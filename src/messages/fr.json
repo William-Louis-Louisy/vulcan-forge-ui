@@ -1,0 +1,23 @@
+{
+  "HomePage": {
+    "eyebrow": "Design System Studio",
+    "title": "VulcanForgeUI",
+    "description": "Créez des design systems accessibles, bilingues et prêts pour l’IA pour vos produits web et mobile.",
+    "primaryCta": "Créer un design system",
+    "secondaryCta": "Voir un exemple",
+    "cards": {
+      "tokens": {
+        "title": "Tokens",
+        "description": "Créez une fondation propre pour des interfaces produit cohérentes."
+      },
+      "accessibility": {
+        "title": "Accessibilité",
+        "description": "Détectez les problèmes de contraste courants avant qu’ils deviennent de la dette produit."
+      },
+      "aiReadyDocs": {
+        "title": "Docs prêtes pour l’IA",
+        "description": "Générez des instructions structurées pour aider les assistants IA à respecter votre système."
+      }
+    }
+  }
+}
