@@ -1,3 +1,4 @@
+import { Link } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 
 const featureCardKeys = ['tokens', 'accessibility', 'aiReadyDocs'] as const;
@@ -21,19 +22,19 @@ export default function HomePage() {
         </p>
 
         <div className="mt-10 flex flex-wrap gap-3">
-          <a
-            href="#"
+          <Link
+            href="/signup"
             className="bg-action-primary text-action-primary-content shadow-soft hover:bg-action-primary-hover rounded-lg px-5 py-3 text-sm font-semibold transition"
           >
             {t('primaryCta')}
-          </a>
+          </Link>
 
-          <a
-            href="#"
+          <Link
+            href="/pricing"
             className="border-border-default bg-surface-primary text-content-primary hover:bg-surface-secondary rounded-lg border px-5 py-3 text-sm font-semibold transition"
           >
             {t('secondaryCta')}
-          </a>
+          </Link>
         </div>
 
         <div className="mt-14 grid gap-4 md:grid-cols-3">
