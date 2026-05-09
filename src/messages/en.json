@@ -19,5 +19,28 @@
         "description": "Generate structured instructions that help AI assistants respect your system."
       }
     }
+  },
+  "LocaleSwitcher": {
+    "label": "Change language",
+    "switchTo": "Switch to {locale}"
+  },
+  "LoginPage": {
+    "title": "Sign in",
+    "description": "Access your VulcanForgeUI workspace."
+  },
+  "SignupPage": {
+    "title": "Create your account",
+    "description": "Start building accessible, bilingual and AI-ready design systems."
+  },
+  "PricingPage": {
+    "title": "Pricing",
+    "description": "VulcanForgeUI is currently prepared for a free beta."
+  },
+  "PublicHeader": {
+    "navigationLabel": "Main navigation",
+    "product": "Product",
+    "pricing": "Pricing",
+    "signIn": "Sign in",
+    "getStarted": "Get started"
   }
 }

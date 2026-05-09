@@ -19,5 +19,28 @@
         "description": "Générez des instructions structurées pour aider les assistants IA à respecter votre système."
       }
     }
+  },
+  "LocaleSwitcher": {
+    "label": "Changer de langue",
+    "switchTo": "Passer en {locale}"
+  },
+  "LoginPage": {
+    "title": "Connexion",
+    "description": "Accédez à votre espace VulcanForgeUI."
+  },
+  "SignupPage": {
+    "title": "Créer votre compte",
+    "description": "Commencez à créer des design systems accessibles, bilingues et prêts pour l’IA."
+  },
+  "PricingPage": {
+    "title": "Tarifs",
+    "description": "VulcanForgeUI est actuellement préparé pour une beta gratuite."
+  },
+  "PublicHeader": {
+    "navigationLabel": "Navigation principale",
+    "product": "Produit",
+    "pricing": "Tarifs",
+    "signIn": "Connexion",
+    "getStarted": "Commencer"
   }
 }
