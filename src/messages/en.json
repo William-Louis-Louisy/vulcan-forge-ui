@@ -1,10 +1,50 @@
 {
+  "Metadata": {
+    "title": "VulcanForgeUI",
+    "description": "Create accessible, bilingual, AI-ready design systems for web and mobile products."
+  },
+  "Common": {
+    "actions": {
+      "cancel": "Cancel",
+      "continue": "Continue",
+      "create": "Create",
+      "save": "Save",
+      "copy": "Copy",
+      "download": "Download",
+      "retry": "Retry",
+      "backToHome": "Back to home"
+    },
+    "states": {
+      "loading": "Loading...",
+      "saving": "Saving...",
+      "saved": "Saved",
+      "error": "Something went wrong.",
+      "empty": "No data yet."
+    },
+    "validation": {
+      "required": "This field is required.",
+      "invalidEmail": "The email address is invalid.",
+      "passwordMinLength": "Password must contain at least {min} characters."
+    }
+  },
+  "PublicHeader": {
+    "navigationLabel": "Main navigation",
+    "product": "Product",
+    "pricing": "Pricing",
+    "signIn": "Sign in",
+    "getStarted": "Get started"
+  },
+  "LocaleSwitcher": {
+    "label": "Language switcher",
+    "switchTo": "Switch to {locale}",
+    "currentLanguage": "{locale} is the current language"
+  },
   "HomePage": {
     "eyebrow": "Design System Studio",
     "title": "VulcanForgeUI",
     "description": "Create accessible, bilingual, AI-ready design systems for web and mobile products.",
     "primaryCta": "Create a design system",
-    "secondaryCta": "View example",
+    "secondaryCta": "View pricing",
     "cards": {
       "tokens": {
         "title": "Tokens",
@@ -20,11 +60,6 @@
       }
     }
   },
-  "LocaleSwitcher": {
-    "label": "Language switcher",
-    "switchTo": "Switch to {locale}",
-    "currentLanguage": "{locale} is the current language"
-  },
   "LoginPage": {
     "title": "Sign in",
     "description": "Access your VulcanForgeUI workspace."
@@ -36,12 +71,5 @@
   "PricingPage": {
     "title": "Pricing",
     "description": "VulcanForgeUI is currently prepared for a free beta."
-  },
-  "PublicHeader": {
-    "navigationLabel": "Main navigation",
-    "product": "Product",
-    "pricing": "Pricing",
-    "signIn": "Sign in",
-    "getStarted": "Get started"
   }
 }

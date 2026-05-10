@@ -6,7 +6,7 @@ import { usePathname, useRouter } from '@/i18n/navigation';
 import type { Locale } from '@/i18n/routing';
 
 export function LocaleSwitcher() {
-  const currentLocale = useLocale() as Locale;
+  const currentLocale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
   const t = useTranslations('LocaleSwitcher');

@@ -1,10 +1,50 @@
 {
+  "Metadata": {
+    "title": "VulcanForgeUI",
+    "description": "Créez des design systems accessibles, bilingues et prêts pour l’IA pour vos produits web et mobile."
+  },
+  "Common": {
+    "actions": {
+      "cancel": "Annuler",
+      "continue": "Continuer",
+      "create": "Créer",
+      "save": "Enregistrer",
+      "copy": "Copier",
+      "download": "Télécharger",
+      "retry": "Réessayer",
+      "backToHome": "Retour à l’accueil"
+    },
+    "states": {
+      "loading": "Chargement...",
+      "saving": "Enregistrement...",
+      "saved": "Enregistré",
+      "error": "Une erreur est survenue.",
+      "empty": "Aucune donnée pour le moment."
+    },
+    "validation": {
+      "required": "Ce champ est obligatoire.",
+      "invalidEmail": "L’adresse email est invalide.",
+      "passwordMinLength": "Le mot de passe doit contenir au moins {min} caractères."
+    }
+  },
+  "PublicHeader": {
+    "navigationLabel": "Navigation principale",
+    "product": "Produit",
+    "pricing": "Tarifs",
+    "signIn": "Connexion",
+    "getStarted": "Commencer"
+  },
+  "LocaleSwitcher": {
+    "label": "Sélecteur de langue",
+    "switchTo": "Passer en {locale}",
+    "currentLanguage": "{locale} est la langue actuelle"
+  },
   "HomePage": {
     "eyebrow": "Design System Studio",
     "title": "VulcanForgeUI",
     "description": "Créez des design systems accessibles, bilingues et prêts pour l’IA pour vos produits web et mobile.",
     "primaryCta": "Créer un design system",
-    "secondaryCta": "Voir un exemple",
+    "secondaryCta": "Voir les tarifs",
     "cards": {
       "tokens": {
         "title": "Tokens",
@@ -20,11 +60,6 @@
       }
     }
   },
-  "LocaleSwitcher": {
-    "label": "Sélecteur de langue",
-    "switchTo": "Passer en {locale}",
-    "currentLanguage": "{locale} est la langue actuelle"
-  },
   "LoginPage": {
     "title": "Connexion",
     "description": "Accédez à votre espace VulcanForgeUI."
@@ -36,12 +71,5 @@
   "PricingPage": {
     "title": "Tarifs",
     "description": "VulcanForgeUI est actuellement préparé pour une beta gratuite."
-  },
-  "PublicHeader": {
-    "navigationLabel": "Navigation principale",
-    "product": "Produit",
-    "pricing": "Tarifs",
-    "signIn": "Connexion",
-    "getStarted": "Commencer"
   }
 }
