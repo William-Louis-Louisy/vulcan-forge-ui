@@ -21,8 +21,9 @@
     }
   },
   "LocaleSwitcher": {
-    "label": "Changer de langue",
-    "switchTo": "Passer en {locale}"
+    "label": "Sélecteur de langue",
+    "switchTo": "Passer en {locale}",
+    "currentLanguage": "{locale} est la langue actuelle"
   },
   "LoginPage": {
     "title": "Connexion",

@@ -21,8 +21,9 @@
     }
   },
   "LocaleSwitcher": {
-    "label": "Change language",
-    "switchTo": "Switch to {locale}"
+    "label": "Language switcher",
+    "switchTo": "Switch to {locale}",
+    "currentLanguage": "{locale} is the current language"
   },
   "LoginPage": {
     "title": "Sign in",
