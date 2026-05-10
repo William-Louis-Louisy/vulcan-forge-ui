@@ -15,7 +15,11 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
-    "quality": "npm run lint && npm run typecheck && npm run format:check && npm run test && npm run build"
+    "quality": "npm run lint && npm run typecheck && npm run format:check && npm run test && npm run build",
+    "db:up": "docker compose up -d postgres",
+    "db:down": "docker compose down",
+    "db:reset": "docker compose down -v && docker compose up -d postgres",
+    "db:logs": "docker compose logs -f postgres"
   },
   "dependencies": {
     "next": "16.2.6",
