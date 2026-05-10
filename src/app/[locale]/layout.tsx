@@ -1,8 +1,8 @@
 import '../globals.css';
 import type { Metadata } from 'next';
-import { appConfig } from '@/config/app';
 import { routing } from '@/i18n/routing';
 import { notFound } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { PublicHeader } from '@/components/layout/PublicHeader';
@@ -17,10 +17,31 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-export const metadata: Metadata = {
-  title: appConfig.name,
-  description: appConfig.description,
+type GenerateMetadataProps = {
+  params: Promise<{
+    locale: string;
+  }>;
 };
+
+export async function generateMetadata({
+  params,
+}: GenerateMetadataProps): Promise<Metadata> {
+  const { locale: requestedLocale } = await params;
+
+  const locale = hasLocale(routing.locales, requestedLocale)
+    ? requestedLocale
+    : routing.defaultLocale;
+
+  const t = await getTranslations({
+    locale,
+    namespace: 'Metadata',
+  });
+
+  return {
+    title: t('title'),
+    description: t('description'),
+  };
+}
 
 type LocaleLayoutProps = Readonly<{
   children: React.ReactNode;
