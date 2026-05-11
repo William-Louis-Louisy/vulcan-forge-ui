@@ -4,7 +4,11 @@ import { SignupForm } from '@/features/auth/signup/SignupForm';
 import { Link } from '@/i18n/navigation';
 import { routing, type Locale } from '@/i18n/routing';
 
-type SignupPageProps = PageProps<'/[locale]/signup'>;
+type SignupPageProps = {
+  params: Promise<{
+    locale: string;
+  }>;
+};
 
 export default async function SignupPage({ params }: SignupPageProps) {
   const { locale: requestedLocale } = await params;
