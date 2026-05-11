@@ -66,7 +66,26 @@
   },
   "SignupPage": {
     "title": "Créer votre compte",
-    "description": "Commencez à créer des design systems accessibles, bilingues et prêts pour l’IA."
+    "description": "Commencez à créer des design systems accessibles, bilingues et prêts pour l’IA.",
+    "form": {
+      "nameLabel": "Nom",
+      "emailLabel": "Email",
+      "passwordLabel": "Mot de passe",
+      "passwordHelp": "Utilisez au moins 12 caractères.",
+      "submit": "Créer le compte",
+      "submitPending": "Création du compte...",
+      "alreadyHaveAccount": "Vous avez déjà un compte ?",
+      "signInLink": "Se connecter"
+    },
+    "validation": {
+      "nameMinLength": "Saisissez au moins 2 caractères.",
+      "nameTooLong": "Le nom doit contenir au maximum 80 caractères.",
+      "emailInvalid": "Saisissez une adresse email valide.",
+      "passwordMinLength": "Le mot de passe doit contenir au moins 12 caractères.",
+      "passwordTooLong": "Le mot de passe doit contenir au maximum 72 caractères.",
+      "emailAlreadyUsed": "Un compte existe déjà avec cette adresse email.",
+      "unexpected": "Impossible de créer votre compte. Veuillez réessayer."
+    }
   },
   "PricingPage": {
     "title": "Tarifs",

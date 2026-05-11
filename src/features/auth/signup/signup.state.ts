@@ -1,0 +1,23 @@
+import type { SignupValidationMessageKey } from './signup.schema';
+
+export type SignupField = 'name' | 'email' | 'password';
+
+export type SignupActionState = {
+  status: 'idle' | 'error';
+  fieldErrors: Partial<Record<SignupField, SignupValidationMessageKey[]>>;
+  formError: 'emailAlreadyUsed' | 'unexpected' | null;
+  values: {
+    name: string;
+    email: string;
+  };
+};
+
+export const initialSignupActionState: SignupActionState = {
+  status: 'idle',
+  fieldErrors: {},
+  formError: null,
+  values: {
+    name: '',
+    email: '',
+  },
+};
