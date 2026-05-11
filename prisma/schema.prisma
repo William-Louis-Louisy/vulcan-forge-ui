@@ -23,16 +23,26 @@ enum ThemePreference {
   dark
 }
 
+enum WorkspaceRole {
+  owner
+  admin
+  editor
+  viewer
+}
+
 model User {
   id              String          @id @default(cuid())
   name            String?
   email           String          @unique
+  passwordHash    String
   emailVerifiedAt DateTime?
   imageUrl        String?
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
 
   preferences     UserPreference?
+  memberships     WorkspaceMember[]
+  ownedWorkspaces Workspace[]     @relation("WorkspaceOwner")
 }
 
 model UserPreference {
@@ -44,4 +54,43 @@ model UserPreference {
   updatedAt       DateTime        @updatedAt
 
   user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Workspace {
+  id        String              @id @default(cuid())
+  name      String
+  slug      String              @unique
+  ownerId   String
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+
+  owner     User                @relation("WorkspaceOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  settings  WorkspaceSettings?
+  members   WorkspaceMember[]
+}
+
+model WorkspaceSettings {
+  id               String      @id @default(cuid())
+  workspaceId      String      @unique
+  defaultLocale    AppLocale   @default(en)
+  supportedLocales AppLocale[] @default([en, fr])
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  workspace        Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+}
+
+model WorkspaceMember {
+  id          String        @id @default(cuid())
+  workspaceId String
+  userId      String
+  role        WorkspaceRole @default(owner)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  workspace   Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+  @@index([userId])
 }
