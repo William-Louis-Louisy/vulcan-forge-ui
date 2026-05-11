@@ -69,3 +69,29 @@ DATABASE_URL="postgresql://vulcan:vulcan_dev_password@localhost:5432/vulcan_forg
 - Do not commit `.env.local`.
 - Prisma setup is handled in DS-021.
 - Docker Desktop must be running before using `docker compose`.
+
+## Prisma
+
+Generate Prisma Client:
+
+```powershell
+npm run db:generate
+```
+
+Run migrations:
+
+```powershell
+npm run db:migrate
+```
+
+Open Prisma Studio:
+
+```powershell
+npm run db:studio
+```
+
+Check the database connection:
+
+```powershell
+npm run db:check
+```
