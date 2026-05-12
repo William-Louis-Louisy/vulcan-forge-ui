@@ -62,7 +62,25 @@
   },
   "LoginPage": {
     "title": "Sign in",
-    "description": "Access your VulcanForgeUI workspace."
+    "description": "Access your VulcanForgeUI workspace.",
+    "registeredSuccess": "Your account has been created. You can now sign in.",
+    "form": {
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "submit": "Sign in",
+      "submitPending": "Signing in...",
+      "noAccount": "Don’t have an account?",
+      "signupLink": "Create an account"
+    },
+    "validation": {
+      "emailInvalid": "Enter a valid email address.",
+      "passwordRequired": "Enter your password.",
+      "invalidCredentials": "Invalid email or password.",
+      "unexpected": "Unable to sign in. Please try again."
+    }
+  },
+  "LogoutButton": {
+    "label": "Sign out"
   },
   "SignupPage": {
     "title": "Create your account",

@@ -62,7 +62,25 @@
   },
   "LoginPage": {
     "title": "Connexion",
-    "description": "Accédez à votre espace VulcanForgeUI."
+    "description": "Accédez à votre espace VulcanForgeUI.",
+    "registeredSuccess": "Votre compte a été créé. Vous pouvez maintenant vous connecter.",
+    "form": {
+      "emailLabel": "Email",
+      "passwordLabel": "Mot de passe",
+      "submit": "Se connecter",
+      "submitPending": "Connexion...",
+      "noAccount": "Vous n’avez pas encore de compte ?",
+      "signupLink": "Créer un compte"
+    },
+    "validation": {
+      "emailInvalid": "Saisissez une adresse email valide.",
+      "passwordRequired": "Saisissez votre mot de passe.",
+      "invalidCredentials": "Email ou mot de passe invalide.",
+      "unexpected": "Impossible de vous connecter. Veuillez réessayer."
+    }
+  },
+  "LogoutButton": {
+    "label": "Se déconnecter"
   },
   "SignupPage": {
     "title": "Créer votre compte",
