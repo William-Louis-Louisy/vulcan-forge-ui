@@ -1,4 +1,9 @@
 {
+  "AppPage": {
+    "title": "Application VulcanForgeUI",
+    "signedInAs": "Connecté avec {email}.",
+    "unknownUser": "utilisateur inconnu"
+  },
   "Metadata": {
     "title": "VulcanForgeUI",
     "description": "Créez des design systems accessibles, bilingues et prêts pour l’IA pour vos produits web et mobile."
