@@ -1,8 +1,9 @@
-import { hasLocale, useTranslations } from 'next-intl';
-import { notFound } from 'next/navigation';
-import { LoginForm } from '@/features/auth/login/LoginForm';
+import { auth } from '@/auth';
 import { Link } from '@/i18n/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { routing, type Locale } from '@/i18n/routing';
+import { hasLocale, useTranslations } from 'next-intl';
+import { LoginForm } from '@/features/auth/login/LoginForm';
 
 type LoginPageProps = {
   params: Promise<{
@@ -22,6 +23,12 @@ export default async function LoginPage({
 
   if (!hasLocale(routing.locales, requestedLocale)) {
     notFound();
+  }
+
+  const session = await auth();
+
+  if (session?.user) {
+    redirect(`/${requestedLocale}/app`);
   }
 
   return (
