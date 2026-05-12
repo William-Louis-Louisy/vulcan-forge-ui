@@ -45,24 +45,125 @@
     "currentLanguage": "{locale} is the current language"
   },
   "HomePage": {
-    "eyebrow": "Design System Studio",
-    "title": "VulcanForgeUI",
-    "description": "Create accessible, bilingual, AI-ready design systems for web and mobile products.",
-    "primaryCta": "Create a design system",
-    "secondaryCta": "View pricing",
-    "cards": {
-      "tokens": {
-        "title": "Tokens",
-        "description": "Create a clean foundation for consistent product interfaces."
-      },
-      "accessibility": {
-        "title": "Accessibility",
-        "description": "Detect common contrast issues before they become product debt."
-      },
-      "aiReadyDocs": {
-        "title": "AI-ready docs",
-        "description": "Generate structured instructions that help AI assistants respect your system."
+    "hero": {
+      "eyebrow": "Design System Studio",
+      "title": "Create accessible, bilingual, AI-ready design systems.",
+      "description": "Structure your tokens, document your components, validate contrast and generate usable exports for web, mobile, documentation and AI assistants.",
+      "primaryCta": "Create a design system",
+      "secondaryCta": "View pricing"
+    },
+    "preview": {
+      "title": "Structured by design",
+      "description": "Your design system becomes a validated model, not a static document.",
+      "button": "Generate export",
+      "helper": "Tailwind, CSS variables, TypeScript, React Native, Markdown and AI instructions."
+    },
+    "features": {
+      "eyebrow": "Everything you need",
+      "title": "A real system, not just a color palette.",
+      "description": "VulcanForgeUI helps you create design systems that are readable by humans, usable by developers and understandable by AI tools.",
+      "items": {
+        "tokens": {
+          "title": "Modern design tokens",
+          "description": "Define primitives and semantic tokens with a structure ready for Tailwind, CSS variables and mobile themes."
+        },
+        "accessibility": {
+          "title": "Accessibility checks",
+          "description": "Detect common contrast issues and keep manual checks visible before they become product debt."
+        },
+        "exports": {
+          "title": "Useful exports",
+          "description": "Generate CSS variables, Tailwind v4 snippets, TypeScript themes and React Native theme objects."
+        },
+        "aiInstructions": {
+          "title": "AI-ready instructions",
+          "description": "Produce structured rules that help AI assistants respect your tokens, components and forbidden patterns."
+        },
+        "bilingual": {
+          "title": "Bilingual from day one",
+          "description": "Manage interface and project content in English and French from the MVP."
+        },
+        "preview": {
+          "title": "Live preview",
+          "description": "See how tokens affect real interface patterns before exporting them."
+        }
       }
+    },
+    "workflow": {
+      "eyebrow": "Workflow",
+      "title": "Create, structure, validate and export.",
+      "description": "The product is designed around a simple loop that turns design decisions into usable implementation assets.",
+      "steps": {
+        "create": {
+          "title": "Create",
+          "description": "Start a project with platforms, locales, visual direction and accessibility targets."
+        },
+        "structure": {
+          "title": "Structure",
+          "description": "Organize tokens, themes and component contracts as a reusable model."
+        },
+        "validate": {
+          "title": "Validate",
+          "description": "Run contrast checks and keep accessibility warnings visible."
+        },
+        "export": {
+          "title": "Export",
+          "description": "Generate assets that can be copied into web, mobile, documentation and AI workflows."
+        }
+      }
+    },
+    "pricing": {
+      "eyebrow": "Pricing",
+      "title": "Start with a focused free beta.",
+      "description": "The MVP does not pretend to sell unavailable plans. Billing will come later when the product value is validated.",
+      "tiers": {
+        "freeBeta": {
+          "name": "Free beta",
+          "price": "Free",
+          "description": "For early users who want to create and export their first design systems.",
+          "features": [
+            "Create design system projects",
+            "English and French interface",
+            "Token and theme exports",
+            "Markdown and AI instruction exports"
+          ],
+          "cta": "Join the beta"
+        },
+        "proSoon": {
+          "name": "Pro",
+          "price": "Soon",
+          "description": "For freelancers and teams that need advanced workflows and more automation.",
+          "features": [
+            "Advanced project history",
+            "More export targets",
+            "Template management",
+            "Collaboration-ready foundations"
+          ],
+          "cta": "Create an account"
+        }
+      }
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "items": {
+        "audit": {
+          "question": "Does VulcanForgeUI replace an accessibility audit?",
+          "answer": "No. It helps detect common issues and document manual checks, but it does not replace a complete accessibility audit."
+        },
+        "exports": {
+          "question": "Can I use the exports in real projects?",
+          "answer": "Yes. The MVP focuses on practical outputs such as CSS variables, Tailwind v4 snippets, TypeScript themes and React Native theme objects."
+        },
+        "billing": {
+          "question": "Is billing available in the MVP?",
+          "answer": "No. The first version is designed as a free beta so the core product value can be validated before adding paid plans."
+        }
+      }
+    },
+    "finalCta": {
+      "title": "Build your next design system with a stronger foundation.",
+      "description": "Start with tokens, accessibility, exports and AI instructions instead of scattered UI decisions.",
+      "cta": "Create your account"
     }
   },
   "LoginPage": {

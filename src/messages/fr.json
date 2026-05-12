@@ -45,24 +45,125 @@
     "currentLanguage": "{locale} est la langue actuelle"
   },
   "HomePage": {
-    "eyebrow": "Design System Studio",
-    "title": "VulcanForgeUI",
-    "description": "Créez des design systems accessibles, bilingues et prêts pour l’IA pour vos produits web et mobile.",
-    "primaryCta": "Créer un design system",
-    "secondaryCta": "Voir les tarifs",
-    "cards": {
-      "tokens": {
-        "title": "Tokens",
-        "description": "Créez une fondation propre pour des interfaces produit cohérentes."
-      },
-      "accessibility": {
-        "title": "Accessibilité",
-        "description": "Détectez les problèmes de contraste courants avant qu’ils deviennent de la dette produit."
-      },
-      "aiReadyDocs": {
-        "title": "Docs prêtes pour l’IA",
-        "description": "Générez des instructions structurées pour aider les assistants IA à respecter votre système."
+    "hero": {
+      "eyebrow": "Design System Studio",
+      "title": "Créez des design systems accessibles, bilingues et prêts pour l’IA.",
+      "description": "Structurez vos tokens, documentez vos composants, validez les contrastes et générez des exports exploitables pour le web, le mobile, la documentation et les assistants IA.",
+      "primaryCta": "Créer un design system",
+      "secondaryCta": "Voir les tarifs"
+    },
+    "preview": {
+      "title": "Structuré par conception",
+      "description": "Votre design system devient un modèle validé, pas un simple document statique.",
+      "button": "Générer un export",
+      "helper": "Tailwind, variables CSS, TypeScript, React Native, Markdown et instructions IA."
+    },
+    "features": {
+      "eyebrow": "Tout le nécessaire",
+      "title": "Un vrai système, pas seulement une palette de couleurs.",
+      "description": "VulcanForgeUI vous aide à créer des design systems lisibles par les humains, exploitables par les développeurs et compréhensibles par les outils IA.",
+      "items": {
+        "tokens": {
+          "title": "Design tokens modernes",
+          "description": "Définissez des tokens primitifs et sémantiques avec une structure prête pour Tailwind, les variables CSS et les thèmes mobiles."
+        },
+        "accessibility": {
+          "title": "Contrôles d’accessibilité",
+          "description": "Détectez les problèmes de contraste courants et gardez les vérifications manuelles visibles avant qu’elles deviennent de la dette produit."
+        },
+        "exports": {
+          "title": "Exports exploitables",
+          "description": "Générez des variables CSS, des snippets Tailwind v4, des thèmes TypeScript et des objets de thème React Native."
+        },
+        "aiInstructions": {
+          "title": "Instructions prêtes pour l’IA",
+          "description": "Produisez des règles structurées pour aider les assistants IA à respecter vos tokens, composants et motifs interdits."
+        },
+        "bilingual": {
+          "title": "Bilingue dès le départ",
+          "description": "Gérez l’interface et les contenus projet en anglais et en français dès le MVP."
+        },
+        "preview": {
+          "title": "Prévisualisation live",
+          "description": "Voyez comment vos tokens influencent de vrais patterns d’interface avant de les exporter."
+        }
       }
+    },
+    "workflow": {
+      "eyebrow": "Workflow",
+      "title": "Créer, structurer, valider et exporter.",
+      "description": "Le produit est conçu autour d’une boucle simple qui transforme les décisions de design en assets réellement exploitables.",
+      "steps": {
+        "create": {
+          "title": "Créer",
+          "description": "Démarrez un projet avec ses plateformes, locales, direction visuelle et objectifs d’accessibilité."
+        },
+        "structure": {
+          "title": "Structurer",
+          "description": "Organisez les tokens, thèmes et contrats composants comme un modèle réutilisable."
+        },
+        "validate": {
+          "title": "Valider",
+          "description": "Lancez des contrôles de contraste et gardez les alertes d’accessibilité visibles."
+        },
+        "export": {
+          "title": "Exporter",
+          "description": "Générez des assets copiables dans vos workflows web, mobile, documentation et IA."
+        }
+      }
+    },
+    "pricing": {
+      "eyebrow": "Tarifs",
+      "title": "Démarrez avec une beta gratuite et ciblée.",
+      "description": "Le MVP ne prétend pas vendre des offres indisponibles. Le paiement viendra plus tard, une fois la valeur produit validée.",
+      "tiers": {
+        "freeBeta": {
+          "name": "Beta gratuite",
+          "price": "Gratuit",
+          "description": "Pour les premiers utilisateurs qui veulent créer et exporter leurs premiers design systems.",
+          "features": [
+            "Création de projets design system",
+            "Interface en anglais et en français",
+            "Exports de tokens et thèmes",
+            "Exports Markdown et instructions IA"
+          ],
+          "cta": "Rejoindre la beta"
+        },
+        "proSoon": {
+          "name": "Pro",
+          "price": "Bientôt",
+          "description": "Pour les freelances et équipes qui auront besoin de workflows avancés et de plus d’automatisation.",
+          "features": [
+            "Historique projet avancé",
+            "Plus de formats d’export",
+            "Gestion de templates",
+            "Fondations prêtes pour la collaboration"
+          ],
+          "cta": "Créer un compte"
+        }
+      }
+    },
+    "faq": {
+      "title": "Questions fréquentes",
+      "items": {
+        "audit": {
+          "question": "VulcanForgeUI remplace-t-il un audit d’accessibilité ?",
+          "answer": "Non. Il aide à détecter certains problèmes courants et à documenter les vérifications manuelles, mais il ne remplace pas un audit complet."
+        },
+        "exports": {
+          "question": "Puis-je utiliser les exports dans de vrais projets ?",
+          "answer": "Oui. Le MVP se concentre sur des sorties pratiques comme les variables CSS, les snippets Tailwind v4, les thèmes TypeScript et les objets de thème React Native."
+        },
+        "billing": {
+          "question": "Le paiement est-il disponible dans le MVP ?",
+          "answer": "Non. La première version est pensée comme une beta gratuite afin de valider la valeur produit avant d’ajouter des offres payantes."
+        }
+      }
+    },
+    "finalCta": {
+      "title": "Construisez votre prochain design system sur des bases plus solides.",
+      "description": "Commencez par les tokens, l’accessibilité, les exports et les instructions IA au lieu d’accumuler des décisions UI dispersées.",
+      "cta": "Créer votre compte"
     }
   },
   "LoginPage": {
