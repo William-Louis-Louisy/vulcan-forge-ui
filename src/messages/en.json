@@ -230,7 +230,56 @@
     }
   },
   "PricingPage": {
-    "title": "Pricing",
-    "description": "VulcanForgeUI is currently prepared for a free beta."
+    "eyebrow": "Pricing",
+    "title": "Start with a focused free beta.",
+    "description": "VulcanForgeUI is currently in beta. The goal is to validate the core product value before introducing paid plans.",
+    "recommendedBadge": "Recommended",
+    "tiers": {
+      "freeBeta": {
+        "name": "Free beta",
+        "price": "Free",
+        "description": "For early users who want to create, validate and export their first design systems.",
+        "features": {
+          "feature1": "Create design system projects",
+          "feature2": "English and French interface",
+          "feature3": "Export CSS variables, Tailwind, TypeScript and React Native themes",
+          "feature4": "Generate Markdown documentation and AI instructions"
+        },
+        "cta": "Create your account"
+      },
+      "proSoon": {
+        "name": "Pro",
+        "price": "Soon",
+        "description": "For freelancers and teams that will need advanced workflows, automation and collaboration.",
+        "features": {
+          "feature1": "Advanced project history",
+          "feature2": "Additional export targets",
+          "feature3": "Reusable design system templates",
+          "feature4": "Collaboration-ready foundations"
+        },
+        "cta": "Join the beta"
+      }
+    },
+    "betaNotice": {
+      "title": "No fake billing in the MVP.",
+      "description": "The MVP does not include Stripe or paid subscriptions. This page presents the intended pricing direction while keeping the beta experience honest and free."
+    },
+    "faq": {
+      "title": "Pricing questions",
+      "items": {
+        "whyFree": {
+          "question": "Why is the beta free?",
+          "answer": "Because the first goal is to validate the workflow: create, structure, validate, preview and export a design system."
+        },
+        "billing": {
+          "question": "Will billing be added later?",
+          "answer": "Yes, but only after the product proves enough value to justify paid plans."
+        },
+        "limits": {
+          "question": "Will the beta have limits?",
+          "answer": "The first beta can stay intentionally limited to keep the product focused and stable."
+        }
+      }
+    }
   }
 }
