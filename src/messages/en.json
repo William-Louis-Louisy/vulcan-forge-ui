@@ -38,6 +38,52 @@
       "passwordMinLength": "Password must contain at least {min} characters."
     }
   },
+  "DashboardPage": {
+    "eyebrow": "Workspace",
+    "title": "Welcome, {name}.",
+    "fallbackName": "there",
+    "description": "This is your private VulcanForgeUI workspace. Start by creating your first design system project.",
+    "primaryCta": "Create a design system",
+    "stats": {
+      "workspace": {
+        "label": "Workspace",
+        "empty": "No workspace",
+        "description": "Your personal workspace created during signup."
+      },
+      "projects": {
+        "label": "Design systems",
+        "description": "Projects created in this workspace."
+      },
+      "exports": {
+        "label": "Exports",
+        "description": "Generated implementation assets."
+      }
+    },
+    "emptyState": {
+      "title": "No design system yet.",
+      "description": "Your workspace is ready. The next step is to create a design system project with platforms, locales, tokens and accessibility targets.",
+      "cardTitle": "Create your first design system",
+      "cardDescription": "Start with a focused setup, then progressively add tokens, themes, components, validations and exports.",
+      "cta": "Create first project"
+    },
+    "quickActions": {
+      "title": "What comes next",
+      "items": {
+        "create": {
+          "title": "Create a project",
+          "description": "Define the project name, target platforms, default locale and supported languages."
+        },
+        "tokens": {
+          "title": "Structure tokens",
+          "description": "Prepare primitives and semantic tokens for web and mobile usage."
+        },
+        "accessibility": {
+          "title": "Validate accessibility",
+          "description": "Run contrast checks and keep manual accessibility notes visible."
+        }
+      }
+    }
+  },
   "HomePage": {
     "hero": {
       "eyebrow": "Design System Studio",

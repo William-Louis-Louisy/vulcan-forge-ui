@@ -38,6 +38,52 @@
       "passwordMinLength": "Le mot de passe doit contenir au moins {min} caractères."
     }
   },
+  "DashboardPage": {
+    "eyebrow": "Espace de travail",
+    "title": "Bienvenue, {name}.",
+    "fallbackName": "à vous",
+    "description": "Voici votre espace privé VulcanForgeUI. Commencez par créer votre premier projet de design system.",
+    "primaryCta": "Créer un design system",
+    "stats": {
+      "workspace": {
+        "label": "Workspace",
+        "empty": "Aucun workspace",
+        "description": "Votre espace personnel créé lors de l’inscription."
+      },
+      "projects": {
+        "label": "Design systems",
+        "description": "Projets créés dans cet espace."
+      },
+      "exports": {
+        "label": "Exports",
+        "description": "Assets d’implémentation générés."
+      }
+    },
+    "emptyState": {
+      "title": "Aucun design system pour le moment.",
+      "description": "Votre espace est prêt. La prochaine étape consiste à créer un projet de design system avec ses plateformes, locales, tokens et objectifs d’accessibilité.",
+      "cardTitle": "Créer votre premier design system",
+      "cardDescription": "Commencez par une configuration ciblée, puis ajoutez progressivement les tokens, thèmes, composants, validations et exports.",
+      "cta": "Créer le premier projet"
+    },
+    "quickActions": {
+      "title": "Prochaines étapes",
+      "items": {
+        "create": {
+          "title": "Créer un projet",
+          "description": "Définissez le nom du projet, les plateformes cibles, la locale par défaut et les langues supportées."
+        },
+        "tokens": {
+          "title": "Structurer les tokens",
+          "description": "Préparez les tokens primitifs et sémantiques pour un usage web et mobile."
+        },
+        "accessibility": {
+          "title": "Valider l’accessibilité",
+          "description": "Lancez des contrôles de contraste et gardez les notes d’accessibilité visibles."
+        }
+      }
+    }
+  },
   "HomePage": {
     "hero": {
       "eyebrow": "Design System Studio",
