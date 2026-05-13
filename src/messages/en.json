@@ -167,9 +167,18 @@
     }
   },
   "LoginPage": {
-    "title": "Sign in",
-    "description": "Access your VulcanForgeUI workspace.",
+    "eyebrow": "Welcome back",
+    "title": "Sign in to your workspace.",
+    "description": "Access your VulcanForgeUI projects, exports and design system foundations.",
     "registeredSuccess": "Your account has been created. You can now sign in.",
+    "benefits": {
+      "title": "Continue building",
+      "items": {
+        "workspace": "Access your personal design system workspace.",
+        "exports": "Continue generating tokens, themes and implementation exports.",
+        "ai": "Keep your AI-ready documentation and instructions aligned."
+      }
+    },
     "form": {
       "emailLabel": "Email",
       "passwordLabel": "Password",
