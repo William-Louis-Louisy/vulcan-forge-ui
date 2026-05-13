@@ -230,7 +230,56 @@
     }
   },
   "PricingPage": {
-    "title": "Tarifs",
-    "description": "VulcanForgeUI est actuellement préparé pour une beta gratuite."
+    "eyebrow": "Tarifs",
+    "title": "Démarrez avec une beta gratuite et ciblée.",
+    "description": "VulcanForgeUI est actuellement en beta. L’objectif est de valider la valeur produit avant d’introduire des offres payantes.",
+    "recommendedBadge": "Recommandé",
+    "tiers": {
+      "freeBeta": {
+        "name": "Beta gratuite",
+        "price": "Gratuit",
+        "description": "Pour les premiers utilisateurs qui veulent créer, valider et exporter leurs premiers design systems.",
+        "features": {
+          "feature1": "Création de projets design system",
+          "feature2": "Interface en anglais et en français",
+          "feature3": "Export de variables CSS, Tailwind, TypeScript et thèmes React Native",
+          "feature4": "Génération de documentation Markdown et d’instructions IA"
+        },
+        "cta": "Créer votre compte"
+      },
+      "proSoon": {
+        "name": "Pro",
+        "price": "Bientôt",
+        "description": "Pour les freelances et les équipes qui auront besoin de workflows avancés, d’automatisation et de collaboration.",
+        "features": {
+          "feature1": "Historique projet avancé",
+          "feature2": "Formats d’export supplémentaires",
+          "feature3": "Templates de design systems réutilisables",
+          "feature4": "Fondations prêtes pour la collaboration"
+        },
+        "cta": "Rejoindre la beta"
+      }
+    },
+    "betaNotice": {
+      "title": "Pas de faux paiement dans le MVP.",
+      "description": "Le MVP n’intègre pas Stripe ni d’abonnements payants. Cette page présente l’orientation tarifaire prévue tout en gardant l’expérience beta honnête et gratuite."
+    },
+    "faq": {
+      "title": "Questions sur les tarifs",
+      "items": {
+        "whyFree": {
+          "question": "Pourquoi la beta est-elle gratuite ?",
+          "answer": "Parce que le premier objectif est de valider le workflow : créer, structurer, valider, prévisualiser et exporter un design system."
+        },
+        "billing": {
+          "question": "Le paiement sera-t-il ajouté plus tard ?",
+          "answer": "Oui, mais seulement lorsque le produit aura démontré suffisamment de valeur pour justifier des offres payantes."
+        },
+        "limits": {
+          "question": "La beta aura-t-elle des limites ?",
+          "answer": "La première beta peut rester volontairement limitée pour garder le produit ciblé et stable."
+        }
+      }
+    }
   }
 }
