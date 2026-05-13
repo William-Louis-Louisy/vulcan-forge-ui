@@ -42,10 +42,14 @@ function getEmptyStringPaths(value: JsonObject, prefix = ''): string[] {
 
 describe('localized messages', () => {
   it('uses English as the reference message structure', () => {
-    const enKeys = getKeyPaths(enMessages);
-    const frKeys = getKeyPaths(frMessages);
+    const enKeys = getKeyPaths(enMessages).sort();
+    const frKeys = getKeyPaths(frMessages).sort();
 
-    expect(frKeys).toEqual(enKeys);
+    const missingInFrench = enKeys.filter((key) => !frKeys.includes(key));
+    const extraInFrench = frKeys.filter((key) => !enKeys.includes(key));
+
+    expect(missingInFrench).toEqual([]);
+    expect(extraInFrench).toEqual([]);
   });
 
   it('does not contain empty English messages', () => {

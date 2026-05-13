@@ -1,12 +1,18 @@
 {
   "AppPage": {
-    "title": "VulcanForgeUI App",
+    "eyebrow": "Workspace",
+    "title": "Dashboard",
     "signedInAs": "Signed in as {email}.",
     "unknownUser": "unknown user"
   },
-  "Metadata": {
-    "title": "VulcanForgeUI",
-    "description": "Create accessible, bilingual, AI-ready design systems for web and mobile products."
+  "AppShell": {
+    "navigationLabel": "Application navigation",
+    "dashboard": "Dashboard",
+    "projectsSoon": "Projects — soon",
+    "settingsSoon": "Settings — soon",
+    "account": "Account",
+    "signedInAs": "Signed in as",
+    "unknownUser": "unknown user"
   },
   "Common": {
     "actions": {
@@ -31,18 +37,6 @@
       "invalidEmail": "The email address is invalid.",
       "passwordMinLength": "Password must contain at least {min} characters."
     }
-  },
-  "PublicHeader": {
-    "navigationLabel": "Main navigation",
-    "product": "Product",
-    "pricing": "Pricing",
-    "signIn": "Sign in",
-    "getStarted": "Get started"
-  },
-  "LocaleSwitcher": {
-    "label": "Language switcher",
-    "switchTo": "Switch to {locale}",
-    "currentLanguage": "{locale} is the current language"
   },
   "HomePage": {
     "hero": {
@@ -166,6 +160,17 @@
       "cta": "Create your account"
     }
   },
+  "Metadata": {
+    "title": "VulcanForgeUI",
+    "description": "Create accessible, bilingual, AI-ready design systems for web and mobile products."
+  },
+
+  "LocaleSwitcher": {
+    "label": "Language switcher",
+    "switchTo": "Switch to {locale}",
+    "currentLanguage": "{locale} is the current language"
+  },
+
   "LoginPage": {
     "eyebrow": "Welcome back",
     "title": "Sign in to your workspace.",
@@ -197,38 +202,7 @@
   "LogoutButton": {
     "label": "Sign out"
   },
-  "SignupPage": {
-    "eyebrow": "Create your account",
-    "title": "Start building your design system.",
-    "description": "Create your VulcanForgeUI account and generate accessible, bilingual and AI-ready design systems.",
-    "benefits": {
-      "title": "Included from day one",
-      "items": {
-        "tokens": "Structure modern design tokens for web and mobile projects.",
-        "accessibility": "Prepare accessibility checks and contrast validation early.",
-        "exports": "Generate useful exports for Tailwind, CSS variables, TypeScript, React Native and AI assistants."
-      }
-    },
-    "form": {
-      "nameLabel": "Name",
-      "emailLabel": "Email",
-      "passwordLabel": "Password",
-      "passwordHelp": "Use at least 12 characters.",
-      "submit": "Create account",
-      "submitPending": "Creating account...",
-      "alreadyHaveAccount": "Already have an account?",
-      "signInLink": "Sign in"
-    },
-    "validation": {
-      "nameMinLength": "Enter at least 2 characters.",
-      "nameTooLong": "Name must contain at most 80 characters.",
-      "emailInvalid": "Enter a valid email address.",
-      "passwordMinLength": "Password must contain at least 12 characters.",
-      "passwordTooLong": "Password must contain at most 72 characters.",
-      "emailAlreadyUsed": "An account already exists with this email address.",
-      "unexpected": "Unable to create your account. Please try again."
-    }
-  },
+
   "PricingPage": {
     "eyebrow": "Pricing",
     "title": "Start with a focused free beta.",
@@ -280,6 +254,45 @@
           "answer": "The first beta can stay intentionally limited to keep the product focused and stable."
         }
       }
+    }
+  },
+  "PublicHeader": {
+    "navigationLabel": "Main navigation",
+    "product": "Product",
+    "pricing": "Pricing",
+    "signIn": "Sign in",
+    "getStarted": "Get started"
+  },
+  "SignupPage": {
+    "eyebrow": "Create your account",
+    "title": "Start building your design system.",
+    "description": "Create your VulcanForgeUI account and generate accessible, bilingual and AI-ready design systems.",
+    "benefits": {
+      "title": "Included from day one",
+      "items": {
+        "tokens": "Structure modern design tokens for web and mobile projects.",
+        "accessibility": "Prepare accessibility checks and contrast validation early.",
+        "exports": "Generate useful exports for Tailwind, CSS variables, TypeScript, React Native and AI assistants."
+      }
+    },
+    "form": {
+      "nameLabel": "Name",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "passwordHelp": "Use at least 12 characters.",
+      "submit": "Create account",
+      "submitPending": "Creating account...",
+      "alreadyHaveAccount": "Already have an account?",
+      "signInLink": "Sign in"
+    },
+    "validation": {
+      "nameMinLength": "Enter at least 2 characters.",
+      "nameTooLong": "Name must contain at most 80 characters.",
+      "emailInvalid": "Enter a valid email address.",
+      "passwordMinLength": "Password must contain at least 12 characters.",
+      "passwordTooLong": "Password must contain at most 72 characters.",
+      "emailAlreadyUsed": "An account already exists with this email address.",
+      "unexpected": "Unable to create your account. Please try again."
     }
   }
 }
