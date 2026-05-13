@@ -1,10 +1,13 @@
+import type { ReactNode } from 'react';
 import { hasLocale } from 'next-intl';
-import { redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
+import { notFound, redirect } from 'next/navigation';
 import { auth } from '@/auth';
+import { AppShell } from '@/components/layout/AppShell';
 import { routing } from '@/i18n/routing';
 
 type AppLayoutProps = {
-  children: React.ReactNode;
+  children: ReactNode;
   params: Promise<{
     locale: string;
   }>;
@@ -13,15 +16,34 @@ type AppLayoutProps = {
 export default async function AppLayout({ children, params }: AppLayoutProps) {
   const { locale: requestedLocale } = await params;
 
-  const locale = hasLocale(routing.locales, requestedLocale)
-    ? requestedLocale
-    : routing.defaultLocale;
+  if (!hasLocale(routing.locales, requestedLocale)) {
+    notFound();
+  }
 
   const session = await auth();
 
   if (!session?.user) {
-    redirect(`/${locale}/login`);
+    redirect(`/${requestedLocale}/login`);
   }
 
-  return children;
+  const t = await getTranslations({
+    locale: requestedLocale,
+    namespace: 'AppShell',
+  });
+
+  return (
+    <AppShell
+      userEmail={session.user.email ?? t('unknownUser')}
+      labels={{
+        navigationLabel: t('navigationLabel'),
+        dashboard: t('dashboard'),
+        projectsSoon: t('projectsSoon'),
+        settingsSoon: t('settingsSoon'),
+        account: t('account'),
+        signedInAs: t('signedInAs'),
+      }}
+    >
+      {children}
+    </AppShell>
+  );
 }
