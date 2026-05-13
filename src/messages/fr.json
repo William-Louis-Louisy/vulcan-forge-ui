@@ -167,9 +167,18 @@
     }
   },
   "LoginPage": {
-    "title": "Connexion",
-    "description": "Accédez à votre espace VulcanForgeUI.",
+    "eyebrow": "Bon retour",
+    "title": "Connectez-vous à votre espace.",
+    "description": "Accédez à vos projets VulcanForgeUI, vos exports et vos fondations de design system.",
     "registeredSuccess": "Votre compte a été créé. Vous pouvez maintenant vous connecter.",
+    "benefits": {
+      "title": "Continuez la construction",
+      "items": {
+        "workspace": "Accédez à votre espace personnel de design system.",
+        "exports": "Continuez à générer vos tokens, thèmes et exports d’implémentation.",
+        "ai": "Gardez votre documentation et vos instructions IA alignées."
+      }
+    },
     "form": {
       "emailLabel": "Email",
       "passwordLabel": "Mot de passe",

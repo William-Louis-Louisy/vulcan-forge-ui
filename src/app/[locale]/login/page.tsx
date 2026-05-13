@@ -1,9 +1,9 @@
-import { auth } from '@/auth';
-import { Link } from '@/i18n/navigation';
-import { notFound, redirect } from 'next/navigation';
-import { routing, type Locale } from '@/i18n/routing';
 import { hasLocale, useTranslations } from 'next-intl';
+import { notFound } from 'next/navigation';
+import { AuthShell } from '@/components/layout/AuthShell';
 import { LoginForm } from '@/features/auth/login/LoginForm';
+import { Link } from '@/i18n/navigation';
+import { routing, type Locale } from '@/i18n/routing';
 
 type LoginPageProps = {
   params: Promise<{
@@ -14,6 +14,8 @@ type LoginPageProps = {
   }>;
 };
 
+const benefitKeys = ['workspace', 'exports', 'ai'] as const;
+
 export default async function LoginPage({
   params,
   searchParams,
@@ -23,12 +25,6 @@ export default async function LoginPage({
 
   if (!hasLocale(routing.locales, requestedLocale)) {
     notFound();
-  }
-
-  const session = await auth();
-
-  if (session?.user) {
-    redirect(`/${requestedLocale}/app`);
   }
 
   return (
@@ -49,20 +45,21 @@ function LoginPageContent({
   const t = useTranslations('LoginPage');
 
   return (
-    <main className="bg-background-app text-content-primary min-h-screen px-6 py-16">
-      <section className="mx-auto max-w-md">
-        <h1 className="text-4xl font-semibold tracking-tight">{t('title')}</h1>
-        <p className="text-content-secondary mt-4">{t('description')}</p>
+    <AuthShell
+      eyebrow={t('eyebrow')}
+      title={t('title')}
+      description={t('description')}
+      benefitsTitle={t('benefits.title')}
+      benefits={benefitKeys.map((key) => t(`benefits.items.${key}`))}
+    >
+      <LoginForm locale={locale} registered={registered} />
 
-        <LoginForm locale={locale} registered={registered} />
-
-        <p className="text-content-secondary mt-6 text-center text-sm">
-          {t('form.noAccount')}{' '}
-          <Link href="/signup" className="text-action-primary font-semibold">
-            {t('form.signupLink')}
-          </Link>
-        </p>
-      </section>
-    </main>
+      <p className="text-content-secondary mt-6 text-center text-sm">
+        {t('form.noAccount')}{' '}
+        <Link href="/signup" className="text-action-primary font-semibold">
+          {t('form.signupLink')}
+        </Link>
+      </p>
+    </AuthShell>
   );
 }
