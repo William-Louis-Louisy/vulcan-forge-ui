@@ -189,8 +189,17 @@
     "label": "Se déconnecter"
   },
   "SignupPage": {
-    "title": "Créer votre compte",
-    "description": "Commencez à créer des design systems accessibles, bilingues et prêts pour l’IA.",
+    "eyebrow": "Créer votre compte",
+    "title": "Commencez votre design system.",
+    "description": "Créez votre compte VulcanForgeUI et générez des design systems accessibles, bilingues et prêts pour l’IA.",
+    "benefits": {
+      "title": "Inclus dès le départ",
+      "items": {
+        "tokens": "Structurez des design tokens modernes pour vos projets web et mobile.",
+        "accessibility": "Préparez les contrôles d’accessibilité et la validation des contrastes dès le début.",
+        "exports": "Générez des exports utiles pour Tailwind, les variables CSS, TypeScript, React Native et les assistants IA."
+      }
+    },
     "form": {
       "nameLabel": "Nom",
       "emailLabel": "Email",

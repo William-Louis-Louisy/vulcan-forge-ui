@@ -189,8 +189,17 @@
     "label": "Sign out"
   },
   "SignupPage": {
-    "title": "Create your account",
-    "description": "Start building accessible, bilingual and AI-ready design systems.",
+    "eyebrow": "Create your account",
+    "title": "Start building your design system.",
+    "description": "Create your VulcanForgeUI account and generate accessible, bilingual and AI-ready design systems.",
+    "benefits": {
+      "title": "Included from day one",
+      "items": {
+        "tokens": "Structure modern design tokens for web and mobile projects.",
+        "accessibility": "Prepare accessibility checks and contrast validation early.",
+        "exports": "Generate useful exports for Tailwind, CSS variables, TypeScript, React Native and AI assistants."
+      }
+    },
     "form": {
       "nameLabel": "Name",
       "emailLabel": "Email",
