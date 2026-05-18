@@ -39,6 +39,114 @@
       "passwordMinLength": "Le mot de passe doit contenir au moins {min} caractères."
     }
   },
+  "CreateDesignSystemPage": {
+    "backLink": "Retour aux design systems",
+    "eyebrow": "Nouveau design system",
+    "title": "Créer un design system",
+    "description": "Commencez avec une configuration guidée. Vous allez définir les bases, les plateformes, les langues, la direction visuelle, l’objectif d’accessibilité et vérifier l’ensemble avant de créer le projet.",
+    "steps": {
+      "label": "Étapes de création du design system",
+      "step": "Étape {number}",
+      "basics": "Bases",
+      "platformsLanguages": "Plateformes & langues",
+      "visualDirection": "Direction visuelle",
+      "accessibilityTarget": "Objectif d’accessibilité",
+      "review": "Récapitulatif"
+    },
+    "actions": {
+      "back": "Retour",
+      "continue": "Continuer"
+    },
+    "basics": {
+      "title": "Bases du projet",
+      "description": "Donnez à votre design system un nom clair et une description optionnelle."
+    },
+    "platformsLanguages": {
+      "title": "Plateformes et langues",
+      "description": "Choisissez où ce design system sera utilisé et quelles langues il devra supporter."
+    },
+    "visualDirection": {
+      "title": "Direction visuelle",
+      "description": "Choisissez l’intention visuelle initiale. Elle pourra évoluer plus tard."
+    },
+    "accessibilityTarget": {
+      "title": "Objectif d’accessibilité",
+      "description": "Définissez le niveau d’accessibilité visé par ce design system."
+    },
+    "review": {
+      "title": "Vérifier la configuration",
+      "description": "Contrôlez les fondations du projet avant de créer le design system.",
+      "emptyDescription": "Aucune description renseignée."
+    },
+    "form": {
+      "nameLabel": "Nom",
+      "nameHelp": "Exemple : Core Product UI, Site marketing, Application mobile.",
+      "descriptionLabel": "Description",
+      "descriptionHelp": "Optionnel. Expliquez à quoi sert ce design system.",
+      "platformsLabel": "Plateformes cibles",
+      "platforms": {
+        "web": {
+          "label": "Web",
+          "description": "Pour les sites, applications web, SaaS et interfaces accessibles depuis un navigateur."
+        },
+        "mobile": {
+          "label": "Mobile",
+          "description": "Pour React Native, Expo et les interfaces d’applications mobiles."
+        }
+      },
+      "defaultLocaleLabel": "Locale par défaut",
+      "defaultLocaleHelp": "Elle sera utilisée comme langue de référence pour les contenus projet.",
+      "supportedLocalesLabel": "Langues supportées",
+      "locales": {
+        "en": "Anglais",
+        "fr": "Français"
+      },
+      "visualDirections": {
+        "minimal": {
+          "label": "Minimal",
+          "description": "Clair, sobre et centré sur la lisibilité."
+        },
+        "editorial": {
+          "label": "Éditorial",
+          "description": "Élégant, expressif et orienté contenu."
+        },
+        "playful": {
+          "label": "Ludique",
+          "description": "Chaleureux, dynamique et plus distinctif visuellement."
+        },
+        "enterprise": {
+          "label": "Entreprise",
+          "description": "Structuré, fiable et adapté aux produits professionnels."
+        }
+      },
+      "accessibilityTargets": {
+        "wcag_aa": {
+          "label": "WCAG AA",
+          "description": "Un objectif d’accessibilité pratique et largement utilisé pour les produits numériques."
+        },
+        "wcag_aaa": {
+          "label": "WCAG AAA",
+          "description": "Un objectif plus strict qui peut ne pas être réaliste pour toutes les interfaces."
+        }
+      },
+      "submit": "Créer le design system",
+      "submitPending": "Création du design system..."
+    },
+    "validation": {
+      "nameMinLength": "Saisissez au moins 2 caractères.",
+      "nameTooLong": "Le nom doit contenir au maximum 80 caractères.",
+      "descriptionTooLong": "La description doit contenir au maximum 240 caractères.",
+      "defaultLocaleInvalid": "Choisissez une locale supportée.",
+      "platformRequired": "Sélectionnez au moins une plateforme cible.",
+      "supportedLocaleRequired": "Sélectionnez au moins une langue supportée.",
+      "visualDirectionRequired": "Choisissez une direction visuelle.",
+      "accessibilityTargetInvalid": "Choisissez un objectif d’accessibilité supporté.",
+      "missingWorkspace": "Aucun workspace n’a été trouvé pour votre compte.",
+      "slugAlreadyUsed": "Un design system avec ce nom existe déjà dans ce workspace.",
+      "unauthorized": "Vous devez être connecté pour créer un design system.",
+      "unexpected": "Impossible de créer le design system. Veuillez réessayer."
+    }
+  },
   "DashboardPage": {
     "eyebrow": "Espace de travail",
     "title": "Bienvenue, {name}.",
