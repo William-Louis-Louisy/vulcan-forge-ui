@@ -20,9 +20,9 @@ type AppShellProps = {
 
 export function AppShell({ children, userEmail, labels }: AppShellProps) {
   return (
-    <div className="bg-background-app text-content-primary min-h-screen lg:grid lg:grid-cols-[17rem_1fr]">
-      <aside className="border-border-subtle bg-background-subtle hidden border-r lg:block">
-        <div className="flex h-full min-h-screen flex-col px-5 py-6">
+    <div className="bg-background-app text-content-primary min-h-screen lg:grid lg:h-screen lg:grid-cols-[17rem_minmax(0,1fr)] lg:overflow-hidden">
+      <aside className="border-border-subtle bg-background-subtle hidden border-r lg:block lg:h-screen lg:overflow-y-auto">
+        <div className="flex min-h-full flex-col px-5 py-6">
           <Link
             href="/app"
             className="inline-flex items-center gap-3 font-semibold"
@@ -76,7 +76,7 @@ export function AppShell({ children, userEmail, labels }: AppShellProps) {
         </div>
       </aside>
 
-      <div className="min-w-0">
+      <div className="min-w-0 lg:h-screen lg:overflow-y-auto">
         <header className="border-border-subtle bg-background-app flex min-h-16 items-center justify-between border-b px-6 lg:hidden">
           <Link
             href="/app"
