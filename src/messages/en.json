@@ -90,9 +90,21 @@
     "title": "Your design systems",
     "description": "Create, organize and export design systems for your products.",
     "primaryCta": "Create a design system",
+    "workspace": {
+      "label": "Current workspace",
+      "empty": "No workspace found"
+    },
+    "card": {
+      "badge": "Project",
+      "slug": "Slug: {slug}",
+      "noDescription": "No description yet.",
+      "updatedAt": "Updated on {date}",
+      "open": "Open"
+    },
     "emptyState": {
       "title": "No design system yet.",
-      "description": "Your workspace is ready. The next step is to create your first design system project."
+      "description": "Your workspace is ready. The next step is to create your first design system project.",
+      "cta": "Create first design system"
     }
   },
   "HomePage": {
