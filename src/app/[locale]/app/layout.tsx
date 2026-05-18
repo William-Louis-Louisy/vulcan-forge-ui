@@ -36,9 +36,10 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
       userEmail={session.user.email ?? t('unknownUser')}
       labels={{
         navigationLabel: t('navigationLabel'),
-        dashboard: t('dashboard'),
-        projectsSoon: t('projectsSoon'),
-        settingsSoon: t('settingsSoon'),
+        navigationItems: {
+          dashboard: t('navigationItems.dashboard'),
+          designSystems: t('navigationItems.designSystems'),
+        },
         account: t('account'),
         signedInAs: t('signedInAs'),
       }}
