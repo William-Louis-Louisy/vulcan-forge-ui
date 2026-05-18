@@ -7,9 +7,10 @@
   },
   "AppShell": {
     "navigationLabel": "Application navigation",
-    "dashboard": "Dashboard",
-    "projectsSoon": "Projects — soon",
-    "settingsSoon": "Settings — soon",
+    "navigationItems": {
+      "dashboard": "Dashboard",
+      "designSystems": "Design systems"
+    },
     "account": "Account",
     "signedInAs": "Signed in as",
     "unknownUser": "unknown user"
@@ -82,6 +83,16 @@
           "description": "Run contrast checks and keep manual accessibility notes visible."
         }
       }
+    }
+  },
+  "DesignSystemsPage": {
+    "eyebrow": "Design systems",
+    "title": "Your design systems",
+    "description": "Create, organize and export design systems for your products.",
+    "primaryCta": "Create a design system",
+    "emptyState": {
+      "title": "No design system yet.",
+      "description": "Your workspace is ready. The next step is to create your first design system project."
     }
   },
   "HomePage": {

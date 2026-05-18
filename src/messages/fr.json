@@ -7,9 +7,10 @@
   },
   "AppShell": {
     "navigationLabel": "Navigation de l’application",
-    "dashboard": "Tableau de bord",
-    "projectsSoon": "Projets — bientôt",
-    "settingsSoon": "Paramètres — bientôt",
+    "navigationItems": {
+      "dashboard": "Tableau de bord",
+      "designSystems": "Design systems"
+    },
     "account": "Compte",
     "signedInAs": "Connecté avec",
     "unknownUser": "utilisateur inconnu"
@@ -82,6 +83,16 @@
           "description": "Lancez des contrôles de contraste et gardez les notes d’accessibilité visibles."
         }
       }
+    }
+  },
+  "DesignSystemsPage": {
+    "eyebrow": "Design systems",
+    "title": "Vos design systems",
+    "description": "Créez, organisez et exportez les design systems de vos produits.",
+    "primaryCta": "Créer un design system",
+    "emptyState": {
+      "title": "Aucun design system pour le moment.",
+      "description": "Votre espace est prêt. La prochaine étape consiste à créer votre premier projet de design system."
     }
   },
   "HomePage": {

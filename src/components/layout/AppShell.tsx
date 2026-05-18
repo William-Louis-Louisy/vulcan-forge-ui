@@ -1,13 +1,13 @@
 import type { ReactNode } from 'react';
-import { LogoutButton } from '@/features/auth/logout/LogoutButton';
 import { Link } from '@/i18n/navigation';
 import { appConfig } from '@/config/app';
+import { LogoutButton } from '@/features/auth/logout/LogoutButton';
+import { AppShellNavigation } from '@/components/layout/AppShellNavigation';
+import type { PrivateNavigationItemKey } from '@/features/app-navigation/private-navigation';
 
 type AppShellLabels = {
   navigationLabel: string;
-  dashboard: string;
-  projectsSoon: string;
-  settingsSoon: string;
+  navigationItems: Record<PrivateNavigationItemKey, string>;
   account: string;
   signedInAs: string;
 };
@@ -33,30 +33,12 @@ export function AppShell({ children, userEmail, labels }: AppShellProps) {
             <span>{appConfig.name}</span>
           </Link>
 
-          <nav aria-label={labels.navigationLabel} className="mt-10 space-y-1">
-            <Link
-              href="/app"
-              className="bg-surface-primary text-content-primary shadow-soft flex rounded-lg px-3 py-2 text-sm font-semibold"
-            >
-              {labels.dashboard}
-            </Link>
-
-            <button
-              type="button"
-              disabled
-              className="text-content-tertiary flex w-full cursor-not-allowed rounded-lg px-3 py-2 text-left text-sm font-medium"
-            >
-              {labels.projectsSoon}
-            </button>
-
-            <button
-              type="button"
-              disabled
-              className="text-content-tertiary flex w-full cursor-not-allowed rounded-lg px-3 py-2 text-left text-sm font-medium"
-            >
-              {labels.settingsSoon}
-            </button>
-          </nav>
+          <div className="mt-10">
+            <AppShellNavigation
+              navigationLabel={labels.navigationLabel}
+              labels={labels.navigationItems}
+            />
+          </div>
 
           <div className="border-border-subtle bg-surface-primary mt-auto rounded-2xl border p-4">
             <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
