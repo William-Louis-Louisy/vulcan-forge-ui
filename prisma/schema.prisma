@@ -30,16 +30,31 @@ enum WorkspaceRole {
   viewer
 }
 
-model DesignSystem {
-  id          String    @id @default(cuid())
-  workspaceId String
-  name        String
-  slug        String
-  description String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+enum DesignSystemPlatform {
+  web
+  mobile
+}
 
-  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+enum AccessibilityTarget {
+  wcag_aa
+  wcag_aaa
+}
+
+model DesignSystem {
+  id                  String                 @id @default(cuid())
+  workspaceId         String
+  name                String
+  slug                String
+  description         String?
+  platforms           DesignSystemPlatform[] @default([web])
+  defaultLocale       AppLocale              @default(en)
+  supportedLocales    AppLocale[]            @default([en, fr])
+  visualDirection     String?
+  accessibilityTarget AccessibilityTarget    @default(wcag_aa)
+  createdAt           DateTime               @default(now())
+  updatedAt           DateTime               @updatedAt
+
+  workspace           Workspace              @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
   @@unique([workspaceId, slug])
   @@index([workspaceId])
