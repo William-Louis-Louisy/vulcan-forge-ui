@@ -30,6 +30,22 @@ enum WorkspaceRole {
   viewer
 }
 
+model DesignSystem {
+  id          String    @id @default(cuid())
+  workspaceId String
+  name        String
+  slug        String
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, slug])
+  @@index([workspaceId])
+  @@index([updatedAt])
+}
+
 model User {
   id              String          @id @default(cuid())
   name            String?
@@ -67,6 +83,7 @@ model Workspace {
   owner     User                @relation("WorkspaceOwner", fields: [ownerId], references: [id], onDelete: Cascade)
   settings  WorkspaceSettings?
   members   WorkspaceMember[]
+  designSystems DesignSystem[]
 }
 
 model WorkspaceSettings {
