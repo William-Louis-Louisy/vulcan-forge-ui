@@ -81,6 +81,7 @@
     "form": {
       "nameLabel": "Name",
       "nameHelp": "Example: Core Product UI, Marketing Website, Mobile App.",
+      "defaultLocaleBadge": "Default",
       "descriptionLabel": "Description",
       "descriptionHelp": "Optional. Explain what this design system is for.",
       "platformsLabel": "Target platforms",
@@ -144,7 +145,8 @@
       "missingWorkspace": "No workspace was found for your account.",
       "slugAlreadyUsed": "A design system with this name already exists in this workspace.",
       "unauthorized": "You must be signed in to create a design system.",
-      "unexpected": "Unable to create the design system. Please try again."
+      "unexpected": "Unable to create the design system. Please try again.",
+      "defaultLocaleMustBeSupported": "The default locale must be included in supported languages."
     }
   },
   "DashboardPage": {

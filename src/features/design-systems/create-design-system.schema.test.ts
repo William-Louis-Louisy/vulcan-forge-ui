@@ -101,4 +101,18 @@ describe('createDesignSystemSchema', () => {
       }).success,
     ).toBe(false);
   });
+
+  it('rejects default locale when it is not included in supported locales', () => {
+    expect(
+      createDesignSystemSchema.safeParse({
+        name: 'Core Product UI',
+        description: '',
+        platforms: ['web'],
+        defaultLocale: 'fr',
+        supportedLocales: ['en'],
+        visualDirection: 'minimal',
+        accessibilityTarget: 'wcag_aa',
+      }).success,
+    ).toBe(false);
+  });
 });

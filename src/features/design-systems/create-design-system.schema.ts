@@ -10,8 +10,6 @@ export const visualDirections = [
   'enterprise',
 ] as const;
 
-export const accessibilityTargets = ['wcag_aa', 'wcag_aaa'] as const;
-
 export const createDesignSystemValidationMessageKeys = [
   'nameMinLength',
   'nameTooLong',
@@ -19,6 +17,7 @@ export const createDesignSystemValidationMessageKeys = [
   'platformRequired',
   'defaultLocaleInvalid',
   'supportedLocaleRequired',
+  'defaultLocaleMustBeSupported',
   'visualDirectionRequired',
   'accessibilityTargetInvalid',
 ] as const;
@@ -26,37 +25,49 @@ export const createDesignSystemValidationMessageKeys = [
 export type CreateDesignSystemValidationMessageKey =
   (typeof createDesignSystemValidationMessageKeys)[number];
 
-export const createDesignSystemSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(2, { message: 'nameMinLength' })
-    .max(80, { message: 'nameTooLong' }),
+export const accessibilityTargets = ['wcag_aa', 'wcag_aaa'] as const;
 
-  description: z
-    .string()
-    .trim()
-    .max(240, { message: 'descriptionTooLong' })
-    .optional()
-    .transform((value) => (value && value.length > 0 ? value : null)),
+export const createDesignSystemSchema = z
+  .object({
+    name: z
+      .string()
+      .trim()
+      .min(2, { message: 'nameMinLength' })
+      .max(80, { message: 'nameTooLong' }),
 
-  platforms: z
-    .array(z.enum(designSystemPlatforms))
-    .min(1, { message: 'platformRequired' }),
+    description: z
+      .string()
+      .trim()
+      .max(240, { message: 'descriptionTooLong' })
+      .optional()
+      .transform((value) => (value && value.length > 0 ? value : null)),
 
-  defaultLocale: appLocaleSchema,
+    platforms: z
+      .array(z.enum(designSystemPlatforms))
+      .min(1, { message: 'platformRequired' }),
 
-  supportedLocales: z
-    .array(appLocaleSchema)
-    .min(1, { message: 'supportedLocaleRequired' }),
+    defaultLocale: appLocaleSchema,
 
-  visualDirection: z.enum(visualDirections, {
-    message: 'visualDirectionRequired',
-  }),
+    supportedLocales: z
+      .array(appLocaleSchema)
+      .min(1, { message: 'supportedLocaleRequired' }),
 
-  accessibilityTarget: z.enum(accessibilityTargets, {
-    message: 'accessibilityTargetInvalid',
-  }),
-});
+    visualDirection: z.enum(visualDirections, {
+      message: 'visualDirectionRequired',
+    }),
+
+    accessibilityTarget: z.enum(accessibilityTargets, {
+      message: 'accessibilityTargetInvalid',
+    }),
+  })
+  .superRefine((value, context) => {
+    if (!value.supportedLocales.includes(value.defaultLocale)) {
+      context.addIssue({
+        code: 'custom',
+        path: ['defaultLocale'],
+        message: 'defaultLocaleMustBeSupported',
+      });
+    }
+  });
 
 export type CreateDesignSystemInput = z.infer<typeof createDesignSystemSchema>;
