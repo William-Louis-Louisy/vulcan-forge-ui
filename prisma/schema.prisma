@@ -40,7 +40,28 @@ enum AccessibilityTarget {
   wcag_aaa
 }
 
-model DesignSystem {
+enum TokenSetType {
+  color
+  spacing
+  radius
+  typography
+  motion
+}
+
+enum ThemeMode {
+  light
+  dark
+}
+
+enum ComponentContractType {
+  button
+  textField
+  card
+  alert
+  dialog
+}
+
+model DesignSystemProject {
   id                  String                 @id @default(cuid())
   workspaceId         String
   name                String
@@ -54,11 +75,19 @@ model DesignSystem {
   createdAt           DateTime               @default(now())
   updatedAt           DateTime               @updatedAt
 
-  workspace           Workspace              @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  workspace             Workspace              @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  localeSettings        ProjectLocaleSettings?
+  brandProfile          BrandProfile?
+  tokenSets             TokenSet[]
+  themes                Theme[]
+  componentContracts    ComponentContract[]
+  documentationProfile  DocumentationProfile?
+  aiInstructionProfile  AiInstructionProfile?
 
   @@unique([workspaceId, slug])
   @@index([workspaceId])
   @@index([updatedAt])
+  @@map("DesignSystem")
 }
 
 model User {
@@ -98,7 +127,7 @@ model Workspace {
   owner     User                @relation("WorkspaceOwner", fields: [ownerId], references: [id], onDelete: Cascade)
   settings  WorkspaceSettings?
   members   WorkspaceMember[]
-  designSystems DesignSystem[]
+  designSystemProjects DesignSystemProject[]
 }
 
 model WorkspaceSettings {
@@ -125,4 +154,93 @@ model WorkspaceMember {
 
   @@unique([workspaceId, userId])
   @@index([userId])
+}
+
+model ProjectLocaleSettings {
+  id               String              @id @default(cuid())
+  projectId        String              @unique
+  defaultLocale    AppLocale           @default(en)
+  supportedLocales AppLocale[]         @default([en, fr])
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+
+  project          DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model BrandProfile {
+  id              String              @id @default(cuid())
+  projectId       String              @unique
+  name            String
+  description     String?
+  visualDirection String?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  project         DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model TokenSet {
+  id        String              @id @default(cuid())
+  projectId String
+  type      TokenSetType
+  name      String
+  tokens    Json
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+
+  project   DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, type])
+  @@index([projectId])
+}
+
+model Theme {
+  id        String              @id @default(cuid())
+  projectId String
+  mode      ThemeMode
+  name      String
+  tokens    Json
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+
+  project   DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, mode])
+  @@index([projectId])
+}
+
+model ComponentContract {
+  id        String                @id @default(cuid())
+  projectId String
+  type      ComponentContractType
+  name      String
+  contract  Json
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
+
+  project   DesignSystemProject   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, type])
+  @@index([projectId])
+}
+
+model DocumentationProfile {
+  id        String              @id @default(cuid())
+  projectId String              @unique
+  format    String              @default("markdown")
+  content   Json
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+
+  project   DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model AiInstructionProfile {
+  id        String              @id @default(cuid())
+  projectId String              @unique
+  content   Json
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+
+  project   DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
