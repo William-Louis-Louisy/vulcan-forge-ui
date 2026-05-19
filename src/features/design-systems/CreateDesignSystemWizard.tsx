@@ -17,6 +17,12 @@ import {
   type CreateDesignSystemActionState,
   type CreateDesignSystemStep,
 } from './create-design-system.state';
+import type { AppLocale } from '@/domain/i18n';
+import {
+  projectLanguageOptions,
+  toggleSupportedLocale,
+  updateDefaultLocale,
+} from './project-languages';
 
 type CreateDesignSystemWizardProps = {
   locale: Locale;
@@ -27,6 +33,18 @@ type WizardValues = CreateDesignSystemActionState['values'];
 type WizardErrors = Partial<
   Record<keyof WizardValues, CreateDesignSystemValidationMessageKey[]>
 >;
+
+function createInitialWizardValues(locale: Locale): WizardValues {
+  return {
+    ...initialCreateDesignSystemActionState.values,
+    defaultLocale: locale,
+    supportedLocales: ['en', 'fr'],
+  };
+}
+
+function isAppLocaleValue(value: string): value is AppLocale {
+  return value === 'en' || value === 'fr';
+}
 
 function getFirstError(
   errors: WizardErrors | undefined,
@@ -75,6 +93,10 @@ function validateStep(
     }
   }
 
+  if (!values.supportedLocales.includes(values.defaultLocale)) {
+    errors.defaultLocale = ['defaultLocaleMustBeSupported'];
+  }
+
   if (step === 'visualDirection' && !values.visualDirection) {
     errors.visualDirection = ['visualDirectionRequired'];
   }
@@ -103,7 +125,9 @@ export function CreateDesignSystemWizard({
   const safeState = state ?? initialCreateDesignSystemActionState;
 
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [values, setValues] = useState<WizardValues>(safeState.values);
+  const [values, setValues] = useState<WizardValues>(() =>
+    createInitialWizardValues(locale),
+  );
   const [clientErrors, setClientErrors] = useState<WizardErrors>({});
 
   const currentStep = createDesignSystemSteps[currentStepIndex] ?? 'basics';
@@ -440,12 +464,31 @@ function PlatformsLanguagesStep({
         <select
           id="defaultLocale"
           value={values.defaultLocale}
-          onChange={(event) => onChange('defaultLocale', event.target.value)}
+          onChange={(event) => {
+            const nextDefaultLocale = event.target.value;
+
+            if (!isAppLocaleValue(nextDefaultLocale)) {
+              onChange('defaultLocale', nextDefaultLocale);
+              return;
+            }
+
+            const nextLanguageState = updateDefaultLocale({
+              defaultLocale: nextDefaultLocale,
+              supportedLocales:
+                values.supportedLocales.filter(isAppLocaleValue),
+            });
+
+            onChange('defaultLocale', nextLanguageState.defaultLocale);
+            onChange('supportedLocales', nextLanguageState.supportedLocales);
+          }}
           aria-invalid={Boolean(defaultLocaleError)}
           className="border-border-default bg-surface-primary text-content-primary mt-2 min-h-11 w-full rounded-lg border px-3"
         >
-          <option value="en">{t('form.locales.en')}</option>
-          <option value="fr">{t('form.locales.fr')}</option>
+          {projectLanguageOptions.map((language) => (
+            <option key={language.value} value={language.value}>
+              {t(`form.locales.${language.labelKey}`)}
+            </option>
+          ))}
         </select>
         <p className="text-content-tertiary mt-2 text-sm">
           {t('form.defaultLocaleHelp')}
@@ -461,26 +504,43 @@ function PlatformsLanguagesStep({
         <p className="text-sm font-medium">{t('form.supportedLocalesLabel')}</p>
 
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
-          {(['en', 'fr'] as const).map((supportedLocale) => (
-            <label
-              key={supportedLocale}
-              className="border-border-default bg-background-subtle flex cursor-pointer items-center gap-3 rounded-xl border p-4"
-            >
-              <input
-                type="checkbox"
-                checked={values.supportedLocales.includes(supportedLocale)}
-                onChange={() =>
-                  onChange(
-                    'supportedLocales',
-                    toggleArrayValue(values.supportedLocales, supportedLocale),
-                  )
-                }
-              />
-              <span className="text-sm font-semibold">
-                {t(`form.locales.${supportedLocale}`)}
-              </span>
-            </label>
-          ))}
+          {projectLanguageOptions.map((language) => {
+            const isDefaultLocale = values.defaultLocale === language.value;
+
+            return (
+              <label
+                key={language.value}
+                className="border-border-default bg-background-subtle flex cursor-pointer items-center gap-3 rounded-xl border p-4"
+              >
+                <input
+                  type="checkbox"
+                  checked={values.supportedLocales.includes(language.value)}
+                  disabled={isDefaultLocale}
+                  onChange={() =>
+                    onChange(
+                      'supportedLocales',
+                      toggleSupportedLocale({
+                        locale: language.value,
+                        defaultLocale: values.defaultLocale as AppLocale,
+                        supportedLocales:
+                          values.supportedLocales.filter(isAppLocaleValue),
+                      }),
+                    )
+                  }
+                />
+                <span>
+                  <span className="text-sm font-semibold">
+                    {t(`form.locales.${language.labelKey}`)}
+                  </span>
+                  {isDefaultLocale ? (
+                    <span className="text-content-tertiary ml-2 text-xs">
+                      {t('form.defaultLocaleBadge')}
+                    </span>
+                  ) : null}
+                </span>
+              </label>
+            );
+          })}
         </div>
 
         {supportedLocalesError ? (
