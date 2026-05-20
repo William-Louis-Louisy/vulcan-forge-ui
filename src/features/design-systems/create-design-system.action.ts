@@ -9,6 +9,7 @@ import {
   createDesignSystemSchema,
   type CreateDesignSystemValidationMessageKey,
 } from './create-design-system.schema';
+import { getCreateDesignSystemFormError } from './create-design-system.errors';
 import type { CreateDesignSystemActionState } from './create-design-system.state';
 import { createDesignSystemProject } from './create-design-system-project.service';
 
@@ -167,11 +168,11 @@ export async function createDesignSystemAction(
       visualDirection: parsed.data.visualDirection,
       accessibilityTarget: parsed.data.accessibilityTarget,
     });
-  } catch {
+  } catch (error) {
     return {
       status: 'error',
       fieldErrors: {},
-      formError: 'unexpected',
+      formError: getCreateDesignSystemFormError(error),
       values,
     };
   }
