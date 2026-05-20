@@ -112,6 +112,23 @@ function hasErrors(errors: WizardErrors) {
   return Object.values(errors).some((fieldErrors) => fieldErrors?.length);
 }
 
+const stepFieldMap = {
+  basics: ['name', 'description'],
+  platformsLanguages: ['platforms', 'defaultLocale', 'supportedLocales'],
+  visualDirection: ['visualDirection'],
+  accessibilityTarget: ['accessibilityTarget'],
+  review: [],
+} as const satisfies Record<
+  CreateDesignSystemStep,
+  readonly (keyof WizardValues)[]
+>;
+
+function findStepIndexForFieldErrors(errors: WizardErrors) {
+  return createDesignSystemSteps.findIndex((step) =>
+    stepFieldMap[step].some((field) => errors[field]?.length),
+  );
+}
+
 export function CreateDesignSystemWizard({
   locale,
 }: CreateDesignSystemWizardProps) {
@@ -125,13 +142,30 @@ export function CreateDesignSystemWizard({
   const safeState = state ?? initialCreateDesignSystemActionState;
 
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [acknowledgedServerErrorKey, setAcknowledgedServerErrorKey] = useState<
+    string | null
+  >(null);
   const [values, setValues] = useState<WizardValues>(() =>
     createInitialWizardValues(locale),
   );
   const [clientErrors, setClientErrors] = useState<WizardErrors>({});
 
-  const currentStep = createDesignSystemSteps[currentStepIndex] ?? 'basics';
-  const isFirstStep = currentStepIndex === 0;
+  const serverErrorKey = JSON.stringify(safeState.fieldErrors);
+
+  const serverErrorStepIndex =
+    safeState.status === 'error'
+      ? findStepIndexForFieldErrors(safeState.fieldErrors)
+      : -1;
+
+  const shouldShowServerErrorStep =
+    serverErrorStepIndex >= 0 && acknowledgedServerErrorKey !== serverErrorKey;
+
+  const displayedStepIndex = shouldShowServerErrorStep
+    ? serverErrorStepIndex
+    : currentStepIndex;
+
+  const currentStep = createDesignSystemSteps[displayedStepIndex] ?? 'basics';
+  const isFirstStep = displayedStepIndex === 0;
   const isReviewStep = currentStep === 'review';
 
   const visibleErrors = useMemo(() => {
@@ -145,6 +179,8 @@ export function CreateDesignSystemWizard({
     field: Field,
     value: WizardValues[Field],
   ) {
+    setAcknowledgedServerErrorKey(serverErrorKey);
+
     setValues((currentValues) => ({
       ...currentValues,
       [field]: value,
@@ -159,7 +195,8 @@ export function CreateDesignSystemWizard({
 
   function goToPreviousStep() {
     setClientErrors({});
-    setCurrentStepIndex((index) => Math.max(index - 1, 0));
+    setAcknowledgedServerErrorKey(serverErrorKey);
+    setCurrentStepIndex(Math.max(displayedStepIndex - 1, 0));
   }
 
   function goToNextStep() {
@@ -171,8 +208,9 @@ export function CreateDesignSystemWizard({
     }
 
     setClientErrors({});
-    setCurrentStepIndex((index) =>
-      Math.min(index + 1, createDesignSystemSteps.length - 1),
+    setAcknowledgedServerErrorKey(serverErrorKey);
+    setCurrentStepIndex(
+      Math.min(displayedStepIndex + 1, createDesignSystemSteps.length - 1),
     );
   }
 
@@ -209,15 +247,16 @@ export function CreateDesignSystemWizard({
       <ol className="grid gap-2 sm:grid-cols-5" aria-label={t('steps.label')}>
         {createDesignSystemSteps.map((step, index) => {
           const isActive = step === currentStep;
-          const isCompleted = index < currentStepIndex;
+          const isCompleted = index < displayedStepIndex;
 
           return (
             <li key={step}>
               <button
                 type="button"
                 onClick={() => {
-                  if (index <= currentStepIndex) {
+                  if (index <= displayedStepIndex) {
                     setClientErrors({});
+                    setAcknowledgedServerErrorKey(serverErrorKey);
                     setCurrentStepIndex(index);
                   }
                 }}

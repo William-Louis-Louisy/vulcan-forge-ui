@@ -31,22 +31,24 @@ export async function createDesignSystemProject(
     accessibilityTarget: input.accessibilityTarget,
   });
 
-  return prisma.designSystemProject.create({
-    data: {
-      workspaceId: input.workspaceId,
-      name: input.name,
-      slug: input.slug,
-      description: input.description,
-      platforms: input.platforms,
-      defaultLocale: input.defaultLocale,
-      supportedLocales: input.supportedLocales,
-      visualDirection: input.visualDirection,
-      accessibilityTarget: input.accessibilityTarget,
-      ...foundation,
-    },
-    select: {
-      id: true,
-      slug: true,
-    },
-  });
+  return prisma.$transaction((tx) =>
+    tx.designSystemProject.create({
+      data: {
+        workspaceId: input.workspaceId,
+        name: input.name,
+        slug: input.slug,
+        description: input.description,
+        platforms: input.platforms,
+        defaultLocale: input.defaultLocale,
+        supportedLocales: input.supportedLocales,
+        visualDirection: input.visualDirection,
+        accessibilityTarget: input.accessibilityTarget,
+        ...foundation,
+      },
+      select: {
+        id: true,
+        slug: true,
+      },
+    }),
+  );
 }
