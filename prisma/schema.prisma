@@ -61,6 +61,26 @@ enum ComponentContractType {
   dialog
 }
 
+enum AccessibilityReportStatus {
+  pass
+  warning
+  fail
+}
+
+enum ExportFormat {
+  cssVariables
+  tailwindV4
+  typescriptTheme
+  reactNativeTheme
+  markdownDocumentation
+  aiInstructions
+}
+
+enum ExportStatus {
+  success
+  failed
+}
+
 model DesignSystemProject {
   id                  String                 @id @default(cuid())
   workspaceId         String
@@ -81,8 +101,10 @@ model DesignSystemProject {
   tokenSets             TokenSet[]
   themes                Theme[]
   componentContracts    ComponentContract[]
+  accessibilityReports   AccessibilityReport[]
   documentationProfile  DocumentationProfile?
   aiInstructionProfile  AiInstructionProfile?
+  exportLogs             ExportLog[]
 
   @@unique([workspaceId, slug])
   @@index([workspaceId])
@@ -157,14 +179,16 @@ model WorkspaceMember {
 }
 
 model ProjectLocaleSettings {
-  id               String              @id @default(cuid())
-  projectId        String              @unique
-  defaultLocale    AppLocale           @default(en)
-  supportedLocales AppLocale[]         @default([en, fr])
-  createdAt        DateTime            @default(now())
-  updatedAt        DateTime            @updatedAt
+  id                   String              @id @default(cuid())
+  projectId            String              @unique
+  defaultLocale        AppLocale           @default(en)
+  supportedLocales     AppLocale[]         @default([en, fr])
+  documentationLocale  AppLocale           @default(en)
+  aiInstructionLocale  AppLocale           @default(en)
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
 
-  project          DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project              DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model BrandProfile {
@@ -243,4 +267,37 @@ model AiInstructionProfile {
   updatedAt DateTime            @updatedAt
 
   project   DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model AccessibilityReport {
+  id        String                    @id @default(cuid())
+  projectId String
+  status    AccessibilityReportStatus
+  score     Int
+  issues    Json
+  createdAt DateTime                  @default(now())
+  updatedAt DateTime                  @updatedAt
+
+  project   DesignSystemProject       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model ExportLog {
+  id           String              @id @default(cuid())
+  projectId    String
+  format       ExportFormat
+  locale       AppLocale?
+  status       ExportStatus
+  errorMessage String?
+  createdAt    DateTime            @default(now())
+
+  project      DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([format])
+  @@index([status])
+  @@index([createdAt])
 }
