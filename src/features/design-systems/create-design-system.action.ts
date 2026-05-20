@@ -10,6 +10,7 @@ import {
   type CreateDesignSystemValidationMessageKey,
 } from './create-design-system.schema';
 import type { CreateDesignSystemActionState } from './create-design-system.state';
+import { createDesignSystemProject } from './create-design-system-project.service';
 
 type CreateDesignSystemFieldErrors =
   CreateDesignSystemActionState['fieldErrors'];
@@ -133,7 +134,7 @@ export async function createDesignSystemAction(
 
   const slug = createDesignSystemSlug(parsed.data.name);
 
-  const existingDesignSystem = await prisma.designSystem.findUnique({
+  const existingDesignSystem = await prisma.designSystemProject.findUnique({
     where: {
       workspaceId_slug: {
         workspaceId: membership.workspaceId,
@@ -155,21 +156,16 @@ export async function createDesignSystemAction(
   }
 
   try {
-    await prisma.designSystem.create({
-      data: {
-        workspaceId: membership.workspaceId,
-        name: parsed.data.name,
-        slug,
-        description: parsed.data.description,
-        platforms: parsed.data.platforms,
-        defaultLocale: parsed.data.defaultLocale,
-        supportedLocales: parsed.data.supportedLocales,
-        visualDirection: parsed.data.visualDirection,
-        accessibilityTarget: parsed.data.accessibilityTarget,
-      },
-      select: {
-        id: true,
-      },
+    await createDesignSystemProject({
+      workspaceId: membership.workspaceId,
+      name: parsed.data.name,
+      slug,
+      description: parsed.data.description,
+      platforms: parsed.data.platforms,
+      defaultLocale: parsed.data.defaultLocale,
+      supportedLocales: parsed.data.supportedLocales,
+      visualDirection: parsed.data.visualDirection,
+      accessibilityTarget: parsed.data.accessibilityTarget,
     });
   } catch {
     return {

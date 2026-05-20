@@ -33,7 +33,7 @@ export async function getDesignSystemsPageData(
           id: true,
           name: true,
           slug: true,
-          designSystems: {
+          designSystemProjects: {
             orderBy: {
               updatedAt: 'desc',
             },
@@ -63,6 +63,6 @@ export async function getDesignSystemsPageData(
       name: membership.workspace.name,
       slug: membership.workspace.slug,
     },
-    designSystems: membership.workspace.designSystems,
+    designSystems: membership.workspace.designSystemProjects,
   };
 }
