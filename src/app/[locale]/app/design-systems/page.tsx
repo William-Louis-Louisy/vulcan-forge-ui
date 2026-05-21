@@ -86,7 +86,7 @@ export default async function DesignSystemsPage() {
                 </p>
 
                 <Link
-                  href={`/app/design-systems/${designSystem.slug}`}
+                  href={`/app/design-systems/${designSystem.slug}/tokens`}
                   className="text-action-primary text-sm font-semibold"
                 >
                   {t('card.open')}

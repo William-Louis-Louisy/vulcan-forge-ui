@@ -470,5 +470,39 @@
       "emailAlreadyUsed": "Un compte existe déjà avec cette adresse email.",
       "unexpected": "Impossible de créer votre compte. Veuillez réessayer."
     }
+  },
+  "TokensEditorPage": {
+    "backLink": "Retour aux design systems",
+    "eyebrow": "Éditeur de tokens",
+    "title": "Tokens de {projectName}",
+    "description": "Consultez les token sets générés pour ce design system. L’édition arrivera dans les prochains tickets tokens.",
+    "tabs": {
+      "label": "Onglets des token sets",
+      "color": "Couleurs",
+      "spacing": "Espacements",
+      "radius": "Arrondis",
+      "typography": "Typographie",
+      "motion": "Motion"
+    },
+    "tokenCount": "{count, plural, =0 {Aucun token} one {# token} other {# tokens}}",
+    "token": {
+      "path": "Chemin",
+      "type": "Type",
+      "value": "Valeur",
+      "description": "Description",
+      "noDescription": "Aucune description pour le moment."
+    },
+    "states": {
+      "loading": "Chargement des tokens...",
+      "errorTitle": "Impossible de charger les tokens",
+      "errorDescription": "Une erreur est survenue pendant le chargement des tokens de ce projet. Veuillez réessayer.",
+      "retry": "Réessayer",
+      "emptyTitle": "Aucun token set trouvé.",
+      "emptyDescription": "Ce projet ne contient pas encore de token sets.",
+      "emptyTokenSetTitle": "Aucun token dans ce set.",
+      "emptyTokenSetDescription": "Ce token set existe mais ne contient encore aucun token.",
+      "invalidTokensTitle": "Données de tokens invalides",
+      "invalidTokensDescription": "Ce token set contient des données malformées et ne peut pas être affiché de manière fiable."
+    }
   }
 }
