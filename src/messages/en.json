@@ -473,5 +473,39 @@
       "emailAlreadyUsed": "An account already exists with this email address.",
       "unexpected": "Unable to create your account. Please try again."
     }
+  },
+  "TokensEditorPage": {
+    "backLink": "Back to design systems",
+    "eyebrow": "Tokens editor",
+    "title": "{projectName} tokens",
+    "description": "Review the token sets generated for this design system. Editing will be introduced in the next token tickets.",
+    "tabs": {
+      "label": "Token set tabs",
+      "color": "Color",
+      "spacing": "Spacing",
+      "radius": "Radius",
+      "typography": "Typography",
+      "motion": "Motion"
+    },
+    "tokenCount": "{count, plural, =0 {No token} one {# token} other {# tokens}}",
+    "token": {
+      "path": "Path",
+      "type": "Type",
+      "value": "Value",
+      "description": "Description",
+      "noDescription": "No description yet."
+    },
+    "states": {
+      "loading": "Loading tokens...",
+      "errorTitle": "Unable to load tokens",
+      "errorDescription": "Something went wrong while loading this project tokens. Please try again.",
+      "retry": "Retry",
+      "emptyTitle": "No token set found.",
+      "emptyDescription": "This project does not contain token sets yet.",
+      "emptyTokenSetTitle": "No token in this set.",
+      "emptyTokenSetDescription": "This token set exists but does not contain any token yet.",
+      "invalidTokensTitle": "Invalid token data",
+      "invalidTokensDescription": "This token set contains malformed data and cannot be displayed safely."
+    }
   }
 }
