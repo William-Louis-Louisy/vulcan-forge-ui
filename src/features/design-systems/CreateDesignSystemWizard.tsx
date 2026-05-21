@@ -1,28 +1,28 @@
 'use client';
 
-import { useActionState, useMemo, useState } from 'react';
-import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui';
+import { useTranslations } from 'next-intl';
 import type { Locale } from '@/i18n/routing';
+import type { AppLocale } from '@/domain/i18n';
+import { useActionState, useMemo, useState } from 'react';
+import { createDesignSystemAction } from './create-design-system.action';
+import {
+  projectLanguageOptions,
+  toggleSupportedLocale,
+  updateDefaultLocale,
+} from './project-languages';
 import {
   accessibilityTargets,
   designSystemPlatforms,
   visualDirections,
   type CreateDesignSystemValidationMessageKey,
 } from './create-design-system.schema';
-import { createDesignSystemAction } from './create-design-system.action';
 import {
   createDesignSystemSteps,
   initialCreateDesignSystemActionState,
   type CreateDesignSystemActionState,
   type CreateDesignSystemStep,
 } from './create-design-system.state';
-import type { AppLocale } from '@/domain/i18n';
-import {
-  projectLanguageOptions,
-  toggleSupportedLocale,
-  updateDefaultLocale,
-} from './project-languages';
 
 type CreateDesignSystemWizardProps = {
   locale: Locale;

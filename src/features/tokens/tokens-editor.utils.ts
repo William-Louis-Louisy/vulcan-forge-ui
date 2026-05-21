@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { zodErrorToLocalizedIssues } from '@/domain/design-system';
 import { designTokenSchema, type DesignToken } from '@/domain/design-system';
 
 export const tokenSetTypes = [
@@ -60,4 +61,106 @@ export function formatTokenValue(value: DesignToken['value']): string {
 
 export function isHexColorValue(value: string): boolean {
   return /^#[0-9a-fA-F]{3,8}$/.test(value);
+}
+
+export type TokenRowValidationStatus = 'valid' | 'invalid';
+
+export type TokenRowData = {
+  id: string;
+  path: string;
+  type: string;
+  value: string;
+  rawValue: unknown;
+  description?: DesignToken['description'];
+  isColorValue: boolean;
+  validationStatus: TokenRowValidationStatus;
+  errorMessages: string[];
+};
+
+export type TokenRowsResult = {
+  rows: TokenRowData[];
+  isReadable: boolean;
+};
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+function getRecordStringValue(
+  record: Record<string, unknown>,
+  key: string,
+  fallback: string,
+): string {
+  const value = record[key];
+
+  return typeof value === 'string' && value.trim().length > 0
+    ? value
+    : fallback;
+}
+
+export function createTokenRows(tokens: unknown): TokenRowsResult {
+  if (!Array.isArray(tokens)) {
+    return {
+      rows: [],
+      isReadable: false,
+    };
+  }
+
+  return {
+    isReadable: true,
+    rows: tokens.map((token, index) => {
+      const parsedToken = designTokenSchema.safeParse(token);
+
+      if (parsedToken.success) {
+        const value = formatTokenValue(parsedToken.data.value);
+
+        const row: TokenRowData = {
+          id: parsedToken.data.path,
+          path: parsedToken.data.path,
+          type: parsedToken.data.type,
+          value,
+          rawValue: parsedToken.data.value,
+          isColorValue:
+            parsedToken.data.type === 'color' && isHexColorValue(value),
+          validationStatus: 'valid',
+          errorMessages: [],
+        };
+
+        if (parsedToken.data.description) {
+          row.description = parsedToken.data.description;
+        }
+
+        return row;
+      }
+
+      const fallbackRecord = isRecord(token) ? token : {};
+      const fallbackValue = fallbackRecord.value;
+
+      return {
+        id: `invalid-token-${index + 1}`,
+        path: getRecordStringValue(
+          fallbackRecord,
+          'path',
+          `invalid-token-${index + 1}`,
+        ),
+        type: getRecordStringValue(fallbackRecord, 'type', 'unknown'),
+        value:
+          typeof fallbackValue === 'string' ||
+          typeof fallbackValue === 'number' ||
+          typeof fallbackValue === 'boolean'
+            ? String(fallbackValue)
+            : '—',
+        rawValue: fallbackValue,
+        isColorValue:
+          typeof fallbackValue === 'string' && isHexColorValue(fallbackValue),
+        validationStatus: 'invalid',
+        errorMessages: zodErrorToLocalizedIssues(parsedToken.error).map(
+          (issue) =>
+            issue.path
+              ? `${issue.path}: ${issue.messageKey}`
+              : issue.messageKey,
+        ),
+      };
+    }),
+  };
 }

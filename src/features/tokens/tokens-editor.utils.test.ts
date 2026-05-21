@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { createTokenRows } from './tokens-editor.utils';
 import {
   formatTokenValue,
   getActiveTokenSetType,
@@ -72,5 +73,55 @@ describe('tokens editor utils', () => {
   it('detects hex color values', () => {
     expect(isHexColorValue('#ffffff')).toBe(true);
     expect(isHexColorValue('1rem')).toBe(false);
+  });
+
+  it('creates valid token rows from token JSON', () => {
+    expect(
+      createTokenRows([
+        {
+          path: 'color.action.primary',
+          type: 'color',
+          value: '#ff8731',
+          description: {
+            en: 'Primary action color',
+            fr: 'Couleur d’action principale',
+          },
+          status: 'ready',
+        },
+      ]),
+    ).toMatchObject({
+      isReadable: true,
+      rows: [
+        {
+          path: 'color.action.primary',
+          type: 'color',
+          value: '#ff8731',
+          isColorValue: true,
+          validationStatus: 'valid',
+          errorMessages: [],
+        },
+      ],
+    });
+  });
+
+  it('creates invalid token rows with visible errors', () => {
+    const result = createTokenRows([
+      {
+        path: '',
+        type: 'color',
+        value: '',
+      },
+    ]);
+
+    expect(result.isReadable).toBe(true);
+    expect(result.rows[0]?.validationStatus).toBe('invalid');
+    expect(result.rows[0]?.errorMessages.length).toBeGreaterThan(0);
+  });
+
+  it('marks malformed token sets as unreadable', () => {
+    expect(createTokenRows({ invalid: true })).toEqual({
+      rows: [],
+      isReadable: false,
+    });
   });
 });
