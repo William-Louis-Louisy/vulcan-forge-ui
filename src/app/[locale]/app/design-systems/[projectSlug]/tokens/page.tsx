@@ -1,21 +1,24 @@
+import { auth } from '@/auth';
 import { hasLocale } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
-import { auth } from '@/auth';
-import { resolveLocalizedStringWithFallback } from '@/domain/i18n';
-import { Link } from '@/i18n/navigation';
 import { routing, type Locale } from '@/i18n/routing';
 import { getTokensEditorPageData } from '@/features/tokens/tokens-editor.queries';
 import {
-  formatTokenValue,
+  TokenTable,
+  type TokenTableLabels,
+} from '@/features/tokens/TokenTable';
+import {
+  createTokenRows,
+  type TokenRowData,
+} from '@/features/tokens/tokens-editor.utils';
+import {
   getActiveTokenSetType,
-  isHexColorValue,
-  parseTokenSetTokens,
   sortTokenSetsByType,
   tokenSetTypes,
   type TokenSetType,
 } from '@/features/tokens/tokens-editor.utils';
-import type { DesignToken } from '@/domain/design-system';
 
 type TokensEditorPageProps = {
   params: Promise<{
@@ -28,26 +31,6 @@ type TokensEditorPageProps = {
 };
 
 type TokensEditorTranslator = Awaited<ReturnType<typeof getTranslations>>;
-
-type ResolvableLocalizedString = Parameters<
-  typeof resolveLocalizedStringWithFallback
->[0]['localizedString'];
-
-function toResolvableLocalizedString(
-  localizedString: NonNullable<DesignToken['description']>,
-): ResolvableLocalizedString {
-  const normalizedLocalizedString: ResolvableLocalizedString = {};
-
-  if (localizedString.en) {
-    normalizedLocalizedString.en = localizedString.en;
-  }
-
-  if (localizedString.fr) {
-    normalizedLocalizedString.fr = localizedString.fr;
-  }
-
-  return normalizedLocalizedString;
-}
 
 export default async function TokensEditorPage({
   params,
@@ -85,11 +68,11 @@ export default async function TokensEditorPage({
     sortedTokenSets[0] ??
     null;
 
-  const parsedTokens = activeTokenSet
-    ? parseTokenSetTokens(activeTokenSet.tokens)
+  const tokenRowsResult = activeTokenSet
+    ? createTokenRows(activeTokenSet.tokens)
     : {
-        tokens: [],
-        isValid: false,
+        rows: [],
+        isReadable: false,
       };
 
   return (
@@ -130,8 +113,8 @@ export default async function TokensEditorPage({
             locale={locale}
             tokenSetName={activeTokenSet.name}
             tokenSetType={activeTokenSet.type}
-            tokens={parsedTokens.tokens}
-            isValid={parsedTokens.isValid}
+            rows={tokenRowsResult.rows}
+            isReadable={tokenRowsResult.isReadable}
           />
         ) : (
           <EmptyTokenSetsState t={t} />
@@ -185,17 +168,17 @@ function TokenSetPanel({
   locale,
   tokenSetName,
   tokenSetType,
-  tokens,
-  isValid,
+  rows,
+  isReadable,
 }: {
   t: TokensEditorTranslator;
   locale: Locale;
   tokenSetName: string;
   tokenSetType: TokenSetType;
-  tokens: DesignToken[];
-  isValid: boolean;
+  rows: TokenRowData[];
+  isReadable: boolean;
 }) {
-  if (!isValid) {
+  if (!isReadable) {
     return (
       <div className="border-action-danger/30 bg-action-danger/10 shadow-soft rounded-3xl border p-8">
         <h2 className="text-action-danger text-2xl font-semibold tracking-tight">
@@ -221,15 +204,17 @@ function TokenSetPanel({
         </div>
 
         <p className="text-content-secondary text-sm">
-          {t('tokenCount', { count: tokens.length })}
+          {t('tokenCount', { count: rows.length })}
         </p>
       </div>
 
-      {tokens.length > 0 ? (
-        <div className="mt-6 grid gap-4">
-          {tokens.map((token) => (
-            <TokenCard key={token.path} t={t} locale={locale} token={token} />
-          ))}
+      {rows.length > 0 ? (
+        <div className="mt-6">
+          <TokenTable
+            locale={locale}
+            rows={rows}
+            labels={createTokenTableLabels(t)}
+          />
         </div>
       ) : (
         <div className="border-border-default mt-6 rounded-2xl border border-dashed p-8 text-center">
@@ -245,74 +230,6 @@ function TokenSetPanel({
   );
 }
 
-function TokenCard({
-  t,
-  locale,
-  token,
-}: {
-  t: TokensEditorTranslator;
-  locale: Locale;
-  token: DesignToken;
-}) {
-  const tokenValue = formatTokenValue(token.value);
-  const description = token.description
-    ? resolveLocalizedStringWithFallback({
-        localizedString: toResolvableLocalizedString(token.description),
-        locale,
-      }).value
-    : t('token.noDescription');
-
-  return (
-    <article className="border-border-subtle bg-background-subtle grid gap-4 rounded-2xl border p-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.7fr)_minmax(0,0.7fr)_minmax(0,1.3fr)] lg:items-center">
-      <div>
-        <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
-          {t('token.path')}
-        </p>
-        <h3 className="text-content-primary mt-1 font-mono text-sm font-semibold break-words">
-          {token.path}
-        </h3>
-      </div>
-
-      <div>
-        <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
-          {t('token.type')}
-        </p>
-        <p className="text-content-primary mt-1 text-sm font-semibold">
-          {token.type}
-        </p>
-      </div>
-
-      <div>
-        <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
-          {t('token.value')}
-        </p>
-        <div className="mt-1 flex items-center gap-2">
-          {typeof token.value === 'string' && isHexColorValue(token.value) ? (
-            <span
-              aria-hidden="true"
-              className="border-border-subtle size-5 rounded-full border"
-              style={{ backgroundColor: token.value }}
-            />
-          ) : null}
-
-          <p className="text-content-primary font-mono text-sm font-semibold break-all">
-            {tokenValue}
-          </p>
-        </div>
-      </div>
-
-      <div>
-        <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
-          {t('token.description')}
-        </p>
-        <p className="text-content-secondary mt-1 text-sm leading-6">
-          {description}
-        </p>
-      </div>
-    </article>
-  );
-}
-
 function EmptyTokenSetsState({ t }: { t: TokensEditorTranslator }) {
   return (
     <div className="border-border-default bg-surface-primary shadow-soft rounded-3xl border border-dashed p-10 text-center">
@@ -324,4 +241,28 @@ function EmptyTokenSetsState({ t }: { t: TokensEditorTranslator }) {
       </p>
     </div>
   );
+}
+
+function createTokenTableLabels(t: TokensEditorTranslator): TokenTableLabels {
+  return {
+    columns: {
+      path: t('table.columns.path'),
+      type: t('table.columns.type'),
+      value: t('table.columns.value'),
+      descriptionStatus: t('table.columns.descriptionStatus'),
+      validationStatus: t('table.columns.validationStatus'),
+    },
+    descriptionStatus: {
+      available: t('table.descriptionStatus.available'),
+      fallback: t('table.descriptionStatus.fallback'),
+      missing: t('table.descriptionStatus.missing'),
+    },
+    validationStatus: {
+      valid: t('table.validationStatus.valid'),
+      invalid: t('table.validationStatus.invalid'),
+      errorsLabel: t('table.validationStatus.errorsLabel'),
+    },
+    noDescription: t('table.noDescription'),
+    colorSwatchLabel: t('table.colorSwatchLabel'),
+  };
 }

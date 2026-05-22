@@ -506,6 +506,27 @@
       "emptyTokenSetDescription": "This token set exists but does not contain any token yet.",
       "invalidTokensTitle": "Invalid token data",
       "invalidTokensDescription": "This token set contains malformed data and cannot be displayed safely."
+    },
+    "table": {
+      "columns": {
+        "path": "Path",
+        "type": "Type",
+        "value": "Value",
+        "descriptionStatus": "Description",
+        "validationStatus": "Validation"
+      },
+      "descriptionStatus": {
+        "available": "Available",
+        "fallback": "Fallback used",
+        "missing": "Missing"
+      },
+      "validationStatus": {
+        "valid": "Valid",
+        "invalid": "Invalid",
+        "errorsLabel": "Errors"
+      },
+      "noDescription": "No description yet.",
+      "colorSwatchLabel": "Color swatch"
     }
   }
 }
