@@ -527,6 +527,25 @@
       },
       "noDescription": "No description yet.",
       "colorSwatchLabel": "Color swatch"
+    },
+    "primitiveColorEditor": {
+      "label": "Edit hex value",
+      "help": "Use #RGB, #RRGGBB or #RRGGBBAA.",
+      "save": "Save color",
+      "saving": "Saving...",
+      "saved": "Color saved.",
+      "previewLabel": "Color preview: {value}",
+      "validation": {
+        "primitiveColorRequired": "Enter a color value.",
+        "primitiveColorHexInvalid": "Enter a valid hex color, such as #FF8731.",
+        "unauthorized": "You must be signed in to edit this token.",
+        "projectNotFound": "Project not found.",
+        "tokenSetNotFound": "Color token set not found.",
+        "tokenSetMalformed": "Color token data is malformed.",
+        "tokenNotFound": "Token not found.",
+        "notPrimitiveColorToken": "Only primitive color tokens can be edited here.",
+        "unexpected": "Unable to save this color. Please try again."
+      }
     }
   }
 }

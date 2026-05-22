@@ -14,9 +14,9 @@ import {
   type TokenRowData,
 } from '@/features/tokens/tokens-editor.utils';
 import {
-  getActiveTokenSetType,
-  sortTokenSetsByType,
   tokenSetTypes,
+  sortTokenSetsByType,
+  getActiveTokenSetType,
   type TokenSetType,
 } from '@/features/tokens/tokens-editor.utils';
 
@@ -111,6 +111,7 @@ export default async function TokensEditorPage({
           <TokenSetPanel
             t={t}
             locale={locale}
+            projectSlug={pageData.project.slug}
             tokenSetName={activeTokenSet.name}
             tokenSetType={activeTokenSet.type}
             rows={tokenRowsResult.rows}
@@ -166,6 +167,7 @@ function TokenSetTabs({
 function TokenSetPanel({
   t,
   locale,
+  projectSlug,
   tokenSetName,
   tokenSetType,
   rows,
@@ -173,6 +175,7 @@ function TokenSetPanel({
 }: {
   t: TokensEditorTranslator;
   locale: Locale;
+  projectSlug: string;
   tokenSetName: string;
   tokenSetType: TokenSetType;
   rows: TokenRowData[];
@@ -212,6 +215,7 @@ function TokenSetPanel({
         <div className="mt-6">
           <TokenTable
             locale={locale}
+            projectSlug={projectSlug}
             rows={rows}
             labels={createTokenTableLabels(t)}
           />

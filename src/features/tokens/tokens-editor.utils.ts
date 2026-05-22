@@ -60,7 +60,7 @@ export function formatTokenValue(value: DesignToken['value']): string {
 }
 
 export function isHexColorValue(value: string): boolean {
-  return /^#[0-9a-fA-F]{3,8}$/.test(value);
+  return /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(value);
 }
 
 export type TokenRowValidationStatus = 'valid' | 'invalid';
@@ -163,4 +163,17 @@ export function createTokenRows(tokens: unknown): TokenRowsResult {
       };
     }),
   };
+}
+
+export function isPrimitiveColorTokenPath(path: string): boolean {
+  return path.startsWith('color.primitive.');
+}
+
+export function isEditablePrimitiveColorTokenRow(row: TokenRowData): boolean {
+  return (
+    row.validationStatus === 'valid' &&
+    row.type === 'color' &&
+    typeof row.rawValue === 'string' &&
+    isPrimitiveColorTokenPath(row.path)
+  );
 }
