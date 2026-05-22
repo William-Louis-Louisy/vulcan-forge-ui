@@ -2,6 +2,8 @@ import type { Locale } from '@/i18n/routing';
 import type { DesignToken } from '@/domain/design-system';
 import type { TokenRowData } from './tokens-editor.utils';
 import { resolveLocalizedStringWithFallback } from '@/domain/i18n';
+import { PrimitiveColorTokenEditor } from './PrimitiveColorTokenEditor';
+import { isEditablePrimitiveColorTokenRow } from './tokens-editor.utils';
 
 type ResolvableLocalizedString = Parameters<
   typeof resolveLocalizedStringWithFallback
@@ -31,6 +33,7 @@ export type TokenTableLabels = {
 
 type TokenTableProps = {
   locale: Locale;
+  projectSlug: string;
   rows: TokenRowData[];
   labels: TokenTableLabels;
 };
@@ -161,9 +164,13 @@ function ValidationStatusBadge({
 function TokenValueCell({
   row,
   labels,
+  locale,
+  projectSlug,
 }: {
   row: TokenRowData;
   labels: TokenTableLabels;
+  locale: Locale;
+  projectSlug: string;
 }) {
   return (
     <div className="flex items-center gap-2">
@@ -179,6 +186,15 @@ function TokenValueCell({
       <span className="text-content-primary font-mono text-sm font-semibold break-all">
         {row.value}
       </span>
+
+      {isEditablePrimitiveColorTokenRow(row) ? (
+        <PrimitiveColorTokenEditor
+          locale={locale}
+          projectSlug={projectSlug}
+          tokenPath={row.path}
+          initialValue={row.value}
+        />
+      ) : null}
     </div>
   );
 }
@@ -208,7 +224,12 @@ function TokenErrors({
   );
 }
 
-export function TokenTable({ locale, rows, labels }: TokenTableProps) {
+export function TokenTable({
+  locale,
+  projectSlug,
+  rows,
+  labels,
+}: TokenTableProps) {
   return (
     <>
       <div className="hidden overflow-x-auto md:block">
@@ -232,6 +253,7 @@ export function TokenTable({ locale, rows, labels }: TokenTableProps) {
               <TokenRow
                 key={row.id}
                 locale={locale}
+                projectSlug={projectSlug}
                 row={row}
                 labels={labels}
               />
@@ -245,6 +267,7 @@ export function TokenTable({ locale, rows, labels }: TokenTableProps) {
           <MobileTokenRowCard
             key={row.id}
             locale={locale}
+            projectSlug={projectSlug}
             row={row}
             labels={labels}
           />
@@ -256,10 +279,12 @@ export function TokenTable({ locale, rows, labels }: TokenTableProps) {
 
 export function TokenRow({
   locale,
+  projectSlug,
   row,
   labels,
 }: {
   locale: Locale;
+  projectSlug: string;
   row: TokenRowData;
   labels: TokenTableLabels;
 }) {
@@ -282,7 +307,12 @@ export function TokenRow({
       </td>
 
       <td className="border-border-subtle border-b px-4 py-4">
-        <TokenValueCell row={row} labels={labels} />
+        <TokenValueCell
+          row={row}
+          labels={labels}
+          locale={locale}
+          projectSlug={projectSlug}
+        />
       </td>
 
       <td className="border-border-subtle border-b px-4 py-4">
@@ -305,10 +335,12 @@ export function TokenRow({
 
 function MobileTokenRowCard({
   locale,
+  projectSlug,
   row,
   labels,
 }: {
   locale: Locale;
+  projectSlug: string;
   row: TokenRowData;
   labels: TokenTableLabels;
 }) {
@@ -342,7 +374,12 @@ function MobileTokenRowCard({
             {labels.columns.value}
           </dt>
           <dd className="mt-1">
-            <TokenValueCell row={row} labels={labels} />
+            <TokenValueCell
+              row={row}
+              labels={labels}
+              locale={locale}
+              projectSlug={projectSlug}
+            />
           </dd>
         </div>
 

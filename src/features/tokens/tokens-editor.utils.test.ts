@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { createTokenRows } from './tokens-editor.utils';
+import { isEditablePrimitiveColorTokenRow } from './tokens-editor.utils';
 import {
-  formatTokenValue,
-  getActiveTokenSetType,
   isHexColorValue,
+  formatTokenValue,
   parseTokenSetTokens,
   sortTokenSetsByType,
+  getActiveTokenSetType,
 } from './tokens-editor.utils';
 
 describe('tokens editor utils', () => {
@@ -123,5 +124,35 @@ describe('tokens editor utils', () => {
       rows: [],
       isReadable: false,
     });
+  });
+
+  it('detects editable primitive color token rows', () => {
+    expect(
+      isEditablePrimitiveColorTokenRow({
+        id: 'color.primitive.accent.primary',
+        path: 'color.primitive.accent.primary',
+        type: 'color',
+        value: '#ff8731',
+        rawValue: '#ff8731',
+        isColorValue: true,
+        validationStatus: 'valid',
+        errorMessages: [],
+      }),
+    ).toBe(true);
+  });
+
+  it('does not mark semantic color aliases as primitive editable rows', () => {
+    expect(
+      isEditablePrimitiveColorTokenRow({
+        id: 'color.semantic.action.primary',
+        path: 'color.semantic.action.primary',
+        type: 'color',
+        value: '{color.primitive.accent.primary}',
+        rawValue: '{color.primitive.accent.primary}',
+        isColorValue: false,
+        validationStatus: 'valid',
+        errorMessages: [],
+      }),
+    ).toBe(false);
   });
 });

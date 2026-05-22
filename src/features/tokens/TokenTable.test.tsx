@@ -1,5 +1,20 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
+
+vi.mock('./PrimitiveColorTokenEditor', () => ({
+  PrimitiveColorTokenEditor: ({
+    tokenPath,
+    initialValue,
+  }: {
+    tokenPath: string;
+    initialValue: string;
+  }) => (
+    <div data-testid="primitive-color-editor">
+      {tokenPath}:{initialValue}
+    </div>
+  ),
+}));
+
 import { TokenTable, type TokenTableLabels } from './TokenTable';
 
 const labels: TokenTableLabels = {
@@ -29,6 +44,7 @@ describe('TokenTable', () => {
     render(
       <TokenTable
         locale="en"
+        projectSlug="core-product-ui"
         labels={labels}
         rows={[
           {
@@ -62,6 +78,7 @@ describe('TokenTable', () => {
     render(
       <TokenTable
         locale="en"
+        projectSlug="core-product-ui"
         labels={labels}
         rows={[
           {
@@ -87,6 +104,7 @@ describe('TokenTable', () => {
     render(
       <TokenTable
         locale="en"
+        projectSlug="core-product-ui"
         labels={labels}
         rows={[
           {
