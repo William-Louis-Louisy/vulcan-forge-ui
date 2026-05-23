@@ -1,6 +1,7 @@
 import type { Locale } from '@/i18n/routing';
 import type { DesignToken } from '@/domain/design-system';
 import type { TokenRowData } from './tokens-editor.utils';
+import { TokenDescriptionEditor } from './TokenDescriptionEditor';
 import { resolveLocalizedStringWithFallback } from '@/domain/i18n';
 import { PrimitiveColorTokenEditor } from './PrimitiveColorTokenEditor';
 import { isEditablePrimitiveColorTokenRow } from './tokens-editor.utils';
@@ -323,6 +324,14 @@ export function TokenRow({
         <p className="text-content-secondary mt-2 max-w-sm text-sm leading-6">
           {description.value}
         </p>
+        <TokenDescriptionEditor
+          locale={locale}
+          projectSlug={projectSlug}
+          tokenSetType={row.type}
+          tokenPath={row.path}
+          initialDescriptionEn={row.description?.en ?? ''}
+          initialDescriptionFr={row.description?.fr ?? ''}
+        />
       </td>
 
       <td className="border-border-subtle border-b px-4 py-4">
@@ -395,6 +404,14 @@ function MobileTokenRowCard({
             <p className="text-content-secondary mt-2 text-sm leading-6">
               {description.value}
             </p>
+            <TokenDescriptionEditor
+              locale={locale}
+              projectSlug={projectSlug}
+              tokenSetType={row.type}
+              tokenPath={row.path}
+              initialDescriptionEn={row.description?.en ?? ''}
+              initialDescriptionFr={row.description?.fr ?? ''}
+            />
           </dd>
         </div>
 

@@ -543,6 +543,27 @@
         "notPrimitiveColorToken": "Seuls les tokens couleur primitifs peuvent être modifiés ici.",
         "unexpected": "Impossible de sauvegarder cette couleur. Veuillez réessayer."
       }
+    },
+    "descriptionEditor": {
+      "title": "Description localisée",
+      "fields": {
+        "en": "Description anglaise",
+        "fr": "Description française"
+      },
+      "missingLanguage": "Langue manquante. Le fallback sera utilisé si disponible.",
+      "fallbackNotice": "Une langue manquante ne bloque pas la sauvegarde.",
+      "save": "Sauvegarder la description",
+      "saving": "Sauvegarde...",
+      "saved": "Description sauvegardée.",
+      "validation": {
+        "descriptionTooLong": "La description doit contenir au maximum 240 caractères.",
+        "unauthorized": "Vous devez être connecté pour modifier ce token.",
+        "projectNotFound": "Projet introuvable.",
+        "tokenSetNotFound": "Token set introuvable.",
+        "tokenSetMalformed": "Les données des tokens sont malformées.",
+        "tokenNotFound": "Token introuvable.",
+        "unexpected": "Impossible de sauvegarder cette description. Veuillez réessayer."
+      }
     }
   }
 }
