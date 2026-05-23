@@ -15,6 +15,22 @@ vi.mock('./PrimitiveColorTokenEditor', () => ({
   ),
 }));
 
+vi.mock('./TokenDescriptionEditor', () => ({
+  TokenDescriptionEditor: ({
+    tokenPath,
+    initialDescriptionEn,
+    initialDescriptionFr,
+  }: {
+    tokenPath: string;
+    initialDescriptionEn: string;
+    initialDescriptionFr: string;
+  }) => (
+    <div data-testid="token-description-editor">
+      {tokenPath}:{initialDescriptionEn}:{initialDescriptionFr}
+    </div>
+  ),
+}));
+
 import { TokenTable, type TokenTableLabels } from './TokenTable';
 
 const labels: TokenTableLabels = {
