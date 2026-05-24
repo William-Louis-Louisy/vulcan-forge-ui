@@ -31,6 +31,20 @@ vi.mock('./TokenDescriptionEditor', () => ({
   ),
 }));
 
+vi.mock('./SemanticColorTokenAliasEditor', () => ({
+  SemanticColorTokenAliasEditor: ({
+    tokenPath,
+    initialReferencePath,
+  }: {
+    tokenPath: string;
+    initialReferencePath: string;
+  }) => (
+    <div data-testid="semantic-color-alias-editor">
+      {tokenPath}:{initialReferencePath}
+    </div>
+  ),
+}));
+
 import { TokenTable, type TokenTableLabels } from './TokenTable';
 
 const labels: TokenTableLabels = {
@@ -50,6 +64,10 @@ const labels: TokenTableLabels = {
     valid: 'Valid',
     invalid: 'Invalid',
     errorsLabel: 'Errors',
+  },
+  semanticAlias: {
+    resolvedValue: 'Resolved value',
+    unresolved: 'Unresolved alias',
   },
   noDescription: 'No description',
   colorSwatchLabel: 'Color swatch',
@@ -140,6 +158,46 @@ describe('TokenTable', () => {
     expect(screen.getAllByText('Invalid').length).toBeGreaterThan(0);
     expect(
       screen.getAllByText('value: tokenValueRequired').length,
+    ).toBeGreaterThan(0);
+  });
+
+  it('renders resolved semantic color aliases', () => {
+    render(
+      <TokenTable
+        locale="en"
+        projectSlug="core-product-ui"
+        labels={labels}
+        rows={[
+          {
+            id: 'color.primitive.accent.primary',
+            path: 'color.primitive.accent.primary',
+            type: 'color',
+            value: '#ff8731',
+            rawValue: '#ff8731',
+            isColorValue: true,
+            validationStatus: 'valid',
+            errorMessages: [],
+          },
+          {
+            id: 'color.semantic.action.primary',
+            path: 'color.semantic.action.primary',
+            type: 'color',
+            value: '{color.primitive.accent.primary}',
+            rawValue: '{color.primitive.accent.primary}',
+            reference: '{color.primitive.accent.primary}',
+            isColorValue: false,
+            validationStatus: 'valid',
+            errorMessages: [],
+          },
+        ]}
+      />,
+    );
+
+    expect(
+      screen.getAllByText('Resolved value: #ff8731').length,
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByTestId('semantic-color-alias-editor').length,
     ).toBeGreaterThan(0);
   });
 });

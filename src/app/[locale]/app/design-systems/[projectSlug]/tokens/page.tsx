@@ -266,6 +266,10 @@ function createTokenTableLabels(t: TokensEditorTranslator): TokenTableLabels {
       invalid: t('table.validationStatus.invalid'),
       errorsLabel: t('table.validationStatus.errorsLabel'),
     },
+    semanticAlias: {
+      resolvedValue: t('table.semanticAlias.resolvedValue'),
+      unresolved: t('table.semanticAlias.unresolved'),
+    },
     noDescription: t('table.noDescription'),
     colorSwatchLabel: t('table.colorSwatchLabel'),
   };

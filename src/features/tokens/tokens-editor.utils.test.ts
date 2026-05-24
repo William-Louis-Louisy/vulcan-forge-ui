@@ -8,6 +8,13 @@ import {
   sortTokenSetsByType,
   getActiveTokenSetType,
 } from './tokens-editor.utils';
+import {
+  getPrimitiveColorTokenAliasOptions,
+  getResolvedColorValueForReference,
+  isEditableSemanticColorTokenRow,
+  pathToTokenReference,
+  tokenReferenceToPath,
+} from './tokens-editor.utils';
 
 describe('tokens editor utils', () => {
   it('returns color as the default active token set type', () => {
@@ -154,5 +161,97 @@ describe('tokens editor utils', () => {
         errorMessages: [],
       }),
     ).toBe(false);
+  });
+
+  it('detects editable semantic color token rows', () => {
+    expect(
+      isEditableSemanticColorTokenRow({
+        id: 'color.semantic.action.primary',
+        path: 'color.semantic.action.primary',
+        type: 'color',
+        value: '{color.primitive.accent.primary}',
+        rawValue: '{color.primitive.accent.primary}',
+        reference: '{color.primitive.accent.primary}',
+        isColorValue: false,
+        validationStatus: 'valid',
+        errorMessages: [],
+      }),
+    ).toBe(true);
+  });
+
+  it('does not mark primitive color tokens as semantic editable rows', () => {
+    expect(
+      isEditableSemanticColorTokenRow({
+        id: 'color.primitive.accent.primary',
+        path: 'color.primitive.accent.primary',
+        type: 'color',
+        value: '#ff8731',
+        rawValue: '#ff8731',
+        isColorValue: true,
+        validationStatus: 'valid',
+        errorMessages: [],
+      }),
+    ).toBe(false);
+  });
+
+  it('converts token paths to token references', () => {
+    expect(pathToTokenReference('color.primitive.accent.primary')).toBe(
+      '{color.primitive.accent.primary}',
+    );
+  });
+
+  it('extracts paths from token references', () => {
+    expect(tokenReferenceToPath('{color.primitive.accent.primary}')).toBe(
+      'color.primitive.accent.primary',
+    );
+  });
+
+  it('returns primitive color token alias options', () => {
+    expect(
+      getPrimitiveColorTokenAliasOptions([
+        {
+          id: 'color.primitive.accent.primary',
+          path: 'color.primitive.accent.primary',
+          type: 'color',
+          value: '#ff8731',
+          rawValue: '#ff8731',
+          isColorValue: true,
+          validationStatus: 'valid',
+          errorMessages: [],
+        },
+        {
+          id: 'color.semantic.action.primary',
+          path: 'color.semantic.action.primary',
+          type: 'color',
+          value: '{color.primitive.accent.primary}',
+          rawValue: '{color.primitive.accent.primary}',
+          reference: '{color.primitive.accent.primary}',
+          isColorValue: false,
+          validationStatus: 'valid',
+          errorMessages: [],
+        },
+      ]),
+    ).toEqual([
+      {
+        path: 'color.primitive.accent.primary',
+        value: '#ff8731',
+        label: 'color.primitive.accent.primary',
+      },
+    ]);
+  });
+
+  it('resolves a semantic color reference to its primitive color value', () => {
+    expect(
+      getResolvedColorValueForReference({
+        reference: '{color.primitive.accent.primary}',
+        primitiveOptions: [
+          {
+            path: 'color.primitive.accent.primary',
+            value: '#ff8731',
+            label: 'color.primitive.accent.primary',
+          },
+        ],
+      }),
+    ).toBe('#ff8731');
   });
 });

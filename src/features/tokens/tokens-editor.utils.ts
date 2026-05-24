@@ -71,6 +71,7 @@ export type TokenRowData = {
   type: string;
   value: string;
   rawValue: unknown;
+  reference?: string;
   description?: DesignToken['description'];
   isColorValue: boolean;
   validationStatus: TokenRowValidationStatus;
@@ -126,6 +127,10 @@ export function createTokenRows(tokens: unknown): TokenRowsResult {
           errorMessages: [],
         };
 
+        if (parsedToken.data.reference) {
+          row.reference = parsedToken.data.reference;
+        }
+
         if (parsedToken.data.description) {
           row.description = parsedToken.data.description;
         }
@@ -175,5 +180,67 @@ export function isEditablePrimitiveColorTokenRow(row: TokenRowData): boolean {
     row.type === 'color' &&
     typeof row.rawValue === 'string' &&
     isPrimitiveColorTokenPath(row.path)
+  );
+}
+
+export type PrimitiveColorTokenAliasOption = {
+  path: string;
+  value: string;
+  label: string;
+};
+
+export function pathToTokenReference(path: string): string {
+  return `{${path}}`;
+}
+
+export function tokenReferenceToPath(reference: string): string | null {
+  const match = /^\{([a-zA-Z0-9._-]+)\}$/.exec(reference.trim());
+
+  return match?.[1] ?? null;
+}
+
+export function isSemanticColorTokenPath(path: string): boolean {
+  return path.startsWith('color.semantic.');
+}
+
+export function isEditableSemanticColorTokenRow(row: TokenRowData): boolean {
+  return (
+    row.validationStatus === 'valid' &&
+    row.type === 'color' &&
+    isSemanticColorTokenPath(row.path)
+  );
+}
+
+export function getPrimitiveColorTokenAliasOptions(
+  rows: TokenRowData[],
+): PrimitiveColorTokenAliasOption[] {
+  return rows
+    .filter(
+      (row) =>
+        row.validationStatus === 'valid' &&
+        row.type === 'color' &&
+        isPrimitiveColorTokenPath(row.path) &&
+        typeof row.rawValue === 'string' &&
+        isHexColorValue(row.rawValue),
+    )
+    .map((row) => ({
+      path: row.path,
+      value: row.value,
+      label: row.path,
+    }));
+}
+
+export function getResolvedColorValueForReference({
+  reference,
+  primitiveOptions,
+}: {
+  reference: string;
+  primitiveOptions: PrimitiveColorTokenAliasOption[];
+}): string | null {
+  const referencedPath = tokenReferenceToPath(reference) ?? reference;
+
+  return (
+    primitiveOptions.find((option) => option.path === referencedPath)?.value ??
+    null
   );
 }

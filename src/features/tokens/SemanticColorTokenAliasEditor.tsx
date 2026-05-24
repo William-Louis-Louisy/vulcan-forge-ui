@@ -1,0 +1,154 @@
+'use client';
+
+import { Button } from '@/components/ui';
+import { useTranslations } from 'next-intl';
+import type { Locale } from '@/i18n/routing';
+import { useActionState, useMemo, useState } from 'react';
+import type { PrimitiveColorTokenAliasOption } from './tokens-editor.utils';
+import { updateSemanticColorTokenAction } from './update-semantic-color-token.action';
+import {
+  initialUpdateSemanticColorTokenActionState,
+  type UpdateSemanticColorTokenActionState,
+} from './update-semantic-color-token.state';
+
+type SemanticColorTokenAliasEditorProps = {
+  locale: Locale;
+  projectSlug: string;
+  tokenPath: string;
+  initialReferencePath: string;
+  resolvedColorValue: string | null;
+  primitiveOptions: PrimitiveColorTokenAliasOption[];
+};
+
+function getFirstError(
+  errors: UpdateSemanticColorTokenActionState['fieldErrors'],
+) {
+  return errors.referencePath?.[0] ?? null;
+}
+
+export function SemanticColorTokenAliasEditor({
+  locale,
+  projectSlug,
+  tokenPath,
+  initialReferencePath,
+  resolvedColorValue,
+  primitiveOptions,
+}: SemanticColorTokenAliasEditorProps) {
+  const t = useTranslations('TokensEditorPage');
+  const [referencePath, setReferencePath] = useState(initialReferencePath);
+
+  const [state, formAction, isPending] = useActionState(
+    updateSemanticColorTokenAction,
+    {
+      ...initialUpdateSemanticColorTokenActionState,
+      values: {
+        referencePath: initialReferencePath,
+      },
+    },
+  );
+
+  const selectedOption = useMemo(
+    () => primitiveOptions.find((option) => option.path === referencePath),
+    [primitiveOptions, referencePath],
+  );
+
+  const previewValue = selectedOption?.value ?? resolvedColorValue;
+  const referencePathError = getFirstError(state.fieldErrors);
+  const hasPrimitiveOptions = primitiveOptions.length > 0;
+
+  return (
+    <form
+      action={formAction}
+      className="border-border-subtle bg-surface-primary mt-3 rounded-xl border p-3"
+    >
+      <input type="hidden" name="locale" value={locale} />
+      <input type="hidden" name="projectSlug" value={projectSlug} />
+      <input type="hidden" name="tokenPath" value={tokenPath} />
+
+      <label
+        htmlFor={`semantic-alias-${tokenPath}`}
+        className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase"
+      >
+        {t('semanticAliasEditor.label')}
+      </label>
+
+      <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center">
+        <select
+          id={`semantic-alias-${tokenPath}`}
+          name="referencePath"
+          value={referencePath}
+          onChange={(event) => setReferencePath(event.target.value)}
+          disabled={!hasPrimitiveOptions || isPending}
+          aria-invalid={Boolean(referencePathError)}
+          aria-describedby={
+            referencePathError
+              ? `semantic-alias-${tokenPath}-error`
+              : `semantic-alias-${tokenPath}-help`
+          }
+          className="border-border-default bg-background-subtle text-content-primary min-h-10 min-w-0 flex-1 rounded-lg border px-3 text-sm"
+        >
+          {primitiveOptions.map((option) => (
+            <option key={option.path} value={option.path}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+
+        <Button type="submit" disabled={isPending || !hasPrimitiveOptions}>
+          {isPending
+            ? t('semanticAliasEditor.saving')
+            : t('semanticAliasEditor.save')}
+        </Button>
+      </div>
+
+      <div className="mt-2 flex items-center gap-2">
+        {previewValue ? (
+          <span
+            role="img"
+            aria-label={t('semanticAliasEditor.previewLabel', {
+              value: previewValue,
+            })}
+            className="border-border-subtle size-5 rounded-full border"
+            style={{ backgroundColor: previewValue }}
+          />
+        ) : null}
+
+        <p
+          id={`semantic-alias-${tokenPath}-help`}
+          className="text-content-tertiary text-xs"
+        >
+          {hasPrimitiveOptions
+            ? t('semanticAliasEditor.help')
+            : t('semanticAliasEditor.noPrimitiveOptions')}
+        </p>
+      </div>
+
+      {referencePathError ? (
+        <p
+          id={`semantic-alias-${tokenPath}-error`}
+          className="text-action-danger mt-2 text-xs font-semibold"
+        >
+          {t(`semanticAliasEditor.validation.${referencePathError}`)}
+        </p>
+      ) : null}
+
+      {state.formError ? (
+        <p
+          role="alert"
+          className="text-action-danger mt-2 text-xs font-semibold"
+        >
+          {t(`semanticAliasEditor.validation.${state.formError}`)}
+        </p>
+      ) : null}
+
+      {state.status === 'success' ? (
+        <p
+          role="status"
+          className="text-action-success mt-2 text-xs font-semibold"
+        >
+          {t('semanticAliasEditor.saved')}
+        </p>
+      ) : null}
+    </form>
+  );
+}
