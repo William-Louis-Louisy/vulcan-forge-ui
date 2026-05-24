@@ -512,6 +512,10 @@
         "descriptionStatus": "Description",
         "validationStatus": "Validation"
       },
+      "semanticAlias": {
+        "resolvedValue": "Valeur résolue",
+        "unresolved": "Alias non résolu"
+      },
       "descriptionStatus": {
         "available": "Disponible",
         "fallback": "Fallback utilisé",
@@ -563,6 +567,28 @@
         "tokenSetMalformed": "Les données des tokens sont malformées.",
         "tokenNotFound": "Token introuvable.",
         "unexpected": "Impossible de sauvegarder cette description. Veuillez réessayer."
+      }
+    },
+    "semanticAliasEditor": {
+      "label": "Alias sémantique",
+      "help": "Choisissez le token couleur primitif utilisé par ce token sémantique.",
+      "save": "Sauvegarder l’alias",
+      "saving": "Sauvegarde...",
+      "saved": "Alias sauvegardé.",
+      "noPrimitiveOptions": "Aucun token couleur primitif n’est disponible.",
+      "previewLabel": "Aperçu couleur résolu : {value}",
+      "validation": {
+        "semanticAliasRequired": "Choisissez un token couleur primitif.",
+        "semanticAliasInvalid": "Choisissez un token couleur primitif valide.",
+        "unauthorized": "Vous devez être connecté pour modifier ce token.",
+        "projectNotFound": "Projet introuvable.",
+        "tokenSetNotFound": "Token set de couleurs introuvable.",
+        "tokenSetMalformed": "Les données du token set de couleurs sont malformées.",
+        "tokenNotFound": "Token introuvable.",
+        "notSemanticColorToken": "Seuls les tokens couleur sémantiques peuvent être modifiés ici.",
+        "aliasNotFound": "Le token primitif sélectionné est introuvable.",
+        "aliasInvalid": "L’alias sélectionné doit pointer vers un token couleur primitif hexadécimal.",
+        "unexpected": "Impossible de sauvegarder cet alias. Veuillez réessayer."
       }
     }
   }

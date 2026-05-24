@@ -526,7 +526,11 @@
         "errorsLabel": "Errors"
       },
       "noDescription": "No description yet.",
-      "colorSwatchLabel": "Color swatch"
+      "colorSwatchLabel": "Color swatch",
+      "semanticAlias": {
+        "resolvedValue": "Resolved value",
+        "unresolved": "Unresolved alias"
+      }
     },
     "primitiveColorEditor": {
       "label": "Edit hex value",
@@ -566,6 +570,28 @@
         "tokenSetMalformed": "Token data is malformed.",
         "tokenNotFound": "Token not found.",
         "unexpected": "Unable to save this description. Please try again."
+      }
+    },
+    "semanticAliasEditor": {
+      "label": "Semantic alias",
+      "help": "Choose the primitive color token used by this semantic token.",
+      "save": "Save alias",
+      "saving": "Saving...",
+      "saved": "Alias saved.",
+      "noPrimitiveOptions": "No primitive color token is available.",
+      "previewLabel": "Resolved color preview: {value}",
+      "validation": {
+        "semanticAliasRequired": "Choose a primitive color token.",
+        "semanticAliasInvalid": "Choose a valid primitive color token.",
+        "unauthorized": "You must be signed in to edit this token.",
+        "projectNotFound": "Project not found.",
+        "tokenSetNotFound": "Color token set not found.",
+        "tokenSetMalformed": "Color token data is malformed.",
+        "tokenNotFound": "Token not found.",
+        "notSemanticColorToken": "Only semantic color tokens can be edited here.",
+        "aliasNotFound": "Selected primitive token was not found.",
+        "aliasInvalid": "Selected alias must point to a primitive hex color token.",
+        "unexpected": "Unable to save this alias. Please try again."
       }
     }
   }

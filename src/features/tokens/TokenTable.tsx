@@ -1,10 +1,18 @@
 import type { Locale } from '@/i18n/routing';
 import type { DesignToken } from '@/domain/design-system';
-import type { TokenRowData } from './tokens-editor.utils';
 import { TokenDescriptionEditor } from './TokenDescriptionEditor';
 import { resolveLocalizedStringWithFallback } from '@/domain/i18n';
 import { PrimitiveColorTokenEditor } from './PrimitiveColorTokenEditor';
-import { isEditablePrimitiveColorTokenRow } from './tokens-editor.utils';
+import { SemanticColorTokenAliasEditor } from './SemanticColorTokenAliasEditor';
+import {
+  getPrimitiveColorTokenAliasOptions,
+  getResolvedColorValueForReference,
+  isEditablePrimitiveColorTokenRow,
+  isEditableSemanticColorTokenRow,
+  tokenReferenceToPath,
+  type PrimitiveColorTokenAliasOption,
+  type TokenRowData,
+} from './tokens-editor.utils';
 
 type ResolvableLocalizedString = Parameters<
   typeof resolveLocalizedStringWithFallback
@@ -27,6 +35,10 @@ export type TokenTableLabels = {
     valid: string;
     invalid: string;
     errorsLabel: string;
+  };
+  semanticAlias: {
+    resolvedValue: string;
+    unresolved: string;
   };
   noDescription: string;
   colorSwatchLabel: string;
@@ -167,26 +179,75 @@ function TokenValueCell({
   labels,
   locale,
   projectSlug,
+  primitiveColorAliasOptions,
 }: {
   row: TokenRowData;
   labels: TokenTableLabels;
   locale: Locale;
   projectSlug: string;
+  primitiveColorAliasOptions: PrimitiveColorTokenAliasOption[];
 }) {
-  return (
-    <div className="flex items-center gap-2">
-      {row.isColorValue ? (
-        <span
-          role="img"
-          aria-label={`${labels.colorSwatchLabel}: ${row.value}`}
-          className="border-border-subtle size-5 rounded-full border"
-          style={{ backgroundColor: row.value }}
-        />
-      ) : null}
+  const currentReference =
+    row.reference ?? (typeof row.rawValue === 'string' ? row.rawValue : '');
 
-      <span className="text-content-primary font-mono text-sm font-semibold break-all">
-        {row.value}
-      </span>
+  const currentReferencePath = currentReference
+    ? tokenReferenceToPath(currentReference)
+    : null;
+
+  const resolvedColorValue = currentReference
+    ? getResolvedColorValueForReference({
+        reference: currentReference,
+        primitiveOptions: primitiveColorAliasOptions,
+      })
+    : null;
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-2">
+        {row.isColorValue ? (
+          <span
+            role="img"
+            aria-label={`${labels.colorSwatchLabel}: ${row.value}`}
+            className="border-border-subtle size-5 rounded-full border"
+            style={{ backgroundColor: row.value }}
+          />
+        ) : null}
+
+        <span className="text-content-primary font-mono text-sm font-semibold break-all">
+          {row.value}
+        </span>
+      </div>
+
+      {isEditableSemanticColorTokenRow(row) ? (
+        <div>
+          {resolvedColorValue ? (
+            <div className="text-content-secondary mb-2 flex items-center gap-2 text-xs">
+              <span
+                role="img"
+                aria-label={`${labels.semanticAlias.resolvedValue}: ${resolvedColorValue}`}
+                className="border-border-subtle size-5 rounded-full border"
+                style={{ backgroundColor: resolvedColorValue }}
+              />
+              <span>
+                {labels.semanticAlias.resolvedValue}: {resolvedColorValue}
+              </span>
+            </div>
+          ) : (
+            <p className="text-action-warning mb-2 text-xs font-semibold">
+              {labels.semanticAlias.unresolved}
+            </p>
+          )}
+
+          <SemanticColorTokenAliasEditor
+            locale={locale}
+            projectSlug={projectSlug}
+            tokenPath={row.path}
+            initialReferencePath={currentReferencePath ?? ''}
+            resolvedColorValue={resolvedColorValue}
+            primitiveOptions={primitiveColorAliasOptions}
+          />
+        </div>
+      ) : null}
 
       {isEditablePrimitiveColorTokenRow(row) ? (
         <PrimitiveColorTokenEditor
@@ -231,13 +292,20 @@ export function TokenTable({
   rows,
   labels,
 }: TokenTableProps) {
+  const primitiveColorAliasOptions = getPrimitiveColorTokenAliasOptions(rows);
   return (
     <>
       <div className="hidden overflow-x-auto md:block">
         <table className="w-full border-separate border-spacing-0 text-left">
           <thead>
             <tr>
-              {Object.values(labels.columns).map((columnLabel) => (
+              {[
+                labels.columns.path,
+                labels.columns.type,
+                labels.columns.value,
+                labels.columns.descriptionStatus,
+                labels.columns.validationStatus,
+              ].map((columnLabel) => (
                 <th
                   key={columnLabel}
                   scope="col"
@@ -257,6 +325,7 @@ export function TokenTable({
                 projectSlug={projectSlug}
                 row={row}
                 labels={labels}
+                primitiveColorAliasOptions={primitiveColorAliasOptions}
               />
             ))}
           </tbody>
@@ -271,6 +340,7 @@ export function TokenTable({
             projectSlug={projectSlug}
             row={row}
             labels={labels}
+            primitiveColorAliasOptions={primitiveColorAliasOptions}
           />
         ))}
       </div>
@@ -283,11 +353,13 @@ export function TokenRow({
   projectSlug,
   row,
   labels,
+  primitiveColorAliasOptions,
 }: {
   locale: Locale;
   projectSlug: string;
   row: TokenRowData;
   labels: TokenTableLabels;
+  primitiveColorAliasOptions: PrimitiveColorTokenAliasOption[];
 }) {
   const description = getDescriptionPresentation({
     locale,
@@ -298,7 +370,7 @@ export function TokenRow({
   return (
     <tr className="align-top">
       <td className="border-border-subtle border-b px-4 py-4">
-        <span className="wrap-break-words font-mono text-sm font-semibold">
+        <span className="font-mono text-sm font-semibold break-words">
           {row.path}
         </span>
       </td>
@@ -313,6 +385,7 @@ export function TokenRow({
           labels={labels}
           locale={locale}
           projectSlug={projectSlug}
+          primitiveColorAliasOptions={primitiveColorAliasOptions}
         />
       </td>
 
@@ -347,11 +420,13 @@ function MobileTokenRowCard({
   projectSlug,
   row,
   labels,
+  primitiveColorAliasOptions,
 }: {
   locale: Locale;
   projectSlug: string;
   row: TokenRowData;
   labels: TokenTableLabels;
+  primitiveColorAliasOptions: PrimitiveColorTokenAliasOption[];
 }) {
   const description = getDescriptionPresentation({
     locale,
@@ -388,6 +463,7 @@ function MobileTokenRowCard({
               labels={labels}
               locale={locale}
               projectSlug={projectSlug}
+              primitiveColorAliasOptions={primitiveColorAliasOptions}
             />
           </dd>
         </div>
