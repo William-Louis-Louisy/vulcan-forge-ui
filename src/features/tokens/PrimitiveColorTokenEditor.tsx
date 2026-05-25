@@ -43,6 +43,8 @@ export function PrimitiveColorTokenEditor({
     },
   );
 
+  const hasUnsavedChanges = draftValue !== state.values.value;
+
   const valueError = getFirstError(state.fieldErrors);
   const isPreviewValid = primitiveColorHexPattern.test(draftValue);
 
@@ -122,12 +124,21 @@ export function PrimitiveColorTokenEditor({
         </p>
       ) : null}
 
-      {state.status === 'success' ? (
+      {hasUnsavedChanges ? (
+        <p
+          role="status"
+          className="text-action-warning mt-2 text-xs font-semibold"
+        >
+          {t('saveStatus.unsaved')}
+        </p>
+      ) : null}
+
+      {state.status === 'success' && !hasUnsavedChanges ? (
         <p
           role="status"
           className="text-action-success mt-2 text-xs font-semibold"
         >
-          {t('primitiveColorEditor.saved')}
+          {t('saveStatus.saved')}
         </p>
       ) : null}
     </form>

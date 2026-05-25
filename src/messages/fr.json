@@ -545,7 +545,8 @@
         "tokenSetMalformed": "Les données du token set de couleurs sont malformées.",
         "tokenNotFound": "Token introuvable.",
         "notPrimitiveColorToken": "Seuls les tokens couleur primitifs peuvent être modifiés ici.",
-        "unexpected": "Impossible de sauvegarder cette couleur. Veuillez réessayer."
+        "unexpected": "Impossible de sauvegarder cette couleur. Veuillez réessayer.",
+        "tokenValidationFailed": "Les données du token ont échoué à la validation serveur."
       }
     },
     "descriptionEditor": {
@@ -566,7 +567,8 @@
         "tokenSetNotFound": "Token set introuvable.",
         "tokenSetMalformed": "Les données des tokens sont malformées.",
         "tokenNotFound": "Token introuvable.",
-        "unexpected": "Impossible de sauvegarder cette description. Veuillez réessayer."
+        "unexpected": "Impossible de sauvegarder cette description. Veuillez réessayer.",
+        "tokenValidationFailed": "Les données du token ont échoué à la validation serveur."
       }
     },
     "semanticAliasEditor": {
@@ -588,8 +590,13 @@
         "notSemanticColorToken": "Seuls les tokens couleur sémantiques peuvent être modifiés ici.",
         "aliasNotFound": "Le token primitif sélectionné est introuvable.",
         "aliasInvalid": "L’alias sélectionné doit pointer vers un token couleur primitif hexadécimal.",
-        "unexpected": "Impossible de sauvegarder cet alias. Veuillez réessayer."
+        "unexpected": "Impossible de sauvegarder cet alias. Veuillez réessayer.",
+        "tokenValidationFailed": "Les données du token ont échoué à la validation serveur."
       }
+    },
+    "saveStatus": {
+      "saved": "Toutes les modifications sont sauvegardées.",
+      "unsaved": "Modifications non sauvegardées."
     }
   }
 }

@@ -1,13 +1,15 @@
 'use server';
 
-import { z } from 'zod';
 import { auth } from '@/auth';
 import { revalidatePath } from 'next/cache';
-import { prisma } from '@/server/db/prisma';
-import type { Prisma } from '@/generated/prisma/client';
+import type { DesignToken } from '@/domain/design-system';
 import { defaultAppLocale, isAppLocale } from '@/domain/i18n';
-import { designTokenSchema, type DesignToken } from '@/domain/design-system';
 import { isHexColorValue, pathToTokenReference } from './tokens-editor.utils';
+import {
+  getEditableTokenSetForUser,
+  parseStoredTokenSetTokens,
+  saveValidatedTokenSetTokens,
+} from './token-set-save.service';
 import type {
   UpdateSemanticColorTokenActionState,
   UpdateSemanticColorTokenField,
@@ -16,8 +18,6 @@ import {
   updateSemanticColorTokenSchema,
   type UpdateSemanticColorTokenValidationMessageKey,
 } from './semantic-color-token.schema';
-
-const designTokenArraySchema = z.array(designTokenSchema);
 
 function getFormStringValue(formData: FormData, key: string): string {
   const value = formData.get(key);
@@ -47,10 +47,6 @@ function getActionLocale(formData: FormData) {
   const rawLocale = getFormStringValue(formData, 'locale');
 
   return isAppLocale(rawLocale) ? rawLocale : defaultAppLocale;
-}
-
-function toInputJsonValue(value: unknown): Prisma.InputJsonValue {
-  return value as Prisma.InputJsonValue;
 }
 
 function isSemanticColorToken(token: DesignToken) {
@@ -100,63 +96,35 @@ export async function updateSemanticColorTokenAction(
     };
   }
 
-  const project = await prisma.designSystemProject.findFirst({
-    where: {
-      slug: projectSlug,
-      workspace: {
-        members: {
-          some: {
-            userId: session.user.id,
-          },
-        },
-      },
-    },
-    select: {
-      id: true,
-    },
+  const tokenSetResult = await getEditableTokenSetForUser({
+    userId: session.user.id,
+    projectSlug,
+    tokenSetType: 'color',
   });
 
-  if (!project) {
+  if (tokenSetResult.status === 'error') {
     return {
       status: 'error',
       fieldErrors: {},
-      formError: 'projectNotFound',
+      formError: tokenSetResult.error,
       values,
     };
   }
 
-  const colorTokenSet = await prisma.tokenSet.findFirst({
-    where: {
-      projectId: project.id,
-      type: 'color',
-    },
-    select: {
-      id: true,
-      tokens: true,
-    },
-  });
+  const parsedTokensResult = parseStoredTokenSetTokens(
+    tokenSetResult.tokenSet.tokens,
+  );
 
-  if (!colorTokenSet) {
+  if (parsedTokensResult.status === 'error') {
     return {
       status: 'error',
       fieldErrors: {},
-      formError: 'tokenSetNotFound',
+      formError: parsedTokensResult.error,
       values,
     };
   }
 
-  const parsedTokens = designTokenArraySchema.safeParse(colorTokenSet.tokens);
-
-  if (!parsedTokens.success) {
-    return {
-      status: 'error',
-      fieldErrors: {},
-      formError: 'tokenSetMalformed',
-      values,
-    };
-  }
-
-  const semanticTokenIndex = parsedTokens.data.findIndex(
+  const semanticTokenIndex = parsedTokensResult.tokens.findIndex(
     (token) => token.path === tokenPath,
   );
 
@@ -169,7 +137,7 @@ export async function updateSemanticColorTokenAction(
     };
   }
 
-  const semanticToken = parsedTokens.data[semanticTokenIndex];
+  const semanticToken = parsedTokensResult.tokens[semanticTokenIndex];
 
   if (!semanticToken || !isSemanticColorToken(semanticToken)) {
     return {
@@ -180,7 +148,7 @@ export async function updateSemanticColorTokenAction(
     };
   }
 
-  const primitiveToken = parsedTokens.data.find(
+  const primitiveToken = parsedTokensResult.tokens.find(
     (token) => token.path === parsed.data.referencePath,
   );
 
@@ -204,43 +172,37 @@ export async function updateSemanticColorTokenAction(
 
   const nextReference = pathToTokenReference(parsed.data.referencePath);
 
-  const nextTokens = parsedTokens.data.map((token, index) =>
-    index === semanticTokenIndex
-      ? {
-          ...token,
-          value: nextReference,
-          reference: nextReference,
-        }
-      : token,
+  const nextTokens: DesignToken[] = parsedTokensResult.tokens.map(
+    (token, index) =>
+      index === semanticTokenIndex
+        ? {
+            ...token,
+            value: nextReference,
+            reference: nextReference,
+          }
+        : token,
   );
 
-  try {
-    await prisma.tokenSet.update({
-      where: {
-        id: colorTokenSet.id,
-      },
-      data: {
-        tokens: toInputJsonValue(nextTokens),
-      },
-      select: {
-        id: true,
-      },
-    });
+  const saveResult = await saveValidatedTokenSetTokens({
+    tokenSetId: tokenSetResult.tokenSet.id,
+    tokens: nextTokens,
+  });
 
-    revalidatePath(`/${locale}/app/design-systems/${projectSlug}/tokens`);
-
-    return {
-      status: 'success',
-      fieldErrors: {},
-      formError: null,
-      values: parsed.data,
-    };
-  } catch {
+  if (saveResult.status === 'error') {
     return {
       status: 'error',
       fieldErrors: {},
-      formError: 'unexpected',
+      formError: saveResult.error,
       values,
     };
   }
+
+  revalidatePath(`/${locale}/app/design-systems/${projectSlug}/tokens`);
+
+  return {
+    status: 'success',
+    fieldErrors: {},
+    formError: null,
+    values: parsed.data,
+  };
 }

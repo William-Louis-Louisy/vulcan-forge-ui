@@ -17,6 +17,7 @@ export type UpdateTokenDescriptionActionState = {
     | 'tokenSetMalformed'
     | 'tokenNotFound'
     | 'unexpected'
+    | 'tokenValidationFailed'
     | null;
   values: {
     descriptionEn: string;

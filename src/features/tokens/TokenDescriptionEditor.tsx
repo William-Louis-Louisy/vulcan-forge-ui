@@ -50,6 +50,10 @@ export function TokenDescriptionEditor({
     },
   );
 
+  const hasUnsavedChanges =
+    descriptionEn !== state.values.descriptionEn ||
+    descriptionFr !== state.values.descriptionFr;
+
   const descriptionEnError = getFirstError(state.fieldErrors, 'descriptionEn');
   const descriptionFrError = getFirstError(state.fieldErrors, 'descriptionFr');
 
@@ -181,12 +185,21 @@ export function TokenDescriptionEditor({
         </p>
       ) : null}
 
-      {state.status === 'success' ? (
+      {hasUnsavedChanges ? (
+        <p
+          role="status"
+          className="text-action-warning mt-2 text-xs font-semibold"
+        >
+          {t('saveStatus.unsaved')}
+        </p>
+      ) : null}
+
+      {state.status === 'success' && !hasUnsavedChanges ? (
         <p
           role="status"
           className="text-action-success mt-2 text-xs font-semibold"
         >
-          {t('descriptionEditor.saved')}
+          {t('saveStatus.saved')}
         </p>
       ) : null}
     </form>
