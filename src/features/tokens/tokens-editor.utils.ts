@@ -1,6 +1,10 @@
 import { z } from 'zod';
 import { zodErrorToLocalizedIssues } from '@/domain/design-system';
 import { designTokenSchema, type DesignToken } from '@/domain/design-system';
+import {
+  pathToTokenReference,
+  tokenReferenceToPath,
+} from '@/domain/design-system';
 
 export const tokenSetTypes = [
   'color',
@@ -189,16 +193,6 @@ export type PrimitiveColorTokenAliasOption = {
   label: string;
 };
 
-export function pathToTokenReference(path: string): string {
-  return `{${path}}`;
-}
-
-export function tokenReferenceToPath(reference: string): string | null {
-  const match = /^\{([a-zA-Z0-9._-]+)\}$/.exec(reference.trim());
-
-  return match?.[1] ?? null;
-}
-
 export function isSemanticColorTokenPath(path: string): boolean {
   return path.startsWith('color.semantic.');
 }
@@ -244,3 +238,5 @@ export function getResolvedColorValueForReference({
     null
   );
 }
+
+export { pathToTokenReference, tokenReferenceToPath };
