@@ -47,6 +47,8 @@ export function SemanticColorTokenAliasEditor({
     },
   );
 
+  const hasUnsavedChanges = referencePath !== state.values.referencePath;
+
   const selectedOption = useMemo(
     () => primitiveOptions.find((option) => option.path === referencePath),
     [primitiveOptions, referencePath],
@@ -141,12 +143,21 @@ export function SemanticColorTokenAliasEditor({
         </p>
       ) : null}
 
-      {state.status === 'success' ? (
+      {hasUnsavedChanges ? (
+        <p
+          role="status"
+          className="text-action-warning mt-2 text-xs font-semibold"
+        >
+          {t('saveStatus.unsaved')}
+        </p>
+      ) : null}
+
+      {state.status === 'success' && !hasUnsavedChanges ? (
         <p
           role="status"
           className="text-action-success mt-2 text-xs font-semibold"
         >
-          {t('semanticAliasEditor.saved')}
+          {t('saveStatus.saved')}
         </p>
       ) : null}
     </form>

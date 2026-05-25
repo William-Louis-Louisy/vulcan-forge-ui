@@ -18,6 +18,7 @@ export type UpdatePrimitiveColorTokenActionState = {
     | 'tokenNotFound'
     | 'notPrimitiveColorToken'
     | 'unexpected'
+    | 'tokenValidationFailed'
     | null;
   values: {
     value: string;

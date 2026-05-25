@@ -1,12 +1,15 @@
 'use server';
 
-import { z } from 'zod';
 import { auth } from '@/auth';
 import { revalidatePath } from 'next/cache';
-import { prisma } from '@/server/db/prisma';
-import type { Prisma } from '@/generated/prisma/client';
+import { type DesignToken } from '@/domain/design-system';
 import { defaultAppLocale, isAppLocale } from '@/domain/i18n';
-import { designTokenSchema, type DesignToken } from '@/domain/design-system';
+
+import {
+  getEditableTokenSetForUser,
+  parseStoredTokenSetTokens,
+  saveValidatedTokenSetTokens,
+} from './token-set-save.service';
 import type {
   UpdatePrimitiveColorTokenActionState,
   UpdatePrimitiveColorTokenField,
@@ -15,8 +18,6 @@ import {
   updatePrimitiveColorTokenSchema,
   type UpdatePrimitiveColorTokenValidationMessageKey,
 } from './primitive-color-token.schema';
-
-const designTokenArraySchema = z.array(designTokenSchema);
 
 function getFormStringValue(formData: FormData, key: string): string {
   const value = formData.get(key);
@@ -56,10 +57,6 @@ function isPrimitiveColorToken(token: DesignToken) {
   );
 }
 
-function toInputJsonValue(value: unknown): Prisma.InputJsonValue {
-  return value as Prisma.InputJsonValue;
-}
-
 export async function updatePrimitiveColorTokenAction(
   _previousState: UpdatePrimitiveColorTokenActionState,
   formData: FormData,
@@ -94,64 +91,35 @@ export async function updatePrimitiveColorTokenAction(
     };
   }
 
-  const project = await prisma.designSystemProject.findFirst({
-    where: {
-      slug: projectSlug,
-      workspace: {
-        members: {
-          some: {
-            userId: session.user.id,
-          },
-        },
-      },
-    },
-    select: {
-      id: true,
-      tokenSets: {
-        where: {
-          type: 'color',
-        },
-        select: {
-          id: true,
-          tokens: true,
-        },
-        take: 1,
-      },
-    },
+  const tokenSetResult = await getEditableTokenSetForUser({
+    userId: session.user.id,
+    projectSlug,
+    tokenSetType: 'color',
   });
 
-  if (!project) {
+  if (tokenSetResult.status === 'error') {
     return {
       status: 'error',
       fieldErrors: {},
-      formError: 'projectNotFound',
+      formError: tokenSetResult.error,
       values,
     };
   }
 
-  const colorTokenSet = project.tokenSets[0];
+  const parsedTokensResult = parseStoredTokenSetTokens(
+    tokenSetResult.tokenSet.tokens,
+  );
 
-  if (!colorTokenSet) {
+  if (parsedTokensResult.status === 'error') {
     return {
       status: 'error',
       fieldErrors: {},
-      formError: 'tokenSetNotFound',
+      formError: parsedTokensResult.error,
       values,
     };
   }
 
-  const parsedTokens = designTokenArraySchema.safeParse(colorTokenSet.tokens);
-
-  if (!parsedTokens.success) {
-    return {
-      status: 'error',
-      fieldErrors: {},
-      formError: 'tokenSetMalformed',
-      values,
-    };
-  }
-
-  const tokenIndex = parsedTokens.data.findIndex(
+  const tokenIndex = parsedTokensResult.tokens.findIndex(
     (token) => token.path === tokenPath,
   );
 
@@ -164,7 +132,7 @@ export async function updatePrimitiveColorTokenAction(
     };
   }
 
-  const token = parsedTokens.data[tokenIndex];
+  const token = parsedTokensResult.tokens[tokenIndex];
 
   if (!token || !isPrimitiveColorToken(token)) {
     return {
@@ -175,7 +143,7 @@ export async function updatePrimitiveColorTokenAction(
     };
   }
 
-  const nextTokens = parsedTokens.data.map((currentToken, index) =>
+  const nextTokens = parsedTokensResult.tokens.map((currentToken, index) =>
     index === tokenIndex
       ? {
           ...currentToken,
@@ -184,35 +152,28 @@ export async function updatePrimitiveColorTokenAction(
       : currentToken,
   );
 
-  try {
-    await prisma.tokenSet.update({
-      where: {
-        id: colorTokenSet.id,
-      },
-      data: {
-        tokens: toInputJsonValue(nextTokens),
-      },
-      select: {
-        id: true,
-      },
-    });
+  const saveResult = await saveValidatedTokenSetTokens({
+    tokenSetId: tokenSetResult.tokenSet.id,
+    tokens: nextTokens,
+  });
 
-    revalidatePath(`/${locale}/app/design-systems/${projectSlug}/tokens`);
-
-    return {
-      status: 'success',
-      fieldErrors: {},
-      formError: null,
-      values: {
-        value: parsed.data.value,
-      },
-    };
-  } catch {
+  if (saveResult.status === 'error') {
     return {
       status: 'error',
       fieldErrors: {},
-      formError: 'unexpected',
+      formError: saveResult.error,
       values,
     };
   }
+
+  revalidatePath(`/${locale}/app/design-systems/${projectSlug}/tokens`);
+
+  return {
+    status: 'success',
+    fieldErrors: {},
+    formError: null,
+    values: {
+      value: parsed.data.value,
+    },
+  };
 }

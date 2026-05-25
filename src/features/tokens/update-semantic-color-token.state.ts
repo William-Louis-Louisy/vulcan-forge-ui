@@ -20,6 +20,7 @@ export type UpdateSemanticColorTokenActionState = {
     | 'aliasNotFound'
     | 'aliasInvalid'
     | 'unexpected'
+    | 'tokenValidationFailed'
     | null;
   values: {
     referencePath: string;

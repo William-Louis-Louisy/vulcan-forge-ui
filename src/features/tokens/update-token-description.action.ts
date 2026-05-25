@@ -1,12 +1,9 @@
 'use server';
 
-import { z } from 'zod';
 import { auth } from '@/auth';
 import { revalidatePath } from 'next/cache';
-import { prisma } from '@/server/db/prisma';
 import { isTokenSetType } from './tokens-editor.utils';
-import type { Prisma } from '@/generated/prisma/client';
-import { designTokenSchema } from '@/domain/design-system';
+import type { DesignToken } from '@/domain/design-system';
 import { defaultAppLocale, isAppLocale } from '@/domain/i18n';
 import type {
   UpdateTokenDescriptionActionState,
@@ -16,8 +13,13 @@ import {
   updateTokenDescriptionSchema,
   type UpdateTokenDescriptionValidationMessageKey,
 } from './token-description.schema';
+import {
+  getEditableTokenSetForUser,
+  parseStoredTokenSetTokens,
+  saveValidatedTokenSetTokens,
+} from './token-set-save.service';
 
-const designTokenArraySchema = z.array(designTokenSchema);
+type TokenDescription = NonNullable<DesignToken['description']>;
 
 function getFormStringValue(formData: FormData, key: string): string {
   const value = formData.get(key);
@@ -54,28 +56,24 @@ function getActionLocale(formData: FormData) {
   return isAppLocale(rawLocale) ? rawLocale : defaultAppLocale;
 }
 
-function toInputJsonValue(value: unknown): Prisma.InputJsonValue {
-  return value as Prisma.InputJsonValue;
-}
-
 function createTokenDescription({
   descriptionEn,
   descriptionFr,
 }: {
   descriptionEn: string;
   descriptionFr: string;
-}) {
-  const description: {
-    en?: string;
-    fr?: string;
-  } = {};
+}): TokenDescription | undefined {
+  const description: TokenDescription = {};
 
-  if (descriptionEn.trim().length > 0) {
-    description.en = descriptionEn.trim();
+  const trimmedDescriptionEn = descriptionEn.trim();
+  const trimmedDescriptionFr = descriptionFr.trim();
+
+  if (trimmedDescriptionEn.length > 0) {
+    description.en = trimmedDescriptionEn;
   }
 
-  if (descriptionFr.trim().length > 0) {
-    description.fr = descriptionFr.trim();
+  if (trimmedDescriptionFr.length > 0) {
+    description.fr = trimmedDescriptionFr;
   }
 
   return Object.keys(description).length > 0 ? description : undefined;
@@ -126,63 +124,35 @@ export async function updateTokenDescriptionAction(
     };
   }
 
-  const project = await prisma.designSystemProject.findFirst({
-    where: {
-      slug: projectSlug,
-      workspace: {
-        members: {
-          some: {
-            userId: session.user.id,
-          },
-        },
-      },
-    },
-    select: {
-      id: true,
-    },
+  const tokenSetResult = await getEditableTokenSetForUser({
+    userId: session.user.id,
+    projectSlug,
+    tokenSetType,
   });
 
-  if (!project) {
+  if (tokenSetResult.status === 'error') {
     return {
       status: 'error',
       fieldErrors: {},
-      formError: 'projectNotFound',
+      formError: tokenSetResult.error,
       values,
     };
   }
 
-  const tokenSet = await prisma.tokenSet.findFirst({
-    where: {
-      projectId: project.id,
-      type: tokenSetType,
-    },
-    select: {
-      id: true,
-      tokens: true,
-    },
-  });
+  const parsedTokensResult = parseStoredTokenSetTokens(
+    tokenSetResult.tokenSet.tokens,
+  );
 
-  if (!tokenSet) {
+  if (parsedTokensResult.status === 'error') {
     return {
       status: 'error',
       fieldErrors: {},
-      formError: 'tokenSetNotFound',
+      formError: parsedTokensResult.error,
       values,
     };
   }
 
-  const parsedTokens = designTokenArraySchema.safeParse(tokenSet.tokens);
-
-  if (!parsedTokens.success) {
-    return {
-      status: 'error',
-      fieldErrors: {},
-      formError: 'tokenSetMalformed',
-      values,
-    };
-  }
-
-  const tokenIndex = parsedTokens.data.findIndex(
+  const tokenIndex = parsedTokensResult.tokens.findIndex(
     (token) => token.path === tokenPath,
   );
 
@@ -197,49 +167,45 @@ export async function updateTokenDescriptionAction(
 
   const nextDescription = createTokenDescription(parsed.data);
 
-  const nextTokens = parsedTokens.data.map((token, index) => {
-    if (index !== tokenIndex) {
-      return token;
-    }
+  const nextTokens: DesignToken[] = parsedTokensResult.tokens.map(
+    (token, index) => {
+      if (index !== tokenIndex) {
+        return token;
+      }
 
-    if (!nextDescription) {
-      const { description: _description, ...tokenWithoutDescription } = token;
-      return tokenWithoutDescription;
-    }
+      if (!nextDescription) {
+        const { description: _description, ...tokenWithoutDescription } = token;
 
-    return {
-      ...token,
-      description: nextDescription,
-    };
+        return tokenWithoutDescription;
+      }
+
+      return {
+        ...token,
+        description: nextDescription,
+      };
+    },
+  );
+
+  const saveResult = await saveValidatedTokenSetTokens({
+    tokenSetId: tokenSetResult.tokenSet.id,
+    tokens: nextTokens,
   });
 
-  try {
-    await prisma.tokenSet.update({
-      where: {
-        id: tokenSet.id,
-      },
-      data: {
-        tokens: toInputJsonValue(nextTokens),
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    revalidatePath(`/${locale}/app/design-systems/${projectSlug}/tokens`);
-
-    return {
-      status: 'success',
-      fieldErrors: {},
-      formError: null,
-      values: parsed.data,
-    };
-  } catch {
+  if (saveResult.status === 'error') {
     return {
       status: 'error',
       fieldErrors: {},
-      formError: 'unexpected',
+      formError: saveResult.error,
       values,
     };
   }
+
+  revalidatePath(`/${locale}/app/design-systems/${projectSlug}/tokens`);
+
+  return {
+    status: 'success',
+    fieldErrors: {},
+    formError: null,
+    values: parsed.data,
+  };
 }
