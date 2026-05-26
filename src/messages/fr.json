@@ -471,6 +471,51 @@
       "unexpected": "Impossible de créer votre compte. Veuillez réessayer."
     }
   },
+  "ThemesEditorPage": {
+    "backToProjects": "Retour aux design systems",
+    "openTokensEditor": "Ouvrir l’éditeur de tokens",
+    "eyebrow": "Éditeur de thèmes",
+    "title": "Thèmes de {projectName}",
+    "description": "Gérez les thèmes light et dark, mappez les tokens couleur sémantiques et consultez les paires de couleurs clés utilisées par les previews.",
+    "themes": {
+      "light": "Thème light",
+      "dark": "Thème dark",
+      "defaultBadge": "Par défaut"
+    },
+    "contrast": {
+      "title": "Paires de contraste clés",
+      "description": "Ces paires sont affichées dès maintenant. Les ratios de contraste seront calculés dans l’epic accessibilité.",
+      "foreground": "Premier plan",
+      "background": "Arrière-plan",
+      "ratioPending": "Le calcul du ratio de contraste sera ajouté dans DS-090.",
+      "pairs": {
+        "contentOnBackground": "Contenu sur fond applicatif",
+        "mutedOnBackground": "Contenu secondaire sur fond applicatif",
+        "contentOnSurface": "Contenu sur surface",
+        "accentOnBackground": "Accent sur fond applicatif"
+      }
+    },
+    "semanticTokens": {
+      "eyebrow": "Tokens couleur sémantiques",
+      "title": "Alias sémantiques du thème",
+      "count": "{count, plural, =0 {Aucun token sémantique} one {# token sémantique} other {# tokens sémantiques}}",
+      "path": "Chemin du token",
+      "currentAlias": "Alias actuel",
+      "noAlias": "Aucun alias",
+      "resolvedValue": "Valeur résolue",
+      "unresolved": "Alias non résolu",
+      "emptyTitle": "Aucun token couleur sémantique trouvé.",
+      "emptyDescription": "Ce projet ne contient pas encore de tokens couleur sémantiques éditables.",
+      "invalidTitle": "Données de tokens couleur invalides",
+      "invalidDescription": "Le token set de couleurs est malformé et ne peut pas être édité de manière fiable."
+    },
+    "states": {
+      "loading": "Chargement des thèmes...",
+      "errorTitle": "Impossible de charger les thèmes",
+      "errorDescription": "Une erreur est survenue pendant le chargement des thèmes de ce projet. Veuillez réessayer.",
+      "retry": "Réessayer"
+    }
+  },
   "TokensEditorPage": {
     "backLink": "Retour aux design systems",
     "eyebrow": "Éditeur de tokens",
@@ -597,6 +642,7 @@
     "saveStatus": {
       "saved": "Toutes les modifications sont sauvegardées.",
       "unsaved": "Modifications non sauvegardées."
-    }
+    },
+    "openThemesEditor": "Ouvrir l’éditeur de thèmes"
   }
 }
