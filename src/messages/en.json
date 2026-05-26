@@ -517,6 +517,36 @@
       "errorTitle": "Unable to load themes",
       "errorDescription": "Something went wrong while loading this project's themes. Please try again.",
       "retry": "Retry"
+    },
+    "preview": {
+      "title": "Component preview",
+      "description": "Preview how resolved tokens affect core components. This section updates after token changes are saved.",
+      "modeLabel": "Preview theme mode",
+      "empty": "No theme is available for preview.",
+      "components": {
+        "button": "Button",
+        "textField": "TextField",
+        "card": "Card",
+        "alert": "Alert"
+      },
+      "button": {
+        "primary": "Primary action",
+        "secondary": "Secondary action"
+      },
+      "textField": {
+        "label": "Email address",
+        "placeholder": "hello@vulcanforge.dev",
+        "helper": "Helper text remains readable against the current theme."
+      },
+      "card": {
+        "title": "Design system card",
+        "description": "Cards use surface, content and muted tokens to structure information.",
+        "cta": "Open card"
+      },
+      "alert": {
+        "title": "Token update available",
+        "description": "Alert components use semantic color decisions while keeping accessible structure."
+      }
     }
   },
   "TokensEditorPage": {

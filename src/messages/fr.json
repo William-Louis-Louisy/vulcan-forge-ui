@@ -514,6 +514,36 @@
       "errorTitle": "Impossible de charger les thèmes",
       "errorDescription": "Une erreur est survenue pendant le chargement des thèmes de ce projet. Veuillez réessayer.",
       "retry": "Réessayer"
+    },
+    "preview": {
+      "title": "Preview des composants",
+      "description": "Prévisualisez l’impact des tokens résolus sur les composants principaux. Cette section se met à jour après sauvegarde des tokens.",
+      "modeLabel": "Mode du thème de preview",
+      "empty": "Aucun thème n’est disponible pour la preview.",
+      "components": {
+        "button": "Button",
+        "textField": "TextField",
+        "card": "Card",
+        "alert": "Alert"
+      },
+      "button": {
+        "primary": "Action principale",
+        "secondary": "Action secondaire"
+      },
+      "textField": {
+        "label": "Adresse email",
+        "placeholder": "hello@vulcanforge.dev",
+        "helper": "Le texte d’aide reste lisible avec le thème courant."
+      },
+      "card": {
+        "title": "Card de design system",
+        "description": "Les cards utilisent les tokens surface, contenu et texte secondaire pour structurer l’information.",
+        "cta": "Ouvrir la card"
+      },
+      "alert": {
+        "title": "Mise à jour de token disponible",
+        "description": "Les alertes utilisent les décisions de couleurs sémantiques tout en conservant une structure accessible."
+      }
     }
   },
   "TokensEditorPage": {
