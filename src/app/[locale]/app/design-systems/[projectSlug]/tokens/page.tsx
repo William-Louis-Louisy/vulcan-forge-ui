@@ -77,12 +77,21 @@ export default async function TokensEditorPage({
 
   return (
     <section className="mx-auto max-w-7xl">
-      <Link
-        href="/app/design-systems"
-        className="text-action-primary text-sm font-semibold"
-      >
-        {t('backLink')}
-      </Link>
+      <div className="flex flex-wrap gap-8">
+        <Link
+          href="/app/design-systems"
+          className="text-action-primary text-sm font-semibold"
+        >
+          {t('backLink')}
+        </Link>
+
+        <Link
+          href={`/app/design-systems/${pageData.project.slug}/themes`}
+          className="text-action-primary text-sm font-semibold"
+        >
+          {t('openThemesEditor')}
+        </Link>
+      </div>
 
       <div className="mt-8 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
