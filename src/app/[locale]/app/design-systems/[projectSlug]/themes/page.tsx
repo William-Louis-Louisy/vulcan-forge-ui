@@ -4,7 +4,12 @@ import { Link } from '@/i18n/navigation';
 import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
 import { routing, type Locale } from '@/i18n/routing';
+import { createPreviewThemes } from '@/features/themes/preview-panel.utils';
 import { getThemesEditorPageData } from '@/features/themes/themes-editor.queries';
+import {
+  PreviewPanel,
+  type PreviewPanelLabels,
+} from '@/features/themes/PreviewPanel';
 import { SemanticColorTokenAliasEditor } from '@/features/tokens/SemanticColorTokenAliasEditor';
 import {
   getThemeContrastPairs,
@@ -57,6 +62,12 @@ export default async function ThemesEditorPage({
   }
 
   const themes = sortThemesByMode(pageData.themes);
+
+  const previewThemes = createPreviewThemes({
+    themes,
+    colorTokenSetTokens: pageData.colorTokenSet?.tokens ?? [],
+  });
+
   const colorRowsResult = pageData.colorTokenSet
     ? createTokenRows(pageData.colorTokenSet.tokens)
     : {
@@ -102,6 +113,13 @@ export default async function ThemesEditorPage({
         <p className="text-content-secondary mt-4 max-w-3xl">
           {t('description')}
         </p>
+      </div>
+
+      <div className="mt-10">
+        <PreviewPanel
+          themes={previewThemes}
+          labels={createPreviewPanelLabels(t)}
+        />
       </div>
 
       <div className="mt-10 grid gap-6 lg:grid-cols-2">
@@ -360,4 +378,43 @@ function EmptyState({
       </p>
     </div>
   );
+}
+
+function createPreviewPanelLabels(
+  t: ThemesEditorTranslator,
+): PreviewPanelLabels {
+  return {
+    title: t('preview.title'),
+    description: t('preview.description'),
+    modeLabel: t('preview.modeLabel'),
+    modes: {
+      light: t('themes.light'),
+      dark: t('themes.dark'),
+    },
+    empty: t('preview.empty'),
+    components: {
+      button: t('preview.components.button'),
+      textField: t('preview.components.textField'),
+      card: t('preview.components.card'),
+      alert: t('preview.components.alert'),
+    },
+    button: {
+      primary: t('preview.button.primary'),
+      secondary: t('preview.button.secondary'),
+    },
+    textField: {
+      label: t('preview.textField.label'),
+      placeholder: t('preview.textField.placeholder'),
+      helper: t('preview.textField.helper'),
+    },
+    card: {
+      title: t('preview.card.title'),
+      description: t('preview.card.description'),
+      cta: t('preview.card.cta'),
+    },
+    alert: {
+      title: t('preview.alert.title'),
+      description: t('preview.alert.description'),
+    },
+  };
 }
