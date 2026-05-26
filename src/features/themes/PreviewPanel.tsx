@@ -1,5 +1,6 @@
 'use client';
 
+import { ThemeSwitcher } from './ThemeSwitcher';
 import type { ThemeMode } from './themes-editor.utils';
 import { useMemo, useState, type CSSProperties, type ReactNode } from 'react';
 import {
@@ -115,32 +116,15 @@ export function PreviewPanel({ themes, labels }: PreviewPanelProps) {
           </p>
         </div>
 
-        <div
-          role="group"
-          aria-label={labels.modeLabel}
-          className="border-border-subtle bg-background-subtle inline-flex rounded-2xl border p-1"
-        >
-          {themes.map((theme) => {
-            const isActive = theme.mode === activeMode;
-
-            return (
-              <button
-                key={theme.mode}
-                type="button"
-                aria-pressed={isActive}
-                onClick={() => setActiveMode(theme.mode)}
-                className={[
-                  'rounded-xl px-4 py-2 text-sm font-semibold transition',
-                  isActive
-                    ? 'bg-action-primary text-action-primary-content'
-                    : 'text-content-secondary hover:text-content-primary',
-                ].join(' ')}
-              >
-                {labels.modes[theme.mode]}
-              </button>
-            );
-          })}
-        </div>
+        <ThemeSwitcher
+          modes={themes.map((theme) => theme.mode)}
+          activeMode={activeMode}
+          labels={{
+            groupLabel: labels.modeLabel,
+            modes: labels.modes,
+          }}
+          onModeChange={setActiveMode}
+        />
       </div>
 
       <div
