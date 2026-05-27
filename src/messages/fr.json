@@ -1,5 +1,6 @@
 {
   "AccessibilityCenterPage": {
+    "openComponentsRegistry": "Ouvrir le registre de composants",
     "backToProjects": "Retour aux design systems",
     "openTokensEditor": "Ouvrir l’éditeur de tokens",
     "openThemesEditor": "Ouvrir l’éditeur de thèmes",
@@ -133,6 +134,74 @@
       "required": "Ce champ est obligatoire.",
       "invalidEmail": "L’adresse email est invalide.",
       "passwordMinLength": "Le mot de passe doit contenir au moins {min} caractères."
+    }
+  },
+  "ComponentsRegistryPage": {
+    "backToProjects": "Retour aux design systems",
+    "openTokensEditor": "Ouvrir l’éditeur de tokens",
+    "openThemesEditor": "Ouvrir l’éditeur de thèmes",
+    "openAccessibilityCenter": "Ouvrir le centre d’accessibilité",
+    "eyebrow": "Registre de composants",
+    "title": "Composants de {projectName}",
+    "description": "Consultez les contrats des composants MVP, leur statut, leurs plateformes et leur complétude documentaire.",
+    "invalidContractsWarning": "{count, plural, one {# contrat composant invalide a été ignoré.} other {# contrats composants invalides ont été ignorés.}}",
+    "list": {
+      "title": "Composants"
+    },
+    "statuses": {
+      "draft": "Brouillon",
+      "ready": "Prêt",
+      "deprecated": "Déprécié"
+    },
+    "categories": {
+      "action": "Action",
+      "input": "Saisie",
+      "layout": "Layout",
+      "feedback": "Feedback",
+      "overlay": "Overlay"
+    },
+    "platforms": {
+      "web": "Web",
+      "mobile": "Mobile"
+    },
+    "completeness": {
+      "label": "Complétude",
+      "title": "Warnings de complétude",
+      "completeMessage": "Ce contrat composant est complet pour le MVP.",
+      "levels": {
+        "complete": "Complet",
+        "partial": "Partiel",
+        "incomplete": "Incomplet"
+      }
+    },
+    "details": {
+      "anatomy": "Anatomie",
+      "variants": "Variantes",
+      "states": "États",
+      "accessibility": "Règles d’accessibilité",
+      "accessibilityRules": "Règles a11y",
+      "empty": "Aucun élément documenté pour le moment."
+    },
+    "severity": {
+      "info": "Info",
+      "warning": "Avertissement",
+      "critical": "Critique"
+    },
+    "missingFields": {
+      "purpose": "Purpose manquant",
+      "anatomy": "Anatomie manquante",
+      "variants": "Variantes manquantes",
+      "states": "États manquants",
+      "accessibility": "Règles d’accessibilité manquantes",
+      "forbiddenPatterns": "Patterns interdits manquants"
+    },
+    "states": {
+      "loading": "Chargement des composants...",
+      "emptyTitle": "Aucun contrat composant trouvé.",
+      "emptyDescription": "Ce projet ne contient pas encore de contrats composants.",
+      "errorTitle": "Impossible de charger les composants",
+      "errorDescription": "Une erreur est survenue pendant le chargement des composants de ce projet. Veuillez réessayer.",
+      "retry": "Réessayer"
     }
   },
   "CreateDesignSystemPage": {
@@ -568,6 +637,7 @@
     }
   },
   "ThemesEditorPage": {
+    "openComponentsRegistry": "Ouvrir le registre de composants",
     "backToProjects": "Retour aux design systems",
     "openTokensEditor": "Ouvrir l’éditeur de tokens",
     "eyebrow": "Éditeur de thèmes",
@@ -644,6 +714,7 @@
     }
   },
   "TokensEditorPage": {
+    "openComponentsRegistry": "Ouvrir le registre de composants",
     "backLink": "Retour aux design systems",
     "eyebrow": "Éditeur de tokens",
     "title": "Tokens de {projectName}",

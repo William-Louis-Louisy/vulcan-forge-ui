@@ -1,5 +1,6 @@
 {
   "AccessibilityCenterPage": {
+    "openComponentsRegistry": "Open components registry",
     "backToProjects": "Back to design systems",
     "openTokensEditor": "Open tokens editor",
     "openThemesEditor": "Open themes editor",
@@ -133,6 +134,74 @@
       "required": "This field is required.",
       "invalidEmail": "The email address is invalid.",
       "passwordMinLength": "Password must contain at least {min} characters."
+    }
+  },
+  "ComponentsRegistryPage": {
+    "backToProjects": "Back to design systems",
+    "openTokensEditor": "Open tokens editor",
+    "openThemesEditor": "Open themes editor",
+    "openAccessibilityCenter": "Open accessibility center",
+    "eyebrow": "Components registry",
+    "title": "{projectName} components",
+    "description": "Review MVP component contracts, their status, platforms and documentation completeness.",
+    "invalidContractsWarning": "{count, plural, one {# invalid component contract was ignored.} other {# invalid component contracts were ignored.}}",
+    "list": {
+      "title": "Components"
+    },
+    "statuses": {
+      "draft": "Draft",
+      "ready": "Ready",
+      "deprecated": "Deprecated"
+    },
+    "categories": {
+      "action": "Action",
+      "input": "Input",
+      "layout": "Layout",
+      "feedback": "Feedback",
+      "overlay": "Overlay"
+    },
+    "platforms": {
+      "web": "Web",
+      "mobile": "Mobile"
+    },
+    "completeness": {
+      "label": "Completeness",
+      "title": "Completeness warnings",
+      "completeMessage": "This component contract is complete for the MVP.",
+      "levels": {
+        "complete": "Complete",
+        "partial": "Partial",
+        "incomplete": "Incomplete"
+      }
+    },
+    "details": {
+      "anatomy": "Anatomy",
+      "variants": "Variants",
+      "states": "States",
+      "accessibility": "Accessibility rules",
+      "accessibilityRules": "A11y rules",
+      "empty": "No item documented yet."
+    },
+    "severity": {
+      "info": "Info",
+      "warning": "Warning",
+      "critical": "Critical"
+    },
+    "missingFields": {
+      "purpose": "Missing purpose",
+      "anatomy": "Missing anatomy",
+      "variants": "Missing variants",
+      "states": "Missing states",
+      "accessibility": "Missing accessibility rules",
+      "forbiddenPatterns": "Missing forbidden patterns"
+    },
+    "states": {
+      "loading": "Loading components...",
+      "emptyTitle": "No component contract found.",
+      "emptyDescription": "This project does not contain component contracts yet.",
+      "errorTitle": "Unable to load components",
+      "errorDescription": "Something went wrong while loading this project's components. Please try again.",
+      "retry": "Retry"
     }
   },
   "CreateDesignSystemPage": {
@@ -571,6 +640,7 @@
     }
   },
   "ThemesEditorPage": {
+    "openComponentsRegistry": "Open components registry",
     "backToProjects": "Back to design systems",
     "openTokensEditor": "Open tokens editor",
     "eyebrow": "Themes editor",
@@ -647,6 +717,7 @@
     }
   },
   "TokensEditorPage": {
+    "openComponentsRegistry": "Open components registry",
     "backLink": "Back to design systems",
     "eyebrow": "Tokens editor",
     "title": "{projectName} tokens",
