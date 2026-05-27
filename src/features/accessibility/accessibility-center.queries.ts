@@ -10,6 +10,13 @@ export type AccessibilityCenterPageData = {
     id: string;
     tokens: unknown;
   } | null;
+  latestAccessibilityReport: {
+    id: string;
+    status: 'pass' | 'warning' | 'fail';
+    score: number;
+    issues: unknown;
+    createdAt: Date;
+  } | null;
 };
 
 export async function getAccessibilityCenterPageData({
@@ -44,6 +51,19 @@ export async function getAccessibilityCenterPageData({
         },
         take: 1,
       },
+      accessibilityReports: {
+        orderBy: {
+          createdAt: 'desc',
+        },
+        select: {
+          id: true,
+          status: true,
+          score: true,
+          issues: true,
+          createdAt: true,
+        },
+        take: 1,
+      },
     },
   });
 
@@ -58,5 +78,6 @@ export async function getAccessibilityCenterPageData({
       slug: project.slug,
     },
     colorTokenSet: project.tokenSets[0] ?? null,
+    latestAccessibilityReport: project.accessibilityReports[0] ?? null,
   };
 }
