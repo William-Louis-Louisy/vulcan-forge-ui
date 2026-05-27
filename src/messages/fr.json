@@ -67,6 +67,32 @@
       "errorTitle": "Impossible de charger les vérifications d’accessibilité",
       "errorDescription": "Une erreur est survenue pendant le chargement du centre d’accessibilité de ce projet. Veuillez réessayer.",
       "retry": "Réessayer"
+    },
+    "saveReport": {
+      "title": "Sauvegarder le rapport actuel",
+      "description": "Persistez le rapport d’accessibilité automatisé courant afin de suivre son évolution dans le temps.",
+      "action": "Sauvegarder le rapport",
+      "saving": "Sauvegarde...",
+      "success": "Rapport sauvegardé avec un score de {score}/100 et le statut {status}.",
+      "errors": {
+        "unauthorized": "Vous devez être connecté pour sauvegarder ce rapport.",
+        "projectNotFound": "Projet introuvable.",
+        "colorTokenSetNotFound": "Token set de couleurs introuvable.",
+        "unexpected": "Impossible de sauvegarder ce rapport. Veuillez réessayer."
+      }
+    },
+    "latestReport": {
+      "title": "Dernier rapport sauvegardé",
+      "description": "Voici le dernier rapport d’accessibilité automatisé persisté pour ce projet.",
+      "empty": "Aucun rapport d’accessibilité n’a encore été sauvegardé.",
+      "score": "Score",
+      "status": "Statut",
+      "savedAt": "Sauvegardé le",
+      "statuses": {
+        "pass": "Réussi",
+        "warning": "Avertissement",
+        "fail": "Échec"
+      }
     }
   },
   "AppPage": {

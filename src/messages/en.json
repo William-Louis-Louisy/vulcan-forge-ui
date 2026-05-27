@@ -67,6 +67,32 @@
       "errorTitle": "Unable to load accessibility checks",
       "errorDescription": "Something went wrong while loading this project's accessibility center. Please try again.",
       "retry": "Retry"
+    },
+    "saveReport": {
+      "title": "Save current report",
+      "description": "Persist the current automated accessibility report so it can be tracked over time.",
+      "action": "Save report",
+      "saving": "Saving...",
+      "success": "Report saved with score {score}/100 and status {status}.",
+      "errors": {
+        "unauthorized": "You must be signed in to save this report.",
+        "projectNotFound": "Project not found.",
+        "colorTokenSetNotFound": "Color token set not found.",
+        "unexpected": "Unable to save this report. Please try again."
+      }
+    },
+    "latestReport": {
+      "title": "Latest saved report",
+      "description": "This is the latest persisted automated accessibility report for this project.",
+      "empty": "No accessibility report has been saved yet.",
+      "score": "Score",
+      "status": "Status",
+      "savedAt": "Saved at",
+      "statuses": {
+        "pass": "Pass",
+        "warning": "Warning",
+        "fail": "Fail"
+      }
     }
   },
   "AppPage": {

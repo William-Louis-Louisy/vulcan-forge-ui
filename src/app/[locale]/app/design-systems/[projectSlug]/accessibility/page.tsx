@@ -4,6 +4,7 @@ import { Link } from '@/i18n/navigation';
 import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
 import { routing, type Locale } from '@/i18n/routing';
+import { SaveAccessibilityReportButton } from '@/features/accessibility/SaveAccessibilityReportButton';
 import { getAccessibilityCenterPageData } from '@/features/accessibility/accessibility-center.queries';
 import {
   createAccessibilityCenterReport,
@@ -106,6 +107,18 @@ export default async function AccessibilityCenterPage({
           {t('auditNotice.title')}
         </strong>{' '}
         {t('auditNotice.description')}
+      </div>
+
+      <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+        <SaveAccessibilityReportButton
+          locale={locale}
+          projectSlug={pageData.project.slug}
+        />
+
+        <LatestAccessibilityReportCard
+          t={t}
+          latestReport={pageData.latestAccessibilityReport}
+        />
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
@@ -419,5 +432,68 @@ function ColorValue({ label, value }: { label: string; value: string | null }) {
         </span>
       </div>
     </div>
+  );
+}
+
+function LatestAccessibilityReportCard({
+  t,
+  latestReport,
+}: {
+  t: AccessibilityCenterTranslator;
+  latestReport: {
+    id: string;
+    status: 'pass' | 'warning' | 'fail';
+    score: number;
+    issues: unknown;
+    createdAt: Date;
+  } | null;
+}) {
+  return (
+    <article className="border-border-subtle bg-surface-primary shadow-soft rounded-3xl border p-5">
+      <h2 className="text-xl font-semibold tracking-tight">
+        {t('latestReport.title')}
+      </h2>
+
+      {latestReport ? (
+        <div className="mt-4 grid gap-3">
+          <p className="text-content-secondary text-sm">
+            {t('latestReport.description')}
+          </p>
+
+          <div className="grid grid-cols-3 gap-3">
+            <div className="border-border-subtle bg-background-subtle rounded-2xl border p-3">
+              <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
+                {t('latestReport.score')}
+              </p>
+              <p className="mt-2 text-2xl font-semibold">
+                {latestReport.score}
+              </p>
+            </div>
+
+            <div className="border-border-subtle bg-background-subtle rounded-2xl border p-3">
+              <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
+                {t('latestReport.status')}
+              </p>
+              <p className="mt-2 text-sm font-semibold">
+                {t(`latestReport.statuses.${latestReport.status}`)}
+              </p>
+            </div>
+
+            <div className="border-border-subtle bg-background-subtle rounded-2xl border p-3">
+              <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
+                {t('latestReport.savedAt')}
+              </p>
+              <p className="mt-2 text-sm font-semibold">
+                {latestReport.createdAt.toLocaleDateString()}
+              </p>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <p className="text-content-secondary mt-4 text-sm leading-6">
+          {t('latestReport.empty')}
+        </p>
+      )}
+    </article>
   );
 }
