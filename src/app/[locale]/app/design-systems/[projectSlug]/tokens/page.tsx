@@ -91,6 +91,13 @@ export default async function TokensEditorPage({
         >
           {t('openThemesEditor')}
         </Link>
+
+        <Link
+          href={`/app/design-systems/${pageData.project.slug}/accessibility`}
+          className="text-action-primary text-sm font-semibold"
+        >
+          {t('openAccessibilityCenter')}
+        </Link>
       </div>
 
       <div className="mt-8 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">

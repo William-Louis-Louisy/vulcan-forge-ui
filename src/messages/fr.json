@@ -1,4 +1,74 @@
 {
+  "AccessibilityCenterPage": {
+    "backToProjects": "Retour aux design systems",
+    "openTokensEditor": "Ouvrir l’éditeur de tokens",
+    "openThemesEditor": "Ouvrir l’éditeur de thèmes",
+    "eyebrow": "Centre d’accessibilité",
+    "title": "Accessibilité de {projectName}",
+    "description": "Consultez les problèmes d’accessibilité détectés et les paires de contraste clés de ce design system.",
+    "auditNotice": {
+      "title": "Important :",
+      "description": "Cet outil fournit des vérifications assistées et ne remplace pas un audit d’accessibilité manuel complet."
+    },
+    "score": {
+      "eyebrow": "Score indicatif",
+      "description": "Ce score est calculé à partir de vérifications automatisées et doit être considéré comme un signal produit, pas comme une certification.",
+      "totalIssues": "Issues totales",
+      "criticalIssues": "Issues critiques",
+      "status": {
+        "healthy": "Sain",
+        "needsAttention": "À surveiller",
+        "critical": "Critique"
+      }
+    },
+    "severity": {
+      "warning": "Avertissement",
+      "critical": "Critique"
+    },
+    "issues": {
+      "eyebrow": "Issues détectées",
+      "title": "Problèmes à corriger",
+      "count": "{count, plural, =0 {Aucune issue} one {# issue} other {# issues}}",
+      "emptyTitle": "Aucune issue détectée.",
+      "emptyDescription": "Aucune issue automatique n’a été détectée pour les paires de contraste clés actuelles.",
+      "codes": {
+        "missingForegroundColor": "Couleur de premier plan manquante",
+        "missingBackgroundColor": "Couleur d’arrière-plan manquante",
+        "contrastWarning": "Avertissement de contraste",
+        "contrastFail": "Échec de contraste",
+        "tokenResolutionError": "Erreur de résolution de token",
+        "invalidColorTokenSet": "Token set de couleurs invalide"
+      },
+      "fixes": {
+        "missingForegroundColor": "Ajoutez ou mappez le token sémantique de premier plan utilisé par cette paire de contraste.",
+        "missingBackgroundColor": "Ajoutez ou mappez le token sémantique d’arrière-plan utilisé par cette paire de contraste.",
+        "contrastWarning": "Vérifiez cette paire de couleurs. Elle peut être insuffisante pour du texte normal.",
+        "contrastFail": "Augmentez le contraste en modifiant le premier plan, l’arrière-plan ou l’alias sémantique.",
+        "tokenResolutionError": "Corrigez l’alias du token afin qu’il pointe vers un token existant sans créer de cycle.",
+        "invalidColorTokenSet": "Réparez le JSON du token set de couleurs avant de lancer les vérifications d’accessibilité."
+      }
+    },
+    "pairs": {
+      "title": "Paires de contraste clés",
+      "description": "Voici les combinaisons de contraste MVP vérifiées automatiquement.",
+      "foreground": "Premier plan",
+      "background": "Arrière-plan",
+      "ratio": "Ratio {ratio}:1 — requis {required}:1",
+      "noRatio": "Aucun ratio disponible.",
+      "contentPrimaryOnAppBackground": "Contenu principal sur fond applicatif",
+      "contentSecondaryOnAppBackground": "Contenu secondaire sur fond applicatif",
+      "contentPrimaryOnPrimarySurface": "Contenu principal sur surface principale",
+      "contentSecondaryOnPrimarySurface": "Contenu secondaire sur surface principale",
+      "contentInverseOnPrimaryAction": "Contenu inversé sur action principale",
+      "dangerTextOnPrimarySurface": "Texte danger sur surface principale"
+    },
+    "states": {
+      "loading": "Chargement des vérifications d’accessibilité...",
+      "errorTitle": "Impossible de charger les vérifications d’accessibilité",
+      "errorDescription": "Une erreur est survenue pendant le chargement du centre d’accessibilité de ce projet. Veuillez réessayer.",
+      "retry": "Réessayer"
+    }
+  },
   "AppPage": {
     "eyebrow": "Espace de travail",
     "title": "Tableau de bord",
@@ -477,6 +547,7 @@
     "eyebrow": "Éditeur de thèmes",
     "title": "Thèmes de {projectName}",
     "description": "Gérez les thèmes light et dark, mappez les tokens couleur sémantiques et consultez les paires de couleurs clés utilisées par les previews.",
+    "openAccessibilityCenter": "Ouvrir le centre d’accessibilité",
     "themes": {
       "light": "Thème light",
       "dark": "Thème dark",
@@ -551,6 +622,7 @@
     "eyebrow": "Éditeur de tokens",
     "title": "Tokens de {projectName}",
     "description": "Consultez les token sets générés pour ce design system. L’édition arrivera dans les prochains tickets tokens.",
+    "openAccessibilityCenter": "Ouvrir le centre d’accessibilité",
     "tabs": {
       "label": "Onglets des token sets",
       "color": "Couleurs",

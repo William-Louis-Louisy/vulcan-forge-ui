@@ -12,17 +12,17 @@ import {
 } from '@/features/themes/PreviewPanel';
 import { SemanticColorTokenAliasEditor } from '@/features/tokens/SemanticColorTokenAliasEditor';
 import {
-  getThemeContrastPairs,
   sortThemesByMode,
+  getThemeContrastPairs,
   type ThemeColorPair,
   type ThemeEditorTheme,
 } from '@/features/themes/themes-editor.utils';
 import {
   createTokenRows,
-  getPrimitiveColorTokenAliasOptions,
-  getResolvedColorValueForReference,
-  isEditableSemanticColorTokenRow,
   tokenReferenceToPath,
+  isEditableSemanticColorTokenRow,
+  getResolvedColorValueForReference,
+  getPrimitiveColorTokenAliasOptions,
 } from '@/features/tokens/tokens-editor.utils';
 
 type ThemesEditorPageProps = {
@@ -98,6 +98,13 @@ export default async function ThemesEditorPage({
           className="text-action-primary text-sm font-semibold"
         >
           {t('openTokensEditor')}
+        </Link>
+
+        <Link
+          href={`/app/design-systems/${pageData.project.slug}/accessibility`}
+          className="text-action-primary text-sm font-semibold"
+        >
+          {t('openAccessibilityCenter')}
         </Link>
       </div>
 

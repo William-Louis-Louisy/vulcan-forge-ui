@@ -1,4 +1,74 @@
 {
+  "AccessibilityCenterPage": {
+    "backToProjects": "Back to design systems",
+    "openTokensEditor": "Open tokens editor",
+    "openThemesEditor": "Open themes editor",
+    "eyebrow": "Accessibility Center",
+    "title": "{projectName} accessibility",
+    "description": "Review detected accessibility issues and key contrast pairs for this design system.",
+    "auditNotice": {
+      "title": "Important:",
+      "description": "This tool provides assisted checks and does not replace a complete manual accessibility audit."
+    },
+    "score": {
+      "eyebrow": "Indicative score",
+      "description": "This score is calculated from automated checks and should be treated as a product signal, not a certification.",
+      "totalIssues": "Total issues",
+      "criticalIssues": "Critical issues",
+      "status": {
+        "healthy": "Healthy",
+        "needsAttention": "Needs attention",
+        "critical": "Critical"
+      }
+    },
+    "severity": {
+      "warning": "Warning",
+      "critical": "Critical"
+    },
+    "issues": {
+      "eyebrow": "Detected issues",
+      "title": "Issues to review",
+      "count": "{count, plural, =0 {No issue} one {# issue} other {# issues}}",
+      "emptyTitle": "No issue detected.",
+      "emptyDescription": "No automated issue was detected for the current key contrast checks.",
+      "codes": {
+        "missingForegroundColor": "Missing foreground color",
+        "missingBackgroundColor": "Missing background color",
+        "contrastWarning": "Contrast warning",
+        "contrastFail": "Contrast failure",
+        "tokenResolutionError": "Token resolution error",
+        "invalidColorTokenSet": "Invalid color token set"
+      },
+      "fixes": {
+        "missingForegroundColor": "Add or map the foreground semantic token used by this contrast pair.",
+        "missingBackgroundColor": "Add or map the background semantic token used by this contrast pair.",
+        "contrastWarning": "Review this color pair. It may not be strong enough for normal text.",
+        "contrastFail": "Increase contrast by changing the foreground, background or semantic alias.",
+        "tokenResolutionError": "Fix the token alias so it points to an existing token and does not create a cycle.",
+        "invalidColorTokenSet": "Repair the color token set JSON before running accessibility checks."
+      }
+    },
+    "pairs": {
+      "title": "Key contrast pairs",
+      "description": "These are the MVP contrast combinations checked automatically.",
+      "foreground": "Foreground",
+      "background": "Background",
+      "ratio": "Ratio {ratio}:1 — required {required}:1",
+      "noRatio": "No ratio available.",
+      "contentPrimaryOnAppBackground": "Primary content on app background",
+      "contentSecondaryOnAppBackground": "Secondary content on app background",
+      "contentPrimaryOnPrimarySurface": "Primary content on primary surface",
+      "contentSecondaryOnPrimarySurface": "Secondary content on primary surface",
+      "contentInverseOnPrimaryAction": "Inverse content on primary action",
+      "dangerTextOnPrimarySurface": "Danger text on primary surface"
+    },
+    "states": {
+      "loading": "Loading accessibility checks...",
+      "errorTitle": "Unable to load accessibility checks",
+      "errorDescription": "Something went wrong while loading this project's accessibility center. Please try again.",
+      "retry": "Retry"
+    }
+  },
   "AppPage": {
     "eyebrow": "Workspace",
     "title": "Dashboard",
@@ -480,6 +550,7 @@
     "eyebrow": "Themes editor",
     "title": "{projectName} themes",
     "description": "Manage light and dark themes, map semantic color tokens and review the key color pairs used by previews.",
+    "openAccessibilityCenter": "Open accessibility center",
     "themes": {
       "light": "Light theme",
       "dark": "Dark theme",
@@ -554,6 +625,7 @@
     "eyebrow": "Tokens editor",
     "title": "{projectName} tokens",
     "description": "Review the token sets generated for this design system. Editing will be introduced in the next token tickets.",
+    "openAccessibilityCenter": "Open accessibility center",
     "tabs": {
       "label": "Token set tabs",
       "color": "Color",
