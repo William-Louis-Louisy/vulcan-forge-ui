@@ -86,6 +86,13 @@ export default async function AccessibilityCenterPage({
         >
           {t('openThemesEditor')}
         </Link>
+
+        <Link
+          href={`/app/design-systems/${pageData.project.slug}/components`}
+          className="text-action-primary text-sm font-semibold"
+        >
+          {t('openComponentsRegistry')}
+        </Link>
       </div>
 
       <div className="mt-8">

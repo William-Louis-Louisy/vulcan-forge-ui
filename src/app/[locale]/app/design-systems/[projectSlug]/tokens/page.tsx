@@ -98,6 +98,13 @@ export default async function TokensEditorPage({
         >
           {t('openAccessibilityCenter')}
         </Link>
+
+        <Link
+          href={`/app/design-systems/${pageData.project.slug}/components`}
+          className="text-action-primary text-sm font-semibold"
+        >
+          {t('openComponentsRegistry')}
+        </Link>
       </div>
 
       <div className="mt-8 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
