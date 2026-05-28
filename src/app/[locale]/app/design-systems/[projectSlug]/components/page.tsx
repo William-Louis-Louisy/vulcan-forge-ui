@@ -11,6 +11,10 @@ import {
   createComponentRegistryItems,
   type ComponentRegistryItem,
 } from '@/features/components/components-registry.utils';
+import {
+  ComponentContractEditor,
+  type ComponentContractEditorLabels,
+} from '@/features/components/ComponentContractEditor';
 
 type ComponentsRegistryPageProps = {
   params: Promise<{
@@ -353,6 +357,13 @@ function ComponentDetails({
           </p>
         )}
       </Section>
+
+      <Section title={t('editor.sectionTitle')}>
+        <ComponentContractEditor
+          contract={component.contract}
+          labels={createComponentContractEditorLabels(t)}
+        />
+      </Section>
     </article>
   );
 }
@@ -427,4 +438,65 @@ function EmptyState({
       </p>
     </div>
   );
+}
+
+function createComponentContractEditorLabels(
+  t: ComponentsRegistryTranslator,
+): ComponentContractEditorLabels {
+  return {
+    title: t('editor.title'),
+    description: t('editor.description'),
+    unsavedNotice: t('editor.unsavedNotice'),
+    validationTitle: t('editor.validationTitle'),
+    saveUnavailable: t('editor.saveUnavailable'),
+    basics: {
+      title: t('editor.basics.title'),
+      name: t('editor.basics.name'),
+      status: t('editor.basics.status'),
+      purposeEn: t('editor.basics.purposeEn'),
+      purposeFr: t('editor.basics.purposeFr'),
+    },
+    anatomy: {
+      title: t('editor.anatomy.title'),
+      description: t('editor.anatomy.description'),
+      add: t('editor.anatomy.add'),
+    },
+    variants: {
+      title: t('editor.variants.title'),
+      add: t('editor.variants.add'),
+    },
+    states: {
+      title: t('editor.states.title'),
+      add: t('editor.states.add'),
+    },
+    accessibility: {
+      title: t('editor.accessibility.title'),
+      add: t('editor.accessibility.add'),
+      severity: t('editor.accessibility.severity'),
+    },
+    forbiddenPatterns: {
+      title: t('editor.forbiddenPatterns.title'),
+      add: t('editor.forbiddenPatterns.add'),
+    },
+    fields: {
+      key: t('editor.fields.key'),
+      labelEn: t('editor.fields.labelEn'),
+      labelFr: t('editor.fields.labelFr'),
+      descriptionEn: t('editor.fields.descriptionEn'),
+      descriptionFr: t('editor.fields.descriptionFr'),
+      patternEn: t('editor.fields.patternEn'),
+      patternFr: t('editor.fields.patternFr'),
+      remove: t('editor.fields.remove'),
+    },
+    statuses: {
+      draft: t('statuses.draft'),
+      ready: t('statuses.ready'),
+      deprecated: t('statuses.deprecated'),
+    },
+    severities: {
+      info: t('severity.info'),
+      warning: t('severity.warning'),
+      critical: t('severity.critical'),
+    },
+  };
 }

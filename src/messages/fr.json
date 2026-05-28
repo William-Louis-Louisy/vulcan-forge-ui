@@ -1,463 +1,507 @@
 {
   "AccessibilityCenterPage": {
-    "openComponentsRegistry": "Ouvrir le registre de composants",
-    "backToProjects": "Retour aux design systems",
-    "openTokensEditor": "Ouvrir l’éditeur de tokens",
-    "openThemesEditor": "Ouvrir l’éditeur de thèmes",
-    "eyebrow": "Centre d’accessibilité",
-    "title": "Accessibilité de {projectName}",
-    "description": "Consultez les problèmes d’accessibilité détectés et les paires de contraste clés de ce design system.",
     "auditNotice": {
-      "title": "Important :",
-      "description": "Cet outil fournit des vérifications assistées et ne remplace pas un audit d’accessibilité manuel complet."
+      "description": "Cet outil fournit des vérifications assistées et ne remplace pas un audit d’accessibilité manuel complet.",
+      "title": "Important :"
     },
-    "score": {
-      "eyebrow": "Score indicatif",
-      "description": "Ce score est calculé à partir de vérifications automatisées et doit être considéré comme un signal produit, pas comme une certification.",
-      "totalIssues": "Issues totales",
-      "criticalIssues": "Issues critiques",
-      "status": {
-        "healthy": "Sain",
-        "needsAttention": "À surveiller",
-        "critical": "Critique"
-      }
-    },
-    "severity": {
-      "warning": "Avertissement",
-      "critical": "Critique"
-    },
+    "backToProjects": "Retour aux design systems",
+    "description": "Consultez les problèmes d’accessibilité détectés et les paires de contraste clés de ce design system.",
+    "eyebrow": "Centre d’accessibilité",
     "issues": {
-      "eyebrow": "Issues détectées",
-      "title": "Problèmes à corriger",
-      "count": "{count, plural, =0 {Aucune issue} one {# issue} other {# issues}}",
-      "emptyTitle": "Aucune issue détectée.",
-      "emptyDescription": "Aucune issue automatique n’a été détectée pour les paires de contraste clés actuelles.",
       "codes": {
-        "missingForegroundColor": "Couleur de premier plan manquante",
-        "missingBackgroundColor": "Couleur d’arrière-plan manquante",
-        "contrastWarning": "Avertissement de contraste",
         "contrastFail": "Échec de contraste",
-        "tokenResolutionError": "Erreur de résolution de token",
-        "invalidColorTokenSet": "Token set de couleurs invalide"
+        "contrastWarning": "Avertissement de contraste",
+        "invalidColorTokenSet": "Token set de couleurs invalide",
+        "missingBackgroundColor": "Couleur d’arrière-plan manquante",
+        "missingForegroundColor": "Couleur de premier plan manquante",
+        "tokenResolutionError": "Erreur de résolution de token"
       },
+      "count": "{count, plural, =0 {Aucune issue} one {# issue} other {# issues}}",
+      "emptyDescription": "Aucune issue automatique n’a été détectée pour les paires de contraste clés actuelles.",
+      "emptyTitle": "Aucune issue détectée.",
+      "eyebrow": "Issues détectées",
       "fixes": {
-        "missingForegroundColor": "Ajoutez ou mappez le token sémantique de premier plan utilisé par cette paire de contraste.",
-        "missingBackgroundColor": "Ajoutez ou mappez le token sémantique d’arrière-plan utilisé par cette paire de contraste.",
-        "contrastWarning": "Vérifiez cette paire de couleurs. Elle peut être insuffisante pour du texte normal.",
         "contrastFail": "Augmentez le contraste en modifiant le premier plan, l’arrière-plan ou l’alias sémantique.",
-        "tokenResolutionError": "Corrigez l’alias du token afin qu’il pointe vers un token existant sans créer de cycle.",
-        "invalidColorTokenSet": "Réparez le JSON du token set de couleurs avant de lancer les vérifications d’accessibilité."
-      }
-    },
-    "pairs": {
-      "title": "Paires de contraste clés",
-      "description": "Voici les combinaisons de contraste MVP vérifiées automatiquement.",
-      "foreground": "Premier plan",
-      "background": "Arrière-plan",
-      "ratio": "Ratio {ratio}:1 — requis {required}:1",
-      "noRatio": "Aucun ratio disponible.",
-      "contentPrimaryOnAppBackground": "Contenu principal sur fond applicatif",
-      "contentSecondaryOnAppBackground": "Contenu secondaire sur fond applicatif",
-      "contentPrimaryOnPrimarySurface": "Contenu principal sur surface principale",
-      "contentSecondaryOnPrimarySurface": "Contenu secondaire sur surface principale",
-      "contentInverseOnPrimaryAction": "Contenu inversé sur action principale",
-      "dangerTextOnPrimarySurface": "Texte danger sur surface principale"
-    },
-    "states": {
-      "loading": "Chargement des vérifications d’accessibilité...",
-      "errorTitle": "Impossible de charger les vérifications d’accessibilité",
-      "errorDescription": "Une erreur est survenue pendant le chargement du centre d’accessibilité de ce projet. Veuillez réessayer.",
-      "retry": "Réessayer"
-    },
-    "saveReport": {
-      "title": "Sauvegarder le rapport actuel",
-      "description": "Persistez le rapport d’accessibilité automatisé courant afin de suivre son évolution dans le temps.",
-      "action": "Sauvegarder le rapport",
-      "saving": "Sauvegarde...",
-      "success": "Rapport sauvegardé avec un score de {score}/100 et le statut {status}.",
-      "errors": {
-        "unauthorized": "Vous devez être connecté pour sauvegarder ce rapport.",
-        "projectNotFound": "Projet introuvable.",
-        "colorTokenSetNotFound": "Token set de couleurs introuvable.",
-        "unexpected": "Impossible de sauvegarder ce rapport. Veuillez réessayer."
-      }
+        "contrastWarning": "Vérifiez cette paire de couleurs. Elle peut être insuffisante pour du texte normal.",
+        "invalidColorTokenSet": "Réparez le JSON du token set de couleurs avant de lancer les vérifications d’accessibilité.",
+        "missingBackgroundColor": "Ajoutez ou mappez le token sémantique d’arrière-plan utilisé par cette paire de contraste.",
+        "missingForegroundColor": "Ajoutez ou mappez le token sémantique de premier plan utilisé par cette paire de contraste.",
+        "tokenResolutionError": "Corrigez l’alias du token afin qu’il pointe vers un token existant sans créer de cycle."
+      },
+      "title": "Problèmes à corriger"
     },
     "latestReport": {
-      "title": "Dernier rapport sauvegardé",
       "description": "Voici le dernier rapport d’accessibilité automatisé persisté pour ce projet.",
       "empty": "Aucun rapport d’accessibilité n’a encore été sauvegardé.",
+      "savedAt": "Sauvegardé le",
       "score": "Score",
       "status": "Statut",
-      "savedAt": "Sauvegardé le",
       "statuses": {
+        "fail": "Échec",
         "pass": "Réussi",
-        "warning": "Avertissement",
-        "fail": "Échec"
-      }
-    }
+        "warning": "Avertissement"
+      },
+      "title": "Dernier rapport sauvegardé"
+    },
+    "openComponentsRegistry": "Ouvrir le registre de composants",
+    "openThemesEditor": "Ouvrir l’éditeur de thèmes",
+    "openTokensEditor": "Ouvrir l’éditeur de tokens",
+    "pairs": {
+      "background": "Arrière-plan",
+      "contentInverseOnPrimaryAction": "Contenu inversé sur action principale",
+      "contentPrimaryOnAppBackground": "Contenu principal sur fond applicatif",
+      "contentPrimaryOnPrimarySurface": "Contenu principal sur surface principale",
+      "contentSecondaryOnAppBackground": "Contenu secondaire sur fond applicatif",
+      "contentSecondaryOnPrimarySurface": "Contenu secondaire sur surface principale",
+      "dangerTextOnPrimarySurface": "Texte danger sur surface principale",
+      "description": "Voici les combinaisons de contraste MVP vérifiées automatiquement.",
+      "foreground": "Premier plan",
+      "noRatio": "Aucun ratio disponible.",
+      "ratio": "Ratio {ratio}:1 — requis {required}:1",
+      "title": "Paires de contraste clés"
+    },
+    "saveReport": {
+      "action": "Sauvegarder le rapport",
+      "description": "Persistez le rapport d’accessibilité automatisé courant afin de suivre son évolution dans le temps.",
+      "errors": {
+        "colorTokenSetNotFound": "Token set de couleurs introuvable.",
+        "projectNotFound": "Projet introuvable.",
+        "unauthorized": "Vous devez être connecté pour sauvegarder ce rapport.",
+        "unexpected": "Impossible de sauvegarder ce rapport. Veuillez réessayer."
+      },
+      "saving": "Sauvegarde...",
+      "success": "Rapport sauvegardé avec un score de {score}/100 et le statut {status}.",
+      "title": "Sauvegarder le rapport actuel"
+    },
+    "score": {
+      "criticalIssues": "Issues critiques",
+      "description": "Ce score est calculé à partir de vérifications automatisées et doit être considéré comme un signal produit, pas comme une certification.",
+      "eyebrow": "Score indicatif",
+      "status": {
+        "critical": "Critique",
+        "healthy": "Sain",
+        "needsAttention": "À surveiller"
+      },
+      "totalIssues": "Issues totales"
+    },
+    "severity": {
+      "critical": "Critique",
+      "warning": "Avertissement"
+    },
+    "states": {
+      "errorDescription": "Une erreur est survenue pendant le chargement du centre d’accessibilité de ce projet. Veuillez réessayer.",
+      "errorTitle": "Impossible de charger les vérifications d’accessibilité",
+      "loading": "Chargement des vérifications d’accessibilité...",
+      "retry": "Réessayer"
+    },
+    "title": "Accessibilité de {projectName}"
   },
   "AppPage": {
     "eyebrow": "Espace de travail",
-    "title": "Tableau de bord",
     "signedInAs": "Connecté avec {email}.",
+    "title": "Tableau de bord",
     "unknownUser": "utilisateur inconnu"
   },
   "AppShell": {
-    "navigationLabel": "Navigation de l’application",
+    "account": "Compte",
     "navigationItems": {
       "dashboard": "Tableau de bord",
       "designSystems": "Design systems"
     },
-    "account": "Compte",
+    "navigationLabel": "Navigation de l’application",
     "signedInAs": "Connecté avec",
     "unknownUser": "utilisateur inconnu"
   },
   "Common": {
     "actions": {
+      "backToHome": "Retour à l’accueil",
       "cancel": "Annuler",
       "continue": "Continuer",
-      "create": "Créer",
-      "save": "Enregistrer",
       "copy": "Copier",
+      "create": "Créer",
       "download": "Télécharger",
       "retry": "Réessayer",
-      "backToHome": "Retour à l’accueil"
+      "save": "Enregistrer"
     },
     "states": {
-      "loading": "Chargement...",
-      "saving": "Enregistrement...",
-      "saved": "Enregistré",
+      "empty": "Aucune donnée pour le moment.",
       "error": "Une erreur est survenue.",
-      "empty": "Aucune donnée pour le moment."
+      "loading": "Chargement...",
+      "saved": "Enregistré",
+      "saving": "Enregistrement..."
     },
     "validation": {
-      "required": "Ce champ est obligatoire.",
       "invalidEmail": "L’adresse email est invalide.",
-      "passwordMinLength": "Le mot de passe doit contenir au moins {min} caractères."
+      "passwordMinLength": "Le mot de passe doit contenir au moins {min} caractères.",
+      "required": "Ce champ est obligatoire."
     }
   },
   "ComponentsRegistryPage": {
     "backToProjects": "Retour aux design systems",
-    "openTokensEditor": "Ouvrir l’éditeur de tokens",
-    "openThemesEditor": "Ouvrir l’éditeur de thèmes",
-    "openAccessibilityCenter": "Ouvrir le centre d’accessibilité",
-    "eyebrow": "Registre de composants",
-    "title": "Composants de {projectName}",
+    "categories": {
+      "action": "Action",
+      "feedback": "Feedback",
+      "input": "Saisie",
+      "layout": "Layout",
+      "overlay": "Overlay"
+    },
+    "completeness": {
+      "completeMessage": "Ce contrat composant est complet pour le MVP.",
+      "label": "Complétude",
+      "levels": {
+        "complete": "Complet",
+        "incomplete": "Incomplet",
+        "partial": "Partiel"
+      },
+      "title": "Warnings de complétude"
+    },
     "description": "Consultez les contrats des composants MVP, leur statut, leurs plateformes et leur complétude documentaire.",
+    "details": {
+      "accessibility": "Règles d’accessibilité",
+      "accessibilityRules": "Règles a11y",
+      "anatomy": "Anatomie",
+      "empty": "Aucun élément documenté pour le moment.",
+      "states": "États",
+      "variants": "Variantes"
+    },
+    "editor": {
+      "accessibility": {
+        "add": "Ajouter une règle d’accessibilité",
+        "severity": "Sévérité",
+        "title": "Règles d’accessibilité"
+      },
+      "anatomy": {
+        "add": "Ajouter un élément d’anatomie",
+        "description": "Définissez les parties structurelles du composant.",
+        "title": "Anatomie"
+      },
+      "basics": {
+        "name": "Nom",
+        "purposeEn": "Purpose — anglais",
+        "purposeFr": "Purpose — français",
+        "status": "Statut",
+        "title": "Basics"
+      },
+      "description": "Éditez le brouillon local de ce contrat composant. La persistance sera ajoutée dans le ticket suivant.",
+      "fields": {
+        "descriptionEn": "Description — anglais",
+        "descriptionFr": "Description — français",
+        "key": "Clé",
+        "labelEn": "Label — anglais",
+        "labelFr": "Label — français",
+        "patternEn": "Pattern — anglais",
+        "patternFr": "Pattern — français",
+        "remove": "Supprimer"
+      },
+      "forbiddenPatterns": {
+        "add": "Ajouter un pattern interdit",
+        "title": "Patterns interdits"
+      },
+      "saveUnavailable": "La sauvegarde sera implémentée dans DS-102. Pour l’instant, cet éditeur valide uniquement le brouillon local.",
+      "sectionTitle": "Éditer le contrat",
+      "states": {
+        "add": "Ajouter un état",
+        "title": "États"
+      },
+      "title": "Éditeur de contrat composant",
+      "unsavedNotice": "Modifications locales non sauvegardées.",
+      "validationTitle": "Erreurs de validation",
+      "variants": {
+        "add": "Ajouter une variante",
+        "title": "Variantes"
+      }
+    },
+    "eyebrow": "Registre de composants",
     "invalidContractsWarning": "{count, plural, one {# contrat composant invalide a été ignoré.} other {# contrats composants invalides ont été ignorés.}}",
     "list": {
       "title": "Composants"
     },
-    "statuses": {
-      "draft": "Brouillon",
-      "ready": "Prêt",
-      "deprecated": "Déprécié"
+    "missingFields": {
+      "accessibility": "Règles d’accessibilité manquantes",
+      "anatomy": "Anatomie manquante",
+      "forbiddenPatterns": "Patterns interdits manquants",
+      "purpose": "Purpose manquant",
+      "states": "États manquants",
+      "variants": "Variantes manquantes"
     },
-    "categories": {
-      "action": "Action",
-      "input": "Saisie",
-      "layout": "Layout",
-      "feedback": "Feedback",
-      "overlay": "Overlay"
-    },
+    "openAccessibilityCenter": "Ouvrir le centre d’accessibilité",
+    "openThemesEditor": "Ouvrir l’éditeur de thèmes",
+    "openTokensEditor": "Ouvrir l’éditeur de tokens",
     "platforms": {
-      "web": "Web",
-      "mobile": "Mobile"
-    },
-    "completeness": {
-      "label": "Complétude",
-      "title": "Warnings de complétude",
-      "completeMessage": "Ce contrat composant est complet pour le MVP.",
-      "levels": {
-        "complete": "Complet",
-        "partial": "Partiel",
-        "incomplete": "Incomplet"
-      }
-    },
-    "details": {
-      "anatomy": "Anatomie",
-      "variants": "Variantes",
-      "states": "États",
-      "accessibility": "Règles d’accessibilité",
-      "accessibilityRules": "Règles a11y",
-      "empty": "Aucun élément documenté pour le moment."
+      "mobile": "Mobile",
+      "web": "Web"
     },
     "severity": {
+      "critical": "Critique",
       "info": "Info",
-      "warning": "Avertissement",
-      "critical": "Critique"
-    },
-    "missingFields": {
-      "purpose": "Purpose manquant",
-      "anatomy": "Anatomie manquante",
-      "variants": "Variantes manquantes",
-      "states": "États manquants",
-      "accessibility": "Règles d’accessibilité manquantes",
-      "forbiddenPatterns": "Patterns interdits manquants"
+      "warning": "Avertissement"
     },
     "states": {
-      "loading": "Chargement des composants...",
-      "emptyTitle": "Aucun contrat composant trouvé.",
       "emptyDescription": "Ce projet ne contient pas encore de contrats composants.",
-      "errorTitle": "Impossible de charger les composants",
+      "emptyTitle": "Aucun contrat composant trouvé.",
       "errorDescription": "Une erreur est survenue pendant le chargement des composants de ce projet. Veuillez réessayer.",
+      "errorTitle": "Impossible de charger les composants",
+      "loading": "Chargement des composants...",
       "retry": "Réessayer"
-    }
+    },
+    "statuses": {
+      "deprecated": "Déprécié",
+      "draft": "Brouillon",
+      "ready": "Prêt"
+    },
+    "title": "Composants de {projectName}"
   },
   "CreateDesignSystemPage": {
-    "backLink": "Retour aux design systems",
-    "eyebrow": "Nouveau design system",
-    "title": "Créer un design system",
-    "description": "Commencez avec une configuration guidée. Vous allez définir les bases, les plateformes, les langues, la direction visuelle, l’objectif d’accessibilité et vérifier l’ensemble avant de créer le projet.",
-    "steps": {
-      "label": "Étapes de création du design system",
-      "step": "Étape {number}",
-      "basics": "Bases",
-      "platformsLanguages": "Plateformes & langues",
-      "visualDirection": "Direction visuelle",
-      "accessibilityTarget": "Objectif d’accessibilité",
-      "review": "Récapitulatif"
+    "accessibilityTarget": {
+      "description": "Définissez le niveau d’accessibilité visé par ce design system.",
+      "title": "Objectif d’accessibilité"
     },
     "actions": {
       "back": "Retour",
       "continue": "Continuer"
     },
+    "backLink": "Retour aux design systems",
     "basics": {
-      "title": "Bases du projet",
-      "description": "Donnez à votre design system un nom clair et une description optionnelle."
+      "description": "Donnez à votre design system un nom clair et une description optionnelle.",
+      "title": "Bases du projet"
     },
-    "platformsLanguages": {
-      "title": "Plateformes et langues",
-      "description": "Choisissez où ce design system sera utilisé et quelles langues il devra supporter."
-    },
-    "visualDirection": {
-      "title": "Direction visuelle",
-      "description": "Choisissez l’intention visuelle initiale. Elle pourra évoluer plus tard."
-    },
-    "accessibilityTarget": {
-      "title": "Objectif d’accessibilité",
-      "description": "Définissez le niveau d’accessibilité visé par ce design system."
-    },
-    "review": {
-      "title": "Vérifier la configuration",
-      "description": "Contrôlez les fondations du projet avant de créer le design system.",
-      "emptyDescription": "Aucune description renseignée."
-    },
+    "description": "Commencez avec une configuration guidée. Vous allez définir les bases, les plateformes, les langues, la direction visuelle, l’objectif d’accessibilité et vérifier l’ensemble avant de créer le projet.",
+    "eyebrow": "Nouveau design system",
     "form": {
-      "nameLabel": "Nom",
-      "nameHelp": "Exemple : Core Product UI, Site marketing, Application mobile.",
-      "defaultLocaleBadge": "Par défaut",
-      "descriptionLabel": "Description",
-      "descriptionHelp": "Optionnel. Expliquez à quoi sert ce design system.",
-      "platformsLabel": "Plateformes cibles",
-      "platforms": {
-        "web": {
-          "label": "Web",
-          "description": "Pour les sites, applications web, SaaS et interfaces accessibles depuis un navigateur."
+      "accessibilityTargets": {
+        "wcag_aa": {
+          "description": "Un objectif d’accessibilité pratique et largement utilisé pour les produits numériques.",
+          "label": "WCAG AA"
         },
-        "mobile": {
-          "label": "Mobile",
-          "description": "Pour React Native, Expo et les interfaces d’applications mobiles."
+        "wcag_aaa": {
+          "description": "Un objectif plus strict qui peut ne pas être réaliste pour toutes les interfaces.",
+          "label": "WCAG AAA"
         }
       },
-      "defaultLocaleLabel": "Locale par défaut",
+      "defaultLocaleBadge": "Par défaut",
       "defaultLocaleHelp": "Elle sera utilisée comme langue de référence pour les contenus projet.",
-      "supportedLocalesLabel": "Langues supportées",
+      "defaultLocaleLabel": "Locale par défaut",
+      "descriptionHelp": "Optionnel. Expliquez à quoi sert ce design system.",
+      "descriptionLabel": "Description",
       "locales": {
         "en": "Anglais",
         "fr": "Français"
       },
+      "nameHelp": "Exemple : Core Product UI, Site marketing, Application mobile.",
+      "nameLabel": "Nom",
+      "platforms": {
+        "mobile": {
+          "description": "Pour React Native, Expo et les interfaces d’applications mobiles.",
+          "label": "Mobile"
+        },
+        "web": {
+          "description": "Pour les sites, applications web, SaaS et interfaces accessibles depuis un navigateur.",
+          "label": "Web"
+        }
+      },
+      "platformsLabel": "Plateformes cibles",
+      "submit": "Créer le design system",
+      "submitPending": "Création du design system...",
+      "supportedLocalesLabel": "Langues supportées",
       "visualDirections": {
-        "minimal": {
-          "label": "Minimal",
-          "description": "Clair, sobre et centré sur la lisibilité."
-        },
         "editorial": {
-          "label": "Éditorial",
-          "description": "Élégant, expressif et orienté contenu."
-        },
-        "playful": {
-          "label": "Ludique",
-          "description": "Chaleureux, dynamique et plus distinctif visuellement."
+          "description": "Élégant, expressif et orienté contenu.",
+          "label": "Éditorial"
         },
         "enterprise": {
-          "label": "Entreprise",
-          "description": "Structuré, fiable et adapté aux produits professionnels."
-        }
-      },
-      "accessibilityTargets": {
-        "wcag_aa": {
-          "label": "WCAG AA",
-          "description": "Un objectif d’accessibilité pratique et largement utilisé pour les produits numériques."
+          "description": "Structuré, fiable et adapté aux produits professionnels.",
+          "label": "Entreprise"
         },
-        "wcag_aaa": {
-          "label": "WCAG AAA",
-          "description": "Un objectif plus strict qui peut ne pas être réaliste pour toutes les interfaces."
+        "minimal": {
+          "description": "Clair, sobre et centré sur la lisibilité.",
+          "label": "Minimal"
+        },
+        "playful": {
+          "description": "Chaleureux, dynamique et plus distinctif visuellement.",
+          "label": "Ludique"
         }
-      },
-      "submit": "Créer le design system",
-      "submitPending": "Création du design system..."
+      }
     },
+    "platformsLanguages": {
+      "description": "Choisissez où ce design system sera utilisé et quelles langues il devra supporter.",
+      "title": "Plateformes et langues"
+    },
+    "review": {
+      "description": "Contrôlez les fondations du projet avant de créer le design system.",
+      "emptyDescription": "Aucune description renseignée.",
+      "title": "Vérifier la configuration"
+    },
+    "steps": {
+      "accessibilityTarget": "Objectif d’accessibilité",
+      "basics": "Bases",
+      "label": "Étapes de création du design system",
+      "platformsLanguages": "Plateformes & langues",
+      "review": "Récapitulatif",
+      "step": "Étape {number}",
+      "visualDirection": "Direction visuelle"
+    },
+    "title": "Créer un design system",
     "validation": {
+      "accessibilityTargetInvalid": "Choisissez un objectif d’accessibilité supporté.",
+      "defaultLocaleInvalid": "Choisissez une locale supportée.",
+      "defaultLocaleMustBeSupported": "La locale par défaut doit faire partie des langues supportées.",
+      "descriptionTooLong": "La description doit contenir au maximum 240 caractères.",
+      "missingWorkspace": "Aucun workspace n’a été trouvé pour votre compte.",
       "nameMinLength": "Saisissez au moins 2 caractères.",
       "nameTooLong": "Le nom doit contenir au maximum 80 caractères.",
-      "descriptionTooLong": "La description doit contenir au maximum 240 caractères.",
-      "defaultLocaleInvalid": "Choisissez une locale supportée.",
       "platformRequired": "Sélectionnez au moins une plateforme cible.",
-      "supportedLocaleRequired": "Sélectionnez au moins une langue supportée.",
-      "visualDirectionRequired": "Choisissez une direction visuelle.",
-      "accessibilityTargetInvalid": "Choisissez un objectif d’accessibilité supporté.",
-      "missingWorkspace": "Aucun workspace n’a été trouvé pour votre compte.",
       "slugAlreadyUsed": "Un design system avec ce nom existe déjà dans ce workspace.",
+      "supportedLocaleRequired": "Sélectionnez au moins une langue supportée.",
       "unauthorized": "Vous devez être connecté pour créer un design system.",
       "unexpected": "Impossible de créer le design system. Veuillez réessayer.",
-      "defaultLocaleMustBeSupported": "La locale par défaut doit faire partie des langues supportées."
+      "visualDirectionRequired": "Choisissez une direction visuelle."
+    },
+    "visualDirection": {
+      "description": "Choisissez l’intention visuelle initiale. Elle pourra évoluer plus tard.",
+      "title": "Direction visuelle"
     }
   },
   "DashboardPage": {
-    "eyebrow": "Espace de travail",
-    "title": "Bienvenue, {name}.",
-    "fallbackName": "à vous",
     "description": "Voici votre espace privé VulcanForgeUI. Commencez par créer votre premier projet de design system.",
-    "primaryCta": "Créer un design system",
-    "stats": {
-      "workspace": {
-        "label": "Workspace",
-        "empty": "Aucun workspace",
-        "description": "Votre espace personnel créé lors de l’inscription."
-      },
-      "projects": {
-        "label": "Design systems",
-        "description": "Projets créés dans cet espace."
-      },
-      "exports": {
-        "label": "Exports",
-        "description": "Assets d’implémentation générés."
-      }
-    },
     "emptyState": {
-      "title": "Aucun design system pour le moment.",
-      "description": "Votre espace est prêt. La prochaine étape consiste à créer un projet de design system avec ses plateformes, locales, tokens et objectifs d’accessibilité.",
-      "cardTitle": "Créer votre premier design system",
       "cardDescription": "Commencez par une configuration ciblée, puis ajoutez progressivement les tokens, thèmes, composants, validations et exports.",
-      "cta": "Créer le premier projet"
+      "cardTitle": "Créer votre premier design system",
+      "cta": "Créer le premier projet",
+      "description": "Votre espace est prêt. La prochaine étape consiste à créer un projet de design system avec ses plateformes, locales, tokens et objectifs d’accessibilité.",
+      "title": "Aucun design system pour le moment."
     },
+    "eyebrow": "Espace de travail",
+    "fallbackName": "à vous",
+    "primaryCta": "Créer un design system",
     "quickActions": {
-      "title": "Prochaines étapes",
       "items": {
+        "accessibility": {
+          "description": "Lancez des contrôles de contraste et gardez les notes d’accessibilité visibles.",
+          "title": "Valider l’accessibilité"
+        },
         "create": {
-          "title": "Créer un projet",
-          "description": "Définissez le nom du projet, les plateformes cibles, la locale par défaut et les langues supportées."
+          "description": "Définissez le nom du projet, les plateformes cibles, la locale par défaut et les langues supportées.",
+          "title": "Créer un projet"
         },
         "tokens": {
-          "title": "Structurer les tokens",
-          "description": "Préparez les tokens primitifs et sémantiques pour un usage web et mobile."
-        },
-        "accessibility": {
-          "title": "Valider l’accessibilité",
-          "description": "Lancez des contrôles de contraste et gardez les notes d’accessibilité visibles."
+          "description": "Préparez les tokens primitifs et sémantiques pour un usage web et mobile.",
+          "title": "Structurer les tokens"
         }
+      },
+      "title": "Prochaines étapes"
+    },
+    "stats": {
+      "exports": {
+        "description": "Assets d’implémentation générés.",
+        "label": "Exports"
+      },
+      "projects": {
+        "description": "Projets créés dans cet espace.",
+        "label": "Design systems"
+      },
+      "workspace": {
+        "description": "Votre espace personnel créé lors de l’inscription.",
+        "empty": "Aucun workspace",
+        "label": "Workspace"
       }
-    }
+    },
+    "title": "Bienvenue, {name}."
   },
   "DesignSystemsPage": {
-    "eyebrow": "Design systems",
-    "title": "Vos design systems",
-    "description": "Créez, organisez et exportez les design systems de vos produits.",
-    "primaryCta": "Créer un design system",
-    "workspace": {
-      "label": "Workspace courant",
-      "empty": "Aucun workspace trouvé"
-    },
     "card": {
       "badge": "Projet",
-      "slug": "Slug : {slug}",
       "noDescription": "Aucune description pour le moment.",
-      "updatedAt": "Mis à jour le {date}",
-      "open": "Ouvrir"
+      "open": "Ouvrir",
+      "slug": "Slug : {slug}",
+      "updatedAt": "Mis à jour le {date}"
     },
+    "description": "Créez, organisez et exportez les design systems de vos produits.",
     "emptyState": {
-      "title": "Aucun design system pour le moment.",
+      "cta": "Créer le premier design system",
       "description": "Votre espace est prêt. La prochaine étape consiste à créer votre premier projet de design system.",
-      "cta": "Créer le premier design system"
+      "title": "Aucun design system pour le moment."
+    },
+    "eyebrow": "Design systems",
+    "primaryCta": "Créer un design system",
+    "title": "Vos design systems",
+    "workspace": {
+      "empty": "Aucun workspace trouvé",
+      "label": "Workspace courant"
     }
   },
   "HomePage": {
-    "hero": {
-      "eyebrow": "Design System Studio",
-      "title": "Créez des design systems accessibles, bilingues et prêts pour l’IA.",
-      "description": "Structurez vos tokens, documentez vos composants, validez les contrastes et générez des exports exploitables pour le web, le mobile, la documentation et les assistants IA.",
-      "primaryCta": "Créer un design system",
-      "secondaryCta": "Voir les tarifs"
-    },
-    "preview": {
-      "title": "Structuré par conception",
-      "description": "Votre design system devient un modèle validé, pas un simple document statique.",
-      "button": "Générer un export",
-      "helper": "Tailwind, variables CSS, TypeScript, React Native, Markdown et instructions IA."
-    },
-    "features": {
-      "eyebrow": "Tout le nécessaire",
-      "title": "Un vrai système, pas seulement une palette de couleurs.",
-      "description": "VulcanForgeUI vous aide à créer des design systems lisibles par les humains, exploitables par les développeurs et compréhensibles par les outils IA.",
+    "faq": {
       "items": {
-        "tokens": {
-          "title": "Design tokens modernes",
-          "description": "Définissez des tokens primitifs et sémantiques avec une structure prête pour Tailwind, les variables CSS et les thèmes mobiles."
+        "audit": {
+          "answer": "Non. Il aide à détecter certains problèmes courants et à documenter les vérifications manuelles, mais il ne remplace pas un audit complet.",
+          "question": "VulcanForgeUI remplace-t-il un audit d’accessibilité ?"
         },
-        "accessibility": {
-          "title": "Contrôles d’accessibilité",
-          "description": "Détectez les problèmes de contraste courants et gardez les vérifications manuelles visibles avant qu’elles deviennent de la dette produit."
+        "billing": {
+          "answer": "Non. La première version est pensée comme une beta gratuite afin de valider la valeur produit avant d’ajouter des offres payantes.",
+          "question": "Le paiement est-il disponible dans le MVP ?"
         },
         "exports": {
-          "title": "Exports exploitables",
-          "description": "Générez des variables CSS, des snippets Tailwind v4, des thèmes TypeScript et des objets de thème React Native."
+          "answer": "Oui. Le MVP se concentre sur des sorties pratiques comme les variables CSS, les snippets Tailwind v4, les thèmes TypeScript et les objets de thème React Native.",
+          "question": "Puis-je utiliser les exports dans de vrais projets ?"
+        }
+      },
+      "title": "Questions fréquentes"
+    },
+    "features": {
+      "description": "VulcanForgeUI vous aide à créer des design systems lisibles par les humains, exploitables par les développeurs et compréhensibles par les outils IA.",
+      "eyebrow": "Tout le nécessaire",
+      "items": {
+        "accessibility": {
+          "description": "Détectez les problèmes de contraste courants et gardez les vérifications manuelles visibles avant qu’elles deviennent de la dette produit.",
+          "title": "Contrôles d’accessibilité"
         },
         "aiInstructions": {
-          "title": "Instructions prêtes pour l’IA",
-          "description": "Produisez des règles structurées pour aider les assistants IA à respecter vos tokens, composants et motifs interdits."
+          "description": "Produisez des règles structurées pour aider les assistants IA à respecter vos tokens, composants et motifs interdits.",
+          "title": "Instructions prêtes pour l’IA"
         },
         "bilingual": {
-          "title": "Bilingue dès le départ",
-          "description": "Gérez l’interface et les contenus projet en anglais et en français dès le MVP."
+          "description": "Gérez l’interface et les contenus projet en anglais et en français dès le MVP.",
+          "title": "Bilingue dès le départ"
+        },
+        "exports": {
+          "description": "Générez des variables CSS, des snippets Tailwind v4, des thèmes TypeScript et des objets de thème React Native.",
+          "title": "Exports exploitables"
         },
         "preview": {
-          "title": "Prévisualisation live",
-          "description": "Voyez comment vos tokens influencent de vrais patterns d’interface avant de les exporter."
+          "description": "Voyez comment vos tokens influencent de vrais patterns d’interface avant de les exporter.",
+          "title": "Prévisualisation live"
+        },
+        "tokens": {
+          "description": "Définissez des tokens primitifs et sémantiques avec une structure prête pour Tailwind, les variables CSS et les thèmes mobiles.",
+          "title": "Design tokens modernes"
         }
-      }
+      },
+      "title": "Un vrai système, pas seulement une palette de couleurs."
     },
-    "workflow": {
-      "eyebrow": "Workflow",
-      "title": "Créer, structurer, valider et exporter.",
-      "description": "Le produit est conçu autour d’une boucle simple qui transforme les décisions de design en assets réellement exploitables.",
-      "steps": {
-        "create": {
-          "title": "Créer",
-          "description": "Démarrez un projet avec ses plateformes, locales, direction visuelle et objectifs d’accessibilité."
-        },
-        "structure": {
-          "title": "Structurer",
-          "description": "Organisez les tokens, thèmes et contrats composants comme un modèle réutilisable."
-        },
-        "validate": {
-          "title": "Valider",
-          "description": "Lancez des contrôles de contraste et gardez les alertes d’accessibilité visibles."
-        },
-        "export": {
-          "title": "Exporter",
-          "description": "Générez des assets copiables dans vos workflows web, mobile, documentation et IA."
-        }
-      }
+    "finalCta": {
+      "cta": "Créer votre compte",
+      "description": "Commencez par les tokens, l’accessibilité, les exports et les instructions IA au lieu d’accumuler des décisions UI dispersées.",
+      "title": "Construisez votre prochain design system sur des bases plus solides."
+    },
+    "hero": {
+      "description": "Structurez vos tokens, documentez vos composants, validez les contrastes et générez des exports exploitables pour le web, le mobile, la documentation et les assistants IA.",
+      "eyebrow": "Design System Studio",
+      "primaryCta": "Créer un design system",
+      "secondaryCta": "Voir les tarifs",
+      "title": "Créez des design systems accessibles, bilingues et prêts pour l’IA."
+    },
+    "preview": {
+      "button": "Générer un export",
+      "description": "Votre design system devient un modèle validé, pas un simple document statique.",
+      "helper": "Tailwind, variables CSS, TypeScript, React Native, Markdown et instructions IA.",
+      "title": "Structuré par conception"
     },
     "pricing": {
-      "eyebrow": "Tarifs",
-      "title": "Démarrez avec une beta gratuite et ciblée.",
       "description": "Le MVP ne prétend pas vendre des offres indisponibles. Le paiement viendra plus tard, une fois la valeur produit validée.",
+      "eyebrow": "Tarifs",
       "tiers": {
         "freeBeta": {
-          "name": "Beta gratuite",
-          "price": "Gratuit",
+          "cta": "Rejoindre la beta",
           "description": "Pour les premiers utilisateurs qui veulent créer et exporter leurs premiers design systems.",
           "features": [
             "Création de projets design system",
@@ -465,11 +509,11 @@
             "Exports de tokens et thèmes",
             "Exports Markdown et instructions IA"
           ],
-          "cta": "Rejoindre la beta"
+          "name": "Beta gratuite",
+          "price": "Gratuit"
         },
         "proSoon": {
-          "name": "Pro",
-          "price": "Bientôt",
+          "cta": "Créer un compte",
           "description": "Pour les freelances et équipes qui auront besoin de workflows avancés et de plus d’automatisation.",
           "features": [
             "Historique projet avancé",
@@ -477,63 +521,66 @@
             "Gestion de templates",
             "Fondations prêtes pour la collaboration"
           ],
-          "cta": "Créer un compte"
+          "name": "Pro",
+          "price": "Bientôt"
         }
-      }
+      },
+      "title": "Démarrez avec une beta gratuite et ciblée."
     },
-    "faq": {
-      "title": "Questions fréquentes",
-      "items": {
-        "audit": {
-          "question": "VulcanForgeUI remplace-t-il un audit d’accessibilité ?",
-          "answer": "Non. Il aide à détecter certains problèmes courants et à documenter les vérifications manuelles, mais il ne remplace pas un audit complet."
+    "workflow": {
+      "description": "Le produit est conçu autour d’une boucle simple qui transforme les décisions de design en assets réellement exploitables.",
+      "eyebrow": "Workflow",
+      "steps": {
+        "create": {
+          "description": "Démarrez un projet avec ses plateformes, locales, direction visuelle et objectifs d’accessibilité.",
+          "title": "Créer"
         },
-        "exports": {
-          "question": "Puis-je utiliser les exports dans de vrais projets ?",
-          "answer": "Oui. Le MVP se concentre sur des sorties pratiques comme les variables CSS, les snippets Tailwind v4, les thèmes TypeScript et les objets de thème React Native."
+        "export": {
+          "description": "Générez des assets copiables dans vos workflows web, mobile, documentation et IA.",
+          "title": "Exporter"
         },
-        "billing": {
-          "question": "Le paiement est-il disponible dans le MVP ?",
-          "answer": "Non. La première version est pensée comme une beta gratuite afin de valider la valeur produit avant d’ajouter des offres payantes."
+        "structure": {
+          "description": "Organisez les tokens, thèmes et contrats composants comme un modèle réutilisable.",
+          "title": "Structurer"
+        },
+        "validate": {
+          "description": "Lancez des contrôles de contraste et gardez les alertes d’accessibilité visibles.",
+          "title": "Valider"
         }
-      }
-    },
-    "finalCta": {
-      "title": "Construisez votre prochain design system sur des bases plus solides.",
-      "description": "Commencez par les tokens, l’accessibilité, les exports et les instructions IA au lieu d’accumuler des décisions UI dispersées.",
-      "cta": "Créer votre compte"
+      },
+      "title": "Créer, structurer, valider et exporter."
     }
   },
   "LocaleSwitcher": {
+    "currentLanguage": "{locale} est la langue actuelle",
     "label": "Sélecteur de langue",
-    "switchTo": "Passer en {locale}",
-    "currentLanguage": "{locale} est la langue actuelle"
+    "switchTo": "Passer en {locale}"
   },
   "LoginPage": {
-    "eyebrow": "Bon retour",
-    "title": "Connectez-vous à votre espace.",
-    "description": "Accédez à vos projets VulcanForgeUI, vos exports et vos fondations de design system.",
-    "registeredSuccess": "Votre compte a été créé. Vous pouvez maintenant vous connecter.",
     "benefits": {
-      "title": "Continuez la construction",
       "items": {
-        "workspace": "Accédez à votre espace personnel de design system.",
+        "ai": "Gardez votre documentation et vos instructions IA alignées.",
         "exports": "Continuez à générer vos tokens, thèmes et exports d’implémentation.",
-        "ai": "Gardez votre documentation et vos instructions IA alignées."
-      }
+        "workspace": "Accédez à votre espace personnel de design system."
+      },
+      "title": "Continuez la construction"
     },
+    "description": "Accédez à vos projets VulcanForgeUI, vos exports et vos fondations de design system.",
+    "eyebrow": "Bon retour",
     "form": {
       "emailLabel": "Email",
-      "passwordLabel": "Mot de passe",
-      "submit": "Se connecter",
-      "submitPending": "Connexion...",
       "noAccount": "Vous n’avez pas encore de compte ?",
-      "signupLink": "Créer un compte"
+      "passwordLabel": "Mot de passe",
+      "signupLink": "Créer un compte",
+      "submit": "Se connecter",
+      "submitPending": "Connexion..."
     },
+    "registeredSuccess": "Votre compte a été créé. Vous pouvez maintenant vous connecter.",
+    "title": "Connectez-vous à votre espace.",
     "validation": {
       "emailInvalid": "Saisissez une adresse email valide.",
-      "passwordRequired": "Saisissez votre mot de passe.",
       "invalidCredentials": "Email ou mot de passe invalide.",
+      "passwordRequired": "Saisissez votre mot de passe.",
       "unexpected": "Impossible de vous connecter. Veuillez réessayer."
     }
   },
@@ -541,18 +588,37 @@
     "label": "Se déconnecter"
   },
   "Metadata": {
-    "title": "VulcanForgeUI",
-    "description": "Créez des design systems accessibles, bilingues et prêts pour l’IA pour vos produits web et mobile."
+    "description": "Créez des design systems accessibles, bilingues et prêts pour l’IA pour vos produits web et mobile.",
+    "title": "VulcanForgeUI"
   },
   "PricingPage": {
-    "eyebrow": "Tarifs",
-    "title": "Démarrez avec une beta gratuite et ciblée.",
+    "betaNotice": {
+      "description": "Le MVP n’intègre pas Stripe ni d’abonnements payants. Cette page présente l’orientation tarifaire prévue tout en gardant l’expérience beta honnête et gratuite.",
+      "title": "Pas de faux paiement dans le MVP."
+    },
     "description": "VulcanForgeUI est actuellement en beta. L’objectif est de valider la valeur produit avant d’introduire des offres payantes.",
+    "eyebrow": "Tarifs",
+    "faq": {
+      "items": {
+        "billing": {
+          "answer": "Oui, mais seulement lorsque le produit aura démontré suffisamment de valeur pour justifier des offres payantes.",
+          "question": "Le paiement sera-t-il ajouté plus tard ?"
+        },
+        "limits": {
+          "answer": "La première beta peut rester volontairement limitée pour garder le produit ciblé et stable.",
+          "question": "La beta aura-t-elle des limites ?"
+        },
+        "whyFree": {
+          "answer": "Parce que le premier objectif est de valider le workflow : créer, structurer, valider, prévisualiser et exporter un design system.",
+          "question": "Pourquoi la beta est-elle gratuite ?"
+        }
+      },
+      "title": "Questions sur les tarifs"
+    },
     "recommendedBadge": "Recommandé",
     "tiers": {
       "freeBeta": {
-        "name": "Beta gratuite",
-        "price": "Gratuit",
+        "cta": "Créer votre compte",
         "description": "Pour les premiers utilisateurs qui veulent créer, valider et exporter leurs premiers design systems.",
         "features": {
           "feature1": "Création de projets design system",
@@ -560,11 +626,11 @@
           "feature3": "Export de variables CSS, Tailwind, TypeScript et thèmes React Native",
           "feature4": "Génération de documentation Markdown et d’instructions IA"
         },
-        "cta": "Créer votre compte"
+        "name": "Beta gratuite",
+        "price": "Gratuit"
       },
       "proSoon": {
-        "name": "Pro",
-        "price": "Bientôt",
+        "cta": "Rejoindre la beta",
         "description": "Pour les freelances et les équipes qui auront besoin de workflows avancés, d’automatisation et de collaboration.",
         "features": {
           "feature1": "Historique projet avancé",
@@ -572,276 +638,257 @@
           "feature3": "Templates de design systems réutilisables",
           "feature4": "Fondations prêtes pour la collaboration"
         },
-        "cta": "Rejoindre la beta"
+        "name": "Pro",
+        "price": "Bientôt"
       }
     },
-    "betaNotice": {
-      "title": "Pas de faux paiement dans le MVP.",
-      "description": "Le MVP n’intègre pas Stripe ni d’abonnements payants. Cette page présente l’orientation tarifaire prévue tout en gardant l’expérience beta honnête et gratuite."
-    },
-    "faq": {
-      "title": "Questions sur les tarifs",
-      "items": {
-        "whyFree": {
-          "question": "Pourquoi la beta est-elle gratuite ?",
-          "answer": "Parce que le premier objectif est de valider le workflow : créer, structurer, valider, prévisualiser et exporter un design system."
-        },
-        "billing": {
-          "question": "Le paiement sera-t-il ajouté plus tard ?",
-          "answer": "Oui, mais seulement lorsque le produit aura démontré suffisamment de valeur pour justifier des offres payantes."
-        },
-        "limits": {
-          "question": "La beta aura-t-elle des limites ?",
-          "answer": "La première beta peut rester volontairement limitée pour garder le produit ciblé et stable."
-        }
-      }
-    }
+    "title": "Démarrez avec une beta gratuite et ciblée."
   },
   "PublicHeader": {
+    "getStarted": "Commencer",
     "navigationLabel": "Navigation principale",
-    "product": "Produit",
     "pricing": "Tarifs",
-    "signIn": "Connexion",
-    "getStarted": "Commencer"
+    "product": "Produit",
+    "signIn": "Connexion"
   },
   "SignupPage": {
-    "eyebrow": "Créer votre compte",
-    "title": "Commencez votre design system.",
-    "description": "Créez votre compte VulcanForgeUI et générez des design systems accessibles, bilingues et prêts pour l’IA.",
     "benefits": {
-      "title": "Inclus dès le départ",
       "items": {
-        "tokens": "Structurez des design tokens modernes pour vos projets web et mobile.",
         "accessibility": "Préparez les contrôles d’accessibilité et la validation des contrastes dès le début.",
-        "exports": "Générez des exports utiles pour Tailwind, les variables CSS, TypeScript, React Native et les assistants IA."
-      }
+        "exports": "Générez des exports utiles pour Tailwind, les variables CSS, TypeScript, React Native et les assistants IA.",
+        "tokens": "Structurez des design tokens modernes pour vos projets web et mobile."
+      },
+      "title": "Inclus dès le départ"
     },
+    "description": "Créez votre compte VulcanForgeUI et générez des design systems accessibles, bilingues et prêts pour l’IA.",
+    "eyebrow": "Créer votre compte",
     "form": {
-      "nameLabel": "Nom",
-      "emailLabel": "Email",
-      "passwordLabel": "Mot de passe",
-      "passwordHelp": "Utilisez au moins 12 caractères.",
-      "submit": "Créer le compte",
-      "submitPending": "Création du compte...",
       "alreadyHaveAccount": "Vous avez déjà un compte ?",
-      "signInLink": "Se connecter"
+      "emailLabel": "Email",
+      "nameLabel": "Nom",
+      "passwordHelp": "Utilisez au moins 12 caractères.",
+      "passwordLabel": "Mot de passe",
+      "signInLink": "Se connecter",
+      "submit": "Créer le compte",
+      "submitPending": "Création du compte..."
     },
+    "title": "Commencez votre design system.",
     "validation": {
+      "emailAlreadyUsed": "Un compte existe déjà avec cette adresse email.",
+      "emailInvalid": "Saisissez une adresse email valide.",
       "nameMinLength": "Saisissez au moins 2 caractères.",
       "nameTooLong": "Le nom doit contenir au maximum 80 caractères.",
-      "emailInvalid": "Saisissez une adresse email valide.",
       "passwordMinLength": "Le mot de passe doit contenir au moins 12 caractères.",
       "passwordTooLong": "Le mot de passe doit contenir au maximum 72 caractères.",
-      "emailAlreadyUsed": "Un compte existe déjà avec cette adresse email.",
       "unexpected": "Impossible de créer votre compte. Veuillez réessayer."
     }
   },
   "ThemesEditorPage": {
-    "openComponentsRegistry": "Ouvrir le registre de composants",
     "backToProjects": "Retour aux design systems",
-    "openTokensEditor": "Ouvrir l’éditeur de tokens",
-    "eyebrow": "Éditeur de thèmes",
-    "title": "Thèmes de {projectName}",
-    "description": "Gérez les thèmes light et dark, mappez les tokens couleur sémantiques et consultez les paires de couleurs clés utilisées par les previews.",
-    "openAccessibilityCenter": "Ouvrir le centre d’accessibilité",
-    "themes": {
-      "light": "Thème light",
-      "dark": "Thème dark",
-      "defaultBadge": "Par défaut"
-    },
     "contrast": {
-      "title": "Paires de contraste clés",
+      "background": "Arrière-plan",
       "description": "Ces paires sont affichées dès maintenant. Les ratios de contraste seront calculés dans l’epic accessibilité.",
       "foreground": "Premier plan",
-      "background": "Arrière-plan",
-      "ratioPending": "Le calcul du ratio de contraste sera ajouté dans DS-090.",
       "pairs": {
+        "accentOnBackground": "Accent sur fond applicatif",
         "contentOnBackground": "Contenu sur fond applicatif",
-        "mutedOnBackground": "Contenu secondaire sur fond applicatif",
         "contentOnSurface": "Contenu sur surface",
-        "accentOnBackground": "Accent sur fond applicatif"
-      }
+        "mutedOnBackground": "Contenu secondaire sur fond applicatif"
+      },
+      "ratioPending": "Le calcul du ratio de contraste sera ajouté dans DS-090.",
+      "title": "Paires de contraste clés"
     },
-    "semanticTokens": {
-      "eyebrow": "Tokens couleur sémantiques",
-      "title": "Alias sémantiques du thème",
-      "count": "{count, plural, =0 {Aucun token sémantique} one {# token sémantique} other {# tokens sémantiques}}",
-      "path": "Chemin du token",
-      "currentAlias": "Alias actuel",
-      "noAlias": "Aucun alias",
-      "resolvedValue": "Valeur résolue",
-      "unresolved": "Alias non résolu",
-      "emptyTitle": "Aucun token couleur sémantique trouvé.",
-      "emptyDescription": "Ce projet ne contient pas encore de tokens couleur sémantiques éditables.",
-      "invalidTitle": "Données de tokens couleur invalides",
-      "invalidDescription": "Le token set de couleurs est malformé et ne peut pas être édité de manière fiable."
-    },
-    "states": {
-      "loading": "Chargement des thèmes...",
-      "errorTitle": "Impossible de charger les thèmes",
-      "errorDescription": "Une erreur est survenue pendant le chargement des thèmes de ce projet. Veuillez réessayer.",
-      "retry": "Réessayer"
-    },
+    "description": "Gérez les thèmes light et dark, mappez les tokens couleur sémantiques et consultez les paires de couleurs clés utilisées par les previews.",
+    "eyebrow": "Éditeur de thèmes",
+    "openAccessibilityCenter": "Ouvrir le centre d’accessibilité",
+    "openComponentsRegistry": "Ouvrir le registre de composants",
+    "openTokensEditor": "Ouvrir l’éditeur de tokens",
     "preview": {
-      "title": "Preview des composants",
-      "description": "Prévisualisez l’impact des tokens résolus sur les composants principaux. Cette section se met à jour après sauvegarde des tokens.",
-      "modeLabel": "Mode du thème de preview",
-      "empty": "Aucun thème n’est disponible pour la preview.",
-      "components": {
-        "button": "Button",
-        "textField": "TextField",
-        "card": "Card",
-        "alert": "Alert"
+      "alert": {
+        "description": "Les alertes utilisent les décisions de couleurs sémantiques tout en conservant une structure accessible.",
+        "title": "Mise à jour de token disponible"
       },
       "button": {
         "primary": "Action principale",
         "secondary": "Action secondaire"
       },
-      "textField": {
-        "label": "Adresse email",
-        "placeholder": "hello@vulcanforge.dev",
-        "helper": "Le texte d’aide reste lisible avec le thème courant."
-      },
       "card": {
-        "title": "Card de design system",
+        "cta": "Ouvrir la card",
         "description": "Les cards utilisent les tokens surface, contenu et texte secondaire pour structurer l’information.",
-        "cta": "Ouvrir la card"
+        "title": "Card de design system"
       },
-      "alert": {
-        "title": "Mise à jour de token disponible",
-        "description": "Les alertes utilisent les décisions de couleurs sémantiques tout en conservant une structure accessible."
-      }
-    }
-  },
-  "TokensEditorPage": {
-    "openComponentsRegistry": "Ouvrir le registre de composants",
-    "backLink": "Retour aux design systems",
-    "eyebrow": "Éditeur de tokens",
-    "title": "Tokens de {projectName}",
-    "description": "Consultez les token sets générés pour ce design system. L’édition arrivera dans les prochains tickets tokens.",
-    "openAccessibilityCenter": "Ouvrir le centre d’accessibilité",
-    "tabs": {
-      "label": "Onglets des token sets",
-      "color": "Couleurs",
-      "spacing": "Espacements",
-      "radius": "Arrondis",
-      "typography": "Typographie",
-      "motion": "Motion"
+      "components": {
+        "alert": "Alert",
+        "button": "Button",
+        "card": "Card",
+        "textField": "TextField"
+      },
+      "description": "Prévisualisez l’impact des tokens résolus sur les composants principaux. Cette section se met à jour après sauvegarde des tokens.",
+      "empty": "Aucun thème n’est disponible pour la preview.",
+      "modeLabel": "Mode du thème de preview",
+      "textField": {
+        "helper": "Le texte d’aide reste lisible avec le thème courant.",
+        "label": "Adresse email",
+        "placeholder": "hello@vulcanforge.dev"
+      },
+      "title": "Preview des composants"
     },
-    "tokenCount": "{count, plural, =0 {Aucun token} one {# token} other {# tokens}}",
-    "token": {
-      "path": "Chemin",
-      "type": "Type",
-      "value": "Valeur",
-      "description": "Description",
-      "noDescription": "Aucune description pour le moment."
+    "semanticTokens": {
+      "count": "{count, plural, =0 {Aucun token sémantique} one {# token sémantique} other {# tokens sémantiques}}",
+      "currentAlias": "Alias actuel",
+      "emptyDescription": "Ce projet ne contient pas encore de tokens couleur sémantiques éditables.",
+      "emptyTitle": "Aucun token couleur sémantique trouvé.",
+      "eyebrow": "Tokens couleur sémantiques",
+      "invalidDescription": "Le token set de couleurs est malformé et ne peut pas être édité de manière fiable.",
+      "invalidTitle": "Données de tokens couleur invalides",
+      "noAlias": "Aucun alias",
+      "path": "Chemin du token",
+      "resolvedValue": "Valeur résolue",
+      "title": "Alias sémantiques du thème",
+      "unresolved": "Alias non résolu"
     },
     "states": {
-      "loading": "Chargement des tokens...",
-      "errorTitle": "Impossible de charger les tokens",
-      "errorDescription": "Une erreur est survenue pendant le chargement des tokens de ce projet. Veuillez réessayer.",
-      "retry": "Réessayer",
-      "emptyTitle": "Aucun token set trouvé.",
-      "emptyDescription": "Ce projet ne contient pas encore de token sets.",
-      "emptyTokenSetTitle": "Aucun token dans ce set.",
-      "emptyTokenSetDescription": "Ce token set existe mais ne contient encore aucun token.",
-      "invalidTokensTitle": "Données de tokens invalides",
-      "invalidTokensDescription": "Ce token set contient des données malformées et ne peut pas être affiché de manière fiable."
+      "errorDescription": "Une erreur est survenue pendant le chargement des thèmes de ce projet. Veuillez réessayer.",
+      "errorTitle": "Impossible de charger les thèmes",
+      "loading": "Chargement des thèmes...",
+      "retry": "Réessayer"
     },
-    "table": {
-      "columns": {
-        "path": "Chemin",
-        "type": "Type",
-        "value": "Valeur",
-        "descriptionStatus": "Description",
-        "validationStatus": "Validation"
-      },
-      "semanticAlias": {
-        "resolvedValue": "Valeur résolue",
-        "unresolved": "Alias non résolu"
-      },
-      "descriptionStatus": {
-        "available": "Disponible",
-        "fallback": "Fallback utilisé",
-        "missing": "Manquante"
-      },
-      "validationStatus": {
-        "valid": "Valide",
-        "invalid": "Invalide",
-        "errorsLabel": "Erreurs"
-      },
-      "noDescription": "Aucune description pour le moment.",
-      "colorSwatchLabel": "Aperçu couleur"
+    "themes": {
+      "dark": "Thème dark",
+      "defaultBadge": "Par défaut",
+      "light": "Thème light"
     },
-    "primitiveColorEditor": {
-      "label": "Modifier la valeur hex",
-      "help": "Utilisez #RGB, #RRGGBB ou #RRGGBBAA.",
-      "save": "Sauvegarder",
-      "saving": "Sauvegarde...",
-      "saved": "Couleur sauvegardée.",
-      "previewLabel": "Aperçu couleur : {value}",
-      "validation": {
-        "primitiveColorRequired": "Saisissez une valeur de couleur.",
-        "primitiveColorHexInvalid": "Saisissez une couleur hex valide, par exemple #FF8731.",
-        "unauthorized": "Vous devez être connecté pour modifier ce token.",
-        "projectNotFound": "Projet introuvable.",
-        "tokenSetNotFound": "Token set de couleurs introuvable.",
-        "tokenSetMalformed": "Les données du token set de couleurs sont malformées.",
-        "tokenNotFound": "Token introuvable.",
-        "notPrimitiveColorToken": "Seuls les tokens couleur primitifs peuvent être modifiés ici.",
-        "unexpected": "Impossible de sauvegarder cette couleur. Veuillez réessayer.",
-        "tokenValidationFailed": "Les données du token ont échoué à la validation serveur."
-      }
-    },
+    "title": "Thèmes de {projectName}"
+  },
+  "TokensEditorPage": {
+    "backLink": "Retour aux design systems",
+    "description": "Consultez les token sets générés pour ce design system. L’édition arrivera dans les prochains tickets tokens.",
     "descriptionEditor": {
-      "title": "Description localisée",
+      "fallbackNotice": "Une langue manquante ne bloque pas la sauvegarde.",
       "fields": {
         "en": "Description anglaise",
         "fr": "Description française"
       },
       "missingLanguage": "Langue manquante. Le fallback sera utilisé si disponible.",
-      "fallbackNotice": "Une langue manquante ne bloque pas la sauvegarde.",
       "save": "Sauvegarder la description",
-      "saving": "Sauvegarde...",
       "saved": "Description sauvegardée.",
+      "saving": "Sauvegarde...",
+      "title": "Description localisée",
       "validation": {
         "descriptionTooLong": "La description doit contenir au maximum 240 caractères.",
-        "unauthorized": "Vous devez être connecté pour modifier ce token.",
         "projectNotFound": "Projet introuvable.",
-        "tokenSetNotFound": "Token set introuvable.",
-        "tokenSetMalformed": "Les données des tokens sont malformées.",
         "tokenNotFound": "Token introuvable.",
-        "unexpected": "Impossible de sauvegarder cette description. Veuillez réessayer.",
-        "tokenValidationFailed": "Les données du token ont échoué à la validation serveur."
+        "tokenSetMalformed": "Les données des tokens sont malformées.",
+        "tokenSetNotFound": "Token set introuvable.",
+        "tokenValidationFailed": "Les données du token ont échoué à la validation serveur.",
+        "unauthorized": "Vous devez être connecté pour modifier ce token.",
+        "unexpected": "Impossible de sauvegarder cette description. Veuillez réessayer."
       }
     },
-    "semanticAliasEditor": {
-      "label": "Alias sémantique",
-      "help": "Choisissez le token couleur primitif utilisé par ce token sémantique.",
-      "save": "Sauvegarder l’alias",
+    "eyebrow": "Éditeur de tokens",
+    "openAccessibilityCenter": "Ouvrir le centre d’accessibilité",
+    "openComponentsRegistry": "Ouvrir le registre de composants",
+    "openThemesEditor": "Ouvrir l’éditeur de thèmes",
+    "primitiveColorEditor": {
+      "help": "Utilisez #RGB, #RRGGBB ou #RRGGBBAA.",
+      "label": "Modifier la valeur hex",
+      "previewLabel": "Aperçu couleur : {value}",
+      "save": "Sauvegarder",
+      "saved": "Couleur sauvegardée.",
       "saving": "Sauvegarde...",
-      "saved": "Alias sauvegardé.",
-      "noPrimitiveOptions": "Aucun token couleur primitif n’est disponible.",
-      "previewLabel": "Aperçu couleur résolu : {value}",
       "validation": {
-        "semanticAliasRequired": "Choisissez un token couleur primitif.",
-        "semanticAliasInvalid": "Choisissez un token couleur primitif valide.",
-        "unauthorized": "Vous devez être connecté pour modifier ce token.",
+        "notPrimitiveColorToken": "Seuls les tokens couleur primitifs peuvent être modifiés ici.",
+        "primitiveColorHexInvalid": "Saisissez une couleur hex valide, par exemple #FF8731.",
+        "primitiveColorRequired": "Saisissez une valeur de couleur.",
         "projectNotFound": "Projet introuvable.",
-        "tokenSetNotFound": "Token set de couleurs introuvable.",
-        "tokenSetMalformed": "Les données du token set de couleurs sont malformées.",
         "tokenNotFound": "Token introuvable.",
-        "notSemanticColorToken": "Seuls les tokens couleur sémantiques peuvent être modifiés ici.",
-        "aliasNotFound": "Le token primitif sélectionné est introuvable.",
-        "aliasInvalid": "L’alias sélectionné doit pointer vers un token couleur primitif hexadécimal.",
-        "unexpected": "Impossible de sauvegarder cet alias. Veuillez réessayer.",
-        "tokenValidationFailed": "Les données du token ont échoué à la validation serveur."
+        "tokenSetMalformed": "Les données du token set de couleurs sont malformées.",
+        "tokenSetNotFound": "Token set de couleurs introuvable.",
+        "tokenValidationFailed": "Les données du token ont échoué à la validation serveur.",
+        "unauthorized": "Vous devez être connecté pour modifier ce token.",
+        "unexpected": "Impossible de sauvegarder cette couleur. Veuillez réessayer."
       }
     },
     "saveStatus": {
       "saved": "Toutes les modifications sont sauvegardées.",
       "unsaved": "Modifications non sauvegardées."
     },
-    "openThemesEditor": "Ouvrir l’éditeur de thèmes"
+    "semanticAliasEditor": {
+      "help": "Choisissez le token couleur primitif utilisé par ce token sémantique.",
+      "label": "Alias sémantique",
+      "noPrimitiveOptions": "Aucun token couleur primitif n’est disponible.",
+      "previewLabel": "Aperçu couleur résolu : {value}",
+      "save": "Sauvegarder l’alias",
+      "saved": "Alias sauvegardé.",
+      "saving": "Sauvegarde...",
+      "validation": {
+        "aliasInvalid": "L’alias sélectionné doit pointer vers un token couleur primitif hexadécimal.",
+        "aliasNotFound": "Le token primitif sélectionné est introuvable.",
+        "notSemanticColorToken": "Seuls les tokens couleur sémantiques peuvent être modifiés ici.",
+        "projectNotFound": "Projet introuvable.",
+        "semanticAliasInvalid": "Choisissez un token couleur primitif valide.",
+        "semanticAliasRequired": "Choisissez un token couleur primitif.",
+        "tokenNotFound": "Token introuvable.",
+        "tokenSetMalformed": "Les données du token set de couleurs sont malformées.",
+        "tokenSetNotFound": "Token set de couleurs introuvable.",
+        "tokenValidationFailed": "Les données du token ont échoué à la validation serveur.",
+        "unauthorized": "Vous devez être connecté pour modifier ce token.",
+        "unexpected": "Impossible de sauvegarder cet alias. Veuillez réessayer."
+      }
+    },
+    "states": {
+      "emptyDescription": "Ce projet ne contient pas encore de token sets.",
+      "emptyTitle": "Aucun token set trouvé.",
+      "emptyTokenSetDescription": "Ce token set existe mais ne contient encore aucun token.",
+      "emptyTokenSetTitle": "Aucun token dans ce set.",
+      "errorDescription": "Une erreur est survenue pendant le chargement des tokens de ce projet. Veuillez réessayer.",
+      "errorTitle": "Impossible de charger les tokens",
+      "invalidTokensDescription": "Ce token set contient des données malformées et ne peut pas être affiché de manière fiable.",
+      "invalidTokensTitle": "Données de tokens invalides",
+      "loading": "Chargement des tokens...",
+      "retry": "Réessayer"
+    },
+    "table": {
+      "colorSwatchLabel": "Aperçu couleur",
+      "columns": {
+        "descriptionStatus": "Description",
+        "path": "Chemin",
+        "type": "Type",
+        "validationStatus": "Validation",
+        "value": "Valeur"
+      },
+      "descriptionStatus": {
+        "available": "Disponible",
+        "fallback": "Fallback utilisé",
+        "missing": "Manquante"
+      },
+      "noDescription": "Aucune description pour le moment.",
+      "semanticAlias": {
+        "resolvedValue": "Valeur résolue",
+        "unresolved": "Alias non résolu"
+      },
+      "validationStatus": {
+        "errorsLabel": "Erreurs",
+        "invalid": "Invalide",
+        "valid": "Valide"
+      }
+    },
+    "tabs": {
+      "color": "Couleurs",
+      "label": "Onglets des token sets",
+      "motion": "Motion",
+      "radius": "Arrondis",
+      "spacing": "Espacements",
+      "typography": "Typographie"
+    },
+    "title": "Tokens de {projectName}",
+    "token": {
+      "description": "Description",
+      "noDescription": "Aucune description pour le moment.",
+      "path": "Chemin",
+      "type": "Type",
+      "value": "Valeur"
+    },
+    "tokenCount": "{count, plural, =0 {Aucun token} one {# token} other {# tokens}}"
   }
 }
