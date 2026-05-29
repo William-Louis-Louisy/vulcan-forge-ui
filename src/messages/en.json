@@ -197,7 +197,21 @@
         "add": "Add forbidden pattern",
         "title": "Forbidden patterns"
       },
-      "saveUnavailable": "Saving will be implemented in DS-102. For now, this editor validates the local draft only.",
+      "save": {
+        "action": "Save contract",
+        "errors": {
+          "componentContractNotFound": "Component contract not found.",
+          "invalidContract": "The component contract is invalid.",
+          "invalidPayload": "The submitted payload is invalid.",
+          "projectNotFound": "Project not found.",
+          "unauthorized": "You must be signed in to update this contract.",
+          "unexpected": "Unable to save this component contract. Please try again."
+        },
+        "invalid": "Fix validation errors before saving.",
+        "saved": "All changes saved.",
+        "saving": "Saving...",
+        "unsaved": "Unsaved changes."
+      },
       "sectionTitle": "Edit contract",
       "states": {
         "add": "Add state",

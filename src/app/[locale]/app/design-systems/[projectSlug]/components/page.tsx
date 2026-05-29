@@ -155,6 +155,7 @@ export default async function ComponentsRegistryPage({
               t={t}
               locale={locale}
               component={selectedComponent}
+              projectSlug={pageData.project.slug}
             />
           ) : null}
         </div>
@@ -243,10 +244,12 @@ function ComponentList({
 function ComponentDetails({
   t,
   locale,
+  projectSlug,
   component,
 }: {
   t: ComponentsRegistryTranslator;
   locale: Locale;
+  projectSlug: string;
   component: ComponentRegistryItem;
 }) {
   const purpose = resolveLocalizedStringWithFallback({
@@ -360,6 +363,8 @@ function ComponentDetails({
 
       <Section title={t('editor.sectionTitle')}>
         <ComponentContractEditor
+          locale={locale}
+          projectSlug={projectSlug}
           contract={component.contract}
           labels={createComponentContractEditorLabels(t)}
         />
@@ -447,8 +452,24 @@ function createComponentContractEditorLabels(
     title: t('editor.title'),
     description: t('editor.description'),
     unsavedNotice: t('editor.unsavedNotice'),
+    save: {
+      action: t('editor.save.action'),
+      saving: t('editor.save.saving'),
+      saved: t('editor.save.saved'),
+      unsaved: t('editor.save.unsaved'),
+      invalid: t('editor.save.invalid'),
+      errors: {
+        unauthorized: t('editor.save.errors.unauthorized'),
+        projectNotFound: t('editor.save.errors.projectNotFound'),
+        componentContractNotFound: t(
+          'editor.save.errors.componentContractNotFound',
+        ),
+        invalidPayload: t('editor.save.errors.invalidPayload'),
+        invalidContract: t('editor.save.errors.invalidContract'),
+        unexpected: t('editor.save.errors.unexpected'),
+      },
+    },
     validationTitle: t('editor.validationTitle'),
-    saveUnavailable: t('editor.saveUnavailable'),
     basics: {
       title: t('editor.basics.title'),
       name: t('editor.basics.name'),
