@@ -1,6 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import type { ComponentContract } from '@/domain/design-system';
 import { fireEvent, render, screen } from '@testing-library/react';
+
+vi.mock('./update-component-contract.action', () => ({
+  updateComponentContractAction: vi.fn(async () => ({
+    status: 'idle',
+    formError: null,
+    savedContract: null,
+  })),
+}));
+
 import {
   ComponentContractEditor,
   type ComponentContractEditorLabels,
@@ -11,7 +20,21 @@ const labels: ComponentContractEditorLabels = {
   description: 'Edit this component contract.',
   unsavedNotice: 'Unsaved local changes.',
   validationTitle: 'Validation errors',
-  saveUnavailable: 'Saving will be implemented in DS-102.',
+  save: {
+    action: 'Save contract',
+    saving: 'Saving...',
+    saved: 'All changes saved.',
+    unsaved: 'Unsaved changes.',
+    invalid: 'Fix validation errors before saving.',
+    errors: {
+      unauthorized: 'Unauthorized',
+      projectNotFound: 'Project not found',
+      componentContractNotFound: 'Component contract not found',
+      invalidPayload: 'Invalid payload',
+      invalidContract: 'Invalid contract',
+      unexpected: 'Unexpected error',
+    },
+  },
   basics: {
     title: 'Basics',
     name: 'Name',
@@ -110,7 +133,14 @@ const contract: ComponentContract = {
 
 describe('ComponentContractEditor', () => {
   it('renders editable component contract fields', () => {
-    render(<ComponentContractEditor contract={contract} labels={labels} />);
+    render(
+      <ComponentContractEditor
+        locale="en"
+        projectSlug="project"
+        contract={contract}
+        labels={labels}
+      />,
+    );
 
     expect(screen.getByLabelText('Name')).toHaveValue('Button');
     expect(screen.getByLabelText('Purpose EN')).toHaveValue(
@@ -121,7 +151,14 @@ describe('ComponentContractEditor', () => {
   });
 
   it('shows an unsaved notice after editing a field', () => {
-    render(<ComponentContractEditor contract={contract} labels={labels} />);
+    render(
+      <ComponentContractEditor
+        locale="en"
+        projectSlug="project"
+        contract={contract}
+        labels={labels}
+      />,
+    );
 
     fireEvent.change(screen.getByLabelText('Name'), {
       target: {
@@ -132,5 +169,28 @@ describe('ComponentContractEditor', () => {
     expect(screen.getByRole('status')).toHaveTextContent(
       'Unsaved local changes.',
     );
+  });
+
+  it('enables the save button after a valid local change', () => {
+    render(
+      <ComponentContractEditor
+        locale="en"
+        projectSlug="project"
+        contract={contract}
+        labels={labels}
+      />,
+    );
+
+    const saveButton = screen.getByRole('button', { name: 'Save contract' });
+
+    expect(saveButton).toBeDisabled();
+
+    fireEvent.change(screen.getByLabelText('Name'), {
+      target: {
+        value: 'Primary Button',
+      },
+    });
+
+    expect(saveButton).toBeEnabled();
   });
 });

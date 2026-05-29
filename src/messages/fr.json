@@ -197,7 +197,21 @@
         "add": "Ajouter un pattern interdit",
         "title": "Patterns interdits"
       },
-      "saveUnavailable": "La sauvegarde sera implémentée dans DS-102. Pour l’instant, cet éditeur valide uniquement le brouillon local.",
+      "save": {
+        "action": "Sauvegarder le contrat",
+        "errors": {
+          "componentContractNotFound": "Contrat composant introuvable.",
+          "invalidContract": "Le contrat composant est invalide.",
+          "invalidPayload": "Le payload soumis est invalide.",
+          "projectNotFound": "Projet introuvable.",
+          "unauthorized": "Vous devez être connecté pour modifier ce contrat.",
+          "unexpected": "Impossible de sauvegarder ce contrat composant. Veuillez réessayer."
+        },
+        "invalid": "Corrigez les erreurs de validation avant de sauvegarder.",
+        "saved": "Toutes les modifications sont sauvegardées.",
+        "saving": "Sauvegarde...",
+        "unsaved": "Modifications non sauvegardées."
+      },
       "sectionTitle": "Éditer le contrat",
       "states": {
         "add": "Ajouter un état",

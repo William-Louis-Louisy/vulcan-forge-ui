@@ -1,7 +1,10 @@
 'use client';
 
-import { useMemo, useState, type ReactNode } from 'react';
+import type { Locale } from '@/i18n/routing';
 import type { ComponentContract } from '@/domain/design-system';
+import { useActionState, useMemo, useState, type ReactNode } from 'react';
+import { updateComponentContractAction } from './update-component-contract.action';
+import { initialUpdateComponentContractActionState } from './update-component-contract.state';
 import {
   createComponentContractDraft,
   createComponentContractFromDraft,
@@ -21,7 +24,6 @@ export type ComponentContractEditorLabels = {
   description: string;
   unsavedNotice: string;
   validationTitle: string;
-  saveUnavailable: string;
   basics: {
     title: string;
     name: string;
@@ -71,17 +73,41 @@ export type ComponentContractEditorLabels = {
     warning: string;
     critical: string;
   };
+  save: {
+    action: string;
+    saving: string;
+    saved: string;
+    unsaved: string;
+    invalid: string;
+    errors: {
+      unauthorized: string;
+      projectNotFound: string;
+      componentContractNotFound: string;
+      invalidPayload: string;
+      invalidContract: string;
+      unexpected: string;
+    };
+  };
 };
 
 type ComponentContractEditorProps = {
+  locale: Locale;
+  projectSlug: string;
   contract: ComponentContract;
   labels: ComponentContractEditorLabels;
 };
 
 export function ComponentContractEditor({
+  locale,
+  projectSlug,
   contract,
   labels,
 }: ComponentContractEditorProps) {
+  const [state, formAction, isPending] = useActionState(
+    updateComponentContractAction,
+    initialUpdateComponentContractActionState,
+  );
+
   const initialDraft = useMemo(
     () => createComponentContractDraft(contract),
     [contract],
@@ -90,10 +116,23 @@ export function ComponentContractEditor({
   const [draft, setDraft] =
     useState<ComponentContractEditorDraft>(initialDraft);
 
+  const savedContract =
+    state.status === 'success' && state.savedContract
+      ? state.savedContract
+      : contract;
+
+  const savedDraft = useMemo(
+    () => createComponentContractDraft(savedContract),
+    [savedContract],
+  );
+
   const validation = createComponentContractFromDraft(draft);
 
+  const contractPayload =
+    validation.status === 'success' ? JSON.stringify(validation.contract) : '';
+
   const hasUnsavedChanges =
-    JSON.stringify(draft) !== JSON.stringify(initialDraft);
+    JSON.stringify(draft) !== JSON.stringify(savedDraft);
 
   return (
     <section className="border-border-subtle bg-surface-primary shadow-soft rounded-3xl border p-6">
@@ -151,11 +190,57 @@ export function ComponentContractEditor({
         />
       </div>
 
-      <div className="border-border-subtle mt-8 rounded-2xl border p-4">
-        <p className="text-content-secondary text-sm leading-6">
-          {labels.saveUnavailable}
-        </p>
-      </div>
+      <form
+        action={formAction}
+        className="border-border-subtle mt-8 rounded-2xl border p-4"
+      >
+        <input type="hidden" name="locale" value={locale} />
+        <input type="hidden" name="projectSlug" value={projectSlug} />
+        <input type="hidden" name="componentType" value={draft.type} />
+        <input type="hidden" name="contract" value={contractPayload} />
+
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold">
+              {hasUnsavedChanges ? labels.save.unsaved : labels.save.saved}
+            </p>
+
+            {validation.status === 'error' ? (
+              <p className="text-action-danger mt-1 text-sm font-semibold">
+                {labels.save.invalid}
+              </p>
+            ) : null}
+          </div>
+
+          <button
+            type="submit"
+            disabled={
+              isPending || validation.status === 'error' || !hasUnsavedChanges
+            }
+            className="bg-action-primary text-action-primary-content disabled:bg-background-subtle disabled:text-content-tertiary rounded-xl px-4 py-2 text-sm font-semibold transition disabled:cursor-not-allowed"
+          >
+            {isPending ? labels.save.saving : labels.save.action}
+          </button>
+        </div>
+
+        {state.status === 'success' ? (
+          <p
+            role="status"
+            className="text-action-success mt-4 text-sm font-semibold"
+          >
+            {labels.save.saved}
+          </p>
+        ) : null}
+
+        {state.formError ? (
+          <p
+            role="alert"
+            className="text-action-danger mt-4 text-sm font-semibold"
+          >
+            {labels.save.errors[state.formError]}
+          </p>
+        ) : null}
+      </form>
     </section>
   );
 }
