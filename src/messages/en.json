@@ -153,7 +153,24 @@
         "incomplete": "Incomplete",
         "partial": "Partial"
       },
-      "title": "Completeness warnings"
+      "noProductWarnings": "No completeness warning detected for this component.",
+      "productWarningsTitle": "Component completeness warnings",
+      "title": "Completeness warnings",
+      "warningCount": "{count, plural, one {# warning} other {# warnings}}",
+      "warnings": {
+        "missingAccessibleNameRule": {
+          "description": "Interactive components should document how their accessible name is provided, for example through visible text, aria-label or aria-labelledby.",
+          "title": "Missing accessible name rule"
+        },
+        "missingCriticalStates": {
+          "description": "Document the critical states expected for this component, such as focus, disabled, error, hover or open depending on the component type.",
+          "title": "Missing critical states"
+        },
+        "missingPurpose": {
+          "description": "Add a localized purpose so documentation and AI instructions can explain when to use this component.",
+          "title": "Missing purpose"
+        }
+      }
     },
     "description": "Review MVP component contracts, their status, platforms and documentation completeness.",
     "details": {
