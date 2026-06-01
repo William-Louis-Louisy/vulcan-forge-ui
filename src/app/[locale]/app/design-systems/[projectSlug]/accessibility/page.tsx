@@ -1,16 +1,16 @@
 import { auth } from '@/auth';
 import { hasLocale } from 'next-intl';
-import { Link } from '@/i18n/navigation';
 import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
 import { routing, type Locale } from '@/i18n/routing';
-import { SaveAccessibilityReportButton } from '@/features/accessibility/SaveAccessibilityReportButton';
-import { getAccessibilityCenterPageData } from '@/features/accessibility/accessibility-center.queries';
 import {
   createAccessibilityCenterReport,
   type AccessibilityCenterIssue,
   type AccessibilityCenterReport,
 } from '@/features/accessibility/accessibility-center.utils';
+import { ProjectEditorNav } from '@/features/design-systems/project-editor/ProjectEditorNav';
+import { SaveAccessibilityReportButton } from '@/features/accessibility/SaveAccessibilityReportButton';
+import { getAccessibilityCenterPageData } from '@/features/accessibility/accessibility-center.queries';
 
 type AccessibilityCenterPageProps = {
   params: Promise<{
@@ -65,35 +65,7 @@ export default async function AccessibilityCenterPage({
 
   return (
     <section className="mx-auto max-w-7xl">
-      <div className="flex flex-wrap gap-3">
-        <Link
-          href="/app/design-systems"
-          className="text-action-primary text-sm font-semibold"
-        >
-          {t('backToProjects')}
-        </Link>
-
-        <Link
-          href={`/app/design-systems/${pageData.project.slug}/tokens?set=color`}
-          className="text-action-primary text-sm font-semibold"
-        >
-          {t('openTokensEditor')}
-        </Link>
-
-        <Link
-          href={`/app/design-systems/${pageData.project.slug}/themes`}
-          className="text-action-primary text-sm font-semibold"
-        >
-          {t('openThemesEditor')}
-        </Link>
-
-        <Link
-          href={`/app/design-systems/${pageData.project.slug}/components`}
-          className="text-action-primary text-sm font-semibold"
-        >
-          {t('openComponentsRegistry')}
-        </Link>
-      </div>
+      <ProjectEditorNav projectSlug={pageData.project.slug} />
 
       <div className="mt-8">
         <p className="text-action-primary text-sm font-semibold tracking-[0.24em] uppercase">
