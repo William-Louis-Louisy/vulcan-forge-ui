@@ -460,6 +460,58 @@
       "label": "Current workspace"
     }
   },
+  "DocumentationGeneratorPage": {
+    "actions": {
+      "copy": "Copy Markdown",
+      "download": "Download Markdown"
+    },
+    "backToProjects": "Back to design systems",
+    "controls": {
+      "locale": {
+        "legend": "Documentation language",
+        "options": {
+          "en": "English",
+          "fr": "French"
+        }
+      },
+      "sections": {
+        "legend": "Sections to include",
+        "options": {
+          "accessibility": "Accessibility",
+          "components": "Components",
+          "overview": "Overview",
+          "themes": "Themes",
+          "tokens": "Tokens"
+        }
+      },
+      "title": "Documentation settings"
+    },
+    "copy": {
+      "error": "Unable to copy Markdown. Please try again.",
+      "success": "Markdown copied to clipboard."
+    },
+    "description": "Configure, preview, copy and download localized Markdown documentation for this design system.",
+    "eyebrow": "Documentation Generator",
+    "missingTranslations": {
+      "count": "{count, plural, one {# missing translation uses a fallback.} other {# missing translations use a fallback.}}",
+      "empty": "No missing translation detected for this configuration.",
+      "title": "Missing translations"
+    },
+    "openComponentsRegistry": "Open components registry",
+    "openTokensEditor": "Open tokens editor",
+    "preview": {
+      "fileName": "File: {fileName}",
+      "sectionCount": "{count, plural, =0 {No section selected} one {# section selected} other {# sections selected}}",
+      "title": "Markdown preview"
+    },
+    "states": {
+      "errorDescription": "Something went wrong while loading this project's documentation generator. Please try again.",
+      "errorTitle": "Unable to load documentation generator",
+      "loading": "Loading documentation generator...",
+      "retry": "Retry"
+    },
+    "title": "{projectName} documentation"
+  },
   "HomePage": {
     "faq": {
       "items": {
@@ -674,6 +726,21 @@
       }
     },
     "title": "Start with a focused free beta."
+  },
+  "ProjectEditorNav": {
+    "accessibility": "Accessibility",
+    "aiInstructions": "AI instructions",
+    "backToProjects": "Back to design systems",
+    "brand": "Brand",
+    "components": "Components",
+    "documentation": "Documentation",
+    "exports": "Exports",
+    "label": "Project navigation",
+    "overview": "Overview",
+    "soon": "Soon",
+    "themes": "Themes",
+    "tokens": "Tokens",
+    "warning": "Needs attention"
   },
   "PublicHeader": {
     "getStarted": "Get started",

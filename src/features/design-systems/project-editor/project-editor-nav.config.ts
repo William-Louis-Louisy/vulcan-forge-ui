@@ -1,0 +1,50 @@
+export const projectEditorNavItems = [
+  {
+    key: 'overview',
+    path: '',
+    isEnabled: false,
+  },
+  {
+    key: 'brand',
+    path: 'brand',
+    isEnabled: false,
+  },
+  {
+    key: 'tokens',
+    path: 'tokens?set=color',
+    isEnabled: true,
+    badgeKey: 'tokens',
+  },
+  {
+    key: 'themes',
+    path: 'themes',
+    isEnabled: true,
+  },
+  {
+    key: 'components',
+    path: 'components',
+    isEnabled: true,
+    badgeKey: 'components',
+  },
+  {
+    key: 'accessibility',
+    path: 'accessibility',
+    isEnabled: true,
+    severity: 'warning',
+  },
+  {
+    key: 'documentation',
+    path: 'documentation',
+    isEnabled: true,
+  },
+  {
+    key: 'exports',
+    path: 'exports',
+    isEnabled: false,
+  },
+  {
+    key: 'aiInstructions',
+    path: 'ai-instructions',
+    isEnabled: false,
+  },
+] as const;

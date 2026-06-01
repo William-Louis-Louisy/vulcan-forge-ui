@@ -460,6 +460,58 @@
       "label": "Workspace courant"
     }
   },
+  "DocumentationGeneratorPage": {
+    "actions": {
+      "copy": "Copier le Markdown",
+      "download": "Télécharger le Markdown"
+    },
+    "backToProjects": "Retour aux design systems",
+    "controls": {
+      "locale": {
+        "legend": "Langue de documentation",
+        "options": {
+          "en": "Anglais",
+          "fr": "Français"
+        }
+      },
+      "sections": {
+        "legend": "Sections à inclure",
+        "options": {
+          "accessibility": "Accessibilité",
+          "components": "Composants",
+          "overview": "Vue d’ensemble",
+          "themes": "Thèmes",
+          "tokens": "Tokens"
+        }
+      },
+      "title": "Paramètres de documentation"
+    },
+    "copy": {
+      "error": "Impossible de copier le Markdown. Veuillez réessayer.",
+      "success": "Markdown copié dans le presse-papiers."
+    },
+    "description": "Configurez, prévisualisez, copiez et téléchargez la documentation Markdown localisée de ce design system.",
+    "eyebrow": "Générateur de documentation",
+    "missingTranslations": {
+      "count": "{count, plural, one {# traduction manquante utilise un fallback.} other {# traductions manquantes utilisent un fallback.}}",
+      "empty": "Aucune traduction manquante détectée pour cette configuration.",
+      "title": "Traductions manquantes"
+    },
+    "openComponentsRegistry": "Ouvrir le registre de composants",
+    "openTokensEditor": "Ouvrir l’éditeur de tokens",
+    "preview": {
+      "fileName": "Fichier : {fileName}",
+      "sectionCount": "{count, plural, =0 {Aucune section sélectionnée} one {# section sélectionnée} other {# sections sélectionnées}}",
+      "title": "Preview Markdown"
+    },
+    "states": {
+      "errorDescription": "Une erreur est survenue pendant le chargement du générateur de documentation de ce projet. Veuillez réessayer.",
+      "errorTitle": "Impossible de charger le générateur de documentation",
+      "loading": "Chargement du générateur de documentation...",
+      "retry": "Réessayer"
+    },
+    "title": "Documentation de {projectName}"
+  },
   "HomePage": {
     "faq": {
       "items": {
@@ -674,6 +726,21 @@
       }
     },
     "title": "Démarrez avec une beta gratuite et ciblée."
+  },
+  "ProjectEditorNav": {
+    "accessibility": "Accessibilité",
+    "aiInstructions": "Instructions IA",
+    "backToProjects": "Retour aux design systems",
+    "brand": "Marque",
+    "components": "Composants",
+    "documentation": "Documentation",
+    "exports": "Exports",
+    "label": "Navigation projet",
+    "overview": "Vue d’ensemble",
+    "soon": "Bientôt",
+    "themes": "Thèmes",
+    "tokens": "Tokens",
+    "warning": "Attention requise"
   },
   "PublicHeader": {
     "getStarted": "Commencer",

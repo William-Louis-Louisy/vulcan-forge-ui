@@ -1,14 +1,10 @@
 import { auth } from '@/auth';
 import { hasLocale } from 'next-intl';
-import { Link } from '@/i18n/navigation';
-import { getTranslations } from 'next-intl/server';
-import { notFound, redirect } from 'next/navigation';
-import { routing, type Locale } from '@/i18n/routing';
-import { getTokensEditorPageData } from '@/features/tokens/tokens-editor.queries';
 import {
   TokenTable,
   type TokenTableLabels,
 } from '@/features/tokens/TokenTable';
+import { Link } from '@/i18n/navigation';
 import {
   createTokenRows,
   type TokenRowData,
@@ -19,6 +15,11 @@ import {
   getActiveTokenSetType,
   type TokenSetType,
 } from '@/features/tokens/tokens-editor.utils';
+import { getTranslations } from 'next-intl/server';
+import { notFound, redirect } from 'next/navigation';
+import { routing, type Locale } from '@/i18n/routing';
+import { getTokensEditorPageData } from '@/features/tokens/tokens-editor.queries';
+import { ProjectEditorNav } from '@/features/design-systems/project-editor/ProjectEditorNav';
 
 type TokensEditorPageProps = {
   params: Promise<{
@@ -77,35 +78,7 @@ export default async function TokensEditorPage({
 
   return (
     <section className="mx-auto max-w-7xl">
-      <div className="flex flex-wrap gap-8">
-        <Link
-          href="/app/design-systems"
-          className="text-action-primary text-sm font-semibold"
-        >
-          {t('backLink')}
-        </Link>
-
-        <Link
-          href={`/app/design-systems/${pageData.project.slug}/themes`}
-          className="text-action-primary text-sm font-semibold"
-        >
-          {t('openThemesEditor')}
-        </Link>
-
-        <Link
-          href={`/app/design-systems/${pageData.project.slug}/accessibility`}
-          className="text-action-primary text-sm font-semibold"
-        >
-          {t('openAccessibilityCenter')}
-        </Link>
-
-        <Link
-          href={`/app/design-systems/${pageData.project.slug}/components`}
-          className="text-action-primary text-sm font-semibold"
-        >
-          {t('openComponentsRegistry')}
-        </Link>
-      </div>
+      <ProjectEditorNav projectSlug={pageData.project.slug} />
 
       <div className="mt-8 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
