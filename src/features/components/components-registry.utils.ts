@@ -10,6 +10,7 @@ export type ComponentRegistryCompleteness = {
   score: number;
   level: 'complete' | 'partial' | 'incomplete';
   missingFields: ComponentRegistryMissingField[];
+  warnings: ComponentCompletenessWarning[];
 };
 
 export type ComponentRegistryMissingField =
@@ -35,6 +36,16 @@ export type ComponentRegistryItem = {
 export type ComponentRegistryResult = {
   items: ComponentRegistryItem[];
   invalidCount: number;
+};
+
+export type ComponentCompletenessWarningCode =
+  | 'missingPurpose'
+  | 'missingAccessibleNameRule'
+  | 'missingCriticalStates';
+
+export type ComponentCompletenessWarning = {
+  code: ComponentCompletenessWarningCode;
+  severity: 'warning';
 };
 
 export function getComponentCategory(
@@ -93,14 +104,19 @@ export function getComponentCompleteness(
     missingFields.push('forbiddenPatterns');
   }
 
+  const warnings = getComponentCompletenessWarnings(contract);
+
   const totalFields = 6;
-  const score = Math.round(
+  const fieldScore = Math.round(
     ((totalFields - missingFields.length) / totalFields) * 100,
   );
+
+  const score = Math.max(0, fieldScore - warnings.length * 10);
 
   return {
     score,
     missingFields,
+    warnings,
     level: score >= 90 ? 'complete' : score >= 50 ? 'partial' : 'incomplete',
   };
 }
@@ -143,4 +159,92 @@ export function createComponentRegistryItems(
     items,
     invalidCount,
   };
+}
+
+const interactiveComponentTypes: ComponentContractType[] = [
+  'button',
+  'textField',
+  'dialog',
+];
+
+const criticalStateKeysByComponentType: Record<
+  ComponentContractType,
+  string[]
+> = {
+  button: ['disabled', 'focus', 'hover'],
+  textField: ['focus', 'disabled', 'error'],
+  card: [],
+  alert: [],
+  dialog: ['open', 'focus', 'dismissed'],
+};
+
+function hasLocalizedPurpose(contract: ComponentContract): boolean {
+  return Boolean(contract.purpose.en?.trim() || contract.purpose.fr?.trim());
+}
+
+function hasAccessibleNameRule(contract: ComponentContract): boolean {
+  return contract.accessibility.some((rule) => {
+    const searchableText = [
+      rule.key,
+      rule.description.en ?? '',
+      rule.description.fr ?? '',
+    ]
+      .join(' ')
+      .toLowerCase();
+
+    return (
+      searchableText.includes('accessible name') ||
+      searchableText.includes('nom accessible') ||
+      searchableText.includes('aria-label') ||
+      searchableText.includes('aria-labelledby')
+    );
+  });
+}
+
+function hasRequiredCriticalStates(contract: ComponentContract): boolean {
+  const criticalStates = criticalStateKeysByComponentType[contract.type];
+
+  if (criticalStates.length === 0) {
+    return true;
+  }
+
+  const documentedStateKeys = contract.states.map((state) =>
+    state.key.toLowerCase(),
+  );
+
+  return criticalStates.every((criticalState) =>
+    documentedStateKeys.includes(criticalState),
+  );
+}
+
+export function getComponentCompletenessWarnings(
+  contract: ComponentContract,
+): ComponentCompletenessWarning[] {
+  const warnings: ComponentCompletenessWarning[] = [];
+
+  if (!hasLocalizedPurpose(contract)) {
+    warnings.push({
+      code: 'missingPurpose',
+      severity: 'warning',
+    });
+  }
+
+  if (
+    interactiveComponentTypes.includes(contract.type) &&
+    !hasAccessibleNameRule(contract)
+  ) {
+    warnings.push({
+      code: 'missingAccessibleNameRule',
+      severity: 'warning',
+    });
+  }
+
+  if (!hasRequiredCriticalStates(contract)) {
+    warnings.push({
+      code: 'missingCriticalStates',
+      severity: 'warning',
+    });
+  }
+
+  return warnings;
 }

@@ -153,7 +153,24 @@
         "incomplete": "Incomplet",
         "partial": "Partiel"
       },
-      "title": "Warnings de complétude"
+      "noProductWarnings": "Aucun warning de complétude détecté pour ce composant.",
+      "productWarningsTitle": "Warnings de complétude composant",
+      "title": "Warnings de complétude",
+      "warningCount": "{count, plural, one {# warning} other {# warnings}}",
+      "warnings": {
+        "missingAccessibleNameRule": {
+          "description": "Les composants interactifs doivent documenter la manière dont leur nom accessible est fourni, par exemple via un texte visible, aria-label ou aria-labelledby.",
+          "title": "Règle de nom accessible manquante"
+        },
+        "missingCriticalStates": {
+          "description": "Documentez les états critiques attendus pour ce composant, comme focus, disabled, error, hover ou open selon le type de composant.",
+          "title": "États critiques manquants"
+        },
+        "missingPurpose": {
+          "description": "Ajoutez un purpose localisé afin que la documentation et les instructions IA puissent expliquer quand utiliser ce composant.",
+          "title": "Purpose manquant"
+        }
+      }
     },
     "description": "Consultez les contrats des composants MVP, leur statut, leurs plateformes et leur complétude documentaire.",
     "details": {

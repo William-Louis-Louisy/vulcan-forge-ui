@@ -233,6 +233,14 @@ function ComponentList({
                   {component.completeness.score}%
                 </p>
               </div>
+
+              {component.completeness.warnings.length > 0 ? (
+                <p className="text-action-warning mt-2 text-sm font-semibold">
+                  {t('completeness.warningCount', {
+                    count: component.completeness.warnings.length,
+                  })}
+                </p>
+              ) : null}
             </Link>
           );
         })}
@@ -357,6 +365,30 @@ function ComponentDetails({
         ) : (
           <p className="text-action-success text-sm font-semibold">
             {t('completeness.completeMessage')}
+          </p>
+        )}
+      </Section>
+
+      <Section title={t('completeness.productWarningsTitle')}>
+        {component.completeness.warnings.length > 0 ? (
+          <div className="grid gap-3">
+            {component.completeness.warnings.map((warning) => (
+              <article
+                key={warning.code}
+                className="border-action-warning/30 bg-action-warning/10 rounded-2xl border p-4"
+              >
+                <p className="text-action-warning text-sm font-semibold">
+                  {t(`completeness.warnings.${warning.code}.title`)}
+                </p>
+                <p className="text-content-secondary mt-2 text-sm leading-6">
+                  {t(`completeness.warnings.${warning.code}.description`)}
+                </p>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <p className="text-action-success text-sm font-semibold">
+            {t('completeness.noProductWarnings')}
           </p>
         )}
       </Section>

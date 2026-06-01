@@ -4,6 +4,7 @@ import {
   createComponentRegistryItems,
   getComponentCategory,
   getComponentCompleteness,
+  getComponentCompletenessWarnings,
 } from './components-registry.utils';
 
 const buttonContract: ComponentContract = {
@@ -30,6 +31,20 @@ const buttonContract: ComponentContract = {
       label: {
         en: 'Disabled',
         fr: 'Désactivé',
+      },
+    },
+    {
+      key: 'focus',
+      label: {
+        en: 'Focus',
+        fr: 'Focus',
+      },
+    },
+    {
+      key: 'hover',
+      label: {
+        en: 'Hover',
+        fr: 'Survol',
       },
     },
   ],
@@ -65,6 +80,7 @@ describe('components registry utils', () => {
       score: 100,
       level: 'complete',
       missingFields: [],
+      warnings: [],
     });
   });
 
@@ -76,9 +92,15 @@ describe('components registry utils', () => {
         forbiddenPatterns: [],
       }),
     ).toEqual({
-      score: 67,
+      score: 57,
       level: 'partial',
       missingFields: ['states', 'forbiddenPatterns'],
+      warnings: [
+        {
+          code: 'missingCriticalStates',
+          severity: 'warning',
+        },
+      ],
     });
   });
 
@@ -127,6 +149,74 @@ describe('components registry utils', () => {
     ).toEqual({
       items: [],
       invalidCount: 1,
+    });
+  });
+
+  it('returns a warning when purpose is missing', () => {
+    expect(
+      getComponentCompletenessWarnings({
+        ...buttonContract,
+        purpose: {},
+      }),
+    ).toContainEqual({
+      code: 'missingPurpose',
+      severity: 'warning',
+    });
+  });
+
+  it('returns a warning when an interactive component has no accessible name rule', () => {
+    expect(
+      getComponentCompletenessWarnings({
+        ...buttonContract,
+        accessibility: [
+          {
+            key: 'keyboard-support',
+            severity: 'critical',
+            description: {
+              en: 'The component must support keyboard interactions.',
+              fr: 'Le composant doit supporter les interactions clavier.',
+            },
+          },
+        ],
+      }),
+    ).toContainEqual({
+      code: 'missingAccessibleNameRule',
+      severity: 'warning',
+    });
+  });
+
+  it('returns a warning when critical states are missing', () => {
+    expect(
+      getComponentCompletenessWarnings({
+        ...buttonContract,
+        states: [
+          {
+            key: 'disabled',
+            label: {
+              en: 'Disabled',
+              fr: 'Désactivé',
+            },
+          },
+        ],
+      }),
+    ).toContainEqual({
+      code: 'missingCriticalStates',
+      severity: 'warning',
+    });
+  });
+
+  it('does not require accessible name warnings for non-interactive cards', () => {
+    expect(
+      getComponentCompletenessWarnings({
+        ...buttonContract,
+        type: 'card',
+        name: 'Card',
+        accessibility: [],
+        states: [],
+      }),
+    ).not.toContainEqual({
+      code: 'missingAccessibleNameRule',
+      severity: 'warning',
     });
   });
 });
