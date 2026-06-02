@@ -70,7 +70,12 @@ export default async function AiInstructionsGeneratorPage({
 
       <AiInstructionsGeneratorClient
         projectSlug={pageData.projectSlug}
-        initialLocale={initialLocale}
+        initialProfile={{
+          ...pageData.savedProfile,
+          locale: supportedLocales.includes(pageData.savedProfile.locale)
+            ? pageData.savedProfile.locale
+            : initialLocale,
+        }}
         fallbackLocale={pageData.fallbackLocale}
         aiInstructionsInput={pageData.aiInstructionsInput}
       />

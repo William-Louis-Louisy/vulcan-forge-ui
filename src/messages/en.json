@@ -149,6 +149,20 @@
       "empty": "No missing translation detected for this configuration.",
       "title": "Missing translations"
     },
+    "preferences": {
+      "description": "Save these AI instruction settings for this project.",
+      "errors": {
+        "invalidPayload": "The AI instruction preferences are invalid.",
+        "projectNotFound": "Project not found.",
+        "unauthorized": "You must be signed in to save AI instruction preferences.",
+        "unexpected": "Unable to save AI instruction preferences. Please try again."
+      },
+      "save": "Save preferences",
+      "saved": "AI instruction preferences saved.",
+      "saving": "Saving...",
+      "success": "AI instruction preferences saved.",
+      "unsaved": "Unsaved AI instruction preferences."
+    },
     "preview": {
       "fileName": "File: {fileName}",
       "sectionCount": "{count, plural, =0 {Only anti-hallucination rules included} one {# section selected} other {# sections selected}}",

@@ -149,6 +149,20 @@
       "empty": "Aucune traduction manquante détectée pour cette configuration.",
       "title": "Traductions manquantes"
     },
+    "preferences": {
+      "description": "Sauvegardez ces paramètres d’instructions IA pour ce projet.",
+      "errors": {
+        "invalidPayload": "Les préférences d’instructions IA sont invalides.",
+        "projectNotFound": "Projet introuvable.",
+        "unauthorized": "Vous devez être connecté pour sauvegarder les préférences d’instructions IA.",
+        "unexpected": "Impossible de sauvegarder les préférences d’instructions IA. Veuillez réessayer."
+      },
+      "save": "Sauvegarder les préférences",
+      "saved": "Préférences d’instructions IA sauvegardées.",
+      "saving": "Sauvegarde...",
+      "success": "Préférences d’instructions IA sauvegardées.",
+      "unsaved": "Préférences d’instructions IA non sauvegardées."
+    },
     "preview": {
       "fileName": "Fichier : {fileName}",
       "sectionCount": "{count, plural, =0 {Seules les règles anti-hallucination sont incluses} one {# section sélectionnée} other {# sections sélectionnées}}",
