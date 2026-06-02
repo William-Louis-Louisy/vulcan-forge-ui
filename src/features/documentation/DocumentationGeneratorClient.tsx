@@ -14,13 +14,16 @@ import {
   createDefaultDocumentationSectionSelection,
   type DocumentationSectionSelection,
 } from './documentation-generator.utils';
-import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import type { AppLocale } from '@/domain/i18n';
+import { useMemo, useState, useActionState } from 'react';
+import type { DocumentationProfileContent } from './documentation-profile.schema';
+import { saveDocumentationProfileAction } from './save-documentation-profile.action';
+import { initialSaveDocumentationProfileActionState } from './save-documentation-profile.state';
 
 type DocumentationGeneratorClientProps = {
   projectSlug: string;
-  initialLocale: AppLocale;
+  initialProfile: DocumentationProfileContent;
   fallbackLocale: AppLocale;
   documentationInput: Omit<
     MarkdownDocumentationInput,
@@ -32,19 +35,34 @@ type CopyStatus = 'idle' | 'success' | 'error';
 
 export function DocumentationGeneratorClient({
   projectSlug,
-  initialLocale,
+  initialProfile,
   fallbackLocale,
   documentationInput,
 }: DocumentationGeneratorClientProps) {
   const t = useTranslations('DocumentationGeneratorPage');
 
-  const [documentationLocale, setDocumentationLocale] =
-    useState<AppLocale>(initialLocale);
+  const [state, formAction, isPending] = useActionState(
+    saveDocumentationProfileAction,
+    initialSaveDocumentationProfileActionState,
+  );
+
+  const [documentationLocale, setDocumentationLocale] = useState<AppLocale>(
+    initialProfile.locale,
+  );
 
   const [sectionSelection, setSectionSelection] =
-    useState<DocumentationSectionSelection>(() =>
-      createDefaultDocumentationSectionSelection(),
-    );
+    useState<DocumentationSectionSelection>(() => {
+      const defaultSelection = createDefaultDocumentationSectionSelection();
+
+      return {
+        ...defaultSelection,
+        overview: initialProfile.sections.includes('overview'),
+        tokens: initialProfile.sections.includes('tokens'),
+        themes: initialProfile.sections.includes('themes'),
+        components: initialProfile.sections.includes('components'),
+        accessibility: initialProfile.sections.includes('accessibility'),
+      };
+    });
 
   const [copyStatus, setCopyStatus] = useState<CopyStatus>('idle');
 
@@ -68,6 +86,16 @@ export function DocumentationGeneratorClient({
     projectSlug,
     locale: documentationLocale,
   });
+
+  const currentProfile: DocumentationProfileContent = {
+    locale: documentationLocale,
+    sections: selectedSections,
+    format: 'markdown',
+  };
+
+  const serializedProfile = JSON.stringify(currentProfile);
+  const serializedInitialProfile = JSON.stringify(initialProfile);
+  const hasUnsavedPreferences = serializedProfile !== serializedInitialProfile;
 
   async function copyMarkdown() {
     try {
@@ -167,6 +195,58 @@ export function DocumentationGeneratorClient({
               {t('actions.download')}
             </Button>
           </div>
+
+          <form
+            action={formAction}
+            className="border-border-subtle rounded-2xl border p-4"
+          >
+            <input type="hidden" name="locale" value={documentationLocale} />
+            <input type="hidden" name="projectSlug" value={projectSlug} />
+            <input type="hidden" name="profile" value={serializedProfile} />
+
+            <div className="flex flex-col gap-3">
+              <div>
+                <p className="text-sm font-semibold">
+                  {hasUnsavedPreferences
+                    ? t('preferences.unsaved')
+                    : t('preferences.saved')}
+                </p>
+
+                <p className="text-content-secondary mt-1 text-xs leading-5">
+                  {t('preferences.description')}
+                </p>
+              </div>
+
+              <Button
+                type="submit"
+                disabled={
+                  isPending ||
+                  selectedSections.length === 0 ||
+                  !hasUnsavedPreferences
+                }
+              >
+                {isPending ? t('preferences.saving') : t('preferences.save')}
+              </Button>
+            </div>
+
+            {state.status === 'success' ? (
+              <p
+                role="status"
+                className="text-action-success mt-3 text-sm font-semibold"
+              >
+                {t('preferences.success')}
+              </p>
+            ) : null}
+
+            {state.formError ? (
+              <p
+                role="alert"
+                className="text-action-danger mt-3 text-sm font-semibold"
+              >
+                {t(`preferences.errors.${state.formError}`)}
+              </p>
+            ) : null}
+          </form>
 
           {copyStatus === 'success' ? (
             <p
