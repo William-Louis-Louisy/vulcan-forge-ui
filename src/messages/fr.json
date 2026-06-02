@@ -96,6 +96,72 @@
     },
     "title": "Accessibilité de {projectName}"
   },
+  "AiInstructionsGeneratorPage": {
+    "actions": {
+      "copy": "Copier les instructions",
+      "download": "Télécharger les instructions"
+    },
+    "controls": {
+      "locale": {
+        "legend": "Langue des instructions",
+        "options": {
+          "en": "Anglais",
+          "fr": "Français"
+        }
+      },
+      "sections": {
+        "antiHallucinationNotice": "Les règles anti-hallucination sont toujours incluses.",
+        "legend": "Sections à inclure",
+        "options": {
+          "accessibilityRules": "Règles d’accessibilité",
+          "componentRules": "Règles de composants",
+          "forbiddenPatterns": "Patterns interdits",
+          "tokenRules": "Règles de tokens"
+        }
+      },
+      "strictness": {
+        "legend": "Niveau de strictness",
+        "options": {
+          "balanced": {
+            "description": "Autorise des choix d’implémentation prudents lorsque le modèle est incomplet.",
+            "label": "Équilibré"
+          },
+          "strict": {
+            "description": "Empêche l’invention de tokens, composants, variantes et comportements d’accessibilité.",
+            "label": "Strict"
+          },
+          "veryStrict": {
+            "description": "Utilise uniquement les données explicites du modèle et signale les informations manquantes.",
+            "label": "Très strict"
+          }
+        }
+      },
+      "title": "Paramètres des instructions IA"
+    },
+    "copy": {
+      "error": "Impossible de copier les instructions IA. Veuillez réessayer.",
+      "success": "Instructions IA copiées dans le presse-papiers."
+    },
+    "description": "Configurez, prévisualisez, copiez et téléchargez les instructions IA localisées de ce design system.",
+    "eyebrow": "Générateur d’instructions IA",
+    "missingTranslations": {
+      "count": "{count, plural, one {# traduction manquante utilise un fallback.} other {# traductions manquantes utilisent un fallback.}}",
+      "empty": "Aucune traduction manquante détectée pour cette configuration.",
+      "title": "Traductions manquantes"
+    },
+    "preview": {
+      "fileName": "Fichier : {fileName}",
+      "sectionCount": "{count, plural, =0 {Seules les règles anti-hallucination sont incluses} one {# section sélectionnée} other {# sections sélectionnées}}",
+      "title": "Preview des instructions IA"
+    },
+    "states": {
+      "errorDescription": "Une erreur est survenue pendant le chargement du générateur d’instructions IA de ce projet. Veuillez réessayer.",
+      "errorTitle": "Impossible de charger le générateur d’instructions IA",
+      "loading": "Chargement du générateur d’instructions IA...",
+      "retry": "Réessayer"
+    },
+    "title": "Instructions IA de {projectName}"
+  },
   "AppPage": {
     "eyebrow": "Espace de travail",
     "signedInAs": "Connecté avec {email}.",

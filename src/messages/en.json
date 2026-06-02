@@ -96,6 +96,72 @@
     },
     "title": "{projectName} accessibility"
   },
+  "AiInstructionsGeneratorPage": {
+    "actions": {
+      "copy": "Copy instructions",
+      "download": "Download instructions"
+    },
+    "controls": {
+      "locale": {
+        "legend": "Instruction language",
+        "options": {
+          "en": "English",
+          "fr": "French"
+        }
+      },
+      "sections": {
+        "antiHallucinationNotice": "Anti-hallucination rules are always included.",
+        "legend": "Sections to include",
+        "options": {
+          "accessibilityRules": "Accessibility rules",
+          "componentRules": "Component rules",
+          "forbiddenPatterns": "Forbidden patterns",
+          "tokenRules": "Token rules"
+        }
+      },
+      "strictness": {
+        "legend": "Strictness",
+        "options": {
+          "balanced": {
+            "description": "Allows careful implementation choices when the model is incomplete.",
+            "label": "Balanced"
+          },
+          "strict": {
+            "description": "Prevents invented tokens, components, variants and accessibility behavior.",
+            "label": "Strict"
+          },
+          "veryStrict": {
+            "description": "Uses only explicit model data and reports missing information.",
+            "label": "Very strict"
+          }
+        }
+      },
+      "title": "AI instruction settings"
+    },
+    "copy": {
+      "error": "Unable to copy AI instructions. Please try again.",
+      "success": "AI instructions copied to clipboard."
+    },
+    "description": "Configure, preview, copy and download localized AI instructions for this design system.",
+    "eyebrow": "AI Instructions Generator",
+    "missingTranslations": {
+      "count": "{count, plural, one {# missing translation uses a fallback.} other {# missing translations use a fallback.}}",
+      "empty": "No missing translation detected for this configuration.",
+      "title": "Missing translations"
+    },
+    "preview": {
+      "fileName": "File: {fileName}",
+      "sectionCount": "{count, plural, =0 {Only anti-hallucination rules included} one {# section selected} other {# sections selected}}",
+      "title": "AI instructions preview"
+    },
+    "states": {
+      "errorDescription": "Something went wrong while loading this project's AI instructions generator. Please try again.",
+      "errorTitle": "Unable to load AI instructions generator",
+      "loading": "Loading AI instructions generator...",
+      "retry": "Retry"
+    },
+    "title": "{projectName} AI instructions"
+  },
   "AppPage": {
     "eyebrow": "Workspace",
     "signedInAs": "Signed in as {email}.",
