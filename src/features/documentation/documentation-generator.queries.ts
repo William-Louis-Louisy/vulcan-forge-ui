@@ -9,6 +9,11 @@ import {
   type DesignToken,
   type ComponentContract,
 } from '@/domain/design-system';
+import {
+  parseDocumentationProfileContent,
+  defaultDocumentationProfileContent,
+  type DocumentationProfileContent,
+} from './documentation-profile.schema';
 import { prisma } from '@/server/db/prisma';
 import type { AppLocale } from '@/domain/i18n';
 import { createAccessibilityCenterReport } from '@/features/accessibility/accessibility-center.utils';
@@ -23,6 +28,7 @@ export type DocumentationGeneratorInput = Omit<
 export type DocumentationGeneratorPageData = {
   projectSlug: string;
   fallbackLocale: AppLocale;
+  savedProfile: DocumentationProfileContent;
   documentationInput: DocumentationGeneratorInput;
 };
 
@@ -68,6 +74,11 @@ export async function getDocumentationGeneratorPageData({
       slug: true,
       description: true,
       defaultLocale: true,
+      documentationProfile: {
+        select: {
+          content: true,
+        },
+      },
       supportedLocales: true,
       localeSettings: {
         select: {
@@ -133,6 +144,15 @@ export async function getDocumentationGeneratorPageData({
     : null;
 
   return {
+    savedProfile: project.documentationProfile
+      ? parseDocumentationProfileContent(project.documentationProfile.content)
+      : {
+          ...defaultDocumentationProfileContent,
+          locale:
+            (project.localeSettings?.documentationLocale as
+              | AppLocale
+              | undefined) ?? (project.defaultLocale as AppLocale),
+        },
     projectSlug: project.slug,
     fallbackLocale:
       (project.localeSettings?.documentationLocale as AppLocale | undefined) ??

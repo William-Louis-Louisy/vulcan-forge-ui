@@ -69,7 +69,12 @@ export default async function DocumentationGeneratorPage({
 
       <DocumentationGeneratorClient
         projectSlug={pageData.projectSlug}
-        initialLocale={initialLocale}
+        initialProfile={{
+          ...pageData.savedProfile,
+          locale: supportedLocales.includes(pageData.savedProfile.locale)
+            ? pageData.savedProfile.locale
+            : initialLocale,
+        }}
         fallbackLocale={pageData.fallbackLocale}
         documentationInput={pageData.documentationInput}
       />

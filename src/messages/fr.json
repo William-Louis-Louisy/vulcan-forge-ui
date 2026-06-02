@@ -499,6 +499,20 @@
     },
     "openComponentsRegistry": "Ouvrir le registre de composants",
     "openTokensEditor": "Ouvrir l’éditeur de tokens",
+    "preferences": {
+      "description": "Sauvegardez ces paramètres de documentation pour ce projet.",
+      "errors": {
+        "invalidPayload": "Les préférences de documentation sont invalides.",
+        "projectNotFound": "Projet introuvable.",
+        "unauthorized": "Vous devez être connecté pour sauvegarder les préférences de documentation.",
+        "unexpected": "Impossible de sauvegarder les préférences de documentation. Veuillez réessayer."
+      },
+      "save": "Sauvegarder les préférences",
+      "saved": "Préférences de documentation sauvegardées.",
+      "saving": "Sauvegarde...",
+      "success": "Préférences de documentation sauvegardées.",
+      "unsaved": "Préférences de documentation non sauvegardées."
+    },
     "preview": {
       "fileName": "Fichier : {fileName}",
       "sectionCount": "{count, plural, =0 {Aucune section sélectionnée} one {# section sélectionnée} other {# sections sélectionnées}}",
