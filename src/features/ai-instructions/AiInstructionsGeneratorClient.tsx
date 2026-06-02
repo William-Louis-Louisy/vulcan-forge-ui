@@ -8,7 +8,6 @@ import {
   type AiInstructionsMissingTranslation,
 } from '@/domain/ai-instructions';
 import { Button } from '@/components/ui';
-import { useMemo, useState } from 'react';
 import {
   aiInstructionsSections,
   getAiInstructionsFileName,
@@ -19,10 +18,14 @@ import {
 } from './ai-instructions-generator.utils';
 import { useTranslations } from 'next-intl';
 import type { AppLocale } from '@/domain/i18n';
+import { useActionState, useMemo, useState } from 'react';
+import type { AiInstructionProfileContent } from './ai-instruction-profile.schema';
+import { saveAiInstructionProfileAction } from './save-ai-instruction-profile.action';
+import { initialSaveAiInstructionProfileActionState } from './save-ai-instruction-profile.state';
 
 type AiInstructionsGeneratorClientProps = {
   projectSlug: string;
-  initialLocale: AppLocale;
+  initialProfile: AiInstructionProfileContent;
   fallbackLocale: AppLocale;
   aiInstructionsInput: Omit<
     AiInstructionsInput,
@@ -34,22 +37,39 @@ type CopyStatus = 'idle' | 'success' | 'error';
 
 export function AiInstructionsGeneratorClient({
   projectSlug,
-  initialLocale,
+  initialProfile,
   fallbackLocale,
   aiInstructionsInput,
 }: AiInstructionsGeneratorClientProps) {
   const t = useTranslations('AiInstructionsGeneratorPage');
 
-  const [instructionsLocale, setInstructionsLocale] =
-    useState<AppLocale>(initialLocale);
+  const [state, formAction, isPending] = useActionState(
+    saveAiInstructionProfileAction,
+    initialSaveAiInstructionProfileActionState,
+  );
 
-  const [strictness, setStrictness] =
-    useState<AiInstructionsStrictness>('strict');
+  const [instructionsLocale, setInstructionsLocale] = useState<AppLocale>(
+    initialProfile.locale,
+  );
+
+  const [strictness, setStrictness] = useState<AiInstructionsStrictness>(
+    initialProfile.strictness,
+  );
 
   const [sectionSelection, setSectionSelection] =
-    useState<AiInstructionsSectionSelection>(() =>
-      createDefaultAiInstructionsSectionSelection(),
-    );
+    useState<AiInstructionsSectionSelection>(() => {
+      const defaultSelection = createDefaultAiInstructionsSectionSelection();
+
+      return {
+        ...defaultSelection,
+        tokenRules: initialProfile.sections.includes('tokenRules'),
+        componentRules: initialProfile.sections.includes('componentRules'),
+        accessibilityRules:
+          initialProfile.sections.includes('accessibilityRules'),
+        forbiddenPatterns:
+          initialProfile.sections.includes('forbiddenPatterns'),
+      };
+    });
 
   const [copyStatus, setCopyStatus] = useState<CopyStatus>('idle');
 
@@ -80,6 +100,16 @@ export function AiInstructionsGeneratorClient({
     projectSlug,
     locale: instructionsLocale,
   });
+
+  const currentProfile: AiInstructionProfileContent = {
+    locale: instructionsLocale,
+    strictness,
+    sections: selectedSections,
+  };
+
+  const serializedProfile = JSON.stringify(currentProfile);
+  const serializedInitialProfile = JSON.stringify(initialProfile);
+  const hasUnsavedPreferences = serializedProfile !== serializedInitialProfile;
 
   async function copyInstructions() {
     try {
@@ -214,6 +244,54 @@ export function AiInstructionsGeneratorClient({
               {t('actions.download')}
             </Button>
           </div>
+
+          <form
+            action={formAction}
+            className="border-border-subtle rounded-2xl border p-4"
+          >
+            <input type="hidden" name="locale" value={instructionsLocale} />
+            <input type="hidden" name="projectSlug" value={projectSlug} />
+            <input type="hidden" name="profile" value={serializedProfile} />
+
+            <div className="flex flex-col gap-3">
+              <div>
+                <p className="text-sm font-semibold">
+                  {hasUnsavedPreferences
+                    ? t('preferences.unsaved')
+                    : t('preferences.saved')}
+                </p>
+
+                <p className="text-content-secondary mt-1 text-xs leading-5">
+                  {t('preferences.description')}
+                </p>
+              </div>
+
+              <Button
+                type="submit"
+                disabled={isPending || !hasUnsavedPreferences}
+              >
+                {isPending ? t('preferences.saving') : t('preferences.save')}
+              </Button>
+            </div>
+
+            {state.status === 'success' ? (
+              <p
+                role="status"
+                className="text-action-success mt-3 text-sm font-semibold"
+              >
+                {t('preferences.success')}
+              </p>
+            ) : null}
+
+            {state.formError ? (
+              <p
+                role="alert"
+                className="text-action-danger mt-3 text-sm font-semibold"
+              >
+                {t(`preferences.errors.${state.formError}`)}
+              </p>
+            ) : null}
+          </form>
 
           {copyStatus === 'success' ? (
             <p

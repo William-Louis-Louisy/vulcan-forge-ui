@@ -5,6 +5,11 @@ import {
   type DesignToken,
   type ComponentContract,
 } from '@/domain/design-system';
+import {
+  parseAiInstructionProfileContent,
+  defaultAiInstructionProfileContent,
+  type AiInstructionProfileContent,
+} from './ai-instruction-profile.schema';
 import { prisma } from '@/server/db/prisma';
 import type { AppLocale } from '@/domain/i18n';
 import type { AiInstructionsInput } from '@/domain/ai-instructions';
@@ -19,6 +24,7 @@ export type AiInstructionsGeneratorInput = Omit<
 export type AiInstructionsGeneratorPageData = {
   projectSlug: string;
   fallbackLocale: AppLocale;
+  savedProfile: AiInstructionProfileContent;
   aiInstructionsInput: AiInstructionsGeneratorInput;
 };
 
@@ -58,6 +64,11 @@ export async function getAiInstructionsGeneratorPageData({
       description: true,
       defaultLocale: true,
       supportedLocales: true,
+      aiInstructionProfile: {
+        select: {
+          content: true,
+        },
+      },
       localeSettings: {
         select: {
           documentationLocale: true,
@@ -101,6 +112,15 @@ export async function getAiInstructionsGeneratorPageData({
     fallbackLocale:
       (project.localeSettings?.documentationLocale as AppLocale | undefined) ??
       (project.defaultLocale as AppLocale),
+    savedProfile: project.aiInstructionProfile
+      ? parseAiInstructionProfileContent(project.aiInstructionProfile.content)
+      : {
+          ...defaultAiInstructionProfileContent,
+          locale:
+            (project.localeSettings?.documentationLocale as
+              | AppLocale
+              | undefined) ?? (project.defaultLocale as AppLocale),
+        },
     aiInstructionsInput: {
       project: {
         name: project.name,
