@@ -45,6 +45,6 @@ export const projectEditorNavItems = [
   {
     key: 'aiInstructions',
     path: 'ai-instructions',
-    isEnabled: false,
+    isEnabled: true,
   },
 ] as const;
