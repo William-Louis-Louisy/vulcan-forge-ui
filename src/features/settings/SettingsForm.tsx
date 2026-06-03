@@ -4,6 +4,7 @@ import { Button } from '@/components/ui';
 import type { AppLocale } from '@/domain/i18n';
 import { useTranslations, useLocale } from 'next-intl';
 import { usePathname, useRouter } from '@/i18n/navigation';
+import { applyThemePreference } from './theme-preference.client';
 import { useActionState, useMemo, useState, useEffect } from 'react';
 import { updateUserSettingsAction } from './update-user-settings.action';
 import type { ThemePreference, UserSettings } from './user-settings.schema';
@@ -35,6 +36,10 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
   const [themePreference, setThemePreference] = useState<ThemePreference>(
     initialSettings.themePreference,
   );
+
+  useEffect(() => {
+    applyThemePreference(themePreference);
+  }, [themePreference]);
 
   const currentSettings = useMemo(
     () => ({

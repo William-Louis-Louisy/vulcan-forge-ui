@@ -2,9 +2,11 @@ import { auth } from '@/auth';
 import { hasLocale } from 'next-intl';
 import type { ReactNode } from 'react';
 import { routing } from '@/i18n/routing';
+import { prisma } from '@/server/db/prisma';
 import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
 import { AppShell } from '@/components/layout/AppShell';
+import type { ThemePreference } from '@/features/settings/user-settings.schema';
 
 type AppLayoutProps = {
   children: ReactNode;
@@ -31,6 +33,19 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
     namespace: 'AppShell',
   });
 
+  const userPreferences = await prisma.userPreference.findUnique({
+    where: {
+      userId: session.user.id,
+    },
+    select: {
+      themePreference: true,
+    },
+  });
+
+  const themePreference =
+    (userPreferences?.themePreference as ThemePreference | undefined) ??
+    'system';
+
   return (
     <AppShell
       userEmail={session.user.email ?? t('unknownUser')}
@@ -44,6 +59,7 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
         account: t('account'),
         signedInAs: t('signedInAs'),
       }}
+      themePreference={themePreference}
     >
       {children}
     </AppShell>
