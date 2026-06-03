@@ -1,5 +1,7 @@
 import {
+  toExportLogFormat,
   exportCenterFormats,
+  fromExportLogFormat,
   getExportCenterFileExtension,
 } from './export-center.utils';
 import { describe, expect, it } from 'vitest';
@@ -23,5 +25,19 @@ describe('export center utils', () => {
     expect(getExportCenterFileExtension('reactNativeTheme')).toBe('ts');
     expect(getExportCenterFileExtension('documentationMarkdown')).toBe('md');
     expect(getExportCenterFileExtension('aiInstructions')).toBe('md');
+  });
+
+  it('maps UI export formats to persisted export log formats', () => {
+    expect(toExportLogFormat('cssVariables')).toBe('cssVariables');
+    expect(toExportLogFormat('documentationMarkdown')).toBe(
+      'markdownDocumentation',
+    );
+  });
+
+  it('maps persisted export log formats to UI export formats', () => {
+    expect(fromExportLogFormat('cssVariables')).toBe('cssVariables');
+    expect(fromExportLogFormat('markdownDocumentation')).toBe(
+      'documentationMarkdown',
+    );
   });
 });

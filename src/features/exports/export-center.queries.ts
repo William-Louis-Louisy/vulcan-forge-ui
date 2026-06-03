@@ -7,6 +7,7 @@ import {
 } from '@/domain/design-system';
 import { prisma } from '@/server/db/prisma';
 import type { AppLocale } from '@/domain/i18n';
+import type { ExportLogFormat } from './export-center.utils';
 import {
   parseDocumentationProfileContent,
   defaultDocumentationProfileContent,
@@ -23,6 +24,15 @@ import { createAccessibilityCenterReport } from '@/features/accessibility/access
 
 const designTokenArraySchema = z.array(designTokenSchema);
 
+export type ExportCenterLog = {
+  id: string;
+  format: ExportLogFormat;
+  locale: AppLocale | null;
+  status: 'success' | 'failed';
+  errorMessage: string | null;
+  createdAt: string;
+};
+
 export type ExportCenterInput = {
   project: MarkdownDocumentationInput['project'];
   tokens: DesignToken[];
@@ -36,6 +46,7 @@ export type ExportCenterPageData = {
   fallbackLocale: AppLocale;
   documentationProfile: DocumentationProfileContent;
   aiInstructionProfile: AiInstructionProfileContent;
+  exportLogs: ExportCenterLog[];
   exportCenterInput: ExportCenterInput;
 };
 
@@ -116,6 +127,20 @@ export async function getExportCenterPageData({
       description: true,
       defaultLocale: true,
       supportedLocales: true,
+      exportLogs: {
+        orderBy: {
+          createdAt: 'desc',
+        },
+        take: 8,
+        select: {
+          id: true,
+          format: true,
+          locale: true,
+          status: true,
+          errorMessage: true,
+          createdAt: true,
+        },
+      },
       documentationProfile: {
         select: {
           content: true,
@@ -222,6 +247,14 @@ export async function getExportCenterPageData({
     fallbackLocale,
     documentationProfile,
     aiInstructionProfile,
+    exportLogs: project.exportLogs.map((exportLog) => ({
+      id: exportLog.id,
+      format: exportLog.format as ExportLogFormat,
+      locale: exportLog.locale as AppLocale | null,
+      status: exportLog.status,
+      errorMessage: exportLog.errorMessage,
+      createdAt: exportLog.createdAt.toISOString(),
+    })),
     exportCenterInput: {
       project: {
         name: project.name,

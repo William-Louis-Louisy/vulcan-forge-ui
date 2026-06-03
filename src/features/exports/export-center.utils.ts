@@ -9,6 +9,17 @@ export const exportCenterFormats = [
 
 export type ExportCenterFormat = (typeof exportCenterFormats)[number];
 
+export const exportLogFormats = [
+  'cssVariables',
+  'tailwindV4',
+  'typescriptTheme',
+  'reactNativeTheme',
+  'markdownDocumentation',
+  'aiInstructions',
+] as const;
+
+export type ExportLogFormat = (typeof exportLogFormats)[number];
+
 export function getExportCenterFileExtension(
   format: ExportCenterFormat,
 ): 'css' | 'ts' | 'md' {
@@ -25,4 +36,14 @@ export function getExportCenterFileExtension(
     case 'aiInstructions':
       return 'md';
   }
+}
+
+export function toExportLogFormat(format: ExportCenterFormat): ExportLogFormat {
+  return format === 'documentationMarkdown' ? 'markdownDocumentation' : format;
+}
+
+export function fromExportLogFormat(
+  format: ExportLogFormat,
+): ExportCenterFormat {
+  return format === 'markdownDocumentation' ? 'documentationMarkdown' : format;
 }
