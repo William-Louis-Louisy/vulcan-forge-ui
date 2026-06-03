@@ -7,6 +7,10 @@ export const privateNavigationItems = [
     key: 'designSystems',
     href: '/app/design-systems',
   },
+  {
+    key: 'settings',
+    href: '/app/settings',
+  },
 ] as const;
 
 export type PrivateNavigationItem = (typeof privateNavigationItems)[number];

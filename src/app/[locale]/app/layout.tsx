@@ -1,10 +1,10 @@
-import type { ReactNode } from 'react';
+import { auth } from '@/auth';
 import { hasLocale } from 'next-intl';
+import type { ReactNode } from 'react';
+import { routing } from '@/i18n/routing';
 import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
-import { auth } from '@/auth';
 import { AppShell } from '@/components/layout/AppShell';
-import { routing } from '@/i18n/routing';
 
 type AppLayoutProps = {
   children: ReactNode;
@@ -39,6 +39,7 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
         navigationItems: {
           dashboard: t('navigationItems.dashboard'),
           designSystems: t('navigationItems.designSystems'),
+          settings: t('navigationItems.settings'),
         },
         account: t('account'),
         signedInAs: t('signedInAs'),
