@@ -606,6 +606,81 @@
     },
     "title": "Documentation de {projectName}"
   },
+  "ExportCenterPage": {
+    "actions": {
+      "copy": "Copier l’export",
+      "download": "Télécharger l’export"
+    },
+    "controls": {
+      "format": {
+        "legend": "Format d’export"
+      },
+      "includeDeprecated": {
+        "description": "Les tokens dépréciés sont exclus par défaut. Activez cette option uniquement pour les migrations ou les consommateurs legacy.",
+        "label": "Inclure les tokens dépréciés"
+      },
+      "title": "Paramètres d’export"
+    },
+    "copy": {
+      "error": "Impossible de copier cet export. Veuillez réessayer.",
+      "success": "Export copié dans le presse-papiers."
+    },
+    "description": "Prévisualisez, copiez et téléchargez les sorties du design system pour le web, Tailwind, TypeScript, React Native, la documentation et les workflows IA.",
+    "diagnostics": {
+      "empty": "Aucun token ignoré ni traduction manquante détecté pour cet export.",
+      "missingTranslations": {
+        "title": "Traductions manquantes"
+      },
+      "skippedTokens": {
+        "reasons": {
+          "deprecated": "Token déprécié",
+          "resolutionError": "Référence non résolue",
+          "unsupportedValue": "Valeur non supportée"
+        },
+        "title": "Tokens ignorés"
+      },
+      "title": "Diagnostics d’export"
+    },
+    "eyebrow": "Export Center",
+    "formats": {
+      "aiInstructions": {
+        "description": "Instructions IA générées à partir des préférences sauvegardées du générateur d’instructions IA.",
+        "label": "Instructions IA"
+      },
+      "cssVariables": {
+        "description": "Un fichier CSS autonome avec les custom properties résolues.",
+        "label": "CSS variables"
+      },
+      "documentationMarkdown": {
+        "description": "Documentation générée à partir des préférences sauvegardées du générateur de documentation.",
+        "label": "Documentation Markdown"
+      },
+      "reactNativeTheme": {
+        "description": "Un module thème typé avec lightTheme, darkTheme et helper getTheme.",
+        "label": "Thème React Native"
+      },
+      "tailwindV4": {
+        "description": "Un fichier CSS contenant les variables sources et un bloc @theme Tailwind v4.",
+        "label": "Thème Tailwind v4"
+      },
+      "typescriptTheme": {
+        "description": "Un module thème typé pour les applications web et les packages partagés.",
+        "label": "Thème TypeScript"
+      }
+    },
+    "preview": {
+      "fileName": "Fichier : {fileName}",
+      "format": "Format : {format}",
+      "title": "Preview de l’export"
+    },
+    "states": {
+      "errorDescription": "Une erreur est survenue pendant le chargement de l’export center de ce projet. Veuillez réessayer.",
+      "errorTitle": "Impossible de charger l’export center",
+      "loading": "Chargement de l’export center...",
+      "retry": "Réessayer"
+    },
+    "title": "Exports de {projectName}"
+  },
   "HomePage": {
     "faq": {
       "items": {
