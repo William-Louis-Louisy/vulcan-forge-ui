@@ -40,7 +40,7 @@ export const projectEditorNavItems = [
   {
     key: 'exports',
     path: 'exports',
-    isEnabled: false,
+    isEnabled: true,
   },
   {
     key: 'aiInstructions',

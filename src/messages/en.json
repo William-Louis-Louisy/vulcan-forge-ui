@@ -606,6 +606,81 @@
     },
     "title": "{projectName} documentation"
   },
+  "ExportCenterPage": {
+    "actions": {
+      "copy": "Copy export",
+      "download": "Download export"
+    },
+    "controls": {
+      "format": {
+        "legend": "Export format"
+      },
+      "includeDeprecated": {
+        "description": "Deprecated tokens are excluded by default. Enable this only for migrations or legacy consumers.",
+        "label": "Include deprecated tokens"
+      },
+      "title": "Export settings"
+    },
+    "copy": {
+      "error": "Unable to copy this export. Please try again.",
+      "success": "Export copied to clipboard."
+    },
+    "description": "Preview, copy and download design system outputs for web, Tailwind, TypeScript, React Native, documentation and AI workflows.",
+    "diagnostics": {
+      "empty": "No skipped token or missing translation detected for this export.",
+      "missingTranslations": {
+        "title": "Missing translations"
+      },
+      "skippedTokens": {
+        "reasons": {
+          "deprecated": "Deprecated token",
+          "resolutionError": "Unresolved reference",
+          "unsupportedValue": "Unsupported value"
+        },
+        "title": "Skipped tokens"
+      },
+      "title": "Export diagnostics"
+    },
+    "eyebrow": "Export Center",
+    "formats": {
+      "aiInstructions": {
+        "description": "Generated AI instructions using the saved AI Instructions preferences.",
+        "label": "AI instructions"
+      },
+      "cssVariables": {
+        "description": "A standalone CSS file with resolved custom properties.",
+        "label": "CSS variables"
+      },
+      "documentationMarkdown": {
+        "description": "Generated documentation using the saved Documentation Generator preferences.",
+        "label": "Markdown documentation"
+      },
+      "reactNativeTheme": {
+        "description": "A typed theme module with lightTheme, darkTheme and getTheme helpers.",
+        "label": "React Native theme"
+      },
+      "tailwindV4": {
+        "description": "A CSS file containing source variables and a Tailwind v4 @theme block.",
+        "label": "Tailwind v4 theme"
+      },
+      "typescriptTheme": {
+        "description": "A typed theme module for web applications and shared packages.",
+        "label": "TypeScript theme"
+      }
+    },
+    "preview": {
+      "fileName": "File: {fileName}",
+      "format": "Format: {format}",
+      "title": "Export preview"
+    },
+    "states": {
+      "errorDescription": "Something went wrong while loading this project's export center. Please try again.",
+      "errorTitle": "Unable to load export center",
+      "loading": "Loading export center...",
+      "retry": "Retry"
+    },
+    "title": "{projectName} exports"
+  },
   "HomePage": {
     "faq": {
       "items": {
