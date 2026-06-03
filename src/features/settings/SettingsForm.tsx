@@ -1,9 +1,10 @@
 'use client';
 
 import { Button } from '@/components/ui';
-import { useTranslations } from 'next-intl';
 import type { AppLocale } from '@/domain/i18n';
-import { useActionState, useMemo, useState } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
+import { usePathname, useRouter } from '@/i18n/navigation';
+import { useActionState, useMemo, useState, useEffect } from 'react';
 import { updateUserSettingsAction } from './update-user-settings.action';
 import type { ThemePreference, UserSettings } from './user-settings.schema';
 import { initialUpdateUserSettingsActionState } from './update-user-settings.state';
@@ -21,6 +22,9 @@ const themePreferences = [
 
 export function SettingsForm({ initialSettings }: SettingsFormProps) {
   const t = useTranslations('SettingsPage');
+  const router = useRouter();
+  const pathname = usePathname();
+  const pageLocale = useLocale() as AppLocale;
 
   const [state, formAction, isPending] = useActionState(
     updateUserSettingsAction,
@@ -40,8 +44,26 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
     [locale, themePreference],
   );
 
+  const lastSavedSettings = state.savedSettings ?? initialSettings;
+
   const hasUnsavedChanges =
-    JSON.stringify(currentSettings) !== JSON.stringify(initialSettings);
+    JSON.stringify(currentSettings) !== JSON.stringify(lastSavedSettings);
+
+  useEffect(() => {
+    if (state.status !== 'success' || !state.savedSettings) {
+      return;
+    }
+
+    if (state.savedSettings.locale !== pageLocale) {
+      router.replace(pathname, {
+        locale: state.savedSettings.locale,
+      });
+
+      return;
+    }
+
+    router.refresh();
+  }, [pageLocale, pathname, router, state.savedSettings, state.status]);
 
   return (
     <form
