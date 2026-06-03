@@ -186,7 +186,8 @@
     "account": "Compte",
     "navigationItems": {
       "dashboard": "Tableau de bord",
-      "designSystems": "Design systems"
+      "designSystems": "Design systems",
+      "settings": "Paramètres"
     },
     "navigationLabel": "Navigation de l’application",
     "signedInAs": "Connecté avec",
@@ -929,6 +930,68 @@
     "pricing": "Tarifs",
     "product": "Produit",
     "signIn": "Connexion"
+  },
+  "SettingsPage": {
+    "account": {
+      "email": "Email",
+      "name": "Nom",
+      "title": "Compte",
+      "unknownName": "Utilisateur inconnu"
+    },
+    "description": "Gérez vos préférences de compte et le comportement par défaut de l’application.",
+    "eyebrow": "Paramètres utilisateur",
+    "form": {
+      "description": "Sauvegardez vos préférences pour les prochaines sessions.",
+      "errors": {
+        "invalidPayload": "Les paramètres envoyés sont invalides.",
+        "unauthorized": "Vous devez être connecté pour modifier vos paramètres.",
+        "unexpected": "Impossible de sauvegarder vos paramètres. Veuillez réessayer."
+      },
+      "save": "Sauvegarder les paramètres",
+      "saved": "Les paramètres sont à jour.",
+      "saving": "Sauvegarde...",
+      "success": "Paramètres sauvegardés.",
+      "unsaved": "Vous avez des paramètres non sauvegardés."
+    },
+    "locale": {
+      "description": "Choisissez la langue par défaut de l’application pour votre compte.",
+      "options": {
+        "en": {
+          "description": "Utiliser l’anglais comme langue d’interface préférée.",
+          "label": "Anglais"
+        },
+        "fr": {
+          "description": "Utiliser le français comme langue d’interface préférée.",
+          "label": "Français"
+        }
+      },
+      "title": "Langue"
+    },
+    "states": {
+      "errorDescription": "Une erreur est survenue pendant le chargement de vos paramètres. Veuillez réessayer.",
+      "errorTitle": "Impossible de charger les paramètres",
+      "loading": "Chargement des paramètres...",
+      "retry": "Réessayer"
+    },
+    "theme": {
+      "description": "Choisissez comment l’interface doit s’adapter à vos préférences d’affichage.",
+      "options": {
+        "dark": {
+          "description": "Toujours utiliser l’interface sombre.",
+          "label": "Sombre"
+        },
+        "light": {
+          "description": "Toujours utiliser l’interface claire.",
+          "label": "Clair"
+        },
+        "system": {
+          "description": "Suivre les paramètres d’apparence de votre appareil.",
+          "label": "Système"
+        }
+      },
+      "title": "Apparence"
+    },
+    "title": "Paramètres"
   },
   "SignupPage": {
     "benefits": {

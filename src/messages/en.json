@@ -186,7 +186,8 @@
     "account": "Account",
     "navigationItems": {
       "dashboard": "Dashboard",
-      "designSystems": "Design systems"
+      "designSystems": "Design systems",
+      "settings": "Settings"
     },
     "navigationLabel": "Application navigation",
     "signedInAs": "Signed in as",
@@ -929,6 +930,68 @@
     "pricing": "Pricing",
     "product": "Product",
     "signIn": "Sign in"
+  },
+  "SettingsPage": {
+    "account": {
+      "email": "Email",
+      "name": "Name",
+      "title": "Account",
+      "unknownName": "Unknown user"
+    },
+    "description": "Manage your account preferences and default application behavior.",
+    "eyebrow": "User settings",
+    "form": {
+      "description": "Save your preferences for the next sessions.",
+      "errors": {
+        "invalidPayload": "The settings payload is invalid.",
+        "unauthorized": "You must be signed in to update your settings.",
+        "unexpected": "Unable to save your settings. Please try again."
+      },
+      "save": "Save settings",
+      "saved": "Settings are up to date.",
+      "saving": "Saving...",
+      "success": "Settings saved.",
+      "unsaved": "You have unsaved settings."
+    },
+    "locale": {
+      "description": "Choose the default application language for your account.",
+      "options": {
+        "en": {
+          "description": "Use English as your preferred interface language.",
+          "label": "English"
+        },
+        "fr": {
+          "description": "Use French as your preferred interface language.",
+          "label": "French"
+        }
+      },
+      "title": "Language"
+    },
+    "states": {
+      "errorDescription": "Something went wrong while loading your settings. Please try again.",
+      "errorTitle": "Unable to load settings",
+      "loading": "Loading settings...",
+      "retry": "Retry"
+    },
+    "theme": {
+      "description": "Choose how the interface should adapt to your display preferences.",
+      "options": {
+        "dark": {
+          "description": "Always use the dark interface.",
+          "label": "Dark"
+        },
+        "light": {
+          "description": "Always use the light interface.",
+          "label": "Light"
+        },
+        "system": {
+          "description": "Follow your device appearance setting.",
+          "label": "System"
+        }
+      },
+      "title": "Appearance"
+    },
+    "title": "Settings"
   },
   "SignupPage": {
     "benefits": {
