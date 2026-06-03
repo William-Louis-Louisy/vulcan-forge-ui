@@ -9,14 +9,22 @@ import {
 } from '@/domain/exports';
 import {
   exportCenterFormats,
+  fromExportLogFormat,
   type ExportCenterFormat,
 } from './export-center.utils';
+import type {
+  ExportCenterLog,
+  ExportCenterInput,
+} from './export-center.queries';
+import { useLocale } from 'next-intl';
 import { Button } from '@/components/ui';
-import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import type { ExportCenterInput } from './export-center.queries';
+import { useRouter } from '@/i18n/navigation';
+import type { AppLocale } from '@/domain/i18n';
+import { useMemo, useState, useTransition } from 'react';
 import { generateAiInstructions } from '@/domain/ai-instructions';
 import { generateMarkdownDocumentation } from '@/domain/documentation';
+import { logExportAction, type LogExportStatus } from './log-export.action';
 import type { AiInstructionsMissingTranslation } from '@/domain/ai-instructions';
 import type { MarkdownDocumentationMissingTranslation } from '@/domain/documentation';
 import type { DocumentationProfileContent } from '@/features/documentation/documentation-profile.schema';
@@ -26,6 +34,7 @@ type CopyStatus = 'idle' | 'success' | 'error';
 
 type ExportCenterOutput = {
   format: ExportCenterFormat;
+  locale: AppLocale | null;
   fileName: string;
   content: string;
   skippedTokens: CssVariablesExportSkippedToken[];
@@ -40,6 +49,7 @@ type ExportCenterClientProps = {
   exportCenterInput: ExportCenterInput;
   documentationProfile: DocumentationProfileContent;
   aiInstructionProfile: AiInstructionProfileContent;
+  exportLogs: ExportCenterLog[];
 };
 
 function getSelectedExportOutput({
@@ -66,8 +76,14 @@ export function ExportCenterClient({
   exportCenterInput,
   documentationProfile,
   aiInstructionProfile,
+  exportLogs,
 }: ExportCenterClientProps) {
   const t = useTranslations('ExportCenterPage');
+
+  const router = useRouter();
+  const pageLocale = useLocale() as AppLocale;
+  const [isLoggingExport, startLoggingExportTransition] = useTransition();
+  const [logStatus, setLogStatus] = useState<'idle' | 'error'>('idle');
 
   const [selectedFormat, setSelectedFormat] =
     useState<ExportCenterFormat>('cssVariables');
@@ -129,6 +145,7 @@ export function ExportCenterClient({
     return [
       {
         format: 'cssVariables',
+        locale: null,
         fileName: cssVariables.fileName,
         content: cssVariables.content,
         skippedTokens: cssVariables.skippedTokens,
@@ -136,6 +153,7 @@ export function ExportCenterClient({
       },
       {
         format: 'tailwindV4',
+        locale: null,
         fileName: tailwindV4.fileName,
         content: tailwindV4.content,
         skippedTokens: tailwindV4.skippedTokens,
@@ -143,6 +161,7 @@ export function ExportCenterClient({
       },
       {
         format: 'typescriptTheme',
+        locale: null,
         fileName: typescriptTheme.fileName,
         content: typescriptTheme.content,
         skippedTokens: typescriptTheme.skippedTokens,
@@ -150,6 +169,7 @@ export function ExportCenterClient({
       },
       {
         format: 'reactNativeTheme',
+        locale: null,
         fileName: reactNativeTheme.fileName,
         content: reactNativeTheme.content,
         skippedTokens: reactNativeTheme.skippedTokens,
@@ -157,6 +177,7 @@ export function ExportCenterClient({
       },
       {
         format: 'documentationMarkdown',
+        locale: documentationProfile.locale,
         fileName: `${projectSlug}-documentation-${documentationProfile.locale}.md`,
         content: documentationMarkdown.markdown,
         skippedTokens: [],
@@ -164,6 +185,7 @@ export function ExportCenterClient({
       },
       {
         format: 'aiInstructions',
+        locale: aiInstructionProfile.locale,
         fileName: aiInstructions.fileName,
         content: aiInstructions.content,
         skippedTokens: [],
@@ -184,28 +206,70 @@ export function ExportCenterClient({
     selectedFormat,
   });
 
+  function logSelectedExport({
+    status,
+    errorMessage = null,
+  }: {
+    status: LogExportStatus;
+    errorMessage?: string | null;
+  }) {
+    setLogStatus('idle');
+
+    startLoggingExportTransition(() => {
+      void logExportAction({
+        projectSlug,
+        pageLocale,
+        format: selectedOutput.format,
+        exportLocale: selectedOutput.locale,
+        status,
+        errorMessage,
+      }).then((result) => {
+        if (result.status === 'error') {
+          setLogStatus('error');
+          return;
+        }
+
+        router.refresh();
+      });
+    });
+  }
+
   async function copyExportContent() {
     try {
       await navigator.clipboard.writeText(selectedOutput.content);
       setCopyStatus('success');
+      logSelectedExport({ status: 'success' });
     } catch {
       setCopyStatus('error');
+      logSelectedExport({
+        status: 'failed',
+        errorMessage: 'Unable to copy export content to clipboard.',
+      });
     }
   }
 
   function downloadExportContent() {
-    const blob = new Blob([selectedOutput.content], {
-      type: 'text/plain;charset=utf-8',
-    });
+    try {
+      const blob = new Blob([selectedOutput.content], {
+        type: 'text/plain;charset=utf-8',
+      });
 
-    const objectUrl = URL.createObjectURL(blob);
-    const link = document.createElement('a');
+      const objectUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
 
-    link.href = objectUrl;
-    link.download = selectedOutput.fileName;
-    link.click();
+      link.href = objectUrl;
+      link.download = selectedOutput.fileName;
+      link.click();
 
-    URL.revokeObjectURL(objectUrl);
+      URL.revokeObjectURL(objectUrl);
+
+      logSelectedExport({ status: 'success' });
+    } catch {
+      logSelectedExport({
+        status: 'failed',
+        errorMessage: 'Unable to download export content.',
+      });
+    }
   }
 
   return (
@@ -236,6 +300,7 @@ export function ExportCenterClient({
                     onChange={() => {
                       setSelectedFormat(format);
                       setCopyStatus('idle');
+                      setLogStatus('idle');
                     }}
                   />
 
@@ -258,9 +323,11 @@ export function ExportCenterClient({
               className="mt-1"
               type="checkbox"
               checked={includeDeprecated}
-              onChange={(event) =>
-                setIncludeDeprecated(event.currentTarget.checked)
-              }
+              onChange={(event) => {
+                setIncludeDeprecated(event.currentTarget.checked);
+                setCopyStatus('idle');
+                setLogStatus('idle');
+              }}
             />
 
             <span>
@@ -275,7 +342,11 @@ export function ExportCenterClient({
           </label>
 
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
-            <Button type="button" onClick={copyExportContent}>
+            <Button
+              type="button"
+              onClick={copyExportContent}
+              disabled={isLoggingExport}
+            >
               {t('actions.copy')}
             </Button>
 
@@ -283,6 +354,7 @@ export function ExportCenterClient({
               type="button"
               variant="secondary"
               onClick={downloadExportContent}
+              disabled={isLoggingExport}
             >
               {t('actions.download')}
             </Button>
@@ -305,11 +377,28 @@ export function ExportCenterClient({
               {t('copy.error')}
             </p>
           ) : null}
+
+          {isLoggingExport ? (
+            <p className="text-content-secondary text-sm font-semibold">
+              {t('logs.saving')}
+            </p>
+          ) : null}
+
+          {logStatus === 'error' ? (
+            <p
+              role="alert"
+              className="text-action-danger text-sm font-semibold"
+            >
+              {t('logs.error')}
+            </p>
+          ) : null}
         </div>
       </aside>
 
       <section className="grid gap-6">
         <ExportDiagnosticsPanel output={selectedOutput} />
+
+        <ExportLogsPanel logs={exportLogs} />
 
         <article className="border-border-subtle bg-surface-primary shadow-soft rounded-3xl border p-6">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
@@ -332,7 +421,7 @@ export function ExportCenterClient({
             </p>
           </div>
 
-          <pre className="border-border-subtle bg-background-subtle mt-6 max-h-[720px] overflow-auto rounded-2xl border p-4 text-sm leading-6">
+          <pre className="border-border-subtle bg-background-subtle mt-6 max-h-180 overflow-auto rounded-2xl border p-4 text-sm leading-6">
             <code>{selectedOutput.content}</code>
           </pre>
         </article>
@@ -402,6 +491,76 @@ function ExportDiagnosticsPanel({ output }: { output: ExportCenterOutput }) {
           </ul>
         </div>
       ) : null}
+    </section>
+  );
+}
+
+function ExportLogsPanel({ logs }: { logs: ExportCenterLog[] }) {
+  const t = useTranslations('ExportCenterPage');
+
+  const formatLabels: Record<ExportCenterFormat, string> = {
+    cssVariables: t('formats.cssVariables.label'),
+    tailwindV4: t('formats.tailwindV4.label'),
+    typescriptTheme: t('formats.typescriptTheme.label'),
+    reactNativeTheme: t('formats.reactNativeTheme.label'),
+    documentationMarkdown: t('formats.documentationMarkdown.label'),
+    aiInstructions: t('formats.aiInstructions.label'),
+  };
+
+  return (
+    <section className="border-border-subtle bg-surface-primary shadow-soft rounded-3xl border p-6">
+      <h2 className="text-2xl font-semibold tracking-tight">
+        {t('logs.title')}
+      </h2>
+
+      {logs.length === 0 ? (
+        <p className="text-content-secondary mt-4 text-sm">{t('logs.empty')}</p>
+      ) : (
+        <ul className="mt-4 grid gap-3">
+          {logs.map((log) => {
+            const uiFormat = fromExportLogFormat(log.format);
+
+            return (
+              <li
+                key={log.id}
+                className="border-border-subtle rounded-2xl border p-4 text-sm"
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="font-semibold">{formatLabels[uiFormat]}</p>
+
+                  <span
+                    className={
+                      log.status === 'success'
+                        ? 'text-action-success font-semibold'
+                        : 'text-action-danger font-semibold'
+                    }
+                  >
+                    {t(`logs.status.${log.status}`)}
+                  </span>
+                </div>
+
+                <p className="text-content-secondary mt-2">
+                  {t('logs.createdAt', {
+                    date: new Date(log.createdAt),
+                  })}
+                </p>
+
+                {log.locale ? (
+                  <p className="text-content-secondary mt-1">
+                    {t('logs.locale', { locale: log.locale })}
+                  </p>
+                ) : null}
+
+                {log.errorMessage ? (
+                  <p className="text-action-danger mt-2 font-semibold">
+                    {log.errorMessage}
+                  </p>
+                ) : null}
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </section>
   );
 }

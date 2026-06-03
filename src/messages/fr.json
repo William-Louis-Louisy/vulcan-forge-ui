@@ -668,6 +668,18 @@
         "label": "Thème TypeScript"
       }
     },
+    "logs": {
+      "createdAt": "Créé le {date, date, medium} à {date, time, short}",
+      "empty": "Aucun export n’a encore été loggé pour ce projet.",
+      "error": "L’export a été généré, mais le log d’export n’a pas pu être sauvegardé.",
+      "locale": "Locale : {locale}",
+      "saving": "Log de l’export...",
+      "status": {
+        "failed": "Échec",
+        "success": "Succès"
+      },
+      "title": "Exports récents"
+    },
     "preview": {
       "fileName": "Fichier : {fileName}",
       "format": "Format : {format}",

@@ -67,6 +67,7 @@ export default async function ExportCenterPage({
         exportCenterInput={pageData.exportCenterInput}
         documentationProfile={pageData.documentationProfile}
         aiInstructionProfile={pageData.aiInstructionProfile}
+        exportLogs={pageData.exportLogs}
       />
     </section>
   );
