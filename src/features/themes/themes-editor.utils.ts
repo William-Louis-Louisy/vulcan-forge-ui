@@ -1,3 +1,8 @@
+import {
+  evaluateContrast,
+  type ContrastEvaluation,
+} from '@/domain/accessibility';
+
 export const themeModes = ['light', 'dark'] as const;
 
 export type ThemeMode = (typeof themeModes)[number];
@@ -16,6 +21,7 @@ export type ThemeColorPair = {
   backgroundKey: string;
   foregroundValue: string | null;
   backgroundValue: string | null;
+  contrast: ContrastEvaluation | null;
 };
 
 export const themeContrastPairDefinitions = [
@@ -82,17 +88,31 @@ export function getThemeColorValue({
 }
 
 export function getThemeContrastPairs(tokens: unknown): ThemeColorPair[] {
-  return themeContrastPairDefinitions.map((pair) => ({
-    key: pair.key,
-    foregroundKey: pair.foregroundKey,
-    backgroundKey: pair.backgroundKey,
-    foregroundValue: getThemeColorValue({
+  return themeContrastPairDefinitions.map((pair) => {
+    const foregroundValue = getThemeColorValue({
       tokens,
       colorKey: pair.foregroundKey,
-    }),
-    backgroundValue: getThemeColorValue({
+    });
+
+    const backgroundValue = getThemeColorValue({
       tokens,
       colorKey: pair.backgroundKey,
-    }),
-  }));
+    });
+
+    return {
+      key: pair.key,
+      foregroundKey: pair.foregroundKey,
+      backgroundKey: pair.backgroundKey,
+      foregroundValue,
+      backgroundValue,
+      contrast:
+        foregroundValue && backgroundValue
+          ? evaluateContrast({
+              foreground: foregroundValue,
+              background: backgroundValue,
+              textSize: 'normal',
+            })
+          : null,
+    };
+  });
 }

@@ -59,4 +59,12 @@ describe('localized messages', () => {
   it('does not contain empty French messages', () => {
     expect(getEmptyStringPaths(frMessages)).toEqual([]);
   });
+
+  it('does not contain obsolete DS-090 contrast placeholders', () => {
+    const serializedEnglishMessages = JSON.stringify(enMessages);
+    const serializedFrenchMessages = JSON.stringify(frMessages);
+
+    expect(serializedEnglishMessages).not.toContain('DS-090');
+    expect(serializedFrenchMessages).not.toContain('DS-090');
+  });
 });

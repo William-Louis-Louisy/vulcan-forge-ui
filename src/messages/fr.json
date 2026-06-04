@@ -1033,13 +1033,21 @@
       "background": "Arrière-plan",
       "description": "Ces paires sont affichées dès maintenant. Les ratios de contraste seront calculés dans l’epic accessibilité.",
       "foreground": "Premier plan",
+      "invalidColors": "Ratio indisponible : une couleur est invalide.",
+      "missingColors": "Ratio indisponible : une couleur est manquante.",
       "pairs": {
         "accentOnBackground": "Accent sur fond applicatif",
         "contentOnBackground": "Contenu sur fond applicatif",
         "contentOnSurface": "Contenu sur surface",
         "mutedOnBackground": "Contenu secondaire sur fond applicatif"
       },
-      "ratioPending": "Le calcul du ratio de contraste sera ajouté dans DS-090.",
+      "ratio": "Ratio : {ratio}:1",
+      "requiredRatio": "Minimum texte normal : {required}:1",
+      "status": {
+        "fail": "Insuffisant AA",
+        "pass": "Valide AA",
+        "warning": "À surveiller"
+      },
       "title": "Paires de contraste clés"
     },
     "description": "Gérez les thèmes light et dark, mappez les tokens couleur sémantiques et consultez les paires de couleurs clés utilisées par les previews.",
