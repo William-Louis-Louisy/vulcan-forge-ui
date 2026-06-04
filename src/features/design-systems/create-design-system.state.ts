@@ -25,6 +25,7 @@ export type CreateDesignSystemActionState = {
     | 'missingWorkspace'
     | 'slugAlreadyUsed'
     | 'unauthorized'
+    | 'reviewRequired'
     | 'unexpected'
     | null;
   values: {

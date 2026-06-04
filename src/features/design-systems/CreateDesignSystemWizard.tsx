@@ -1,28 +1,28 @@
 'use client';
 
+import {
+  updateDefaultLocale,
+  toggleSupportedLocale,
+  projectLanguageOptions,
+} from './project-languages';
+import {
+  createDesignSystemSteps,
+  initialCreateDesignSystemActionState,
+  type CreateDesignSystemStep,
+  type CreateDesignSystemActionState,
+} from './create-design-system.state';
+import {
+  visualDirections,
+  accessibilityTargets,
+  designSystemPlatforms,
+  type CreateDesignSystemValidationMessageKey,
+} from './create-design-system.schema';
 import { Button } from '@/components/ui';
 import { useTranslations } from 'next-intl';
 import type { Locale } from '@/i18n/routing';
 import type { AppLocale } from '@/domain/i18n';
-import { useActionState, useMemo, useState } from 'react';
 import { createDesignSystemAction } from './create-design-system.action';
-import {
-  projectLanguageOptions,
-  toggleSupportedLocale,
-  updateDefaultLocale,
-} from './project-languages';
-import {
-  accessibilityTargets,
-  designSystemPlatforms,
-  visualDirections,
-  type CreateDesignSystemValidationMessageKey,
-} from './create-design-system.schema';
-import {
-  createDesignSystemSteps,
-  initialCreateDesignSystemActionState,
-  type CreateDesignSystemActionState,
-  type CreateDesignSystemStep,
-} from './create-design-system.state';
+import { useActionState, useMemo, useState, type SyntheticEvent } from 'react';
 
 type CreateDesignSystemWizardProps = {
   locale: Locale;
@@ -214,8 +214,17 @@ export function CreateDesignSystemWizard({
     );
   }
 
+  function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
+    if (isReviewStep) {
+      return;
+    }
+
+    event.preventDefault();
+    goToNextStep();
+  }
+
   return (
-    <form action={formAction} className="mt-8">
+    <form className="mt-8" onSubmit={handleSubmit}>
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="name" value={values.name} />
       <input type="hidden" name="description" value={values.description} />
@@ -230,6 +239,10 @@ export function CreateDesignSystemWizard({
         name="accessibilityTarget"
         value={values.accessibilityTarget}
       />
+
+      {isReviewStep ? (
+        <input type="hidden" name="reviewConfirmed" value="true" />
+      ) : null}
 
       {values.platforms.map((platform) => (
         <input key={platform} type="hidden" name="platforms" value={platform} />
@@ -338,8 +351,8 @@ export function CreateDesignSystemWizard({
         </Button>
 
         {isReviewStep ? (
-          <Button type="submit" disabled={isPending}>
-            {isPending ? t('form.submitPending') : t('form.submit')}
+          <Button type="submit" formAction={formAction} disabled={isPending}>
+            {isPending ? t('form.submitPending') : t('review.createProject')}
           </Button>
         ) : (
           <Button type="button" disabled={isPending} onClick={goToNextStep}>
