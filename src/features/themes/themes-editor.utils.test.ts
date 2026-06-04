@@ -1,10 +1,10 @@
-import { describe, expect, it } from 'vitest';
 import {
-  getThemeColorValue,
-  getThemeContrastPairs,
   isThemeMode,
   sortThemesByMode,
+  getThemeColorValue,
+  getThemeContrastPairs,
 } from './themes-editor.utils';
+import { describe, expect, it } from 'vitest';
 
 describe('themes editor utils', () => {
   it('detects theme modes', () => {
@@ -80,5 +80,45 @@ describe('themes editor utils', () => {
         backgroundValue: '#070707',
       },
     ]);
+  });
+
+  it('evaluates contrast for theme color pairs when both colors are available', () => {
+    const pairs = getThemeContrastPairs({
+      color: {
+        content: '#111827',
+        background: '#ffffff',
+        muted: '#6b7280',
+        surface: '#f9fafb',
+        accent: '#2563eb',
+      },
+    });
+
+    expect(pairs[0]).toMatchObject({
+      key: 'contentOnBackground',
+      foregroundValue: '#111827',
+      backgroundValue: '#ffffff',
+      contrast: {
+        isValid: true,
+        requiredRatio: 4.5,
+        status: 'pass',
+      },
+    });
+
+    expect(pairs[0]?.contrast?.ratio).toBeGreaterThan(0);
+  });
+
+  it('returns a missing contrast evaluation when one color is unavailable', () => {
+    const pairs = getThemeContrastPairs({
+      color: {
+        content: '#111827',
+      },
+    });
+
+    expect(pairs[0]).toMatchObject({
+      key: 'contentOnBackground',
+      foregroundValue: '#111827',
+      backgroundValue: null,
+      contrast: null,
+    });
   });
 });

@@ -1,15 +1,9 @@
 import { auth } from '@/auth';
 import { hasLocale } from 'next-intl';
-import { getTranslations } from 'next-intl/server';
-import { notFound, redirect } from 'next/navigation';
-import { routing, type Locale } from '@/i18n/routing';
-import { createPreviewThemes } from '@/features/themes/preview-panel.utils';
-import { getThemesEditorPageData } from '@/features/themes/themes-editor.queries';
 import {
   PreviewPanel,
   type PreviewPanelLabels,
 } from '@/features/themes/PreviewPanel';
-import { SemanticColorTokenAliasEditor } from '@/features/tokens/SemanticColorTokenAliasEditor';
 import {
   sortThemesByMode,
   getThemeContrastPairs,
@@ -23,7 +17,13 @@ import {
   getResolvedColorValueForReference,
   getPrimitiveColorTokenAliasOptions,
 } from '@/features/tokens/tokens-editor.utils';
+import { getTranslations } from 'next-intl/server';
+import { notFound, redirect } from 'next/navigation';
+import { routing, type Locale } from '@/i18n/routing';
+import { createPreviewThemes } from '@/features/themes/preview-panel.utils';
+import { getThemesEditorPageData } from '@/features/themes/themes-editor.queries';
 import { ProjectEditorNav } from '@/features/design-systems/project-editor/ProjectEditorNav';
+import { SemanticColorTokenAliasEditor } from '@/features/tokens/SemanticColorTokenAliasEditor';
 
 type ThemesEditorPageProps = {
   params: Promise<{
@@ -285,8 +285,65 @@ function ContrastPairRow({
         </div>
       </div>
 
-      <p className="text-content-secondary mt-3 text-xs font-semibold">
-        {t('contrast.ratioPending')}
+      <ContrastRatioSummary t={t} pair={pair} />
+    </div>
+  );
+}
+
+function ContrastRatioSummary({
+  t,
+  pair,
+}: {
+  t: ThemesEditorTranslator;
+  pair: ThemeColorPair;
+}) {
+  if (!pair.foregroundValue || !pair.backgroundValue) {
+    return (
+      <p className="text-action-warning mt-3 text-xs font-semibold">
+        {t('contrast.missingColors')}
+      </p>
+    );
+  }
+
+  if (!pair.contrast?.isValid || pair.contrast.ratio === null) {
+    return (
+      <p className="text-action-danger mt-3 text-xs font-semibold">
+        {t('contrast.invalidColors')}
+      </p>
+    );
+  }
+
+  return (
+    <div className="mt-3 flex flex-col gap-1">
+      <span
+        className={[
+          'w-fit rounded-full px-2.5 py-1 text-xs font-semibold',
+          pair.contrast.status === 'pass'
+            ? 'bg-action-success/10 text-action-success'
+            : '',
+          pair.contrast.status === 'warning'
+            ? 'bg-action-warning/10 text-action-warning'
+            : '',
+          pair.contrast.status === 'fail'
+            ? 'bg-action-danger/10 text-action-danger'
+            : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
+      >
+        {t(`contrast.status.${pair.contrast.status}`)}
+      </span>
+
+      <p className="text-content-secondary text-xs font-semibold">
+        {t('contrast.ratio', {
+          ratio: pair.contrast.ratio.toFixed(2),
+        })}
+      </p>
+
+      <p className="text-content-tertiary text-xs">
+        {t('contrast.requiredRatio', {
+          required: pair.contrast.requiredRatio.toFixed(1),
+        })}
       </p>
     </div>
   );

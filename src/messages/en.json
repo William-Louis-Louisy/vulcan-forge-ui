@@ -1033,13 +1033,21 @@
       "background": "Background",
       "description": "These pairs are displayed now. Contrast ratios will be calculated in the accessibility epic.",
       "foreground": "Foreground",
+      "invalidColors": "Ratio unavailable: one color is invalid.",
+      "missingColors": "Ratio unavailable: one color is missing.",
       "pairs": {
         "accentOnBackground": "Accent on app background",
         "contentOnBackground": "Content on app background",
         "contentOnSurface": "Content on surface",
         "mutedOnBackground": "Muted content on app background"
       },
-      "ratioPending": "Contrast ratio calculation will be added in DS-090.",
+      "ratio": "Ratio: {ratio}:1",
+      "requiredRatio": "Normal text minimum: {required}:1",
+      "status": {
+        "fail": "fail",
+        "pass": "pass",
+        "warning": "warning"
+      },
       "title": "Key contrast pairs"
     },
     "description": "Manage light and dark themes, map semantic color tokens and review the key color pairs used by previews.",
