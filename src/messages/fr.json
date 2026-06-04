@@ -439,6 +439,7 @@
       "title": "Plateformes et langues"
     },
     "review": {
+      "createProject": "Créer le projet",
       "description": "Contrôlez les fondations du projet avant de créer le design system.",
       "emptyDescription": "Aucune description renseignée.",
       "title": "Vérifier la configuration"
@@ -462,6 +463,7 @@
       "nameMinLength": "Saisissez au moins 2 caractères.",
       "nameTooLong": "Le nom doit contenir au maximum 80 caractères.",
       "platformRequired": "Sélectionnez au moins une plateforme cible.",
+      "reviewRequired": "Veuillez vérifier la configuration du projet avant de le créer.",
       "slugAlreadyUsed": "Un design system avec ce nom existe déjà dans ce workspace.",
       "supportedLocaleRequired": "Sélectionnez au moins une langue supportée.",
       "unauthorized": "Vous devez être connecté pour créer un design system.",

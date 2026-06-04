@@ -1,14 +1,14 @@
 'use server';
 
 import { auth } from '@/auth';
-import { redirect } from 'next/navigation';
-import { prisma } from '@/server/db/prisma';
-import { isAppLocale, defaultAppLocale } from '@/domain/i18n';
-import { createDesignSystemSlug } from './design-system-slug';
 import {
   createDesignSystemSchema,
   type CreateDesignSystemValidationMessageKey,
 } from './create-design-system.schema';
+import { redirect } from 'next/navigation';
+import { prisma } from '@/server/db/prisma';
+import { isAppLocale, defaultAppLocale } from '@/domain/i18n';
+import { createDesignSystemSlug } from './design-system-slug';
 import { getCreateDesignSystemFormError } from './create-design-system.errors';
 import type { CreateDesignSystemActionState } from './create-design-system.state';
 import { createDesignSystemProject } from './create-design-system-project.service';
@@ -91,6 +91,18 @@ export async function createDesignSystemAction(
     visualDirection: getFormStringValue(formData, 'visualDirection'),
     accessibilityTarget: getFormStringValue(formData, 'accessibilityTarget'),
   };
+
+  const reviewConfirmed =
+    getFormStringValue(formData, 'reviewConfirmed') === 'true';
+
+  if (!reviewConfirmed) {
+    return {
+      status: 'error',
+      fieldErrors: {},
+      formError: 'reviewRequired',
+      values,
+    };
+  }
 
   if (!session?.user?.id) {
     return {
@@ -177,5 +189,5 @@ export async function createDesignSystemAction(
     };
   }
 
-  redirect(`/${locale}/app/design-systems`);
+  redirect(`/${locale}/app/design-systems/${slug}/tokens?set=color`);
 }
