@@ -1105,6 +1105,37 @@
       "loading": "Chargement des thèmes...",
       "retry": "Réessayer"
     },
+    "themeMapping": {
+      "currentReference": "Référence actuelle",
+      "description": "Associez chaque rôle du thème à un token couleur existant. La preview, les contrastes et les exports utilisent ensuite les valeurs résolues.",
+      "form": {
+        "errors": {
+          "invalidPayload": "Le mapping envoyé est invalide.",
+          "invalidTokenReference": "Le token sélectionné est introuvable ou ne se résout pas en couleur HEX.",
+          "themeNotFound": "Thème introuvable.",
+          "unauthorized": "Vous devez être connecté pour modifier ce thème.",
+          "unexpected": "Impossible de sauvegarder ce mapping. Veuillez réessayer."
+        },
+        "noOptions": "Aucun token couleur résoluble n’est disponible.",
+        "save": "Sauvegarder",
+        "saved": "Mapping sauvegardé.",
+        "saving": "Sauvegarde...",
+        "unsaved": "Mapping non sauvegardé."
+      },
+      "keys": {
+        "accent": "Accent",
+        "background": "Fond",
+        "content": "Contenu",
+        "muted": "Contenu secondaire",
+        "surface": "Surface"
+      },
+      "legacyDirectValue": "Valeur directe legacy",
+      "placeholder": "Sélectionner un token couleur",
+      "resolvedValue": "Valeur résolue",
+      "selectLabel": "Token couleur pour {colorName}",
+      "slotLabel": "Rôle de thème",
+      "title": "Mapping des rôles de thème"
+    },
     "themes": {
       "dark": "Thème dark",
       "defaultBadge": "Par défaut",

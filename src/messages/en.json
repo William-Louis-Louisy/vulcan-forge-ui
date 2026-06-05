@@ -1105,6 +1105,37 @@
       "loading": "Loading themes...",
       "retry": "Retry"
     },
+    "themeMapping": {
+      "currentReference": "Current reference",
+      "description": "Map each theme role to an existing color token. The preview, contrast pairs and exports then use the resolved values.",
+      "form": {
+        "errors": {
+          "invalidPayload": "The submitted mapping is invalid.",
+          "invalidTokenReference": "The selected token was not found or does not resolve to a HEX color.",
+          "themeNotFound": "Theme not found.",
+          "unauthorized": "You must be signed in to edit this theme.",
+          "unexpected": "Unable to save this mapping. Please try again."
+        },
+        "noOptions": "No resolvable color token is available.",
+        "save": "Save",
+        "saved": "Mapping saved.",
+        "saving": "Saving...",
+        "unsaved": "Unsaved mapping."
+      },
+      "keys": {
+        "accent": "Accent",
+        "background": "Background",
+        "content": "Content",
+        "muted": "Secondary content",
+        "surface": "Surface"
+      },
+      "legacyDirectValue": "Legacy direct value",
+      "placeholder": "Select a color token",
+      "resolvedValue": "Resolved value",
+      "selectLabel": "Color token for {colorName}",
+      "slotLabel": "Theme role",
+      "title": "Theme role mapping"
+    },
     "themes": {
       "dark": "Dark theme",
       "defaultBadge": "Default",

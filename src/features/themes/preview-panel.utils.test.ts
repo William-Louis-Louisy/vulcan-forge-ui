@@ -1,10 +1,10 @@
-import { describe, expect, it } from 'vitest';
-import type { ThemeEditorTheme } from './themes-editor.utils';
 import {
   createPreviewTheme,
   createPreviewThemes,
   getDefaultPreviewThemeMode,
 } from './preview-panel.utils';
+import { describe, expect, it } from 'vitest';
+import type { ThemeEditorTheme } from './themes-editor.utils';
 
 const updatedAt = new Date('2026-05-01T00:00:00.000Z');
 
@@ -59,13 +59,23 @@ describe('preview panel utils', () => {
     });
   });
 
-  it('uses resolved semantic action color as preview accent', () => {
+  it('uses a resolved semantic action color when the theme accent references it', () => {
     expect(
       createPreviewTheme({
-        theme: lightTheme,
+        theme: {
+          id: 'light-theme',
+          mode: 'light',
+          name: 'Light',
+          tokens: {
+            color: {
+              accent: '{color.semantic.action.primary}',
+            },
+          },
+          updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+        },
         colorTokenSetTokens: [
           {
-            path: 'color.primitive.accent.primary',
+            path: 'color.primitive.brand.primary',
             type: 'color',
             value: '#00aaff',
             status: 'ready',
@@ -73,8 +83,8 @@ describe('preview panel utils', () => {
           {
             path: 'color.semantic.action.primary',
             type: 'color',
-            value: '{color.primitive.accent.primary}',
-            reference: '{color.primitive.accent.primary}',
+            value: '{color.primitive.brand.primary}',
+            reference: '{color.primitive.brand.primary}',
             status: 'ready',
           },
         ],
