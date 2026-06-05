@@ -1,17 +1,10 @@
-import { z } from 'zod';
 import {
-  designTokenSchema,
-  getResolvedTokenByPath,
-  resolveDesignTokens,
-} from '@/domain/design-system';
-import {
+  createThemeColorTokenOptions,
   getThemeColorValue,
   sortThemesByMode,
   type ThemeEditorTheme,
   type ThemeMode,
 } from './themes-editor.utils';
-
-const designTokenArraySchema = z.array(designTokenSchema);
 
 export type PreviewThemeColors = {
   background: string;
@@ -48,28 +41,6 @@ const fallbackThemeColors: Record<ThemeMode, PreviewThemeColors> = {
   },
 };
 
-function getResolvedStringTokenValue({
-  tokens,
-  path,
-}: {
-  tokens: unknown;
-  path: string;
-}): string | null {
-  const parsedTokens = designTokenArraySchema.safeParse(tokens);
-
-  if (!parsedTokens.success) {
-    return null;
-  }
-
-  const resolution = resolveDesignTokens(parsedTokens.data);
-  const token = getResolvedTokenByPath({
-    path,
-    result: resolution,
-  });
-
-  return typeof token?.resolvedValue === 'string' ? token.resolvedValue : null;
-}
-
 export function createPreviewTheme({
   theme,
   colorTokenSetTokens,
@@ -78,16 +49,19 @@ export function createPreviewTheme({
   colorTokenSetTokens: unknown;
 }): PreviewTheme {
   const fallbackColors = fallbackThemeColors[theme.mode];
+  const colorTokenOptions = createThemeColorTokenOptions(colorTokenSetTokens);
+
+  const resolvedPrimaryAction =
+    colorTokenOptions.find(
+      (option) => option.path === 'color.semantic.action.primary',
+    )?.value ?? null;
 
   const resolvedAccent =
-    getResolvedStringTokenValue({
-      tokens: colorTokenSetTokens,
-      path: 'color.semantic.action.primary',
-    }) ??
     getThemeColorValue({
       tokens: theme.tokens,
       colorKey: 'accent',
-    });
+      colorTokenOptions,
+    }) ?? resolvedPrimaryAction;
 
   return {
     id: theme.id,
@@ -98,21 +72,25 @@ export function createPreviewTheme({
         getThemeColorValue({
           tokens: theme.tokens,
           colorKey: 'background',
+          colorTokenOptions,
         }) ?? fallbackColors.background,
       surface:
         getThemeColorValue({
           tokens: theme.tokens,
           colorKey: 'surface',
+          colorTokenOptions,
         }) ?? fallbackColors.surface,
       content:
         getThemeColorValue({
           tokens: theme.tokens,
           colorKey: 'content',
+          colorTokenOptions,
         }) ?? fallbackColors.content,
       muted:
         getThemeColorValue({
           tokens: theme.tokens,
           colorKey: 'muted',
+          colorTokenOptions,
         }) ?? fallbackColors.muted,
       accent: resolvedAccent ?? fallbackColors.accent,
       border: fallbackColors.border,

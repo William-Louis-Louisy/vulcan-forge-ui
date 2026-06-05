@@ -1,11 +1,11 @@
 import {
-  componentContractSchema,
-  type ComponentContract,
-} from './component-contract.schema';
-import {
   designTokenSetSchema,
   type DesignTokenSet,
 } from './design-token.schema';
+import {
+  componentContractSchema,
+  type ComponentContract,
+} from './component-contract.schema';
 import { themeSchema, type ThemeSeed } from './theme.schema';
 
 export const mvpTokenSetSeeds = [
@@ -72,6 +72,56 @@ export const mvpTokenSetSeeds = [
         description: {
           en: 'Primary interactive action color.',
           fr: 'Couleur principale des actions interactives.',
+        },
+        status: 'ready',
+      },
+      {
+        path: 'color.primitive.neutral.50',
+        type: 'color',
+        value: '#F7F3EB',
+        description: {
+          en: 'Warm light application background.',
+          fr: 'Fond applicatif clair et chaleureux.',
+        },
+        status: 'ready',
+      },
+      {
+        path: 'color.primitive.neutral.100',
+        type: 'color',
+        value: '#E2E7EF',
+        description: {
+          en: 'Light content color for dark surfaces.',
+          fr: 'Couleur de contenu claire pour les surfaces sombres.',
+        },
+        status: 'ready',
+      },
+      {
+        path: 'color.primitive.neutral.400',
+        type: 'color',
+        value: '#A0B1CA',
+        description: {
+          en: 'Muted content color for dark surfaces.',
+          fr: 'Couleur de contenu secondaire pour les surfaces sombres.',
+        },
+        status: 'ready',
+      },
+      {
+        path: 'color.primitive.neutral.700',
+        type: 'color',
+        value: '#3A4454',
+        description: {
+          en: 'Muted content color for light surfaces.',
+          fr: 'Couleur de contenu secondaire pour les surfaces claires.',
+        },
+        status: 'ready',
+      },
+      {
+        path: 'color.primitive.neutral.900',
+        type: 'color',
+        value: '#1E1E1E',
+        description: {
+          en: 'Dark surface color.',
+          fr: 'Couleur de surface sombre.',
         },
         status: 'ready',
       },
@@ -249,11 +299,11 @@ export const mvpThemeSeeds = [
     name: 'Light',
     tokens: {
       color: {
-        background: '#F7F3EB',
-        surface: '#ffffff',
-        content: '#111827',
-        muted: '#3A4454',
-        accent: '#FF8731',
+        background: '{color.primitive.neutral.50}',
+        surface: '{color.primitive.neutral.0}',
+        content: '{color.primitive.neutral.950}',
+        muted: '{color.primitive.neutral.700}',
+        accent: '{color.primitive.accent.primary}',
       },
     },
   },
@@ -262,11 +312,11 @@ export const mvpThemeSeeds = [
     name: 'Dark',
     tokens: {
       color: {
-        background: '#070707',
-        surface: '#1E1E1E',
-        content: '#E2E7EF',
-        muted: '#A0B1CA',
-        accent: '#FF8731',
+        background: '{color.primitive.neutral.950}',
+        surface: '{color.primitive.neutral.900}',
+        content: '{color.primitive.neutral.100}',
+        muted: '{color.primitive.neutral.400}',
+        accent: '{color.primitive.accent.primary}',
       },
     },
   },

@@ -5,8 +5,13 @@ import {
   type PreviewPanelLabels,
 } from '@/features/themes/PreviewPanel';
 import {
+  themeColorKeys,
   sortThemesByMode,
+  getThemeColorValue,
   getThemeContrastPairs,
+  getThemeColorRawValue,
+  getThemeColorReferencePath,
+  createThemeColorTokenOptions,
   type ThemeColorPair,
   type ThemeEditorTheme,
 } from '@/features/themes/themes-editor.utils';
@@ -22,6 +27,7 @@ import { notFound, redirect } from 'next/navigation';
 import { routing, type Locale } from '@/i18n/routing';
 import { createPreviewThemes } from '@/features/themes/preview-panel.utils';
 import { getThemesEditorPageData } from '@/features/themes/themes-editor.queries';
+import { ThemeTokenReferenceEditor } from '@/features/themes/ThemeTokenReferenceEditor';
 import { ProjectEditorNav } from '@/features/design-systems/project-editor/ProjectEditorNav';
 import { SemanticColorTokenAliasEditor } from '@/features/tokens/SemanticColorTokenAliasEditor';
 
@@ -79,6 +85,10 @@ export default async function ThemesEditorPage({
     colorRowsResult.rows,
   );
 
+  const themeColorTokenOptions = createThemeColorTokenOptions(
+    pageData.colorTokenSet?.tokens ?? [],
+  );
+
   const semanticColorRows = colorRowsResult.rows.filter(
     isEditableSemanticColorTokenRow,
   );
@@ -110,7 +120,14 @@ export default async function ThemesEditorPage({
 
       <div className="mt-10 grid gap-6 lg:grid-cols-2">
         {themes.map((theme) => (
-          <ThemeCard key={theme.id} t={t} theme={theme} />
+          <ThemeCard
+            key={theme.id}
+            t={t}
+            locale={locale}
+            projectSlug={pageData.project.slug}
+            theme={theme}
+            colorTokenOptions={themeColorTokenOptions}
+          />
         ))}
       </div>
 
@@ -208,12 +225,21 @@ export default async function ThemesEditorPage({
 
 function ThemeCard({
   t,
+  locale,
+  projectSlug,
   theme,
+  colorTokenOptions,
 }: {
   t: ThemesEditorTranslator;
+  locale: Locale;
+  projectSlug: string;
   theme: ThemeEditorTheme;
+  colorTokenOptions: ReturnType<typeof createThemeColorTokenOptions>;
 }) {
-  const contrastPairs = getThemeContrastPairs(theme.tokens);
+  const contrastPairs = getThemeContrastPairs({
+    tokens: theme.tokens,
+    colorTokenOptions,
+  });
   const isDefaultTheme = theme.mode === 'light';
 
   return (
@@ -233,6 +259,76 @@ function ThemeCard({
             {t('themes.defaultBadge')}
           </span>
         ) : null}
+      </div>
+
+      <div className="mt-6">
+        <h3 className="text-content-tertiary text-sm font-semibold tracking-[0.18em] uppercase">
+          {t('themeMapping.title')}
+        </h3>
+
+        <p className="text-content-secondary mt-2 text-sm leading-6">
+          {t('themeMapping.description')}
+        </p>
+
+        <div className="mt-4 grid gap-3">
+          {themeColorKeys.map((colorKey) => {
+            const rawValue = getThemeColorRawValue({
+              tokens: theme.tokens,
+              colorKey,
+            });
+
+            const referencePath = getThemeColorReferencePath({
+              tokens: theme.tokens,
+              colorKey,
+            });
+
+            const resolvedValue = getThemeColorValue({
+              tokens: theme.tokens,
+              colorKey,
+              colorTokenOptions,
+            });
+
+            return (
+              <ThemeTokenReferenceEditor
+                key={colorKey}
+                locale={locale}
+                projectSlug={projectSlug}
+                themeId={theme.id}
+                colorKey={colorKey}
+                initialReferencePath={referencePath}
+                legacyDirectValue={referencePath ? null : rawValue}
+                resolvedValue={resolvedValue}
+                options={colorTokenOptions}
+                labels={{
+                  slotLabel: t('themeMapping.slotLabel'),
+                  selectLabel: t('themeMapping.selectLabel', {
+                    colorName: t(`themeMapping.keys.${colorKey}`),
+                  }),
+                  placeholder: t('themeMapping.placeholder'),
+                  currentReference: t('themeMapping.currentReference'),
+                  resolvedValue: t('themeMapping.resolvedValue'),
+                  legacyDirectValue: t('themeMapping.legacyDirectValue'),
+                  save: t('themeMapping.form.save'),
+                  saving: t('themeMapping.form.saving'),
+                  saved: t('themeMapping.form.saved'),
+                  unsaved: t('themeMapping.form.unsaved'),
+                  noOptions: t('themeMapping.form.noOptions'),
+                  errors: {
+                    unauthorized: t('themeMapping.form.errors.unauthorized'),
+                    invalidPayload: t(
+                      'themeMapping.form.errors.invalidPayload',
+                    ),
+                    themeNotFound: t('themeMapping.form.errors.themeNotFound'),
+                    invalidTokenReference: t(
+                      'themeMapping.form.errors.invalidTokenReference',
+                    ),
+                    unexpected: t('themeMapping.form.errors.unexpected'),
+                  },
+                }}
+              />
+            );
+          })}
+        </div>
       </div>
 
       <div className="mt-6">
@@ -269,7 +365,13 @@ function ContrastPairRow({
             {t(`contrast.pairs.${pair.key}`)}
           </p>
           <p className="text-content-tertiary mt-1 text-xs">
-            {pair.foregroundKey} / {pair.backgroundKey}
+            {pair.foregroundReferencePath
+              ? `{${pair.foregroundReferencePath}}`
+              : pair.foregroundKey}{' '}
+            /{' '}
+            {pair.backgroundReferencePath
+              ? `{${pair.backgroundReferencePath}}`
+              : pair.backgroundKey}
           </p>
         </div>
 

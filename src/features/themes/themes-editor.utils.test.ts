@@ -3,6 +3,7 @@ import {
   sortThemesByMode,
   getThemeColorValue,
   getThemeContrastPairs,
+  createThemeColorTokenOptions,
 } from './themes-editor.utils';
 import { describe, expect, it } from 'vitest';
 
@@ -50,12 +51,14 @@ describe('themes editor utils', () => {
   it('returns key contrast preview pairs', () => {
     expect(
       getThemeContrastPairs({
-        color: {
-          background: '#070707',
-          surface: '#1E1E1E',
-          content: '#E2E7EF',
-          muted: '#A0B1CA',
-          accent: '#FF8731',
+        tokens: {
+          color: {
+            background: '#070707',
+            surface: '#1E1E1E',
+            content: '#E2E7EF',
+            muted: '#A0B1CA',
+            accent: '#FF8731',
+          },
         },
       }),
     ).toMatchObject([
@@ -84,12 +87,14 @@ describe('themes editor utils', () => {
 
   it('evaluates contrast for theme color pairs when both colors are available', () => {
     const pairs = getThemeContrastPairs({
-      color: {
-        content: '#111827',
-        background: '#ffffff',
-        muted: '#6b7280',
-        surface: '#f9fafb',
-        accent: '#2563eb',
+      tokens: {
+        color: {
+          content: '#111827',
+          background: '#ffffff',
+          muted: '#6b7280',
+          surface: '#f9fafb',
+          accent: '#2563eb',
+        },
       },
     });
 
@@ -109,8 +114,10 @@ describe('themes editor utils', () => {
 
   it('returns a missing contrast evaluation when one color is unavailable', () => {
     const pairs = getThemeContrastPairs({
-      color: {
-        content: '#111827',
+      tokens: {
+        color: {
+          content: '#111827',
+        },
       },
     });
 
@@ -119,6 +126,114 @@ describe('themes editor utils', () => {
       foregroundValue: '#111827',
       backgroundValue: null,
       contrast: null,
+    });
+  });
+
+  it('creates token reference options from resolved color tokens', () => {
+    const options = createThemeColorTokenOptions([
+      {
+        path: 'color.primitive.accent.primary',
+        type: 'color',
+        value: '#ff8731',
+        status: 'ready',
+      },
+      {
+        path: 'color.semantic.action.primary',
+        type: 'color',
+        value: '{color.primitive.accent.primary}',
+        reference: '{color.primitive.accent.primary}',
+        status: 'ready',
+      },
+    ]);
+
+    expect(options).toEqual([
+      {
+        path: 'color.semantic.action.primary',
+        reference: '{color.semantic.action.primary}',
+        value: '#ff8731',
+        label: 'color.semantic.action.primary',
+      },
+      {
+        path: 'color.primitive.accent.primary',
+        reference: '{color.primitive.accent.primary}',
+        value: '#ff8731',
+        label: 'color.primitive.accent.primary',
+      },
+    ]);
+  });
+
+  it('resolves theme colors from token references', () => {
+    const colorTokenOptions = createThemeColorTokenOptions([
+      {
+        path: 'color.primitive.neutral.950',
+        type: 'color',
+        value: '#070707',
+        status: 'ready',
+      },
+    ]);
+
+    expect(
+      getThemeColorValue({
+        tokens: {
+          color: {
+            background: '{color.primitive.neutral.950}',
+          },
+        },
+        colorKey: 'background',
+        colorTokenOptions,
+      }),
+    ).toBe('#070707');
+  });
+
+  it('keeps direct hex theme colors as legacy fallback', () => {
+    expect(
+      getThemeColorValue({
+        tokens: {
+          color: {
+            background: '#ffffff',
+          },
+        },
+        colorKey: 'background',
+      }),
+    ).toBe('#ffffff');
+  });
+
+  it('evaluates contrast pairs from resolved token references', () => {
+    const colorTokenOptions = createThemeColorTokenOptions([
+      {
+        path: 'color.primitive.neutral.0',
+        type: 'color',
+        value: '#ffffff',
+        status: 'ready',
+      },
+      {
+        path: 'color.primitive.neutral.950',
+        type: 'color',
+        value: '#070707',
+        status: 'ready',
+      },
+    ]);
+
+    const pairs = getThemeContrastPairs({
+      tokens: {
+        color: {
+          content: '{color.primitive.neutral.950}',
+          background: '{color.primitive.neutral.0}',
+        },
+      },
+      colorTokenOptions,
+    });
+
+    expect(pairs[0]).toMatchObject({
+      key: 'contentOnBackground',
+      foregroundReferencePath: 'color.primitive.neutral.950',
+      backgroundReferencePath: 'color.primitive.neutral.0',
+      foregroundValue: '#070707',
+      backgroundValue: '#ffffff',
+      contrast: {
+        isValid: true,
+        status: 'pass',
+      },
     });
   });
 });
