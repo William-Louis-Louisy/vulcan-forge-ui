@@ -7,6 +7,14 @@
     "backToProjects": "Back to design systems",
     "description": "Review detected accessibility issues and key contrast pairs for this design system.",
     "eyebrow": "Accessibility Center",
+    "issueDetails": {
+      "background": "Background",
+      "backgroundValue": "Background value",
+      "foreground": "Foreground",
+      "foregroundValue": "Foreground value",
+      "ratio": "Ratio",
+      "ratioValue": "{ratio}:1 / required {required}:1"
+    },
     "issues": {
       "codes": {
         "contrastFail": "Contrast failure",
@@ -14,6 +22,7 @@
         "invalidColorTokenSet": "Invalid color token set",
         "missingBackgroundColor": "Missing background color",
         "missingForegroundColor": "Missing foreground color",
+        "missingThemes": "Missing themes",
         "tokenResolutionError": "Token resolution error"
       },
       "count": "{count, plural, =0 {No issue} one {# issue} other {# issues}}",
@@ -26,6 +35,7 @@
         "invalidColorTokenSet": "Repair the color token set JSON before running accessibility checks.",
         "missingBackgroundColor": "Add or map the background semantic token used by this contrast pair.",
         "missingForegroundColor": "Add or map the foreground semantic token used by this contrast pair.",
+        "missingThemes": "Add at least one light or dark theme to evaluate contrast pairs.",
         "tokenResolutionError": "Fix the token alias so it points to an existing token and does not create a cycle."
       },
       "title": "Issues to review"
@@ -47,8 +57,11 @@
     "openThemesEditor": "Open themes editor",
     "openTokensEditor": "Open tokens editor",
     "pairs": {
+      "accentOnBackground": "Accent on background",
       "background": "Background",
       "contentInverseOnPrimaryAction": "Inverse content on primary action",
+      "contentOnBackground": "Content on background",
+      "contentOnSurface": "Content on surface",
       "contentPrimaryOnAppBackground": "Primary content on app background",
       "contentPrimaryOnPrimarySurface": "Primary content on primary surface",
       "contentSecondaryOnAppBackground": "Secondary content on app background",
@@ -56,8 +69,15 @@
       "dangerTextOnPrimarySurface": "Danger text on primary surface",
       "description": "These are the MVP contrast combinations checked automatically.",
       "foreground": "Foreground",
+      "mutedOnBackground": "Secondary content on background",
       "noRatio": "No ratio available.",
       "ratio": "Ratio {ratio}:1 — required {required}:1",
+      "status": {
+        "fail": "Fail",
+        "missing": "Incomplete",
+        "pass": "Pass",
+        "warning": "Needs review"
+      },
       "title": "Key contrast pairs"
     },
     "saveReport": {
@@ -77,6 +97,8 @@
       "criticalIssues": "Critical issues",
       "description": "This score is calculated from automated checks and should be treated as a product signal, not a certification.",
       "eyebrow": "Indicative score",
+      "failedPairs": "Failed pairs",
+      "passedPairs": "Passed pairs",
       "status": {
         "critical": "Critical",
         "healthy": "Healthy",

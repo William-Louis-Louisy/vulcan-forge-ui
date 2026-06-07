@@ -18,26 +18,26 @@ describe('accessibility report persistence service', () => {
   });
 
   it('serializes accessibility issues for Prisma JSON persistence', () => {
-    expect(
-      serializeAccessibilityIssues([
-        {
-          code: 'contrastFail',
-          severity: 'critical',
-          pairId: 'contentPrimaryOnAppBackground',
-          foregroundTokenPath: 'color.semantic.content.primary',
-          backgroundTokenPath: 'color.semantic.background.app',
-          tokenPath: null,
-        },
-      ]),
-    ).toEqual([
-      {
-        code: 'contrastFail',
-        severity: 'critical',
-        pairId: 'contentPrimaryOnAppBackground',
-        foregroundTokenPath: 'color.semantic.content.primary',
-        backgroundTokenPath: 'color.semantic.background.app',
-        tokenPath: null,
-      },
-    ]);
+    const issue = {
+      id: 'themeContrast:contrastFail:light:contentOnBackground:content:background',
+      code: 'contrastFail' as const,
+      severity: 'critical' as const,
+      scope: 'themeContrast' as const,
+      themeId: 'light-theme',
+      themeMode: 'light' as const,
+      themeName: 'Light',
+      pairId: 'contentOnBackground',
+      foregroundRole: 'content' as const,
+      backgroundRole: 'background' as const,
+      foregroundTokenPath: 'color.semantic.content.primary',
+      backgroundTokenPath: 'color.semantic.background.app',
+      foregroundValue: '#777778',
+      backgroundValue: '#777777',
+      ratio: 1,
+      requiredRatio: 4.5,
+      tokenPath: null,
+    };
+
+    expect(serializeAccessibilityIssues([issue])).toEqual([issue]);
   });
 });

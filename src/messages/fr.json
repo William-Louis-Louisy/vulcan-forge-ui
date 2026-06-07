@@ -7,6 +7,14 @@
     "backToProjects": "Retour aux design systems",
     "description": "Consultez les problèmes d’accessibilité détectés et les paires de contraste clés de ce design system.",
     "eyebrow": "Centre d’accessibilité",
+    "issueDetails": {
+      "background": "Arrière-plan",
+      "backgroundValue": "Valeur arrière-plan",
+      "foreground": "Premier plan",
+      "foregroundValue": "Valeur premier plan",
+      "ratio": "Ratio",
+      "ratioValue": "{ratio}:1 / requis {required}:1"
+    },
     "issues": {
       "codes": {
         "contrastFail": "Échec de contraste",
@@ -14,6 +22,7 @@
         "invalidColorTokenSet": "Token set de couleurs invalide",
         "missingBackgroundColor": "Couleur d’arrière-plan manquante",
         "missingForegroundColor": "Couleur de premier plan manquante",
+        "missingThemes": "Thèmes manquants",
         "tokenResolutionError": "Erreur de résolution de token"
       },
       "count": "{count, plural, =0 {Aucune issue} one {# issue} other {# issues}}",
@@ -26,6 +35,7 @@
         "invalidColorTokenSet": "Réparez le JSON du token set de couleurs avant de lancer les vérifications d’accessibilité.",
         "missingBackgroundColor": "Ajoutez ou mappez le token sémantique d’arrière-plan utilisé par cette paire de contraste.",
         "missingForegroundColor": "Ajoutez ou mappez le token sémantique de premier plan utilisé par cette paire de contraste.",
+        "missingThemes": "Ajoutez au moins un thème light ou dark afin de pouvoir évaluer les contrastes.",
         "tokenResolutionError": "Corrigez l’alias du token afin qu’il pointe vers un token existant sans créer de cycle."
       },
       "title": "Problèmes à corriger"
@@ -47,8 +57,11 @@
     "openThemesEditor": "Ouvrir l’éditeur de thèmes",
     "openTokensEditor": "Ouvrir l’éditeur de tokens",
     "pairs": {
+      "accentOnBackground": "Accent sur fond",
       "background": "Arrière-plan",
       "contentInverseOnPrimaryAction": "Contenu inversé sur action principale",
+      "contentOnBackground": "Contenu sur fond",
+      "contentOnSurface": "Contenu sur surface",
       "contentPrimaryOnAppBackground": "Contenu principal sur fond applicatif",
       "contentPrimaryOnPrimarySurface": "Contenu principal sur surface principale",
       "contentSecondaryOnAppBackground": "Contenu secondaire sur fond applicatif",
@@ -56,8 +69,15 @@
       "dangerTextOnPrimarySurface": "Texte danger sur surface principale",
       "description": "Voici les combinaisons de contraste MVP vérifiées automatiquement.",
       "foreground": "Premier plan",
+      "mutedOnBackground": "Contenu secondaire sur fond",
       "noRatio": "Aucun ratio disponible.",
       "ratio": "Ratio {ratio}:1 — requis {required}:1",
+      "status": {
+        "fail": "Insuffisant",
+        "missing": "Incomplet",
+        "pass": "Valide",
+        "warning": "À surveiller"
+      },
       "title": "Paires de contraste clés"
     },
     "saveReport": {
@@ -77,6 +97,8 @@
       "criticalIssues": "Issues critiques",
       "description": "Ce score est calculé à partir de vérifications automatisées et doit être considéré comme un signal produit, pas comme une certification.",
       "eyebrow": "Score indicatif",
+      "failedPairs": "Paires insuffisantes",
+      "passedPairs": "Paires valides",
       "status": {
         "critical": "Critique",
         "healthy": "Sain",

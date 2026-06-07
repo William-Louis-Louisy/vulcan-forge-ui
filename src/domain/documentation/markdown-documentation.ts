@@ -1,12 +1,8 @@
-import type { ComponentContract, DesignToken } from '@/domain/design-system';
 import {
   resolveLocalizedStringWithFallback,
   type AppLocale,
 } from '@/domain/i18n';
-import type {
-  KeyContrastPairEvaluation,
-  KeyContrastPairStatus,
-} from '@/domain/accessibility';
+import type { ComponentContract, DesignToken } from '@/domain/design-system';
 
 export type MarkdownDocumentationSection =
   | 'overview'
@@ -19,6 +15,13 @@ export type MarkdownDocumentationTheme = {
   mode: 'light' | 'dark';
   name: string;
   tokens: Record<string, unknown>;
+};
+
+export type MarkdownDocumentationAccessibilityContrastPair = {
+  pairId: string;
+  themeName: string;
+  status: string;
+  ratio: number | null;
 };
 
 export type MarkdownDocumentationProject = {
@@ -45,7 +48,7 @@ export type MarkdownDocumentationInput = {
   accessibility: {
     score: number;
     status: 'healthy' | 'needsAttention' | 'critical';
-    contrastPairs: readonly KeyContrastPairEvaluation[];
+    contrastPairs: readonly MarkdownDocumentationAccessibilityContrastPair[];
   } | null;
 };
 
@@ -399,9 +402,9 @@ function renderAccessibilitySection({
     createMarkdownTable(
       [t.contrastPair, t.contrastStatus, t.contrastRatio],
       accessibility.contrastPairs.map((pair) => [
-        pair.pair.id,
-        pair.status satisfies KeyContrastPairStatus,
-        pair.contrast?.ratio ? `${pair.contrast.ratio}:1` : t.none,
+        pair.themeName ? `${pair.themeName} · ${pair.pairId}` : pair.pairId,
+        pair.status,
+        pair.ratio !== null ? `${pair.ratio.toFixed(2)}:1` : t.none,
       ]),
     ),
   ].join('\n');
