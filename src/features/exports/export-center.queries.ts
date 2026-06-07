@@ -19,6 +19,7 @@ import {
   defaultAiInstructionProfileContent,
   type AiInstructionProfileContent,
 } from '@/features/ai-instructions/ai-instruction-profile.schema';
+import type { ThemeMode } from '@/features/themes/themes-editor.utils';
 import type { MarkdownDocumentationInput } from '@/domain/documentation';
 import { createAccessibilityCenterReport } from '@/features/accessibility/accessibility-center.utils';
 
@@ -170,9 +171,11 @@ export async function getExportCenterPageData({
           mode: 'asc',
         },
         select: {
+          id: true,
           mode: true,
           name: true,
           tokens: true,
+          updatedAt: true,
         },
       },
       componentContracts: {
@@ -206,6 +209,14 @@ export async function getExportCenterPageData({
     tokens: asThemeTokens(theme.tokens),
   }));
 
+  const accessibilityThemes = project.themes.map((theme) => ({
+    id: theme.id,
+    mode: theme.mode as ThemeMode,
+    name: theme.name,
+    tokens: theme.tokens,
+    updatedAt: theme.updatedAt,
+  }));
+
   const components = project.componentContracts
     .map((componentContract) =>
       parseComponentContract(componentContract.contract),
@@ -217,7 +228,10 @@ export async function getExportCenterPageData({
   );
 
   const accessibilityReport = colorTokenSet
-    ? createAccessibilityCenterReport(colorTokenSet.tokens)
+    ? createAccessibilityCenterReport({
+        colorTokenSetTokens: colorTokenSet.tokens,
+        themes: accessibilityThemes,
+      })
     : null;
 
   const documentationProfile = normalizeDocumentationProfile({
@@ -269,7 +283,12 @@ export async function getExportCenterPageData({
         ? {
             score: accessibilityReport.score,
             status: accessibilityReport.status,
-            contrastPairs: accessibilityReport.contrastPairs,
+            contrastPairs: accessibilityReport.contrastPairs.map((pair) => ({
+              pairId: pair.pairId,
+              themeName: pair.themeName,
+              status: pair.status,
+              ratio: pair.ratio,
+            })),
           }
         : null,
     },

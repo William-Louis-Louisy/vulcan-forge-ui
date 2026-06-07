@@ -4,6 +4,7 @@ import { auth } from '@/auth';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/server/db/prisma';
 import { defaultAppLocale, isAppLocale } from '@/domain/i18n';
+import type { ThemeMode } from '@/features/themes/themes-editor.utils';
 import { createAccessibilityCenterReport } from './accessibility-center.utils';
 import type { SaveAccessibilityReportActionState } from './save-accessibility-report.state';
 import { persistAccessibilityReportForUser } from './accessibility-report-persistence.service';
@@ -50,6 +51,15 @@ export async function saveAccessibilityReportAction(
     },
     select: {
       id: true,
+      themes: {
+        select: {
+          id: true,
+          mode: true,
+          name: true,
+          tokens: true,
+          updatedAt: true,
+        },
+      },
       tokenSets: {
         where: {
           type: 'color',
@@ -81,7 +91,16 @@ export async function saveAccessibilityReportAction(
     };
   }
 
-  const report = createAccessibilityCenterReport(colorTokenSet.tokens);
+  const report = createAccessibilityCenterReport({
+    colorTokenSetTokens: colorTokenSet.tokens,
+    themes: project.themes.map((theme) => ({
+      id: theme.id,
+      mode: theme.mode as ThemeMode,
+      name: theme.name,
+      tokens: theme.tokens,
+      updatedAt: theme.updatedAt,
+    })),
+  });
 
   const persistenceResult = await persistAccessibilityReportForUser({
     userId: session.user.id,

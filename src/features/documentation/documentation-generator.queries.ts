@@ -16,6 +16,7 @@ import {
 } from './documentation-profile.schema';
 import { prisma } from '@/server/db/prisma';
 import type { AppLocale } from '@/domain/i18n';
+import type { ThemeMode } from '@/features/themes/themes-editor.utils';
 import { createAccessibilityCenterReport } from '@/features/accessibility/accessibility-center.utils';
 
 const designTokenArraySchema = z.array(designTokenSchema);
@@ -99,9 +100,11 @@ export async function getDocumentationGeneratorPageData({
           mode: 'asc',
         },
         select: {
+          id: true,
           mode: true,
           name: true,
           tokens: true,
+          updatedAt: true,
         },
       },
       componentContracts: {
@@ -129,6 +132,14 @@ export async function getDocumentationGeneratorPageData({
     tokens: asThemeTokens(theme.tokens),
   }));
 
+  const accessibilityThemes = project.themes.map((theme) => ({
+    id: theme.id,
+    mode: theme.mode as ThemeMode,
+    name: theme.name,
+    tokens: theme.tokens,
+    updatedAt: theme.updatedAt,
+  }));
+
   const components = project.componentContracts
     .map((componentContract) =>
       parseComponentContract(componentContract.contract),
@@ -140,7 +151,10 @@ export async function getDocumentationGeneratorPageData({
   );
 
   const accessibilityReport = colorTokenSet
-    ? createAccessibilityCenterReport(colorTokenSet.tokens)
+    ? createAccessibilityCenterReport({
+        colorTokenSetTokens: colorTokenSet.tokens,
+        themes: accessibilityThemes,
+      })
     : null;
 
   return {
@@ -171,7 +185,12 @@ export async function getDocumentationGeneratorPageData({
         ? {
             score: accessibilityReport.score,
             status: accessibilityReport.status,
-            contrastPairs: accessibilityReport.contrastPairs,
+            contrastPairs: accessibilityReport.contrastPairs.map((pair) => ({
+              pairId: pair.pairId,
+              themeName: pair.themeName,
+              status: pair.status,
+              ratio: pair.ratio,
+            })),
           }
         : null,
     },

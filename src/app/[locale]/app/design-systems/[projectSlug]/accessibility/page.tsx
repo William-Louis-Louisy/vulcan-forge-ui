@@ -57,9 +57,10 @@ export default async function AccessibilityCenterPage({
     notFound();
   }
 
-  const report = createAccessibilityCenterReport(
-    pageData.colorTokenSet?.tokens ?? [],
-  );
+  const report = createAccessibilityCenterReport({
+    colorTokenSetTokens: pageData.colorTokenSet?.tokens ?? [],
+    themes: pageData.themes,
+  });
 
   const labels = createAccessibilityCenterLabels(t);
 
@@ -115,16 +116,10 @@ function createAccessibilityCenterLabels(
 ): AccessibilityCenterLabels {
   return {
     pairs: {
-      contentPrimaryOnAppBackground: t('pairs.contentPrimaryOnAppBackground'),
-      contentSecondaryOnAppBackground: t(
-        'pairs.contentSecondaryOnAppBackground',
-      ),
-      contentPrimaryOnPrimarySurface: t('pairs.contentPrimaryOnPrimarySurface'),
-      contentSecondaryOnPrimarySurface: t(
-        'pairs.contentSecondaryOnPrimarySurface',
-      ),
-      contentInverseOnPrimaryAction: t('pairs.contentInverseOnPrimaryAction'),
-      dangerTextOnPrimarySurface: t('pairs.dangerTextOnPrimarySurface'),
+      contentOnBackground: t('pairs.contentOnBackground'),
+      mutedOnBackground: t('pairs.mutedOnBackground'),
+      contentOnSurface: t('pairs.contentOnSurface'),
+      accentOnBackground: t('pairs.accentOnBackground'),
     },
     issueCodes: {
       missingForegroundColor: t('issues.codes.missingForegroundColor'),
@@ -133,6 +128,7 @@ function createAccessibilityCenterLabels(
       contrastFail: t('issues.codes.contrastFail'),
       tokenResolutionError: t('issues.codes.tokenResolutionError'),
       invalidColorTokenSet: t('issues.codes.invalidColorTokenSet'),
+      missingThemes: t('issues.codes.missingThemes'),
     },
     issueFixes: {
       missingForegroundColor: t('issues.fixes.missingForegroundColor'),
@@ -141,6 +137,7 @@ function createAccessibilityCenterLabels(
       contrastFail: t('issues.fixes.contrastFail'),
       tokenResolutionError: t('issues.fixes.tokenResolutionError'),
       invalidColorTokenSet: t('issues.fixes.invalidColorTokenSet'),
+      missingThemes: t('issues.fixes.missingThemes'),
     },
     severities: {
       warning: t('severity.warning'),
@@ -184,10 +181,15 @@ function ScoreCard({
         />
         <ScoreMetric
           label={t('score.criticalIssues')}
-          value={String(
-            report.issues.filter((issue) => issue.severity === 'critical')
-              .length,
-          )}
+          value={String(report.summary.criticalIssues)}
+        />
+        <ScoreMetric
+          label={t('score.passedPairs')}
+          value={String(report.summary.passedPairs)}
+        />
+        <ScoreMetric
+          label={t('score.failedPairs')}
+          value={String(report.summary.failedPairs)}
         />
       </div>
     </article>
@@ -233,12 +235,8 @@ function IssuesPanel({
 
       {report.issues.length > 0 ? (
         <div className="mt-6 grid gap-4">
-          {report.issues.map((issue, index) => (
-            <IssueCard
-              key={`${issue.code}-${issue.pairId ?? issue.tokenPath ?? index}`}
-              issue={issue}
-              labels={labels}
-            />
+          {report.issues.map((issue) => (
+            <IssueCard key={issue.id} issue={issue} labels={labels} t={t} />
           ))}
         </div>
       ) : (
@@ -256,9 +254,11 @@ function IssuesPanel({
 }
 
 function IssueCard({
+  t,
   issue,
   labels,
 }: {
+  t: AccessibilityCenterTranslator;
   issue: AccessibilityCenterIssue;
   labels: AccessibilityCenterLabels;
 }) {
@@ -276,8 +276,14 @@ function IssueCard({
             <p className="text-content-secondary mt-1 text-sm">{pairLabel}</p>
           ) : null}
 
+          {issue.themeName ? (
+            <p className="text-content-tertiary mt-1 text-xs font-semibold tracking-[0.18em] uppercase">
+              {issue.themeName}
+            </p>
+          ) : null}
+
           {issue.tokenPath ? (
-            <p className="text-content-secondary mt-1 font-mono text-xs break-words">
+            <p className="text-content-secondary wrap-break-words mt-1 font-mono text-xs">
               {issue.tokenPath}
             </p>
           ) : null}
@@ -303,8 +309,8 @@ function IssueCard({
         <dl className="text-content-tertiary mt-4 grid gap-2 text-xs">
           {issue.foregroundTokenPath ? (
             <div>
-              <dt className="font-semibold">Foreground</dt>
-              <dd className="font-mono break-words">
+              <dt className="font-semibold">{t('issueDetails.foreground')}</dt>
+              <dd className="wrap-break-words font-mono">
                 {issue.foregroundTokenPath}
               </dd>
             </div>
@@ -312,9 +318,47 @@ function IssueCard({
 
           {issue.backgroundTokenPath ? (
             <div>
-              <dt className="font-semibold">Background</dt>
-              <dd className="font-mono break-words">
+              <dt className="font-semibold">{t('issueDetails.background')}</dt>
+              <dd className="wrap-break-words font-mono">
                 {issue.backgroundTokenPath}
+              </dd>
+            </div>
+          ) : null}
+        </dl>
+      ) : null}
+
+      {issue.foregroundValue || issue.backgroundValue ? (
+        <dl className="text-content-tertiary mt-4 grid gap-2 text-xs">
+          {issue.foregroundValue ? (
+            <div>
+              <dt className="font-semibold">
+                {t('issueDetails.foregroundValue')}
+              </dt>
+              <dd className="wrap-break-words font-mono">
+                {issue.foregroundValue}
+              </dd>
+            </div>
+          ) : null}
+
+          {issue.backgroundValue ? (
+            <div>
+              <dt className="font-semibold">
+                {t('issueDetails.backgroundValue')}
+              </dt>
+              <dd className="wrap-break-words font-mono">
+                {issue.backgroundValue}
+              </dd>
+            </div>
+          ) : null}
+
+          {issue.ratio !== null && issue.requiredRatio !== null ? (
+            <div>
+              <dt className="font-semibold">{t('issueDetails.ratio')}</dt>
+              <dd className="wrap-break-words font-mono">
+                {t('issueDetails.ratioValue', {
+                  ratio: issue.ratio.toFixed(2),
+                  required: issue.requiredRatio.toFixed(1),
+                })}
               </dd>
             </div>
           ) : null}
@@ -346,39 +390,48 @@ function ContrastPairsPanel({
       <div className="mt-6 grid gap-4 lg:grid-cols-2">
         {report.contrastPairs.map((pair) => (
           <article
-            key={pair.pair.id}
+            key={pair.id}
             className="border-border-subtle bg-background-subtle rounded-2xl border p-4"
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h3 className="font-semibold">{labels.pairs[pair.pair.id]}</h3>
+                <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
+                  {pair.themeName}
+                </p>
+
+                <h3 className="mt-1 font-semibold">
+                  {labels.pairs[pair.pairId]}
+                </h3>
+
                 <p className="text-content-tertiary mt-1 text-xs">
-                  {pair.pair.foregroundTokenPath} /{' '}
-                  {pair.pair.backgroundTokenPath}
+                  {pair.foregroundRole} / {pair.backgroundRole}
                 </p>
               </div>
 
               <span className="border-border-subtle rounded-full border px-3 py-1 text-xs font-semibold">
-                {pair.status}
+                {t(`pairs.status.${pair.status}`)}
               </span>
             </div>
 
-            <div className="mt-4 grid grid-cols-2 gap-3">
+            <div className="mt-4 grid gap-3">
               <ColorValue
                 label={t('pairs.foreground')}
-                value={pair.foreground}
+                value={pair.foregroundValue}
+                tokenPath={pair.foregroundTokenPath}
               />
+
               <ColorValue
                 label={t('pairs.background')}
-                value={pair.background}
+                value={pair.backgroundValue}
+                tokenPath={pair.backgroundTokenPath}
               />
             </div>
 
             <p className="text-content-secondary mt-4 text-sm">
-              {pair.contrast?.ratio
+              {pair.ratio !== null && pair.requiredRatio !== null
                 ? t('pairs.ratio', {
-                    ratio: pair.contrast.ratio,
-                    required: pair.contrast.requiredRatio,
+                    ratio: pair.ratio.toFixed(2),
+                    required: pair.requiredRatio.toFixed(1),
                   })
                 : t('pairs.noRatio')}
             </p>
@@ -389,12 +442,26 @@ function ContrastPairsPanel({
   );
 }
 
-function ColorValue({ label, value }: { label: string; value: string | null }) {
+function ColorValue({
+  label,
+  value,
+  tokenPath,
+}: {
+  label: string;
+  value: string | null;
+  tokenPath?: string | null;
+}) {
   return (
     <div className="border-border-subtle rounded-xl border p-3">
       <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
         {label}
       </p>
+
+      {tokenPath ? (
+        <p className="text-content-tertiary mt-2 font-mono text-xs break-all">
+          {tokenPath}
+        </p>
+      ) : null}
 
       <div className="mt-2 flex items-center gap-2">
         {value ? (
