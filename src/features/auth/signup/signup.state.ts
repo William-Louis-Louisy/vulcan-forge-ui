@@ -1,6 +1,10 @@
 import type { SignupValidationMessageKey } from './signup.schema';
 
-export type SignupField = 'name' | 'email' | 'password';
+export type SignupField =
+  | 'name'
+  | 'email'
+  | 'password'
+  | 'passwordConfirmation';
 
 export type SignupActionState = {
   status: 'idle' | 'error';
