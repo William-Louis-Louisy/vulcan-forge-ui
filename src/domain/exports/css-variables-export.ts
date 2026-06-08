@@ -1,5 +1,6 @@
 import {
   resolveDesignTokens,
+  tokenReferenceToPath,
   type DesignToken,
   type ThemeSeed,
 } from '@/domain/design-system';
@@ -38,6 +39,15 @@ export type CssVariablesExportResult = {
   content: string;
   variables: CssVariableDefinition[];
   skippedTokens: CssVariablesExportSkippedToken[];
+  themeResolutionIssues: CssVariablesExportThemeResolutionIssue[];
+};
+
+export type CssVariablesExportThemeResolutionIssue = {
+  themeMode: CssVariablesExportTheme['mode'];
+  themeName: string;
+  path: string;
+  referencePath: string;
+  reason: 'tokenNotFound' | 'tokenUnresolved' | 'unsupportedValue';
 };
 
 type FlattenedThemeToken = {
@@ -163,19 +173,92 @@ function flattenThemeTokens(
   });
 }
 
-function createThemeVariables(
-  theme: CssVariablesExportTheme,
-): CssVariableDefinition[] {
+function stringifyThemeValue(value: unknown): string | null {
+  if (
+    typeof value === 'string' ||
+    typeof value === 'number' ||
+    typeof value === 'boolean'
+  ) {
+    return String(value);
+  }
+
+  return null;
+}
+
+function createResolvedTokenValueLookup(tokens: readonly DesignToken[]) {
+  const resolution = resolveDesignTokens(tokens);
+
+  return new Map(
+    resolution.tokens
+      .filter((token) => token.isResolved)
+      .map((token) => [token.path, token.resolvedValue]),
+  );
+}
+
+function createThemeVariables({
+  theme,
+  tokens,
+}: {
+  theme: CssVariablesExportTheme;
+  tokens: readonly DesignToken[];
+}): {
+  variables: CssVariableDefinition[];
+  themeResolutionIssues: CssVariablesExportThemeResolutionIssue[];
+} {
   const scope = (
     theme.mode === 'light' ? ':root' : `[data-theme="${theme.mode}"]`
   ) as CssVariableDefinition['scope'];
 
-  return flattenThemeTokens(theme.tokens).map((token) => ({
-    path: token.path,
-    name: tokenPathToCssVariableName(token.path),
-    value: token.value,
-    scope,
-  }));
+  const resolvedTokenValueByPath = createResolvedTokenValueLookup(tokens);
+  const themeResolutionIssues: CssVariablesExportThemeResolutionIssue[] = [];
+
+  const variables = flattenThemeTokens(theme.tokens).flatMap((token) => {
+    const referencePath = tokenReferenceToPath(token.value);
+
+    const resolvedThemeValue = referencePath
+      ? resolvedTokenValueByPath.get(referencePath)
+      : token.value;
+
+    if (referencePath && resolvedThemeValue === undefined) {
+      themeResolutionIssues.push({
+        themeMode: theme.mode,
+        themeName: theme.name,
+        path: token.path,
+        referencePath,
+        reason: 'tokenNotFound',
+      });
+
+      return [];
+    }
+
+    const value = stringifyThemeValue(resolvedThemeValue);
+
+    if (!value) {
+      themeResolutionIssues.push({
+        themeMode: theme.mode,
+        themeName: theme.name,
+        path: token.path,
+        referencePath: referencePath ?? token.path,
+        reason: referencePath ? 'tokenUnresolved' : 'unsupportedValue',
+      });
+
+      return [];
+    }
+
+    return [
+      {
+        path: token.path,
+        name: tokenPathToCssVariableName(token.path),
+        value,
+        scope,
+      },
+    ];
+  });
+
+  return {
+    variables,
+    themeResolutionIssues,
+  };
 }
 
 function createTokenVariables({
@@ -256,10 +339,18 @@ export function generateCssVariablesExport({
     includeDeprecated,
   });
 
-  const themeVariablesByTheme = themes.map((theme) => ({
-    theme,
-    variables: createThemeVariables(theme),
-  }));
+  const themeVariablesByTheme = themes.map((theme) => {
+    const result = createThemeVariables({
+      theme,
+      tokens,
+    });
+
+    return {
+      theme,
+      variables: result.variables,
+      themeResolutionIssues: result.themeResolutionIssues,
+    };
+  });
 
   const content = [
     `/* ${projectName} — CSS variables */`,
@@ -280,5 +371,8 @@ export function generateCssVariablesExport({
       ...themeVariablesByTheme.flatMap(({ variables }) => variables),
     ],
     skippedTokens,
+    themeResolutionIssues: themeVariablesByTheme.flatMap(
+      ({ themeResolutionIssues }) => themeResolutionIssues,
+    ),
   };
 }

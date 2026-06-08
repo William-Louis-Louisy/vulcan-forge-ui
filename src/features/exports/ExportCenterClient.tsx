@@ -6,6 +6,7 @@ import {
   generateTypeScriptThemeExport,
   generateReactNativeThemeExport,
   type CssVariablesExportSkippedToken,
+  type CssVariablesExportThemeResolutionIssue,
 } from '@/domain/exports';
 import {
   exportCenterFormats,
@@ -38,6 +39,7 @@ type ExportCenterOutput = {
   fileName: string;
   content: string;
   skippedTokens: CssVariablesExportSkippedToken[];
+  themeResolutionIssues: CssVariablesExportThemeResolutionIssue[];
   missingTranslations: Array<
     MarkdownDocumentationMissingTranslation | AiInstructionsMissingTranslation
   >;
@@ -149,6 +151,7 @@ export function ExportCenterClient({
         fileName: cssVariables.fileName,
         content: cssVariables.content,
         skippedTokens: cssVariables.skippedTokens,
+        themeResolutionIssues: cssVariables.themeResolutionIssues,
         missingTranslations: [],
       },
       {
@@ -157,6 +160,7 @@ export function ExportCenterClient({
         fileName: tailwindV4.fileName,
         content: tailwindV4.content,
         skippedTokens: tailwindV4.skippedTokens,
+        themeResolutionIssues: tailwindV4.themeResolutionIssues,
         missingTranslations: [],
       },
       {
@@ -165,6 +169,7 @@ export function ExportCenterClient({
         fileName: typescriptTheme.fileName,
         content: typescriptTheme.content,
         skippedTokens: typescriptTheme.skippedTokens,
+        themeResolutionIssues: typescriptTheme.themeResolutionIssues,
         missingTranslations: [],
       },
       {
@@ -173,6 +178,7 @@ export function ExportCenterClient({
         fileName: reactNativeTheme.fileName,
         content: reactNativeTheme.content,
         skippedTokens: reactNativeTheme.skippedTokens,
+        themeResolutionIssues: reactNativeTheme.themeResolutionIssues,
         missingTranslations: [],
       },
       {
@@ -180,6 +186,7 @@ export function ExportCenterClient({
         locale: documentationProfile.locale,
         fileName: `${projectSlug}-documentation-${documentationProfile.locale}.md`,
         content: documentationMarkdown.markdown,
+        themeResolutionIssues: [],
         skippedTokens: [],
         missingTranslations: documentationMarkdown.missingTranslations,
       },
@@ -188,6 +195,7 @@ export function ExportCenterClient({
         locale: aiInstructionProfile.locale,
         fileName: aiInstructions.fileName,
         content: aiInstructions.content,
+        themeResolutionIssues: [],
         skippedTokens: [],
         missingTranslations: aiInstructions.missingTranslations,
       },
@@ -434,7 +442,21 @@ function ExportDiagnosticsPanel({ output }: { output: ExportCenterOutput }) {
   const t = useTranslations('ExportCenterPage');
 
   const hasSkippedTokens = output.skippedTokens.length > 0;
+  const hasThemeResolutionIssues = output.themeResolutionIssues.length > 0;
   const hasMissingTranslations = output.missingTranslations.length > 0;
+
+  const themeResolutionReasonLabels: Record<
+    ExportCenterOutput['themeResolutionIssues'][number]['reason'],
+    string
+  > = {
+    tokenNotFound: t('diagnostics.themeResolutionIssues.reasons.tokenNotFound'),
+    tokenUnresolved: t(
+      'diagnostics.themeResolutionIssues.reasons.tokenUnresolved',
+    ),
+    unsupportedValue: t(
+      'diagnostics.themeResolutionIssues.reasons.unsupportedValue',
+    ),
+  };
 
   return (
     <section className="border-border-subtle bg-surface-primary shadow-soft rounded-3xl border p-6">
@@ -442,7 +464,9 @@ function ExportDiagnosticsPanel({ output }: { output: ExportCenterOutput }) {
         {t('diagnostics.title')}
       </h2>
 
-      {!hasSkippedTokens && !hasMissingTranslations ? (
+      {!hasSkippedTokens &&
+      !hasThemeResolutionIssues &&
+      !hasMissingTranslations ? (
         <p className="text-action-success mt-4 text-sm font-semibold">
           {t('diagnostics.empty')}
         </p>
@@ -464,6 +488,27 @@ function ExportDiagnosticsPanel({ output }: { output: ExportCenterOutput }) {
                 <span className="text-content-secondary ml-2">
                   {t(`diagnostics.skippedTokens.reasons.${token.reason}`)}
                 </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      {hasThemeResolutionIssues ? (
+        <div className="border-action-warning/30 bg-action-warning/10 mt-4 rounded-2xl border p-4">
+          <p className="text-action-warning text-sm font-semibold">
+            {t('diagnostics.themeResolutionIssues.title')}
+          </p>
+
+          <ul className="text-content-secondary mt-3 grid gap-2 text-xs">
+            {output.themeResolutionIssues.map((issue) => (
+              <li
+                key={`${issue.themeMode}-${issue.path}-${issue.referencePath}`}
+              >
+                <span className="font-semibold">{issue.themeName}</span> ·{' '}
+                <span className="font-mono">{issue.path}</span> →{' '}
+                <span className="font-mono">{issue.referencePath}</span> ·{' '}
+                {themeResolutionReasonLabels[issue.reason]}
               </li>
             ))}
           </ul>

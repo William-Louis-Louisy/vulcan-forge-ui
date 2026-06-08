@@ -664,6 +664,14 @@
         },
         "title": "Skipped tokens"
       },
+      "themeResolutionIssues": {
+        "reasons": {
+          "tokenNotFound": "token not found",
+          "tokenUnresolved": "unresolved token",
+          "unsupportedValue": "unsupported value"
+        },
+        "title": "Some theme values could not be resolved"
+      },
       "title": "Export diagnostics"
     },
     "eyebrow": "Export Center",
