@@ -2,6 +2,7 @@ import {
   generateCssVariablesExport,
   type CssVariablesExportTheme,
   type CssVariablesExportSkippedToken,
+  type CssVariablesExportThemeResolutionIssue,
 } from './css-variables-export';
 import type { DesignToken } from '@/domain/design-system';
 
@@ -24,6 +25,7 @@ export type TailwindV4ExportResult = {
   content: string;
   variables: TailwindThemeVariable[];
   skippedTokens: CssVariablesExportSkippedToken[];
+  themeResolutionIssues: CssVariablesExportThemeResolutionIssue[];
 };
 
 function toKebabCase(value: string): string {
@@ -102,5 +104,6 @@ export function generateTailwindV4Export({
     content,
     variables,
     skippedTokens: cssVariablesExport.skippedTokens,
+    themeResolutionIssues: cssVariablesExport.themeResolutionIssues,
   };
 }

@@ -166,4 +166,53 @@ describe('generateCssVariablesExport', () => {
     expect(result.content).toContain('/* theme · Dark */');
     expect(result.content).toContain('--color-background: #070707;');
   });
+
+  it('resolves theme token references before exporting CSS variables', () => {
+    const result = generateCssVariablesExport({
+      projectName: 'Aurora System',
+      tokens,
+      themes: [
+        {
+          mode: 'light',
+          name: 'Light',
+          tokens: {
+            color: {
+              background: '{color.semantic.action.primary}',
+            },
+          },
+        },
+      ],
+    });
+
+    expect(result.content).toContain('--color-background: #ff8731;');
+    expect(result.content).not.toContain('{color.semantic.action.primary}');
+    expect(result.themeResolutionIssues).toEqual([]);
+  });
+
+  it('reports unresolved theme token references', () => {
+    const result = generateCssVariablesExport({
+      projectName: 'Aurora System',
+      tokens,
+      themes: [
+        {
+          mode: 'light',
+          name: 'Light',
+          tokens: {
+            color: {
+              background: '{color.semantic.missing}',
+            },
+          },
+        },
+      ],
+    });
+
+    expect(result.content).not.toContain('--color-background');
+    expect(result.themeResolutionIssues).toContainEqual({
+      themeMode: 'light',
+      themeName: 'Light',
+      path: 'color.background',
+      referencePath: 'color.semantic.missing',
+      reason: 'tokenNotFound',
+    });
+  });
 });

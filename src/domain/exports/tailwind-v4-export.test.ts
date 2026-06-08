@@ -147,4 +147,26 @@ describe('generateTailwindV4Export', () => {
     expect(result.content).toContain('[data-theme="dark"] {');
     expect(result.content).toContain('--color-background: #070707;');
   });
+
+  it('uses resolved theme references in generated Tailwind CSS', () => {
+    const result = generateTailwindV4Export({
+      projectName: 'Aurora System',
+      tokens,
+      themes: [
+        {
+          mode: 'light',
+          name: 'Light',
+          tokens: {
+            color: {
+              background: '{color.semantic.action.primary}',
+            },
+          },
+        },
+      ],
+    });
+
+    expect(result.content).toContain('--color-background: #ff8731;');
+    expect(result.content).not.toContain('{color.semantic.action.primary}');
+    expect(result.themeResolutionIssues).toEqual([]);
+  });
 });

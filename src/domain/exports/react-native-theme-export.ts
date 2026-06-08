@@ -2,6 +2,7 @@ import {
   generateCssVariablesExport,
   type CssVariablesExportTheme,
   type CssVariablesExportSkippedToken,
+  CssVariablesExportThemeResolutionIssue,
 } from './css-variables-export';
 import type { DesignToken } from '@/domain/design-system';
 
@@ -18,6 +19,7 @@ export type ReactNativeThemeExportResult = {
   tokens: Record<string, unknown>;
   themes: Record<string, Record<string, unknown>>;
   skippedTokens: CssVariablesExportSkippedToken[];
+  themeResolutionIssues: CssVariablesExportThemeResolutionIssue[];
 };
 
 type PrimitiveThemeValue = string | number | boolean;
@@ -150,25 +152,65 @@ function createTokensObject({
   };
 }
 
-function createThemesObject(themes: readonly CssVariablesExportTheme[]) {
-  return themes.reduce<Record<string, Record<string, unknown>>>(
-    (themeMap, theme) => {
-      const themeTokens: Record<string, unknown> = {};
+function createThemesObject({
+  projectName,
+  tokens,
+  themes,
+  includeDeprecated,
+}: {
+  projectName: string;
+  tokens: readonly DesignToken[];
+  themes: readonly CssVariablesExportTheme[];
+  includeDeprecated: boolean;
+}) {
+  const cssVariablesExport = generateCssVariablesExport({
+    projectName,
+    tokens,
+    themes,
+    includeDeprecated,
+  });
 
-      flattenThemeTokens(theme.tokens).forEach((token) => {
-        setNestedValue({
-          target: themeTokens,
-          path: token.path,
-          value: token.value,
-        });
-      });
+  return {
+    themes: themes.reduce<Record<string, Record<string, unknown>>>(
+      (themeMap, theme) => {
+        const themeTokens: Record<string, unknown> = {};
 
-      themeMap[theme.mode] = themeTokens;
+        cssVariablesExport.variables
+          .filter(
+            (variable) => variable.scope === ':root' && theme.mode === 'light',
+          )
+          .concat(
+            cssVariablesExport.variables.filter(
+              (variable) => variable.scope === `[data-theme="${theme.mode}"]`,
+            ),
+          )
+          .filter((variable) => {
+            const isThemeRole = [
+              'color.background',
+              'color.surface',
+              'color.content',
+              'color.muted',
+              'color.accent',
+            ].includes(variable.path);
 
-      return themeMap;
-    },
-    {},
-  );
+            return isThemeRole;
+          })
+          .forEach((variable) => {
+            setNestedValue({
+              target: themeTokens,
+              path: variable.path,
+              value: variable.value,
+            });
+          });
+
+        themeMap[theme.mode] = themeTokens;
+
+        return themeMap;
+      },
+      {},
+    ),
+    themeResolutionIssues: cssVariablesExport.themeResolutionIssues,
+  };
 }
 
 function serializeAsConst(value: unknown): string {
@@ -187,7 +229,14 @@ export function generateReactNativeThemeExport({
     includeDeprecated,
   });
 
-  const themeMap = createThemesObject(themes);
+  const resolvedThemeResult = createThemesObject({
+    projectName,
+    tokens,
+    themes,
+    includeDeprecated,
+  });
+
+  const themeMap = resolvedThemeResult.themes;
 
   const content = [
     `// ${projectName} — React Native theme`,
@@ -227,5 +276,6 @@ export function generateReactNativeThemeExport({
     tokens: resolvedTokenResult.tokens,
     themes: themeMap,
     skippedTokens: resolvedTokenResult.skippedTokens,
+    themeResolutionIssues: resolvedThemeResult.themeResolutionIssues,
   };
 }

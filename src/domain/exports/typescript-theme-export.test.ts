@@ -199,4 +199,30 @@ describe('generateTypeScriptThemeExport', () => {
     expect(result.content).toContain('"light"');
     expect(result.content).toContain('"dark"');
   });
+
+  it('exports resolved theme token references', () => {
+    const result = generateTypeScriptThemeExport({
+      projectName: 'Aurora System',
+      tokens,
+      themes: [
+        {
+          mode: 'light',
+          name: 'Light',
+          tokens: {
+            color: {
+              background: '{color.semantic.action.primary}',
+            },
+          },
+        },
+      ],
+    });
+
+    expect(result.themes.light).toMatchObject({
+      color: {
+        background: '#ff8731',
+      },
+    });
+
+    expect(result.content).not.toContain('{color.semantic.action.primary}');
+  });
 });

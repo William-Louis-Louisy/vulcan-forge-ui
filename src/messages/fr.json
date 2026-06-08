@@ -664,6 +664,14 @@
         },
         "title": "Tokens ignorés"
       },
+      "themeResolutionIssues": {
+        "reasons": {
+          "tokenNotFound": "token introuvable",
+          "tokenUnresolved": "token non résolu",
+          "unsupportedValue": "valeur non supportée"
+        },
+        "title": "Certaines valeurs de thème n’ont pas pu être résolues"
+      },
       "title": "Diagnostics d’export"
     },
     "eyebrow": "Export Center",
