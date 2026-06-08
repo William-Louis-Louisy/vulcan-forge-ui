@@ -3,20 +3,17 @@
 import { useEffect } from 'react';
 import {
   applyThemePreference,
-  persistThemePreference,
+  getPublicThemePreference,
 } from './theme-preference.client';
-import type { ThemePreference } from './user-settings.schema';
+import { usePathname } from 'next/navigation';
 
-type ThemePreferenceApplierProps = {
-  themePreference: ThemePreference;
-};
+export function PublicThemePreferenceApplier() {
+  const pathname = usePathname();
 
-export function ThemePreferenceApplier({
-  themePreference,
-}: ThemePreferenceApplierProps) {
   useEffect(() => {
+    const themePreference = getPublicThemePreference();
+
     applyThemePreference(themePreference);
-    persistThemePreference(themePreference);
 
     if (themePreference !== 'system') {
       return;
@@ -33,7 +30,7 @@ export function ThemePreferenceApplier({
     return () => {
       mediaQuery.removeEventListener('change', handleSystemThemeChange);
     };
-  }, [themePreference]);
+  }, [pathname]);
 
   return null;
 }
