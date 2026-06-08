@@ -28,6 +28,7 @@ import { generateMarkdownDocumentation } from '@/domain/documentation';
 import { logExportAction, type LogExportStatus } from './log-export.action';
 import type { AiInstructionsMissingTranslation } from '@/domain/ai-instructions';
 import type { MarkdownDocumentationMissingTranslation } from '@/domain/documentation';
+import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 import type { DocumentationProfileContent } from '@/features/documentation/documentation-profile.schema';
 import type { AiInstructionProfileContent } from '@/features/ai-instructions/ai-instruction-profile.schema';
 
@@ -89,6 +90,9 @@ export function ExportCenterClient({
 
   const [selectedFormat, setSelectedFormat] =
     useState<ExportCenterFormat>('cssVariables');
+  const preserveSaveContext = usePreserveSaveContext(
+    `export-center:${selectedFormat}`,
+  );
 
   const [includeDeprecated, setIncludeDeprecated] = useState(false);
   const [copyStatus, setCopyStatus] = useState<CopyStatus>('idle');
@@ -221,6 +225,7 @@ export function ExportCenterClient({
     status: LogExportStatus;
     errorMessage?: string | null;
   }) {
+    preserveSaveContext();
     setLogStatus('idle');
 
     startLoggingExportTransition(() => {

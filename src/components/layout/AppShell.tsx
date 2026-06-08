@@ -4,6 +4,7 @@ import { appConfig } from '@/config/app';
 import { LogoutButton } from '@/features/auth/logout/LogoutButton';
 import { AppShellNavigation } from '@/components/layout/AppShellNavigation';
 import type { ThemePreference } from '@/features/settings/user-settings.schema';
+import { SaveContextRestorer } from '@/features/save-context/SaveContextRestorer';
 import { ThemePreferenceApplier } from '@/features/settings/ThemePreferenceApplier';
 import type { PrivateNavigationItemKey } from '@/features/app-navigation/private-navigation';
 
@@ -30,6 +31,7 @@ export function AppShell({
   return (
     <div className="bg-background-app text-content-primary min-h-screen lg:grid lg:h-screen lg:grid-cols-[17rem_minmax(0,1fr)] lg:overflow-hidden">
       <ThemePreferenceApplier themePreference={themePreference} />
+      <SaveContextRestorer />
       <aside className="border-border-subtle bg-background-subtle hidden border-r lg:block lg:h-screen lg:overflow-y-auto">
         <div className="flex min-h-full flex-col px-5 py-6">
           <Link
@@ -67,7 +69,10 @@ export function AppShell({
         </div>
       </aside>
 
-      <div className="min-w-0 lg:h-screen lg:overflow-y-auto">
+      <div
+        data-save-context-scroll-container="app"
+        className="min-w-0 lg:h-screen lg:overflow-y-auto"
+      >
         <header className="border-border-subtle bg-background-app flex min-h-16 items-center justify-between border-b px-6 lg:hidden">
           <Link
             href="/app"

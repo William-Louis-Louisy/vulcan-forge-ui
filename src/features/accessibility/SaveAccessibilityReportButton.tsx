@@ -5,6 +5,7 @@ import { Button } from '@/components/ui';
 import { useTranslations } from 'next-intl';
 import type { Locale } from '@/i18n/routing';
 import { saveAccessibilityReportAction } from './save-accessibility-report.action';
+import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 import { initialSaveAccessibilityReportActionState } from './save-accessibility-report.state';
 
 type SaveAccessibilityReportButtonProps = {
@@ -23,9 +24,14 @@ export function SaveAccessibilityReportButton({
     initialSaveAccessibilityReportActionState,
   );
 
+  const preserveSaveContext = usePreserveSaveContext(
+    `accessibility-report:${projectSlug}`,
+  );
+
   return (
     <form
       action={formAction}
+      onSubmitCapture={preserveSaveContext}
       className="border-border-subtle bg-surface-primary shadow-soft rounded-3xl border p-5"
     >
       <input type="hidden" name="locale" value={locale} />

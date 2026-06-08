@@ -1,14 +1,15 @@
 'use client';
 
 import { Button } from '@/components/ui';
-import { useTranslations } from 'next-intl';
-import type { Locale } from '@/i18n/routing';
-import { useActionState, useState } from 'react';
-import { updateTokenDescriptionAction } from './update-token-description.action';
 import {
   initialUpdateTokenDescriptionActionState,
   type UpdateTokenDescriptionActionState,
 } from './update-token-description.state';
+import { useTranslations } from 'next-intl';
+import type { Locale } from '@/i18n/routing';
+import { useActionState, useState } from 'react';
+import { updateTokenDescriptionAction } from './update-token-description.action';
+import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 
 type TokenDescriptionEditorProps = {
   locale: Locale;
@@ -60,9 +61,14 @@ export function TokenDescriptionEditor({
   const isEnglishMissing = descriptionEn.trim().length === 0;
   const isFrenchMissing = descriptionFr.trim().length === 0;
 
+  const preserveSaveContext = usePreserveSaveContext(
+    `token-description:${projectSlug}:${tokenPath}`,
+  );
+
   return (
     <form
       action={formAction}
+      onSubmitCapture={preserveSaveContext}
       className="border-border-subtle bg-surface-primary mt-3 rounded-xl border p-3"
     >
       <input type="hidden" name="locale" value={locale} />

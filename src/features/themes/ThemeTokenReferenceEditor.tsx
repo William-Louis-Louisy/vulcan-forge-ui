@@ -7,6 +7,7 @@ import type {
 import { Button } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
 import { useActionState, useMemo, useState } from 'react';
+import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 import { updateThemeTokenReferenceAction } from './update-theme-token-reference.action';
 import { initialUpdateThemeTokenReferenceActionState } from './update-theme-token-reference.state';
 
@@ -70,9 +71,14 @@ export function ThemeTokenReferenceEditor({
   const hasOptions = options.length > 0;
   const inputId = `${themeId}-${colorKey}-token-reference`;
 
+  const preserveSaveContext = usePreserveSaveContext(
+    `theme-token-reference:${projectSlug}:${themeId}:${colorKey}`,
+  );
+
   return (
     <form
       action={formAction}
+      onSubmitCapture={preserveSaveContext}
       className="border-border-subtle bg-background-subtle rounded-2xl border p-4"
     >
       <input type="hidden" name="locale" value={locale} />

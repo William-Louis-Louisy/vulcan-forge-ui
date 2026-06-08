@@ -3,13 +3,14 @@
 import { Button } from '@/components/ui';
 import { useTranslations } from 'next-intl';
 import type { Locale } from '@/i18n/routing';
-import { useActionState, useMemo, useState } from 'react';
-import type { PrimitiveColorTokenAliasOption } from './tokens-editor.utils';
-import { updateSemanticColorTokenAction } from './update-semantic-color-token.action';
 import {
   initialUpdateSemanticColorTokenActionState,
   type UpdateSemanticColorTokenActionState,
 } from './update-semantic-color-token.state';
+import { useActionState, useMemo, useState } from 'react';
+import type { PrimitiveColorTokenAliasOption } from './tokens-editor.utils';
+import { updateSemanticColorTokenAction } from './update-semantic-color-token.action';
+import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 
 type SemanticColorTokenAliasEditorProps = {
   locale: Locale;
@@ -58,9 +59,14 @@ export function SemanticColorTokenAliasEditor({
   const referencePathError = getFirstError(state.fieldErrors);
   const hasPrimitiveOptions = primitiveOptions.length > 0;
 
+  const preserveSaveContext = usePreserveSaveContext(
+    `semantic-color-token:${projectSlug}:${tokenPath}`,
+  );
+
   return (
     <form
       action={formAction}
+      onSubmitCapture={preserveSaveContext}
       className="border-border-subtle bg-surface-primary mt-3 rounded-xl border p-3"
     >
       <input type="hidden" name="locale" value={locale} />

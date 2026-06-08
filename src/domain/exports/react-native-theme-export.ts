@@ -2,7 +2,7 @@ import {
   generateCssVariablesExport,
   type CssVariablesExportTheme,
   type CssVariablesExportSkippedToken,
-  CssVariablesExportThemeResolutionIssue,
+  type CssVariablesExportThemeResolutionIssue,
 } from './css-variables-export';
 import type { DesignToken } from '@/domain/design-system';
 
@@ -20,13 +20,6 @@ export type ReactNativeThemeExportResult = {
   themes: Record<string, Record<string, unknown>>;
   skippedTokens: CssVariablesExportSkippedToken[];
   themeResolutionIssues: CssVariablesExportThemeResolutionIssue[];
-};
-
-type PrimitiveThemeValue = string | number | boolean;
-
-type FlattenedThemeToken = {
-  path: string;
-  value: PrimitiveThemeValue;
 };
 
 function toKebabCase(value: string): string {
@@ -88,34 +81,6 @@ function setNestedValue({
     }
 
     currentTarget = currentTarget[segment] as Record<string, unknown>;
-  });
-}
-
-function flattenThemeTokens(
-  tokens: Record<string, unknown>,
-  prefix: string[] = [],
-): FlattenedThemeToken[] {
-  return Object.entries(tokens).flatMap(([key, value]) => {
-    const nextPath = [...prefix, key];
-
-    if (
-      typeof value === 'string' ||
-      typeof value === 'number' ||
-      typeof value === 'boolean'
-    ) {
-      return [
-        {
-          path: nextPath.join('.'),
-          value,
-        },
-      ];
-    }
-
-    if (value && typeof value === 'object' && !Array.isArray(value)) {
-      return flattenThemeTokens(value as Record<string, unknown>, nextPath);
-    }
-
-    return [];
   });
 }
 

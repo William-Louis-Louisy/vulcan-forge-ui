@@ -1,23 +1,24 @@
 'use client';
 
+import {
+  createEmptyStateDraft,
+  createEmptyVariantDraft,
+  createComponentContractDraft,
+  createComponentContractFromDraft,
+  createEmptyForbiddenPatternDraft,
+  createEmptyAccessibilityRuleDraft,
+  type LocalizedTextDraft,
+  type ComponentStateDraft,
+  type ComponentVariantDraft,
+  type ComponentContractEditorDraft,
+  type ComponentAccessibilityRuleDraft,
+} from './component-contract-editor.utils';
 import type { Locale } from '@/i18n/routing';
 import type { ComponentContract } from '@/domain/design-system';
 import { useActionState, useMemo, useState, type ReactNode } from 'react';
 import { updateComponentContractAction } from './update-component-contract.action';
+import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 import { initialUpdateComponentContractActionState } from './update-component-contract.state';
-import {
-  createComponentContractDraft,
-  createComponentContractFromDraft,
-  createEmptyAccessibilityRuleDraft,
-  createEmptyForbiddenPatternDraft,
-  createEmptyStateDraft,
-  createEmptyVariantDraft,
-  type ComponentAccessibilityRuleDraft,
-  type ComponentContractEditorDraft,
-  type ComponentStateDraft,
-  type ComponentVariantDraft,
-  type LocalizedTextDraft,
-} from './component-contract-editor.utils';
 
 export type ComponentContractEditorLabels = {
   title: string;
@@ -134,6 +135,10 @@ export function ComponentContractEditor({
   const hasUnsavedChanges =
     JSON.stringify(draft) !== JSON.stringify(savedDraft);
 
+  const preserveSaveContext = usePreserveSaveContext(
+    `component-contract:${projectSlug}:${contract.type}`,
+  );
+
   return (
     <section className="border-border-subtle bg-surface-primary shadow-soft rounded-3xl border p-6">
       <div>
@@ -192,6 +197,7 @@ export function ComponentContractEditor({
 
       <form
         action={formAction}
+        onSubmitCapture={preserveSaveContext}
         className="border-border-subtle mt-8 rounded-2xl border p-4"
       >
         <input type="hidden" name="locale" value={locale} />
