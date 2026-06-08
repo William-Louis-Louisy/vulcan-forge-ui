@@ -19,6 +19,7 @@ import type { AppLocale } from '@/domain/i18n';
 import { useMemo, useState, useActionState } from 'react';
 import type { DocumentationProfileContent } from './documentation-profile.schema';
 import { saveDocumentationProfileAction } from './save-documentation-profile.action';
+import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 import { initialSaveDocumentationProfileActionState } from './save-documentation-profile.state';
 
 type DocumentationGeneratorClientProps = {
@@ -40,6 +41,10 @@ export function DocumentationGeneratorClient({
   documentationInput,
 }: DocumentationGeneratorClientProps) {
   const t = useTranslations('DocumentationGeneratorPage');
+
+  const preserveSaveContext = usePreserveSaveContext(
+    `documentation-profile:${projectSlug}`,
+  );
 
   const [state, formAction, isPending] = useActionState(
     saveDocumentationProfileAction,
@@ -198,6 +203,7 @@ export function DocumentationGeneratorClient({
 
           <form
             action={formAction}
+            onSubmitCapture={preserveSaveContext}
             className="border-border-subtle rounded-2xl border p-4"
           >
             <input type="hidden" name="locale" value={documentationLocale} />

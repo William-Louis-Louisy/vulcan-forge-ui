@@ -9,6 +9,7 @@ import { useActionState, useMemo, useState, useEffect } from 'react';
 import { updateUserSettingsAction } from './update-user-settings.action';
 import type { ThemePreference, UserSettings } from './user-settings.schema';
 import { initialUpdateUserSettingsActionState } from './update-user-settings.state';
+import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 
 type SettingsFormProps = {
   initialSettings: UserSettings;
@@ -54,6 +55,8 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
   const hasUnsavedChanges =
     JSON.stringify(currentSettings) !== JSON.stringify(lastSavedSettings);
 
+  const preserveSaveContext = usePreserveSaveContext('settings');
+
   useEffect(() => {
     if (state.status !== 'success' || !state.savedSettings) {
       return;
@@ -73,6 +76,7 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
   return (
     <form
       action={formAction}
+      onSubmitCapture={preserveSaveContext}
       className="border-border-subtle bg-surface-primary shadow-soft mt-8 rounded-3xl border p-6"
     >
       <div className="grid gap-8">

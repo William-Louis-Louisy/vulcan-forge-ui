@@ -21,6 +21,7 @@ import type { AppLocale } from '@/domain/i18n';
 import { useActionState, useMemo, useState } from 'react';
 import type { AiInstructionProfileContent } from './ai-instruction-profile.schema';
 import { saveAiInstructionProfileAction } from './save-ai-instruction-profile.action';
+import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 import { initialSaveAiInstructionProfileActionState } from './save-ai-instruction-profile.state';
 
 type AiInstructionsGeneratorClientProps = {
@@ -110,6 +111,10 @@ export function AiInstructionsGeneratorClient({
   const serializedProfile = JSON.stringify(currentProfile);
   const serializedInitialProfile = JSON.stringify(initialProfile);
   const hasUnsavedPreferences = serializedProfile !== serializedInitialProfile;
+
+  const preserveSaveContext = usePreserveSaveContext(
+    `ai-instruction-profile:${projectSlug}`,
+  );
 
   async function copyInstructions() {
     try {
@@ -247,6 +252,7 @@ export function AiInstructionsGeneratorClient({
 
           <form
             action={formAction}
+            onSubmitCapture={preserveSaveContext}
             className="border-border-subtle rounded-2xl border p-4"
           >
             <input type="hidden" name="locale" value={instructionsLocale} />

@@ -3,13 +3,14 @@
 import { Button } from '@/components/ui';
 import { useTranslations } from 'next-intl';
 import type { Locale } from '@/i18n/routing';
-import { useActionState, useState } from 'react';
-import { primitiveColorHexPattern } from './primitive-color-token.schema';
-import { updatePrimitiveColorTokenAction } from './update-primitive-color-token.action';
 import {
   initialUpdatePrimitiveColorTokenActionState,
   type UpdatePrimitiveColorTokenActionState,
 } from './update-primitive-color-token.state';
+import { useActionState, useState } from 'react';
+import { primitiveColorHexPattern } from './primitive-color-token.schema';
+import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
+import { updatePrimitiveColorTokenAction } from './update-primitive-color-token.action';
 
 type PrimitiveColorTokenEditorProps = {
   locale: Locale;
@@ -48,9 +49,14 @@ export function PrimitiveColorTokenEditor({
   const valueError = getFirstError(state.fieldErrors);
   const isPreviewValid = primitiveColorHexPattern.test(draftValue);
 
+  const preserveSaveContext = usePreserveSaveContext(
+    `primitive-color-token:${projectSlug}:${tokenPath}`,
+  );
+
   return (
     <form
       action={formAction}
+      onSubmitCapture={preserveSaveContext}
       className="border-border-subtle bg-surface-primary mt-3 rounded-xl border p-3"
     >
       <input type="hidden" name="locale" value={locale} />
