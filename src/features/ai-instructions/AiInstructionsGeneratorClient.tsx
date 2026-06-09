@@ -18,6 +18,11 @@ import {
 } from './ai-instructions-generator.utils';
 import { useTranslations } from 'next-intl';
 import type { AppLocale } from '@/domain/i18n';
+import {
+  createAiInstructionsSourceDataQualityReport,
+  type SourceDataQualityIssue,
+  type SourceDataQualityReport,
+} from '@/domain/generation/source-data-quality';
 import { useActionState, useMemo, useState } from 'react';
 import type { AiInstructionProfileContent } from './ai-instruction-profile.schema';
 import { saveAiInstructionProfileAction } from './save-ai-instruction-profile.action';
@@ -95,6 +100,11 @@ export function AiInstructionsGeneratorClient({
       strictness,
       selectedSections,
     ],
+  );
+
+  const sourceDataQualityReport = useMemo(
+    () => createAiInstructionsSourceDataQualityReport(aiInstructionsInput),
+    [aiInstructionsInput],
   );
 
   const fileName = getAiInstructionsFileName({
@@ -320,6 +330,8 @@ export function AiInstructionsGeneratorClient({
       </aside>
 
       <section className="grid gap-6">
+        <SourceDataQualityPanel report={sourceDataQualityReport} />
+
         <MissingTranslationsPanel
           missingTranslations={generatedInstructions.missingTranslations}
         />
@@ -392,4 +404,154 @@ function MissingTranslationsPanel({
       )}
     </section>
   );
+}
+
+function SourceDataQualityPanel({
+  report,
+}: {
+  report: SourceDataQualityReport;
+}) {
+  const t = useTranslations('AiInstructionsGeneratorPage');
+
+  return (
+    <section className="border-border-subtle bg-surface-primary shadow-soft rounded-3xl border p-6">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h2 className="text-2xl font-semibold tracking-tight">
+            {t('sourceQuality.title')}
+          </h2>
+
+          <p className="text-content-secondary mt-2 text-sm leading-6">
+            {t('sourceQuality.description')}
+          </p>
+        </div>
+
+        <span className="border-border-subtle rounded-full border px-3 py-1 text-xs font-semibold">
+          {t(`sourceQuality.status.${report.status}`)}
+        </span>
+      </div>
+
+      <div className="mt-5 grid gap-3 sm:grid-cols-4">
+        <SourceQualityMetric
+          label={t('sourceQuality.summary.total')}
+          value={String(report.summary.total)}
+        />
+        <SourceQualityMetric
+          label={t('sourceQuality.summary.critical')}
+          value={String(report.summary.critical)}
+        />
+        <SourceQualityMetric
+          label={t('sourceQuality.summary.warning')}
+          value={String(report.summary.warning)}
+        />
+        <SourceQualityMetric
+          label={t('sourceQuality.summary.info')}
+          value={String(report.summary.info)}
+        />
+      </div>
+
+      {report.issues.length > 0 ? (
+        <ul className="mt-5 grid gap-2">
+          {report.issues.map((issue) => (
+            <SourceQualityIssueItem
+              key={issue.id}
+              issue={issue}
+              labels={{
+                title: getDocumentationSourceQualityIssueTitle(t, issue),
+                severity: t(`sourceQuality.severity.${issue.severity}`),
+              }}
+            />
+          ))}
+        </ul>
+      ) : (
+        <p className="text-action-success mt-5 text-sm font-semibold">
+          {t('sourceQuality.empty')}
+        </p>
+      )}
+    </section>
+  );
+}
+
+function SourceQualityMetric({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="border-border-subtle bg-background-subtle rounded-2xl border p-3">
+      <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
+        {label}
+      </p>
+      <p className="mt-2 text-xl font-semibold">{value}</p>
+    </div>
+  );
+}
+
+function SourceQualityIssueItem({
+  issue,
+  labels,
+}: {
+  issue: SourceDataQualityIssue;
+  labels: {
+    title: string;
+    severity: string;
+  };
+}) {
+  return (
+    <li className="border-border-subtle bg-background-subtle rounded-2xl border p-3 text-sm">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <p className="font-semibold">{labels.title}</p>
+
+          <p className="text-content-tertiary mt-1 font-mono text-xs break-all">
+            {issue.path}
+          </p>
+
+          {issue.label ? (
+            <p className="text-content-secondary mt-1 text-xs">{issue.label}</p>
+          ) : null}
+        </div>
+
+        <span className="border-border-subtle rounded-full border px-3 py-1 text-xs font-semibold">
+          {labels.severity}
+        </span>
+      </div>
+    </li>
+  );
+}
+
+function getDocumentationSourceQualityIssueTitle(
+  t: ReturnType<typeof useTranslations<'AiInstructionsGeneratorPage'>>,
+  issue: SourceDataQualityIssue,
+) {
+  const count = issue.count ?? 0;
+
+  switch (issue.code) {
+    case 'missingProjectDescription':
+      return t('sourceQuality.issues.missingProjectDescription');
+    case 'missingTokens':
+      return t('sourceQuality.issues.missingTokens');
+    case 'missingTokenDescriptions':
+      return t('sourceQuality.issues.missingTokenDescriptions', { count });
+    case 'missingThemes':
+      return t('sourceQuality.issues.missingThemes');
+    case 'missingAccessibilityReport':
+      return t('sourceQuality.issues.missingAccessibilityReport');
+    case 'missingAccessibilityContrastPairs':
+      return t('sourceQuality.issues.missingAccessibilityContrastPairs');
+    case 'missingComponents':
+      return t('sourceQuality.issues.missingComponents');
+    case 'componentMissingAnatomy':
+      return t('sourceQuality.issues.componentMissingAnatomy');
+    case 'componentMissingVariants':
+      return t('sourceQuality.issues.componentMissingVariants');
+    case 'componentMissingStates':
+      return t('sourceQuality.issues.componentMissingStates');
+    case 'componentMissingAccessibilityRules':
+      return t('sourceQuality.issues.componentMissingAccessibilityRules');
+    case 'componentMissingForbiddenPatterns':
+      return t('sourceQuality.issues.componentMissingForbiddenPatterns');
+  }
 }

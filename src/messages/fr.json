@@ -190,6 +190,41 @@
       "sectionCount": "{count, plural, =0 {Seules les règles anti-hallucination sont incluses} one {# section sélectionnée} other {# sections sélectionnées}}",
       "title": "Preview des instructions IA"
     },
+    "sourceQuality": {
+      "description": "Ce diagnostic explique pourquoi le contenu généré peut sembler incomplet. Il ne bloque pas la génération, mais signale les données à compléter.",
+      "empty": "Aucun problème de complétude détecté pour cette génération.",
+      "issues": {
+        "componentMissingAccessibilityRules": "Un composant ne documente aucune règle d’accessibilité.",
+        "componentMissingAnatomy": "Un composant ne documente pas son anatomie.",
+        "componentMissingForbiddenPatterns": "Un composant ne documente aucun pattern interdit.",
+        "componentMissingStates": "Un composant ne documente aucun état.",
+        "componentMissingVariants": "Un composant ne documente aucune variante.",
+        "missingAccessibilityContrastPairs": "Le rapport d’accessibilité ne contient aucune paire de contraste.",
+        "missingAccessibilityReport": "Aucun rapport d’accessibilité n’est disponible.",
+        "missingComponents": "Aucun composant n’est disponible pour cette génération.",
+        "missingProjectDescription": "La description du projet est absente.",
+        "missingThemes": "Aucun thème n’est disponible dans les données source.",
+        "missingTokenDescriptions": "{count, plural, one {# token n’a pas de description.} other {# tokens n’ont pas de description.}}",
+        "missingTokens": "Aucun token n’est disponible pour cette génération."
+      },
+      "severity": {
+        "critical": "Critique",
+        "info": "Info",
+        "warning": "Warning"
+      },
+      "status": {
+        "insufficient": "Insuffisant",
+        "partial": "Partiel",
+        "ready": "Prêt"
+      },
+      "summary": {
+        "critical": "Critiques",
+        "info": "Infos",
+        "total": "Total",
+        "warning": "Warnings"
+      },
+      "title": "Qualité des données source"
+    },
     "states": {
       "errorDescription": "Une erreur est survenue pendant le chargement du générateur d’instructions IA de ce projet. Veuillez réessayer.",
       "errorTitle": "Impossible de charger le générateur d’instructions IA",
@@ -622,6 +657,41 @@
       "fileName": "Fichier : {fileName}",
       "sectionCount": "{count, plural, =0 {Aucune section sélectionnée} one {# section sélectionnée} other {# sections sélectionnées}}",
       "title": "Preview Markdown"
+    },
+    "sourceQuality": {
+      "description": "Ce diagnostic explique pourquoi le contenu généré peut sembler incomplet. Il ne bloque pas la génération, mais signale les données à compléter.",
+      "empty": "Aucun problème de complétude détecté pour cette génération.",
+      "issues": {
+        "componentMissingAccessibilityRules": "Un composant ne documente aucune règle d’accessibilité.",
+        "componentMissingAnatomy": "Un composant ne documente pas son anatomie.",
+        "componentMissingForbiddenPatterns": "Un composant ne documente aucun pattern interdit.",
+        "componentMissingStates": "Un composant ne documente aucun état.",
+        "componentMissingVariants": "Un composant ne documente aucune variante.",
+        "missingAccessibilityContrastPairs": "Le rapport d’accessibilité ne contient aucune paire de contraste.",
+        "missingAccessibilityReport": "Aucun rapport d’accessibilité n’est disponible.",
+        "missingComponents": "Aucun composant n’est disponible pour cette génération.",
+        "missingProjectDescription": "La description du projet est absente.",
+        "missingThemes": "Aucun thème n’est disponible dans les données source.",
+        "missingTokenDescriptions": "{count, plural, one {# token n’a pas de description.} other {# tokens n’ont pas de description.}}",
+        "missingTokens": "Aucun token n’est disponible pour cette génération."
+      },
+      "severity": {
+        "critical": "Critique",
+        "info": "Info",
+        "warning": "Warning"
+      },
+      "status": {
+        "insufficient": "Insuffisant",
+        "partial": "Partiel",
+        "ready": "Prêt"
+      },
+      "summary": {
+        "critical": "Critiques",
+        "info": "Infos",
+        "total": "Total",
+        "warning": "Warnings"
+      },
+      "title": "Qualité des données source"
     },
     "states": {
       "errorDescription": "Une erreur est survenue pendant le chargement du générateur de documentation de ce projet. Veuillez réessayer.",

@@ -190,6 +190,41 @@
       "sectionCount": "{count, plural, =0 {Only anti-hallucination rules included} one {# section selected} other {# sections selected}}",
       "title": "AI instructions preview"
     },
+    "sourceQuality": {
+      "description": "This diagnostic explains why the generated content may feel incomplete. It does not block generation, but highlights data that should be completed.",
+      "empty": "No completeness issue detected for this generation.",
+      "issues": {
+        "componentMissingAccessibilityRules": "A component does not document any accessibility rule.",
+        "componentMissingAnatomy": "A component does not document its anatomy.",
+        "componentMissingForbiddenPatterns": "A component does not document any forbidden pattern.",
+        "componentMissingStates": "A component does not document any state.",
+        "componentMissingVariants": "A component does not document any variant.",
+        "missingAccessibilityContrastPairs": "The accessibility report does not contain contrast pairs.",
+        "missingAccessibilityReport": "No accessibility report is available.",
+        "missingComponents": "No component is available for this generation.",
+        "missingProjectDescription": "The project description is missing.",
+        "missingThemes": "No theme is available in the source data.",
+        "missingTokenDescriptions": "{count, plural, one {# token has no description.} other {# tokens have no description.}}",
+        "missingTokens": "No token is available for this generation."
+      },
+      "severity": {
+        "critical": "Critical",
+        "info": "Info",
+        "warning": "Warning"
+      },
+      "status": {
+        "insufficient": "Insufficient",
+        "partial": "Partial",
+        "ready": "Ready"
+      },
+      "summary": {
+        "critical": "Critical",
+        "info": "Info",
+        "total": "Total",
+        "warning": "Warnings"
+      },
+      "title": "Source data quality"
+    },
     "states": {
       "errorDescription": "Something went wrong while loading this project's AI instructions generator. Please try again.",
       "errorTitle": "Unable to load AI instructions generator",
@@ -622,6 +657,41 @@
       "fileName": "File: {fileName}",
       "sectionCount": "{count, plural, =0 {No section selected} one {# section selected} other {# sections selected}}",
       "title": "Markdown preview"
+    },
+    "sourceQuality": {
+      "description": "This diagnostic explains why the generated content may feel incomplete. It does not block generation, but highlights data that should be completed.",
+      "empty": "No completeness issue detected for this generation.",
+      "issues": {
+        "componentMissingAccessibilityRules": "A component does not document any accessibility rule.",
+        "componentMissingAnatomy": "A component does not document its anatomy.",
+        "componentMissingForbiddenPatterns": "A component does not document any forbidden pattern.",
+        "componentMissingStates": "A component does not document any state.",
+        "componentMissingVariants": "A component does not document any variant.",
+        "missingAccessibilityContrastPairs": "The accessibility report does not contain contrast pairs.",
+        "missingAccessibilityReport": "No accessibility report is available.",
+        "missingComponents": "No component is available for this generation.",
+        "missingProjectDescription": "The project description is missing.",
+        "missingThemes": "No theme is available in the source data.",
+        "missingTokenDescriptions": "{count, plural, one {# token has no description.} other {# tokens have no description.}}",
+        "missingTokens": "No token is available for this generation."
+      },
+      "severity": {
+        "critical": "Critical",
+        "info": "Info",
+        "warning": "Warning"
+      },
+      "status": {
+        "insufficient": "Insufficient",
+        "partial": "Partial",
+        "ready": "Ready"
+      },
+      "summary": {
+        "critical": "Critical",
+        "info": "Info",
+        "total": "Total",
+        "warning": "Warnings"
+      },
+      "title": "Source data quality"
     },
     "states": {
       "errorDescription": "Something went wrong while loading this project's documentation generator. Please try again.",
