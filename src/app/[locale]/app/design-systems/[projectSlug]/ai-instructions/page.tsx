@@ -4,7 +4,6 @@ import type { AppLocale } from '@/domain/i18n';
 import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
 import { routing, type Locale } from '@/i18n/routing';
-import { ProjectEditorNav } from '@/features/design-systems/project-editor/ProjectEditorNav';
 import { AiInstructionsGeneratorClient } from '@/features/ai-instructions/AiInstructionsGeneratorClient';
 import { getAiInstructionsGeneratorPageData } from '@/features/ai-instructions/ai-instructions-generator.queries';
 
@@ -50,8 +49,6 @@ export default async function AiInstructionsGeneratorPage({
 
   return (
     <section className="mx-auto max-w-7xl">
-      <ProjectEditorNav projectSlug={pageData.projectSlug} />
-
       <div className="mt-8">
         <p className="text-action-primary text-sm font-semibold tracking-[0.24em] uppercase">
           {t('eyebrow')}

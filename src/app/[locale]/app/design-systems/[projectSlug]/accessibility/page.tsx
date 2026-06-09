@@ -8,7 +8,6 @@ import {
   type AccessibilityCenterIssue,
   type AccessibilityCenterReport,
 } from '@/features/accessibility/accessibility-center.utils';
-import { ProjectEditorNav } from '@/features/design-systems/project-editor/ProjectEditorNav';
 import { SaveAccessibilityReportButton } from '@/features/accessibility/SaveAccessibilityReportButton';
 import { getAccessibilityCenterPageData } from '@/features/accessibility/accessibility-center.queries';
 
@@ -66,8 +65,6 @@ export default async function AccessibilityCenterPage({
 
   return (
     <section className="mx-auto max-w-7xl">
-      <ProjectEditorNav projectSlug={pageData.project.slug} />
-
       <div className="mt-8">
         <p className="text-action-primary text-sm font-semibold tracking-[0.24em] uppercase">
           {t('eyebrow')}

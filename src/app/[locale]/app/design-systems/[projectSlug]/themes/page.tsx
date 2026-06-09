@@ -28,7 +28,6 @@ import { routing, type Locale } from '@/i18n/routing';
 import { createPreviewThemes } from '@/features/themes/preview-panel.utils';
 import { getThemesEditorPageData } from '@/features/themes/themes-editor.queries';
 import { ThemeTokenReferenceEditor } from '@/features/themes/ThemeTokenReferenceEditor';
-import { ProjectEditorNav } from '@/features/design-systems/project-editor/ProjectEditorNav';
 import { SemanticColorTokenAliasEditor } from '@/features/tokens/SemanticColorTokenAliasEditor';
 
 type ThemesEditorPageProps = {
@@ -95,8 +94,6 @@ export default async function ThemesEditorPage({
 
   return (
     <section className="mx-auto max-w-7xl">
-      <ProjectEditorNav projectSlug={pageData.project.slug} />
-
       <div className="mt-8">
         <p className="text-action-primary text-sm font-semibold tracking-[0.24em] uppercase">
           {t('eyebrow')}

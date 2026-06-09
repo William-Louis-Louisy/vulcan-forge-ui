@@ -14,7 +14,6 @@ import {
   type ComponentRegistryItem,
 } from '@/features/components/components-registry.utils';
 import { resolveLocalizedStringWithFallback } from '@/domain/i18n';
-import { ProjectEditorNav } from '@/features/design-systems/project-editor/ProjectEditorNav';
 import { getComponentsRegistryPageData } from '@/features/components/components-registry.queries';
 
 type ComponentsRegistryPageProps = {
@@ -92,8 +91,6 @@ export default async function ComponentsRegistryPage({
 
   return (
     <section className="mx-auto max-w-7xl">
-      <ProjectEditorNav projectSlug={pageData.project.slug} />
-
       <div className="mt-8">
         <p className="text-action-primary text-sm font-semibold tracking-[0.24em] uppercase">
           {t('eyebrow')}
@@ -115,22 +112,42 @@ export default async function ComponentsRegistryPage({
       ) : null}
 
       {registry.items.length > 0 ? (
-        <div className="mt-10 grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-          <ComponentList
-            t={t}
-            projectSlug={pageData.project.slug}
-            components={registry.items}
-            selectedComponentType={selectedComponent?.type ?? null}
-          />
-
-          {selectedComponent ? (
-            <ComponentDetails
+        <div className="mt-10 grid gap-6 xl:grid-cols-[minmax(18rem,0.75fr)_minmax(0,1.35fr)_minmax(18rem,0.9fr)]">
+          <aside className="xl:sticky xl:top-6 xl:self-start">
+            <ComponentList
               t={t}
-              locale={locale}
-              component={selectedComponent}
               projectSlug={pageData.project.slug}
+              components={registry.items}
+              selectedComponentType={selectedComponent?.type ?? null}
             />
-          ) : null}
+          </aside>
+
+          <main className="min-w-0">
+            {selectedComponent ? (
+              <ComponentDetails
+                t={t}
+                locale={locale}
+                component={selectedComponent}
+                projectSlug={pageData.project.slug}
+              />
+            ) : null}
+          </main>
+
+          <aside className="grid gap-6 xl:sticky xl:top-6 xl:self-start">
+            {selectedComponent ? (
+              <>
+                <ComponentFoundationsPreviewShell
+                  t={t}
+                  component={selectedComponent}
+                />
+                <ComponentAiContractShell
+                  t={t}
+                  locale={locale}
+                  component={selectedComponent}
+                />
+              </>
+            ) : null}
+          </aside>
         </div>
       ) : (
         <EmptyState
@@ -525,4 +542,116 @@ function createComponentContractEditorLabels(
       critical: t('severity.critical'),
     },
   };
+}
+
+function ComponentFoundationsPreviewShell({
+  t,
+  component,
+}: {
+  t: ComponentsRegistryTranslator;
+  component: ComponentRegistryItem;
+}) {
+  return (
+    <section className="border-border-subtle bg-surface-primary shadow-soft rounded-3xl border p-5">
+      <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
+        {t('foundationsPreview.eyebrow')}
+      </p>
+
+      <h2 className="mt-2 text-xl font-semibold tracking-tight">
+        {t('foundationsPreview.title')}
+      </h2>
+
+      <p className="text-content-secondary mt-3 text-sm leading-6">
+        {t('foundationsPreview.description')}
+      </p>
+
+      <div className="mt-5 grid gap-3">
+        <DetailMetric
+          label={t('details.variants')}
+          value={String(component.contract.variants.length)}
+        />
+
+        <DetailMetric
+          label={t('details.states')}
+          value={String(component.contract.states.length)}
+        />
+
+        <DetailMetric
+          label={t('details.accessibilityRules')}
+          value={String(component.contract.accessibility.length)}
+        />
+      </div>
+
+      <div className="border-border-subtle bg-background-subtle mt-5 rounded-2xl border p-4">
+        <p className="text-sm font-semibold">
+          {t('foundationsPreview.matrixPlaceholderTitle')}
+        </p>
+
+        <p className="text-content-secondary mt-2 text-sm leading-6">
+          {t('foundationsPreview.matrixPlaceholderDescription')}
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function ComponentAiContractShell({
+  t,
+  locale,
+  component,
+}: {
+  t: ComponentsRegistryTranslator;
+  locale: Locale;
+  component: ComponentRegistryItem;
+}) {
+  const purpose = resolveLocalizedStringWithFallback({
+    localizedString: toResolvableLocalizedString(component.contract.purpose),
+    locale,
+  });
+
+  return (
+    <section className="border-border-subtle bg-surface-primary shadow-soft rounded-3xl border p-5">
+      <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
+        {t('aiContract.eyebrow')}
+      </p>
+
+      <h2 className="mt-2 text-xl font-semibold tracking-tight">
+        {t('aiContract.title')}
+      </h2>
+
+      <p className="text-content-secondary mt-3 text-sm leading-6">
+        {t('aiContract.description')}
+      </p>
+
+      <div className="border-border-subtle bg-background-subtle mt-5 rounded-2xl border p-4">
+        <p className="text-sm font-semibold">{t('aiContract.purpose')}</p>
+
+        <p className="text-content-secondary mt-2 text-sm leading-6">
+          {purpose.value}
+        </p>
+      </div>
+
+      <div className="mt-4 grid gap-2">
+        <p className="text-sm font-semibold">{t('aiContract.signals')}</p>
+
+        <ul className="text-content-secondary grid gap-2 text-sm leading-6">
+          <li>
+            {t('aiContract.signalVariants', {
+              count: component.contract.variants.length,
+            })}
+          </li>
+          <li>
+            {t('aiContract.signalStates', {
+              count: component.contract.states.length,
+            })}
+          </li>
+          <li>
+            {t('aiContract.signalForbiddenPatterns', {
+              count: component.contract.forbiddenPatterns.length,
+            })}
+          </li>
+        </ul>
+      </div>
+    </section>
+  );
 }

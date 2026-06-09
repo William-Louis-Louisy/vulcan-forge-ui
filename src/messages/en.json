@@ -275,6 +275,16 @@
     }
   },
   "ComponentsRegistryPage": {
+    "aiContract": {
+      "description": "A reusable summary for AI instructions and generated documentation.",
+      "eyebrow": "AI contract",
+      "purpose": "Purpose",
+      "signalForbiddenPatterns": "{count, plural, =0 {No documented forbidden pattern} one {# documented forbidden pattern} other {# documented forbidden patterns}}",
+      "signals": "Available signals",
+      "signalStates": "{count, plural, =0 {No documented state} one {# documented state} other {# documented states}}",
+      "signalVariants": "{count, plural, =0 {No documented variant} one {# documented variant} other {# documented variants}}",
+      "title": "AI Contract"
+    },
     "backToProjects": "Back to design systems",
     "categories": {
       "action": "Action",
@@ -381,6 +391,13 @@
       }
     },
     "eyebrow": "Components registry",
+    "foundationsPreview": {
+      "description": "Prepares the visualization of variants, sizes and states for the selected component.",
+      "eyebrow": "Foundations preview",
+      "matrixPlaceholderDescription": "The real matrix will be added in DS-150-09-04 using available variants, states and tokens.",
+      "matrixPlaceholderTitle": "Visual matrix coming next",
+      "title": "Visual Matrix"
+    },
     "invalidContractsWarning": "{count, plural, one {# invalid component contract was ignored.} other {# invalid component contracts were ignored.}}",
     "list": {
       "title": "Components"

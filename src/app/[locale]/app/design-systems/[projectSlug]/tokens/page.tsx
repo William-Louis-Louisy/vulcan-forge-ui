@@ -19,7 +19,6 @@ import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
 import { routing, type Locale } from '@/i18n/routing';
 import { getTokensEditorPageData } from '@/features/tokens/tokens-editor.queries';
-import { ProjectEditorNav } from '@/features/design-systems/project-editor/ProjectEditorNav';
 
 type TokensEditorPageProps = {
   params: Promise<{
@@ -78,8 +77,6 @@ export default async function TokensEditorPage({
 
   return (
     <section className="mx-auto max-w-7xl">
-      <ProjectEditorNav projectSlug={pageData.project.slug} />
-
       <div className="mt-8 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="text-action-primary text-sm font-semibold tracking-[0.24em] uppercase">
