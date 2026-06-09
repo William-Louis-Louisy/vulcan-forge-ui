@@ -5,7 +5,6 @@ import { notFound, redirect } from 'next/navigation';
 import { routing, type Locale } from '@/i18n/routing';
 import { ExportCenterClient } from '@/features/exports/ExportCenterClient';
 import { getExportCenterPageData } from '@/features/exports/export-center.queries';
-import { ProjectEditorNav } from '@/features/design-systems/project-editor/ProjectEditorNav';
 
 type ExportCenterPageProps = {
   params: Promise<{
@@ -43,8 +42,6 @@ export default async function ExportCenterPage({
 
   return (
     <section className="mx-auto max-w-7xl">
-      <ProjectEditorNav projectSlug={pageData.projectSlug} />
-
       <div className="mt-8">
         <p className="text-action-primary text-sm font-semibold tracking-[0.24em] uppercase">
           {t('eyebrow')}
