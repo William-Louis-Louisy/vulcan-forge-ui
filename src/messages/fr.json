@@ -400,7 +400,16 @@
     },
     "invalidContractsWarning": "{count, plural, one {# contrat composant invalide a été ignoré.} other {# contrats composants invalides ont été ignorés.}}",
     "list": {
-      "title": "Composants"
+      "addDisabled": "Ajouter un composant",
+      "categorySummary": "{count, plural, one {# composant} other {# composants}} · complétude moyenne {average}%",
+      "description": "Parcourez les composants par catégorie, vérifiez leur statut et repérez rapidement les contrats incomplets.",
+      "emptyFilter": "Aucun composant ne correspond à ce filtre.",
+      "filterPlaceholder": "Filtrer...",
+      "missingSummary": "{count, plural, one {# champ manquant} other {# champs manquants}}",
+      "selected": "Sélectionné",
+      "title": "Composants",
+      "totalComponents": "{count, plural, one {# composant} other {# composants}}",
+      "warningSummary": "{count, plural, one {# warning} other {# warnings}}"
     },
     "missingFields": {
       "accessibility": "Règles d’accessibilité manquantes",

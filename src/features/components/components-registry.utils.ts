@@ -48,6 +48,30 @@ export type ComponentCompletenessWarning = {
   severity: 'warning';
 };
 
+export type ComponentRegistryCategoryGroup = {
+  category: ComponentRegistryItem['category'];
+  items: ComponentRegistryItem[];
+};
+
+export function groupComponentRegistryItemsByCategory(
+  items: readonly ComponentRegistryItem[],
+): ComponentRegistryCategoryGroup[] {
+  return componentRegistryCategoryOrder
+    .map((category) => ({
+      category,
+      items: items.filter((item) => item.category === category),
+    }))
+    .filter((group) => group.items.length > 0);
+}
+
+export const componentRegistryCategoryOrder = [
+  'action',
+  'input',
+  'layout',
+  'feedback',
+  'overlay',
+] as const satisfies readonly ComponentRegistryItem['category'][];
+
 export function getComponentCategory(
   type: ComponentContractType,
 ): ComponentRegistryItem['category'] {

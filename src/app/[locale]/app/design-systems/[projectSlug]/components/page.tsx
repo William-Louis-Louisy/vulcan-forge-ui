@@ -11,7 +11,9 @@ import {
 } from '@/features/components/ComponentContractEditor';
 import {
   createComponentRegistryItems,
+  groupComponentRegistryItemsByCategory,
   type ComponentRegistryItem,
+  type ComponentRegistryCategoryGroup,
 } from '@/features/components/components-registry.utils';
 import { resolveLocalizedStringWithFallback } from '@/domain/i18n';
 import { getComponentsRegistryPageData } from '@/features/components/components-registry.queries';
@@ -23,6 +25,7 @@ type ComponentsRegistryPageProps = {
   }>;
   searchParams: Promise<{
     component?: string;
+    q?: string;
   }>;
 };
 
@@ -71,7 +74,8 @@ export default async function ComponentsRegistryPage({
   }
 
   const t = await getTranslations('ComponentsRegistryPage');
-  const { component: selectedComponentType } = await searchParams;
+  const { component: selectedComponentType, q } = await searchParams;
+  const componentFilterQuery = q?.trim() ?? '';
 
   const pageData = await getComponentsRegistryPageData({
     userId: session.user.id,
@@ -84,8 +88,18 @@ export default async function ComponentsRegistryPage({
 
   const registry = createComponentRegistryItems(pageData.componentContracts);
 
+  const filteredRegistryItems = filterComponentRegistryItems({
+    items: registry.items,
+    query: componentFilterQuery,
+  });
+
+  const componentGroups = groupComponentRegistryItemsByCategory(
+    filteredRegistryItems,
+  );
+
   const selectedComponent =
-    registry.items.find((item) => item.type === selectedComponentType) ??
+    filteredRegistryItems.find((item) => item.type === selectedComponentType) ??
+    filteredRegistryItems[0] ??
     registry.items[0] ??
     null;
 
@@ -117,8 +131,9 @@ export default async function ComponentsRegistryPage({
             <ComponentList
               t={t}
               projectSlug={pageData.project.slug}
-              components={registry.items}
+              componentGroups={componentGroups}
               selectedComponentType={selectedComponent?.type ?? null}
+              filterQuery={componentFilterQuery}
             />
           </aside>
 
@@ -162,79 +177,64 @@ export default async function ComponentsRegistryPage({
 function ComponentList({
   t,
   projectSlug,
-  components,
+  componentGroups,
   selectedComponentType,
+  filterQuery,
 }: {
   t: ComponentsRegistryTranslator;
   projectSlug: string;
-  components: ComponentRegistryItem[];
+  componentGroups: ComponentRegistryCategoryGroup[];
   selectedComponentType: string | null;
+  filterQuery: string;
 }) {
   return (
     <section className="border-border-subtle bg-surface-primary shadow-soft rounded-3xl border p-5">
-      <h2 className="text-2xl font-semibold tracking-tight">
-        {t('list.title')}
-      </h2>
+      <div className="flex items-center justify-between gap-4">
+        <h2 className="text-2xl font-semibold tracking-tight">
+          {t('list.title')}
+        </h2>
 
-      <div className="mt-5 grid gap-3">
-        {components.map((component) => {
-          const isSelected = component.type === selectedComponentType;
-
-          return (
-            <Link
-              key={component.id}
-              href={`/app/design-systems/${projectSlug}/components?component=${component.type}`}
-              aria-current={isSelected ? 'true' : undefined}
-              className={[
-                'rounded-2xl border p-4 transition',
-                isSelected
-                  ? 'border-action-primary bg-action-primary/10'
-                  : 'border-border-subtle bg-background-subtle hover:border-action-primary/40',
-              ].join(' ')}
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h3 className="text-lg font-semibold">{component.name}</h3>
-                  <p className="text-content-secondary mt-1 text-sm">
-                    {t(`categories.${component.category}`)}
-                  </p>
-                </div>
-
-                <StatusBadge t={t} status={component.status} />
-              </div>
-
-              <div className="mt-4 flex flex-wrap gap-2">
-                {component.platforms.map((platform) => (
-                  <span
-                    key={platform}
-                    className="border-border-subtle text-content-secondary rounded-full border px-3 py-1 text-xs font-semibold"
-                  >
-                    {t(`platforms.${platform}`)}
-                  </span>
-                ))}
-              </div>
-
-              <div className="mt-4">
-                <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
-                  {t('completeness.label')}
-                </p>
-                <p className="mt-1 text-sm font-semibold">
-                  {t(`completeness.levels.${component.completeness.level}`)} ·{' '}
-                  {component.completeness.score}%
-                </p>
-              </div>
-
-              {component.completeness.warnings.length > 0 ? (
-                <p className="text-action-warning mt-2 text-sm font-semibold">
-                  {t('completeness.warningCount', {
-                    count: component.completeness.warnings.length,
-                  })}
-                </p>
-              ) : null}
-            </Link>
-          );
-        })}
+        <button
+          type="button"
+          disabled
+          aria-label={t('list.addDisabled')}
+          className="border-border-subtle bg-background-subtle text-content-primary flex size-9 items-center justify-center rounded-xl border text-lg font-semibold opacity-70"
+        >
+          +
+        </button>
       </div>
+
+      <form
+        action={`/app/design-systems/${projectSlug}/components`}
+        className="mt-4"
+      >
+        <input
+          type="search"
+          name="q"
+          defaultValue={filterQuery}
+          placeholder={t('list.filterPlaceholder')}
+          className="border-border-subtle bg-background-subtle focus:border-action-primary w-full rounded-xl border px-3 py-2 text-sm outline-none"
+        />
+      </form>
+
+      {componentGroups.length > 0 ? (
+        <div className="mt-6 grid gap-6">
+          {componentGroups.map((group) => (
+            <ComponentCategorySection
+              key={group.category}
+              t={t}
+              projectSlug={projectSlug}
+              group={group}
+              selectedComponentType={selectedComponentType}
+              filterQuery={filterQuery}
+            />
+          ))}
+        </div>
+      ) : (
+        <p className="text-content-secondary mt-6 text-sm">
+          {t('list.emptyFilter')}
+        </p>
+      )}
     </section>
   );
 }
@@ -402,8 +402,20 @@ function StatusBadge({
   t: ComponentsRegistryTranslator;
   status: ComponentRegistryItem['status'];
 }) {
+  const statusClassName: Record<ComponentRegistryItem['status'], string> = {
+    ready: 'border-action-success/30 bg-action-success/10 text-action-success',
+    draft: 'border-action-warning/30 bg-action-warning/10 text-action-warning',
+    deprecated:
+      'border-border-subtle bg-background-subtle text-content-tertiary',
+  };
+
   return (
-    <span className="border-border-subtle text-content-secondary rounded-full border px-3 py-1 text-xs font-semibold">
+    <span
+      className={[
+        'rounded-full border px-2.5 py-1 text-[11px] font-semibold whitespace-nowrap',
+        statusClassName[status],
+      ].join(' ')}
+    >
       {t(`statuses.${status}`)}
     </span>
   );
@@ -654,4 +666,130 @@ function ComponentAiContractShell({
       </div>
     </section>
   );
+}
+
+function ComponentCategorySection({
+  t,
+  projectSlug,
+  group,
+  selectedComponentType,
+  filterQuery,
+}: {
+  t: ComponentsRegistryTranslator;
+  projectSlug: string;
+  group: ComponentRegistryCategoryGroup;
+  selectedComponentType: string | null;
+  filterQuery: string;
+}) {
+  return (
+    <section>
+      <h3 className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
+        {t(`categories.${group.category}`)}
+      </h3>
+
+      <div className="mt-3 grid">
+        {group.items.map((component) => (
+          <ComponentNavigationRow
+            key={component.id}
+            t={t}
+            projectSlug={projectSlug}
+            component={component}
+            isSelected={component.type === selectedComponentType}
+            filterQuery={filterQuery}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function ComponentNavigationRow({
+  t,
+  projectSlug,
+  component,
+  isSelected,
+  filterQuery,
+}: {
+  t: ComponentsRegistryTranslator;
+  projectSlug: string;
+  component: ComponentRegistryItem;
+  isSelected: boolean;
+  filterQuery: string;
+}) {
+  return (
+    <Link
+      href={createComponentNavigationHref({
+        projectSlug,
+        componentType: component.type,
+        filterQuery,
+      })}
+      aria-current={isSelected ? 'page' : undefined}
+      className={[
+        'border-l-2 px-4 py-3 transition',
+        isSelected
+          ? 'border-action-primary bg-action-primary/10'
+          : 'hover:bg-background-subtle border-transparent',
+      ].join(' ')}
+    >
+      <div className="flex items-center justify-between gap-4">
+        <div className="min-w-0">
+          <h4 className="truncate text-sm font-semibold">{component.name}</h4>
+
+          <p className="text-content-secondary mt-1 text-sm">
+            {formatComponentPlatforms(t, component.platforms)}
+          </p>
+        </div>
+
+        <StatusBadge t={t} status={component.status} />
+      </div>
+    </Link>
+  );
+}
+
+function filterComponentRegistryItems({
+  items,
+  query,
+}: {
+  items: ComponentRegistryItem[];
+  query: string;
+}) {
+  if (!query) {
+    return items;
+  }
+
+  const normalizedQuery = query.toLowerCase();
+
+  return items.filter((item) =>
+    [item.name, item.type, item.category, ...item.platforms]
+      .join(' ')
+      .toLowerCase()
+      .includes(normalizedQuery),
+  );
+}
+
+function createComponentNavigationHref({
+  projectSlug,
+  componentType,
+  filterQuery,
+}: {
+  projectSlug: string;
+  componentType: string;
+  filterQuery: string;
+}) {
+  const params = new URLSearchParams({
+    component: componentType,
+  });
+
+  if (filterQuery) {
+    params.set('q', filterQuery);
+  }
+
+  return `/app/design-systems/${projectSlug}/components?${params.toString()}`;
+}
+
+function formatComponentPlatforms(
+  t: ComponentsRegistryTranslator,
+  platforms: ComponentRegistryItem['platforms'],
+) {
+  return platforms.map((platform) => t(`platforms.${platform}`)).join(' • ');
 }
