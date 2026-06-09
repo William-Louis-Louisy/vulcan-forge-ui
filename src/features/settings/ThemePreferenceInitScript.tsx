@@ -1,3 +1,4 @@
+import Script from 'next/script';
 import { themePreferenceStorageKey } from './theme-preference.client';
 
 export function ThemePreferenceInitScript() {
@@ -32,5 +33,11 @@ export function ThemePreferenceInitScript() {
 })();
 `;
 
-  return <script dangerouslySetInnerHTML={{ __html: script }} />;
+  return (
+    <Script
+      id="theme-preference-init"
+      strategy="afterInteractive"
+      dangerouslySetInnerHTML={{ __html: script }}
+    />
+  );
 }

@@ -1,12 +1,12 @@
 'use server';
 
 import bcrypt from 'bcryptjs';
-import { redirect } from 'next/navigation';
+import { signIn } from '@/auth';
 import { prisma } from '@/server/db/prisma';
-import { appLocales, defaultAppLocale, isAppLocale } from '@/domain/i18n';
-import { createPersonalWorkspaceSlug } from '@/domain/workspaces/slug';
-import { signupSchema, type SignupValidationMessageKey } from './signup.schema';
 import type { SignupActionState } from './signup.state';
+import { createPersonalWorkspaceSlug } from '@/domain/workspaces/slug';
+import { appLocales, defaultAppLocale, isAppLocale } from '@/domain/i18n';
+import { signupSchema, type SignupValidationMessageKey } from './signup.schema';
 
 function getFormStringValue(formData: FormData, key: string): string {
   const value = formData.get(key);
@@ -38,6 +38,11 @@ function normalizeFieldErrors(
       fieldErrors.password as SignupValidationMessageKey[];
   }
 
+  if (fieldErrors.passwordConfirmation?.length) {
+    normalizedErrors.passwordConfirmation =
+      fieldErrors.passwordConfirmation as SignupValidationMessageKey[];
+  }
+
   return normalizedErrors;
 }
 
@@ -55,6 +60,7 @@ export async function signupAction(
   const parsed = signupSchema.safeParse({
     ...values,
     password: getFormStringValue(formData, 'password'),
+    passwordConfirmation: getFormStringValue(formData, 'passwordConfirmation'),
   });
 
   if (!parsed.success) {
@@ -126,5 +132,16 @@ export async function signupAction(
     });
   });
 
-  redirect(`/${locale}/login?registered=1`);
+  await signIn('credentials', {
+    email: parsed.data.email,
+    password: parsed.data.password,
+    redirectTo: `/${locale}/app`,
+  });
+
+  return {
+    status: 'error',
+    fieldErrors: {},
+    formError: 'unexpected',
+    values,
+  };
 }

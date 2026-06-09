@@ -1040,8 +1040,13 @@
       "alreadyHaveAccount": "Already have an account?",
       "emailLabel": "Email",
       "nameLabel": "Name",
+      "passwordConfirmationLabel": "Confirm password",
       "passwordHelp": "Use at least 12 characters.",
       "passwordLabel": "Password",
+      "passwordVisibility": {
+        "hide": "Hide",
+        "show": "Show"
+      },
       "signInLink": "Sign in",
       "submit": "Create account",
       "submitPending": "Creating account..."
@@ -1052,6 +1057,7 @@
       "emailInvalid": "Enter a valid email address.",
       "nameMinLength": "Enter at least 2 characters.",
       "nameTooLong": "Name must contain at most 80 characters.",
+      "passwordConfirmationMismatch": "Passwords do not match.",
       "passwordMinLength": "Password must contain at least 12 characters.",
       "passwordTooLong": "Password must contain at most 72 characters.",
       "unexpected": "Unable to create your account. Please try again."
