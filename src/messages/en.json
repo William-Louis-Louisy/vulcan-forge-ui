@@ -400,7 +400,16 @@
     },
     "invalidContractsWarning": "{count, plural, one {# invalid component contract was ignored.} other {# invalid component contracts were ignored.}}",
     "list": {
-      "title": "Components"
+      "addDisabled": "Add component",
+      "categorySummary": "{count, plural, one {# component} other {# components}} · average completeness {average}%",
+      "description": "Browse components by category, check their status and quickly identify incomplete contracts.",
+      "emptyFilter": "No component matches this filter.",
+      "filterPlaceholder": "Filter...",
+      "missingSummary": "{count, plural, one {# missing field} other {# missing fields}}",
+      "selected": "Selected",
+      "title": "Components",
+      "totalComponents": "{count, plural, one {# component} other {# components}}",
+      "warningSummary": "{count, plural, one {# warning} other {# warnings}}"
     },
     "missingFields": {
       "accessibility": "Missing accessibility rules",

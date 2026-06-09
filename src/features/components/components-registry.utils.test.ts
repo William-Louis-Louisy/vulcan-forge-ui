@@ -1,11 +1,12 @@
-import { describe, expect, it } from 'vitest';
-import type { ComponentContract } from '@/domain/design-system';
 import {
-  createComponentRegistryItems,
   getComponentCategory,
   getComponentCompleteness,
+  createComponentRegistryItems,
   getComponentCompletenessWarnings,
+  groupComponentRegistryItemsByCategory,
 } from './components-registry.utils';
+import { describe, expect, it } from 'vitest';
+import type { ComponentContract } from '@/domain/design-system';
 
 const buttonContract: ComponentContract = {
   type: 'button',
@@ -218,5 +219,42 @@ describe('components registry utils', () => {
       code: 'missingAccessibleNameRule',
       severity: 'warning',
     });
+  });
+
+  it('groups registry items by category', () => {
+    const registry = createComponentRegistryItems([
+      {
+        id: 'button-contract',
+        type: 'button',
+        name: 'Button',
+        contract: buttonContract,
+      },
+      {
+        id: 'alert-contract',
+        type: 'alert',
+        name: 'Alert',
+        contract: {
+          ...buttonContract,
+          type: 'alert',
+          name: 'Alert',
+          status: 'draft',
+          variants: [],
+          states: [],
+          accessibility: [],
+          forbiddenPatterns: [],
+        },
+      },
+    ]);
+
+    expect(groupComponentRegistryItemsByCategory(registry.items)).toEqual([
+      {
+        category: 'action',
+        items: [expect.objectContaining({ type: 'button' })],
+      },
+      {
+        category: 'feedback',
+        items: [expect.objectContaining({ type: 'alert' })],
+      },
+    ]);
   });
 });
