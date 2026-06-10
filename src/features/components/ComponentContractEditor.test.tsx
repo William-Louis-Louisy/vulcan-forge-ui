@@ -20,6 +20,19 @@ const labels: ComponentContractEditorLabels = {
   description: 'Edit this component contract.',
   unsavedNotice: 'Unsaved local changes.',
   validationTitle: 'Validation errors',
+  localizedContent: {
+    title: 'Localized content',
+    editing: 'Editing:',
+    schemaNotice:
+      'Usage guidelines and Content guidelines are not persisted yet.',
+    locales: {
+      en: 'EN',
+      fr: 'FR',
+    },
+  },
+  metadata: {
+    title: 'Contract metadata',
+  },
   save: {
     action: 'Save contract',
     saving: 'Saving...',
@@ -148,6 +161,10 @@ describe('ComponentContractEditor', () => {
     );
     expect(screen.getByText('Variants')).toBeInTheDocument();
     expect(screen.getByText('Accessibility')).toBeInTheDocument();
+    expect(screen.getByText('Localized content')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'EN' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'FR' })).toBeInTheDocument();
+    expect(screen.queryByLabelText('Purpose FR')).not.toBeInTheDocument();
   });
 
   it('shows an unsaved notice after editing a field', () => {

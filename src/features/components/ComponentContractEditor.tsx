@@ -89,6 +89,18 @@ export type ComponentContractEditorLabels = {
       unexpected: string;
     };
   };
+  localizedContent: {
+    title: string;
+    editing: string;
+    schemaNotice: string;
+    locales: {
+      en: string;
+      fr: string;
+    };
+  };
+  metadata: {
+    title: string;
+  };
 };
 
 type ComponentContractEditorProps = {
@@ -117,6 +129,10 @@ export function ComponentContractEditor({
   const [draft, setDraft] =
     useState<ComponentContractEditorDraft>(initialDraft);
 
+  const [activeLocale, setActiveLocale] = useState<'en' | 'fr'>(
+    locale === 'fr' ? 'fr' : 'en',
+  );
+
   const savedContract =
     state.status === 'success' && state.savedContract
       ? state.savedContract
@@ -140,7 +156,7 @@ export function ComponentContractEditor({
   );
 
   return (
-    <section className="border-border-subtle bg-surface-primary shadow-soft rounded-3xl border p-6">
+    <section className="p-4">
       <div>
         <p className="text-content-tertiary text-sm font-semibold tracking-[0.18em] uppercase">
           {labels.title}
@@ -174,13 +190,23 @@ export function ComponentContractEditor({
       ) : null}
 
       <div className="mt-8 grid gap-8">
-        <BasicsSection labels={labels} draft={draft} setDraft={setDraft} />
+        <LocalizedContentSection
+          labels={labels}
+          draft={draft}
+          activeLocale={activeLocale}
+          setActiveLocale={setActiveLocale}
+          setDraft={setDraft}
+        />
+
+        <MetadataSection labels={labels} draft={draft} setDraft={setDraft} />
 
         <AnatomySection labels={labels} draft={draft} setDraft={setDraft} />
 
-        <VariantsSection labels={labels} draft={draft} setDraft={setDraft} />
-
-        <StatesSection labels={labels} draft={draft} setDraft={setDraft} />
+        <VariantsAndStatesSection
+          labels={labels}
+          draft={draft}
+          setDraft={setDraft}
+        />
 
         <AccessibilitySection
           labels={labels}
@@ -251,69 +277,6 @@ export function ComponentContractEditor({
   );
 }
 
-function BasicsSection({
-  labels,
-  draft,
-  setDraft,
-}: {
-  labels: ComponentContractEditorLabels;
-  draft: ComponentContractEditorDraft;
-  setDraft: (draft: ComponentContractEditorDraft) => void;
-}) {
-  return (
-    <EditorSection title={labels.basics.title}>
-      <div className="grid gap-4 md:grid-cols-2">
-        <TextInput
-          label={labels.basics.name}
-          value={draft.name}
-          onChange={(value) => setDraft({ ...draft, name: value })}
-        />
-
-        <label className="grid gap-2">
-          <span className="text-sm font-semibold">{labels.basics.status}</span>
-          <select
-            value={draft.status}
-            onChange={(event) =>
-              setDraft({
-                ...draft,
-                status: event.target
-                  .value as ComponentContractEditorDraft['status'],
-              })
-            }
-            className="border-border-subtle bg-background-subtle min-h-11 rounded-xl border px-3 text-sm"
-          >
-            <option value="draft">{labels.statuses.draft}</option>
-            <option value="ready">{labels.statuses.ready}</option>
-            <option value="deprecated">{labels.statuses.deprecated}</option>
-          </select>
-        </label>
-
-        <TextareaInput
-          label={labels.basics.purposeEn}
-          value={draft.purpose.en}
-          onChange={(value) =>
-            setDraft({
-              ...draft,
-              purpose: { ...draft.purpose, en: value },
-            })
-          }
-        />
-
-        <TextareaInput
-          label={labels.basics.purposeFr}
-          value={draft.purpose.fr}
-          onChange={(value) =>
-            setDraft({
-              ...draft,
-              purpose: { ...draft.purpose, fr: value },
-            })
-          }
-        />
-      </div>
-    </EditorSection>
-  );
-}
-
 function AnatomySection({
   labels,
   draft,
@@ -362,94 +325,6 @@ function AnatomySection({
         />
       </div>
     </EditorSection>
-  );
-}
-
-function VariantsSection({
-  labels,
-  draft,
-  setDraft,
-}: {
-  labels: ComponentContractEditorLabels;
-  draft: ComponentContractEditorDraft;
-  setDraft: (draft: ComponentContractEditorDraft) => void;
-}) {
-  return (
-    <EditableListSection
-      title={labels.variants.title}
-      addLabel={labels.variants.add}
-      onAdd={() =>
-        setDraft({
-          ...draft,
-          variants: [...draft.variants, createEmptyVariantDraft()],
-        })
-      }
-    >
-      {draft.variants.map((variant, index) => (
-        <VariantEditor
-          key={`${variant.key}-${index}`}
-          labels={labels}
-          variant={variant}
-          onChange={(nextVariant) => {
-            const nextVariants = [...draft.variants];
-            nextVariants[index] = nextVariant;
-            setDraft({ ...draft, variants: nextVariants });
-          }}
-          onRemove={() =>
-            setDraft({
-              ...draft,
-              variants: draft.variants.filter(
-                (_, itemIndex) => itemIndex !== index,
-              ),
-            })
-          }
-        />
-      ))}
-    </EditableListSection>
-  );
-}
-
-function StatesSection({
-  labels,
-  draft,
-  setDraft,
-}: {
-  labels: ComponentContractEditorLabels;
-  draft: ComponentContractEditorDraft;
-  setDraft: (draft: ComponentContractEditorDraft) => void;
-}) {
-  return (
-    <EditableListSection
-      title={labels.states.title}
-      addLabel={labels.states.add}
-      onAdd={() =>
-        setDraft({
-          ...draft,
-          states: [...draft.states, createEmptyStateDraft()],
-        })
-      }
-    >
-      {draft.states.map((state, index) => (
-        <StateEditor
-          key={`${state.key}-${index}`}
-          labels={labels}
-          state={state}
-          onChange={(nextState) => {
-            const nextStates = [...draft.states];
-            nextStates[index] = nextState;
-            setDraft({ ...draft, states: nextStates });
-          }}
-          onRemove={() =>
-            setDraft({
-              ...draft,
-              states: draft.states.filter(
-                (_, itemIndex) => itemIndex !== index,
-              ),
-            })
-          }
-        />
-      ))}
-    </EditableListSection>
   );
 }
 
@@ -757,7 +632,7 @@ function NestedEditorCard({
   children: ReactNode;
 }) {
   return (
-    <div className="border-border-subtle bg-background-subtle rounded-2xl border p-4">
+    <div className="p-4">
       <div className="grid gap-4">{children}</div>
       <RemoveButton label={removeLabel} onClick={onRemove} />
     </div>
@@ -834,5 +709,197 @@ function RemoveButton({
     >
       {label}
     </button>
+  );
+}
+
+function LocalizedContentSection({
+  labels,
+  draft,
+  activeLocale,
+  setActiveLocale,
+  setDraft,
+}: {
+  labels: ComponentContractEditorLabels;
+  draft: ComponentContractEditorDraft;
+  activeLocale: 'en' | 'fr';
+  setActiveLocale: (locale: 'en' | 'fr') => void;
+  setDraft: (draft: ComponentContractEditorDraft) => void;
+}) {
+  return (
+    <EditorSection title={labels.localizedContent.title}>
+      <div className="flex flex-wrap items-center gap-3">
+        <span className="text-content-secondary text-sm">
+          {labels.localizedContent.editing}
+        </span>
+
+        <div className="border-border-subtle bg-background-subtle inline-flex rounded-xl border p-1">
+          {(['fr', 'en'] as const).map((localeOption) => {
+            const isActive = activeLocale === localeOption;
+
+            return (
+              <button
+                key={localeOption}
+                type="button"
+                onClick={() => setActiveLocale(localeOption)}
+                className={[
+                  'rounded-lg px-3 py-1.5 text-sm font-semibold transition',
+                  isActive
+                    ? 'bg-content-primary text-background-app'
+                    : 'text-content-secondary hover:text-content-primary',
+                ].join(' ')}
+              >
+                {labels.localizedContent.locales[localeOption]}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="mt-5">
+        <TextareaInput
+          label={
+            activeLocale === 'fr'
+              ? labels.basics.purposeFr
+              : labels.basics.purposeEn
+          }
+          value={draft.purpose[activeLocale]}
+          onChange={(value) =>
+            setDraft({
+              ...draft,
+              purpose: {
+                ...draft.purpose,
+                [activeLocale]: value,
+              },
+            })
+          }
+        />
+      </div>
+
+      <p className="text-content-tertiary mt-3 text-xs leading-5">
+        {labels.localizedContent.schemaNotice}
+      </p>
+    </EditorSection>
+  );
+}
+
+function MetadataSection({
+  labels,
+  draft,
+  setDraft,
+}: {
+  labels: ComponentContractEditorLabels;
+  draft: ComponentContractEditorDraft;
+  setDraft: (draft: ComponentContractEditorDraft) => void;
+}) {
+  return (
+    <EditorSection title={labels.metadata.title}>
+      <div className="grid gap-4 md:grid-cols-2">
+        <TextInput
+          label={labels.basics.name}
+          value={draft.name}
+          onChange={(value) => setDraft({ ...draft, name: value })}
+        />
+
+        <label className="grid gap-2">
+          <span className="text-sm font-semibold">{labels.basics.status}</span>
+
+          <select
+            value={draft.status}
+            onChange={(event) =>
+              setDraft({
+                ...draft,
+                status: event.target
+                  .value as ComponentContractEditorDraft['status'],
+              })
+            }
+            className="border-border-subtle bg-background-subtle min-h-11 rounded-xl border px-3 text-sm"
+          >
+            <option value="draft">{labels.statuses.draft}</option>
+            <option value="ready">{labels.statuses.ready}</option>
+            <option value="deprecated">{labels.statuses.deprecated}</option>
+          </select>
+        </label>
+      </div>
+    </EditorSection>
+  );
+}
+
+function VariantsAndStatesSection({
+  labels,
+  draft,
+  setDraft,
+}: {
+  labels: ComponentContractEditorLabels;
+  draft: ComponentContractEditorDraft;
+  setDraft: (draft: ComponentContractEditorDraft) => void;
+}) {
+  return (
+    <EditorSection title={`${labels.variants.title} & ${labels.states.title}`}>
+      <div className="grid gap-4">
+        <EditableListSection
+          title={labels.variants.title}
+          addLabel={labels.variants.add}
+          onAdd={() =>
+            setDraft({
+              ...draft,
+              variants: [...draft.variants, createEmptyVariantDraft()],
+            })
+          }
+        >
+          {draft.variants.map((variant, index) => (
+            <VariantEditor
+              key={`${variant.key}-${index}`}
+              labels={labels}
+              variant={variant}
+              onChange={(nextVariant) => {
+                const nextVariants = [...draft.variants];
+                nextVariants[index] = nextVariant;
+                setDraft({ ...draft, variants: nextVariants });
+              }}
+              onRemove={() =>
+                setDraft({
+                  ...draft,
+                  variants: draft.variants.filter(
+                    (_, itemIndex) => itemIndex !== index,
+                  ),
+                })
+              }
+            />
+          ))}
+        </EditableListSection>
+
+        <EditableListSection
+          title={labels.states.title}
+          addLabel={labels.states.add}
+          onAdd={() =>
+            setDraft({
+              ...draft,
+              states: [...draft.states, createEmptyStateDraft()],
+            })
+          }
+        >
+          {draft.states.map((state, index) => (
+            <StateEditor
+              key={`${state.key}-${index}`}
+              labels={labels}
+              state={state}
+              onChange={(nextState) => {
+                const nextStates = [...draft.states];
+                nextStates[index] = nextState;
+                setDraft({ ...draft, states: nextStates });
+              }}
+              onRemove={() =>
+                setDraft({
+                  ...draft,
+                  states: draft.states.filter(
+                    (_, itemIndex) => itemIndex !== index,
+                  ),
+                })
+              }
+            />
+          ))}
+        </EditableListSection>
+      </div>
+    </EditorSection>
   );
 }

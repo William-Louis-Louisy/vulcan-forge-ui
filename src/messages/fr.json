@@ -362,6 +362,18 @@
         "add": "Ajouter un pattern interdit",
         "title": "Patterns interdits"
       },
+      "localizedContent": {
+        "editing": "Editing :",
+        "locales": {
+          "en": "EN",
+          "fr": "FR"
+        },
+        "schemaNotice": "Les champs Usage guidelines et Content guidelines visibles dans la maquette ne sont pas encore persistés dans le modèle. Ils seront ajoutés uniquement après validation du schema.",
+        "title": "Localized content"
+      },
+      "metadata": {
+        "title": "Contract metadata"
+      },
       "save": {
         "action": "Sauvegarder le contrat",
         "errors": {

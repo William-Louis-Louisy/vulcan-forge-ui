@@ -362,6 +362,18 @@
         "add": "Add forbidden pattern",
         "title": "Forbidden patterns"
       },
+      "localizedContent": {
+        "editing": "Editing:",
+        "locales": {
+          "en": "EN",
+          "fr": "FR"
+        },
+        "schemaNotice": "The Usage guidelines and Content guidelines fields visible in the mockup are not persisted in the model yet. They will only be added after validating the schema.",
+        "title": "Localized content"
+      },
+      "metadata": {
+        "title": "Contract metadata"
+      },
       "save": {
         "action": "Save contract",
         "errors": {
