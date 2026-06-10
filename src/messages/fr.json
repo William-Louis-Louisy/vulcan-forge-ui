@@ -406,6 +406,7 @@
     "foundationsPreview": {
       "description": "Prépare la visualisation des variantes, tailles et états du composant sélectionné.",
       "eyebrow": "Preview foundations",
+      "incompleteMatrixNotice": "Cette matrice utilise des valeurs de fallback parce que ce composant ne documente pas encore tous ses variants ou states.",
       "matrixPlaceholderDescription": "La vraie matrix sera ajoutée dans DS-150-09-04 à partir des variantes, états et tokens disponibles.",
       "matrixPlaceholderTitle": "Matrice visuelle à venir",
       "title": "Visual Matrix"
