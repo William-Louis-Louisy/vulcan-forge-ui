@@ -276,13 +276,45 @@
   },
   "ComponentsRegistryPage": {
     "aiContract": {
-      "description": "A reusable summary for AI instructions and generated documentation.",
-      "eyebrow": "AI contract",
-      "purpose": "Purpose",
-      "signalForbiddenPatterns": "{count, plural, =0 {No documented forbidden pattern} one {# documented forbidden pattern} other {# documented forbidden patterns}}",
-      "signals": "Available signals",
-      "signalStates": "{count, plural, =0 {No documented state} one {# documented state} other {# documented states}}",
-      "signalVariants": "{count, plural, =0 {No documented variant} one {# documented variant} other {# documented variants}}",
+      "description": "AI-readable contract based on the data currently available for this component.",
+      "empty": {
+        "accessibility": "No accessibility rule documented.",
+        "forbiddenPatterns": "No forbidden pattern documented.",
+        "missingSourceData": "No missing source data detected in the current model.",
+        "modelGaps": "No model limitation detected.",
+        "purpose": "No purpose documented.",
+        "states": "No allowed state documented.",
+        "variants": "No allowed variant documented."
+      },
+      "eyebrow": "AI Contract",
+      "fields": {
+        "category": "category",
+        "component": "component",
+        "status": "status",
+        "type": "type"
+      },
+      "missingSourceData": {
+        "accessibilityRules": "Missing accessibility rules",
+        "anatomy": "Missing anatomy",
+        "forbiddenPatterns": "Missing forbidden patterns",
+        "states": "Missing states",
+        "variants": "Missing variants"
+      },
+      "modelGaps": {
+        "contentGuidelines": "Content guidelines are not modeled yet",
+        "tokenBindings": "Component/token bindings are not modeled yet",
+        "usageGuidelines": "Usage guidelines are not modeled yet"
+      },
+      "sections": {
+        "accessibilityRules": "accessibility_rules",
+        "allowedStates": "allowed_states",
+        "allowedVariants": "allowed_variants",
+        "forbiddenPatterns": "forbidden_patterns",
+        "identity": "identity",
+        "missingSourceData": "missing_source_data",
+        "modelGaps": "known_model_gaps",
+        "purpose": "purpose"
+      },
       "title": "AI Contract"
     },
     "backToProjects": "Back to design systems",
