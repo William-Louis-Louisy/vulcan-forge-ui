@@ -93,6 +93,8 @@ export default async function TokensEditorPage({
         </div>
       </div>
 
+      <TokenEditorLimitationsNotice t={t} />
+
       <TokenSetTabs
         t={t}
         projectSlug={pageData.project.slug}
@@ -115,6 +117,75 @@ export default async function TokensEditorPage({
         )}
       </div>
     </section>
+  );
+}
+
+function TokenEditorLimitationsNotice({ t }: { t: TokensEditorTranslator }) {
+  return (
+    <section className="border-action-warning/30 bg-action-warning/10 mt-8 rounded-3xl border p-5">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div>
+          <p className="text-action-warning text-sm font-semibold tracking-[0.18em] uppercase">
+            {t('limitations.eyebrow')}
+          </p>
+
+          <h2 className="mt-2 text-xl font-semibold tracking-tight">
+            {t('limitations.title')}
+          </h2>
+
+          <p className="text-content-secondary mt-3 max-w-3xl text-sm leading-6">
+            {t('limitations.description')}
+          </p>
+        </div>
+
+        <span className="border-action-warning/30 text-action-warning rounded-full border px-3 py-1 text-xs font-semibold whitespace-nowrap">
+          {t('limitations.badge')}
+        </span>
+      </div>
+
+      <div className="mt-5 grid gap-3 md:grid-cols-2">
+        <TokenEditorCapabilityCard
+          title={t('limitations.available.title')}
+          items={[
+            t('limitations.available.colorEdition'),
+            t('limitations.available.descriptionEdition'),
+            t('limitations.available.themeReferences'),
+          ]}
+        />
+
+        <TokenEditorCapabilityCard
+          title={t('limitations.upcoming.title')}
+          items={[
+            t('limitations.upcoming.renameTokens'),
+            t('limitations.upcoming.createTokens'),
+            t('limitations.upcoming.spacingRadiusTypographyMotion'),
+          ]}
+        />
+      </div>
+    </section>
+  );
+}
+
+function TokenEditorCapabilityCard({
+  title,
+  items,
+}: {
+  title: string;
+  items: string[];
+}) {
+  return (
+    <div className="border-border-subtle bg-surface-primary rounded-2xl border p-4">
+      <h3 className="text-sm font-semibold">{title}</h3>
+
+      <ul className="text-content-secondary mt-3 grid gap-2 text-sm leading-6">
+        {items.map((item) => (
+          <li key={item} className="flex gap-2">
+            <span aria-hidden="true">•</span>
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
@@ -203,6 +274,20 @@ function TokenSetPanel({
           {t('tokenCount', { count: rows.length })}
         </p>
       </div>
+
+      {tokenSetType !== 'color' ? (
+        <div className="border-border-subtle bg-background-subtle mt-5 rounded-2xl border p-4">
+          <p className="text-sm font-semibold">
+            {t('limitations.nonColor.title')}
+          </p>
+
+          <p className="text-content-secondary mt-2 text-sm leading-6">
+            {t('limitations.nonColor.description', {
+              tokenSetType: t(`tabs.${tokenSetType}`),
+            })}
+          </p>
+        </div>
+      ) : null}
 
       {rows.length > 0 ? (
         <div className="mt-6">
