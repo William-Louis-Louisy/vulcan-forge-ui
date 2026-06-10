@@ -1346,6 +1346,28 @@
       }
     },
     "eyebrow": "Éditeur de tokens",
+    "limitations": {
+      "available": {
+        "colorEdition": "Modifier les tokens couleur existants.",
+        "descriptionEdition": "Consulter les descriptions et les statuts de documentation.",
+        "themeReferences": "Utiliser les tokens couleur dans les thèmes light/dark.",
+        "title": "Disponible maintenant"
+      },
+      "badge": "MVP",
+      "description": "L’éditeur de tokens est volontairement limité dans cette version. Ces limites sont connues et seront levées progressivement dans les prochains tickets.",
+      "eyebrow": "Limites actuelles",
+      "nonColor": {
+        "description": "Le set {tokenSetType} est visible pour préparer la structure du design system, mais son édition complète sera traitée dans DS-150-13.",
+        "title": "Édition complète à venir"
+      },
+      "title": "Ce qui est éditable aujourd’hui",
+      "upcoming": {
+        "createTokens": "Créer de nouveaux tokens.",
+        "renameTokens": "Renommer un token avec migration des références.",
+        "spacingRadiusTypographyMotion": "Éditer les tokens spacing, radius, typography et motion.",
+        "title": "Prévu ensuite"
+      }
+    },
     "openAccessibilityCenter": "Ouvrir le centre d’accessibilité",
     "openComponentsRegistry": "Ouvrir le registre de composants",
     "openThemesEditor": "Ouvrir l’éditeur de thèmes",

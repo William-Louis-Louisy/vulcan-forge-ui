@@ -1346,6 +1346,28 @@
       }
     },
     "eyebrow": "Tokens editor",
+    "limitations": {
+      "available": {
+        "colorEdition": "Edit existing color tokens.",
+        "descriptionEdition": "Review descriptions and documentation status.",
+        "themeReferences": "Use color tokens in light/dark themes.",
+        "title": "Available now"
+      },
+      "badge": "MVP",
+      "description": "The token editor is intentionally limited in this version. These limitations are known and will be addressed progressively in the next tickets.",
+      "eyebrow": "Current limitations",
+      "nonColor": {
+        "description": "The {tokenSetType} set is visible to prepare the design-system structure, but full editing will be handled in DS-150-13.",
+        "title": "Full editing coming later"
+      },
+      "title": "What can be edited today",
+      "upcoming": {
+        "createTokens": "Create new tokens.",
+        "renameTokens": "Rename a token and migrate references.",
+        "spacingRadiusTypographyMotion": "Edit spacing, radius, typography and motion tokens.",
+        "title": "Planned next"
+      }
+    },
     "openAccessibilityCenter": "Open accessibility center",
     "openComponentsRegistry": "Open components registry",
     "openThemesEditor": "Open themes editor",
