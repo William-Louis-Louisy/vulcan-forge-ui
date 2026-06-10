@@ -8,16 +8,42 @@ import {
 } from './save-context.utils';
 
 const appScrollContainerSelector = '[data-save-context-scroll-container="app"]';
+const scrollContainerSelector = '[data-save-context-scroll-container]';
 
-function getScrollableElement(): HTMLElement | null {
+function isScrollableElement(element: HTMLElement) {
+  return element.scrollHeight > element.clientHeight;
+}
+
+function getContextScrollableElement(contextId: string): HTMLElement | null {
+  const scrollContainers = Array.from(
+    document.querySelectorAll<HTMLElement>(scrollContainerSelector),
+  );
+
+  const contextScrollContainer = scrollContainers.find(
+    (element) => element.dataset.saveContextScrollContainer === contextId,
+  );
+
+  if (contextScrollContainer && isScrollableElement(contextScrollContainer)) {
+    return contextScrollContainer;
+  }
+
+  return null;
+}
+
+function getScrollableElement(contextId?: string): HTMLElement | null {
+  if (contextId) {
+    const contextScrollableElement = getContextScrollableElement(contextId);
+
+    if (contextScrollableElement) {
+      return contextScrollableElement;
+    }
+  }
+
   const appScrollContainer = document.querySelector<HTMLElement>(
     appScrollContainerSelector,
   );
 
-  if (
-    appScrollContainer &&
-    appScrollContainer.scrollHeight > appScrollContainer.clientHeight
-  ) {
+  if (appScrollContainer && isScrollableElement(appScrollContainer)) {
     return appScrollContainer;
   }
 
@@ -33,7 +59,7 @@ export function captureSaveContextSnapshot({
   pathname: string;
   contextId: string;
 }) {
-  const scrollableElement = getScrollableElement();
+  const scrollableElement = getScrollableElement(contextId);
 
   if (!scrollableElement) {
     return;
@@ -61,7 +87,7 @@ function restoreSnapshotWithRetry({
   const maxAttempts = 20;
 
   requestAnimationFrame(() => {
-    const scrollableElement = getScrollableElement();
+    const scrollableElement = getScrollableElement(snapshot.contextId);
 
     if (!scrollableElement) {
       return;

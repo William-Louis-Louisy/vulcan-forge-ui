@@ -87,7 +87,7 @@ export function AppShell({
           <LogoutButton />
         </header>
 
-        <main className="px-6 py-10 lg:px-10">{children}</main>
+        <main>{children}</main>
       </div>
     </div>
   );

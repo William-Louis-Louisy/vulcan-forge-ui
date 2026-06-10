@@ -1,6 +1,5 @@
 import { auth } from '@/auth';
 import { hasLocale } from 'next-intl';
-import { type ReactNode } from 'react';
 import { Link } from '@/i18n/navigation';
 import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
@@ -104,30 +103,16 @@ export default async function ComponentsRegistryPage({
     null;
 
   return (
-    <section className="mx-auto max-w-7xl">
-      <div className="mt-8">
-        <p className="text-action-primary text-sm font-semibold tracking-[0.24em] uppercase">
-          {t('eyebrow')}
-        </p>
-
-        <h1 className="mt-4 text-4xl font-semibold tracking-tight">
-          {t('title', { projectName: pageData.project.name })}
-        </h1>
-
-        <p className="text-content-secondary mt-4 max-w-3xl">
-          {t('description')}
-        </p>
-      </div>
-
+    <section className="flex h-screen min-h-0 flex-col overflow-hidden">
       {registry.invalidCount > 0 ? (
-        <div className="border-action-warning/30 bg-action-warning/10 text-action-warning mt-8 rounded-3xl border p-5 text-sm font-semibold">
+        <div className="border-action-warning/30 bg-action-warning/10 text-action-warning mt-8 shrink-0 rounded-3xl border p-5 text-sm font-semibold">
           {t('invalidContractsWarning', { count: registry.invalidCount })}
         </div>
       ) : null}
 
       {registry.items.length > 0 ? (
-        <div className="mt-10 grid gap-6 xl:grid-cols-[minmax(18rem,0.75fr)_minmax(0,1.35fr)_minmax(18rem,0.9fr)]">
-          <aside className="xl:sticky xl:top-6 xl:self-start">
+        <div className="grid min-h-0 flex-1 overflow-hidden xl:grid-cols-[minmax(18rem,0.75fr)_minmax(0,1.35fr)_minmax(18rem,0.9fr)]">
+          <aside className="border-border-subtle h-full min-h-0 overflow-y-auto border-r">
             <ComponentList
               t={t}
               projectSlug={pageData.project.slug}
@@ -137,7 +122,14 @@ export default async function ComponentsRegistryPage({
             />
           </aside>
 
-          <main className="min-w-0">
+          <main
+            data-save-context-scroll-container={
+              selectedComponent
+                ? `component-contract:${pageData.project.slug}:${selectedComponent.type}`
+                : undefined
+            }
+            className="min-h-0 min-w-0 overflow-y-auto"
+          >
             {selectedComponent ? (
               <ComponentDetails
                 t={t}
@@ -148,7 +140,7 @@ export default async function ComponentsRegistryPage({
             ) : null}
           </main>
 
-          <aside className="grid gap-6 xl:sticky xl:top-6 xl:self-start">
+          <aside className="border-border-subtle grid h-full min-h-0 content-start gap-6 overflow-y-auto border-l">
             {selectedComponent ? (
               <>
                 <ComponentFoundationsPreviewShell
@@ -188,7 +180,7 @@ function ComponentList({
   filterQuery: string;
 }) {
   return (
-    <section className="border-border-subtle bg-surface-primary shadow-soft rounded-3xl border p-5">
+    <section className="p-4">
       <div className="flex items-center justify-between gap-4">
         <h2 className="text-2xl font-semibold tracking-tight">
           {t('list.title')}
@@ -218,7 +210,7 @@ function ComponentList({
       </form>
 
       {componentGroups.length > 0 ? (
-        <div className="mt-6 grid gap-6">
+        <div className="mt-6 grid gap-4">
           {componentGroups.map((group) => (
             <ComponentCategorySection
               key={group.category}
@@ -256,7 +248,7 @@ function ComponentDetails({
   });
 
   return (
-    <article className="border-border-subtle bg-surface-primary shadow-soft rounded-3xl border p-6">
+    <article className="px-6 py-4">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-content-tertiary text-sm font-semibold tracking-[0.18em] uppercase">
@@ -272,125 +264,14 @@ function ComponentDetails({
 
         <StatusBadge t={t} status={component.status} />
       </div>
-
-      <div className="mt-6 grid gap-4 sm:grid-cols-3">
-        <DetailMetric
-          label={t('details.variants')}
-          value={String(component.contract.variants.length)}
-        />
-        <DetailMetric
-          label={t('details.states')}
-          value={String(component.contract.states.length)}
-        />
-        <DetailMetric
-          label={t('details.accessibilityRules')}
-          value={String(component.contract.accessibility.length)}
-        />
-      </div>
-
-      <Section title={t('details.anatomy')}>
-        {component.contract.anatomy.length > 0 ? (
-          <TagList values={component.contract.anatomy} />
-        ) : (
-          <MutedText>{t('details.empty')}</MutedText>
-        )}
-      </Section>
-
-      <Section title={t('details.variants')}>
-        {component.contract.variants.length > 0 ? (
-          <TagList
-            values={component.contract.variants.map((variant) => variant.key)}
-          />
-        ) : (
-          <MutedText>{t('details.empty')}</MutedText>
-        )}
-      </Section>
-
-      <Section title={t('details.accessibility')}>
-        {component.contract.accessibility.length > 0 ? (
-          <div className="grid gap-3">
-            {component.contract.accessibility.map((rule) => {
-              const description = resolveLocalizedStringWithFallback({
-                localizedString: toResolvableLocalizedString(rule.description),
-                locale,
-              });
-
-              return (
-                <div
-                  key={rule.key}
-                  className="border-border-subtle bg-background-subtle rounded-2xl border p-4"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <h3 className="font-mono text-sm font-semibold">
-                      {rule.key}
-                    </h3>
-                    <span className="border-border-subtle rounded-full border px-3 py-1 text-xs font-semibold">
-                      {t(`severity.${rule.severity}`)}
-                    </span>
-                  </div>
-                  <p className="text-content-secondary mt-2 text-sm leading-6">
-                    {description.value}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <MutedText>{t('details.empty')}</MutedText>
-        )}
-      </Section>
-
-      <Section title={t('completeness.title')}>
-        {component.completeness.missingFields.length > 0 ? (
-          <div className="flex flex-wrap gap-2">
-            {component.completeness.missingFields.map((field) => (
-              <span
-                key={field}
-                className="border-action-warning/30 bg-action-warning/10 text-action-warning rounded-full border px-3 py-1 text-xs font-semibold"
-              >
-                {t(`missingFields.${field}`)}
-              </span>
-            ))}
-          </div>
-        ) : (
-          <p className="text-action-success text-sm font-semibold">
-            {t('completeness.completeMessage')}
-          </p>
-        )}
-      </Section>
-
-      <Section title={t('completeness.productWarningsTitle')}>
-        {component.completeness.warnings.length > 0 ? (
-          <div className="grid gap-3">
-            {component.completeness.warnings.map((warning) => (
-              <article
-                key={warning.code}
-                className="border-action-warning/30 bg-action-warning/10 rounded-2xl border p-4"
-              >
-                <p className="text-action-warning text-sm font-semibold">
-                  {t(`completeness.warnings.${warning.code}.title`)}
-                </p>
-                <p className="text-content-secondary mt-2 text-sm leading-6">
-                  {t(`completeness.warnings.${warning.code}.description`)}
-                </p>
-              </article>
-            ))}
-          </div>
-        ) : (
-          <p className="text-action-success text-sm font-semibold">
-            {t('completeness.noProductWarnings')}
-          </p>
-        )}
-      </Section>
-
-      <Section title={t('editor.sectionTitle')}>
+      <div className="mt-8">
         <ComponentContractEditor
           locale={locale}
           projectSlug={projectSlug}
           contract={component.contract}
           labels={createComponentContractEditorLabels(t)}
         />
-      </Section>
+      </div>
     </article>
   );
 }
@@ -430,36 +311,6 @@ function DetailMetric({ label, value }: { label: string; value: string }) {
       <p className="mt-2 text-2xl font-semibold">{value}</p>
     </div>
   );
-}
-
-function Section({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <section className="mt-8">
-      <h3 className="text-content-tertiary text-sm font-semibold tracking-[0.18em] uppercase">
-        {title}
-      </h3>
-      <div className="mt-3">{children}</div>
-    </section>
-  );
-}
-
-function TagList({ values }: { values: string[] }) {
-  return (
-    <div className="flex flex-wrap gap-2">
-      {values.map((value) => (
-        <span
-          key={value}
-          className="border-border-subtle bg-background-subtle text-content-secondary rounded-full border px-3 py-1 text-xs font-semibold"
-        >
-          {value}
-        </span>
-      ))}
-    </div>
-  );
-}
-
-function MutedText({ children }: { children: ReactNode }) {
-  return <p className="text-content-secondary text-sm">{children}</p>;
 }
 
 function EmptyState({
@@ -553,6 +404,18 @@ function createComponentContractEditorLabels(
       warning: t('severity.warning'),
       critical: t('severity.critical'),
     },
+    localizedContent: {
+      title: t('editor.localizedContent.title'),
+      editing: t('editor.localizedContent.editing'),
+      schemaNotice: t('editor.localizedContent.schemaNotice'),
+      locales: {
+        en: t('editor.localizedContent.locales.en'),
+        fr: t('editor.localizedContent.locales.fr'),
+      },
+    },
+    metadata: {
+      title: t('editor.metadata.title'),
+    },
   };
 }
 
@@ -564,7 +427,7 @@ function ComponentFoundationsPreviewShell({
   component: ComponentRegistryItem;
 }) {
   return (
-    <section className="border-border-subtle bg-surface-primary shadow-soft rounded-3xl border p-5">
+    <section className="p-4">
       <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
         {t('foundationsPreview.eyebrow')}
       </p>
@@ -622,7 +485,7 @@ function ComponentAiContractShell({
   });
 
   return (
-    <section className="border-border-subtle bg-surface-primary shadow-soft rounded-3xl border p-5">
+    <section className="p-4">
       <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
         {t('aiContract.eyebrow')}
       </p>
