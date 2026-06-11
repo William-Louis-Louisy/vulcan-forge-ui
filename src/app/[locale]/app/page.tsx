@@ -1,6 +1,6 @@
-import { getTranslations } from 'next-intl/server';
 import { auth } from '@/auth';
-import { Link } from '@/i18n/navigation';
+import { getTranslations } from 'next-intl/server';
+import { AppLink } from '@/components/navigation/AppLink';
 import { getDashboardSummary } from '@/features/dashboard/dashboard.queries';
 import { getDisplayNameFromEmail } from '@/features/dashboard/dashboard.utils';
 
@@ -45,12 +45,12 @@ export default async function AppPage() {
             </p>
           </div>
 
-          <Link
+          <AppLink
             href="/app/design-systems/new"
             className="bg-action-primary text-action-primary-content shadow-soft hover:bg-action-primary-hover inline-flex justify-center rounded-lg px-5 py-3 text-sm font-semibold transition"
           >
             {t('primaryCta')}
-          </Link>
+          </AppLink>
         </div>
       </section>
 
@@ -93,12 +93,12 @@ export default async function AppPage() {
               {t('emptyState.cardDescription')}
             </p>
 
-            <Link
+            <AppLink
               href="/app/design-systems/new"
               className="bg-action-primary text-action-primary-content hover:bg-action-primary-hover mt-6 inline-flex rounded-lg px-5 py-3 text-sm font-semibold transition"
             >
               {t('emptyState.cta')}
-            </Link>
+            </AppLink>
           </div>
         </div>
 

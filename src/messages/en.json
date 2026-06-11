@@ -1346,6 +1346,15 @@
       }
     },
     "eyebrow": "Tokens editor",
+    "inspector": {
+      "description": "Description",
+      "editingLimitDescription": "Rename, creation and full editing actions will be handled in the next tickets.",
+      "editingLimitTitle": "Upcoming actions",
+      "empty": "Select a token to display its details.",
+      "eyebrow": "Inspector",
+      "noDescription": "No description available for this language.",
+      "value": "Value"
+    },
     "limitations": {
       "available": {
         "colorEdition": "Edit existing color tokens.",
@@ -1471,6 +1480,11 @@
       "type": "Type",
       "value": "Value"
     },
-    "tokenCount": "{count, plural, =0 {No token} one {# token} other {# tokens}}"
+    "tokenCount": "{count, plural, =0 {No token} one {# token} other {# tokens}}",
+    "toolbar": {
+      "newToken": "New token",
+      "searchLabel": "Search token",
+      "searchPlaceholder": "Search tokens..."
+    }
   }
 }

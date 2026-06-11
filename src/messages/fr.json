@@ -1346,6 +1346,15 @@
       }
     },
     "eyebrow": "Éditeur de tokens",
+    "inspector": {
+      "description": "Description",
+      "editingLimitDescription": "Les actions de renommage, création et édition complète seront traitées dans les tickets suivants.",
+      "editingLimitTitle": "Actions à venir",
+      "empty": "Sélectionnez un token pour afficher ses détails.",
+      "eyebrow": "Inspector",
+      "noDescription": "Aucune description disponible pour cette langue.",
+      "value": "Valeur"
+    },
     "limitations": {
       "available": {
         "colorEdition": "Modifier les tokens couleur existants.",
@@ -1471,6 +1480,11 @@
       "type": "Type",
       "value": "Valeur"
     },
-    "tokenCount": "{count, plural, =0 {Aucun token} one {# token} other {# tokens}}"
+    "tokenCount": "{count, plural, =0 {Aucun token} one {# token} other {# tokens}}",
+    "toolbar": {
+      "newToken": "Nouveau token",
+      "searchLabel": "Rechercher un token",
+      "searchPlaceholder": "Rechercher des tokens..."
+    }
   }
 }

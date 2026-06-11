@@ -1,5 +1,5 @@
 import { useTranslations } from 'next-intl';
-import { Link } from '@/i18n/navigation';
+import { AppLink } from '@/components/navigation/AppLink';
 
 const tierKeys = ['freeBeta', 'proSoon'] as const;
 
@@ -74,7 +74,7 @@ export default function PricingPage() {
                 ))}
               </ul>
 
-              <Link
+              <AppLink
                 href="/signup"
                 className={[
                   'mt-8 inline-flex w-full justify-center rounded-lg px-4 py-3 text-sm font-semibold transition',
@@ -84,7 +84,7 @@ export default function PricingPage() {
                 ].join(' ')}
               >
                 {t(`tiers.${tierKey}.cta`)}
-              </Link>
+              </AppLink>
             </article>
           );
         })}
