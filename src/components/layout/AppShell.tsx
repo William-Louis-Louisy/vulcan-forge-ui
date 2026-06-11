@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import { Link } from '@/i18n/navigation';
 import { appConfig } from '@/config/app';
+import { AppLink } from '@/components/navigation/AppLink';
 import { LogoutButton } from '@/features/auth/logout/LogoutButton';
 import { AppShellNavigation } from '@/components/layout/AppShellNavigation';
 import type { ThemePreference } from '@/features/settings/user-settings.schema';
@@ -34,7 +34,7 @@ export function AppShell({
       <SaveContextRestorer />
       <aside className="border-border-subtle bg-background-subtle hidden border-r lg:block lg:h-screen lg:overflow-y-auto">
         <div className="flex min-h-full flex-col px-5 py-6">
-          <Link
+          <AppLink
             href="/app"
             className="inline-flex items-center gap-3 font-semibold"
           >
@@ -42,7 +42,7 @@ export function AppShell({
               VF
             </span>
             <span>{appConfig.name}</span>
-          </Link>
+          </AppLink>
 
           <div className="mt-10">
             <AppShellNavigation
@@ -74,7 +74,7 @@ export function AppShell({
         className="min-w-0 lg:h-screen lg:overflow-y-auto"
       >
         <header className="border-border-subtle bg-background-app flex min-h-16 items-center justify-between border-b px-6 lg:hidden">
-          <Link
+          <AppLink
             href="/app"
             className="inline-flex items-center gap-3 font-semibold"
           >
@@ -82,7 +82,7 @@ export function AppShell({
               VF
             </span>
             <span>{appConfig.name}</span>
-          </Link>
+          </AppLink>
 
           <LogoutButton />
         </header>

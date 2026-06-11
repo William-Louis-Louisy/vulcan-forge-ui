@@ -1,8 +1,8 @@
 import { auth } from '@/auth';
-import { Link } from '@/i18n/navigation';
 import { getTranslations } from 'next-intl/server';
-import { getDesignSystemsPageData } from '@/features/design-systems/design-systems.queries';
+import { AppLink } from '@/components/navigation/AppLink';
 import { formatRelativeUpdatedDate } from '@/features/design-systems/design-systems.utils';
+import { getDesignSystemsPageData } from '@/features/design-systems/design-systems.queries';
 
 export default async function DesignSystemsPage() {
   const session = await auth();
@@ -34,12 +34,12 @@ export default async function DesignSystemsPage() {
           </p>
         </div>
 
-        <Link
+        <AppLink
           href="/app/design-systems/new"
           className="bg-action-primary text-action-primary-content shadow-soft hover:bg-action-primary-hover inline-flex justify-center rounded-lg px-5 py-3 text-sm font-semibold transition"
         >
           {t('primaryCta')}
-        </Link>
+        </AppLink>
       </div>
 
       <div className="border-border-subtle bg-surface-primary shadow-soft mt-8 rounded-2xl border p-5">
@@ -85,12 +85,12 @@ export default async function DesignSystemsPage() {
                   })}
                 </p>
 
-                <Link
+                <AppLink
                   href={`/app/design-systems/${designSystem.slug}/tokens`}
                   className="text-action-primary text-sm font-semibold"
                 >
                   {t('card.open')}
-                </Link>
+                </AppLink>
               </div>
             </article>
           ))}
@@ -105,12 +105,12 @@ export default async function DesignSystemsPage() {
             {t('emptyState.description')}
           </p>
 
-          <Link
+          <AppLink
             href="/app/design-systems/new"
             className="bg-action-primary text-action-primary-content shadow-soft hover:bg-action-primary-hover mt-8 inline-flex justify-center rounded-lg px-5 py-3 text-sm font-semibold transition"
           >
             {t('emptyState.cta')}
-          </Link>
+          </AppLink>
         </div>
       )}
     </section>

@@ -1,8 +1,8 @@
 import { hasLocale } from 'next-intl';
-import { Link } from '@/i18n/navigation';
 import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { routing, type Locale } from '@/i18n/routing';
+import { AppLink } from '@/components/navigation/AppLink';
 import { CreateDesignSystemWizard } from '@/features/design-systems/CreateDesignSystemWizard';
 
 type CreateDesignSystemPageProps = {
@@ -28,12 +28,12 @@ async function CreateDesignSystemPageContent({ locale }: { locale: Locale }) {
 
   return (
     <section className="mx-auto max-w-3xl">
-      <Link
+      <AppLink
         href="/app/design-systems"
         className="text-action-primary text-sm font-semibold"
       >
         {t('backLink')}
-      </Link>
+      </AppLink>
 
       <p className="text-action-primary mt-8 text-sm font-semibold tracking-[0.24em] uppercase">
         {t('eyebrow')}

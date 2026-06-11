@@ -1,9 +1,9 @@
-import { hasLocale, useTranslations } from 'next-intl';
 import { notFound } from 'next/navigation';
-import { SignupForm } from '@/features/auth/signup/SignupForm';
-import { AuthShell } from '@/components/layout/AuthShell';
-import { Link } from '@/i18n/navigation';
 import { routing, type Locale } from '@/i18n/routing';
+import { hasLocale, useTranslations } from 'next-intl';
+import { AuthShell } from '@/components/layout/AuthShell';
+import { AppLink } from '@/components/navigation/AppLink';
+import { SignupForm } from '@/features/auth/signup/SignupForm';
 
 type SignupPageProps = {
   params: Promise<{
@@ -38,9 +38,9 @@ function SignupPageContent({ locale }: { locale: Locale }) {
 
       <p className="text-content-secondary mt-6 text-center text-sm">
         {t('form.alreadyHaveAccount')}{' '}
-        <Link href="/login" className="text-action-primary font-semibold">
+        <AppLink href="/login" className="text-action-primary font-semibold">
           {t('form.signInLink')}
-        </Link>
+        </AppLink>
       </p>
     </AuthShell>
   );
