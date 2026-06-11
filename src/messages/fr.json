@@ -1400,6 +1400,27 @@
         "unexpected": "Impossible de sauvegarder cette couleur. Veuillez réessayer."
       }
     },
+    "rename": {
+      "description": "Modifie le chemin du token et migre les alias internes qui pointent vers lui.",
+      "fieldErrors": {
+        "tokenPathInvalid": "Le chemin ne peut contenir que des lettres, chiffres, points, tirets et underscores.",
+        "tokenPathRequired": "Le chemin du token est obligatoire."
+      },
+      "formErrors": {
+        "projectNotFound": "Projet introuvable.",
+        "tokenNotFound": "Token introuvable.",
+        "tokenPathAlreadyExists": "Un token utilise déjà ce chemin.",
+        "tokenSetMalformed": "Le set de tokens est malformé.",
+        "tokenSetNotFound": "Set de tokens introuvable.",
+        "tokenValidationFailed": "Le set de tokens généré n’est pas valide.",
+        "unauthorized": "Vous devez être connecté pour renommer un token.",
+        "unexpected": "Une erreur inattendue est survenue."
+      },
+      "inputLabel": "Nouveau chemin",
+      "submit": "Renommer",
+      "success": "Token renommé.",
+      "title": "Renommer le token"
+    },
     "saveStatus": {
       "saved": "Toutes les modifications sont sauvegardées.",
       "unsaved": "Modifications non sauvegardées."

@@ -137,6 +137,27 @@ export default async function TokensEditorPage({
       description: t('inspector.description'),
       noDescription: t('inspector.noDescription'),
       colorSwatchLabel: t('table.colorSwatchLabel'),
+      rename: {
+        title: t('rename.title'),
+        description: t('rename.description'),
+        inputLabel: t('rename.inputLabel'),
+        submit: t('rename.submit'),
+        success: t('rename.success'),
+        fieldErrors: {
+          tokenPathRequired: t('rename.fieldErrors.tokenPathRequired'),
+          tokenPathInvalid: t('rename.fieldErrors.tokenPathInvalid'),
+        },
+        formErrors: {
+          unauthorized: t('rename.formErrors.unauthorized'),
+          projectNotFound: t('rename.formErrors.projectNotFound'),
+          tokenSetNotFound: t('rename.formErrors.tokenSetNotFound'),
+          tokenSetMalformed: t('rename.formErrors.tokenSetMalformed'),
+          tokenValidationFailed: t('rename.formErrors.tokenValidationFailed'),
+          tokenNotFound: t('rename.formErrors.tokenNotFound'),
+          tokenPathAlreadyExists: t('rename.formErrors.tokenPathAlreadyExists'),
+          unexpected: t('rename.formErrors.unexpected'),
+        },
+      },
       semanticAlias: {
         resolvedValue: t('table.semanticAlias.resolvedValue'),
         unresolved: t('table.semanticAlias.unresolved'),

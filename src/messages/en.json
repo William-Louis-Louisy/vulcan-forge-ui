@@ -1400,6 +1400,27 @@
         "unexpected": "Unable to save this color. Please try again."
       }
     },
+    "rename": {
+      "description": "Updates the token path and migrates internal aliases pointing to it.",
+      "fieldErrors": {
+        "tokenPathInvalid": "The path can only contain letters, numbers, dots, dashes and underscores.",
+        "tokenPathRequired": "The token path is required."
+      },
+      "formErrors": {
+        "projectNotFound": "Project not found.",
+        "tokenNotFound": "Token not found.",
+        "tokenPathAlreadyExists": "A token already uses this path.",
+        "tokenSetMalformed": "The token set is malformed.",
+        "tokenSetNotFound": "Token set not found.",
+        "tokenValidationFailed": "The generated token set is not valid.",
+        "unauthorized": "You must be signed in to rename a token.",
+        "unexpected": "An unexpected error occurred."
+      },
+      "inputLabel": "New path",
+      "submit": "Rename",
+      "success": "Token renamed.",
+      "title": "Rename token"
+    },
     "saveStatus": {
       "saved": "All changes saved.",
       "unsaved": "Unsaved changes."
