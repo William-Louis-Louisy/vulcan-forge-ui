@@ -109,7 +109,7 @@ export function TokensEditorShell({
       null,
       '',
       createTokenEditorUrl({
-        projectSlug,
+        pathname: window.location.pathname,
         tokenSetType: nextTokenSetType,
         tokenPath: nextTokenPath,
         tokenSearchQuery: nextQuery,
@@ -144,6 +144,14 @@ export function TokensEditorShell({
     updateUrl({
       q: query,
       token: null,
+    });
+  }
+
+  function handleTokenRenamed(nextTokenPath: string) {
+    setSelectedTokenPath(nextTokenPath);
+
+    updateUrl({
+      token: nextTokenPath,
     });
   }
 
@@ -188,6 +196,7 @@ export function TokensEditorShell({
         tokenSetType={activeTokenSet?.type ?? activeTokenSetType}
         primitiveColorAliasOptions={primitiveColorAliasOptions}
         labels={labels.inspector}
+        onTokenRenamed={handleTokenRenamed}
       />
     </div>
   );

@@ -1,4 +1,8 @@
 import {
+  TokenRenameForm,
+  type TokenRenameFormLabels,
+} from '../TokenRenameForm';
+import {
   type TokenRowData,
   type TokenSetType,
   type PrimitiveColorTokenAliasOption,
@@ -14,6 +18,7 @@ export type TokenInspectorPanelLabels = {
   description: string;
   noDescription: string;
   colorSwatchLabel: string;
+  rename: TokenRenameFormLabels;
   semanticAlias: {
     resolvedValue: string;
     unresolved: string;
@@ -27,6 +32,7 @@ type TokenInspectorPanelProps = {
   tokenSetType: TokenSetType;
   primitiveColorAliasOptions: PrimitiveColorTokenAliasOption[];
   labels: TokenInspectorPanelLabels;
+  onTokenRenamed?: (nextTokenPath: string) => void;
 };
 
 export function TokenInspectorPanel({
@@ -36,6 +42,7 @@ export function TokenInspectorPanel({
   tokenSetType,
   primitiveColorAliasOptions,
   labels,
+  onTokenRenamed,
 }: TokenInspectorPanelProps) {
   if (!token) {
     return (
@@ -62,6 +69,16 @@ export function TokenInspectorPanel({
       </h2>
 
       <p className="text-content-secondary mt-1 text-sm">{tokenSetType}</p>
+
+      <TokenRenameForm
+        key={token.path}
+        locale={locale}
+        projectSlug={projectSlug}
+        tokenSetType={tokenSetType}
+        currentTokenPath={token.path}
+        labels={labels.rename}
+        {...(onTokenRenamed ? { onRenamed: onTokenRenamed } : {})}
+      />
 
       <div className="border-border-subtle bg-background-subtle mt-5 rounded-2xl border p-4">
         <p className="text-content-tertiary text-xs font-semibold tracking-[0.16em] uppercase">

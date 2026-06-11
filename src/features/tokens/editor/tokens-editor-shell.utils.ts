@@ -23,12 +23,12 @@ export function filterTokenRows({
 }
 
 export function createTokenEditorUrl({
-  projectSlug,
+  pathname,
   tokenSetType,
   tokenPath,
   tokenSearchQuery,
 }: {
-  projectSlug: string;
+  pathname: string;
   tokenSetType: TokenSetType;
   tokenPath: string | null;
   tokenSearchQuery: string;
@@ -45,5 +45,5 @@ export function createTokenEditorUrl({
     params.set('q', tokenSearchQuery);
   }
 
-  return `/app/design-systems/${projectSlug}/tokens?${params.toString()}`;
+  return `${pathname}?${params.toString()}`;
 }
