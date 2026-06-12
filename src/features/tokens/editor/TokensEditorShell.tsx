@@ -223,6 +223,7 @@ export function TokensEditorShell({
               selectedTokenPath={selectedToken?.path ?? null}
               labels={labels.tokenSet}
               onTokenSelect={handleTokenSelect}
+              primitiveColorAliasOptions={primitiveColorAliasOptions}
             />
           ) : (
             <EmptyTokenSetsState />

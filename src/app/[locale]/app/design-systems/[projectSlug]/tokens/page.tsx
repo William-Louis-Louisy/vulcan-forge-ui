@@ -107,6 +107,11 @@ export default async function TokensEditorPage({
       items: tokenSetTypeLabels,
     },
     tokenSet: {
+      groups: {
+        primitive: t('groups.primitive'),
+        semantic: t('groups.semantic'),
+        other: t('groups.other'),
+      },
       invalidTokensTitle: t('states.invalidTokensTitle'),
       invalidTokensDescription: t('states.invalidTokensDescription'),
       nonColorTitle: t('limitations.nonColor.title'),

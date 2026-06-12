@@ -1380,6 +1380,11 @@
       }
     },
     "eyebrow": "Éditeur de tokens",
+    "groups": {
+      "other": "Autres",
+      "primitive": "Primitifs",
+      "semantic": "Sémantiques"
+    },
     "inspector": {
       "description": "Description",
       "editingLimitDescription": "Les actions de renommage, création et édition complète seront traitées dans les tickets suivants.",

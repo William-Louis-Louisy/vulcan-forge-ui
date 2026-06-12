@@ -1380,6 +1380,11 @@
       }
     },
     "eyebrow": "Tokens editor",
+    "groups": {
+      "other": "Other",
+      "primitive": "Primitive",
+      "semantic": "Semantic"
+    },
     "inspector": {
       "description": "Description",
       "editingLimitDescription": "Rename, creation and full editing actions will be handled in the next tickets.",
