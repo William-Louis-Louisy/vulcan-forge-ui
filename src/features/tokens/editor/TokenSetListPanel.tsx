@@ -1,4 +1,11 @@
-import type { TokenRowData, TokenSetType } from '../tokens-editor.utils';
+import {
+  getResolvedColorValueForReference,
+  isEditablePrimitiveColorTokenRow,
+  isEditableSemanticColorTokenRow,
+  type PrimitiveColorTokenAliasOption,
+  type TokenRowData,
+  type TokenSetType,
+} from '../tokens-editor.utils';
 
 export type TokenSetListPanelLabels = {
   invalidTokensTitle: string;
@@ -7,6 +14,11 @@ export type TokenSetListPanelLabels = {
   nonColorDescriptions: Record<TokenSetType, string>;
   emptySearchTitle: string;
   emptySearchDescription: string;
+  groups: {
+    primitive: string;
+    semantic: string;
+    other: string;
+  };
 };
 
 export type TokenSetListPanelViewModel = {
@@ -24,7 +36,66 @@ type TokenSetListPanelProps = {
   selectedTokenPath: string | null;
   labels: TokenSetListPanelLabels;
   onTokenSelect: (tokenPath: string) => void;
+  primitiveColorAliasOptions: PrimitiveColorTokenAliasOption[];
 };
+
+type TokenGroup = {
+  id: 'primitive' | 'semantic' | 'other';
+  label: string;
+  rows: TokenRowData[];
+};
+
+function sortTokenRowsAlphabetically(rows: TokenRowData[]) {
+  return [...rows].sort((firstRow, secondRow) =>
+    firstRow.path.localeCompare(secondRow.path),
+  );
+}
+
+function createTokenGroups({
+  rows,
+  labels,
+}: {
+  rows: TokenRowData[];
+  labels: TokenSetListPanelLabels['groups'];
+}): TokenGroup[] {
+  const primitiveRows: TokenRowData[] = [];
+  const semanticRows: TokenRowData[] = [];
+  const otherRows: TokenRowData[] = [];
+
+  for (const row of rows) {
+    if (isEditablePrimitiveColorTokenRow(row)) {
+      primitiveRows.push(row);
+      continue;
+    }
+
+    if (isEditableSemanticColorTokenRow(row)) {
+      semanticRows.push(row);
+      continue;
+    }
+
+    otherRows.push(row);
+  }
+
+  const groups: TokenGroup[] = [
+    {
+      id: 'primitive',
+      label: labels.primitive,
+      rows: sortTokenRowsAlphabetically(primitiveRows),
+    },
+    {
+      id: 'semantic',
+      label: labels.semantic,
+      rows: sortTokenRowsAlphabetically(semanticRows),
+    },
+    {
+      id: 'other',
+      label: labels.other,
+      rows: sortTokenRowsAlphabetically(otherRows),
+    },
+  ];
+
+  return groups.filter((group) => group.rows.length > 0);
+}
 
 export function TokenSetListPanel({
   tokenSet,
@@ -33,6 +104,7 @@ export function TokenSetListPanel({
   selectedTokenPath,
   labels,
   onTokenSelect,
+  primitiveColorAliasOptions,
 }: TokenSetListPanelProps) {
   if (!tokenSet.isReadable) {
     return (
@@ -47,6 +119,11 @@ export function TokenSetListPanel({
       </div>
     );
   }
+
+  const tokenGroups = createTokenGroups({
+    rows,
+    labels: labels.groups,
+  });
 
   return (
     <div className="border-border-subtle bg-surface-primary shadow-soft rounded-3xl border p-5 lg:p-6">
@@ -76,40 +153,59 @@ export function TokenSetListPanel({
         </div>
       ) : null}
 
-      {rows.length > 0 ? (
-        <div className="border-border-subtle bg-surface-primary mt-6 overflow-hidden rounded-3xl border">
-          {rows.map((row) => {
-            const isSelected = row.path === selectedTokenPath;
+      {tokenGroups.length > 0 ? (
+        <div className="mt-6 grid gap-5">
+          {tokenGroups.map((group) => (
+            <section key={group.id}>
+              <div className="mb-3 flex items-center gap-2">
+                <h3 className="text-content-tertiary text-sm font-semibold tracking-[0.18em] uppercase">
+                  {group.label}
+                </h3>
 
-            return (
-              <button
-                key={row.path}
-                type="button"
-                aria-current={isSelected ? 'page' : undefined}
-                onClick={() => onTokenSelect(row.path)}
-                className={[
-                  'border-border-subtle flex w-full items-center gap-4 border-b px-5 py-4 text-left last:border-b-0',
-                  isSelected
-                    ? 'bg-action-primary/10'
-                    : 'hover:bg-background-subtle',
-                ].join(' ')}
-              >
-                <TokenPreviewSwatch row={row} />
+                <span className="text-content-tertiary bg-content-tertiary/20 rounded-full px-2 py-0.5 text-xs">
+                  {group.rows.length}
+                </span>
+              </div>
 
-                <div className="min-w-0 flex-1">
-                  <p className="truncate font-mono text-sm font-semibold">
-                    {row.path}
-                  </p>
+              <div className="border-border-subtle bg-surface-primary overflow-hidden rounded-3xl border">
+                {group.rows.map((row) => {
+                  const isSelected = row.path === selectedTokenPath;
 
-                  <p className="text-content-secondary mt-1 truncate font-mono text-xs">
-                    {row.value}
-                  </p>
-                </div>
+                  return (
+                    <button
+                      key={row.path}
+                      type="button"
+                      aria-current={isSelected ? 'page' : undefined}
+                      onClick={() => onTokenSelect(row.path)}
+                      className={[
+                        'border-border-subtle flex w-full items-center gap-4 border-b px-5 py-4 text-left last:border-b-0',
+                        isSelected
+                          ? 'bg-action-primary/10'
+                          : 'hover:bg-background-subtle',
+                      ].join(' ')}
+                    >
+                      <TokenPreviewSwatch
+                        row={row}
+                        primitiveColorAliasOptions={primitiveColorAliasOptions}
+                      />
 
-                <span className="text-content-tertiary text-xl">›</span>
-              </button>
-            );
-          })}
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate font-mono text-sm font-semibold">
+                          {row.path}
+                        </p>
+
+                        <p className="text-content-secondary mt-1 truncate font-mono text-xs">
+                          {row.value}
+                        </p>
+                      </div>
+
+                      <span className="text-content-tertiary text-xl">›</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
+          ))}
         </div>
       ) : (
         <div className="border-border-default mt-6 rounded-2xl border border-dashed p-8 text-center">
@@ -126,15 +222,27 @@ export function TokenSetListPanel({
   );
 }
 
-export function TokenPreviewSwatch({ row }: { row: TokenRowData }) {
+export function TokenPreviewSwatch({
+  row,
+  primitiveColorAliasOptions,
+}: {
+  row: TokenRowData;
+  primitiveColorAliasOptions: PrimitiveColorTokenAliasOption[];
+}) {
   const value = String(row.value);
-  const isColorValue = value.startsWith('#');
+  const reference = row.reference ?? value;
+  const resolvedColorValue = value.startsWith('#')
+    ? value
+    : getResolvedColorValueForReference({
+        reference,
+        primitiveOptions: primitiveColorAliasOptions,
+      });
 
   return (
     <span
       className="border-border-subtle size-8 shrink-0 rounded-lg border"
       style={{
-        backgroundColor: isColorValue ? value : undefined,
+        backgroundColor: resolvedColorValue ?? undefined,
       }}
       aria-hidden="true"
     />

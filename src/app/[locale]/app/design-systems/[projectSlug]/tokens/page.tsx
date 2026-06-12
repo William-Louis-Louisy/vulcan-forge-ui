@@ -107,6 +107,11 @@ export default async function TokensEditorPage({
       items: tokenSetTypeLabels,
     },
     tokenSet: {
+      groups: {
+        primitive: t('groups.primitive'),
+        semantic: t('groups.semantic'),
+        other: t('groups.other'),
+      },
       invalidTokensTitle: t('states.invalidTokensTitle'),
       invalidTokensDescription: t('states.invalidTokensDescription'),
       nonColorTitle: t('limitations.nonColor.title'),
@@ -161,6 +166,56 @@ export default async function TokensEditorPage({
       semanticAlias: {
         resolvedValue: t('table.semanticAlias.resolvedValue'),
         unresolved: t('table.semanticAlias.unresolved'),
+      },
+    },
+    createColorToken: {
+      title: t('createColorToken.title'),
+      description: t('createColorToken.description'),
+      kindLabel: t('createColorToken.kindLabel'),
+      primitiveKind: t('createColorToken.primitiveKind'),
+      semanticKind: t('createColorToken.semanticKind'),
+      pathLabel: t('createColorToken.pathLabel'),
+      valueLabel: t('createColorToken.valueLabel'),
+      referenceLabel: t('createColorToken.referenceLabel'),
+      descriptionEnLabel: t('createColorToken.descriptionEnLabel'),
+      descriptionFrLabel: t('createColorToken.descriptionFrLabel'),
+      submit: t('createColorToken.submit'),
+      success: t('createColorToken.success'),
+      cancel: t('createColorToken.cancel'),
+      fieldErrors: {
+        tokenPathRequired: t('createColorToken.fieldErrors.tokenPathRequired'),
+        tokenPathInvalid: t('createColorToken.fieldErrors.tokenPathInvalid'),
+        tokenValueRequired: t(
+          'createColorToken.fieldErrors.tokenValueRequired',
+        ),
+        tokenColorValueInvalid: t(
+          'createColorToken.fieldErrors.tokenColorValueInvalid',
+        ),
+        tokenReferenceRequired: t(
+          'createColorToken.fieldErrors.tokenReferenceRequired',
+        ),
+        tokenReferenceInvalid: t(
+          'createColorToken.fieldErrors.tokenReferenceInvalid',
+        ),
+      },
+      formErrors: {
+        unauthorized: t('createColorToken.formErrors.unauthorized'),
+        projectNotFound: t('createColorToken.formErrors.projectNotFound'),
+        tokenSetNotFound: t('createColorToken.formErrors.tokenSetNotFound'),
+        tokenSetMalformed: t('createColorToken.formErrors.tokenSetMalformed'),
+        tokenValidationFailed: t(
+          'createColorToken.formErrors.tokenValidationFailed',
+        ),
+        tokenPathAlreadyExists: t(
+          'createColorToken.formErrors.tokenPathAlreadyExists',
+        ),
+        primitiveReferenceNotFound: t(
+          'createColorToken.formErrors.primitiveReferenceNotFound',
+        ),
+        primitiveReferenceInvalid: t(
+          'createColorToken.formErrors.primitiveReferenceInvalid',
+        ),
+        unexpected: t('createColorToken.formErrors.unexpected'),
       },
     },
   };

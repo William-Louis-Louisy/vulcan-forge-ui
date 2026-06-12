@@ -14,6 +14,10 @@ import {
   type TokenSetType,
 } from '../tokens-editor.utils';
 import {
+  CreateColorTokenForm,
+  type CreateColorTokenFormLabels,
+} from '../CreateColorTokenForm';
+import {
   filterTokenRows,
   createTokenEditorUrl,
 } from './tokens-editor-shell.utils';
@@ -34,6 +38,7 @@ export type TokensEditorShellLabels = {
   };
   tokenSet: TokenSetListPanelLabels;
   inspector: TokenInspectorPanelLabels;
+  createColorToken: CreateColorTokenFormLabels;
 };
 
 export type TokenSetEditorViewModel = TokenSetListPanelViewModel;
@@ -66,6 +71,8 @@ export function TokensEditorShell({
   const [tokenSearchQuery, setTokenSearchQuery] = useState(
     initialTokenSearchQuery,
   );
+  const [isCreateColorTokenFormOpen, setIsCreateColorTokenFormOpen] =
+    useState(false);
 
   const activeTokenSet =
     tokenSets.find((tokenSet) => tokenSet.type === activeTokenSetType) ??
@@ -155,6 +162,27 @@ export function TokensEditorShell({
     });
   }
 
+  function handleNewTokenClick() {
+    setIsCreateColorTokenFormOpen(true);
+  }
+
+  function handleCreateTokenCancel() {
+    setIsCreateColorTokenFormOpen(false);
+  }
+
+  function handleColorTokenCreated(tokenPath: string) {
+    setIsCreateColorTokenFormOpen(false);
+    setActiveTokenSetType('color');
+    setTokenSearchQuery('');
+    setSelectedTokenPath(tokenPath);
+
+    updateUrl({
+      set: 'color',
+      token: tokenPath,
+      q: '',
+    });
+  }
+
   return (
     <div className="mt-6 grid min-h-0 gap-6 xl:grid-cols-[minmax(0,1fr)_24rem]">
       <div className="min-w-0">
@@ -163,8 +191,21 @@ export function TokensEditorShell({
           searchPlaceholder={labels.toolbar.searchPlaceholder}
           newTokenLabel={labels.toolbar.newToken}
           tokenSearchQuery={tokenSearchQuery}
+          isNewTokenDisabled={activeTokenSetType !== 'color'}
+          onNewTokenClick={handleNewTokenClick}
           onSearchChange={handleSearchChange}
         />
+
+        {isCreateColorTokenFormOpen && activeTokenSetType === 'color' ? (
+          <CreateColorTokenForm
+            locale={locale}
+            projectSlug={projectSlug}
+            primitiveColorAliasOptions={primitiveColorAliasOptions}
+            labels={labels.createColorToken}
+            onCancel={handleCreateTokenCancel}
+            onCreated={handleColorTokenCreated}
+          />
+        ) : null}
 
         <TokenSetTabs
           label={labels.tabs.label}
@@ -182,6 +223,7 @@ export function TokensEditorShell({
               selectedTokenPath={selectedToken?.path ?? null}
               labels={labels.tokenSet}
               onTokenSelect={handleTokenSelect}
+              primitiveColorAliasOptions={primitiveColorAliasOptions}
             />
           ) : (
             <EmptyTokenSetsState />

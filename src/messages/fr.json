@@ -1322,6 +1322,40 @@
   },
   "TokensEditorPage": {
     "backLink": "Retour aux design systems",
+    "createColorToken": {
+      "cancel": "Annuler",
+      "description": "Crée un token couleur primitif ou un token sémantique basé sur un alias existant.",
+      "descriptionEnLabel": "Description EN",
+      "descriptionFrLabel": "Description FR",
+      "fieldErrors": {
+        "tokenColorValueInvalid": "La valeur doit être une couleur hexadécimale valide.",
+        "tokenPathInvalid": "Le chemin ne peut contenir que des lettres, chiffres, points, tirets et underscores.",
+        "tokenPathRequired": "Le chemin du token est obligatoire.",
+        "tokenReferenceInvalid": "La référence du token est invalide.",
+        "tokenReferenceRequired": "Une référence primitive est obligatoire.",
+        "tokenValueRequired": "La valeur du token est obligatoire."
+      },
+      "formErrors": {
+        "primitiveReferenceInvalid": "La référence sélectionnée n’est pas un token couleur primitif valide.",
+        "primitiveReferenceNotFound": "La référence primitive est introuvable.",
+        "projectNotFound": "Projet introuvable.",
+        "tokenPathAlreadyExists": "Un token utilise déjà ce chemin.",
+        "tokenSetMalformed": "Le set de tokens est malformé.",
+        "tokenSetNotFound": "Set de tokens introuvable.",
+        "tokenValidationFailed": "Le set de tokens généré n’est pas valide.",
+        "unauthorized": "Vous devez être connecté pour créer un token.",
+        "unexpected": "Une erreur inattendue est survenue."
+      },
+      "kindLabel": "Type de token",
+      "pathLabel": "Chemin",
+      "primitiveKind": "Primitif",
+      "referenceLabel": "Référence primitive",
+      "semanticKind": "Sémantique",
+      "submit": "Créer le token",
+      "success": "Token créé.",
+      "title": "Nouveau token couleur",
+      "valueLabel": "Valeur"
+    },
     "description": "Consultez les token sets générés pour ce design system. L’édition arrivera dans les prochains tickets tokens.",
     "descriptionEditor": {
       "fallbackNotice": "Une langue manquante ne bloque pas la sauvegarde.",
@@ -1346,6 +1380,11 @@
       }
     },
     "eyebrow": "Éditeur de tokens",
+    "groups": {
+      "other": "Autres",
+      "primitive": "Primitifs",
+      "semantic": "Sémantiques"
+    },
     "inspector": {
       "description": "Description",
       "editingLimitDescription": "Les actions de renommage, création et édition complète seront traitées dans les tickets suivants.",
