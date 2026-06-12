@@ -4,6 +4,8 @@ type TokenEditorToolbarProps = {
   newTokenLabel: string;
   tokenSearchQuery: string;
   onSearchChange: (query: string) => void;
+  isNewTokenDisabled: boolean;
+  onNewTokenClick: () => void;
 };
 
 export function TokenEditorToolbar({
@@ -12,6 +14,8 @@ export function TokenEditorToolbar({
   newTokenLabel,
   tokenSearchQuery,
   onSearchChange,
+  isNewTokenDisabled,
+  onNewTokenClick,
 }: TokenEditorToolbarProps) {
   return (
     <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -30,7 +34,8 @@ export function TokenEditorToolbar({
 
       <button
         type="button"
-        disabled
+        disabled={isNewTokenDisabled}
+        onClick={onNewTokenClick}
         className="border-border-subtle bg-surface-primary text-content-primary rounded-2xl border px-4 py-3 text-sm font-semibold opacity-70"
       >
         + {newTokenLabel}

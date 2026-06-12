@@ -1322,6 +1322,40 @@
   },
   "TokensEditorPage": {
     "backLink": "Back to design systems",
+    "createColorToken": {
+      "cancel": "Cancel",
+      "description": "Creates a primitive color token or a semantic token based on an existing alias.",
+      "descriptionEnLabel": "Description EN",
+      "descriptionFrLabel": "Description FR",
+      "fieldErrors": {
+        "tokenColorValueInvalid": "The value must be a valid hexadecimal color.",
+        "tokenPathInvalid": "The path can only contain letters, numbers, dots, dashes and underscores.",
+        "tokenPathRequired": "The token path is required.",
+        "tokenReferenceInvalid": "The token reference is invalid.",
+        "tokenReferenceRequired": "A primitive reference is required.",
+        "tokenValueRequired": "The token value is required."
+      },
+      "formErrors": {
+        "primitiveReferenceInvalid": "The selected reference is not a valid primitive color token.",
+        "primitiveReferenceNotFound": "The primitive reference was not found.",
+        "projectNotFound": "Project not found.",
+        "tokenPathAlreadyExists": "A token already uses this path.",
+        "tokenSetMalformed": "The token set is malformed.",
+        "tokenSetNotFound": "Token set not found.",
+        "tokenValidationFailed": "The generated token set is not valid.",
+        "unauthorized": "You must be signed in to create a token.",
+        "unexpected": "An unexpected error occurred."
+      },
+      "kindLabel": "Token type",
+      "pathLabel": "Path",
+      "primitiveKind": "Primitive",
+      "referenceLabel": "Primitive reference",
+      "semanticKind": "Semantic",
+      "submit": "Create token",
+      "success": "Token created.",
+      "title": "New color token",
+      "valueLabel": "Value"
+    },
     "description": "Review the token sets generated for this design system. Editing will be introduced in the next token tickets.",
     "descriptionEditor": {
       "fallbackNotice": "A missing language does not block saving.",
