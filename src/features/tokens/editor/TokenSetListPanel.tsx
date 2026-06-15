@@ -45,9 +45,12 @@ type TokenGroup = {
   rows: TokenRowData[];
 };
 
-function sortTokenRowsAlphabetically(rows: TokenRowData[]) {
+function sortTokenRowsNaturally(rows: TokenRowData[]) {
   return [...rows].sort((firstRow, secondRow) =>
-    firstRow.path.localeCompare(secondRow.path),
+    firstRow.path.localeCompare(secondRow.path, undefined, {
+      numeric: true,
+      sensitivity: 'base',
+    }),
   );
 }
 
@@ -80,17 +83,17 @@ function createTokenGroups({
     {
       id: 'primitive',
       label: labels.primitive,
-      rows: sortTokenRowsAlphabetically(primitiveRows),
+      rows: sortTokenRowsNaturally(primitiveRows),
     },
     {
       id: 'semantic',
       label: labels.semantic,
-      rows: sortTokenRowsAlphabetically(semanticRows),
+      rows: sortTokenRowsNaturally(semanticRows),
     },
     {
       id: 'other',
       label: labels.other,
-      rows: sortTokenRowsAlphabetically(otherRows),
+      rows: sortTokenRowsNaturally(otherRows),
     },
   ];
 
@@ -184,10 +187,14 @@ export function TokenSetListPanel({
                           : 'hover:bg-background-subtle',
                       ].join(' ')}
                     >
-                      <TokenPreviewSwatch
-                        row={row}
-                        primitiveColorAliasOptions={primitiveColorAliasOptions}
-                      />
+                      {row.type === 'color' ? (
+                        <TokenPreviewSwatch
+                          row={row}
+                          primitiveColorAliasOptions={
+                            primitiveColorAliasOptions
+                          }
+                        />
+                      ) : null}
 
                       <div className="min-w-0 flex-1">
                         <p className="truncate font-mono text-sm font-semibold">

@@ -6,6 +6,7 @@ import type { DesignToken, DesignTokenType } from '@/domain/design-system';
 
 export type CreateDesignTokenError =
   | 'tokenPathAlreadyExists'
+  | TokenPathValidationError
   | TokenValueValidationError;
 
 export type CreateDesignTokenResult =
@@ -18,6 +19,18 @@ export type CreateDesignTokenResult =
       status: 'error';
       error: CreateDesignTokenError;
     };
+
+export type TokenPathValidationError = 'tokenPathRequired' | 'tokenPathInvalid';
+
+function validateTokenPath(path: string): TokenPathValidationError | null {
+  const trimmedPath = path.trim();
+
+  if (!trimmedPath) {
+    return 'tokenPathRequired';
+  }
+
+  return /^[a-zA-Z0-9._-]+$/.test(trimmedPath) ? null : 'tokenPathInvalid';
+}
 
 export function createDesignToken({
   tokens,
@@ -36,6 +49,15 @@ export function createDesignToken({
 }): CreateDesignTokenResult {
   const nextPath = path.trim();
   const nextValue = value.trim();
+
+  const pathError = validateTokenPath(nextPath);
+
+  if (pathError) {
+    return {
+      status: 'error',
+      error: pathError,
+    };
+  }
 
   const pathAlreadyExists = tokens.some((token) => token.path === nextPath);
 

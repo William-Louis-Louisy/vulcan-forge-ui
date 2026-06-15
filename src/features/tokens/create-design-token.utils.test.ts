@@ -126,4 +126,32 @@ describe('createDesignToken', () => {
       error: 'tokenSpacingValueInvalid',
     });
   });
+
+  it('returns an error when the path is empty', () => {
+    const result = createDesignToken({
+      tokens: [],
+      type: 'spacing',
+      path: '',
+      value: '1rem',
+    });
+
+    expect(result).toEqual({
+      status: 'error',
+      error: 'tokenPathRequired',
+    });
+  });
+
+  it('returns an error when the path is invalid', () => {
+    const result = createDesignToken({
+      tokens: [],
+      type: 'spacing',
+      path: 'spacing invalid',
+      value: '1rem',
+    });
+
+    expect(result).toEqual({
+      status: 'error',
+      error: 'tokenPathInvalid',
+    });
+  });
 });
