@@ -168,6 +168,9 @@ export default async function TokensEditorPage({
         submit: t('genericValueEditor.submit'),
         success: t('genericValueEditor.success'),
         fieldErrors: {
+          tokenRadiusValueInvalid: t(
+            'genericValueEditor.fieldErrors.tokenRadiusValueInvalid',
+          ),
           tokenValueRequired: t(
             'genericValueEditor.fieldErrors.tokenValueRequired',
           ),
@@ -270,6 +273,46 @@ export default async function TokensEditorPage({
           ),
           tokenSpacingValueInvalid: t(
             'createDesignToken.fieldErrors.tokenSpacingValueInvalid',
+          ),
+        },
+        formErrors: {
+          unauthorized: t('createDesignToken.formErrors.unauthorized'),
+          projectNotFound: t('createDesignToken.formErrors.projectNotFound'),
+          tokenSetNotFound: t('createDesignToken.formErrors.tokenSetNotFound'),
+          tokenSetMalformed: t(
+            'createDesignToken.formErrors.tokenSetMalformed',
+          ),
+          tokenValidationFailed: t(
+            'createDesignToken.formErrors.tokenValidationFailed',
+          ),
+          tokenPathAlreadyExists: t(
+            'createDesignToken.formErrors.tokenPathAlreadyExists',
+          ),
+          unexpected: t('createDesignToken.formErrors.unexpected'),
+        },
+      },
+      radius: {
+        title: t('createDesignToken.radius.title'),
+        description: t('createDesignToken.radius.description'),
+        pathLabel: t('createDesignToken.pathLabel'),
+        valueLabel: t('createDesignToken.valueLabel'),
+        descriptionEnLabel: t('createDesignToken.descriptionEnLabel'),
+        descriptionFrLabel: t('createDesignToken.descriptionFrLabel'),
+        submit: t('createDesignToken.submit'),
+        success: t('createDesignToken.success'),
+        cancel: t('createDesignToken.cancel'),
+        pathPlaceholder: 'radius.md',
+        valuePlaceholder: '0.5rem',
+        fieldErrors: {
+          tokenPathRequired: t(
+            'createDesignToken.fieldErrors.tokenPathRequired',
+          ),
+          tokenPathInvalid: t('createDesignToken.fieldErrors.tokenPathInvalid'),
+          tokenValueRequired: t(
+            'createDesignToken.fieldErrors.tokenValueRequired',
+          ),
+          tokenRadiusValueInvalid: t(
+            'createDesignToken.fieldErrors.tokenRadiusValueInvalid',
           ),
         },
         formErrors: {

@@ -1,5 +1,5 @@
-import { useActionState } from 'react';
 import type { Locale } from '@/i18n/routing';
+import { useActionState, useEffect } from 'react';
 import type { TokenSetType } from './tokens-editor.utils';
 import { updateDesignTokenValueAction } from './update-design-token-value.action';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
@@ -29,6 +29,7 @@ type DesignTokenValueEditorProps = {
   tokenPath: string;
   initialValue: string;
   labels: DesignTokenValueEditorLabels;
+  onUpdated: (tokenPath: string, tokenSetType: TokenSetType) => void;
 };
 
 export function DesignTokenValueEditor({
@@ -38,6 +39,7 @@ export function DesignTokenValueEditor({
   tokenPath,
   initialValue,
   labels,
+  onUpdated,
 }: DesignTokenValueEditorProps) {
   const [state, formAction, isPending] = useActionState(
     updateDesignTokenValueAction,
@@ -52,6 +54,14 @@ export function DesignTokenValueEditor({
   const preserveSaveContext = usePreserveSaveContext(
     `design-token-value:${projectSlug}:${tokenSetType}:${tokenPath}`,
   );
+
+  useEffect(() => {
+    if (state.status !== 'success') {
+      return;
+    }
+
+    onUpdated(tokenPath, tokenSetType);
+  }, [onUpdated, state.status, tokenPath, tokenSetType]);
 
   const valueErrors = state.fieldErrors.value ?? [];
 
