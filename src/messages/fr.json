@@ -1363,6 +1363,7 @@
       "fieldErrors": {
         "tokenPathInvalid": "Le chemin ne peut contenir que des lettres, chiffres, points, tirets et underscores.",
         "tokenPathRequired": "Le chemin du token est obligatoire.",
+        "tokenRadiusValueInvalid": "La valeur doit être une longueur CSS valide, par exemple 0.5rem ou 8px.",
         "tokenSpacingValueInvalid": "La valeur doit être une longueur CSS valide, par exemple 1rem ou 24px.",
         "tokenValueRequired": "La valeur du token est obligatoire."
       },
@@ -1376,6 +1377,10 @@
         "unexpected": "Une erreur inattendue est survenue."
       },
       "pathLabel": "Chemin",
+      "radius": {
+        "description": "Crée un token radius avec une valeur CSS comme 4px, 0.5rem ou 9999px.",
+        "title": "Nouveau token radius"
+      },
       "spacing": {
         "description": "Crée un token spacing avec une valeur CSS comme 4px, 1rem ou 8%.",
         "title": "Nouveau token spacing"
@@ -1410,6 +1415,7 @@
     "eyebrow": "Éditeur de tokens",
     "genericValueEditor": {
       "fieldErrors": {
+        "tokenRadiusValueInvalid": "La valeur doit être une longueur CSS valide, par exemple 0.5rem ou 8px.",
         "tokenSpacingValueInvalid": "La valeur doit être une longueur CSS valide, par exemple 1rem ou 24px.",
         "tokenValueRequired": "La valeur du token est obligatoire."
       },

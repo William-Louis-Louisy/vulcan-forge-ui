@@ -38,6 +38,7 @@ type TokenInspectorPanelProps = {
   primitiveColorAliasOptions: PrimitiveColorTokenAliasOption[];
   labels: TokenInspectorPanelLabels;
   onTokenRenamed?: (nextTokenPath: string) => void;
+  onTokenValueUpdated: (tokenPath: string) => void;
 };
 
 export function TokenInspectorPanel({
@@ -48,6 +49,7 @@ export function TokenInspectorPanel({
   primitiveColorAliasOptions,
   labels,
   onTokenRenamed,
+  onTokenValueUpdated,
 }: TokenInspectorPanelProps) {
   if (!token) {
     return (
@@ -105,7 +107,7 @@ export function TokenInspectorPanel({
             }}
           />
 
-          {token.type === 'spacing' ? (
+          {token.type === 'spacing' || token.type === 'radius' ? (
             <DesignTokenValueEditor
               key={`${token.path}:${token.value}`}
               locale={locale}
@@ -114,6 +116,7 @@ export function TokenInspectorPanel({
               tokenPath={token.path}
               initialValue={token.value}
               labels={labels.genericValue}
+              onUpdated={onTokenValueUpdated}
             />
           ) : null}
         </div>

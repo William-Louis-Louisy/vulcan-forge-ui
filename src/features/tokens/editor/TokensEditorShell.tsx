@@ -42,6 +42,7 @@ export type TokensEditorShellLabels = {
   };
   createDesignToken: {
     spacing: CreateDesignTokenFormLabels;
+    radius: CreateDesignTokenFormLabels;
   };
   tokenSet: TokenSetListPanelLabels;
   inspector: TokenInspectorPanelLabels;
@@ -170,7 +171,11 @@ export function TokensEditorShell({
   }
 
   function handleNewTokenClick() {
-    if (activeTokenSetType === 'color' || activeTokenSetType === 'spacing') {
+    if (
+      activeTokenSetType === 'color' ||
+      activeTokenSetType === 'spacing' ||
+      activeTokenSetType === 'radius'
+    ) {
       setCreateTokenFormType(activeTokenSetType);
     }
   }
@@ -198,6 +203,16 @@ export function TokensEditorShell({
     });
   }
 
+  function handleTokenValueUpdated(tokenPath: string) {
+    setSelectedTokenPath(tokenPath);
+
+    updateUrl({
+      set: activeTokenSetType,
+      token: tokenPath,
+      q: tokenSearchQuery,
+    });
+  }
+
   return (
     <div className="mt-6 grid min-h-0 gap-6 xl:grid-cols-[minmax(0,1fr)_24rem]">
       <div className="min-w-0">
@@ -207,7 +222,9 @@ export function TokensEditorShell({
           newTokenLabel={labels.toolbar.newToken}
           tokenSearchQuery={tokenSearchQuery}
           isNewTokenDisabled={
-            activeTokenSetType !== 'color' && activeTokenSetType !== 'spacing'
+            activeTokenSetType !== 'color' &&
+            activeTokenSetType !== 'spacing' &&
+            activeTokenSetType !== 'radius'
           }
           onNewTokenClick={handleNewTokenClick}
           onSearchChange={handleSearchChange}
@@ -239,6 +256,22 @@ export function TokensEditorShell({
             onCreated={(tokenPath) =>
               handleTokenCreated({
                 tokenSetType: 'spacing',
+                tokenPath,
+              })
+            }
+          />
+        ) : null}
+
+        {createTokenFormType === 'radius' ? (
+          <CreateDesignTokenForm
+            locale={locale}
+            projectSlug={projectSlug}
+            type="radius"
+            labels={labels.createDesignToken.radius}
+            onCancel={handleCreateTokenCancel}
+            onCreated={(tokenPath) =>
+              handleTokenCreated({
+                tokenSetType: 'radius',
                 tokenPath,
               })
             }
@@ -277,6 +310,7 @@ export function TokensEditorShell({
         primitiveColorAliasOptions={primitiveColorAliasOptions}
         labels={labels.inspector}
         onTokenRenamed={handleTokenRenamed}
+        onTokenValueUpdated={handleTokenValueUpdated}
       />
     </div>
   );
