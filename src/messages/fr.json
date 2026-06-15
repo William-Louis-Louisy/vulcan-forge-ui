@@ -1356,6 +1356,34 @@
       "title": "Nouveau token couleur",
       "valueLabel": "Valeur"
     },
+    "createDesignToken": {
+      "cancel": "Annuler",
+      "descriptionEnLabel": "Description EN",
+      "descriptionFrLabel": "Description FR",
+      "fieldErrors": {
+        "tokenPathInvalid": "Le chemin ne peut contenir que des lettres, chiffres, points, tirets et underscores.",
+        "tokenPathRequired": "Le chemin du token est obligatoire.",
+        "tokenSpacingValueInvalid": "La valeur doit être une longueur CSS valide, par exemple 1rem ou 24px.",
+        "tokenValueRequired": "La valeur du token est obligatoire."
+      },
+      "formErrors": {
+        "projectNotFound": "Projet introuvable.",
+        "tokenPathAlreadyExists": "Un token utilise déjà ce chemin.",
+        "tokenSetMalformed": "Le set de tokens est malformé.",
+        "tokenSetNotFound": "Set de tokens introuvable.",
+        "tokenValidationFailed": "Le set de tokens généré n’est pas valide.",
+        "unauthorized": "Vous devez être connecté pour créer un token.",
+        "unexpected": "Une erreur inattendue est survenue."
+      },
+      "pathLabel": "Chemin",
+      "spacing": {
+        "description": "Crée un token spacing avec une valeur CSS comme 4px, 1rem ou 8%.",
+        "title": "Nouveau token spacing"
+      },
+      "submit": "Créer le token",
+      "success": "Token créé.",
+      "valueLabel": "Valeur"
+    },
     "description": "Consultez les token sets générés pour ce design system. L’édition arrivera dans les prochains tickets tokens.",
     "descriptionEditor": {
       "fallbackNotice": "Une langue manquante ne bloque pas la sauvegarde.",
@@ -1380,6 +1408,25 @@
       }
     },
     "eyebrow": "Éditeur de tokens",
+    "genericValueEditor": {
+      "fieldErrors": {
+        "tokenSpacingValueInvalid": "La valeur doit être une longueur CSS valide, par exemple 1rem ou 24px.",
+        "tokenValueRequired": "La valeur du token est obligatoire."
+      },
+      "formErrors": {
+        "projectNotFound": "Projet introuvable.",
+        "tokenNotFound": "Token introuvable.",
+        "tokenSetMalformed": "Le set de tokens est malformé.",
+        "tokenSetNotFound": "Set de tokens introuvable.",
+        "tokenTypeMismatch": "Le type du token ne correspond pas au set actif.",
+        "tokenValidationFailed": "Le set de tokens généré n’est pas valide.",
+        "unauthorized": "Vous devez être connecté pour modifier ce token.",
+        "unexpected": "Une erreur inattendue est survenue."
+      },
+      "label": "Modifier la valeur",
+      "submit": "Enregistrer",
+      "success": "Valeur enregistrée."
+    },
     "groups": {
       "other": "Autres",
       "primitive": "Primitifs",

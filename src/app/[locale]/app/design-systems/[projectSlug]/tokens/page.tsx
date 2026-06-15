@@ -163,6 +163,35 @@ export default async function TokensEditorPage({
           unexpected: t('rename.formErrors.unexpected'),
         },
       },
+      genericValue: {
+        label: t('genericValueEditor.label'),
+        submit: t('genericValueEditor.submit'),
+        success: t('genericValueEditor.success'),
+        fieldErrors: {
+          tokenValueRequired: t(
+            'genericValueEditor.fieldErrors.tokenValueRequired',
+          ),
+          tokenSpacingValueInvalid: t(
+            'genericValueEditor.fieldErrors.tokenSpacingValueInvalid',
+          ),
+        },
+        formErrors: {
+          unauthorized: t('genericValueEditor.formErrors.unauthorized'),
+          projectNotFound: t('genericValueEditor.formErrors.projectNotFound'),
+          tokenSetNotFound: t('genericValueEditor.formErrors.tokenSetNotFound'),
+          tokenSetMalformed: t(
+            'genericValueEditor.formErrors.tokenSetMalformed',
+          ),
+          tokenValidationFailed: t(
+            'genericValueEditor.formErrors.tokenValidationFailed',
+          ),
+          tokenNotFound: t('genericValueEditor.formErrors.tokenNotFound'),
+          tokenTypeMismatch: t(
+            'genericValueEditor.formErrors.tokenTypeMismatch',
+          ),
+          unexpected: t('genericValueEditor.formErrors.unexpected'),
+        },
+      },
       semanticAlias: {
         resolvedValue: t('table.semanticAlias.resolvedValue'),
         unresolved: t('table.semanticAlias.unresolved'),
@@ -216,6 +245,48 @@ export default async function TokensEditorPage({
           'createColorToken.formErrors.primitiveReferenceInvalid',
         ),
         unexpected: t('createColorToken.formErrors.unexpected'),
+      },
+    },
+    createDesignToken: {
+      spacing: {
+        title: t('createDesignToken.spacing.title'),
+        description: t('createDesignToken.spacing.description'),
+        pathLabel: t('createDesignToken.pathLabel'),
+        valueLabel: t('createDesignToken.valueLabel'),
+        descriptionEnLabel: t('createDesignToken.descriptionEnLabel'),
+        descriptionFrLabel: t('createDesignToken.descriptionFrLabel'),
+        submit: t('createDesignToken.submit'),
+        success: t('createDesignToken.success'),
+        cancel: t('createDesignToken.cancel'),
+        pathPlaceholder: 'spacing.4',
+        valuePlaceholder: '1rem',
+        fieldErrors: {
+          tokenPathRequired: t(
+            'createDesignToken.fieldErrors.tokenPathRequired',
+          ),
+          tokenPathInvalid: t('createDesignToken.fieldErrors.tokenPathInvalid'),
+          tokenValueRequired: t(
+            'createDesignToken.fieldErrors.tokenValueRequired',
+          ),
+          tokenSpacingValueInvalid: t(
+            'createDesignToken.fieldErrors.tokenSpacingValueInvalid',
+          ),
+        },
+        formErrors: {
+          unauthorized: t('createDesignToken.formErrors.unauthorized'),
+          projectNotFound: t('createDesignToken.formErrors.projectNotFound'),
+          tokenSetNotFound: t('createDesignToken.formErrors.tokenSetNotFound'),
+          tokenSetMalformed: t(
+            'createDesignToken.formErrors.tokenSetMalformed',
+          ),
+          tokenValidationFailed: t(
+            'createDesignToken.formErrors.tokenValidationFailed',
+          ),
+          tokenPathAlreadyExists: t(
+            'createDesignToken.formErrors.tokenPathAlreadyExists',
+          ),
+          unexpected: t('createDesignToken.formErrors.unexpected'),
+        },
       },
     },
   };

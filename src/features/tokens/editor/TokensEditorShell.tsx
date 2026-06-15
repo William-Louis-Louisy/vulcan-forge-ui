@@ -18,6 +18,10 @@ import {
   type CreateColorTokenFormLabels,
 } from '../CreateColorTokenForm';
 import {
+  CreateDesignTokenForm,
+  type CreateDesignTokenFormLabels,
+} from '../CreateDesignTokenForm';
+import {
   filterTokenRows,
   createTokenEditorUrl,
 } from './tokens-editor-shell.utils';
@@ -35,6 +39,9 @@ export type TokensEditorShellLabels = {
   tabs: {
     label: string;
     items: Record<TokenSetType, string>;
+  };
+  createDesignToken: {
+    spacing: CreateDesignTokenFormLabels;
   };
   tokenSet: TokenSetListPanelLabels;
   inspector: TokenInspectorPanelLabels;
@@ -71,8 +78,8 @@ export function TokensEditorShell({
   const [tokenSearchQuery, setTokenSearchQuery] = useState(
     initialTokenSearchQuery,
   );
-  const [isCreateColorTokenFormOpen, setIsCreateColorTokenFormOpen] =
-    useState(false);
+  const [createTokenFormType, setCreateTokenFormType] =
+    useState<TokenSetType | null>(null);
 
   const activeTokenSet =
     tokenSets.find((tokenSet) => tokenSet.type === activeTokenSetType) ??
@@ -163,21 +170,29 @@ export function TokensEditorShell({
   }
 
   function handleNewTokenClick() {
-    setIsCreateColorTokenFormOpen(true);
+    if (activeTokenSetType === 'color' || activeTokenSetType === 'spacing') {
+      setCreateTokenFormType(activeTokenSetType);
+    }
   }
 
   function handleCreateTokenCancel() {
-    setIsCreateColorTokenFormOpen(false);
+    setCreateTokenFormType(null);
   }
 
-  function handleColorTokenCreated(tokenPath: string) {
-    setIsCreateColorTokenFormOpen(false);
-    setActiveTokenSetType('color');
+  function handleTokenCreated({
+    tokenSetType,
+    tokenPath,
+  }: {
+    tokenSetType: TokenSetType;
+    tokenPath: string;
+  }) {
+    setCreateTokenFormType(null);
+    setActiveTokenSetType(tokenSetType);
     setTokenSearchQuery('');
     setSelectedTokenPath(tokenPath);
 
     updateUrl({
-      set: 'color',
+      set: tokenSetType,
       token: tokenPath,
       q: '',
     });
@@ -191,19 +206,42 @@ export function TokensEditorShell({
           searchPlaceholder={labels.toolbar.searchPlaceholder}
           newTokenLabel={labels.toolbar.newToken}
           tokenSearchQuery={tokenSearchQuery}
-          isNewTokenDisabled={activeTokenSetType !== 'color'}
+          isNewTokenDisabled={
+            activeTokenSetType !== 'color' && activeTokenSetType !== 'spacing'
+          }
           onNewTokenClick={handleNewTokenClick}
           onSearchChange={handleSearchChange}
         />
 
-        {isCreateColorTokenFormOpen && activeTokenSetType === 'color' ? (
+        {createTokenFormType === 'color' ? (
           <CreateColorTokenForm
             locale={locale}
             projectSlug={projectSlug}
             primitiveColorAliasOptions={primitiveColorAliasOptions}
             labels={labels.createColorToken}
             onCancel={handleCreateTokenCancel}
-            onCreated={handleColorTokenCreated}
+            onCreated={(tokenPath) =>
+              handleTokenCreated({
+                tokenSetType: 'color',
+                tokenPath,
+              })
+            }
+          />
+        ) : null}
+
+        {createTokenFormType === 'spacing' ? (
+          <CreateDesignTokenForm
+            locale={locale}
+            projectSlug={projectSlug}
+            type="spacing"
+            labels={labels.createDesignToken.spacing}
+            onCancel={handleCreateTokenCancel}
+            onCreated={(tokenPath) =>
+              handleTokenCreated({
+                tokenSetType: 'spacing',
+                tokenPath,
+              })
+            }
           />
         ) : null}
 

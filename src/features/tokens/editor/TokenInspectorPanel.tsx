@@ -7,6 +7,10 @@ import {
   type TokenSetType,
   type PrimitiveColorTokenAliasOption,
 } from '../tokens-editor.utils';
+import {
+  DesignTokenValueEditor,
+  type DesignTokenValueEditorLabels,
+} from '../DesignTokenValueEditor';
 import type { Locale } from '@/i18n/routing';
 import { TokenValueEditor } from './TokenValueEditor';
 import { TokenDescriptionEditor } from '../TokenDescriptionEditor';
@@ -19,6 +23,7 @@ export type TokenInspectorPanelLabels = {
   noDescription: string;
   colorSwatchLabel: string;
   rename: TokenRenameFormLabels;
+  genericValue: DesignTokenValueEditorLabels;
   semanticAlias: {
     resolvedValue: string;
     unresolved: string;
@@ -99,6 +104,18 @@ export function TokenInspectorPanel({
               },
             }}
           />
+
+          {token.type === 'spacing' ? (
+            <DesignTokenValueEditor
+              key={`${token.path}:${token.value}`}
+              locale={locale}
+              projectSlug={projectSlug}
+              tokenSetType={tokenSetType}
+              tokenPath={token.path}
+              initialValue={token.value}
+              labels={labels.genericValue}
+            />
+          ) : null}
         </div>
       </div>
 

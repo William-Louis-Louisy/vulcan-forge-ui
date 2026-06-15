@@ -1356,6 +1356,34 @@
       "title": "New color token",
       "valueLabel": "Value"
     },
+    "createDesignToken": {
+      "cancel": "Cancel",
+      "descriptionEnLabel": "Description EN",
+      "descriptionFrLabel": "Description FR",
+      "fieldErrors": {
+        "tokenPathInvalid": "The path can only contain letters, numbers, dots, dashes and underscores.",
+        "tokenPathRequired": "The token path is required.",
+        "tokenSpacingValueInvalid": "The value must be a valid CSS length, such as 1rem or 24px.",
+        "tokenValueRequired": "The token value is required."
+      },
+      "formErrors": {
+        "projectNotFound": "Project not found.",
+        "tokenPathAlreadyExists": "A token already uses this path.",
+        "tokenSetMalformed": "The token set is malformed.",
+        "tokenSetNotFound": "Token set not found.",
+        "tokenValidationFailed": "The generated token set is not valid.",
+        "unauthorized": "You must be signed in to create a token.",
+        "unexpected": "An unexpected error occurred."
+      },
+      "pathLabel": "Path",
+      "spacing": {
+        "description": "Creates a spacing token with a CSS value such as 4px, 1rem or 8%.",
+        "title": "New spacing token"
+      },
+      "submit": "Create token",
+      "success": "Token created.",
+      "valueLabel": "Value"
+    },
     "description": "Review the token sets generated for this design system. Editing will be introduced in the next token tickets.",
     "descriptionEditor": {
       "fallbackNotice": "A missing language does not block saving.",
@@ -1380,6 +1408,25 @@
       }
     },
     "eyebrow": "Tokens editor",
+    "genericValueEditor": {
+      "fieldErrors": {
+        "tokenSpacingValueInvalid": "The value must be a valid CSS length, such as 1rem or 24px.",
+        "tokenValueRequired": "The token value is required."
+      },
+      "formErrors": {
+        "projectNotFound": "Project not found.",
+        "tokenNotFound": "Token not found.",
+        "tokenSetMalformed": "The token set is malformed.",
+        "tokenSetNotFound": "Token set not found.",
+        "tokenTypeMismatch": "The token type does not match the active set.",
+        "tokenValidationFailed": "The generated token set is not valid.",
+        "unauthorized": "You must be signed in to edit this token.",
+        "unexpected": "An unexpected error occurred."
+      },
+      "label": "Edit value",
+      "submit": "Save",
+      "success": "Value saved."
+    },
     "groups": {
       "other": "Other",
       "primitive": "Primitive",

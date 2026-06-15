@@ -1,0 +1,161 @@
+'use server';
+
+import { auth } from '@/auth';
+import {
+  parseStoredTokenSetTokens,
+  getEditableTokenSetForUser,
+  saveValidatedTokenSetTokens,
+} from './token-set-save.service';
+import { revalidatePath } from 'next/cache';
+import { isTokenSetType } from './tokens-editor.utils';
+import { defaultAppLocale, isAppLocale } from '@/domain/i18n';
+import { validateTokenValueForType } from './token-value-validation.utils';
+import type { UpdateDesignTokenValueActionState } from './update-design-token-value.state';
+
+function getFormStringValue(formData: FormData, key: string): string {
+  const value = formData.get(key);
+
+  return typeof value === 'string' ? value : '';
+}
+
+function getActionLocale(formData: FormData) {
+  const rawLocale = getFormStringValue(formData, 'locale');
+
+  return isAppLocale(rawLocale) ? rawLocale : defaultAppLocale;
+}
+
+export async function updateDesignTokenValueAction(
+  _previousState: UpdateDesignTokenValueActionState,
+  formData: FormData,
+): Promise<UpdateDesignTokenValueActionState> {
+  const locale = getActionLocale(formData);
+  const projectSlug = getFormStringValue(formData, 'projectSlug');
+  const tokenSetType = getFormStringValue(formData, 'tokenSetType');
+  const tokenPath = getFormStringValue(formData, 'tokenPath');
+
+  const values = {
+    value: getFormStringValue(formData, 'value'),
+  };
+
+  if (!isTokenSetType(tokenSetType)) {
+    return {
+      status: 'error',
+      fieldErrors: {},
+      formError: 'tokenSetNotFound',
+      values,
+    };
+  }
+
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return {
+      status: 'error',
+      fieldErrors: {},
+      formError: 'unauthorized',
+      values,
+    };
+  }
+
+  const valueError = validateTokenValueForType({
+    type: tokenSetType,
+    value: values.value,
+  });
+
+  if (valueError) {
+    return {
+      status: 'error',
+      fieldErrors: {
+        value: [valueError],
+      },
+      formError: null,
+      values,
+    };
+  }
+
+  const tokenSetResult = await getEditableTokenSetForUser({
+    userId: session.user.id,
+    projectSlug,
+    tokenSetType,
+  });
+
+  if (tokenSetResult.status === 'error') {
+    return {
+      status: 'error',
+      fieldErrors: {},
+      formError: tokenSetResult.error,
+      values,
+    };
+  }
+
+  const parsedTokensResult = parseStoredTokenSetTokens(
+    tokenSetResult.tokenSet.tokens,
+  );
+
+  if (parsedTokensResult.status === 'error') {
+    return {
+      status: 'error',
+      fieldErrors: {},
+      formError: parsedTokensResult.error,
+      values,
+    };
+  }
+
+  const tokenIndex = parsedTokensResult.tokens.findIndex(
+    (token) => token.path === tokenPath,
+  );
+
+  if (tokenIndex < 0) {
+    return {
+      status: 'error',
+      fieldErrors: {},
+      formError: 'tokenNotFound',
+      values,
+    };
+  }
+
+  const token = parsedTokensResult.tokens[tokenIndex];
+
+  if (!token || token.type !== tokenSetType) {
+    return {
+      status: 'error',
+      fieldErrors: {},
+      formError: 'tokenTypeMismatch',
+      values,
+    };
+  }
+
+  const nextTokens = parsedTokensResult.tokens.map((currentToken, index) =>
+    index === tokenIndex
+      ? {
+          ...currentToken,
+          value: values.value.trim(),
+        }
+      : currentToken,
+  );
+
+  const saveResult = await saveValidatedTokenSetTokens({
+    tokenSetId: tokenSetResult.tokenSet.id,
+    tokens: nextTokens,
+  });
+
+  if (saveResult.status === 'error') {
+    return {
+      status: 'error',
+      fieldErrors: {},
+      formError: saveResult.error,
+      values,
+    };
+  }
+
+  revalidatePath(`/${locale}/app/design-systems/${projectSlug}/tokens`);
+
+  return {
+    status: 'success',
+    fieldErrors: {},
+    formError: null,
+    values: {
+      value: values.value.trim(),
+    },
+  };
+}
