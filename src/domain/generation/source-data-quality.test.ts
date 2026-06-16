@@ -74,6 +74,8 @@ describe('source data quality report', () => {
           states: [],
           accessibility: [],
           forbiddenPatterns: [],
+          sizes: [],
+          tokenBindings: [],
         },
       ],
     });

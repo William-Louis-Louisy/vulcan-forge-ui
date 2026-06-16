@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { localizedStringSchema } from '@/domain/i18n';
+import { designTokenTypeSchema } from './design-token.schema';
 
 export const componentContractTypeSchema = z.enum([
   'button',
@@ -27,6 +28,25 @@ export const componentStateSchema = z.object({
   description: localizedStringSchema.optional(),
 });
 
+export const componentSizeSchema = z.object({
+  key: z.string().trim().min(1, { message: 'sizeKeyRequired' }),
+  label: localizedStringSchema,
+  description: localizedStringSchema.optional(),
+});
+
+export const componentTokenBindingSchema = z.object({
+  key: z.string().trim().min(1, { message: 'tokenBindingKeyRequired' }),
+  tokenType: designTokenTypeSchema,
+  tokenPath: z
+    .string()
+    .trim()
+    .min(1, { message: 'tokenBindingTokenPathRequired' })
+    .regex(/^[a-zA-Z0-9._-]+$/, {
+      message: 'tokenPathInvalid',
+    }),
+  description: localizedStringSchema.optional(),
+});
+
 export const componentAccessibilityRuleSchema = z.object({
   key: z.string().trim().min(1, { message: 'accessibilityRuleKeyRequired' }),
   description: localizedStringSchema,
@@ -40,10 +60,14 @@ export const componentContractSchema = z.object({
   status: componentContractStatusSchema.default('draft'),
   anatomy: z.array(z.string().trim().min(1)).default([]),
   variants: z.array(componentVariantSchema).default([]),
+  sizes: z.array(componentSizeSchema).default([]),
   states: z.array(componentStateSchema).default([]),
+  tokenBindings: z.array(componentTokenBindingSchema).default([]),
   accessibility: z.array(componentAccessibilityRuleSchema).default([]),
   forbiddenPatterns: z.array(localizedStringSchema).default([]),
 });
 
-export type ComponentContractType = z.infer<typeof componentContractTypeSchema>;
+export type ComponentSize = z.infer<typeof componentSizeSchema>;
 export type ComponentContract = z.infer<typeof componentContractSchema>;
+export type ComponentContractType = z.infer<typeof componentContractTypeSchema>;
+export type ComponentTokenBinding = z.infer<typeof componentTokenBindingSchema>;

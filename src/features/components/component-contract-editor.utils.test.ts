@@ -1,13 +1,13 @@
-import { describe, expect, it } from 'vitest';
-import type { ComponentContract } from '@/domain/design-system';
 import {
-  createComponentContractDraft,
-  createComponentContractFromDraft,
-  createEmptyAccessibilityRuleDraft,
-  createEmptyForbiddenPatternDraft,
   createEmptyStateDraft,
   createEmptyVariantDraft,
+  createComponentContractDraft,
+  createComponentContractFromDraft,
+  createEmptyForbiddenPatternDraft,
+  createEmptyAccessibilityRuleDraft,
 } from './component-contract-editor.utils';
+import { describe, expect, it } from 'vitest';
+import type { ComponentContract } from '@/domain/design-system';
 
 const buttonContract: ComponentContract = {
   type: 'button',
@@ -52,6 +52,8 @@ const buttonContract: ComponentContract = {
       fr: 'Ne pas utiliser un bouton comme lien de navigation.',
     },
   ],
+  sizes: [],
+  tokenBindings: [],
 };
 
 describe('component contract editor utils', () => {
@@ -101,5 +103,101 @@ describe('component contract editor utils', () => {
       en: '',
       fr: '',
     });
+  });
+
+  it('creates a draft that preserves sizes and token bindings', () => {
+    const draft = createComponentContractDraft({
+      ...buttonContract,
+      sizes: [
+        {
+          key: 'md',
+          label: {
+            en: 'Medium',
+            fr: 'Moyen',
+          },
+        },
+      ],
+      tokenBindings: [
+        {
+          key: 'radius',
+          tokenType: 'radius',
+          tokenPath: 'radius.md',
+        },
+      ],
+    });
+
+    expect(draft.sizes).toEqual([
+      {
+        key: 'md',
+        label: {
+          en: 'Medium',
+          fr: 'Moyen',
+        },
+        description: {
+          en: '',
+          fr: '',
+        },
+      },
+    ]);
+
+    expect(draft.tokenBindings).toEqual([
+      {
+        key: 'radius',
+        tokenType: 'radius',
+        tokenPath: 'radius.md',
+        description: {
+          en: '',
+          fr: '',
+        },
+      },
+    ]);
+  });
+
+  it('creates a contract from draft that preserves sizes and token bindings', () => {
+    const draft = createComponentContractDraft({
+      ...buttonContract,
+      sizes: [
+        {
+          key: 'md',
+          label: {
+            en: 'Medium',
+            fr: 'Moyen',
+          },
+        },
+      ],
+      tokenBindings: [
+        {
+          key: 'paddingX',
+          tokenType: 'spacing',
+          tokenPath: 'spacing.4',
+        },
+      ],
+    });
+
+    const result = createComponentContractFromDraft(draft);
+
+    expect(result.status).toBe('success');
+
+    if (result.status !== 'success') {
+      return;
+    }
+
+    expect(result.contract.sizes).toEqual([
+      {
+        key: 'md',
+        label: {
+          en: 'Medium',
+          fr: 'Moyen',
+        },
+      },
+    ]);
+
+    expect(result.contract.tokenBindings).toEqual([
+      {
+        key: 'paddingX',
+        tokenType: 'spacing',
+        tokenPath: 'spacing.4',
+      },
+    ]);
   });
 });
