@@ -107,7 +107,9 @@ export function TokenInspectorPanel({
             }}
           />
 
-          {token.type === 'spacing' || token.type === 'radius' ? (
+          {token.type === 'spacing' ||
+          token.type === 'radius' ||
+          token.type === 'motion' ? (
             <DesignTokenValueEditor
               key={`${token.path}:${token.value}`}
               locale={locale}

@@ -1361,6 +1361,7 @@
       "descriptionEnLabel": "Description EN",
       "descriptionFrLabel": "Description FR",
       "fieldErrors": {
+        "tokenMotionValueInvalid": "La valeur doit être une durée CSS valide, par exemple 150ms ou 0.2s.",
         "tokenPathInvalid": "Le chemin ne peut contenir que des lettres, chiffres, points, tirets et underscores.",
         "tokenPathRequired": "Le chemin du token est obligatoire.",
         "tokenRadiusValueInvalid": "La valeur doit être une longueur CSS valide, par exemple 0.5rem ou 8px.",
@@ -1375,6 +1376,10 @@
         "tokenValidationFailed": "Le set de tokens généré n’est pas valide.",
         "unauthorized": "Vous devez être connecté pour créer un token.",
         "unexpected": "Une erreur inattendue est survenue."
+      },
+      "motion": {
+        "description": "Crée un token motion avec une durée CSS comme 150ms, 0.2s ou 500ms.",
+        "title": "Nouveau token motion"
       },
       "pathLabel": "Chemin",
       "radius": {
@@ -1415,6 +1420,7 @@
     "eyebrow": "Éditeur de tokens",
     "genericValueEditor": {
       "fieldErrors": {
+        "tokenMotionValueInvalid": "La valeur doit être une durée CSS valide, par exemple 150ms ou 0.2s.",
         "tokenRadiusValueInvalid": "La valeur doit être une longueur CSS valide, par exemple 0.5rem ou 8px.",
         "tokenSpacingValueInvalid": "La valeur doit être une longueur CSS valide, par exemple 1rem ou 24px.",
         "tokenValueRequired": "La valeur du token est obligatoire."
