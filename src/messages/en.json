@@ -1394,6 +1394,36 @@
       "success": "Token created.",
       "valueLabel": "Value"
     },
+    "createTypographyToken": {
+      "cancel": "Cancel",
+      "description": "Creates a structured typography token without typing raw JSON.",
+      "descriptionEnLabel": "Description EN",
+      "descriptionFrLabel": "Description FR",
+      "fieldErrors": {
+        "tokenPathInvalid": "The path can only contain letters, numbers, dots, dashes and underscores.",
+        "tokenPathRequired": "The token path is required.",
+        "tokenTypographyValueInvalid": "The generated typography value is invalid.",
+        "tokenValueRequired": "Fill at least one typography property."
+      },
+      "fontFamilyLabel": "Font family",
+      "fontSizeLabel": "Font size",
+      "fontWeightLabel": "Font weight",
+      "formErrors": {
+        "projectNotFound": "Project not found.",
+        "tokenPathAlreadyExists": "A token already uses this path.",
+        "tokenSetMalformed": "The token set is malformed.",
+        "tokenSetNotFound": "Token set not found.",
+        "tokenValidationFailed": "The generated token set is not valid.",
+        "unauthorized": "You must be signed in to create a token.",
+        "unexpected": "An unexpected error occurred."
+      },
+      "letterSpacingLabel": "Letter spacing",
+      "lineHeightLabel": "Line height",
+      "pathLabel": "Path",
+      "submit": "Create token",
+      "success": "Token created.",
+      "title": "New typography token"
+    },
     "description": "Review the token sets generated for this design system. Editing will be introduced in the next token tickets.",
     "descriptionEditor": {
       "fallbackNotice": "A missing language does not block saving.",
@@ -1604,6 +1634,30 @@
       "newToken": "New token",
       "searchLabel": "Search token",
       "searchPlaceholder": "Search tokens..."
+    },
+    "typographyValueEditor": {
+      "fieldErrors": {
+        "tokenTypographyValueInvalid": "The generated typography value is invalid.",
+        "tokenValueRequired": "Fill at least one typography property."
+      },
+      "fontFamilyLabel": "Font family",
+      "fontSizeLabel": "Font size",
+      "fontWeightLabel": "Font weight",
+      "formErrors": {
+        "projectNotFound": "Project not found.",
+        "tokenNotFound": "Token not found.",
+        "tokenSetMalformed": "The token set is malformed.",
+        "tokenSetNotFound": "Token set not found.",
+        "tokenTypeMismatch": "The token type does not match the active set.",
+        "tokenValidationFailed": "The generated token set is not valid.",
+        "unauthorized": "You must be signed in to edit this token.",
+        "unexpected": "An unexpected error occurred."
+      },
+      "letterSpacingLabel": "Letter spacing",
+      "lineHeightLabel": "Line height",
+      "submit": "Save",
+      "success": "Value saved.",
+      "title": "Edit typography"
     }
   }
 }

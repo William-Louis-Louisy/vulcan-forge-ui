@@ -1394,6 +1394,36 @@
       "success": "Token créé.",
       "valueLabel": "Valeur"
     },
+    "createTypographyToken": {
+      "cancel": "Annuler",
+      "description": "Crée un token typographique structuré sans saisir directement du JSON.",
+      "descriptionEnLabel": "Description EN",
+      "descriptionFrLabel": "Description FR",
+      "fieldErrors": {
+        "tokenPathInvalid": "Le chemin ne peut contenir que des lettres, chiffres, points, tirets et underscores.",
+        "tokenPathRequired": "Le chemin du token est obligatoire.",
+        "tokenTypographyValueInvalid": "La valeur typographique générée n’est pas valide.",
+        "tokenValueRequired": "Renseigne au moins une propriété typographique."
+      },
+      "fontFamilyLabel": "Font family",
+      "fontSizeLabel": "Font size",
+      "fontWeightLabel": "Font weight",
+      "formErrors": {
+        "projectNotFound": "Projet introuvable.",
+        "tokenPathAlreadyExists": "Un token utilise déjà ce chemin.",
+        "tokenSetMalformed": "Le set de tokens est malformé.",
+        "tokenSetNotFound": "Set de tokens introuvable.",
+        "tokenValidationFailed": "Le set de tokens généré n’est pas valide.",
+        "unauthorized": "Vous devez être connecté pour créer un token.",
+        "unexpected": "Une erreur inattendue est survenue."
+      },
+      "letterSpacingLabel": "Letter spacing",
+      "lineHeightLabel": "Line height",
+      "pathLabel": "Chemin",
+      "submit": "Créer le token",
+      "success": "Token créé.",
+      "title": "Nouveau token typography"
+    },
     "description": "Consultez les token sets générés pour ce design system. L’édition arrivera dans les prochains tickets tokens.",
     "descriptionEditor": {
       "fallbackNotice": "Une langue manquante ne bloque pas la sauvegarde.",
@@ -1604,6 +1634,30 @@
       "newToken": "Nouveau token",
       "searchLabel": "Rechercher un token",
       "searchPlaceholder": "Rechercher des tokens..."
+    },
+    "typographyValueEditor": {
+      "fieldErrors": {
+        "tokenTypographyValueInvalid": "La valeur typographique générée n’est pas valide.",
+        "tokenValueRequired": "Renseigne au moins une propriété typographique."
+      },
+      "fontFamilyLabel": "Font family",
+      "fontSizeLabel": "Font size",
+      "fontWeightLabel": "Font weight",
+      "formErrors": {
+        "projectNotFound": "Projet introuvable.",
+        "tokenNotFound": "Token introuvable.",
+        "tokenSetMalformed": "Le set de tokens est malformé.",
+        "tokenSetNotFound": "Set de tokens introuvable.",
+        "tokenTypeMismatch": "Le type du token ne correspond pas au set actif.",
+        "tokenValidationFailed": "Le set de tokens généré n’est pas valide.",
+        "unauthorized": "Vous devez être connecté pour modifier ce token.",
+        "unexpected": "Une erreur inattendue est survenue."
+      },
+      "letterSpacingLabel": "Letter spacing",
+      "lineHeightLabel": "Line height",
+      "submit": "Enregistrer",
+      "success": "Valeur enregistrée.",
+      "title": "Modifier la typographie"
     }
   }
 }

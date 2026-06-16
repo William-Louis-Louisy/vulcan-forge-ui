@@ -1,5 +1,4 @@
 import type { CreateDesignTokenError } from './create-design-token.utils';
-import type { TokenValueValidationError } from './token-value-validation.utils';
 
 export type CreateDesignTokenField =
   | 'path'
@@ -14,8 +13,7 @@ export type CreateDesignTokenFormError =
   | 'tokenSetMalformed'
   | 'tokenValidationFailed'
   | 'tokenPathAlreadyExists'
-  | 'unexpected'
-  | TokenValueValidationError;
+  | 'unexpected';
 
 export type CreateDesignTokenFieldError = Exclude<
   CreateDesignTokenError,

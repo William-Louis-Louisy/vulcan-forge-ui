@@ -25,6 +25,10 @@ import {
   filterTokenRows,
   createTokenEditorUrl,
 } from './tokens-editor-shell.utils';
+import {
+  CreateTypographyTokenForm,
+  type CreateTypographyTokenFormLabels,
+} from '../CreateTypographyTokenForm';
 import { useMemo, useState } from 'react';
 import type { Locale } from '@/i18n/routing';
 import { TokenSetTabs } from './TokenSetTabs';
@@ -48,6 +52,7 @@ export type TokensEditorShellLabels = {
   tokenSet: TokenSetListPanelLabels;
   inspector: TokenInspectorPanelLabels;
   createColorToken: CreateColorTokenFormLabels;
+  createTypographyToken: CreateTypographyTokenFormLabels;
 };
 
 export type TokenSetEditorViewModel = TokenSetListPanelViewModel;
@@ -176,7 +181,8 @@ export function TokensEditorShell({
       activeTokenSetType === 'color' ||
       activeTokenSetType === 'spacing' ||
       activeTokenSetType === 'radius' ||
-      activeTokenSetType === 'motion'
+      activeTokenSetType === 'motion' ||
+      activeTokenSetType === 'typography'
     ) {
       setCreateTokenFormType(activeTokenSetType);
     }
@@ -227,7 +233,8 @@ export function TokensEditorShell({
             activeTokenSetType !== 'color' &&
             activeTokenSetType !== 'spacing' &&
             activeTokenSetType !== 'radius' &&
-            activeTokenSetType !== 'motion'
+            activeTokenSetType !== 'motion' &&
+            activeTokenSetType !== 'typography'
           }
           onNewTokenClick={handleNewTokenClick}
           onSearchChange={handleSearchChange}
@@ -291,6 +298,21 @@ export function TokensEditorShell({
             onCreated={(tokenPath) =>
               handleTokenCreated({
                 tokenSetType: 'motion',
+                tokenPath,
+              })
+            }
+          />
+        ) : null}
+
+        {createTokenFormType === 'typography' ? (
+          <CreateTypographyTokenForm
+            locale={locale}
+            projectSlug={projectSlug}
+            labels={labels.createTypographyToken}
+            onCancel={handleCreateTokenCancel}
+            onCreated={(tokenPath) =>
+              handleTokenCreated({
+                tokenSetType: 'typography',
                 tokenPath,
               })
             }
