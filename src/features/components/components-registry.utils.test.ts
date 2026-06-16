@@ -65,6 +65,8 @@ const buttonContract: ComponentContract = {
       fr: 'Ne pas utiliser un bouton comme lien de navigation.',
     },
   ],
+  sizes: [],
+  tokenBindings: [],
 };
 
 describe('components registry utils', () => {

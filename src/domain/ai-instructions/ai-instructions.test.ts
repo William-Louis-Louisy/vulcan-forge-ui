@@ -68,6 +68,8 @@ const components: ComponentContract[] = [
         fr: 'Ne pas utiliser un bouton comme lien de navigation.',
       },
     ],
+    sizes: [],
+    tokenBindings: [],
   },
   {
     type: 'alert',
@@ -81,6 +83,8 @@ const components: ComponentContract[] = [
     states: [],
     accessibility: [],
     forbiddenPatterns: [],
+    sizes: [],
+    tokenBindings: [],
   },
 ];
 

@@ -384,6 +384,55 @@ export const mvpComponentContractSeeds = [
         fr: 'Ne pas utiliser un bouton comme lien de navigation.',
       },
     ],
+    sizes: [
+      {
+        key: 'sm',
+        label: {
+          en: 'Small',
+          fr: 'Petit',
+        },
+      },
+      {
+        key: 'md',
+        label: {
+          en: 'Medium',
+          fr: 'Moyen',
+        },
+      },
+      {
+        key: 'lg',
+        label: {
+          en: 'Large',
+          fr: 'Grand',
+        },
+      },
+    ],
+    tokenBindings: [
+      {
+        key: 'background',
+        tokenType: 'color',
+        tokenPath: 'color.background.default',
+        description: {
+          en: 'Default button background.',
+          fr: 'Fond par défaut du bouton.',
+        },
+      },
+      {
+        key: 'foreground',
+        tokenType: 'color',
+        tokenPath: 'color.foreground.default',
+      },
+      {
+        key: 'radius',
+        tokenType: 'radius',
+        tokenPath: 'radius.md',
+      },
+      {
+        key: 'paddingX',
+        tokenType: 'spacing',
+        tokenPath: 'spacing.4',
+      },
+    ],
   },
   {
     type: 'textField',
@@ -438,6 +487,30 @@ export const mvpComponentContractSeeds = [
         fr: 'Ne pas utiliser le placeholder comme unique label.',
       },
     ],
+    sizes: [
+      {
+        key: 'sm',
+        label: {
+          en: 'Small',
+          fr: 'Petit',
+        },
+      },
+      {
+        key: 'md',
+        label: {
+          en: 'Medium',
+          fr: 'Moyen',
+        },
+      },
+      {
+        key: 'lg',
+        label: {
+          en: 'Large',
+          fr: 'Grand',
+        },
+      },
+    ],
+    tokenBindings: [],
   },
   {
     type: 'card',
@@ -475,6 +548,30 @@ export const mvpComponentContractSeeds = [
         fr: 'Ne pas rendre toute une card cliquable si des éléments interactifs imbriqués entrent en conflit.',
       },
     ],
+    sizes: [
+      {
+        key: 'sm',
+        label: {
+          en: 'Small',
+          fr: 'Petit',
+        },
+      },
+      {
+        key: 'md',
+        label: {
+          en: 'Medium',
+          fr: 'Moyen',
+        },
+      },
+      {
+        key: 'lg',
+        label: {
+          en: 'Large',
+          fr: 'Grand',
+        },
+      },
+    ],
+    tokenBindings: [],
   },
   {
     type: 'alert',
@@ -520,6 +617,30 @@ export const mvpComponentContractSeeds = [
         fr: 'Ne pas utiliser uniquement la couleur pour communiquer la sévérité.',
       },
     ],
+    sizes: [
+      {
+        key: 'sm',
+        label: {
+          en: 'Small',
+          fr: 'Petit',
+        },
+      },
+      {
+        key: 'md',
+        label: {
+          en: 'Medium',
+          fr: 'Moyen',
+        },
+      },
+      {
+        key: 'lg',
+        label: {
+          en: 'Large',
+          fr: 'Grand',
+        },
+      },
+    ],
+    tokenBindings: [],
   },
   {
     type: 'dialog',
@@ -571,6 +692,30 @@ export const mvpComponentContractSeeds = [
         fr: 'Ne pas ouvrir un dialog sans titre accessible.',
       },
     ],
+    sizes: [
+      {
+        key: 'sm',
+        label: {
+          en: 'Small',
+          fr: 'Petit',
+        },
+      },
+      {
+        key: 'md',
+        label: {
+          en: 'Medium',
+          fr: 'Moyen',
+        },
+      },
+      {
+        key: 'lg',
+        label: {
+          en: 'Large',
+          fr: 'Grand',
+        },
+      },
+    ],
+    tokenBindings: [],
   },
 ] as const satisfies readonly ComponentContract[];
 

@@ -21,6 +21,19 @@ export type ComponentStateDraft = {
   description: LocalizedTextDraft;
 };
 
+export type ComponentSizeDraft = {
+  key: string;
+  label: LocalizedTextDraft;
+  description: LocalizedTextDraft;
+};
+
+export type ComponentTokenBindingDraft = {
+  key: string;
+  tokenType: ComponentContract['tokenBindings'][number]['tokenType'];
+  tokenPath: string;
+  description: LocalizedTextDraft;
+};
+
 export type ComponentAccessibilityRuleDraft = {
   key: string;
   severity: 'info' | 'warning' | 'critical';
@@ -37,6 +50,8 @@ export type ComponentContractEditorDraft = {
   states: ComponentStateDraft[];
   accessibility: ComponentAccessibilityRuleDraft[];
   forbiddenPatterns: LocalizedTextDraft[];
+  sizes: ComponentSizeDraft[];
+  tokenBindings: ComponentTokenBindingDraft[];
 };
 
 export type ComponentContractDraftValidationResult =
@@ -80,10 +95,21 @@ export function createComponentContractDraft(
       label: normalizeLocalizedText(variant.label),
       description: normalizeLocalizedText(variant.description ?? {}),
     })),
+    sizes: contract.sizes.map((size) => ({
+      key: size.key,
+      label: normalizeLocalizedText(size.label),
+      description: normalizeLocalizedText(size.description ?? {}),
+    })),
     states: contract.states.map((state) => ({
       key: state.key,
       label: normalizeLocalizedText(state.label),
       description: normalizeLocalizedText(state.description ?? {}),
+    })),
+    tokenBindings: contract.tokenBindings.map((binding) => ({
+      key: binding.key,
+      tokenType: binding.tokenType,
+      tokenPath: binding.tokenPath,
+      description: normalizeLocalizedText(binding.description ?? {}),
     })),
     accessibility: contract.accessibility.map((rule) => ({
       key: rule.key,
@@ -112,12 +138,30 @@ export function createComponentContractFromDraft(
         label: toOptionalLocalizedText(variant.label),
         description: toOptionalLocalizedTextOrUndefined(variant.description),
       })),
+    sizes: draft.sizes
+      .filter((size) => size.key.trim().length > 0)
+      .map((size) => ({
+        key: size.key.trim(),
+        label: toOptionalLocalizedText(size.label),
+        description: toOptionalLocalizedTextOrUndefined(size.description),
+      })),
     states: draft.states
       .filter((state) => state.key.trim().length > 0)
       .map((state) => ({
         key: state.key.trim(),
         label: toOptionalLocalizedText(state.label),
         description: toOptionalLocalizedTextOrUndefined(state.description),
+      })),
+    tokenBindings: draft.tokenBindings
+      .filter(
+        (binding) =>
+          binding.key.trim().length > 0 || binding.tokenPath.trim().length > 0,
+      )
+      .map((binding) => ({
+        key: binding.key.trim(),
+        tokenType: binding.tokenType,
+        tokenPath: binding.tokenPath.trim(),
+        description: toOptionalLocalizedTextOrUndefined(binding.description),
       })),
     accessibility: draft.accessibility
       .filter((rule) => rule.key.trim().length > 0)
@@ -165,6 +209,32 @@ export function createEmptyStateDraft(): ComponentStateDraft {
       en: '',
       fr: '',
     },
+    description: {
+      en: '',
+      fr: '',
+    },
+  };
+}
+
+export function createEmptySizeDraft(): ComponentSizeDraft {
+  return {
+    key: '',
+    label: {
+      en: '',
+      fr: '',
+    },
+    description: {
+      en: '',
+      fr: '',
+    },
+  };
+}
+
+export function createEmptyTokenBindingDraft(): ComponentTokenBindingDraft {
+  return {
+    key: '',
+    tokenType: 'color',
+    tokenPath: '',
     description: {
       en: '',
       fr: '',

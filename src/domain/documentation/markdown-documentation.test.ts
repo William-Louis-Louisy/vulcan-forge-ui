@@ -70,6 +70,8 @@ const components: ComponentContract[] = [
         fr: 'Ne pas utiliser les boutons pour la navigation.',
       },
     ],
+    sizes: [],
+    tokenBindings: [],
   },
 ];
 

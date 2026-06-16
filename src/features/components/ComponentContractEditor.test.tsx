@@ -142,6 +142,8 @@ const contract: ComponentContract = {
       fr: 'Ne pas utiliser un bouton comme lien de navigation.',
     },
   ],
+  sizes: [],
+  tokenBindings: [],
 };
 
 describe('ComponentContractEditor', () => {
