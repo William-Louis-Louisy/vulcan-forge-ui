@@ -177,6 +177,9 @@ export default async function TokensEditorPage({
           tokenSpacingValueInvalid: t(
             'genericValueEditor.fieldErrors.tokenSpacingValueInvalid',
           ),
+          tokenMotionValueInvalid: t(
+            'genericValueEditor.fieldErrors.tokenMotionValueInvalid',
+          ),
         },
         formErrors: {
           unauthorized: t('genericValueEditor.formErrors.unauthorized'),
@@ -313,6 +316,46 @@ export default async function TokensEditorPage({
           ),
           tokenRadiusValueInvalid: t(
             'createDesignToken.fieldErrors.tokenRadiusValueInvalid',
+          ),
+        },
+        formErrors: {
+          unauthorized: t('createDesignToken.formErrors.unauthorized'),
+          projectNotFound: t('createDesignToken.formErrors.projectNotFound'),
+          tokenSetNotFound: t('createDesignToken.formErrors.tokenSetNotFound'),
+          tokenSetMalformed: t(
+            'createDesignToken.formErrors.tokenSetMalformed',
+          ),
+          tokenValidationFailed: t(
+            'createDesignToken.formErrors.tokenValidationFailed',
+          ),
+          tokenPathAlreadyExists: t(
+            'createDesignToken.formErrors.tokenPathAlreadyExists',
+          ),
+          unexpected: t('createDesignToken.formErrors.unexpected'),
+        },
+      },
+      motion: {
+        title: t('createDesignToken.motion.title'),
+        description: t('createDesignToken.motion.description'),
+        pathLabel: t('createDesignToken.pathLabel'),
+        valueLabel: t('createDesignToken.valueLabel'),
+        descriptionEnLabel: t('createDesignToken.descriptionEnLabel'),
+        descriptionFrLabel: t('createDesignToken.descriptionFrLabel'),
+        submit: t('createDesignToken.submit'),
+        success: t('createDesignToken.success'),
+        cancel: t('createDesignToken.cancel'),
+        pathPlaceholder: 'motion.fast',
+        valuePlaceholder: '150ms',
+        fieldErrors: {
+          tokenPathRequired: t(
+            'createDesignToken.fieldErrors.tokenPathRequired',
+          ),
+          tokenPathInvalid: t('createDesignToken.fieldErrors.tokenPathInvalid'),
+          tokenValueRequired: t(
+            'createDesignToken.fieldErrors.tokenValueRequired',
+          ),
+          tokenMotionValueInvalid: t(
+            'createDesignToken.fieldErrors.tokenMotionValueInvalid',
           ),
         },
         formErrors: {

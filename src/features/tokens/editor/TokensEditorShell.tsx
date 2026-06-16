@@ -43,6 +43,7 @@ export type TokensEditorShellLabels = {
   createDesignToken: {
     spacing: CreateDesignTokenFormLabels;
     radius: CreateDesignTokenFormLabels;
+    motion: CreateDesignTokenFormLabels;
   };
   tokenSet: TokenSetListPanelLabels;
   inspector: TokenInspectorPanelLabels;
@@ -174,7 +175,8 @@ export function TokensEditorShell({
     if (
       activeTokenSetType === 'color' ||
       activeTokenSetType === 'spacing' ||
-      activeTokenSetType === 'radius'
+      activeTokenSetType === 'radius' ||
+      activeTokenSetType === 'motion'
     ) {
       setCreateTokenFormType(activeTokenSetType);
     }
@@ -224,7 +226,8 @@ export function TokensEditorShell({
           isNewTokenDisabled={
             activeTokenSetType !== 'color' &&
             activeTokenSetType !== 'spacing' &&
-            activeTokenSetType !== 'radius'
+            activeTokenSetType !== 'radius' &&
+            activeTokenSetType !== 'motion'
           }
           onNewTokenClick={handleNewTokenClick}
           onSearchChange={handleSearchChange}
@@ -272,6 +275,22 @@ export function TokensEditorShell({
             onCreated={(tokenPath) =>
               handleTokenCreated({
                 tokenSetType: 'radius',
+                tokenPath,
+              })
+            }
+          />
+        ) : null}
+
+        {createTokenFormType === 'motion' ? (
+          <CreateDesignTokenForm
+            locale={locale}
+            projectSlug={projectSlug}
+            type="motion"
+            labels={labels.createDesignToken.motion}
+            onCancel={handleCreateTokenCancel}
+            onCreated={(tokenPath) =>
+              handleTokenCreated({
+                tokenSetType: 'motion',
                 tokenPath,
               })
             }
