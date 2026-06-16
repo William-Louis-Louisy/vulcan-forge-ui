@@ -11,6 +11,10 @@ import {
   DesignTokenValueEditor,
   type DesignTokenValueEditorLabels,
 } from '../DesignTokenValueEditor';
+import {
+  TypographyTokenValueEditor,
+  type TypographyTokenValueEditorLabels,
+} from '../TypographyTokenValueEditor';
 import type { Locale } from '@/i18n/routing';
 import { TokenValueEditor } from './TokenValueEditor';
 import { TokenDescriptionEditor } from '../TokenDescriptionEditor';
@@ -24,6 +28,7 @@ export type TokenInspectorPanelLabels = {
   colorSwatchLabel: string;
   rename: TokenRenameFormLabels;
   genericValue: DesignTokenValueEditorLabels;
+  typographyValue: TypographyTokenValueEditorLabels;
   semanticAlias: {
     resolvedValue: string;
     unresolved: string;
@@ -118,6 +123,18 @@ export function TokenInspectorPanel({
               tokenPath={token.path}
               initialValue={token.value}
               labels={labels.genericValue}
+              onUpdated={onTokenValueUpdated}
+            />
+          ) : null}
+
+          {token.type === 'typography' ? (
+            <TypographyTokenValueEditor
+              key={`${token.path}:${token.value}`}
+              locale={locale}
+              projectSlug={projectSlug}
+              tokenPath={token.path}
+              initialValue={token.value}
+              labels={labels.typographyValue}
               onUpdated={onTokenValueUpdated}
             />
           ) : null}

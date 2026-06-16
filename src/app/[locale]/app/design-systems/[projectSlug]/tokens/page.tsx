@@ -202,6 +202,44 @@ export default async function TokensEditorPage({
         resolvedValue: t('table.semanticAlias.resolvedValue'),
         unresolved: t('table.semanticAlias.unresolved'),
       },
+      typographyValue: {
+        title: t('typographyValueEditor.title'),
+        fontFamilyLabel: t('typographyValueEditor.fontFamilyLabel'),
+        fontSizeLabel: t('typographyValueEditor.fontSizeLabel'),
+        fontWeightLabel: t('typographyValueEditor.fontWeightLabel'),
+        lineHeightLabel: t('typographyValueEditor.lineHeightLabel'),
+        letterSpacingLabel: t('typographyValueEditor.letterSpacingLabel'),
+        submit: t('typographyValueEditor.submit'),
+        success: t('typographyValueEditor.success'),
+        fieldErrors: {
+          tokenValueRequired: t(
+            'typographyValueEditor.fieldErrors.tokenValueRequired',
+          ),
+          tokenTypographyValueInvalid: t(
+            'typographyValueEditor.fieldErrors.tokenTypographyValueInvalid',
+          ),
+        },
+        formErrors: {
+          unauthorized: t('typographyValueEditor.formErrors.unauthorized'),
+          projectNotFound: t(
+            'typographyValueEditor.formErrors.projectNotFound',
+          ),
+          tokenSetNotFound: t(
+            'typographyValueEditor.formErrors.tokenSetNotFound',
+          ),
+          tokenSetMalformed: t(
+            'typographyValueEditor.formErrors.tokenSetMalformed',
+          ),
+          tokenValidationFailed: t(
+            'typographyValueEditor.formErrors.tokenValidationFailed',
+          ),
+          tokenNotFound: t('typographyValueEditor.formErrors.tokenNotFound'),
+          tokenTypeMismatch: t(
+            'typographyValueEditor.formErrors.tokenTypeMismatch',
+          ),
+          unexpected: t('typographyValueEditor.formErrors.unexpected'),
+        },
+      },
     },
     createColorToken: {
       title: t('createColorToken.title'),
@@ -373,6 +411,58 @@ export default async function TokensEditorPage({
           ),
           unexpected: t('createDesignToken.formErrors.unexpected'),
         },
+      },
+    },
+    createTypographyToken: {
+      title: t('createTypographyToken.title'),
+      description: t('createTypographyToken.description'),
+      pathLabel: t('createTypographyToken.pathLabel'),
+      pathPlaceholder: 'typography.body',
+      fontFamilyLabel: t('createTypographyToken.fontFamilyLabel'),
+      fontFamilyPlaceholder: 'Inter',
+      fontSizeLabel: t('createTypographyToken.fontSizeLabel'),
+      fontSizePlaceholder: '1rem',
+      fontWeightLabel: t('createTypographyToken.fontWeightLabel'),
+      fontWeightPlaceholder: '600',
+      lineHeightLabel: t('createTypographyToken.lineHeightLabel'),
+      lineHeightPlaceholder: '1.5',
+      letterSpacingLabel: t('createTypographyToken.letterSpacingLabel'),
+      letterSpacingPlaceholder: '-0.01em',
+      descriptionEnLabel: t('createTypographyToken.descriptionEnLabel'),
+      descriptionFrLabel: t('createTypographyToken.descriptionFrLabel'),
+      submit: t('createTypographyToken.submit'),
+      success: t('createTypographyToken.success'),
+      cancel: t('createTypographyToken.cancel'),
+      fieldErrors: {
+        tokenPathRequired: t(
+          'createTypographyToken.fieldErrors.tokenPathRequired',
+        ),
+        tokenPathInvalid: t(
+          'createTypographyToken.fieldErrors.tokenPathInvalid',
+        ),
+        tokenValueRequired: t(
+          'createTypographyToken.fieldErrors.tokenValueRequired',
+        ),
+        tokenTypographyValueInvalid: t(
+          'createTypographyToken.fieldErrors.tokenTypographyValueInvalid',
+        ),
+      },
+      formErrors: {
+        unauthorized: t('createTypographyToken.formErrors.unauthorized'),
+        projectNotFound: t('createTypographyToken.formErrors.projectNotFound'),
+        tokenSetNotFound: t(
+          'createTypographyToken.formErrors.tokenSetNotFound',
+        ),
+        tokenSetMalformed: t(
+          'createTypographyToken.formErrors.tokenSetMalformed',
+        ),
+        tokenValidationFailed: t(
+          'createTypographyToken.formErrors.tokenValidationFailed',
+        ),
+        tokenPathAlreadyExists: t(
+          'createTypographyToken.formErrors.tokenPathAlreadyExists',
+        ),
+        unexpected: t('createTypographyToken.formErrors.unexpected'),
       },
     },
   };
