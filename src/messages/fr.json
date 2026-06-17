@@ -432,6 +432,14 @@
       "variants": {
         "add": "Ajouter une variante",
         "title": "Variantes"
+      },
+      "visualTokens": {
+        "add": "Ajouter un token visuel",
+        "description": "Associez les tokens du design system aux propriétés visuelles utilisées par la preview du composant.",
+        "selectToken": "Sélectionner un token",
+        "title": "Tokens visuels",
+        "tokenPath": "Chemin du token",
+        "tokenType": "Type de token"
       }
     },
     "eyebrow": "Registre de composants",

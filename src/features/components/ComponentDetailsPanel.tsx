@@ -2,6 +2,7 @@ import type { Locale } from '@/i18n/routing';
 import { resolveLocalizedStringWithFallback } from '@/domain/i18n';
 import { ComponentContractEditor } from './ComponentContractEditor';
 import type { ComponentRegistryItem } from './components-registry.utils';
+import type { ComponentTokenOption } from './component-token-bindings.utils';
 import type { ComponentContractEditorLabels } from './ComponentContractEditor';
 import { toResolvableLocalizedString } from './components-registry-page.utils';
 import { StatusBadge } from '@/app/[locale]/app/design-systems/[projectSlug]/components/page';
@@ -12,11 +13,13 @@ export function ComponentDetails({
   locale,
   projectSlug,
   component,
+  tokenOptions,
 }: {
   t: ComponentsRegistryTranslator;
   locale: Locale;
   projectSlug: string;
   component: ComponentRegistryItem;
+  tokenOptions: ComponentTokenOption[];
 }) {
   const purpose = resolveLocalizedStringWithFallback({
     localizedString: toResolvableLocalizedString(component.contract.purpose),
@@ -46,6 +49,7 @@ export function ComponentDetails({
           projectSlug={projectSlug}
           contract={component.contract}
           labels={createComponentContractEditorLabels(t)}
+          tokenOptions={tokenOptions}
         />
       </div>
     </article>
@@ -137,6 +141,14 @@ function createComponentContractEditorLabels(
     },
     metadata: {
       title: t('editor.metadata.title'),
+    },
+    visualTokens: {
+      title: t('editor.visualTokens.title'),
+      description: t('editor.visualTokens.description'),
+      add: t('editor.visualTokens.add'),
+      tokenType: t('editor.visualTokens.tokenType'),
+      tokenPath: t('editor.visualTokens.tokenPath'),
+      selectToken: t('editor.visualTokens.selectToken'),
     },
   };
 }

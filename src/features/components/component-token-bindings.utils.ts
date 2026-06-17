@@ -21,6 +21,30 @@ export type ComponentTokenBindingResolution = {
   invalidTokenSetsCount: number;
 };
 
+export type ComponentTokenOption = {
+  type: DesignToken['type'];
+  path: string;
+  label: string;
+};
+
+export function createComponentTokenOptions(
+  rawTokenSets: Array<{
+    type: string;
+    name: string;
+    tokens: unknown;
+  }>,
+): ComponentTokenOption[] {
+  const parsedTokenSets = parseComponentTokenSets(rawTokenSets);
+
+  return parsedTokenSets.tokenSets.flatMap((tokenSet) =>
+    tokenSet.tokens.map((token) => ({
+      type: token.type,
+      path: token.path,
+      label: token.path,
+    })),
+  );
+}
+
 export function parseComponentTokenSets(
   tokenSets: Array<{
     type: string;

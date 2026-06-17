@@ -12,6 +12,7 @@ import { ComponentDetails } from '@/features/components/ComponentDetailsPanel';
 import { ComponentList } from '@/features/components/ComponentRegistryNavigation';
 import { ComponentAiContractShell } from '@/features/components/ComponentAiContractPreview';
 import { getComponentsRegistryPageData } from '@/features/components/components-registry.queries';
+import { createComponentTokenOptions } from '@/features/components/component-token-bindings.utils';
 import { filterComponentRegistryItems } from '@/features/components/components-registry-page.utils';
 import { ComponentFoundationsPreviewShell } from '@/features/components/ComponentFoundationsPreview';
 import { createComponentTokenBindingResolution } from '@/features/components/component-token-bindings.utils';
@@ -60,6 +61,8 @@ export default async function ComponentsRegistryPage({
   if (!pageData) {
     notFound();
   }
+
+  const componentTokenOptions = createComponentTokenOptions(pageData.tokenSets);
 
   const registry = createComponentRegistryItems(pageData.componentContracts);
 
@@ -119,6 +122,7 @@ export default async function ComponentsRegistryPage({
                 locale={locale}
                 component={selectedComponent}
                 projectSlug={pageData.project.slug}
+                tokenOptions={componentTokenOptions}
               />
             ) : null}
           </main>
