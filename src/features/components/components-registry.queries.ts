@@ -14,8 +14,13 @@ export type ComponentsRegistryPageData = {
     contract: unknown;
     updatedAt: Date;
   }>;
+  tokenSets: Array<{
+    id: string;
+    type: string;
+    name: string;
+    tokens: unknown;
+  }>;
 };
-
 export async function getComponentsRegistryPageData({
   userId,
   projectSlug,
@@ -50,6 +55,17 @@ export async function getComponentsRegistryPageData({
           updatedAt: true,
         },
       },
+      tokenSets: {
+        orderBy: {
+          type: 'asc',
+        },
+        select: {
+          id: true,
+          type: true,
+          name: true,
+          tokens: true,
+        },
+      },
     },
   });
 
@@ -69,6 +85,12 @@ export async function getComponentsRegistryPageData({
       name: componentContract.name,
       contract: componentContract.contract,
       updatedAt: componentContract.updatedAt,
+    })),
+    tokenSets: project.tokenSets.map((tokenSet) => ({
+      id: tokenSet.id,
+      type: tokenSet.type,
+      name: tokenSet.name,
+      tokens: tokenSet.tokens,
     })),
   };
 }

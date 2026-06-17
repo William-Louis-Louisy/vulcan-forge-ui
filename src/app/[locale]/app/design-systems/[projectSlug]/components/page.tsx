@@ -14,6 +14,7 @@ import { ComponentAiContractShell } from '@/features/components/ComponentAiContr
 import { getComponentsRegistryPageData } from '@/features/components/components-registry.queries';
 import { filterComponentRegistryItems } from '@/features/components/components-registry-page.utils';
 import { ComponentFoundationsPreviewShell } from '@/features/components/ComponentFoundationsPreview';
+import { createComponentTokenBindingResolution } from '@/features/components/component-token-bindings.utils';
 
 type ComponentsRegistryPageProps = {
   params: Promise<{
@@ -77,6 +78,13 @@ export default async function ComponentsRegistryPage({
     registry.items[0] ??
     null;
 
+  const tokenBindingResolution = selectedComponent
+    ? createComponentTokenBindingResolution({
+        bindings: selectedComponent.contract.tokenBindings,
+        rawTokenSets: pageData.tokenSets,
+      })
+    : null;
+
   return (
     <section className="flex h-screen min-h-0 flex-col overflow-hidden">
       {registry.invalidCount > 0 ? (
@@ -122,6 +130,13 @@ export default async function ComponentsRegistryPage({
                   t={t}
                   locale={locale}
                   component={selectedComponent}
+                  tokenBindingResolution={
+                    tokenBindingResolution ?? {
+                      bindings: {},
+                      missingBindings: [],
+                      invalidTokenSetsCount: 0,
+                    }
+                  }
                 />
                 <ComponentAiContractShell
                   t={t}
