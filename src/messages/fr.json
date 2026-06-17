@@ -302,7 +302,7 @@
       },
       "modelGaps": {
         "contentGuidelines": "Content guidelines non encore modélisées",
-        "tokenBindings": "Bindings tokens/composant non encore modélisés",
+        "tokenBindings": "Certains composants n’ont pas encore de tokens visuels associés",
         "usageGuidelines": "Usage guidelines non encore modélisées"
       },
       "sections": {
@@ -449,8 +449,8 @@
       "incompleteMatrixNotice": "Cette matrice utilise des valeurs de fallback parce que ce composant ne documente pas encore tous ses variants ou states.",
       "matrixPlaceholderDescription": "La vraie matrix sera ajoutée dans DS-150-09-04 à partir des variantes, états et tokens disponibles.",
       "matrixPlaceholderTitle": "Matrice visuelle à venir",
-      "noTokenBindingsNotice": "Aucun token binding n’est encore configuré pour ce composant.",
-      "resolvedTokens": "Tokens résolus",
+      "noTokenBindingsNotice": "Aucun token visuel n’est encore associé à ce composant.",
+      "resolvedTokens": "Tokens visuels appliqués",
       "title": "Visual Matrix",
       "tokenBindingWarning": "{missing, plural, =0 {Aucun binding manquant} one {# binding manquant} other {# bindings manquants}} · {invalid, plural, =0 {aucun set invalide} one {# set invalide} other {# sets invalides}}"
     },
@@ -1263,7 +1263,7 @@
         "card": "Card",
         "textField": "TextField"
       },
-      "description": "Prévisualisez l’impact des tokens résolus sur les composants principaux. Cette section se met à jour après sauvegarde des tokens.",
+      "description": "Prévisualisez l’impact des choix de tokens visuels sur les composants principaux. Cette section se met à jour après la sauvegarde des tokens.",
       "empty": "Aucun thème n’est disponible pour la preview.",
       "modeLabel": "Mode du thème de preview",
       "textField": {

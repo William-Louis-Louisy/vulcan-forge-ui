@@ -302,7 +302,7 @@
       },
       "modelGaps": {
         "contentGuidelines": "Content guidelines are not modeled yet",
-        "tokenBindings": "Component/token bindings are not modeled yet",
+        "tokenBindings": "Some components are missing visual token",
         "usageGuidelines": "Usage guidelines are not modeled yet"
       },
       "sections": {
@@ -449,8 +449,8 @@
       "incompleteMatrixNotice": "This matrix uses fallback values because this component does not document all variants or states yet.",
       "matrixPlaceholderDescription": "The real matrix will be added in DS-150-09-04 using available variants, states and tokens.",
       "matrixPlaceholderTitle": "Visual matrix coming next",
-      "noTokenBindingsNotice": "No token binding is configured for this component yet.",
-      "resolvedTokens": "Resolved tokens",
+      "noTokenBindingsNotice": "No visual token is associated with this component yet.",
+      "resolvedTokens": "Applied visual tokens",
       "title": "Visual Matrix",
       "tokenBindingWarning": "{missing, plural, =0 {No missing binding} one {# missing binding} other {# missing bindings}} · {invalid, plural, =0 {no invalid set} one {# invalid set} other {# invalid sets}}"
     },
@@ -1263,7 +1263,7 @@
         "card": "Card",
         "textField": "TextField"
       },
-      "description": "Preview how resolved tokens affect core components. This section updates after token changes are saved.",
+      "description": "Preview how visual token choices affect core components. This section updates after token changes are saved.",
       "empty": "No theme is available for preview.",
       "modeLabel": "Preview theme mode",
       "textField": {
