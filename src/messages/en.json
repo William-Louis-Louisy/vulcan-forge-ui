@@ -441,7 +441,10 @@
       "incompleteMatrixNotice": "This matrix uses fallback values because this component does not document all variants or states yet.",
       "matrixPlaceholderDescription": "The real matrix will be added in DS-150-09-04 using available variants, states and tokens.",
       "matrixPlaceholderTitle": "Visual matrix coming next",
-      "title": "Visual Matrix"
+      "noTokenBindingsNotice": "No token binding is configured for this component yet.",
+      "resolvedTokens": "Resolved tokens",
+      "title": "Visual Matrix",
+      "tokenBindingWarning": "{missing, plural, =0 {No missing binding} one {# missing binding} other {# missing bindings}} · {invalid, plural, =0 {no invalid set} one {# invalid set} other {# invalid sets}}"
     },
     "invalidContractsWarning": "{count, plural, one {# invalid component contract was ignored.} other {# invalid component contracts were ignored.}}",
     "list": {
