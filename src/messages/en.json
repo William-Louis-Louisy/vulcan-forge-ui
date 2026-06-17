@@ -432,6 +432,14 @@
       "variants": {
         "add": "Add variant",
         "title": "Variants"
+      },
+      "visualTokens": {
+        "add": "Add visual token",
+        "description": "Map design system tokens to the visual properties used by the component preview.",
+        "selectToken": "Select a token",
+        "title": "Visual tokens",
+        "tokenPath": "Token path",
+        "tokenType": "Token type"
       }
     },
     "eyebrow": "Components registry",

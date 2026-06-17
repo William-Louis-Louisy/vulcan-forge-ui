@@ -14,6 +14,7 @@ import {
   ComponentContractEditor,
   type ComponentContractEditorLabels,
 } from './ComponentContractEditor';
+import userEvent from '@testing-library/user-event';
 
 const labels: ComponentContractEditorLabels = {
   title: 'Component contract editor',
@@ -97,6 +98,14 @@ const labels: ComponentContractEditorLabels = {
     warning: 'Warning',
     critical: 'Critical',
   },
+  visualTokens: {
+    title: 'Visual tokens',
+    description: 'Map design system tokens to preview properties.',
+    add: 'Add visual token',
+    tokenType: 'Token type',
+    tokenPath: 'Token path',
+    selectToken: 'Select a token',
+  },
 };
 
 const contract: ComponentContract = {
@@ -154,6 +163,18 @@ describe('ComponentContractEditor', () => {
         projectSlug="project"
         contract={contract}
         labels={labels}
+        tokenOptions={[
+          {
+            type: 'color',
+            path: 'color.background.default',
+            label: 'color.background.default',
+          },
+          {
+            type: 'radius',
+            path: 'radius.md',
+            label: 'radius.md',
+          },
+        ]}
       />,
     );
 
@@ -176,6 +197,18 @@ describe('ComponentContractEditor', () => {
         projectSlug="project"
         contract={contract}
         labels={labels}
+        tokenOptions={[
+          {
+            type: 'color',
+            path: 'color.background.default',
+            label: 'color.background.default',
+          },
+          {
+            type: 'radius',
+            path: 'radius.md',
+            label: 'radius.md',
+          },
+        ]}
       />,
     );
 
@@ -197,6 +230,18 @@ describe('ComponentContractEditor', () => {
         projectSlug="project"
         contract={contract}
         labels={labels}
+        tokenOptions={[
+          {
+            type: 'color',
+            path: 'color.background.default',
+            label: 'color.background.default',
+          },
+          {
+            type: 'radius',
+            path: 'radius.md',
+            label: 'radius.md',
+          },
+        ]}
       />,
     );
 
@@ -211,5 +256,41 @@ describe('ComponentContractEditor', () => {
     });
 
     expect(saveButton).toBeEnabled();
+  });
+
+  it('adds a visual token binding', async () => {
+    render(
+      <ComponentContractEditor
+        locale="en"
+        projectSlug="demo"
+        contract={contract}
+        labels={labels}
+        tokenOptions={[
+          {
+            type: 'color',
+            path: 'color.background.default',
+            label: 'color.background.default',
+          },
+          {
+            type: 'radius',
+            path: 'radius.md',
+            label: 'radius.md',
+          },
+        ]}
+      />,
+    );
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Add visual token' }),
+    );
+
+    expect(screen.getByLabelText('Token type')).toBeInTheDocument();
+    expect(screen.getByLabelText('Token path')).toBeInTheDocument();
+    expect(
+      screen.getByRole('combobox', { name: 'Token path' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('option', { name: 'color.background.default' }),
+    ).toBeInTheDocument();
   });
 });

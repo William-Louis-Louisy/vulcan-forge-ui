@@ -1,5 +1,6 @@
 import {
   parseComponentTokenSets,
+  createComponentTokenOptions,
   resolveComponentTokenBindings,
   createComponentTokenBindingResolution,
 } from './component-token-bindings.utils';
@@ -144,5 +145,28 @@ describe('component-token-bindings utils', () => {
 
     expect(result.invalidTokenSetsCount).toBe(0);
     expect(result.bindings.background?.resolvedValue).toBe('#2563eb');
+  });
+
+  it('creates token options from raw token sets', () => {
+    expect(
+      createComponentTokenOptions([
+        {
+          type: colorTokenSet.type,
+          name: colorTokenSet.name,
+          tokens: colorTokenSet.tokens,
+        },
+      ]),
+    ).toEqual([
+      {
+        type: 'color',
+        path: 'color.primitive.blue.500',
+        label: 'color.primitive.blue.500',
+      },
+      {
+        type: 'color',
+        path: 'color.background.default',
+        label: 'color.background.default',
+      },
+    ]);
   });
 });

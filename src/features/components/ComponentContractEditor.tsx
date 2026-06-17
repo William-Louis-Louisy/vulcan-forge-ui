@@ -4,18 +4,21 @@ import {
   createEmptyStateDraft,
   createEmptyVariantDraft,
   createComponentContractDraft,
+  createEmptyTokenBindingDraft,
   createComponentContractFromDraft,
   createEmptyForbiddenPatternDraft,
   createEmptyAccessibilityRuleDraft,
   type LocalizedTextDraft,
   type ComponentStateDraft,
   type ComponentVariantDraft,
+  type ComponentTokenBindingDraft,
   type ComponentContractEditorDraft,
   type ComponentAccessibilityRuleDraft,
 } from './component-contract-editor.utils';
 import type { Locale } from '@/i18n/routing';
 import type { ComponentContract } from '@/domain/design-system';
 import { useActionState, useMemo, useState, type ReactNode } from 'react';
+import type { ComponentTokenOption } from './component-token-bindings.utils';
 import { updateComponentContractAction } from './update-component-contract.action';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 import { initialUpdateComponentContractActionState } from './update-component-contract.state';
@@ -101,6 +104,14 @@ export type ComponentContractEditorLabels = {
   metadata: {
     title: string;
   };
+  visualTokens: {
+    title: string;
+    description: string;
+    add: string;
+    tokenType: string;
+    tokenPath: string;
+    selectToken: string;
+  };
 };
 
 type ComponentContractEditorProps = {
@@ -108,6 +119,7 @@ type ComponentContractEditorProps = {
   projectSlug: string;
   contract: ComponentContract;
   labels: ComponentContractEditorLabels;
+  tokenOptions: ComponentTokenOption[];
 };
 
 export function ComponentContractEditor({
@@ -115,6 +127,7 @@ export function ComponentContractEditor({
   projectSlug,
   contract,
   labels,
+  tokenOptions,
 }: ComponentContractEditorProps) {
   const [state, formAction, isPending] = useActionState(
     updateComponentContractAction,
@@ -206,6 +219,13 @@ export function ComponentContractEditor({
           labels={labels}
           draft={draft}
           setDraft={setDraft}
+        />
+
+        <VisualTokensSection
+          labels={labels}
+          draft={draft}
+          setDraft={setDraft}
+          tokenOptions={tokenOptions}
         />
 
         <AccessibilitySection
@@ -901,5 +921,153 @@ function VariantsAndStatesSection({
         </EditableListSection>
       </div>
     </EditorSection>
+  );
+}
+
+function VisualTokensSection({
+  labels,
+  draft,
+  setDraft,
+  tokenOptions,
+}: {
+  labels: ComponentContractEditorLabels;
+  draft: ComponentContractEditorDraft;
+  setDraft: (draft: ComponentContractEditorDraft) => void;
+  tokenOptions: ComponentTokenOption[];
+}) {
+  return (
+    <EditableListSection
+      title={labels.visualTokens.title}
+      addLabel={labels.visualTokens.add}
+      onAdd={() =>
+        setDraft({
+          ...draft,
+          tokenBindings: [
+            ...draft.tokenBindings,
+            createEmptyTokenBindingDraft(),
+          ],
+        })
+      }
+    >
+      {draft.tokenBindings.length === 0 ? (
+        <p className="text-content-secondary text-sm leading-6">
+          {labels.visualTokens.description}
+        </p>
+      ) : null}
+
+      {draft.tokenBindings.map((binding, index) => (
+        <TokenBindingEditor
+          key={`${binding.key}-${binding.tokenPath}-${index}`}
+          labels={labels}
+          binding={binding}
+          tokenOptions={tokenOptions}
+          onChange={(nextBinding) => {
+            const nextBindings = [...draft.tokenBindings];
+            nextBindings[index] = nextBinding;
+            setDraft({ ...draft, tokenBindings: nextBindings });
+          }}
+          onRemove={() =>
+            setDraft({
+              ...draft,
+              tokenBindings: draft.tokenBindings.filter(
+                (_, itemIndex) => itemIndex !== index,
+              ),
+            })
+          }
+        />
+      ))}
+    </EditableListSection>
+  );
+}
+
+function TokenBindingEditor({
+  labels,
+  binding,
+  onChange,
+  onRemove,
+  tokenOptions,
+}: {
+  labels: ComponentContractEditorLabels;
+  binding: ComponentTokenBindingDraft;
+  tokenOptions: ComponentTokenOption[];
+  onChange: (binding: ComponentTokenBindingDraft) => void;
+  onRemove: () => void;
+}) {
+  const tokenOptionsForType = tokenOptions.filter(
+    (tokenOption) => tokenOption.type === binding.tokenType,
+  );
+
+  const hasCurrentTokenPath = tokenOptionsForType.some(
+    (tokenOption) => tokenOption.path === binding.tokenPath,
+  );
+
+  return (
+    <NestedEditorCard onRemove={onRemove} removeLabel={labels.fields.remove}>
+      <TextInput
+        label={labels.fields.key}
+        value={binding.key}
+        onChange={(key) => onChange({ ...binding, key })}
+      />
+
+      <label className="grid gap-2">
+        <span className="text-sm font-semibold">
+          {labels.visualTokens.tokenType}
+        </span>
+        <select
+          value={binding.tokenType}
+          onChange={(event) =>
+            onChange({
+              ...binding,
+              tokenType: event.target
+                .value as ComponentTokenBindingDraft['tokenType'],
+            })
+          }
+          className="border-border-subtle bg-background-subtle min-h-11 rounded-xl border px-3 text-sm"
+        >
+          <option value="color">color</option>
+          <option value="spacing">spacing</option>
+          <option value="radius">radius</option>
+          <option value="typography">typography</option>
+          <option value="motion">motion</option>
+        </select>
+      </label>
+
+      <label className="grid gap-2">
+        <span className="text-sm font-semibold">
+          {labels.visualTokens.tokenPath}
+        </span>
+
+        <select
+          value={binding.tokenPath}
+          onChange={(event) =>
+            onChange({
+              ...binding,
+              tokenPath: event.target.value,
+            })
+          }
+          className="border-border-subtle bg-background-subtle min-h-11 rounded-xl border px-3 text-sm"
+        >
+          <option value="">{labels.visualTokens.selectToken}</option>
+
+          {!hasCurrentTokenPath && binding.tokenPath ? (
+            <option value={binding.tokenPath}>{binding.tokenPath}</option>
+          ) : null}
+
+          {tokenOptionsForType.map((tokenOption) => (
+            <option key={tokenOption.path} value={tokenOption.path}>
+              {tokenOption.label}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <LocalizedTextEditor
+        labels={labels}
+        value={binding.description}
+        labelEn={labels.fields.descriptionEn}
+        labelFr={labels.fields.descriptionFr}
+        onChange={(description) => onChange({ ...binding, description })}
+      />
+    </NestedEditorCard>
   );
 }
