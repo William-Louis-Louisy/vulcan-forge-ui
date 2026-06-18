@@ -1,7 +1,7 @@
 import { auth } from '@/auth';
 import { hasLocale } from 'next-intl';
-import { Badge } from '@/components/ui';
 import { getTranslations } from 'next-intl/server';
+import { Badge, EmptyState } from '@/components/ui';
 import { notFound, redirect } from 'next/navigation';
 import { routing, type Locale } from '@/i18n/routing';
 import {
@@ -182,22 +182,5 @@ export function StatusBadge({
     <Badge variant={statusVariant[status]} size="sm">
       {t(`statuses.${status}`)}
     </Badge>
-  );
-}
-
-function EmptyState({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="border-border-default mt-10 rounded-3xl border border-dashed p-10 text-center">
-      <h2 className="text-2xl font-semibold tracking-tight">{title}</h2>
-      <p className="text-content-secondary mx-auto mt-4 max-w-xl text-sm leading-6">
-        {description}
-      </p>
-    </div>
   );
 }
