@@ -46,4 +46,31 @@ describe('Button', () => {
 
     expect(handleClick).not.toHaveBeenCalled();
   });
+  it('renders the secondary variant', () => {
+    render(<Button variant="secondary">Cancel</Button>);
+
+    expect(screen.getByRole('button', { name: 'Cancel' })).toHaveClass(
+      'bg-surface-primary',
+    );
+  });
+
+  it('renders the accent variant', () => {
+    render(<Button variant="accent">Highlight</Button>);
+
+    expect(screen.getByRole('button', { name: 'Highlight' })).toHaveClass(
+      'bg-action-accent',
+    );
+    expect(screen.getByRole('button', { name: 'Highlight' })).toHaveClass(
+      'bg-action-accent',
+      'text-action-accent-content',
+    );
+  });
+
+  it('renders the small size', () => {
+    render(<Button size="sm">Small</Button>);
+
+    expect(screen.getByRole('button', { name: 'Small' })).toHaveClass(
+      'min-h-8',
+    );
+  });
 });

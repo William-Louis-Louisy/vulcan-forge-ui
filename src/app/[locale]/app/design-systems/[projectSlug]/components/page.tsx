@@ -1,5 +1,6 @@
 import { auth } from '@/auth';
 import { hasLocale } from 'next-intl';
+import { Badge } from '@/components/ui';
 import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
 import { routing, type Locale } from '@/i18n/routing';
@@ -168,22 +169,19 @@ export function StatusBadge({
   t: ComponentsRegistryTranslator;
   status: ComponentRegistryItem['status'];
 }) {
-  const statusClassName: Record<ComponentRegistryItem['status'], string> = {
-    ready: 'border-action-success/30 bg-action-success/10 text-action-success',
-    draft: 'border-action-warning/30 bg-action-warning/10 text-action-warning',
-    deprecated:
-      'border-border-subtle bg-background-subtle text-content-tertiary',
+  const statusVariant: Record<
+    ComponentRegistryItem['status'],
+    'success' | 'warning' | 'default'
+  > = {
+    ready: 'success',
+    draft: 'warning',
+    deprecated: 'default',
   };
 
   return (
-    <span
-      className={[
-        'rounded-full border px-2.5 py-1 text-[11px] font-semibold whitespace-nowrap',
-        statusClassName[status],
-      ].join(' ')}
-    >
+    <Badge variant={statusVariant[status]} size="sm">
       {t(`statuses.${status}`)}
-    </span>
+    </Badge>
   );
 }
 

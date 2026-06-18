@@ -26,6 +26,30 @@
   --vf-color-green-500: oklch(72% 0.18 145);
   --vf-color-green-600: oklch(62% 0.17 145);
 
+  --vf-color-stone-50: #faf8f3;
+  --vf-color-stone-100: #f4f1ea;
+  --vf-color-stone-150: #ece8de;
+  --vf-color-stone-200: #e3ddd0;
+  --vf-color-stone-300: #c9c0ac;
+  --vf-color-stone-400: #9c9686;
+  --vf-color-stone-500: #6e695d;
+  --vf-color-stone-600: #4a463d;
+  --vf-color-stone-700: #2f2c26;
+  --vf-color-stone-800: #1f1d19;
+  --vf-color-stone-900: #141310;
+
+  --vf-color-clay-50: #fbefe8;
+  --vf-color-clay-100: #f5ddc5;
+  --vf-color-clay-300: #e29773;
+  --vf-color-clay-500: #c96442;
+  --vf-color-clay-600: #a94e2f;
+  --vf-color-clay-700: #823920;
+
+  --vf-color-info-500: #2563b8;
+  --vf-color-moss-500: #3f7a4f;
+  --vf-color-amber-500: #b1781f;
+  --vf-color-rust-500: #b43a2a;
+
   /*
    * Semantic tokens — light theme
    */
@@ -57,6 +81,14 @@
     transparent
   );
   --vf-border-focus: var(--vf-color-gold-500);
+
+  --vf-action-accent: var(--vf-color-clay-500);
+  --vf-action-accent-hover: var(--vf-color-clay-600);
+  --vf-action-accent-pressed: var(--vf-color-clay-700);
+  --vf-action-accent-content: var(--vf-content-inverse);
+
+  --vf-action-warning: var(--vf-color-amber-500);
+  --vf-action-info: var(--vf-color-info-500);
 
   --vf-action-primary: var(--vf-color-gold-600);
   --vf-action-primary-hover: oklch(
@@ -119,6 +151,14 @@
   );
   --vf-border-focus: var(--vf-color-gold-400);
 
+  --vf-action-accent: var(--vf-color-clay-300);
+  --vf-action-accent-hover: var(--vf-color-clay-500);
+  --vf-action-accent-pressed: var(--vf-color-clay-600);
+  --vf-action-accent-content: var(--vf-color-ink-900);
+
+  --vf-action-warning: var(--vf-color-amber-500);
+  --vf-action-info: var(--vf-color-info-500);
+
   --vf-action-primary: var(--vf-color-gold-500);
   --vf-action-primary-hover: oklch(
     from var(--vf-action-primary) calc(l + 0.08) c h
@@ -169,6 +209,14 @@
   --color-border-default: var(--vf-border-default);
   --color-border-strong: var(--vf-border-strong);
   --color-border-focus: var(--vf-border-focus);
+
+  --color-action-accent: var(--vf-action-accent);
+  --color-action-accent-hover: var(--vf-action-accent-hover);
+  --color-action-accent-pressed: var(--vf-action-accent-pressed);
+  --color-action-accent-content: var(--vf-action-accent-content);
+
+  --color-action-warning: var(--vf-action-warning);
+  --color-action-info: var(--vf-action-info);
 
   --color-action-primary: var(--vf-action-primary);
   --color-action-primary-hover: var(--vf-action-primary-hover);
