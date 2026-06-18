@@ -1,32 +1,50 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
-type ButtonVariant = 'primary' | 'secondary';
+type ButtonVariant = 'primary' | 'accent' | 'secondary' | 'ghost' | 'danger';
+type ButtonSize = 'sm' | 'md' | 'lg';
+
+const variantClassNames: Record<ButtonVariant, string> = {
+  primary:
+    'bg-action-primary text-action-primary-content hover:bg-action-primary-hover border border-action-primary',
+  accent:
+    'bg-action-accent text-action-accent-content hover:bg-action-accent-hover border border-action-accent',
+  secondary:
+    'border border-border-default bg-surface-primary text-content-primary hover:bg-surface-secondary',
+  ghost:
+    'border border-transparent bg-transparent text-content-secondary hover:bg-surface-secondary hover:text-content-primary',
+  danger:
+    'border border-action-danger bg-action-danger text-action-primary-content hover:bg-action-danger/90',
+};
+
+const sizeClassNames: Record<ButtonSize, string> = {
+  sm: 'min-h-8 rounded-lg px-3 text-xs',
+  md: 'min-h-11 rounded-xl px-4 text-sm',
+  lg: 'min-h-12 rounded-2xl px-5 text-sm',
+};
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   children: ReactNode;
   variant?: ButtonVariant;
+  size?: ButtonSize;
 };
 
 export function Button({
   children,
   variant = 'primary',
+  size = 'md',
   type = 'button',
   className,
   ...props
 }: ButtonProps) {
-  const variantClassName =
-    variant === 'primary'
-      ? 'bg-action-primary text-action-primary-content hover:bg-action-primary-hover'
-      : 'border border-border-default bg-surface-primary text-content-primary hover:bg-surface-secondary';
-
   return (
     <button
       type={type}
       className={[
-        'inline-flex min-h-11 items-center justify-center rounded-lg px-4 text-sm font-semibold transition',
+        'inline-flex items-center justify-center font-semibold transition',
         'focus-visible:outline-border-focus focus-visible:outline-2 focus-visible:outline-offset-2',
         'disabled:pointer-events-none disabled:opacity-50',
-        variantClassName,
+        variantClassNames[variant],
+        sizeClassNames[size],
         className,
       ]
         .filter(Boolean)
