@@ -302,3 +302,56 @@ DS-160-01 is done when:
 - reusable primitive targets are listed;
 - the next implementation ticket can start from a stable visual foundation;
 - no page-level redesign has been started prematurely.
+
+## 10. Current implementation audit
+
+The current app does not centralize most UI primitives under `src/components`.
+
+Only a small set of shared components currently exists there:
+
+- `src/components/ui/Button.tsx`
+- `src/components/i18n/LocaleSwitcher.tsx`
+- `src/components/layout/AppShell.tsx`
+- `src/components/layout/AppShellNavigation.tsx`
+- `src/components/layout/AuthShell.tsx`
+- `src/components/layout/PublicHeader.tsx`
+- `src/components/navigation/AppLink.tsx`
+
+Most reusable UI patterns are currently implemented directly inside feature or route files.
+
+Repeated patterns detected:
+
+- cards and panels;
+- dashed empty states;
+- warning/error/success notices;
+- status badges;
+- form inputs;
+- selects;
+- textareas;
+- segmented controls;
+- page eyebrows/success notices;
+- status badges;
+- form inputs;
+- selects;
+- textareas;
+- segmented controls;
+- page eyebrows;
+- primary and secondary buttons;
+- sidebar navigation items;
+- preview panels.
+
+Implementation consequence:
+
+DS-160-01 must not only update `src/components`.  
+It must define shared primitives and then progressively migrate duplicated patterns from `src/features` and `src/app`.
+
+Recommended extraction order:
+
+1. Button
+2. Badge / status badge
+3. Card / Panel
+4. Notice / Alert
+5. Form field primitives
+6. Tabs / segmented control
+7. Empty state
+8. Page header / eyebrow
