@@ -1,6 +1,5 @@
 import { auth } from '@/auth';
 import { hasLocale } from 'next-intl';
-import { Badge } from '@/components/ui';
 import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
 import { routing, type Locale } from '@/i18n/routing';
@@ -9,6 +8,7 @@ import {
   groupComponentRegistryItemsByCategory,
   type ComponentRegistryItem,
 } from '@/features/components/components-registry.utils';
+import { Badge, EmptyState, Notice } from '@/components/ui';
 import { ComponentDetails } from '@/features/components/ComponentDetailsPanel';
 import { ComponentList } from '@/features/components/ComponentRegistryNavigation';
 import { ComponentAiContractShell } from '@/features/components/ComponentAiContractPreview';
@@ -92,9 +92,9 @@ export default async function ComponentsRegistryPage({
   return (
     <section className="flex h-screen min-h-0 flex-col overflow-hidden">
       {registry.invalidCount > 0 ? (
-        <div className="border-action-warning/30 bg-action-warning/10 text-action-warning mt-8 shrink-0 rounded-3xl border p-5 text-sm font-semibold">
+        <Notice tone="warning" className="mt-8 shrink-0 font-semibold">
           {t('invalidContractsWarning', { count: registry.invalidCount })}
-        </div>
+        </Notice>
       ) : null}
 
       {registry.items.length > 0 ? (
@@ -182,22 +182,5 @@ export function StatusBadge({
     <Badge variant={statusVariant[status]} size="sm">
       {t(`statuses.${status}`)}
     </Badge>
-  );
-}
-
-function EmptyState({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="border-border-default mt-10 rounded-3xl border border-dashed p-10 text-center">
-      <h2 className="text-2xl font-semibold tracking-tight">{title}</h2>
-      <p className="text-content-secondary mx-auto mt-4 max-w-xl text-sm leading-6">
-        {description}
-      </p>
-    </div>
   );
 }
