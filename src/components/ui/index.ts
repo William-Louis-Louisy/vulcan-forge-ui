@@ -6,3 +6,7 @@ export { EmptyState } from './EmptyState';
 export type { EmptyStateProps } from './EmptyState';
 export { Notice } from './Notice';
 export type { NoticeProps } from './Notice';
+export { Card } from './Card';
+export type { CardProps } from './Card';
+export { Panel } from './Panel';
+export type { PanelProps } from './Panel';
