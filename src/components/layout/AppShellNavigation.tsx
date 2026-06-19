@@ -1,6 +1,12 @@
 'use client';
 
 import { Badge } from '../ui';
+import {
+  HouseIcon,
+  FolderIcon,
+  GearSixIcon,
+  WarningCircleIcon,
+} from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/navigation';
 import {
@@ -18,6 +24,12 @@ type AppShellNavigationProps = {
 
 type ProjectEditorNavItem = (typeof projectEditorNavItems)[number];
 type ProjectEditorNavItemKey = ProjectEditorNavItem['key'];
+
+const navigationIcons = {
+  dashboard: HouseIcon,
+  projects: FolderIcon,
+  settings: GearSixIcon,
+} as const;
 
 function isActivePath(currentPathname: string, itemHref: string) {
   if (itemHref === '/app') {
@@ -102,6 +114,7 @@ export function AppShellNavigation({
         const isActive = isActivePath(pathname, item.href);
         const shouldRenderProjectNav =
           item.key === 'projects' && projectSlug !== null;
+        const Icon = navigationIcons[item.key];
 
         return (
           <div key={item.key}>
@@ -111,17 +124,18 @@ export function AppShellNavigation({
                 isActive && !shouldRenderProjectNav ? 'page' : undefined
               }
               className={[
-                'flex rounded-lg px-3 py-2 text-sm font-semibold transition',
+                'flex min-h-9 items-center gap-2 rounded-md px-2.5 text-sm font-medium transition',
                 isActive
                   ? 'bg-surface-primary text-content-primary shadow-soft'
                   : 'text-content-secondary hover:bg-surface-primary hover:text-content-primary',
               ].join(' ')}
             >
-              {labels[item.key]}
+              <Icon size={15} weight={isActive ? 'fill' : 'regular'} />
+              <span>{labels[item.key]}</span>
             </Link>
 
             {shouldRenderProjectNav ? (
-              <ul className="border-border-subtle mt-2 ml-3 grid gap-1 border-l pl-3">
+              <ul className="border-border-subtle mt-2 ml-4 grid gap-1 border-l pl-3">
                 {projectEditorNavItems.map((projectItem) => {
                   const href = createProjectEditorNavHref({
                     projectSlug,
@@ -157,9 +171,9 @@ export function AppShellNavigation({
                         href={href}
                         aria-current={isProjectItemActive ? 'page' : undefined}
                         className={[
-                          'flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-xs font-semibold transition',
+                          'flex min-h-8 items-center justify-between gap-3 rounded-md px-2.5 text-xs font-medium transition',
                           isProjectItemActive
-                            ? 'bg-action-primary text-action-primary-content'
+                            ? 'bg-action-accent/10 text-action-accent'
                             : 'text-content-secondary hover:bg-surface-primary hover:text-content-primary',
                         ].join(' ')}
                       >
@@ -168,17 +182,16 @@ export function AppShellNavigation({
 
                           {'severity' in projectItem &&
                           projectItem.severity === 'warning' ? (
-                            <span
+                            <WarningCircleIcon
                               aria-label={projectT('warning')}
-                              className={[
-                                'inline-flex size-4 items-center justify-center rounded-full text-[10px] font-bold',
+                              size={14}
+                              weight={isProjectItemActive ? 'fill' : 'regular'}
+                              className={
                                 isProjectItemActive
-                                  ? 'bg-action-primary-content/20 text-action-primary-content'
-                                  : 'bg-action-warning/10 text-action-warning',
-                              ].join(' ')}
-                            >
-                              !
-                            </span>
+                                  ? 'text-action-accent'
+                                  : 'text-action-warning'
+                              }
+                            />
                           ) : null}
                         </span>
                       </Link>

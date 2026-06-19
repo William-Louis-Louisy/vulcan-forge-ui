@@ -53,7 +53,7 @@
   /*
    * Semantic tokens — light theme
    */
-  --vf-background-app: var(--vf-color-paper-50);
+  --vf-background-app: var(--vf-color-stone-50);
   --vf-background-subtle: var(--vf-color-paper-100);
   --vf-background-sunken: var(--vf-color-stone-100);
 
@@ -123,9 +123,9 @@
 .dark {
   color-scheme: dark;
 
-  --vf-background-app: var(--vf-color-ink-950);
+  --vf-background-app: var(--vf-color-stone-900);
   --vf-background-subtle: var(--vf-color-ink-900);
-  --vf-background-sunken: var(--vf-color-stone-900);
+  --vf-background-sunken: var(--vf-color-stone-800);
 
   --vf-surface-primary: var(--vf-color-ink-900);
   --vf-surface-secondary: var(--vf-color-ink-800);
