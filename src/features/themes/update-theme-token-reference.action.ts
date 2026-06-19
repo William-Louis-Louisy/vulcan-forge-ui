@@ -148,11 +148,11 @@ export async function updateThemeTokenReferenceAction(
     });
 
     revalidatePath(
-      `/${parsedPayload.data.locale}/app/design-systems/${parsedPayload.data.projectSlug}/themes`,
+      `/${parsedPayload.data.locale}/app/projects/${parsedPayload.data.projectSlug}/themes`,
     );
 
     revalidatePath(
-      `/${parsedPayload.data.locale}/app/design-systems/${parsedPayload.data.projectSlug}/exports`,
+      `/${parsedPayload.data.locale}/app/projects/${parsedPayload.data.projectSlug}/exports`,
     );
 
     return {

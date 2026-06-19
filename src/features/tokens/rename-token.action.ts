@@ -147,7 +147,7 @@ export async function renameTokenAction(
     };
   }
 
-  revalidatePath(`/${locale}/app/design-systems/${projectSlug}/tokens`);
+  revalidatePath(`/${locale}/app/projects/${projectSlug}/tokens`);
 
   return {
     status: 'success',

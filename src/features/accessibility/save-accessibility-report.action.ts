@@ -116,7 +116,7 @@ export async function saveAccessibilityReportAction(
     };
   }
 
-  revalidatePath(`/${locale}/app/design-systems/${projectSlug}/accessibility`);
+  revalidatePath(`/${locale}/app/projects/${projectSlug}/accessibility`);
 
   return {
     status: 'success',

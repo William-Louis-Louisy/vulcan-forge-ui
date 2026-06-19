@@ -6,7 +6,7 @@ import type { Locale } from '@/i18n/routing';
 import { resolveLocalizedStringWithFallback } from '@/domain/i18n';
 import type { ComponentRegistryItem } from './components-registry.utils';
 import { toResolvableLocalizedString } from './components-registry-page.utils';
-import type { ComponentsRegistryTranslator } from '@/app/[locale]/app/design-systems/[projectSlug]/components/page';
+import type { ComponentsRegistryTranslator } from '@/app/[locale]/app/projects/[projectSlug]/components/page';
 
 export function ComponentAiContractShell({
   t,

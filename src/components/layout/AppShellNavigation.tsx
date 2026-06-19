@@ -1,5 +1,6 @@
 'use client';
 
+import { Badge } from '../ui';
 import { useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/navigation';
 import {
@@ -29,7 +30,7 @@ function isActivePath(currentPathname: string, itemHref: string) {
 }
 
 function getCurrentProjectSlug(pathname: string): string | null {
-  const prefix = '/app/design-systems/';
+  const prefix = '/app/projects/';
 
   if (!pathname.startsWith(prefix)) {
     return null;
@@ -51,7 +52,7 @@ function createProjectEditorNavHref({
   projectSlug: string;
   path: string;
 }) {
-  const baseHref = `/app/design-systems/${projectSlug}`;
+  const baseHref = `/app/projects/${projectSlug}`;
 
   return path ? `${baseHref}/${path}` : baseHref;
 }
@@ -65,7 +66,7 @@ function isProjectEditorNavItemActive({
   projectSlug: string;
   path: string;
 }) {
-  const basePath = `/app/design-systems/${projectSlug}`;
+  const basePath = `/app/projects/${projectSlug}`;
   const pathWithoutQuery = path.split('?')[0] ?? '';
 
   if (!pathWithoutQuery) {
@@ -100,7 +101,7 @@ export function AppShellNavigation({
       {privateNavigationItems.map((item) => {
         const isActive = isActivePath(pathname, item.href);
         const shouldRenderProjectNav =
-          item.key === 'designSystems' && projectSlug !== null;
+          item.key === 'projects' && projectSlug !== null;
 
         return (
           <div key={item.key}>
@@ -142,9 +143,9 @@ export function AppShellNavigation({
                         >
                           <span>{projectLabels[projectItem.key]}</span>
 
-                          <span className="border-border-subtle rounded-full border px-2 py-0.5 text-[10px] font-semibold">
+                          <Badge size="sm" variant="default">
                             {projectT('soon')}
-                          </span>
+                          </Badge>
                         </span>
                       </li>
                     );

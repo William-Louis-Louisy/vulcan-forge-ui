@@ -118,7 +118,7 @@ export async function logExportAction(
     });
 
     revalidatePath(
-      `/${parsedPayload.data.pageLocale}/app/design-systems/${parsedPayload.data.projectSlug}/exports`,
+      `/${parsedPayload.data.pageLocale}/app/projects/${parsedPayload.data.projectSlug}/exports`,
     );
 
     return {

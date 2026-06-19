@@ -200,7 +200,7 @@ export async function updateTokenDescriptionAction(
     };
   }
 
-  revalidatePath(`/${locale}/app/design-systems/${projectSlug}/tokens`);
+  revalidatePath(`/${locale}/app/projects/${projectSlug}/tokens`);
 
   return {
     status: 'success',

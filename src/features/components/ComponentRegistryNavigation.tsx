@@ -3,8 +3,8 @@ import type {
   ComponentRegistryCategoryGroup,
 } from './components-registry.utils';
 import { Link } from '@/i18n/navigation';
-import { StatusBadge } from '@/app/[locale]/app/design-systems/[projectSlug]/components/page';
-import type { ComponentsRegistryTranslator } from '@/app/[locale]/app/design-systems/[projectSlug]/components/page';
+import { StatusBadge } from '@/app/[locale]/app/projects/[projectSlug]/components/page';
+import type { ComponentsRegistryTranslator } from '@/app/[locale]/app/projects/[projectSlug]/components/page';
 
 export function ComponentList({
   t,
@@ -36,10 +36,7 @@ export function ComponentList({
         </button>
       </div>
 
-      <form
-        action={`/app/design-systems/${projectSlug}/components`}
-        className="mt-4"
-      >
+      <form action={`/app/projects/${projectSlug}/components`} className="mt-4">
         <input
           type="search"
           name="q"
@@ -166,7 +163,7 @@ function createComponentNavigationHref({
     params.set('q', filterQuery);
   }
 
-  return `/app/design-systems/${projectSlug}/components?${params.toString()}`;
+  return `/app/projects/${projectSlug}/components?${params.toString()}`;
 }
 
 function formatComponentPlatforms(

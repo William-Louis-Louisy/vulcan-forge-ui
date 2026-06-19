@@ -189,5 +189,5 @@ export async function createDesignSystemAction(
     };
   }
 
-  redirect(`/${locale}/app/design-systems/${slug}/tokens?set=color`);
+  redirect(`/${locale}/app/projects/${slug}/tokens?set=color`);
 }

@@ -5,8 +5,8 @@ import type { ComponentRegistryItem } from './components-registry.utils';
 import type { ComponentTokenOption } from './component-token-bindings.utils';
 import type { ComponentContractEditorLabels } from './ComponentContractEditor';
 import { toResolvableLocalizedString } from './components-registry-page.utils';
-import { StatusBadge } from '@/app/[locale]/app/design-systems/[projectSlug]/components/page';
-import type { ComponentsRegistryTranslator } from '@/app/[locale]/app/design-systems/[projectSlug]/components/page';
+import { StatusBadge } from '@/app/[locale]/app/projects/[projectSlug]/components/page';
+import type { ComponentsRegistryTranslator } from '@/app/[locale]/app/projects/[projectSlug]/components/page';
 
 export function ComponentDetails({
   t,
