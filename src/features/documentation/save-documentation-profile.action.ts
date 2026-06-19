@@ -107,9 +107,7 @@ export async function saveDocumentationProfileAction(
       },
     });
 
-    revalidatePath(
-      `/${locale}/app/design-systems/${projectSlug}/documentation`,
-    );
+    revalidatePath(`/${locale}/app/projects/${projectSlug}/documentation`);
 
     return {
       status: 'success',

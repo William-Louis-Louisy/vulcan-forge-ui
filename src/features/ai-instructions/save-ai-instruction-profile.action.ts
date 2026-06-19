@@ -105,9 +105,7 @@ export async function saveAiInstructionProfileAction(
       },
     });
 
-    revalidatePath(
-      `/${locale}/app/design-systems/${projectSlug}/ai-instructions`,
-    );
+    revalidatePath(`/${locale}/app/projects/${projectSlug}/ai-instructions`);
 
     return {
       status: 'success',

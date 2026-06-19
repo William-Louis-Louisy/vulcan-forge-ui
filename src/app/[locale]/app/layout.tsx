@@ -49,17 +49,26 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
   return (
     <AppShell
       userEmail={session.user.email ?? t('unknownUser')}
+      workspaceName={session.user.name ?? t('unknownUser')}
+      themePreference={themePreference}
       labels={{
         navigationLabel: t('navigationLabel'),
         navigationItems: {
           dashboard: t('navigationItems.dashboard'),
-          designSystems: t('navigationItems.designSystems'),
+          projects: t('navigationItems.projects'),
           settings: t('navigationItems.settings'),
         },
-        account: t('account'),
-        signedInAs: t('signedInAs'),
+        topbar: {
+          export: t('topbar.export'),
+          workspaceLabel: t('topbar.workspaceLabel'),
+          userMenuLabel: t('topbar.userMenuLabel'),
+          account: t('topbar.account'),
+        },
+        sidebar: {
+          workspace: t('sidebar.workspace'),
+          beta: t('sidebar.beta'),
+        },
       }}
-      themePreference={themePreference}
     >
       {children}
     </AppShell>

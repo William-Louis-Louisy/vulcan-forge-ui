@@ -2,7 +2,7 @@ import type { Locale } from '@/i18n/routing';
 import { ComponentVariantPreviewGroup } from './ComponentVisualMatrix';
 import type { ComponentRegistryItem } from './components-registry.utils';
 import type { ComponentTokenBindingResolution } from './component-token-bindings.utils';
-import type { ComponentsRegistryTranslator } from '@/app/[locale]/app/design-systems/[projectSlug]/components/page';
+import type { ComponentsRegistryTranslator } from '@/app/[locale]/app/projects/[projectSlug]/components/page';
 
 export function ComponentFoundationsPreviewShell({
   t,

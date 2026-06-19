@@ -10,14 +10,14 @@ describe('save context utils', () => {
   it('creates a save context snapshot', () => {
     expect(
       createSaveContextSnapshot({
-        pathname: '/fr/app/design-systems/demo/tokens',
+        pathname: '/fr/app/projects/demo/tokens',
         contextId: 'tokens',
         scrollTop: 420,
         scrollLeft: 0,
         now: 1000,
       }),
     ).toEqual({
-      pathname: '/fr/app/design-systems/demo/tokens',
+      pathname: '/fr/app/projects/demo/tokens',
       contextId: 'tokens',
       scrollTop: 420,
       scrollLeft: 0,

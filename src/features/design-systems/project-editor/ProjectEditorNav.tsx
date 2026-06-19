@@ -51,7 +51,7 @@ export function ProjectEditorNav({
       className="border-border-subtle bg-surface-primary shadow-soft rounded-3xl border p-3"
     >
       <Link
-        href="/app/design-systems"
+        href="/app/projects"
         className="text-action-primary hover:text-action-primary/80 block px-3 py-2 text-sm font-semibold transition"
       >
         {t('backToProjects')}
@@ -152,7 +152,7 @@ function createProjectEditorNavHref({
   projectSlug: string;
   path: string;
 }) {
-  const baseHref = `/app/design-systems/${projectSlug}`;
+  const baseHref = `/app/projects/${projectSlug}`;
 
   return path ? `${baseHref}/${path}` : baseHref;
 }
@@ -166,7 +166,7 @@ function isProjectEditorNavItemActive({
   projectSlug: string;
   path: string;
 }) {
-  const basePath = `/app/design-systems/${projectSlug}`;
+  const basePath = `/app/projects/${projectSlug}`;
   const pathWithoutQuery = path.split('?')[0] ?? '';
 
   if (!pathWithoutQuery) {

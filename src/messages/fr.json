@@ -243,11 +243,21 @@
     "account": "Compte",
     "navigationItems": {
       "dashboard": "Tableau de bord",
-      "designSystems": "Design systems",
+      "projects": "Projets",
       "settings": "Paramètres"
     },
     "navigationLabel": "Navigation de l’application",
+    "sidebar": {
+      "beta": "Beta · v0.4.2",
+      "workspace": "Espace de travail"
+    },
     "signedInAs": "Connecté avec",
+    "topbar": {
+      "account": "Compte",
+      "export": "Exporter",
+      "userMenuLabel": "Ouvrir le menu utilisateur",
+      "workspaceLabel": "Changer d’espace de travail"
+    },
     "unknownUser": "utilisateur inconnu"
   },
   "Common": {

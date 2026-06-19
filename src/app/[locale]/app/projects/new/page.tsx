@@ -29,7 +29,7 @@ async function CreateDesignSystemPageContent({ locale }: { locale: Locale }) {
   return (
     <section className="mx-auto max-w-3xl">
       <AppLink
-        href="/app/design-systems"
+        href="/app/projects"
         className="text-action-primary text-sm font-semibold"
       >
         {t('backLink')}

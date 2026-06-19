@@ -137,7 +137,7 @@ export async function updateComponentContractAction(
       };
     }
 
-    revalidatePath(`/${locale}/app/design-systems/${projectSlug}/components`);
+    revalidatePath(`/${locale}/app/projects/${projectSlug}/components`);
 
     return {
       status: 'success',

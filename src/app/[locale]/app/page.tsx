@@ -46,7 +46,7 @@ export default async function AppPage() {
           </div>
 
           <AppLink
-            href="/app/design-systems/new"
+            href="/app/projects/new"
             className="bg-action-primary text-action-primary-content shadow-soft hover:bg-action-primary-hover inline-flex justify-center rounded-lg px-5 py-3 text-sm font-semibold transition"
           >
             {t('primaryCta')}
@@ -94,7 +94,7 @@ export default async function AppPage() {
             </p>
 
             <AppLink
-              href="/app/design-systems/new"
+              href="/app/projects/new"
               className="bg-action-primary text-action-primary-content hover:bg-action-primary-hover mt-6 inline-flex rounded-lg px-5 py-3 text-sm font-semibold transition"
             >
               {t('emptyState.cta')}

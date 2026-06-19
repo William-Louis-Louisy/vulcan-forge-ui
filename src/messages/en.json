@@ -243,11 +243,21 @@
     "account": "Account",
     "navigationItems": {
       "dashboard": "Dashboard",
-      "designSystems": "Design systems",
+      "projects": "Projects",
       "settings": "Settings"
     },
     "navigationLabel": "Application navigation",
+    "sidebar": {
+      "beta": "Beta · v0.4.2",
+      "workspace": "Workspace"
+    },
     "signedInAs": "Signed in as",
+    "topbar": {
+      "account": "Account",
+      "export": "Export",
+      "userMenuLabel": "Open user menu",
+      "workspaceLabel": "Switch workspace"
+    },
     "unknownUser": "unknown user"
   },
   "Common": {

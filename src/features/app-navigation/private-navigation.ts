@@ -4,8 +4,8 @@ export const privateNavigationItems = [
     href: '/app',
   },
   {
-    key: 'designSystems',
-    href: '/app/design-systems',
+    key: 'projects',
+    href: '/app/projects',
   },
   {
     key: 'settings',
