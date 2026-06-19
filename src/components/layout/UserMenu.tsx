@@ -17,14 +17,17 @@ function getInitials(email: string) {
     return 'U';
   }
 
-  const initials = namePart
-    .split(/[._-]/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join('');
+  const parts = namePart.split(/[._-]/).filter(Boolean);
 
-  return initials || 'U';
+  const initials =
+    parts.length >= 2
+      ? parts
+          .slice(0, 2)
+          .map((part) => part[0])
+          .join('')
+      : namePart.slice(0, 2);
+
+  return initials.toUpperCase() || 'U';
 }
 
 export function UserMenu({
@@ -34,6 +37,8 @@ export function UserMenu({
 }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const initials = getInitials(userEmail);
+
+  console.warn(getInitials(userEmail));
 
   return (
     <div className="relative">
