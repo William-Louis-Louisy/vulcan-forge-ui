@@ -6,6 +6,8 @@ export type DesignSystemListItem = {
   slug: string;
   description: string | null;
   updatedAt: Date;
+  platforms: string[];
+  supportedLocales: string[];
 };
 
 export type DesignSystemsPageData = {
@@ -43,6 +45,8 @@ export async function getDesignSystemsPageData(
               slug: true,
               description: true,
               updatedAt: true,
+              platforms: true,
+              supportedLocales: true,
             },
           },
         },

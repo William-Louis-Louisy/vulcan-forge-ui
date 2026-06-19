@@ -1,6 +1,7 @@
 import { auth } from '@/auth';
 import { getTranslations } from 'next-intl/server';
 import { AppLink } from '@/components/navigation/AppLink';
+import { ProjectCard } from '@/features/design-systems/ProjectCard';
 import { formatRelativeUpdatedDate } from '@/features/design-systems/design-systems.utils';
 import { getDesignSystemsPageData } from '@/features/design-systems/design-systems.queries';
 
@@ -54,45 +55,17 @@ export default async function DesignSystemsPage() {
       {hasDesignSystems ? (
         <div className="mt-8 grid gap-4 lg:grid-cols-2">
           {pageData.designSystems.map((designSystem) => (
-            <article
+            <ProjectCard
               key={designSystem.id}
-              className="border-border-subtle bg-surface-primary shadow-soft rounded-2xl border p-6"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h2 className="text-xl font-semibold tracking-tight">
-                    {designSystem.name}
-                  </h2>
-
-                  <p className="text-content-tertiary mt-2 text-sm">
-                    {t('card.slug', { slug: designSystem.slug })}
-                  </p>
-                </div>
-
-                <span className="bg-background-subtle text-content-secondary rounded-full px-3 py-1 text-xs font-semibold">
-                  {t('card.badge')}
-                </span>
-              </div>
-
-              <p className="text-content-secondary mt-4 min-h-12 text-sm leading-6">
-                {designSystem.description ?? t('card.noDescription')}
-              </p>
-
-              <div className="border-border-subtle mt-6 flex items-center justify-between gap-4 border-t pt-4">
-                <p className="text-content-tertiary text-xs">
-                  {t('card.updatedAt', {
-                    date: formatRelativeUpdatedDate(designSystem.updatedAt),
-                  })}
-                </p>
-
-                <AppLink
-                  href={`/app/projects/${designSystem.slug}/tokens`}
-                  className="text-action-primary text-sm font-semibold"
-                >
-                  {t('card.open')}
-                </AppLink>
-              </div>
-            </article>
+              project={designSystem}
+              updatedAtLabel={formatRelativeUpdatedDate(designSystem.updatedAt)}
+              labels={{
+                noDescription: t('card.noDescription'),
+                open: t('card.open'),
+                slug: (slug) => t('card.slug', { slug }),
+                updatedAt: (date) => t('card.updatedAt', { date }),
+              }}
+            />
           ))}
         </div>
       ) : (
