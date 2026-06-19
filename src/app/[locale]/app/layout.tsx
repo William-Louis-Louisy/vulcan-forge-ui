@@ -49,6 +49,7 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
   return (
     <AppShell
       userEmail={session.user.email ?? t('unknownUser')}
+      workspaceName={session.user.name ?? t('unknownUser')}
       themePreference={themePreference}
       labels={{
         navigationLabel: t('navigationLabel'),

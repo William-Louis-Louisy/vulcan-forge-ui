@@ -49,7 +49,7 @@ export function AppShell({
       />
 
       <div className="flex min-h-0 flex-1 overflow-hidden">
-        <aside className="border-border-subtle bg-background-subtle hidden w-50 shrink-0 border-r lg:block">
+        <aside className="border-border-subtle bg-background-sunken hidden w-50 shrink-0 border-r lg:block">
           <div className="flex h-full flex-col gap-2 px-2.5 py-4">
             <AppShellNavigation
               navigationLabel={labels.navigationLabel}

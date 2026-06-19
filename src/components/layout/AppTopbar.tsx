@@ -25,7 +25,7 @@ export function AppTopbar({
   leading,
 }: AppTopbarProps) {
   return (
-    <header className="border-border-subtle bg-surface-primary flex h-12 shrink-0 items-center gap-2 border-b px-4">
+    <header className="border-border-subtle bg-background-sunken flex h-12 shrink-0 items-center gap-2 border-b px-4">
       {leading}
 
       <button

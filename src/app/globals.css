@@ -55,6 +55,7 @@
    */
   --vf-background-app: var(--vf-color-paper-50);
   --vf-background-subtle: var(--vf-color-paper-100);
+  --vf-background-sunken: var(--vf-color-stone-100);
 
   --vf-surface-primary: oklch(100% 0 0);
   --vf-surface-secondary: var(--vf-color-paper-100);
@@ -124,6 +125,7 @@
 
   --vf-background-app: var(--vf-color-ink-950);
   --vf-background-subtle: var(--vf-color-ink-900);
+  --vf-background-sunken: var(--vf-color-stone-900);
 
   --vf-surface-primary: var(--vf-color-ink-900);
   --vf-surface-secondary: var(--vf-color-ink-800);
@@ -195,6 +197,7 @@
 @theme inline {
   --color-background-app: var(--vf-background-app);
   --color-background-subtle: var(--vf-background-subtle);
+  --color-background-sunken: var(--vf-background-sunken);
 
   --color-surface-primary: var(--vf-surface-primary);
   --color-surface-secondary: var(--vf-surface-secondary);
