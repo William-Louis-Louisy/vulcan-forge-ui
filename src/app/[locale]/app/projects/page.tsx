@@ -3,7 +3,6 @@ import {
   UsersIcon,
   GearSixIcon,
   CaretRightIcon,
-  MagnifyingGlassIcon,
   GlobeHemisphereWestIcon,
 } from '@phosphor-icons/react/dist/ssr';
 import { getTranslations } from 'next-intl/server';
