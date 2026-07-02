@@ -640,6 +640,17 @@
     "title": "Vos design systems"
   },
   "DesignSystemsPage": {
+    "actions": {
+      "newProject": "Nouveau projet",
+      "workspaceSettings": "Paramètres workspace"
+    },
+    "atGlance": {
+      "defaultLocale": "Locale par défaut",
+      "locales": "Locales",
+      "members": "Membres",
+      "projects": "Projets",
+      "title": "Vue d’ensemble workspace"
+    },
     "card": {
       "badge": "Projet",
       "noDescription": "Aucune description pour le moment.",
@@ -654,11 +665,29 @@
       "title": "Aucun design system pour le moment."
     },
     "eyebrow": "Design systems",
+    "members": {
+      "empty": "Aucun membre trouvé.",
+      "title": "Membres"
+    },
     "primaryCta": "Créer un design system",
+    "projects": {
+      "searchPlaceholder": "Rechercher…",
+      "title": "Projets"
+    },
+    "roles": {
+      "admin": "Admin",
+      "editor": "Éditeur",
+      "owner": "Owner",
+      "viewer": "Viewer"
+    },
     "title": "Vos design systems",
     "workspace": {
+      "defaultLocale": "Défaut",
       "empty": "Aucun workspace trouvé",
-      "label": "Workspace courant"
+      "eyebrow": "Workspace",
+      "label": "Workspace courant",
+      "locales": "Locales",
+      "memberCount": "{count, plural, =0 {Aucun membre} one {# membre} other {# membres}}"
     }
   },
   "DocumentationGeneratorPage": {
