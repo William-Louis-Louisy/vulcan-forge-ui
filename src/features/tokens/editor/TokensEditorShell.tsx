@@ -35,6 +35,10 @@ import { TokenSetTabs } from './TokenSetTabs';
 import { TokenEditorToolbar } from './TokenEditorToolbar';
 
 export type TokensEditorShellLabels = {
+  header: {
+    title: string;
+    summary: string;
+  };
   toolbar: {
     searchLabel: string;
     searchPlaceholder: string;
@@ -222,137 +226,153 @@ export function TokensEditorShell({
   }
 
   return (
-    <div className="mt-6 grid min-h-0 gap-6 xl:grid-cols-[minmax(0,1fr)_24rem]">
-      <div className="min-w-0">
-        <TokenEditorToolbar
-          searchLabel={labels.toolbar.searchLabel}
-          searchPlaceholder={labels.toolbar.searchPlaceholder}
-          newTokenLabel={labels.toolbar.newToken}
-          tokenSearchQuery={tokenSearchQuery}
-          isNewTokenDisabled={
-            activeTokenSetType !== 'color' &&
-            activeTokenSetType !== 'spacing' &&
-            activeTokenSetType !== 'radius' &&
-            activeTokenSetType !== 'motion' &&
-            activeTokenSetType !== 'typography'
-          }
-          onNewTokenClick={handleNewTokenClick}
-          onSearchChange={handleSearchChange}
-        />
+    <div className="grid h-full min-h-[calc(100vh-88px)] grid-cols-[minmax(0,1fr)_24rem] overflow-hidden">
+      <div className="flex min-w-0 flex-col overflow-hidden">
+        <header className="border-border-subtle flex flex-col gap-4 border-b px-7 pt-5 pb-4 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <h1 className="text-[26px] font-semibold tracking-[-0.015em]">
+              {labels.header.title}
+            </h1>
 
-        {createTokenFormType === 'color' ? (
-          <CreateColorTokenForm
-            locale={locale}
-            projectSlug={projectSlug}
-            primitiveColorAliasOptions={primitiveColorAliasOptions}
-            labels={labels.createColorToken}
-            onCancel={handleCreateTokenCancel}
-            onCreated={(tokenPath) =>
-              handleTokenCreated({
-                tokenSetType: 'color',
-                tokenPath,
-              })
+            <p className="text-content-secondary mt-1 text-sm">
+              {labels.header.summary}
+            </p>
+          </div>
+
+          <TokenEditorToolbar
+            searchLabel={labels.toolbar.searchLabel}
+            searchPlaceholder={labels.toolbar.searchPlaceholder}
+            newTokenLabel={labels.toolbar.newToken}
+            tokenSearchQuery={tokenSearchQuery}
+            isNewTokenDisabled={
+              activeTokenSetType !== 'color' &&
+              activeTokenSetType !== 'spacing' &&
+              activeTokenSetType !== 'radius' &&
+              activeTokenSetType !== 'motion' &&
+              activeTokenSetType !== 'typography'
             }
+            onNewTokenClick={handleNewTokenClick}
+            onSearchChange={handleSearchChange}
           />
-        ) : null}
+        </header>
 
-        {createTokenFormType === 'spacing' ? (
-          <CreateDesignTokenForm
-            locale={locale}
-            projectSlug={projectSlug}
-            type="spacing"
-            labels={labels.createDesignToken.spacing}
-            onCancel={handleCreateTokenCancel}
-            onCreated={(tokenPath) =>
-              handleTokenCreated({
-                tokenSetType: 'spacing',
-                tokenPath,
-              })
-            }
-          />
-        ) : null}
-
-        {createTokenFormType === 'radius' ? (
-          <CreateDesignTokenForm
-            locale={locale}
-            projectSlug={projectSlug}
-            type="radius"
-            labels={labels.createDesignToken.radius}
-            onCancel={handleCreateTokenCancel}
-            onCreated={(tokenPath) =>
-              handleTokenCreated({
-                tokenSetType: 'radius',
-                tokenPath,
-              })
-            }
-          />
-        ) : null}
-
-        {createTokenFormType === 'motion' ? (
-          <CreateDesignTokenForm
-            locale={locale}
-            projectSlug={projectSlug}
-            type="motion"
-            labels={labels.createDesignToken.motion}
-            onCancel={handleCreateTokenCancel}
-            onCreated={(tokenPath) =>
-              handleTokenCreated({
-                tokenSetType: 'motion',
-                tokenPath,
-              })
-            }
-          />
-        ) : null}
-
-        {createTokenFormType === 'typography' ? (
-          <CreateTypographyTokenForm
-            locale={locale}
-            projectSlug={projectSlug}
-            labels={labels.createTypographyToken}
-            onCancel={handleCreateTokenCancel}
-            onCreated={(tokenPath) =>
-              handleTokenCreated({
-                tokenSetType: 'typography',
-                tokenPath,
-              })
-            }
-          />
-        ) : null}
-
-        <TokenSetTabs
-          label={labels.tabs.label}
-          activeTokenSetType={activeTokenSetType}
-          tokenSetLabels={labels.tabs.items}
-          onTokenSetChange={handleTokenSetChange}
-        />
-
-        <div className="mt-6">
-          {activeTokenSet ? (
-            <TokenSetListPanel
-              tokenSet={activeTokenSet}
-              tokenSetLabel={labels.tabs.items[activeTokenSet.type]}
-              rows={filteredTokenRows}
-              selectedTokenPath={selectedToken?.path ?? null}
-              labels={labels.tokenSet}
-              onTokenSelect={handleTokenSelect}
+        <div className="min-h-0 flex-1 overflow-y-auto px-7 py-5">
+          {createTokenFormType === 'color' ? (
+            <CreateColorTokenForm
+              locale={locale}
+              projectSlug={projectSlug}
               primitiveColorAliasOptions={primitiveColorAliasOptions}
+              labels={labels.createColorToken}
+              onCancel={handleCreateTokenCancel}
+              onCreated={(tokenPath) =>
+                handleTokenCreated({
+                  tokenSetType: 'color',
+                  tokenPath,
+                })
+              }
             />
-          ) : (
-            <EmptyTokenSetsState />
-          )}
+          ) : null}
+
+          {createTokenFormType === 'spacing' ? (
+            <CreateDesignTokenForm
+              locale={locale}
+              projectSlug={projectSlug}
+              type="spacing"
+              labels={labels.createDesignToken.spacing}
+              onCancel={handleCreateTokenCancel}
+              onCreated={(tokenPath) =>
+                handleTokenCreated({
+                  tokenSetType: 'spacing',
+                  tokenPath,
+                })
+              }
+            />
+          ) : null}
+
+          {createTokenFormType === 'radius' ? (
+            <CreateDesignTokenForm
+              locale={locale}
+              projectSlug={projectSlug}
+              type="radius"
+              labels={labels.createDesignToken.radius}
+              onCancel={handleCreateTokenCancel}
+              onCreated={(tokenPath) =>
+                handleTokenCreated({
+                  tokenSetType: 'radius',
+                  tokenPath,
+                })
+              }
+            />
+          ) : null}
+
+          {createTokenFormType === 'motion' ? (
+            <CreateDesignTokenForm
+              locale={locale}
+              projectSlug={projectSlug}
+              type="motion"
+              labels={labels.createDesignToken.motion}
+              onCancel={handleCreateTokenCancel}
+              onCreated={(tokenPath) =>
+                handleTokenCreated({
+                  tokenSetType: 'motion',
+                  tokenPath,
+                })
+              }
+            />
+          ) : null}
+
+          {createTokenFormType === 'typography' ? (
+            <CreateTypographyTokenForm
+              locale={locale}
+              projectSlug={projectSlug}
+              labels={labels.createTypographyToken}
+              onCancel={handleCreateTokenCancel}
+              onCreated={(tokenPath) =>
+                handleTokenCreated({
+                  tokenSetType: 'typography',
+                  tokenPath,
+                })
+              }
+            />
+          ) : null}
+
+          <TokenSetTabs
+            label={labels.tabs.label}
+            activeTokenSetType={activeTokenSetType}
+            tokenSetLabels={labels.tabs.items}
+            onTokenSetChange={handleTokenSetChange}
+          />
+
+          <div className="mt-5">
+            {activeTokenSet ? (
+              <TokenSetListPanel
+                tokenSet={activeTokenSet}
+                tokenSetLabel={labels.tabs.items[activeTokenSet.type]}
+                rows={filteredTokenRows}
+                selectedTokenPath={selectedToken?.path ?? null}
+                labels={labels.tokenSet}
+                onTokenSelect={handleTokenSelect}
+                primitiveColorAliasOptions={primitiveColorAliasOptions}
+              />
+            ) : (
+              <EmptyTokenSetsState />
+            )}
+          </div>
         </div>
       </div>
 
-      <TokenInspectorPanel
-        locale={locale}
-        projectSlug={projectSlug}
-        token={selectedToken}
-        tokenSetType={activeTokenSet?.type ?? activeTokenSetType}
-        primitiveColorAliasOptions={primitiveColorAliasOptions}
-        labels={labels.inspector}
-        onTokenRenamed={handleTokenRenamed}
-        onTokenValueUpdated={handleTokenValueUpdated}
-      />
+      <div className="border-border-subtle overflow-y-auto border-l px-5 py-5">
+        <TokenInspectorPanel
+          locale={locale}
+          projectSlug={projectSlug}
+          token={selectedToken}
+          tokenSetType={activeTokenSet?.type ?? activeTokenSetType}
+          primitiveColorAliasOptions={primitiveColorAliasOptions}
+          labels={labels.inspector}
+          onTokenRenamed={handleTokenRenamed}
+          onTokenValueUpdated={handleTokenValueUpdated}
+        />
+      </div>
     </div>
   );
 }

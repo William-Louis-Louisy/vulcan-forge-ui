@@ -1466,6 +1466,10 @@
         "unexpected": "Unable to save this description. Please try again."
       }
     },
+    "editor": {
+      "summary": "{count, plural, =0 {No token} one {# token} other {# tokens}} across {setCount, plural, one {# set} other {# sets}}",
+      "title": "Tokens"
+    },
     "eyebrow": "Tokens editor",
     "genericValueEditor": {
       "fieldErrors": {

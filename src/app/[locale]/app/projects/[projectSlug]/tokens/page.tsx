@@ -15,7 +15,6 @@ import {
 import { notFound, redirect } from 'next/navigation';
 import { routing, type Locale } from '@/i18n/routing';
 import { getTokensEditorPageData } from '@/features/tokens/tokens-editor.queries';
-import { TokenEditorLimitationsNotice } from '@/features/tokens/editor/TokenEditorLimitationsNotice';
 
 type TokensEditorPageProps = {
   params: Promise<{
@@ -96,7 +95,19 @@ export default async function TokensEditorPage({
     motion: t('tabs.motion'),
   } satisfies Record<TokenSetType, string>;
 
+  const totalTokenCount = tokenSetViewModels.reduce(
+    (total, tokenSet) => total + tokenSet.rows.length,
+    0,
+  );
+
   const shellLabels: TokensEditorShellLabels = {
+    header: {
+      title: t('editor.title'),
+      summary: t('editor.summary', {
+        count: totalTokenCount,
+        setCount: tokenSetViewModels.length,
+      }),
+    },
     toolbar: {
       searchLabel: t('toolbar.searchLabel'),
       searchPlaceholder: t('toolbar.searchPlaceholder'),
@@ -468,48 +479,7 @@ export default async function TokensEditorPage({
   };
 
   return (
-    <section className="mx-auto max-w-7xl">
-      <div className="mt-8 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <p className="text-action-primary text-sm font-semibold tracking-[0.24em] uppercase">
-            {t('eyebrow')}
-          </p>
-
-          <h1 className="mt-4 text-4xl font-semibold tracking-tight">
-            {t('title', { projectName: pageData.project.name })}
-          </h1>
-
-          <p className="text-content-secondary mt-4 max-w-3xl">
-            {t('description')}
-          </p>
-        </div>
-      </div>
-
-      <TokenEditorLimitationsNotice
-        labels={{
-          eyebrow: t('limitations.eyebrow'),
-          title: t('limitations.title'),
-          description: t('limitations.description'),
-          badge: t('limitations.badge'),
-          available: {
-            title: t('limitations.available.title'),
-            items: [
-              t('limitations.available.colorEdition'),
-              t('limitations.available.descriptionEdition'),
-              t('limitations.available.themeReferences'),
-            ],
-          },
-          upcoming: {
-            title: t('limitations.upcoming.title'),
-            items: [
-              t('limitations.upcoming.renameTokens'),
-              t('limitations.upcoming.createTokens'),
-              t('limitations.upcoming.spacingRadiusTypographyMotion'),
-            ],
-          },
-        }}
-      />
-
+    <section className="h-full min-h-0">
       <TokensEditorShell
         locale={locale}
         projectSlug={pageData.project.slug}
