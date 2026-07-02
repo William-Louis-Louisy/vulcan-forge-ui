@@ -15,7 +15,7 @@ describe('Card', () => {
 
     expect(screen.getByText('Default card')).toHaveClass(
       'bg-surface-primary',
-      'shadow-soft',
+      'shadow-xs',
     );
   });
 
@@ -30,7 +30,7 @@ describe('Card', () => {
 
     expect(screen.getByText('Elevated card')).toHaveClass(
       'bg-surface-elevated',
-      'shadow-elevated',
+      'shadow-md',
     );
   });
 
