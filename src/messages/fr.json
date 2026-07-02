@@ -626,51 +626,31 @@
   },
   "DashboardPage": {
     "description": "Voici votre espace privé VulcanForgeUI. Commencez par créer votre premier projet de design system.",
-    "emptyState": {
-      "cardDescription": "Commencez par une configuration ciblée, puis ajoutez progressivement les tokens, thèmes, composants, validations et exports.",
-      "cardTitle": "Créer votre premier design system",
-      "cta": "Créer le premier projet",
-      "description": "Votre espace est prêt. La prochaine étape consiste à créer un projet de design system avec ses plateformes, locales, tokens et objectifs d’accessibilité.",
-      "title": "Aucun design system pour le moment."
-    },
     "eyebrow": "Espace de travail",
     "fallbackName": "à vous",
-    "primaryCta": "Créer un design system",
-    "quickActions": {
-      "items": {
-        "accessibility": {
-          "description": "Lancez des contrôles de contraste et gardez les notes d’accessibilité visibles.",
-          "title": "Valider l’accessibilité"
-        },
-        "create": {
-          "description": "Définissez le nom du projet, les plateformes cibles, la locale par défaut et les langues supportées.",
-          "title": "Créer un projet"
-        },
-        "tokens": {
-          "description": "Préparez les tokens primitifs et sémantiques pour un usage web et mobile.",
-          "title": "Structurer les tokens"
-        }
-      },
-      "title": "Prochaines étapes"
+    "placeholder": {
+      "description": "Lancez les tokens, thèmes et composants d’un nouveau produit en moins de 3 minutes.",
+      "title": "Nouveau design system"
     },
-    "stats": {
-      "exports": {
-        "description": "Assets d’implémentation générés.",
-        "label": "Exports"
-      },
-      "projects": {
-        "description": "Projets créés dans cet espace.",
-        "label": "Design systems"
-      },
-      "workspace": {
-        "description": "Votre espace personnel créé lors de l’inscription.",
-        "empty": "Aucun workspace",
-        "label": "Workspace"
-      }
+    "plan": {
+      "beta": "Beta plan"
     },
-    "title": "Bienvenue, {name}."
+    "primaryCta": "Nouveau design system",
+    "summary": "{projectCount, plural, =0 {Aucun projet} one {# projet} other {# projets}} · {workspaceCount, plural, =0 {aucun workspace} one {# workspace} other {# workspaces}} · {plan}",
+    "title": "Vos design systems"
   },
   "DesignSystemsPage": {
+    "actions": {
+      "newProject": "Nouveau projet",
+      "workspaceSettings": "Paramètres workspace"
+    },
+    "atGlance": {
+      "defaultLocale": "Locale par défaut",
+      "locales": "Locales",
+      "members": "Membres",
+      "projects": "Projets",
+      "title": "Vue d’ensemble workspace"
+    },
     "card": {
       "badge": "Projet",
       "noDescription": "Aucune description pour le moment.",
@@ -685,11 +665,29 @@
       "title": "Aucun design system pour le moment."
     },
     "eyebrow": "Design systems",
+    "members": {
+      "empty": "Aucun membre trouvé.",
+      "title": "Membres"
+    },
     "primaryCta": "Créer un design system",
+    "projects": {
+      "searchPlaceholder": "Rechercher…",
+      "title": "Projets"
+    },
+    "roles": {
+      "admin": "Admin",
+      "editor": "Éditeur",
+      "owner": "Owner",
+      "viewer": "Viewer"
+    },
     "title": "Vos design systems",
     "workspace": {
+      "defaultLocale": "Défaut",
       "empty": "Aucun workspace trouvé",
-      "label": "Workspace courant"
+      "eyebrow": "Workspace",
+      "label": "Workspace courant",
+      "locales": "Locales",
+      "memberCount": "{count, plural, =0 {Aucun membre} one {# membre} other {# membres}}"
     }
   },
   "DocumentationGeneratorPage": {

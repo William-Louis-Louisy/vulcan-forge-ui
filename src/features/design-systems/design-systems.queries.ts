@@ -6,6 +6,12 @@ export type DesignSystemListItem = {
   slug: string;
   description: string | null;
   updatedAt: Date;
+  platforms: string[];
+  supportedLocales: string[];
+  tokenSets: {
+    type: 'color' | 'spacing' | 'radius' | 'typography' | 'motion';
+    tokens: unknown;
+  }[];
 };
 
 export type DesignSystemsPageData = {
@@ -13,6 +19,15 @@ export type DesignSystemsPageData = {
     id: string;
     name: string;
     slug: string;
+    defaultLocale: string;
+    supportedLocales: string[];
+    memberCount: number;
+    members: {
+      id: string;
+      name: string | null;
+      email: string;
+      role: string;
+    }[];
   } | null;
   designSystems: DesignSystemListItem[];
 };
@@ -33,6 +48,32 @@ export async function getDesignSystemsPageData(
           id: true,
           name: true,
           slug: true,
+          settings: {
+            select: {
+              defaultLocale: true,
+              supportedLocales: true,
+            },
+          },
+          members: {
+            orderBy: {
+              createdAt: 'asc',
+            },
+            select: {
+              id: true,
+              role: true,
+              user: {
+                select: {
+                  name: true,
+                  email: true,
+                },
+              },
+            },
+          },
+          _count: {
+            select: {
+              members: true,
+            },
+          },
           designSystemProjects: {
             orderBy: {
               updatedAt: 'desc',
@@ -43,6 +84,17 @@ export async function getDesignSystemsPageData(
               slug: true,
               description: true,
               updatedAt: true,
+              platforms: true,
+              supportedLocales: true,
+              tokenSets: {
+                where: {
+                  type: 'color',
+                },
+                select: {
+                  type: true,
+                  tokens: true,
+                },
+              },
             },
           },
         },
@@ -62,6 +114,18 @@ export async function getDesignSystemsPageData(
       id: membership.workspace.id,
       name: membership.workspace.name,
       slug: membership.workspace.slug,
+      defaultLocale: membership.workspace.settings?.defaultLocale ?? 'en',
+      supportedLocales: membership.workspace.settings?.supportedLocales ?? [
+        'en',
+        'fr',
+      ],
+      memberCount: membership.workspace._count.members,
+      members: membership.workspace.members.map((member) => ({
+        id: member.id,
+        name: member.user.name,
+        email: member.user.email,
+        role: member.role,
+      })),
     },
     designSystems: membership.workspace.designSystemProjects,
   };
