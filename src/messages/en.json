@@ -626,49 +626,18 @@
   },
   "DashboardPage": {
     "description": "This is your private VulcanForgeUI workspace. Start by creating your first design system project.",
-    "emptyState": {
-      "cardDescription": "Start with a focused setup, then progressively add tokens, themes, components, validations and exports.",
-      "cardTitle": "Create your first design system",
-      "cta": "Create first project",
-      "description": "Your workspace is ready. The next step is to create a design system project with platforms, locales, tokens and accessibility targets.",
-      "title": "No design system yet."
-    },
     "eyebrow": "Workspace",
     "fallbackName": "there",
-    "primaryCta": "Create a design system",
-    "quickActions": {
-      "items": {
-        "accessibility": {
-          "description": "Run contrast checks and keep manual accessibility notes visible.",
-          "title": "Validate accessibility"
-        },
-        "create": {
-          "description": "Define the project name, target platforms, default locale and supported languages.",
-          "title": "Create a project"
-        },
-        "tokens": {
-          "description": "Prepare primitives and semantic tokens for web and mobile usage.",
-          "title": "Structure tokens"
-        }
-      },
-      "title": "What comes next"
+    "placeholder": {
+      "description": "Spin up tokens, themes, and components for a new product in under 3 minutes.",
+      "title": "New design system"
     },
-    "stats": {
-      "exports": {
-        "description": "Generated implementation assets.",
-        "label": "Exports"
-      },
-      "projects": {
-        "description": "Projects created in this workspace.",
-        "label": "Design systems"
-      },
-      "workspace": {
-        "description": "Your personal workspace created during signup.",
-        "empty": "No workspace",
-        "label": "Workspace"
-      }
+    "plan": {
+      "beta": "Beta plan"
     },
-    "title": "Welcome, {name}."
+    "primaryCta": "New design system",
+    "summary": "{projectCount, plural, =0 {No project} one {# project} other {# projects}} · {workspaceCount, plural, =0 {no workspace} one {# workspace} other {# workspaces}} · {plan}",
+    "title": "Your design systems"
   },
   "DesignSystemsPage": {
     "card": {

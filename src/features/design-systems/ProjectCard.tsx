@@ -41,10 +41,7 @@ export function ProjectCard({
   const swatches = createProjectCardSwatches(project.tokenSets);
 
   return (
-    <Card
-      padding="lg"
-      className="group hover:shadow-elevated min-h-55 transition hover:-translate-y-0.5"
-    >
+    <Card padding="lg" className="group min-h-55 transition hover:shadow-md">
       <div className="flex h-full flex-col">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">

@@ -4,9 +4,9 @@ type CardVariant = 'default' | 'subtle' | 'elevated';
 type CardPadding = 'sm' | 'md' | 'lg';
 
 const variantClassNames: Record<CardVariant, string> = {
-  default: 'border-border-subtle bg-surface-primary shadow-soft',
+  default: 'border-border-subtle bg-surface-primary shadow-xs',
   subtle: 'border-border-subtle bg-background-subtle',
-  elevated: 'border-border-subtle bg-surface-elevated shadow-elevated',
+  elevated: 'border-border-subtle bg-surface-elevated shadow-md',
 };
 
 const paddingClassNames: Record<CardPadding, string> = {
