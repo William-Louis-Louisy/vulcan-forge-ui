@@ -38,8 +38,6 @@ export function UserMenu({
   const [isOpen, setIsOpen] = useState(false);
   const initials = getInitials(userEmail);
 
-  console.warn(getInitials(userEmail));
-
   return (
     <div className="relative">
       <button

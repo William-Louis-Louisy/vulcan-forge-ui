@@ -8,6 +8,10 @@ export type DesignSystemListItem = {
   updatedAt: Date;
   platforms: string[];
   supportedLocales: string[];
+  tokenSets: {
+    type: 'color' | 'spacing' | 'radius' | 'typography' | 'motion';
+    tokens: unknown;
+  }[];
 };
 
 export type DesignSystemsPageData = {
@@ -47,6 +51,15 @@ export async function getDesignSystemsPageData(
               updatedAt: true,
               platforms: true,
               supportedLocales: true,
+              tokenSets: {
+                where: {
+                  type: 'color',
+                },
+                select: {
+                  type: true,
+                  tokens: true,
+                },
+              },
             },
           },
         },

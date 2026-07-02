@@ -2,6 +2,7 @@ import { Badge, Card } from '@/components/ui';
 import { AppLink } from '@/components/navigation/AppLink';
 import { ArrowUpRightIcon } from '@phosphor-icons/react/dist/ssr';
 import type { DesignSystemListItem } from './design-systems.queries';
+import { createProjectCardSwatches } from './project-card-swatches.utils';
 
 type ProjectCardLabels = {
   noDescription: string;
@@ -37,6 +38,8 @@ export function ProjectCard({
   updatedAtLabel,
   labels,
 }: ProjectCardProps) {
+  const swatches = createProjectCardSwatches(project.tokenSets);
+
   return (
     <Card
       padding="lg"
@@ -53,6 +56,16 @@ export function ProjectCard({
               {labels.slug(project.slug)}
             </p>
           </div>
+        </div>
+
+        <div className="mt-4 flex items-center gap-1.5">
+          {swatches.map((color, index) => (
+            <span
+              key={`${color}-${index}`}
+              className="border-border-subtle h-7 flex-1 rounded-md border"
+              style={{ backgroundColor: color }}
+            />
+          ))}
         </div>
 
         <p className="text-content-secondary mt-5 min-h-12 text-sm leading-6">
