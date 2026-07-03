@@ -22,7 +22,6 @@ export type TokenValueEditorLabels = {
 
 type TokenValueEditorProps = {
   row: TokenRowData;
-  labels: TokenValueEditorLabels;
   locale: Locale;
   projectSlug: string;
   primitiveColorAliasOptions: PrimitiveColorTokenAliasOption[];
@@ -30,7 +29,6 @@ type TokenValueEditorProps = {
 
 export function TokenValueEditor({
   row,
-  labels,
   locale,
   projectSlug,
   primitiveColorAliasOptions,
@@ -51,41 +49,8 @@ export function TokenValueEditor({
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center gap-2">
-        {row.isColorValue ? (
-          <span
-            role="img"
-            aria-label={`${labels.colorSwatchLabel}: ${row.value}`}
-            className="border-border-subtle size-5 rounded-full border"
-            style={{ backgroundColor: row.value }}
-          />
-        ) : null}
-
-        <span className="text-content-primary font-mono text-sm font-semibold break-all">
-          {row.value}
-        </span>
-      </div>
-
       {isEditableSemanticColorTokenRow(row) ? (
         <div>
-          {resolvedColorValue ? (
-            <div className="text-content-secondary mb-2 flex items-center gap-2 text-xs">
-              <span
-                role="img"
-                aria-label={`${labels.semanticAlias.resolvedValue}: ${resolvedColorValue}`}
-                className="border-border-subtle size-5 rounded-full border"
-                style={{ backgroundColor: resolvedColorValue }}
-              />
-              <span>
-                {labels.semanticAlias.resolvedValue}: {resolvedColorValue}
-              </span>
-            </div>
-          ) : (
-            <p className="text-action-warning mb-2 text-xs font-semibold">
-              {labels.semanticAlias.unresolved}
-            </p>
-          )}
-
           <SemanticColorTokenAliasEditor
             locale={locale}
             projectSlug={projectSlug}

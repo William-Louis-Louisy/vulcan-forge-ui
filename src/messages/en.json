@@ -1531,6 +1531,15 @@
     "openAccessibilityCenter": "Open accessibility center",
     "openComponentsRegistry": "Open components registry",
     "openThemesEditor": "Open themes editor",
+    "preview": {
+      "empty": "Select a token to preview its rendered output.",
+      "reference": "Reference",
+      "resolvedValue": "Resolved",
+      "sample": "Sample",
+      "title": "Preview",
+      "unresolved": "Unable to resolve this token.",
+      "value": "Value"
+    },
     "primitiveColorEditor": {
       "help": "Use #RGB, #RRGGBB or #RRGGBBAA.",
       "label": "Edit hex value",

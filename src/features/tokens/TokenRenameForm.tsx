@@ -69,26 +69,19 @@ export function TokenRenameForm({
     <form
       action={formAction}
       onSubmitCapture={preserveSaveContext}
-      className="mt-5"
+      className="border-border-subtle space-y-3 border-b pb-2"
     >
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="projectSlug" value={projectSlug} />
       <input type="hidden" name="tokenSetType" value={tokenSetType} />
       <input type="hidden" name="currentTokenPath" value={currentTokenPath} />
 
-      <div className="border-border-subtle bg-background-subtle rounded-2xl border p-4">
-        <div>
-          <p className="text-sm font-semibold">{labels.title}</p>
-          <p className="text-content-secondary mt-2 text-sm leading-6">
-            {labels.description}
-          </p>
-        </div>
-
+      <div>
         <label
           htmlFor={`rename-token-${currentTokenPath}`}
           className="text-content-tertiary mt-4 block text-xs font-semibold tracking-[0.16em] uppercase"
         >
-          {labels.inputLabel}
+          {labels.title}
         </label>
 
         <input
@@ -96,7 +89,7 @@ export function TokenRenameForm({
           name="nextTokenPath"
           defaultValue={state.values.nextTokenPath || currentTokenPath}
           aria-invalid={nextTokenPathErrors.length > 0}
-          className="border-border-subtle bg-surface-primary focus:border-action-primary mt-2 w-full rounded-xl border px-3 py-2 font-mono text-sm outline-none"
+          className="border-border-subtle bg-surface-primary focus:border-action-primary mt-2 w-full rounded-md border px-3 py-2 font-mono text-sm outline-none"
         />
 
         {nextTokenPathErrors.length > 0 ? (
@@ -119,13 +112,15 @@ export function TokenRenameForm({
           </p>
         ) : null}
 
-        <button
-          type="submit"
-          disabled={isPending}
-          className="bg-action-primary text-action-primary-content mt-4 rounded-xl px-4 py-2 text-sm font-semibold disabled:opacity-60"
-        >
-          {isPending ? '…' : labels.submit}
-        </button>
+        <div className="inline-flex w-full items-center justify-end">
+          <button
+            type="submit"
+            disabled={isPending}
+            className="bg-action-primary text-action-primary-content mt-2 self-end rounded-md px-4 py-2 text-sm font-semibold disabled:opacity-60"
+          >
+            {isPending ? '…' : labels.submit}
+          </button>
+        </div>
       </div>
     </form>
   );

@@ -127,9 +127,9 @@ export function TokenSetListPanel({
   });
 
   return (
-    <div className="border-border-subtle bg-surface-primary shadow-soft rounded-lg border">
+    <div className="shadow-soft flex h-full min-h-0 flex-col overflow-hidden">
       {tokenSet.type !== 'color' ? (
-        <div className="border-border-subtle bg-background-subtle mx-4 mt-4 rounded-xl border p-3">
+        <div className="border-border-subtle bg-background-subtle mx-4 mt-4 shrink-0 rounded-xl border p-3">
           <p className="text-sm font-semibold">{labels.nonColorTitle}</p>
 
           <p className="text-content-secondary mt-1.5 text-sm leading-6">
@@ -139,72 +139,78 @@ export function TokenSetListPanel({
       ) : null}
 
       {tokenGroups.length > 0 ? (
-        <div className="grid gap-4 px-4 py-4">
-          {tokenGroups.map((group) => (
-            <section key={group.id}>
-              <div className="mb-2 flex items-center gap-2">
-                <h3 className="text-content-tertiary text-[11px] font-semibold tracking-[0.18em] uppercase">
-                  {group.label}
-                </h3>
+        <div className="min-h-0 flex-1 overflow-y-auto p-4">
+          <div className="grid gap-4">
+            {tokenGroups.map((group) => (
+              <section key={group.id}>
+                <div className="mb-2 flex items-center gap-2">
+                  <h3 className="text-content-tertiary text-[11px] font-semibold tracking-[0.18em] uppercase">
+                    {group.label}
+                  </h3>
 
-                <span className="bg-background-sunken text-content-tertiary rounded-full px-2 py-0.5 text-[11px] font-semibold">
-                  {group.rows.length}
-                </span>
-              </div>
+                  <span className="bg-background-sunken text-content-tertiary rounded-full px-2 py-0.5 text-[11px] font-semibold">
+                    {group.rows.length}
+                  </span>
+                </div>
 
-              <div className="border-border-subtle bg-surface-primary overflow-hidden rounded-md border">
-                {group.rows.map((row) => {
-                  const isSelected = row.path === selectedTokenPath;
+                <div className="border-border-subtle bg-surface-primary overflow-hidden rounded-md border">
+                  {group.rows.map((row) => {
+                    const isSelected = row.path === selectedTokenPath;
 
-                  return (
-                    <button
-                      key={row.path}
-                      type="button"
-                      aria-current={isSelected ? 'page' : undefined}
-                      onClick={() => onTokenSelect(row.path)}
-                      className={[
-                        'border-border-subtle flex w-full items-center gap-3 border-b px-4 py-3 text-left last:border-b-0',
-                        isSelected
-                          ? 'bg-background-sunken'
-                          : 'hover:bg-background-subtle',
-                      ].join(' ')}
-                    >
-                      {row.type === 'color' ? (
-                        <TokenPreviewSwatch
-                          row={row}
-                          primitiveColorAliasOptions={
-                            primitiveColorAliasOptions
-                          }
-                        />
-                      ) : null}
+                    return (
+                      <button
+                        key={row.path}
+                        type="button"
+                        aria-current={isSelected ? 'page' : undefined}
+                        onClick={() => onTokenSelect(row.path)}
+                        className={[
+                          'border-border-subtle flex w-full items-center gap-3 border-b px-4 py-3 text-left last:border-b-0',
+                          isSelected
+                            ? 'bg-background-sunken'
+                            : 'hover:bg-background-subtle',
+                        ].join(' ')}
+                      >
+                        {row.type === 'color' ? (
+                          <TokenPreviewSwatch
+                            row={row}
+                            primitiveColorAliasOptions={
+                              primitiveColorAliasOptions
+                            }
+                          />
+                        ) : null}
 
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate font-mono text-[13px] font-semibold">
-                          {row.path}
-                        </p>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate font-mono text-[13px] font-semibold">
+                            {row.path}
+                          </p>
 
-                        <p className="text-content-secondary mt-0.5 truncate font-mono text-[11px]">
-                          {row.value}
-                        </p>
-                      </div>
+                          <p className="text-content-secondary mt-0.5 truncate font-mono text-[11px]">
+                            {row.value}
+                          </p>
+                        </div>
 
-                      <span className="text-content-tertiary text-base">›</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </section>
-          ))}
+                        <span className="text-content-tertiary text-base">
+                          ›
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </section>
+            ))}
+          </div>
         </div>
       ) : (
-        <div className="border-border-default mx-4 my-4 rounded-md border border-dashed p-6 text-center">
-          <h3 className="text-lg font-semibold tracking-tight">
-            {labels.emptySearchTitle}
-          </h3>
+        <div className="min-h-0 flex-1 overflow-y-auto p-4">
+          <div className="border-border-default rounded-2xl border border-dashed p-6 text-center">
+            <h3 className="text-lg font-semibold tracking-tight">
+              {labels.emptySearchTitle}
+            </h3>
 
-          <p className="text-content-secondary mx-auto mt-2 max-w-xl text-sm leading-6">
-            {labels.emptySearchDescription}
-          </p>
+            <p className="text-content-secondary mx-auto mt-2 max-w-xl text-sm leading-6">
+              {labels.emptySearchDescription}
+            </p>
+          </div>
         </div>
       )}
     </div>

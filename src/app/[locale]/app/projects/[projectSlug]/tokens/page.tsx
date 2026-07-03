@@ -476,10 +476,19 @@ export default async function TokensEditorPage({
         unexpected: t('createTypographyToken.formErrors.unexpected'),
       },
     },
+    preview: {
+      title: t('preview.title'),
+      empty: t('preview.empty'),
+      sample: t('preview.sample'),
+      value: t('preview.value'),
+      reference: t('preview.reference'),
+      resolvedValue: t('preview.resolvedValue'),
+      unresolved: t('preview.unresolved'),
+    },
   };
 
   return (
-    <section className="h-full min-h-0">
+    <section className="h-[calc(100vh-3rem)] min-h-0 overflow-hidden">
       <TokensEditorShell
         locale={locale}
         projectSlug={pageData.project.slug}

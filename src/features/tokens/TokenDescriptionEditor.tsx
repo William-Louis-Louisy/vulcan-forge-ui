@@ -69,16 +69,12 @@ export function TokenDescriptionEditor({
     <form
       action={formAction}
       onSubmitCapture={preserveSaveContext}
-      className="border-border-subtle bg-surface-primary mt-3 rounded-xl border p-3"
+      className="border-border-subtle border-b pb-2"
     >
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="projectSlug" value={projectSlug} />
       <input type="hidden" name="tokenSetType" value={tokenSetType} />
       <input type="hidden" name="tokenPath" value={tokenPath} />
-
-      <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
-        {t('descriptionEditor.title')}
-      </p>
 
       <div className="mt-3 grid gap-3">
         <div>
@@ -103,7 +99,7 @@ export function TokenDescriptionEditor({
                   ? `description-en-${tokenPath}-warning`
                   : undefined
             }
-            className="border-border-default bg-background-subtle text-content-primary mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+            className="border-border-subtle bg-surface-primary focus:border-action-primary mt-1 w-full rounded-md border px-3 py-2 font-mono text-sm outline-none"
           />
 
           {isEnglishMissing ? (
@@ -147,7 +143,7 @@ export function TokenDescriptionEditor({
                   ? `description-fr-${tokenPath}-warning`
                   : undefined
             }
-            className="border-border-default bg-background-subtle text-content-primary mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+            className="border-border-subtle bg-surface-primary focus:border-action-primary mt-1 w-full rounded-md border px-3 py-2 font-mono text-sm outline-none"
           />
 
           {isFrenchMissing ? (
@@ -170,16 +166,17 @@ export function TokenDescriptionEditor({
         </div>
       </div>
 
-      <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mt-3 flex flex-col gap-2">
         <p className="text-content-tertiary text-xs">
           {t('descriptionEditor.fallbackNotice')}
         </p>
-
-        <Button type="submit" disabled={isPending}>
-          {isPending
-            ? t('descriptionEditor.saving')
-            : t('descriptionEditor.save')}
-        </Button>
+        <div className="inline-flex items-center justify-end">
+          <Button type="submit" disabled={isPending}>
+            {isPending
+              ? t('descriptionEditor.saving')
+              : t('descriptionEditor.save')}
+          </Button>
+        </div>
       </div>
 
       {state.formError ? (

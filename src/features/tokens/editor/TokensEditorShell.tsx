@@ -6,6 +6,10 @@ import {
   type TokenSetListPanelViewModel,
 } from './TokenSetListPanel';
 import {
+  TokenPreviewPanel,
+  type TokenPreviewPanelLabels,
+} from './TokenPreviewPanel';
+import {
   TokenInspectorPanel,
   type TokenInspectorPanelLabels,
 } from './TokenInspectorPanel';
@@ -53,6 +57,7 @@ export type TokensEditorShellLabels = {
     radius: CreateDesignTokenFormLabels;
     motion: CreateDesignTokenFormLabels;
   };
+  preview: TokenPreviewPanelLabels;
   tokenSet: TokenSetListPanelLabels;
   inspector: TokenInspectorPanelLabels;
   createColorToken: CreateColorTokenFormLabels;
@@ -233,10 +238,12 @@ export function TokensEditorShell({
     });
   }
 
+  const selectedTokenSetType = activeTokenSet?.type ?? activeTokenSetType;
+
   return (
-    <div className="grid h-full min-h-[calc(100vh-88px)] grid-cols-[minmax(0,1fr)_24rem] overflow-hidden">
+    <div className="grid h-full min-h-0 grid-cols-[minmax(0,1fr)_26rem] overflow-hidden">
       <div className="flex min-w-0 flex-col overflow-hidden">
-        <header className="border-border-subtle border-b px-7 pt-5">
+        <header className="border-border-subtle shrink-0 border-b px-7 pt-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div>
               <h1 className="text-[26px] font-semibold tracking-[-0.015em]">
@@ -276,7 +283,7 @@ export function TokensEditorShell({
           </div>
         </header>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-7 py-4">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-7 py-4">
           {createTokenFormType === 'color' ? (
             <CreateColorTokenForm
               locale={locale}
@@ -356,7 +363,7 @@ export function TokensEditorShell({
             />
           ) : null}
 
-          <div className="mt-4">
+          <div className="min-h-0 flex-1 overflow-hidden">
             {activeTokenSet ? (
               <TokenSetListPanel
                 tokenSet={activeTokenSet}
@@ -373,18 +380,26 @@ export function TokensEditorShell({
         </div>
       </div>
 
-      <div className="border-border-subtle overflow-y-auto border-l px-5 py-5">
+      <aside className="border-border-subtle grid min-h-0 grid-rows-[auto_minmax(0,1fr)] overflow-hidden border-l">
+        <TokenPreviewPanel
+          token={selectedToken}
+          tokenSetType={selectedTokenSetType}
+          tokenSetLabel={labels.tabs.items[selectedTokenSetType]}
+          primitiveColorAliasOptions={primitiveColorAliasOptions}
+          labels={labels.preview}
+        />
+
         <TokenInspectorPanel
           locale={locale}
           projectSlug={projectSlug}
           token={selectedToken}
-          tokenSetType={activeTokenSet?.type ?? activeTokenSetType}
+          tokenSetType={selectedTokenSetType}
           primitiveColorAliasOptions={primitiveColorAliasOptions}
           labels={labels.inspector}
           onTokenRenamed={handleTokenRenamed}
           onTokenValueUpdated={handleTokenValueUpdated}
         />
-      </div>
+      </aside>
     </div>
   );
 }

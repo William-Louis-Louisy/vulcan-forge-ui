@@ -1,6 +1,5 @@
 'use client';
 
-import { Button } from '@/components/ui';
 import { useTranslations } from 'next-intl';
 import type { Locale } from '@/i18n/routing';
 import {
@@ -67,7 +66,7 @@ export function SemanticColorTokenAliasEditor({
     <form
       action={formAction}
       onSubmitCapture={preserveSaveContext}
-      className="border-border-subtle bg-surface-primary mt-3 rounded-xl border p-3"
+      className="border-border-subtle space-y-3 border-b pb-2"
     >
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="projectSlug" value={projectSlug} />
@@ -80,7 +79,7 @@ export function SemanticColorTokenAliasEditor({
         {t('semanticAliasEditor.label')}
       </label>
 
-      <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
         <select
           id={`semantic-alias-${tokenPath}`}
           name="referencePath"
@@ -93,7 +92,7 @@ export function SemanticColorTokenAliasEditor({
               ? `semantic-alias-${tokenPath}-error`
               : `semantic-alias-${tokenPath}-help`
           }
-          className="border-border-default bg-background-subtle text-content-primary min-h-10 min-w-0 flex-1 rounded-lg border px-3 text-sm"
+          className="border-border-subtle bg-surface-primary focus:border-action-primary mt-2 w-full flex-1 rounded-md border py-2 pr-5 pl-3 font-mono text-sm outline-none"
         >
           {primitiveOptions.map((option) => (
             <option key={option.path} value={option.path}>
@@ -102,11 +101,15 @@ export function SemanticColorTokenAliasEditor({
           ))}
         </select>
 
-        <Button type="submit" disabled={isPending || !hasPrimitiveOptions}>
+        <button
+          type="submit"
+          disabled={isPending || !hasPrimitiveOptions}
+          className="bg-action-primary text-action-primary-content mt-2 self-end rounded-md px-4 py-2 text-sm font-semibold disabled:opacity-60"
+        >
           {isPending
             ? t('semanticAliasEditor.saving')
             : t('semanticAliasEditor.save')}
-        </Button>
+        </button>
       </div>
 
       <div className="mt-2 flex items-center gap-2">

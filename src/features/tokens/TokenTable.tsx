@@ -290,7 +290,6 @@ export function TokenRow({
       <td className="border-border-subtle border-b px-4 py-4">
         <TokenValueEditor
           row={row}
-          labels={labels}
           locale={locale}
           projectSlug={projectSlug}
           primitiveColorAliasOptions={primitiveColorAliasOptions}
@@ -368,7 +367,6 @@ function MobileTokenRowCard({
           <dd className="mt-1">
             <TokenValueEditor
               row={row}
-              labels={labels}
               locale={locale}
               projectSlug={projectSlug}
               primitiveColorAliasOptions={primitiveColorAliasOptions}

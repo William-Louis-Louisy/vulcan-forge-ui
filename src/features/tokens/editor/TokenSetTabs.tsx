@@ -30,7 +30,7 @@ export function TokenSetTabs({
               className={[
                 'inline-flex min-h-8 items-center gap-1.5 px-3 pb-1.5 text-center text-sm font-semibold transition',
                 isActive
-                  ? 'border-content-primary border-b'
+                  ? 'border-content-primary border-b-2'
                   : 'text-content-secondary hover:bg-background-sunken hover:text-content-primary',
               ].join(' ')}
             >
