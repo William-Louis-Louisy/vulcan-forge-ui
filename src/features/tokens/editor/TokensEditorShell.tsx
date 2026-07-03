@@ -92,6 +92,14 @@ export function TokensEditorShell({
   const [createTokenFormType, setCreateTokenFormType] =
     useState<TokenSetType | null>(null);
 
+  const tokenSetCounts = useMemo(
+    () =>
+      Object.fromEntries(
+        tokenSets.map((tokenSet) => [tokenSet.type, tokenSet.rows.length]),
+      ) as Record<TokenSetType, number>,
+    [tokenSets],
+  );
+
   const activeTokenSet =
     tokenSets.find((tokenSet) => tokenSet.type === activeTokenSetType) ??
     tokenSets[0] ??
@@ -228,35 +236,47 @@ export function TokensEditorShell({
   return (
     <div className="grid h-full min-h-[calc(100vh-88px)] grid-cols-[minmax(0,1fr)_24rem] overflow-hidden">
       <div className="flex min-w-0 flex-col overflow-hidden">
-        <header className="border-border-subtle flex flex-col gap-4 border-b px-7 pt-5 pb-4 lg:flex-row lg:items-start lg:justify-between">
-          <div>
-            <h1 className="text-[26px] font-semibold tracking-[-0.015em]">
-              {labels.header.title}
-            </h1>
+        <header className="border-border-subtle border-b px-7 pt-5">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div>
+              <h1 className="text-[26px] font-semibold tracking-[-0.015em]">
+                {labels.header.title}
+              </h1>
 
-            <p className="text-content-secondary mt-1 text-sm">
-              {labels.header.summary}
-            </p>
+              <p className="text-content-secondary mt-1 text-sm">
+                {labels.header.summary}
+              </p>
+            </div>
+
+            <TokenEditorToolbar
+              searchLabel={labels.toolbar.searchLabel}
+              searchPlaceholder={labels.toolbar.searchPlaceholder}
+              newTokenLabel={labels.toolbar.newToken}
+              tokenSearchQuery={tokenSearchQuery}
+              isNewTokenDisabled={
+                activeTokenSetType !== 'color' &&
+                activeTokenSetType !== 'spacing' &&
+                activeTokenSetType !== 'radius' &&
+                activeTokenSetType !== 'motion' &&
+                activeTokenSetType !== 'typography'
+              }
+              onNewTokenClick={handleNewTokenClick}
+              onSearchChange={handleSearchChange}
+            />
           </div>
 
-          <TokenEditorToolbar
-            searchLabel={labels.toolbar.searchLabel}
-            searchPlaceholder={labels.toolbar.searchPlaceholder}
-            newTokenLabel={labels.toolbar.newToken}
-            tokenSearchQuery={tokenSearchQuery}
-            isNewTokenDisabled={
-              activeTokenSetType !== 'color' &&
-              activeTokenSetType !== 'spacing' &&
-              activeTokenSetType !== 'radius' &&
-              activeTokenSetType !== 'motion' &&
-              activeTokenSetType !== 'typography'
-            }
-            onNewTokenClick={handleNewTokenClick}
-            onSearchChange={handleSearchChange}
-          />
+          <div className="mt-4">
+            <TokenSetTabs
+              label={labels.tabs.label}
+              activeTokenSetType={activeTokenSetType}
+              tokenSetLabels={labels.tabs.items}
+              tokenSetCounts={tokenSetCounts}
+              onTokenSetChange={handleTokenSetChange}
+            />
+          </div>
         </header>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-7 py-5">
+        <div className="min-h-0 flex-1 overflow-y-auto px-7 py-4">
           {createTokenFormType === 'color' ? (
             <CreateColorTokenForm
               locale={locale}
@@ -336,18 +356,10 @@ export function TokensEditorShell({
             />
           ) : null}
 
-          <TokenSetTabs
-            label={labels.tabs.label}
-            activeTokenSetType={activeTokenSetType}
-            tokenSetLabels={labels.tabs.items}
-            onTokenSetChange={handleTokenSetChange}
-          />
-
-          <div className="mt-5">
+          <div className="mt-4">
             {activeTokenSet ? (
               <TokenSetListPanel
                 tokenSet={activeTokenSet}
-                tokenSetLabel={labels.tabs.items[activeTokenSet.type]}
                 rows={filteredTokenRows}
                 selectedTokenPath={selectedToken?.path ?? null}
                 labels={labels.tokenSet}

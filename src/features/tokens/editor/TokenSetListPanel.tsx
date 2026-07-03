@@ -31,7 +31,6 @@ export type TokenSetListPanelViewModel = {
 
 type TokenSetListPanelProps = {
   tokenSet: TokenSetListPanelViewModel;
-  tokenSetLabel: string;
   rows: TokenRowData[];
   selectedTokenPath: string | null;
   labels: TokenSetListPanelLabels;
@@ -102,7 +101,6 @@ function createTokenGroups({
 
 export function TokenSetListPanel({
   tokenSet,
-  tokenSetLabel,
   rows,
   selectedTokenPath,
   labels,
@@ -129,48 +127,32 @@ export function TokenSetListPanel({
   });
 
   return (
-    <div className="border-border-subtle bg-surface-primary shadow-soft rounded-3xl border p-5 lg:p-6">
-      <div className="border-border-subtle flex flex-col gap-3 border-b pb-5 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-content-tertiary text-sm font-semibold tracking-[0.18em] uppercase">
-            {tokenSetLabel}
-          </p>
-
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-            {tokenSet.name}
-          </h2>
-        </div>
-
-        <p className="text-content-secondary text-sm">
-          {tokenSet.tokenCountLabel}
-        </p>
-      </div>
-
+    <div className="border-border-subtle bg-surface-primary shadow-soft rounded-lg border">
       {tokenSet.type !== 'color' ? (
-        <div className="border-border-subtle bg-background-subtle mt-5 rounded-2xl border p-4">
+        <div className="border-border-subtle bg-background-subtle mx-4 mt-4 rounded-xl border p-3">
           <p className="text-sm font-semibold">{labels.nonColorTitle}</p>
 
-          <p className="text-content-secondary mt-2 text-sm leading-6">
+          <p className="text-content-secondary mt-1.5 text-sm leading-6">
             {labels.nonColorDescriptions[tokenSet.type]}
           </p>
         </div>
       ) : null}
 
       {tokenGroups.length > 0 ? (
-        <div className="mt-6 grid gap-5">
+        <div className="grid gap-4 px-4 py-4">
           {tokenGroups.map((group) => (
             <section key={group.id}>
-              <div className="mb-3 flex items-center gap-2">
-                <h3 className="text-content-tertiary text-sm font-semibold tracking-[0.18em] uppercase">
+              <div className="mb-2 flex items-center gap-2">
+                <h3 className="text-content-tertiary text-[11px] font-semibold tracking-[0.18em] uppercase">
                   {group.label}
                 </h3>
 
-                <span className="text-content-tertiary bg-content-tertiary/20 rounded-full px-2 py-0.5 text-xs">
+                <span className="bg-background-sunken text-content-tertiary rounded-full px-2 py-0.5 text-[11px] font-semibold">
                   {group.rows.length}
                 </span>
               </div>
 
-              <div className="border-border-subtle bg-surface-primary overflow-hidden rounded-3xl border">
+              <div className="border-border-subtle bg-surface-primary overflow-hidden rounded-md border">
                 {group.rows.map((row) => {
                   const isSelected = row.path === selectedTokenPath;
 
@@ -181,9 +163,9 @@ export function TokenSetListPanel({
                       aria-current={isSelected ? 'page' : undefined}
                       onClick={() => onTokenSelect(row.path)}
                       className={[
-                        'border-border-subtle flex w-full items-center gap-4 border-b px-5 py-4 text-left last:border-b-0',
+                        'border-border-subtle flex w-full items-center gap-3 border-b px-4 py-3 text-left last:border-b-0',
                         isSelected
-                          ? 'bg-action-primary/10'
+                          ? 'bg-background-sunken'
                           : 'hover:bg-background-subtle',
                       ].join(' ')}
                     >
@@ -197,16 +179,16 @@ export function TokenSetListPanel({
                       ) : null}
 
                       <div className="min-w-0 flex-1">
-                        <p className="truncate font-mono text-sm font-semibold">
+                        <p className="truncate font-mono text-[13px] font-semibold">
                           {row.path}
                         </p>
 
-                        <p className="text-content-secondary mt-1 truncate font-mono text-xs">
+                        <p className="text-content-secondary mt-0.5 truncate font-mono text-[11px]">
                           {row.value}
                         </p>
                       </div>
 
-                      <span className="text-content-tertiary text-xl">›</span>
+                      <span className="text-content-tertiary text-base">›</span>
                     </button>
                   );
                 })}
@@ -215,12 +197,12 @@ export function TokenSetListPanel({
           ))}
         </div>
       ) : (
-        <div className="border-border-default mt-6 rounded-2xl border border-dashed p-8 text-center">
-          <h3 className="text-xl font-semibold tracking-tight">
+        <div className="border-border-default mx-4 my-4 rounded-md border border-dashed p-6 text-center">
+          <h3 className="text-lg font-semibold tracking-tight">
             {labels.emptySearchTitle}
           </h3>
 
-          <p className="text-content-secondary mx-auto mt-3 max-w-xl text-sm leading-6">
+          <p className="text-content-secondary mx-auto mt-2 max-w-xl text-sm leading-6">
             {labels.emptySearchDescription}
           </p>
         </div>
@@ -247,7 +229,7 @@ export function TokenPreviewSwatch({
 
   return (
     <span
-      className="border-border-subtle size-8 shrink-0 rounded-lg border"
+      className="border-border-subtle size-7 shrink-0 rounded-full border"
       style={{
         backgroundColor: resolvedColorValue ?? undefined,
       }}
