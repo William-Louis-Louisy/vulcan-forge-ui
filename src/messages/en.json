@@ -1467,7 +1467,7 @@
       }
     },
     "editor": {
-      "summary": "{count, plural, =0 {No token} one {# token} other {# tokens}} across {setCount, plural, one {# set} other {# sets}}",
+      "summary": "{count, plural, =0 {No token} one {# token} other {# tokens}} · {missingEnglishDescriptionCount, plural, =0 {No missing EN description} one {# missing EN description} other {# missing EN descriptions}}",
       "title": "Tokens"
     },
     "eyebrow": "Tokens editor",
@@ -1618,6 +1618,7 @@
       "invalidTokensDescription": "This token set contains malformed data and cannot be displayed safely.",
       "invalidTokensTitle": "Invalid token data",
       "loading": "Loading tokens...",
+      "missingEnglishDescription": "Missing EN",
       "retry": "Retry"
     },
     "table": {

@@ -141,9 +141,10 @@ export function TokenInspectorPanel({
           </p>
 
           <TokenDescriptionEditor
+            key={`${token.type}:${token.path}`}
             locale={locale}
             projectSlug={projectSlug}
-            tokenSetType={token.type}
+            tokenSetType={tokenSetType}
             tokenPath={token.path}
             initialDescriptionEn={token.description?.en ?? ''}
             initialDescriptionFr={token.description?.fr ?? ''}

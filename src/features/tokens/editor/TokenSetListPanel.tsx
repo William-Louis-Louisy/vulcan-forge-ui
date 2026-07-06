@@ -14,6 +14,7 @@ export type TokenSetListPanelLabels = {
   nonColorDescriptions: Record<TokenSetType, string>;
   emptySearchTitle: string;
   emptySearchDescription: string;
+  missingEnglishDescription: string;
   groups: {
     primitive: string;
     semantic: string;
@@ -173,16 +174,6 @@ export function TokenSetListPanel({
 
   return (
     <div className="shadow-soft flex h-full min-h-0 flex-col overflow-hidden">
-      {tokenSet.type !== 'color' ? (
-        <div className="border-border-subtle bg-background-subtle mx-4 mt-4 shrink-0 rounded-xl border p-3">
-          <p className="text-sm font-semibold">{labels.nonColorTitle}</p>
-
-          <p className="text-content-secondary mt-1.5 text-sm leading-6">
-            {labels.nonColorDescriptions[tokenSet.type]}
-          </p>
-        </div>
-      ) : null}
-
       {tokenGroups.length > 0 ? (
         <div className="min-h-0 flex-1 overflow-y-auto p-4">
           <div className="grid gap-4">
@@ -233,6 +224,12 @@ export function TokenSetListPanel({
                             {row.value}
                           </p>
                         </div>
+
+                        {!row.description?.en?.trim() ? (
+                          <span className="text-action-warning bg-action-warning/10 rounded-full px-2 py-0.5 text-[11px] font-semibold">
+                            {labels.missingEnglishDescription}
+                          </span>
+                        ) : null}
 
                         <span className="text-content-tertiary text-base">
                           ›
