@@ -39,8 +39,9 @@ type TokenSetListPanelProps = {
 };
 
 type TokenGroup = {
-  id: 'primitive' | 'semantic' | 'other';
+  id: string;
   label: string;
+  order: number;
   rows: TokenRowData[];
 };
 
@@ -60,43 +61,87 @@ function createTokenGroups({
   rows: TokenRowData[];
   labels: TokenSetListPanelLabels['groups'];
 }): TokenGroup[] {
-  const primitiveRows: TokenRowData[] = [];
-  const semanticRows: TokenRowData[] = [];
-  const otherRows: TokenRowData[] = [];
+  const groupMap = new Map<string, TokenGroup>();
 
   for (const row of rows) {
-    if (isEditablePrimitiveColorTokenRow(row)) {
-      primitiveRows.push(row);
+    const groupInfo = getTokenGroupInfo({
+      row,
+      labels,
+    });
+
+    const existingGroup = groupMap.get(groupInfo.id);
+
+    if (existingGroup) {
+      existingGroup.rows.push(row);
       continue;
     }
 
-    if (isEditableSemanticColorTokenRow(row)) {
-      semanticRows.push(row);
-      continue;
-    }
-
-    otherRows.push(row);
+    groupMap.set(groupInfo.id, {
+      ...groupInfo,
+      rows: [row],
+    });
   }
 
-  const groups: TokenGroup[] = [
-    {
-      id: 'primitive',
-      label: labels.primitive,
-      rows: sortTokenRowsNaturally(primitiveRows),
-    },
-    {
-      id: 'semantic',
-      label: labels.semantic,
-      rows: sortTokenRowsNaturally(semanticRows),
-    },
-    {
-      id: 'other',
-      label: labels.other,
-      rows: sortTokenRowsNaturally(otherRows),
-    },
-  ];
+  return Array.from(groupMap.values())
+    .map((group) => ({
+      ...group,
+      rows: sortTokenRowsNaturally(group.rows),
+    }))
+    .sort(
+      (firstGroup, secondGroup) =>
+        firstGroup.order - secondGroup.order ||
+        firstGroup.label.localeCompare(secondGroup.label, undefined, {
+          numeric: true,
+          sensitivity: 'base',
+        }),
+    )
+    .filter((group) => group.rows.length > 0);
+}
 
-  return groups.filter((group) => group.rows.length > 0);
+function getTokenGroupInfo({
+  row,
+  labels,
+}: {
+  row: TokenRowData;
+  labels: TokenSetListPanelLabels['groups'];
+}) {
+  if (isEditablePrimitiveColorTokenRow(row)) {
+    const namespace = getColorTokenNamespace(row.path);
+
+    return {
+      id: `primitive:${namespace}`,
+      label: `${labels.primitive} · ${formatTokenNamespaceLabel(namespace)}`,
+      order: 0,
+    };
+  }
+
+  if (isEditableSemanticColorTokenRow(row)) {
+    const namespace = getColorTokenNamespace(row.path);
+
+    return {
+      id: `semantic:${namespace}`,
+      label: `${labels.semantic} · ${formatTokenNamespaceLabel(namespace)}`,
+      order: 1,
+    };
+  }
+
+  return {
+    id: 'other',
+    label: labels.other,
+    order: 2,
+  };
+}
+
+function getColorTokenNamespace(path: string) {
+  return path.split('.')[2] ?? 'base';
+}
+
+function formatTokenNamespaceLabel(namespace: string) {
+  return namespace
+    .split(/[-_]/)
+    .filter(Boolean)
+    .map((segment) => segment[0]?.toUpperCase() + segment.slice(1))
+    .join(' ');
 }
 
 export function TokenSetListPanel({
