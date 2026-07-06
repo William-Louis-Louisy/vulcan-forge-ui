@@ -58,7 +58,7 @@ export function TokenInspectorPanel({
 }: TokenInspectorPanelProps) {
   if (!token) {
     return (
-      <aside className="border-border-subtle bg-surface-primary shadow-soft flex h-full min-h-0 flex-col overflow-hidden rounded-lg border">
+      <aside className="border-border-subtle bg-surface-primary shadow-soft flex min-h-0 flex-col overflow-hidden rounded-lg border xl:h-full">
         <header className="border-border-subtle shrink-0 border-b px-4 py-3">
           <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
             {labels.eyebrow}
@@ -75,7 +75,7 @@ export function TokenInspectorPanel({
   }
 
   return (
-    <aside className="border-border-subtle flex h-full min-h-0 flex-col overflow-hidden">
+    <aside className="border-border-subtle flex min-h-0 flex-col xl:h-full xl:overflow-hidden">
       <header className="border-border-subtle shrink-0 border-b px-4 py-3">
         <p className="text-content-tertiary text-[11px] font-semibold tracking-[0.16em] uppercase">
           {labels.eyebrow}
@@ -88,7 +88,7 @@ export function TokenInspectorPanel({
         <p className="text-content-secondary mt-1 text-xs">{tokenSetType}</p>
       </header>
 
-      <div className="min-h-0 flex-1 overflow-y-auto p-4">
+      <div className="p-4 xl:min-h-0 xl:flex-1 xl:overflow-y-auto">
         <div>
           <TokenValueEditor
             key={`${tokenSetType}:${token.path}:${token.value}:${token.reference ?? ''}`}

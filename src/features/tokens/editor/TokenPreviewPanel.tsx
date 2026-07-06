@@ -34,7 +34,7 @@ export function TokenPreviewPanel({
 }: TokenPreviewPanelProps) {
   if (!token) {
     return (
-      <aside className="border-border-subtle bg-surface-primary shadow-soft flex h-[19rem] min-h-0 flex-col overflow-hidden rounded-lg border">
+      <aside className="border-border-subtle flex h-76 min-h-0 flex-col overflow-hidden border-b">
         <header className="border-border-subtle shrink-0 border-b px-4 py-3">
           <p className="text-content-tertiary text-[11px] font-semibold tracking-[0.16em] uppercase">
             {labels.title}

@@ -241,9 +241,9 @@ export function TokensEditorShell({
   const selectedTokenSetType = activeTokenSet?.type ?? activeTokenSetType;
 
   return (
-    <div className="grid h-full min-h-0 grid-cols-[minmax(0,1fr)_26rem] overflow-hidden">
-      <div className="flex min-w-0 flex-col overflow-hidden">
-        <header className="border-border-subtle shrink-0 border-b px-7 pt-5">
+    <div className="flex h-full min-h-0 flex-col overflow-y-auto xl:grid xl:grid-cols-[minmax(0,1fr)_26rem] xl:overflow-hidden">
+      <div className="flex min-w-0 flex-col xl:min-h-0 xl:overflow-hidden">
+        <header className="border-border-subtle shrink-0 border-b px-4 pt-4 md:px-6 xl:px-7 xl:pt-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div>
               <h1 className="text-[26px] font-semibold tracking-[-0.015em]">
@@ -283,7 +283,7 @@ export function TokensEditorShell({
           </div>
         </header>
 
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-7 py-4">
+        <div className="flex min-h-0 flex-col py-4 md:px-6 xl:flex-1 xl:overflow-hidden xl:px-7">
           {createTokenFormType === 'color' ? (
             <CreateColorTokenForm
               locale={locale}
@@ -363,7 +363,7 @@ export function TokensEditorShell({
             />
           ) : null}
 
-          <div className="min-h-0 flex-1 overflow-hidden">
+          <div className="min-h-0 xl:flex-1 xl:overflow-hidden">
             {activeTokenSet ? (
               <TokenSetListPanel
                 tokenSet={activeTokenSet}
@@ -380,7 +380,7 @@ export function TokensEditorShell({
         </div>
       </div>
 
-      <aside className="border-border-subtle grid min-h-0 grid-rows-[auto_minmax(0,1fr)] overflow-hidden border-l">
+      <aside className="border-border-subtle grid min-h-0 border-t xl:grid-rows-[auto_minmax(0,1fr)] xl:overflow-hidden xl:border-t-0 xl:border-l">
         <TokenPreviewPanel
           token={selectedToken}
           tokenSetType={selectedTokenSetType}

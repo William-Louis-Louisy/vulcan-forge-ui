@@ -173,9 +173,9 @@ export function TokenSetListPanel({
   });
 
   return (
-    <div className="shadow-soft flex h-full min-h-0 flex-col overflow-hidden">
+    <div className="shadow-soft flex min-h-0 flex-col xl:h-full xl:overflow-hidden">
       {tokenGroups.length > 0 ? (
-        <div className="min-h-0 flex-1 overflow-y-auto p-4">
+        <div className="p-4 xl:min-h-0 xl:flex-1 xl:overflow-y-auto">
           <div className="grid gap-4">
             {tokenGroups.map((group) => (
               <section key={group.id}>
@@ -243,7 +243,7 @@ export function TokenSetListPanel({
           </div>
         </div>
       ) : (
-        <div className="min-h-0 flex-1 overflow-y-auto p-4">
+        <div className="p-4 xl:min-h-0 xl:flex-1 xl:overflow-y-auto">
           <div className="border-border-default rounded-2xl border border-dashed p-6 text-center">
             <h3 className="text-lg font-semibold tracking-tight">
               {labels.emptySearchTitle}
