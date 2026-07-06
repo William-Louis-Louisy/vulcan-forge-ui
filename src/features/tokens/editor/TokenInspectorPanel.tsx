@@ -91,6 +91,7 @@ export function TokenInspectorPanel({
       <div className="min-h-0 flex-1 overflow-y-auto p-4">
         <div>
           <TokenValueEditor
+            key={`${tokenSetType}:${token.path}:${token.value}:${token.reference ?? ''}`}
             row={token}
             locale={locale}
             projectSlug={projectSlug}

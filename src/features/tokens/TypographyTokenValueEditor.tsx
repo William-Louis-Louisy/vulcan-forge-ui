@@ -80,14 +80,6 @@ export function TypographyTokenValueEditor({
     onUpdated(tokenPath);
   }, [onUpdated, state.status, tokenPath]);
 
-  useEffect(() => {
-    if (state.status !== 'success') {
-      return;
-    }
-
-    onUpdated(tokenPath);
-  }, [onUpdated, state.status, tokenPath]);
-
   const serializedTypographyValue = useMemo(() => {
     if (!hasTypographyFieldValue(typographyValues)) {
       return '';
