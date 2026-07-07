@@ -8,6 +8,7 @@ import {
 } from './update-semantic-color-token.state';
 import { useActionState, useMemo, useState } from 'react';
 import type { PrimitiveColorTokenAliasOption } from './tokens-editor.utils';
+import { useProjectSaveStatus } from '@/components/layout/ProjectTopbarBreadcrumb';
 import { updateSemanticColorTokenAction } from './update-semantic-color-token.action';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 
@@ -60,6 +61,17 @@ export function SemanticColorTokenAliasEditor({
 
   const preserveSaveContext = usePreserveSaveContext(
     `semantic-color-token:${projectSlug}:${tokenPath}`,
+  );
+
+  useProjectSaveStatus(
+    `semantic-color:${projectSlug}:${tokenPath}`,
+    isPending
+      ? 'saving'
+      : state.formError
+        ? 'error'
+        : hasUnsavedChanges
+          ? 'unsaved'
+          : 'saved',
   );
 
   return (

@@ -9,6 +9,7 @@ import { useTranslations } from 'next-intl';
 import type { Locale } from '@/i18n/routing';
 import { useActionState, useState } from 'react';
 import { updateTokenDescriptionAction } from './update-token-description.action';
+import { useProjectSaveStatus } from '@/components/layout/ProjectTopbarBreadcrumb';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 
 type TokenDescriptionEditorProps = {
@@ -63,6 +64,17 @@ export function TokenDescriptionEditor({
 
   const preserveSaveContext = usePreserveSaveContext(
     `token-description:${projectSlug}:${tokenPath}`,
+  );
+
+  useProjectSaveStatus(
+    `token-description:${projectSlug}:${tokenPath}`,
+    isPending
+      ? 'saving'
+      : state.formError
+        ? 'error'
+        : hasUnsavedChanges
+          ? 'unsaved'
+          : 'saved',
   );
 
   return (

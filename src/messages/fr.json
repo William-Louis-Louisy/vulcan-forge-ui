@@ -254,7 +254,14 @@
     "signedInAs": "Connecté avec",
     "topbar": {
       "account": "Compte",
+      "breadcrumbLabel": "Fil d’Ariane du projet",
       "export": "Exporter",
+      "saveStatus": {
+        "error": "Échec de l’enregistrement",
+        "saved": "Toutes les modifications sont enregistrées",
+        "saving": "Enregistrement…",
+        "unsaved": "Modifications non enregistrées"
+      },
       "userMenuLabel": "Ouvrir le menu utilisateur",
       "workspaceLabel": "Changer d’espace de travail"
     },

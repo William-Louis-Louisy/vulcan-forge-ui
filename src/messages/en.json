@@ -254,7 +254,14 @@
     "signedInAs": "Signed in as",
     "topbar": {
       "account": "Account",
+      "breadcrumbLabel": "Project breadcrumb",
       "export": "Export",
+      "saveStatus": {
+        "error": "Save failed",
+        "saved": "All changes saved",
+        "saving": "Saving…",
+        "unsaved": "Unsaved changes"
+      },
       "userMenuLabel": "Open user menu",
       "workspaceLabel": "Switch workspace"
     },

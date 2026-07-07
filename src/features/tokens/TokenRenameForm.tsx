@@ -3,6 +3,7 @@ import { useActionState, useEffect } from 'react';
 import { renameTokenAction } from './rename-token.action';
 import type { TokenSetType } from './tokens-editor.utils';
 import { initialRenameTokenActionState } from './rename-token.state';
+import { useProjectSaveStatus } from '@/components/layout/ProjectTopbarBreadcrumb';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 
 export type TokenRenameFormLabels = {
@@ -63,6 +64,19 @@ export function TokenRenameForm({
 
   const preserveSaveContext = usePreserveSaveContext(
     `rename-token:${projectSlug}:${currentTokenPath}`,
+  );
+
+  const hasUnsavedChanges = state.values.nextTokenPath !== currentTokenPath;
+
+  useProjectSaveStatus(
+    `rename-token:${projectSlug}:${currentTokenPath}`,
+    isPending
+      ? 'saving'
+      : state.formError
+        ? 'error'
+        : hasUnsavedChanges
+          ? 'unsaved'
+          : 'saved',
   );
 
   return (

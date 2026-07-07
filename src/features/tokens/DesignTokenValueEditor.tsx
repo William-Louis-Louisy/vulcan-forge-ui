@@ -5,6 +5,7 @@ import type { TokenSetType } from './tokens-editor.utils';
 import { updateDesignTokenValueAction } from './update-design-token-value.action';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 import { initialUpdateDesignTokenValueActionState } from './update-design-token-value.state';
+import { useProjectSaveStatus } from '@/components/layout/ProjectTopbarBreadcrumb';
 
 export type DesignTokenValueEditorLabels = {
   label: string;
@@ -52,8 +53,21 @@ export function DesignTokenValueEditor({
     },
   );
 
+  const hasUnsavedChanges = state.values.value !== initialValue;
+
   const preserveSaveContext = usePreserveSaveContext(
     `design-token-value:${projectSlug}:${tokenSetType}:${tokenPath}`,
+  );
+
+  useProjectSaveStatus(
+    `design-token-value:${projectSlug}:${tokenPath}`,
+    isPending
+      ? 'saving'
+      : state.formError
+        ? 'error'
+        : hasUnsavedChanges
+          ? 'unsaved'
+          : 'saved',
   );
 
   useEffect(() => {

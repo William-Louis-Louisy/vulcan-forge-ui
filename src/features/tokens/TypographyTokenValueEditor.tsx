@@ -7,6 +7,7 @@ import { Button } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
 import { useActionState, useEffect, useMemo, useState } from 'react';
 import { updateDesignTokenValueAction } from './update-design-token-value.action';
+import { useProjectSaveStatus } from '@/components/layout/ProjectTopbarBreadcrumb';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 import { initialUpdateDesignTokenValueActionState } from './update-design-token-value.state';
 
@@ -99,6 +100,19 @@ export function TypographyTokenValueEditor({
       [field]: value,
     }));
   }
+
+  const hasUnsavedChanges = serializedTypographyValue !== state.values.value;
+
+  useProjectSaveStatus(
+    `typography-token:${projectSlug}:${tokenPath}`,
+    isPending
+      ? 'saving'
+      : state.formError
+        ? 'error'
+        : hasUnsavedChanges
+          ? 'unsaved'
+          : 'saved',
+  );
 
   return (
     <form

@@ -9,6 +9,7 @@ import {
 } from './update-primitive-color-token.state';
 import { useActionState, useState } from 'react';
 import { primitiveColorHexPattern } from './primitive-color-token.schema';
+import { useProjectSaveStatus } from '@/components/layout/ProjectTopbarBreadcrumb';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 import { updatePrimitiveColorTokenAction } from './update-primitive-color-token.action';
 
@@ -51,6 +52,17 @@ export function PrimitiveColorTokenEditor({
 
   const preserveSaveContext = usePreserveSaveContext(
     `primitive-color-token:${projectSlug}:${tokenPath}`,
+  );
+
+  useProjectSaveStatus(
+    `primitive-color:${projectSlug}:${tokenPath}`,
+    isPending
+      ? 'saving'
+      : state.formError
+        ? 'error'
+        : hasUnsavedChanges
+          ? 'unsaved'
+          : 'saved',
   );
 
   return (
