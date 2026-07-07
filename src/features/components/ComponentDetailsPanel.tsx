@@ -1,6 +1,6 @@
 import type { Locale } from '@/i18n/routing';
 import { resolveLocalizedStringWithFallback } from '@/domain/i18n';
-import { ComponentContractEditor } from './ComponentContractEditor';
+import { ComponentContractEditorBoundary } from './ComponentContractEditorBoundary';
 import type { ComponentRegistryItem } from './components-registry.utils';
 import type { ComponentTokenOption } from './component-token-bindings.utils';
 import type { ComponentContractEditorLabels } from './ComponentContractEditor';
@@ -44,7 +44,8 @@ export function ComponentDetails({
         <StatusBadge t={t} status={component.status} />
       </div>
       <div className="mt-8">
-        <ComponentContractEditor
+        <ComponentContractEditorBoundary
+          componentId={component.id}
           locale={locale}
           projectSlug={projectSlug}
           contract={component.contract}

@@ -2,6 +2,10 @@ import { describe, expect, it } from 'vitest';
 import type { ComponentContract } from '@/domain/design-system';
 import { fireEvent, render, screen } from '@testing-library/react';
 
+vi.mock('@/components/layout/ProjectTopbarBreadcrumb', () => ({
+  useProjectSaveStatus: vi.fn(),
+}));
+
 vi.mock('./update-component-contract.action', () => ({
   updateComponentContractAction: vi.fn(async () => ({
     status: 'idle',
