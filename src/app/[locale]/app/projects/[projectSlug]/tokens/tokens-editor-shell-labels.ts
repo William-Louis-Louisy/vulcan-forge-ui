@@ -1,5 +1,4 @@
 import type { getTranslations } from 'next-intl/server';
-
 import type { TokenSetType } from '@/features/tokens/tokens-editor.utils';
 import type { TokensEditorShellLabels } from '@/features/tokens/editor/TokensEditorShell';
 

@@ -105,6 +105,19 @@ export function TokensEditorShell({
     [tokenSets],
   );
 
+  const missingEnglishDescriptionCount = useMemo(
+    () =>
+      tokenSets.reduce(
+        (count, tokenSet) =>
+          count +
+          tokenSet.rows.filter((row) => !row.description?.en?.trim()).length,
+        0,
+      ),
+    [tokenSets],
+  );
+
+  const hasMissingEnglishDescriptions = missingEnglishDescriptionCount > 0;
+
   const activeTokenSet =
     tokenSets.find((tokenSet) => tokenSet.type === activeTokenSetType) ??
     tokenSets[0] ??
@@ -250,7 +263,14 @@ export function TokensEditorShell({
                 {labels.header.title}
               </h1>
 
-              <p className="text-content-secondary mt-1 text-sm">
+              <p
+                className={[
+                  'mt-1 text-sm',
+                  hasMissingEnglishDescriptions
+                    ? 'text-action-warning'
+                    : 'text-content-tertiary',
+                ].join(' ')}
+              >
                 {labels.header.summary}
               </p>
             </div>
