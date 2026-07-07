@@ -1,4 +1,6 @@
 import {
+  isEditableSemanticColorTokenRow,
+  getResolvedColorValueForReference,
   getPrimitiveColorTokenAliasOptions,
   type TokenRowData,
   type PrimitiveColorTokenAliasOption,
@@ -194,6 +196,66 @@ function TokenErrors({
   );
 }
 
+function TokenValueSummary({
+  row,
+  labels,
+  primitiveColorAliasOptions,
+}: {
+  row: TokenRowData;
+  labels: TokenTableLabels;
+  primitiveColorAliasOptions: PrimitiveColorTokenAliasOption[];
+}) {
+  const reference =
+    row.reference ?? (typeof row.rawValue === 'string' ? row.rawValue : '');
+
+  const resolvedColorValue = reference
+    ? getResolvedColorValueForReference({
+        reference,
+        primitiveOptions: primitiveColorAliasOptions,
+      })
+    : null;
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center gap-2">
+        {row.isColorValue ? (
+          <span
+            role="img"
+            aria-label={`${labels.colorSwatchLabel}: ${row.value}`}
+            className="border-border-subtle size-5 shrink-0 rounded-full border"
+            style={{ backgroundColor: row.value }}
+          />
+        ) : null}
+
+        <span className="text-content-primary font-mono text-sm font-semibold break-all">
+          {row.value}
+        </span>
+      </div>
+
+      {isEditableSemanticColorTokenRow(row) ? (
+        resolvedColorValue ? (
+          <div className="text-content-secondary flex items-center gap-2 text-xs">
+            <span
+              role="img"
+              aria-label={`${labels.semanticAlias.resolvedValue}: ${resolvedColorValue}`}
+              className="border-border-subtle size-5 shrink-0 rounded-full border"
+              style={{ backgroundColor: resolvedColorValue }}
+            />
+
+            <span>
+              {labels.semanticAlias.resolvedValue}: {resolvedColorValue}
+            </span>
+          </div>
+        ) : (
+          <p className="text-action-warning text-xs font-semibold">
+            {labels.semanticAlias.unresolved}
+          </p>
+        )
+      ) : null}
+    </div>
+  );
+}
+
 export function TokenTable({
   locale,
   projectSlug,
@@ -288,13 +350,20 @@ export function TokenRow({
       </td>
 
       <td className="border-border-subtle border-b px-4 py-4">
-        <TokenValueEditor
-          row={row}
-          labels={labels}
-          locale={locale}
-          projectSlug={projectSlug}
-          primitiveColorAliasOptions={primitiveColorAliasOptions}
-        />
+        <div className="space-y-3">
+          <TokenValueSummary
+            row={row}
+            labels={labels}
+            primitiveColorAliasOptions={primitiveColorAliasOptions}
+          />
+
+          <TokenValueEditor
+            row={row}
+            locale={locale}
+            projectSlug={projectSlug}
+            primitiveColorAliasOptions={primitiveColorAliasOptions}
+          />
+        </div>
       </td>
 
       <td className="border-border-subtle border-b px-4 py-4">
@@ -366,13 +435,20 @@ function MobileTokenRowCard({
             {labels.columns.value}
           </dt>
           <dd className="mt-1">
-            <TokenValueEditor
-              row={row}
-              labels={labels}
-              locale={locale}
-              projectSlug={projectSlug}
-              primitiveColorAliasOptions={primitiveColorAliasOptions}
-            />
+            <div className="space-y-3">
+              <TokenValueSummary
+                row={row}
+                labels={labels}
+                primitiveColorAliasOptions={primitiveColorAliasOptions}
+              />
+
+              <TokenValueEditor
+                row={row}
+                locale={locale}
+                projectSlug={projectSlug}
+                primitiveColorAliasOptions={primitiveColorAliasOptions}
+              />
+            </div>
           </dd>
         </div>
 

@@ -29,14 +29,14 @@ export function TokenEditorToolbar({
         value={tokenSearchQuery}
         onChange={(event) => onSearchChange(event.target.value)}
         placeholder={searchPlaceholder}
-        className="border-border-subtle bg-surface-primary focus:border-action-primary w-full rounded-2xl border px-4 py-3 text-sm outline-none"
+        className="border-border-subtle bg-surface-primary text-content-primary placeholder:text-content-tertiary focus:border-action-primary h-8 w-64 rounded-md border px-3 text-sm outline-none"
       />
 
       <button
         type="button"
         disabled={isNewTokenDisabled}
         onClick={onNewTokenClick}
-        className="border-border-subtle bg-surface-primary text-content-primary rounded-2xl border px-4 py-3 text-sm font-semibold opacity-70"
+        className="bg-action-primary text-action-primary-content hover:bg-action-primary-hover inline-flex h-8 items-center justify-center rounded-md px-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60"
       >
         + {newTokenLabel}
       </button>

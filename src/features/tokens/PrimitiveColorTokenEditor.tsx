@@ -9,6 +9,7 @@ import {
 } from './update-primitive-color-token.state';
 import { useActionState, useState } from 'react';
 import { primitiveColorHexPattern } from './primitive-color-token.schema';
+import { useProjectSaveStatus } from '@/components/layout/ProjectTopbarBreadcrumb';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 import { updatePrimitiveColorTokenAction } from './update-primitive-color-token.action';
 
@@ -53,11 +54,22 @@ export function PrimitiveColorTokenEditor({
     `primitive-color-token:${projectSlug}:${tokenPath}`,
   );
 
+  useProjectSaveStatus(
+    `primitive-color:${projectSlug}:${tokenPath}`,
+    isPending
+      ? 'saving'
+      : state.formError
+        ? 'error'
+        : hasUnsavedChanges
+          ? 'unsaved'
+          : 'saved',
+  );
+
   return (
     <form
       action={formAction}
       onSubmitCapture={preserveSaveContext}
-      className="border-border-subtle bg-surface-primary mt-3 rounded-xl border p-3"
+      className="border-border-subtle space-y-3 border-b pb-2"
     >
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="projectSlug" value={projectSlug} />
@@ -77,7 +89,7 @@ export function PrimitiveColorTokenEditor({
               value: isPreviewValid ? draftValue : initialValue,
             })}
             role="img"
-            className="border-border-subtle size-6 shrink-0 rounded-full border"
+            className="border-border-subtle size-12 shrink-0 rounded-md border"
             style={{
               backgroundColor: isPreviewValid ? draftValue : initialValue,
             }}
@@ -94,7 +106,7 @@ export function PrimitiveColorTokenEditor({
                 ? `primitive-color-${tokenPath}-error`
                 : `primitive-color-${tokenPath}-help`
             }
-            className="border-border-default bg-background-subtle text-content-primary min-h-10 w-full rounded-lg border px-3 font-mono text-sm"
+            className="border-border-subtle bg-surface-primary focus:border-action-primary w-full rounded-md border px-3 py-2 font-mono text-sm outline-none"
           />
         </div>
 

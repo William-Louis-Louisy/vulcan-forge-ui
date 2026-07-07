@@ -58,58 +58,44 @@ export function TokenInspectorPanel({
 }: TokenInspectorPanelProps) {
   if (!token) {
     return (
-      <aside className="border-border-subtle bg-surface-primary h-fit rounded-3xl border p-5">
-        <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
-          {labels.eyebrow}
-        </p>
+      <aside className="border-border-subtle bg-surface-primary shadow-soft flex min-h-0 flex-col overflow-hidden rounded-lg border xl:h-full">
+        <header className="border-border-subtle shrink-0 border-b px-4 py-3">
+          <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
+            {labels.eyebrow}
+          </p>
+        </header>
 
-        <p className="text-content-secondary mt-4 text-sm leading-6">
-          {labels.empty}
-        </p>
+        <div className="min-h-0 flex-1 overflow-y-auto p-4">
+          <p className="text-content-secondary text-sm leading-6">
+            {labels.empty}
+          </p>
+        </div>
       </aside>
     );
   }
 
   return (
-    <aside className="border-border-subtle bg-surface-primary h-fit rounded-3xl border p-5">
-      <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
-        {labels.eyebrow}
-      </p>
-
-      <h2 className="wrap-break-words mt-3 font-mono text-lg font-semibold">
-        {token.path}
-      </h2>
-
-      <p className="text-content-secondary mt-1 text-sm">{tokenSetType}</p>
-
-      <TokenRenameForm
-        key={token.path}
-        locale={locale}
-        projectSlug={projectSlug}
-        tokenSetType={tokenSetType}
-        currentTokenPath={token.path}
-        labels={labels.rename}
-        {...(onTokenRenamed ? { onRenamed: onTokenRenamed } : {})}
-      />
-
-      <div className="border-border-subtle bg-background-subtle mt-5 rounded-2xl border p-4">
-        <p className="text-content-tertiary text-xs font-semibold tracking-[0.16em] uppercase">
-          {labels.value}
+    <aside className="border-border-subtle flex min-h-0 flex-col xl:h-full xl:overflow-hidden">
+      <header className="border-border-subtle shrink-0 border-b px-4 py-3">
+        <p className="text-content-tertiary text-[11px] font-semibold tracking-[0.16em] uppercase">
+          {labels.eyebrow}
         </p>
 
-        <div className="mt-3">
+        <h2 className="wrap-break-words mt-2 font-mono text-base font-semibold">
+          {token.path}
+        </h2>
+
+        <p className="text-content-secondary mt-1 text-xs">{tokenSetType}</p>
+      </header>
+
+      <div className="p-4 xl:min-h-0 xl:flex-1 xl:overflow-y-auto">
+        <div>
           <TokenValueEditor
+            key={`${tokenSetType}:${token.path}:${token.value}:${token.reference ?? ''}`}
             row={token}
             locale={locale}
             projectSlug={projectSlug}
             primitiveColorAliasOptions={primitiveColorAliasOptions}
-            labels={{
-              colorSwatchLabel: labels.colorSwatchLabel,
-              semanticAlias: {
-                resolvedValue: labels.semanticAlias.resolvedValue,
-                unresolved: labels.semanticAlias.unresolved,
-              },
-            }}
           />
 
           {token.type === 'spacing' ||
@@ -139,45 +125,33 @@ export function TokenInspectorPanel({
             />
           ) : null}
         </div>
-      </div>
 
-      <div className="mt-5">
-        <p className="text-content-tertiary text-xs font-semibold tracking-[0.16em] uppercase">
-          {labels.description}
-        </p>
-
-        <p className="text-content-secondary mt-2 text-sm leading-6">
-          {getTokenDescriptionForLocale({
-            token,
-            locale,
-            fallback: labels.noDescription,
-          })}
-        </p>
-
-        <TokenDescriptionEditor
+        <TokenRenameForm
+          key={token.path}
           locale={locale}
           projectSlug={projectSlug}
-          tokenSetType={token.type}
-          tokenPath={token.path}
-          initialDescriptionEn={token.description?.en ?? ''}
-          initialDescriptionFr={token.description?.fr ?? ''}
+          tokenSetType={tokenSetType}
+          currentTokenPath={token.path}
+          labels={labels.rename}
+          {...(onTokenRenamed ? { onRenamed: onTokenRenamed } : {})}
         />
+
+        <div className="mt-4">
+          <p className="text-content-tertiary text-xs font-semibold tracking-[0.16em] uppercase">
+            {labels.description}
+          </p>
+
+          <TokenDescriptionEditor
+            key={`${token.type}:${token.path}`}
+            locale={locale}
+            projectSlug={projectSlug}
+            tokenSetType={tokenSetType}
+            tokenPath={token.path}
+            initialDescriptionEn={token.description?.en ?? ''}
+            initialDescriptionFr={token.description?.fr ?? ''}
+          />
+        </div>
       </div>
     </aside>
   );
-}
-
-function getTokenDescriptionForLocale({
-  token,
-  locale,
-  fallback,
-}: {
-  token: TokenRowData;
-  locale: Locale;
-  fallback: string;
-}) {
-  const description =
-    locale === 'fr' ? token.description?.fr : token.description?.en;
-
-  return description || fallback;
 }

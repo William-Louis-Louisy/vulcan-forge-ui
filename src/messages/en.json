@@ -254,7 +254,14 @@
     "signedInAs": "Signed in as",
     "topbar": {
       "account": "Account",
+      "breadcrumbLabel": "Project breadcrumb",
       "export": "Export",
+      "saveStatus": {
+        "error": "Save failed",
+        "saved": "All changes saved",
+        "saving": "Saving…",
+        "unsaved": "Unsaved changes"
+      },
       "userMenuLabel": "Open user menu",
       "workspaceLabel": "Switch workspace"
     },
@@ -1466,6 +1473,10 @@
         "unexpected": "Unable to save this description. Please try again."
       }
     },
+    "editor": {
+      "summary": "{count, plural, =0 {No token} one {# token} other {# tokens}} · {missingEnglishDescriptionCount, plural, =0 {No missing EN description} one {# missing EN description} other {# missing EN descriptions}}",
+      "title": "Tokens"
+    },
     "eyebrow": "Tokens editor",
     "genericValueEditor": {
       "fieldErrors": {
@@ -1527,6 +1538,15 @@
     "openAccessibilityCenter": "Open accessibility center",
     "openComponentsRegistry": "Open components registry",
     "openThemesEditor": "Open themes editor",
+    "preview": {
+      "empty": "Select a token to preview its rendered output.",
+      "reference": "Reference",
+      "resolvedValue": "Resolved",
+      "sample": "Sample",
+      "title": "Preview",
+      "unresolved": "Unable to resolve this token.",
+      "value": "Value"
+    },
     "primitiveColorEditor": {
       "help": "Use #RGB, #RRGGBB or #RRGGBBAA.",
       "label": "Edit hex value",
@@ -1605,6 +1625,7 @@
       "invalidTokensDescription": "This token set contains malformed data and cannot be displayed safely.",
       "invalidTokensTitle": "Invalid token data",
       "loading": "Loading tokens...",
+      "missingEnglishDescription": "Missing EN",
       "retry": "Retry"
     },
     "table": {

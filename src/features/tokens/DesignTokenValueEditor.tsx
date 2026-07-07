@@ -1,9 +1,11 @@
+import { Button } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
 import { useActionState, useEffect } from 'react';
 import type { TokenSetType } from './tokens-editor.utils';
 import { updateDesignTokenValueAction } from './update-design-token-value.action';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 import { initialUpdateDesignTokenValueActionState } from './update-design-token-value.state';
+import { useProjectSaveStatus } from '@/components/layout/ProjectTopbarBreadcrumb';
 
 export type DesignTokenValueEditorLabels = {
   label: string;
@@ -51,8 +53,21 @@ export function DesignTokenValueEditor({
     },
   );
 
+  const hasUnsavedChanges = state.values.value !== initialValue;
+
   const preserveSaveContext = usePreserveSaveContext(
     `design-token-value:${projectSlug}:${tokenSetType}:${tokenPath}`,
+  );
+
+  useProjectSaveStatus(
+    `design-token-value:${projectSlug}:${tokenPath}`,
+    isPending
+      ? 'saving'
+      : state.formError
+        ? 'error'
+        : hasUnsavedChanges
+          ? 'unsaved'
+          : 'saved',
   );
 
   useEffect(() => {
@@ -69,7 +84,7 @@ export function DesignTokenValueEditor({
     <form
       action={formAction}
       onSubmitCapture={preserveSaveContext}
-      className="border-border-subtle bg-surface-primary mt-3 rounded-xl border p-3"
+      className="border-border-subtle border-b pb-2"
     >
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="projectSlug" value={projectSlug} />
@@ -89,16 +104,16 @@ export function DesignTokenValueEditor({
           name="value"
           defaultValue={state.values.value || initialValue}
           aria-invalid={valueErrors.length > 0}
-          className="border-border-default bg-background-subtle text-content-primary min-h-10 min-w-0 flex-1 rounded-lg border px-3 font-mono text-sm"
+          className="border-border-subtle bg-surface-primary focus:border-action-primary w-full rounded-md border px-3 py-2 font-mono text-sm outline-none"
         />
 
-        <button
+        <Button
           type="submit"
           disabled={isPending}
           className="bg-action-primary text-action-primary-content rounded-lg px-3 py-2 text-sm font-semibold disabled:opacity-60"
         >
           {isPending ? '…' : labels.submit}
-        </button>
+        </Button>
       </div>
 
       {valueErrors.length > 0 ? (

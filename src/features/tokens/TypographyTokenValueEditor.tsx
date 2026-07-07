@@ -3,9 +3,11 @@ import {
   serializeTypographyTokenFormValues,
   type TypographyTokenFormValues,
 } from './typography-token-value.utils';
+import { Button } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
 import { useActionState, useEffect, useMemo, useState } from 'react';
 import { updateDesignTokenValueAction } from './update-design-token-value.action';
+import { useProjectSaveStatus } from '@/components/layout/ProjectTopbarBreadcrumb';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 import { initialUpdateDesignTokenValueActionState } from './update-design-token-value.state';
 
@@ -79,14 +81,6 @@ export function TypographyTokenValueEditor({
     onUpdated(tokenPath);
   }, [onUpdated, state.status, tokenPath]);
 
-  useEffect(() => {
-    if (state.status !== 'success') {
-      return;
-    }
-
-    onUpdated(tokenPath);
-  }, [onUpdated, state.status, tokenPath]);
-
   const serializedTypographyValue = useMemo(() => {
     if (!hasTypographyFieldValue(typographyValues)) {
       return '';
@@ -107,11 +101,24 @@ export function TypographyTokenValueEditor({
     }));
   }
 
+  const hasUnsavedChanges = serializedTypographyValue !== state.values.value;
+
+  useProjectSaveStatus(
+    `typography-token:${projectSlug}:${tokenPath}`,
+    isPending
+      ? 'saving'
+      : state.formError
+        ? 'error'
+        : hasUnsavedChanges
+          ? 'unsaved'
+          : 'saved',
+  );
+
   return (
     <form
       action={formAction}
       onSubmitCapture={preserveSaveContext}
-      className="border-border-subtle bg-surface-primary mt-3 rounded-xl border p-3"
+      className="border-border-subtle border-b pb-2"
     >
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="projectSlug" value={projectSlug} />
@@ -134,7 +141,7 @@ export function TypographyTokenValueEditor({
             onChange={(event) =>
               updateTypographyField('fontFamily', event.target.value)
             }
-            className="border-border-default bg-background-subtle mt-1 w-full rounded-lg border px-3 py-2 text-sm"
+            className="border-border-subtle bg-surface-primary focus:border-action-primary mt-1 w-full rounded-md border px-3 py-2 font-mono text-sm outline-none"
           />
         </div>
 
@@ -149,7 +156,7 @@ export function TypographyTokenValueEditor({
               onChange={(event) =>
                 updateTypographyField('fontSize', event.target.value)
               }
-              className="border-border-default bg-background-subtle mt-1 w-full rounded-lg border px-3 py-2 font-mono text-sm"
+              className="border-border-subtle bg-surface-primary focus:border-action-primary mt-1 w-full rounded-md border px-3 py-2 font-mono text-sm outline-none"
             />
           </div>
 
@@ -163,7 +170,7 @@ export function TypographyTokenValueEditor({
               onChange={(event) =>
                 updateTypographyField('fontWeight', event.target.value)
               }
-              className="border-border-default bg-background-subtle mt-1 w-full rounded-lg border px-3 py-2 font-mono text-sm"
+              className="border-border-subtle bg-surface-primary focus:border-action-primary mt-1 w-full rounded-md border px-3 py-2 font-mono text-sm outline-none"
             />
           </div>
 
@@ -177,7 +184,7 @@ export function TypographyTokenValueEditor({
               onChange={(event) =>
                 updateTypographyField('lineHeight', event.target.value)
               }
-              className="border-border-default bg-background-subtle mt-1 w-full rounded-lg border px-3 py-2 font-mono text-sm"
+              className="border-border-subtle bg-surface-primary focus:border-action-primary mt-1 w-full rounded-md border px-3 py-2 font-mono text-sm outline-none"
             />
           </div>
 
@@ -191,7 +198,7 @@ export function TypographyTokenValueEditor({
               onChange={(event) =>
                 updateTypographyField('letterSpacing', event.target.value)
               }
-              className="border-border-default bg-background-subtle mt-1 w-full rounded-lg border px-3 py-2 font-mono text-sm"
+              className="border-border-subtle bg-surface-primary focus:border-action-primary mt-1 w-full rounded-md border px-3 py-2 font-mono text-sm outline-none"
             />
           </div>
         </div>
@@ -217,13 +224,11 @@ export function TypographyTokenValueEditor({
         </p>
       ) : null}
 
-      <button
-        type="submit"
-        disabled={isPending}
-        className="bg-action-primary text-action-primary-content mt-4 rounded-lg px-3 py-2 text-sm font-semibold disabled:opacity-60"
-      >
-        {isPending ? '…' : labels.submit}
-      </button>
+      <div className="mt-2 inline-flex w-full items-center justify-end">
+        <Button type="submit" disabled={isPending}>
+          {isPending ? '…' : labels.submit}
+        </Button>
+      </div>
     </form>
   );
 }

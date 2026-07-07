@@ -63,6 +63,15 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
           workspaceLabel: t('topbar.workspaceLabel'),
           userMenuLabel: t('topbar.userMenuLabel'),
           account: t('topbar.account'),
+          breadcrumb: {
+            ariaLabel: t('topbar.breadcrumbLabel'),
+            saveStatus: {
+              saved: t('topbar.saveStatus.saved'),
+              unsaved: t('topbar.saveStatus.unsaved'),
+              saving: t('topbar.saveStatus.saving'),
+              error: t('topbar.saveStatus.error'),
+            },
+          },
         },
         sidebar: {
           workspace: t('sidebar.workspace'),

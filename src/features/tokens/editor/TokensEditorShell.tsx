@@ -6,6 +6,10 @@ import {
   type TokenSetListPanelViewModel,
 } from './TokenSetListPanel';
 import {
+  TokenPreviewPanel,
+  type TokenPreviewPanelLabels,
+} from './TokenPreviewPanel';
+import {
   TokenInspectorPanel,
   type TokenInspectorPanelLabels,
 } from './TokenInspectorPanel';
@@ -35,6 +39,10 @@ import { TokenSetTabs } from './TokenSetTabs';
 import { TokenEditorToolbar } from './TokenEditorToolbar';
 
 export type TokensEditorShellLabels = {
+  header: {
+    title: string;
+    summary: string;
+  };
   toolbar: {
     searchLabel: string;
     searchPlaceholder: string;
@@ -49,6 +57,7 @@ export type TokensEditorShellLabels = {
     radius: CreateDesignTokenFormLabels;
     motion: CreateDesignTokenFormLabels;
   };
+  preview: TokenPreviewPanelLabels;
   tokenSet: TokenSetListPanelLabels;
   inspector: TokenInspectorPanelLabels;
   createColorToken: CreateColorTokenFormLabels;
@@ -87,6 +96,27 @@ export function TokensEditorShell({
   );
   const [createTokenFormType, setCreateTokenFormType] =
     useState<TokenSetType | null>(null);
+
+  const tokenSetCounts = useMemo(
+    () =>
+      Object.fromEntries(
+        tokenSets.map((tokenSet) => [tokenSet.type, tokenSet.rows.length]),
+      ) as Record<TokenSetType, number>,
+    [tokenSets],
+  );
+
+  const missingEnglishDescriptionCount = useMemo(
+    () =>
+      tokenSets.reduce(
+        (count, tokenSet) =>
+          count +
+          tokenSet.rows.filter((row) => !row.description?.en?.trim()).length,
+        0,
+      ),
+    [tokenSets],
+  );
+
+  const hasMissingEnglishDescriptions = missingEnglishDescriptionCount > 0;
 
   const activeTokenSet =
     tokenSets.find((tokenSet) => tokenSet.type === activeTokenSetType) ??
@@ -221,138 +251,175 @@ export function TokensEditorShell({
     });
   }
 
+  const selectedTokenSetType = activeTokenSet?.type ?? activeTokenSetType;
+
   return (
-    <div className="mt-6 grid min-h-0 gap-6 xl:grid-cols-[minmax(0,1fr)_24rem]">
-      <div className="min-w-0">
-        <TokenEditorToolbar
-          searchLabel={labels.toolbar.searchLabel}
-          searchPlaceholder={labels.toolbar.searchPlaceholder}
-          newTokenLabel={labels.toolbar.newToken}
-          tokenSearchQuery={tokenSearchQuery}
-          isNewTokenDisabled={
-            activeTokenSetType !== 'color' &&
-            activeTokenSetType !== 'spacing' &&
-            activeTokenSetType !== 'radius' &&
-            activeTokenSetType !== 'motion' &&
-            activeTokenSetType !== 'typography'
-          }
-          onNewTokenClick={handleNewTokenClick}
-          onSearchChange={handleSearchChange}
-        />
+    <div className="flex h-full min-h-0 flex-col overflow-y-auto xl:grid xl:grid-cols-[minmax(0,1fr)_26rem] xl:overflow-hidden">
+      <div className="flex min-w-0 flex-col xl:min-h-0 xl:overflow-hidden">
+        <header className="border-border-subtle shrink-0 border-b px-4 pt-4 md:px-6 xl:px-7 xl:pt-5">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div>
+              <h1 className="text-[26px] font-semibold tracking-[-0.015em]">
+                {labels.header.title}
+              </h1>
 
-        {createTokenFormType === 'color' ? (
-          <CreateColorTokenForm
-            locale={locale}
-            projectSlug={projectSlug}
-            primitiveColorAliasOptions={primitiveColorAliasOptions}
-            labels={labels.createColorToken}
-            onCancel={handleCreateTokenCancel}
-            onCreated={(tokenPath) =>
-              handleTokenCreated({
-                tokenSetType: 'color',
-                tokenPath,
-              })
-            }
-          />
-        ) : null}
+              <p
+                className={[
+                  'mt-1 text-sm',
+                  hasMissingEnglishDescriptions
+                    ? 'text-action-warning'
+                    : 'text-content-tertiary',
+                ].join(' ')}
+              >
+                {labels.header.summary}
+              </p>
+            </div>
 
-        {createTokenFormType === 'spacing' ? (
-          <CreateDesignTokenForm
-            locale={locale}
-            projectSlug={projectSlug}
-            type="spacing"
-            labels={labels.createDesignToken.spacing}
-            onCancel={handleCreateTokenCancel}
-            onCreated={(tokenPath) =>
-              handleTokenCreated({
-                tokenSetType: 'spacing',
-                tokenPath,
-              })
-            }
-          />
-        ) : null}
-
-        {createTokenFormType === 'radius' ? (
-          <CreateDesignTokenForm
-            locale={locale}
-            projectSlug={projectSlug}
-            type="radius"
-            labels={labels.createDesignToken.radius}
-            onCancel={handleCreateTokenCancel}
-            onCreated={(tokenPath) =>
-              handleTokenCreated({
-                tokenSetType: 'radius',
-                tokenPath,
-              })
-            }
-          />
-        ) : null}
-
-        {createTokenFormType === 'motion' ? (
-          <CreateDesignTokenForm
-            locale={locale}
-            projectSlug={projectSlug}
-            type="motion"
-            labels={labels.createDesignToken.motion}
-            onCancel={handleCreateTokenCancel}
-            onCreated={(tokenPath) =>
-              handleTokenCreated({
-                tokenSetType: 'motion',
-                tokenPath,
-              })
-            }
-          />
-        ) : null}
-
-        {createTokenFormType === 'typography' ? (
-          <CreateTypographyTokenForm
-            locale={locale}
-            projectSlug={projectSlug}
-            labels={labels.createTypographyToken}
-            onCancel={handleCreateTokenCancel}
-            onCreated={(tokenPath) =>
-              handleTokenCreated({
-                tokenSetType: 'typography',
-                tokenPath,
-              })
-            }
-          />
-        ) : null}
-
-        <TokenSetTabs
-          label={labels.tabs.label}
-          activeTokenSetType={activeTokenSetType}
-          tokenSetLabels={labels.tabs.items}
-          onTokenSetChange={handleTokenSetChange}
-        />
-
-        <div className="mt-6">
-          {activeTokenSet ? (
-            <TokenSetListPanel
-              tokenSet={activeTokenSet}
-              tokenSetLabel={labels.tabs.items[activeTokenSet.type]}
-              rows={filteredTokenRows}
-              selectedTokenPath={selectedToken?.path ?? null}
-              labels={labels.tokenSet}
-              onTokenSelect={handleTokenSelect}
-              primitiveColorAliasOptions={primitiveColorAliasOptions}
+            <TokenEditorToolbar
+              searchLabel={labels.toolbar.searchLabel}
+              searchPlaceholder={labels.toolbar.searchPlaceholder}
+              newTokenLabel={labels.toolbar.newToken}
+              tokenSearchQuery={tokenSearchQuery}
+              isNewTokenDisabled={
+                activeTokenSetType !== 'color' &&
+                activeTokenSetType !== 'spacing' &&
+                activeTokenSetType !== 'radius' &&
+                activeTokenSetType !== 'motion' &&
+                activeTokenSetType !== 'typography'
+              }
+              onNewTokenClick={handleNewTokenClick}
+              onSearchChange={handleSearchChange}
             />
-          ) : (
-            <EmptyTokenSetsState />
-          )}
+          </div>
+
+          <div className="mt-4">
+            <TokenSetTabs
+              label={labels.tabs.label}
+              activeTokenSetType={activeTokenSetType}
+              tokenSetLabels={labels.tabs.items}
+              tokenSetCounts={tokenSetCounts}
+              onTokenSetChange={handleTokenSetChange}
+            />
+          </div>
+        </header>
+
+        <div className="flex min-h-0 flex-col py-4 md:px-6 xl:flex-1 xl:overflow-hidden xl:px-7">
+          {createTokenFormType === 'color' ? (
+            <CreateColorTokenForm
+              locale={locale}
+              projectSlug={projectSlug}
+              primitiveColorAliasOptions={primitiveColorAliasOptions}
+              labels={labels.createColorToken}
+              onCancel={handleCreateTokenCancel}
+              onCreated={(tokenPath) =>
+                handleTokenCreated({
+                  tokenSetType: 'color',
+                  tokenPath,
+                })
+              }
+            />
+          ) : null}
+
+          {createTokenFormType === 'spacing' ? (
+            <CreateDesignTokenForm
+              locale={locale}
+              projectSlug={projectSlug}
+              type="spacing"
+              labels={labels.createDesignToken.spacing}
+              onCancel={handleCreateTokenCancel}
+              onCreated={(tokenPath) =>
+                handleTokenCreated({
+                  tokenSetType: 'spacing',
+                  tokenPath,
+                })
+              }
+            />
+          ) : null}
+
+          {createTokenFormType === 'radius' ? (
+            <CreateDesignTokenForm
+              locale={locale}
+              projectSlug={projectSlug}
+              type="radius"
+              labels={labels.createDesignToken.radius}
+              onCancel={handleCreateTokenCancel}
+              onCreated={(tokenPath) =>
+                handleTokenCreated({
+                  tokenSetType: 'radius',
+                  tokenPath,
+                })
+              }
+            />
+          ) : null}
+
+          {createTokenFormType === 'motion' ? (
+            <CreateDesignTokenForm
+              locale={locale}
+              projectSlug={projectSlug}
+              type="motion"
+              labels={labels.createDesignToken.motion}
+              onCancel={handleCreateTokenCancel}
+              onCreated={(tokenPath) =>
+                handleTokenCreated({
+                  tokenSetType: 'motion',
+                  tokenPath,
+                })
+              }
+            />
+          ) : null}
+
+          {createTokenFormType === 'typography' ? (
+            <CreateTypographyTokenForm
+              locale={locale}
+              projectSlug={projectSlug}
+              labels={labels.createTypographyToken}
+              onCancel={handleCreateTokenCancel}
+              onCreated={(tokenPath) =>
+                handleTokenCreated({
+                  tokenSetType: 'typography',
+                  tokenPath,
+                })
+              }
+            />
+          ) : null}
+
+          <div className="min-h-0 xl:flex-1 xl:overflow-hidden">
+            {activeTokenSet ? (
+              <TokenSetListPanel
+                tokenSet={activeTokenSet}
+                rows={filteredTokenRows}
+                selectedTokenPath={selectedToken?.path ?? null}
+                labels={labels.tokenSet}
+                onTokenSelect={handleTokenSelect}
+                primitiveColorAliasOptions={primitiveColorAliasOptions}
+              />
+            ) : (
+              <EmptyTokenSetsState />
+            )}
+          </div>
         </div>
       </div>
 
-      <TokenInspectorPanel
-        locale={locale}
-        projectSlug={projectSlug}
-        token={selectedToken}
-        tokenSetType={activeTokenSet?.type ?? activeTokenSetType}
-        primitiveColorAliasOptions={primitiveColorAliasOptions}
-        labels={labels.inspector}
-        onTokenRenamed={handleTokenRenamed}
-        onTokenValueUpdated={handleTokenValueUpdated}
-      />
+      <aside className="border-border-subtle grid min-h-0 border-t xl:grid-rows-[auto_minmax(0,1fr)] xl:overflow-hidden xl:border-t-0 xl:border-l">
+        <TokenPreviewPanel
+          token={selectedToken}
+          tokenSetType={selectedTokenSetType}
+          tokenSetLabel={labels.tabs.items[selectedTokenSetType]}
+          primitiveColorAliasOptions={primitiveColorAliasOptions}
+          labels={labels.preview}
+        />
+
+        <TokenInspectorPanel
+          locale={locale}
+          projectSlug={projectSlug}
+          token={selectedToken}
+          tokenSetType={selectedTokenSetType}
+          primitiveColorAliasOptions={primitiveColorAliasOptions}
+          labels={labels.inspector}
+          onTokenRenamed={handleTokenRenamed}
+          onTokenValueUpdated={handleTokenValueUpdated}
+        />
+      </aside>
     </div>
   );
 }

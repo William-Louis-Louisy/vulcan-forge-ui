@@ -14,6 +14,7 @@ export type TokenSetListPanelLabels = {
   nonColorDescriptions: Record<TokenSetType, string>;
   emptySearchTitle: string;
   emptySearchDescription: string;
+  missingEnglishDescription: string;
   groups: {
     primitive: string;
     semantic: string;
@@ -31,7 +32,6 @@ export type TokenSetListPanelViewModel = {
 
 type TokenSetListPanelProps = {
   tokenSet: TokenSetListPanelViewModel;
-  tokenSetLabel: string;
   rows: TokenRowData[];
   selectedTokenPath: string | null;
   labels: TokenSetListPanelLabels;
@@ -40,8 +40,9 @@ type TokenSetListPanelProps = {
 };
 
 type TokenGroup = {
-  id: 'primitive' | 'semantic' | 'other';
+  id: string;
   label: string;
+  order: number;
   rows: TokenRowData[];
 };
 
@@ -61,48 +62,91 @@ function createTokenGroups({
   rows: TokenRowData[];
   labels: TokenSetListPanelLabels['groups'];
 }): TokenGroup[] {
-  const primitiveRows: TokenRowData[] = [];
-  const semanticRows: TokenRowData[] = [];
-  const otherRows: TokenRowData[] = [];
+  const groupMap = new Map<string, TokenGroup>();
 
   for (const row of rows) {
-    if (isEditablePrimitiveColorTokenRow(row)) {
-      primitiveRows.push(row);
+    const groupInfo = getTokenGroupInfo({
+      row,
+      labels,
+    });
+
+    const existingGroup = groupMap.get(groupInfo.id);
+
+    if (existingGroup) {
+      existingGroup.rows.push(row);
       continue;
     }
 
-    if (isEditableSemanticColorTokenRow(row)) {
-      semanticRows.push(row);
-      continue;
-    }
-
-    otherRows.push(row);
+    groupMap.set(groupInfo.id, {
+      ...groupInfo,
+      rows: [row],
+    });
   }
 
-  const groups: TokenGroup[] = [
-    {
-      id: 'primitive',
-      label: labels.primitive,
-      rows: sortTokenRowsNaturally(primitiveRows),
-    },
-    {
-      id: 'semantic',
-      label: labels.semantic,
-      rows: sortTokenRowsNaturally(semanticRows),
-    },
-    {
-      id: 'other',
-      label: labels.other,
-      rows: sortTokenRowsNaturally(otherRows),
-    },
-  ];
+  return Array.from(groupMap.values())
+    .map((group) => ({
+      ...group,
+      rows: sortTokenRowsNaturally(group.rows),
+    }))
+    .sort(
+      (firstGroup, secondGroup) =>
+        firstGroup.order - secondGroup.order ||
+        firstGroup.label.localeCompare(secondGroup.label, undefined, {
+          numeric: true,
+          sensitivity: 'base',
+        }),
+    )
+    .filter((group) => group.rows.length > 0);
+}
 
-  return groups.filter((group) => group.rows.length > 0);
+function getTokenGroupInfo({
+  row,
+  labels,
+}: {
+  row: TokenRowData;
+  labels: TokenSetListPanelLabels['groups'];
+}) {
+  if (isEditablePrimitiveColorTokenRow(row)) {
+    const namespace = getColorTokenNamespace(row.path);
+
+    return {
+      id: `primitive:${namespace}`,
+      label: `${labels.primitive} · ${formatTokenNamespaceLabel(namespace)}`,
+      order: 0,
+    };
+  }
+
+  if (isEditableSemanticColorTokenRow(row)) {
+    const namespace = getColorTokenNamespace(row.path);
+
+    return {
+      id: `semantic:${namespace}`,
+      label: `${labels.semantic} · ${formatTokenNamespaceLabel(namespace)}`,
+      order: 1,
+    };
+  }
+
+  return {
+    id: 'other',
+    label: labels.other,
+    order: 2,
+  };
+}
+
+function getColorTokenNamespace(path: string) {
+  return path.split('.')[2] ?? 'base';
+}
+
+function formatTokenNamespaceLabel(namespace: string) {
+  return namespace
+    .split(/[-_]/)
+    .filter(Boolean)
+    .map((segment) => segment[0]?.toUpperCase() + segment.slice(1))
+    .join(' ');
 }
 
 export function TokenSetListPanel({
   tokenSet,
-  tokenSetLabel,
   rows,
   selectedTokenPath,
   labels,
@@ -129,100 +173,86 @@ export function TokenSetListPanel({
   });
 
   return (
-    <div className="border-border-subtle bg-surface-primary shadow-soft rounded-3xl border p-5 lg:p-6">
-      <div className="border-border-subtle flex flex-col gap-3 border-b pb-5 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-content-tertiary text-sm font-semibold tracking-[0.18em] uppercase">
-            {tokenSetLabel}
-          </p>
-
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-            {tokenSet.name}
-          </h2>
-        </div>
-
-        <p className="text-content-secondary text-sm">
-          {tokenSet.tokenCountLabel}
-        </p>
-      </div>
-
-      {tokenSet.type !== 'color' ? (
-        <div className="border-border-subtle bg-background-subtle mt-5 rounded-2xl border p-4">
-          <p className="text-sm font-semibold">{labels.nonColorTitle}</p>
-
-          <p className="text-content-secondary mt-2 text-sm leading-6">
-            {labels.nonColorDescriptions[tokenSet.type]}
-          </p>
-        </div>
-      ) : null}
-
+    <div className="shadow-soft flex min-h-0 flex-col xl:h-full xl:overflow-hidden">
       {tokenGroups.length > 0 ? (
-        <div className="mt-6 grid gap-5">
-          {tokenGroups.map((group) => (
-            <section key={group.id}>
-              <div className="mb-3 flex items-center gap-2">
-                <h3 className="text-content-tertiary text-sm font-semibold tracking-[0.18em] uppercase">
-                  {group.label}
-                </h3>
+        <div className="p-4 xl:min-h-0 xl:flex-1 xl:overflow-y-auto">
+          <div className="grid gap-4">
+            {tokenGroups.map((group) => (
+              <section key={group.id}>
+                <div className="mb-2 flex items-center gap-2">
+                  <h3 className="text-content-tertiary text-[11px] font-semibold tracking-[0.18em] uppercase">
+                    {group.label}
+                  </h3>
 
-                <span className="text-content-tertiary bg-content-tertiary/20 rounded-full px-2 py-0.5 text-xs">
-                  {group.rows.length}
-                </span>
-              </div>
+                  <span className="bg-background-sunken text-content-tertiary rounded-full px-2 py-0.5 text-[11px] font-semibold">
+                    {group.rows.length}
+                  </span>
+                </div>
 
-              <div className="border-border-subtle bg-surface-primary overflow-hidden rounded-3xl border">
-                {group.rows.map((row) => {
-                  const isSelected = row.path === selectedTokenPath;
+                <div className="border-border-subtle bg-surface-primary overflow-hidden rounded-md border">
+                  {group.rows.map((row) => {
+                    const isSelected = row.path === selectedTokenPath;
 
-                  return (
-                    <button
-                      key={row.path}
-                      type="button"
-                      aria-current={isSelected ? 'page' : undefined}
-                      onClick={() => onTokenSelect(row.path)}
-                      className={[
-                        'border-border-subtle flex w-full items-center gap-4 border-b px-5 py-4 text-left last:border-b-0',
-                        isSelected
-                          ? 'bg-action-primary/10'
-                          : 'hover:bg-background-subtle',
-                      ].join(' ')}
-                    >
-                      {row.type === 'color' ? (
-                        <TokenPreviewSwatch
-                          row={row}
-                          primitiveColorAliasOptions={
-                            primitiveColorAliasOptions
-                          }
-                        />
-                      ) : null}
+                    return (
+                      <button
+                        key={row.path}
+                        type="button"
+                        aria-current={isSelected ? 'page' : undefined}
+                        onClick={() => onTokenSelect(row.path)}
+                        className={[
+                          'border-border-subtle flex w-full items-center gap-3 border-b px-4 py-3 text-left last:border-b-0',
+                          isSelected
+                            ? 'bg-background-sunken'
+                            : 'hover:bg-background-subtle',
+                        ].join(' ')}
+                      >
+                        {row.type === 'color' ? (
+                          <TokenPreviewSwatch
+                            row={row}
+                            primitiveColorAliasOptions={
+                              primitiveColorAliasOptions
+                            }
+                          />
+                        ) : null}
 
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate font-mono text-sm font-semibold">
-                          {row.path}
-                        </p>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate font-mono text-[13px] font-semibold">
+                            {row.path}
+                          </p>
 
-                        <p className="text-content-secondary mt-1 truncate font-mono text-xs">
-                          {row.value}
-                        </p>
-                      </div>
+                          <p className="text-content-secondary mt-0.5 truncate font-mono text-[11px]">
+                            {row.value}
+                          </p>
+                        </div>
 
-                      <span className="text-content-tertiary text-xl">›</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </section>
-          ))}
+                        {!row.description?.en?.trim() ? (
+                          <span className="text-action-warning bg-action-warning/10 rounded-full px-2 py-0.5 text-[11px] font-semibold">
+                            {labels.missingEnglishDescription}
+                          </span>
+                        ) : null}
+
+                        <span className="text-content-tertiary text-base">
+                          ›
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </section>
+            ))}
+          </div>
         </div>
       ) : (
-        <div className="border-border-default mt-6 rounded-2xl border border-dashed p-8 text-center">
-          <h3 className="text-xl font-semibold tracking-tight">
-            {labels.emptySearchTitle}
-          </h3>
+        <div className="p-4 xl:min-h-0 xl:flex-1 xl:overflow-y-auto">
+          <div className="border-border-default rounded-2xl border border-dashed p-6 text-center">
+            <h3 className="text-lg font-semibold tracking-tight">
+              {labels.emptySearchTitle}
+            </h3>
 
-          <p className="text-content-secondary mx-auto mt-3 max-w-xl text-sm leading-6">
-            {labels.emptySearchDescription}
-          </p>
+            <p className="text-content-secondary mx-auto mt-2 max-w-xl text-sm leading-6">
+              {labels.emptySearchDescription}
+            </p>
+          </div>
         </div>
       )}
     </div>
@@ -247,7 +277,7 @@ export function TokenPreviewSwatch({
 
   return (
     <span
-      className="border-border-subtle size-8 shrink-0 rounded-lg border"
+      className="border-border-subtle size-7 shrink-0 rounded-full border"
       style={{
         backgroundColor: resolvedColorValue ?? undefined,
       }}

@@ -254,7 +254,14 @@
     "signedInAs": "Connecté avec",
     "topbar": {
       "account": "Compte",
+      "breadcrumbLabel": "Fil d’Ariane du projet",
       "export": "Exporter",
+      "saveStatus": {
+        "error": "Échec de l’enregistrement",
+        "saved": "Toutes les modifications sont enregistrées",
+        "saving": "Enregistrement…",
+        "unsaved": "Modifications non enregistrées"
+      },
       "userMenuLabel": "Ouvrir le menu utilisateur",
       "workspaceLabel": "Changer d’espace de travail"
     },
@@ -1466,6 +1473,10 @@
         "unexpected": "Impossible de sauvegarder cette description. Veuillez réessayer."
       }
     },
+    "editor": {
+      "summary": "{count, plural, =0 {Aucun token} one {# token} other {# tokens}} · {missingEnglishDescriptionCount, plural, =0 {Aucune description EN manquante} one {# description EN manquante} other {# descriptions EN manquantes}}",
+      "title": "Tokens"
+    },
     "eyebrow": "Éditeur de tokens",
     "genericValueEditor": {
       "fieldErrors": {
@@ -1527,6 +1538,15 @@
     "openAccessibilityCenter": "Ouvrir le centre d’accessibilité",
     "openComponentsRegistry": "Ouvrir le registre de composants",
     "openThemesEditor": "Ouvrir l’éditeur de thèmes",
+    "preview": {
+      "empty": "Sélectionnez un token pour prévisualiser son rendu.",
+      "reference": "Référence",
+      "resolvedValue": "Résolu",
+      "sample": "Exemple",
+      "title": "Aperçu",
+      "unresolved": "Impossible de résoudre ce token.",
+      "value": "Valeur"
+    },
     "primitiveColorEditor": {
       "help": "Utilisez #RGB, #RRGGBB ou #RRGGBBAA.",
       "label": "Modifier la valeur hex",
@@ -1605,6 +1625,7 @@
       "invalidTokensDescription": "Ce token set contient des données malformées et ne peut pas être affiché de manière fiable.",
       "invalidTokensTitle": "Données de tokens invalides",
       "loading": "Chargement des tokens...",
+      "missingEnglishDescription": "EN manquant",
       "retry": "Réessayer"
     },
     "table": {
