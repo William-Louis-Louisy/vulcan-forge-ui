@@ -6,22 +6,24 @@ import type { ComponentContractEditorLabels } from './ComponentContractEditor';
 vi.mock('./ComponentContractEditor', async () => {
   const React = await import('react');
 
-  return {
-    ComponentContractEditor: ({
-      contract,
-    }: {
-      contract: ComponentContract;
-    }) => {
-      const [name, setName] = React.useState(contract.name);
+  function MockComponentContractEditor({
+    contract,
+  }: {
+    contract: ComponentContract;
+  }) {
+    const [name, setName] = React.useState(contract.name);
 
-      return (
-        <input
-          aria-label="Name"
-          value={name}
-          onChange={(event) => setName(event.target.value)}
-        />
-      );
-    },
+    return (
+      <input
+        aria-label="Name"
+        value={name}
+        onChange={(event) => setName(event.target.value)}
+      />
+    );
+  }
+
+  return {
+    ComponentContractEditor: MockComponentContractEditor,
   };
 });
 
