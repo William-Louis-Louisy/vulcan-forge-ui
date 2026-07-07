@@ -22,6 +22,8 @@ import type { ComponentTokenOption } from './component-token-bindings.utils';
 import { updateComponentContractAction } from './update-component-contract.action';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 import { initialUpdateComponentContractActionState } from './update-component-contract.state';
+import { useProjectSaveStatus } from '@/components/layout/ProjectTopbarBreadcrumb';
+import { getComponentContractEditorSaveStatus } from './component-contract-editor-save-status';
 
 export type ComponentContractEditorLabels = {
   title: string;
@@ -164,9 +166,18 @@ export function ComponentContractEditor({
   const hasUnsavedChanges =
     JSON.stringify(draft) !== JSON.stringify(savedDraft);
 
-  const preserveSaveContext = usePreserveSaveContext(
-    `component-contract:${projectSlug}:${contract.type}`,
-  );
+  const saveContextId = `component-contract:${projectSlug}:${contract.type}`;
+
+  const saveStatus = getComponentContractEditorSaveStatus({
+    isPending,
+    hasUnsavedChanges,
+    hasValidationError: validation.status === 'error',
+    hasFormError: Boolean(state.formError),
+  });
+
+  useProjectSaveStatus(saveContextId, saveStatus);
+
+  const preserveSaveContext = usePreserveSaveContext(saveContextId);
 
   return (
     <section className="p-4">
