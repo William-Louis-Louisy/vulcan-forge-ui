@@ -90,16 +90,16 @@ export default async function ComponentsRegistryPage({
     : null;
 
   return (
-    <section className="flex h-screen min-h-0 flex-col overflow-hidden">
+    <section className="flex h-[calc(100vh-3rem)] min-h-0 flex-col overflow-hidden">
       {registry.invalidCount > 0 ? (
-        <Notice tone="warning" className="mt-8 shrink-0 font-semibold">
+        <Notice tone="warning" className="m-4 shrink-0 font-semibold">
           {t('invalidContractsWarning', { count: registry.invalidCount })}
         </Notice>
       ) : null}
 
       {registry.items.length > 0 ? (
-        <div className="grid min-h-0 flex-1 overflow-hidden xl:grid-cols-[minmax(18rem,0.75fr)_minmax(0,1.35fr)_minmax(18rem,0.9fr)]">
-          <aside className="border-border-subtle h-full min-h-0 overflow-y-auto border-r">
+        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto xl:grid xl:grid-cols-[15rem_minmax(0,1fr)_22rem] xl:overflow-hidden">
+          <aside className="border-border-subtle min-h-0 border-b xl:h-full xl:overflow-y-auto xl:border-r xl:border-b-0">
             <ComponentList
               t={t}
               projectSlug={pageData.project.slug}
@@ -115,7 +115,7 @@ export default async function ComponentsRegistryPage({
                 ? `component-contract:${pageData.project.slug}:${selectedComponent.type}`
                 : undefined
             }
-            className="min-h-0 min-w-0 overflow-y-auto"
+            className="min-h-0 min-w-0 border-b xl:overflow-y-auto xl:border-b-0"
           >
             {selectedComponent ? (
               <ComponentDetails
@@ -128,7 +128,7 @@ export default async function ComponentsRegistryPage({
             ) : null}
           </main>
 
-          <aside className="border-border-subtle grid h-full min-h-0 content-start gap-6 overflow-y-auto border-l">
+          <aside className="border-border-subtle grid min-h-0 content-start gap-6 border-t xl:h-full xl:overflow-y-auto xl:border-t-0 xl:border-l">
             {selectedComponent ? (
               <>
                 <ComponentFoundationsPreviewShell
@@ -153,10 +153,12 @@ export default async function ComponentsRegistryPage({
           </aside>
         </div>
       ) : (
-        <EmptyState
-          title={t('states.emptyTitle')}
-          description={t('states.emptyDescription')}
-        />
+        <div className="flex min-h-0 flex-1 items-center justify-center p-6">
+          <EmptyState
+            title={t('states.emptyTitle')}
+            description={t('states.emptyDescription')}
+          />
+        </div>
       )}
     </section>
   );

@@ -19,35 +19,45 @@ export function ComponentList({
   selectedComponentType: string | null;
   filterQuery: string;
 }) {
+  const componentCount = componentGroups.reduce(
+    (count, group) => count + group.items.length,
+    0,
+  );
+
   return (
     <section className="p-4">
-      <div className="flex items-center justify-between gap-4">
-        <h2 className="text-2xl font-semibold tracking-tight">
-          {t('list.title')}
-        </h2>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex min-w-0 items-baseline gap-2">
+          <h2 className="truncate text-lg font-semibold tracking-tight">
+            {t('list.title')}
+          </h2>
+          <span className="text-content-tertiary text-xs font-medium">
+            {componentCount}
+          </span>
+        </div>
 
         <button
           type="button"
           disabled
           aria-label={t('list.addDisabled')}
-          className="border-border-subtle bg-background-subtle text-content-primary flex size-9 items-center justify-center rounded-xl border text-lg font-semibold opacity-70"
+          className="border-border-subtle bg-background-subtle text-content-tertiary flex size-8 shrink-0 items-center justify-center rounded-md border text-base font-semibold opacity-70"
         >
           +
         </button>
       </div>
 
-      <form action={`/app/projects/${projectSlug}/components`} className="mt-4">
+      <form action={`/app/projects/${projectSlug}/components`} className="mt-3">
         <input
           type="search"
           name="q"
           defaultValue={filterQuery}
           placeholder={t('list.filterPlaceholder')}
-          className="border-border-subtle bg-background-subtle focus:border-action-primary w-full rounded-xl border px-3 py-2 text-sm outline-none"
+          className="border-border-subtle bg-background-subtle focus:border-action-primary min-h-9 w-full rounded-md border px-3 text-sm outline-none"
         />
       </form>
 
       {componentGroups.length > 0 ? (
-        <div className="mt-6 grid gap-4">
+        <div className="mt-5 grid gap-5">
           {componentGroups.map((group) => (
             <ComponentCategorySection
               key={group.category}
@@ -60,7 +70,7 @@ export function ComponentList({
           ))}
         </div>
       ) : (
-        <p className="text-content-secondary mt-6 text-sm">
+        <p className="text-content-secondary mt-5 text-sm">
           {t('list.emptyFilter')}
         </p>
       )}
@@ -83,11 +93,11 @@ function ComponentCategorySection({
 }) {
   return (
     <section>
-      <h3 className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
+      <h3 className="text-content-tertiary text-[11px] font-semibold tracking-[0.16em] uppercase">
         {t(`categories.${group.category}`)}
       </h3>
 
-      <div className="mt-3 grid">
+      <div className="mt-2 grid">
         {group.items.map((component) => (
           <ComponentNavigationRow
             key={component.id}
@@ -125,21 +135,14 @@ function ComponentNavigationRow({
       })}
       aria-current={isSelected ? 'page' : undefined}
       className={[
-        'border-l-2 px-4 py-3 transition',
+        'border-l-2 px-3 py-2.5 transition',
         isSelected
           ? 'border-action-primary bg-action-primary/10'
           : 'hover:bg-background-subtle border-transparent',
       ].join(' ')}
     >
-      <div className="flex items-center justify-between gap-4">
-        <div className="min-w-0">
-          <h4 className="truncate text-sm font-semibold">{component.name}</h4>
-
-          <p className="text-content-secondary mt-1 text-sm">
-            {formatComponentPlatforms(t, component.platforms)}
-          </p>
-        </div>
-
+      <div className="flex min-w-0 items-center justify-between gap-3">
+        <h4 className="truncate text-sm font-semibold">{component.name}</h4>
         <StatusBadge t={t} status={component.status} />
       </div>
     </Link>
@@ -164,11 +167,4 @@ function createComponentNavigationHref({
   }
 
   return `/app/projects/${projectSlug}/components?${params.toString()}`;
-}
-
-function formatComponentPlatforms(
-  t: ComponentsRegistryTranslator,
-  platforms: ComponentRegistryItem['platforms'],
-) {
-  return platforms.map((platform) => t(`platforms.${platform}`)).join(' • ');
 }
