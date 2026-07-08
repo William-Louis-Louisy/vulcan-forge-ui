@@ -1,6 +1,13 @@
 'use client';
 
-import { useActionState, useMemo, useState } from 'react';
+import {
+  useActionState,
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { Button } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
 import type { ComponentContract } from '@/domain/design-system';
@@ -31,6 +38,12 @@ type ComponentContractEditorProps = {
   tokenOptions: ComponentTokenOption[];
 };
 
+type PendingCollectionFocus = {
+  inputIndex: number;
+  selectionStart: number | null;
+  selectionEnd: number | null;
+};
+
 export function ComponentContractEditor({
   locale,
   projectSlug,
@@ -49,9 +62,70 @@ export function ComponentContractEditor({
   );
   const [draft, setDraft] =
     useState<ComponentContractEditorDraft>(initialDraft);
+  const pendingCollectionFocusRef = useRef<PendingCollectionFocus | null>(null);
   const [activeLocale, setActiveLocale] = useState<'en' | 'fr'>(
     locale === 'fr' ? 'fr' : 'en',
   );
+
+  const getCollectionKeyInputs = useCallback(
+    () =>
+      Array.from(document.querySelectorAll<HTMLInputElement>('input')).filter(
+        (input) => input.getAttribute('aria-label') === labels.fields.key,
+      ),
+    [labels.fields.key],
+  );
+
+  const setDraftPreservingCollectionFocus = useCallback(
+    (nextDraft: ComponentContractEditorDraft) => {
+      const activeElement = document.activeElement;
+
+      if (
+        activeElement instanceof HTMLInputElement &&
+        activeElement.getAttribute('aria-label') === labels.fields.key
+      ) {
+        const inputIndex = getCollectionKeyInputs().indexOf(activeElement);
+
+        if (inputIndex >= 0) {
+          pendingCollectionFocusRef.current = {
+            inputIndex,
+            selectionStart: activeElement.selectionStart,
+            selectionEnd: activeElement.selectionEnd,
+          };
+        }
+      }
+
+      setDraft(nextDraft);
+    },
+    [getCollectionKeyInputs, labels.fields.key],
+  );
+
+  useLayoutEffect(() => {
+    const pendingFocus = pendingCollectionFocusRef.current;
+
+    if (!pendingFocus) {
+      return;
+    }
+
+    pendingCollectionFocusRef.current = null;
+
+    const targetInput = getCollectionKeyInputs()[pendingFocus.inputIndex];
+
+    if (!targetInput) {
+      return;
+    }
+
+    targetInput.focus();
+
+    if (
+      pendingFocus.selectionStart !== null &&
+      pendingFocus.selectionEnd !== null
+    ) {
+      targetInput.setSelectionRange(
+        pendingFocus.selectionStart,
+        pendingFocus.selectionEnd,
+      );
+    }
+  }, [draft, getCollectionKeyInputs]);
 
   const savedContract =
     state.status === 'success' && state.savedContract
@@ -107,7 +181,7 @@ export function ComponentContractEditor({
       <ComponentContractEditorSections
         labels={labels}
         draft={draft}
-        setDraft={setDraft}
+        setDraft={setDraftPreservingCollectionFocus}
         activeLocale={activeLocale}
         setActiveLocale={setActiveLocale}
         tokenOptions={tokenOptions}
