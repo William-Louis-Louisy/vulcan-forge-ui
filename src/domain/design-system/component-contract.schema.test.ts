@@ -11,6 +11,14 @@ describe('componentContractSchema', () => {
           en: 'Triggers an action.',
           fr: 'Déclenche une action.',
         },
+        usageGuidelines: {
+          en: 'Use for clear user actions.',
+          fr: 'Utiliser pour des actions utilisateur claires.',
+        },
+        contentGuidelines: {
+          en: 'Start labels with a verb.',
+          fr: 'Commencer les labels par un verbe.',
+        },
         variants: [
           {
             key: 'primary',
@@ -69,7 +77,29 @@ describe('componentContractSchema', () => {
       type: 'button',
       name: 'Button',
       status: 'draft',
+      usageGuidelines: {
+        en: 'Use for clear user actions.',
+        fr: 'Utiliser pour des actions utilisateur claires.',
+      },
+      contentGuidelines: {
+        en: 'Start labels with a verb.',
+        fr: 'Commencer les labels par un verbe.',
+      },
     });
+  });
+
+  it('keeps guideline fields optional for existing contracts', () => {
+    const contract = componentContractSchema.parse({
+      type: 'button',
+      name: 'Button',
+      purpose: {
+        en: 'Triggers an action.',
+        fr: 'Déclenche une action.',
+      },
+    });
+
+    expect(contract.usageGuidelines).toBeUndefined();
+    expect(contract.contentGuidelines).toBeUndefined();
   });
 
   it('rejects a contract without localized purpose', () => {
@@ -81,6 +111,20 @@ describe('componentContractSchema', () => {
       }).success,
     ).toBe(false);
   });
+
+  it('rejects an empty localized guideline when the field is provided', () => {
+    expect(
+      componentContractSchema.safeParse({
+        type: 'button',
+        name: 'Button',
+        purpose: {
+          en: 'Triggers an action.',
+        },
+        usageGuidelines: {},
+      }).success,
+    ).toBe(false);
+  });
+
   it('defaults optional matrix fields to empty arrays', () => {
     const contract = componentContractSchema.parse({
       type: 'button',
@@ -94,6 +138,7 @@ describe('componentContractSchema', () => {
     expect(contract.sizes).toEqual([]);
     expect(contract.tokenBindings).toEqual([]);
   });
+
   it('rejects an invalid token binding path', () => {
     expect(
       componentContractSchema.safeParse({
