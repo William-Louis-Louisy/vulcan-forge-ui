@@ -48,6 +48,8 @@ export const componentGuidelineMessages = {
         eyebrow: 'Visual matrix',
         incompleteMatrixNotice:
           'This matrix uses a fallback axis because this component does not document variants or sizes yet.',
+        noTokenBindingsNotice:
+          'No visual token binding is defined for this component yet.',
         state: 'State',
         title: 'Visual matrix',
       },
@@ -101,6 +103,8 @@ export const componentGuidelineMessages = {
         eyebrow: 'Matrice visuelle',
         incompleteMatrixNotice:
           'Cette matrice utilise un axe de secours car ce composant ne documente pas encore ses variantes ou ses tailles.',
+        noTokenBindingsNotice:
+          'Aucun binding de token visuel n’est encore défini pour ce composant.',
         state: 'État',
         title: 'Matrice visuelle',
       },
