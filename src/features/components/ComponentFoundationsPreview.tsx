@@ -1,5 +1,8 @@
 import type { Locale } from '@/i18n/routing';
-import { ComponentVariantPreviewGroup } from './ComponentVisualMatrix';
+import {
+  ComponentVisualMatrix,
+  createVisualMatrixAxes,
+} from './ComponentVisualMatrix';
 import type { ComponentRegistryItem } from './components-registry.utils';
 import type { ComponentTokenBindingResolution } from './component-token-bindings.utils';
 import type { ComponentsRegistryTranslator } from '@/app/[locale]/app/projects/[projectSlug]/components/page';
@@ -15,79 +18,42 @@ export function ComponentFoundationsPreviewShell({
   component: ComponentRegistryItem;
   tokenBindingResolution: ComponentTokenBindingResolution;
 }) {
-  const variants =
-    component.contract.variants.length > 0
-      ? component.contract.variants
-      : [
-          {
-            key: 'default',
-            label: {
-              en: 'Default',
-              fr: 'Défaut',
-            },
-          },
-        ];
-
-  const states =
-    component.contract.states.length > 0
-      ? component.contract.states
-      : [
-          {
-            key: 'default',
-            label: {
-              en: 'Default',
-              fr: 'Défaut',
-            },
-          },
-        ];
-
-  const hasIncompleteMatrix =
-    component.contract.variants.length === 0 ||
-    component.contract.states.length === 0;
+  const { hasFallback } = createVisualMatrixAxes(component.contract);
 
   return (
-    <section className="p-4">
-      <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
-        {t('foundationsPreview.eyebrow')}
-      </p>
-
-      <h2 className="mt-2 text-xl font-semibold tracking-tight">
+    <section className="border-border-subtle border-b p-4">
+      <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.16em] uppercase">
         {t('foundationsPreview.title')}
-      </h2>
-
-      <p className="text-content-secondary mt-3 text-sm leading-6">
-        {t('foundationsPreview.description')}
       </p>
 
       {component.contract.tokenBindings.length === 0 ? (
-        <div className="border-border-subtle bg-background-subtle text-content-secondary mt-5 rounded-2xl border p-4 text-sm leading-6">
+        <div className="border-border-subtle bg-background-subtle text-content-secondary mt-3 rounded-md border px-3 py-2 text-xs leading-5">
           {t('foundationsPreview.noTokenBindingsNotice')}
         </div>
       ) : null}
 
-      {hasIncompleteMatrix ? (
-        <div className="border-action-warning/30 bg-action-warning/10 text-action-warning mt-5 rounded-2xl border p-4 text-sm leading-6">
+      {hasFallback ? (
+        <div className="border-action-warning/30 bg-action-warning/10 text-action-warning mt-3 rounded-md border px-3 py-2 text-xs leading-5">
           {t('foundationsPreview.incompleteMatrixNotice')}
         </div>
       ) : null}
 
-      <div className="mt-5 grid gap-5">
-        {variants.map((variant) => (
-          <ComponentVariantPreviewGroup
-            key={variant.key}
-            locale={locale}
-            component={component}
-            variantKey={variant.key}
-            variantLabel={variant.label}
-            states={states}
-            tokenBindingResolution={tokenBindingResolution}
-          />
-        ))}
+      <div className="mt-3">
+        <ComponentVisualMatrix
+          key={component.id}
+          locale={locale}
+          component={component}
+          labels={{
+            baseState: t('foundationsPreview.baseState'),
+            state: t('foundationsPreview.state'),
+          }}
+          tokenBindingResolution={tokenBindingResolution}
+        />
       </div>
 
       {Object.keys(tokenBindingResolution.bindings).length > 0 ? (
-        <div className="border-border-subtle bg-background-subtle mt-5 rounded-2xl border p-4">
-          <p className="text-content-tertiary text-xs font-semibold tracking-[0.16em] uppercase">
+        <div className="border-border-subtle bg-background-subtle mt-4 rounded-lg border p-3">
+          <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase">
             {t('foundationsPreview.resolvedTokens')}
           </p>
 
@@ -95,10 +61,10 @@ export function ComponentFoundationsPreviewShell({
             {Object.values(tokenBindingResolution.bindings).map((binding) => (
               <div
                 key={binding.key}
-                className="flex items-center justify-between gap-3 text-sm"
+                className="flex items-center justify-between gap-3 text-xs"
               >
                 <dt className="text-content-secondary">{binding.key}</dt>
-                <dd className="text-content-primary font-mono text-xs">
+                <dd className="text-content-primary max-w-40 truncate font-mono text-[0.6875rem]">
                   {String(binding.resolvedValue)}
                 </dd>
               </div>
@@ -109,7 +75,7 @@ export function ComponentFoundationsPreviewShell({
 
       {tokenBindingResolution.missingBindings.length > 0 ||
       tokenBindingResolution.invalidTokenSetsCount > 0 ? (
-        <div className="border-action-warning/30 bg-action-warning/10 text-action-warning mt-5 rounded-2xl border p-4 text-sm leading-6">
+        <div className="border-action-warning/30 bg-action-warning/10 text-action-warning mt-3 rounded-md border px-3 py-2 text-xs leading-5">
           {t('foundationsPreview.tokenBindingWarning', {
             missing: tokenBindingResolution.missingBindings.length,
             invalid: tokenBindingResolution.invalidTokenSetsCount,
