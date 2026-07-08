@@ -21,28 +21,30 @@ export function ComponentDetails({
 }) {
   return (
     <article className="min-w-0 px-6 py-5">
-      <header className="border-border-subtle flex min-w-0 flex-col gap-3 border-b pb-5 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h1 className="text-[1.625rem] font-semibold tracking-tight">
-            {component.name}
-          </h1>
-          <p className="text-content-tertiary mt-1.5 truncate font-mono text-xs">
-            {component.type} · {t(`categories.${component.category}`)}
-          </p>
+      <div className="mx-auto w-full max-w-[48rem]">
+        <header className="border-border-subtle flex min-w-0 flex-col gap-3 border-b pb-5 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0">
+            <h1 className="text-[1.625rem] font-semibold tracking-tight">
+              {component.name}
+            </h1>
+            <p className="text-content-tertiary mt-1.5 truncate font-mono text-xs">
+              {component.type} · {t(`categories.${component.category}`)}
+            </p>
+          </div>
+
+          <StatusBadge t={t} status={component.status} />
+        </header>
+
+        <div className="mt-5 min-w-0">
+          <ComponentContractEditorBoundary
+            componentId={component.id}
+            locale={locale}
+            projectSlug={projectSlug}
+            contract={component.contract}
+            labels={createComponentContractEditorLabels(t)}
+            tokenOptions={tokenOptions}
+          />
         </div>
-
-        <StatusBadge t={t} status={component.status} />
-      </header>
-
-      <div className="mt-5 min-w-0">
-        <ComponentContractEditorBoundary
-          componentId={component.id}
-          locale={locale}
-          projectSlug={projectSlug}
-          contract={component.contract}
-          labels={createComponentContractEditorLabels(t)}
-          tokenOptions={tokenOptions}
-        />
       </div>
     </article>
   );
@@ -93,17 +95,21 @@ function createComponentContractEditorLabels(
     },
     collections: {
       title: t('editor.collections.title'),
+      editDetails: t('editor.collections.editDetails'),
     },
     variants: {
       title: t('editor.variants.title'),
+      axis: t('editor.variants.axis'),
       add: t('editor.variants.add'),
     },
     sizes: {
       title: t('editor.sizes.title'),
+      axis: t('editor.sizes.axis'),
       add: t('editor.sizes.add'),
     },
     states: {
       title: t('editor.states.title'),
+      axis: t('editor.states.axis'),
       add: t('editor.states.add'),
     },
     accessibility: {
