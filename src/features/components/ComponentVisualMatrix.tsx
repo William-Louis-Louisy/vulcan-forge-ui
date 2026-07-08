@@ -11,6 +11,9 @@ import type { ComponentTokenBindingResolution } from './component-token-bindings
 type ComponentVariant = ComponentRegistryItem['contract']['variants'][number];
 type ComponentSize = ComponentRegistryItem['contract']['sizes'][number];
 
+type PreviewSize = 'small' | 'medium' | 'large';
+export type AlertPreviewTone = 'info' | 'success' | 'warning' | 'danger';
+
 export type ComponentVisualMatrixLabels = {
   baseState: string;
   state: string;
@@ -44,9 +47,7 @@ export function createVisualMatrixAxes(
   };
 }
 
-export function getPreviewSizeCategory(
-  sizeKey: string,
-): 'small' | 'medium' | 'large' {
+export function getPreviewSizeCategory(sizeKey: string): PreviewSize {
   const normalizedSizeKey = sizeKey.toLowerCase();
 
   if (
@@ -67,6 +68,41 @@ export function getPreviewSizeCategory(
   }
 
   return 'medium';
+}
+
+export function getAlertPreviewTone(variantKey: string): AlertPreviewTone {
+  const normalizedVariantKey = variantKey.toLowerCase();
+
+  if (
+    normalizedVariantKey.includes('danger') ||
+    normalizedVariantKey.includes('error') ||
+    normalizedVariantKey.includes('destructive')
+  ) {
+    return 'danger';
+  }
+
+  if (normalizedVariantKey.includes('success')) {
+    return 'success';
+  }
+
+  if (
+    normalizedVariantKey.includes('warning') ||
+    normalizedVariantKey.includes('caution')
+  ) {
+    return 'warning';
+  }
+
+  return 'info';
+}
+
+export function isInteractiveCardVariant(variantKey: string): boolean {
+  const normalizedVariantKey = variantKey.toLowerCase();
+
+  return (
+    normalizedVariantKey.includes('interactive') ||
+    normalizedVariantKey.includes('action') ||
+    normalizedVariantKey.includes('clickable')
+  );
 }
 
 export function ComponentVisualMatrix({
@@ -139,7 +175,7 @@ export function ComponentVisualMatrix({
 
                 {sizes.map((size) => (
                   <td key={`${variant.key}-${size.key}`} className="p-1.5">
-                    <div className="border-border-subtle bg-background-app flex min-h-16 min-w-20 items-center justify-center rounded-md border p-2">
+                    <div className="border-border-subtle bg-background-app flex min-h-20 min-w-24 items-center justify-center rounded-md border p-2">
                       <ComponentPreview
                         type={component.type}
                         name={component.name}
@@ -236,7 +272,7 @@ export function ComponentPreview({
   const isError =
     normalizedStateKey.includes('error') ||
     normalizedStateKey.includes('invalid');
-  const isOpen = normalizedStateKey.includes('open');
+  const isClosed = normalizedStateKey.includes('closed');
   const isLoading = normalizedStateKey.includes('loading');
   const isHover = normalizedStateKey.includes('hover');
   const isActive = normalizedStateKey.includes('active');
@@ -274,67 +310,41 @@ export function ComponentPreview({
 
   if (type === 'card') {
     return (
-      <div
-        style={previewTokenStyles}
-        className={[
-          'w-full rounded-md border p-2',
-          size === 'small'
-            ? 'text-[0.6875rem]'
-            : size === 'large'
-              ? 'text-sm'
-              : 'text-xs',
-          isFocus
-            ? 'border-action-primary ring-action-primary/25 ring-2'
-            : 'border-border-subtle',
-          isDisabled ? 'opacity-50' : '',
-        ].join(' ')}
-      >
-        <p className="truncate font-semibold">{name}</p>
-        <p className="text-content-tertiary mt-1 truncate font-mono text-[0.625rem]">
-          {variantKey}
-        </p>
-      </div>
+      <CardPreview
+        name={name}
+        variantKey={variantKey}
+        size={size}
+        isDisabled={isDisabled}
+        isFocus={isFocus}
+        isHover={isHover}
+        previewTokenStyles={previewTokenStyles}
+      />
     );
   }
 
   if (type === 'alert') {
     return (
-      <div
-        style={previewTokenStyles}
-        className={[
-          'w-full rounded-md border px-2 py-1.5 text-center font-semibold',
-          size === 'large' ? 'text-xs' : 'text-[0.6875rem]',
-          isError || variantKey.toLowerCase().includes('danger')
-            ? 'border-action-danger/30 bg-action-danger/10 text-action-danger'
-            : 'border-action-warning/30 bg-action-warning/10 text-action-warning',
-          isDisabled ? 'opacity-50' : '',
-        ].join(' ')}
-      >
-        {isLoading ? '…' : name}
-      </div>
+      <AlertPreview
+        name={name}
+        variantKey={variantKey}
+        size={size}
+        isDisabled={isDisabled}
+        isLoading={isLoading}
+        previewTokenStyles={previewTokenStyles}
+      />
     );
   }
 
   if (type === 'dialog') {
     return (
-      <div className="border-border-subtle bg-background-subtle w-full rounded-md border p-1.5">
-        <div
-          style={previewTokenStyles}
-          className={[
-            'rounded-md border p-2',
-            size === 'small'
-              ? 'text-[0.625rem]'
-              : size === 'large'
-                ? 'text-xs'
-                : 'text-[0.6875rem]',
-            isOpen
-              ? 'border-action-primary bg-surface-primary'
-              : 'border-border-subtle bg-surface-primary opacity-70',
-          ].join(' ')}
-        >
-          <p className="truncate font-semibold">{name}</p>
-        </div>
-      </div>
+      <DialogPreview
+        name={name}
+        variantKey={variantKey}
+        size={size}
+        isClosed={isClosed}
+        isLoading={isLoading}
+        previewTokenStyles={previewTokenStyles}
+      />
     );
   }
 
@@ -372,6 +382,190 @@ export function ComponentPreview({
     >
       {isLoading ? '…' : name}
     </button>
+  );
+}
+
+function CardPreview({
+  name,
+  variantKey,
+  size,
+  isDisabled,
+  isFocus,
+  isHover,
+  previewTokenStyles,
+}: {
+  name: string;
+  variantKey: string;
+  size: PreviewSize;
+  isDisabled: boolean;
+  isFocus: boolean;
+  isHover: boolean;
+  previewTokenStyles: CSSProperties;
+}) {
+  const isInteractive = isInteractiveCardVariant(variantKey);
+
+  return (
+    <article
+      style={previewTokenStyles}
+      className={[
+        'bg-surface-primary text-content-primary w-full overflow-hidden rounded-md border transition',
+        size === 'small' ? 'p-2' : size === 'large' ? 'p-3.5' : 'p-3',
+        isFocus && isInteractive
+          ? 'border-action-primary ring-action-primary/25 ring-2'
+          : 'border-border-subtle',
+        isHover && isInteractive ? '-translate-y-0.5 shadow-md' : 'shadow-sm',
+        isInteractive ? 'cursor-pointer' : '',
+        isDisabled ? 'opacity-45' : '',
+      ].join(' ')}
+    >
+      <div className="flex items-center gap-2">
+        <span
+          aria-hidden="true"
+          className={[
+            'bg-action-primary/15 shrink-0 rounded-sm',
+            size === 'small' ? 'size-5' : size === 'large' ? 'size-8' : 'size-6',
+          ].join(' ')}
+        />
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-[0.6875rem] font-semibold">{name}</p>
+          <p className="text-content-tertiary truncate font-mono text-[0.5625rem]">
+            {variantKey}
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-2 space-y-1">
+        <span className="bg-background-emphasis block h-1.5 w-full rounded-full" />
+        <span className="bg-background-emphasis block h-1.5 w-3/4 rounded-full" />
+      </div>
+
+      <footer className="border-border-subtle mt-2 flex items-center justify-between border-t pt-2">
+        <span className="bg-background-emphasis block h-1.5 w-8 rounded-full" />
+        {isInteractive ? (
+          <span className="bg-action-primary/15 text-action-primary rounded px-1.5 py-0.5 text-[0.5rem] font-semibold">
+            →
+          </span>
+        ) : null}
+      </footer>
+    </article>
+  );
+}
+
+function AlertPreview({
+  name,
+  variantKey,
+  size,
+  isDisabled,
+  isLoading,
+  previewTokenStyles,
+}: {
+  name: string;
+  variantKey: string;
+  size: PreviewSize;
+  isDisabled: boolean;
+  isLoading: boolean;
+  previewTokenStyles: CSSProperties;
+}) {
+  const tone = getAlertPreviewTone(variantKey);
+  const toneClassNames: Record<AlertPreviewTone, string> = {
+    info: 'border-action-info/30 bg-action-info/10 text-action-info',
+    success: 'border-action-success/30 bg-action-success/10 text-action-success',
+    warning:
+      'border-action-warning/30 bg-action-warning/10 text-action-warning',
+    danger: 'border-action-danger/30 bg-action-danger/10 text-action-danger',
+  };
+  const toneIcon: Record<AlertPreviewTone, string> = {
+    info: 'i',
+    success: '✓',
+    warning: '!',
+    danger: '×',
+  };
+
+  return (
+    <div
+      style={getStructuralTokenStyles(previewTokenStyles)}
+      className={[
+        'flex w-full items-start rounded-md border',
+        size === 'small' ? 'gap-1.5 p-2' : size === 'large' ? 'gap-2.5 p-3.5' : 'gap-2 p-3',
+        toneClassNames[tone],
+        isDisabled ? 'opacity-45' : '',
+      ].join(' ')}
+    >
+      <span
+        aria-hidden="true"
+        className="flex size-4 shrink-0 items-center justify-center rounded-full border border-current text-[0.5625rem] font-bold"
+      >
+        {isLoading ? '…' : toneIcon[tone]}
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-[0.6875rem] font-semibold">{name}</p>
+        <p className="mt-0.5 truncate text-[0.5625rem] opacity-80">
+          {variantKey}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function DialogPreview({
+  name,
+  variantKey,
+  size,
+  isClosed,
+  isLoading,
+  previewTokenStyles,
+}: {
+  name: string;
+  variantKey: string;
+  size: PreviewSize;
+  isClosed: boolean;
+  isLoading: boolean;
+  previewTokenStyles: CSSProperties;
+}) {
+  const isDanger = getButtonVariantTone(variantKey) === 'danger';
+
+  return (
+    <div
+      className={[
+        'bg-content-primary/10 flex w-full items-center justify-center rounded-md p-2',
+        isClosed ? 'opacity-45' : '',
+      ].join(' ')}
+    >
+      <section
+        style={previewTokenStyles}
+        className={[
+          'border-border-subtle bg-surface-primary text-content-primary w-full rounded-md border shadow-md',
+          size === 'small' ? 'max-w-28 p-2' : size === 'large' ? 'max-w-44 p-3' : 'max-w-36 p-2.5',
+        ].join(' ')}
+      >
+        <header className="flex items-center justify-between gap-2">
+          <p className="truncate text-[0.625rem] font-semibold">{name}</p>
+          <span
+            aria-hidden="true"
+            className="text-content-tertiary text-[0.625rem] leading-none"
+          >
+            ×
+          </span>
+        </header>
+
+        <div className="mt-2 space-y-1">
+          <span className="bg-background-emphasis block h-1.5 w-full rounded-full" />
+          <span className="bg-background-emphasis block h-1.5 w-2/3 rounded-full" />
+        </div>
+
+        <footer className="mt-2 flex items-center justify-end gap-1">
+          <span className="border-border-subtle bg-surface-primary h-4 w-7 rounded border" />
+          <span
+            className={[
+              'h-4 w-8 rounded',
+              isDanger ? 'bg-action-danger' : 'bg-action-primary',
+            ].join(' ')}
+          >
+            <span className="sr-only">{isLoading ? '…' : variantKey}</span>
+          </span>
+        </footer>
+      </section>
+    </div>
   );
 }
 
