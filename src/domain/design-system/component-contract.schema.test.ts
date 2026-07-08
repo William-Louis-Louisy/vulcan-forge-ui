@@ -19,6 +19,24 @@ describe('componentContractSchema', () => {
           en: 'Start labels with a verb.',
           fr: 'Commencer les labels par un verbe.',
         },
+        anatomy: [
+          {
+            key: 'label',
+            label: {
+              en: 'Label text',
+              fr: 'Texte du label',
+            },
+            requirement: 'required',
+          },
+          {
+            key: 'icon-leading',
+            label: {
+              en: 'Leading icon',
+              fr: 'Icône de début',
+            },
+            requirement: 'optional',
+          },
+        ],
         variants: [
           {
             key: 'primary',
@@ -77,6 +95,24 @@ describe('componentContractSchema', () => {
       type: 'button',
       name: 'Button',
       status: 'draft',
+      anatomy: [
+        {
+          key: 'label',
+          label: {
+            en: 'Label text',
+            fr: 'Texte du label',
+          },
+          requirement: 'required',
+        },
+        {
+          key: 'icon-leading',
+          label: {
+            en: 'Leading icon',
+            fr: 'Icône de début',
+          },
+          requirement: 'optional',
+        },
+      ],
       usageGuidelines: {
         en: 'Use for clear user actions.',
         fr: 'Utiliser pour des actions utilisateur claires.',
@@ -86,6 +122,35 @@ describe('componentContractSchema', () => {
         fr: 'Commencer les labels par un verbe.',
       },
     });
+  });
+
+  it('upgrades legacy anatomy strings to structured required parts', () => {
+    const contract = componentContractSchema.parse({
+      type: 'button',
+      name: 'Button',
+      purpose: {
+        en: 'Triggers an action.',
+      },
+      anatomy: ['root', 'label'],
+    });
+
+    expect(contract.anatomy).toMatchObject([
+      {
+        key: 'root',
+        label: {
+          en: 'root',
+        },
+        requirement: 'required',
+      },
+      {
+        key: 'label',
+        label: {
+          en: 'label',
+        },
+        requirement: 'required',
+      },
+    ]);
+    expect(contract.anatomy.join(', ')).toBe('root, label');
   });
 
   it('keeps guideline fields optional for existing contracts', () => {
@@ -121,6 +186,25 @@ describe('componentContractSchema', () => {
           en: 'Triggers an action.',
         },
         usageGuidelines: {},
+      }).success,
+    ).toBe(false);
+  });
+
+  it('rejects a structured anatomy part without a localized label', () => {
+    expect(
+      componentContractSchema.safeParse({
+        type: 'button',
+        name: 'Button',
+        purpose: {
+          en: 'Triggers an action.',
+        },
+        anatomy: [
+          {
+            key: 'label',
+            label: {},
+            requirement: 'required',
+          },
+        ],
       }).success,
     ).toBe(false);
   });
