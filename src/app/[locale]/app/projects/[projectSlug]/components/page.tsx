@@ -90,7 +90,7 @@ export default async function ComponentsRegistryPage({
     : null;
 
   return (
-    <section className="flex h-[calc(100vh-3rem)] min-h-0 flex-col overflow-hidden">
+    <section className="flex h-[calc(100dvh-3rem)] min-h-0 flex-col overflow-hidden xl:absolute xl:inset-0 xl:h-auto">
       {registry.invalidCount > 0 ? (
         <Notice tone="warning" className="m-4 shrink-0 font-semibold">
           {t('invalidContractsWarning', { count: registry.invalidCount })}
@@ -98,7 +98,7 @@ export default async function ComponentsRegistryPage({
       ) : null}
 
       {registry.items.length > 0 ? (
-        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto xl:grid xl:grid-cols-[15rem_minmax(0,1fr)_22rem] xl:overflow-hidden">
+        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto xl:grid xl:h-full xl:grid-cols-[15rem_minmax(0,1fr)_22rem] xl:overflow-hidden">
           <aside className="border-border-subtle min-h-0 border-b xl:h-full xl:overflow-y-auto xl:border-r xl:border-b-0">
             <ComponentList
               t={t}

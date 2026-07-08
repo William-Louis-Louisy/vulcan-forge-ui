@@ -1,5 +1,6 @@
 import {
   componentContractSchema,
+  type ComponentAnatomyRequirement,
   type ComponentContract,
   type ComponentContractType,
 } from '@/domain/design-system';
@@ -7,6 +8,12 @@ import {
 export type LocalizedTextDraft = {
   en: string;
   fr: string;
+};
+
+export type ComponentAnatomyPartDraft = {
+  key: string;
+  label: LocalizedTextDraft;
+  requirement: ComponentAnatomyRequirement;
 };
 
 export type ComponentVariantDraft = {
@@ -47,7 +54,7 @@ export type ComponentContractEditorDraft = {
   purpose: LocalizedTextDraft;
   usageGuidelines: LocalizedTextDraft;
   contentGuidelines: LocalizedTextDraft;
-  anatomy: string[];
+  anatomy: ComponentAnatomyPartDraft[];
   variants: ComponentVariantDraft[];
   states: ComponentStateDraft[];
   accessibility: ComponentAccessibilityRuleDraft[];
@@ -76,6 +83,27 @@ function normalizeLocalizedText(value: {
   };
 }
 
+function normalizeAnatomyPart(
+  part: ComponentContract['anatomy'][number],
+): ComponentAnatomyPartDraft {
+  if (typeof part === 'string') {
+    return {
+      key: part,
+      label: {
+        en: part,
+        fr: '',
+      },
+      requirement: 'required',
+    };
+  }
+
+  return {
+    key: part.key,
+    label: normalizeLocalizedText(part.label),
+    requirement: part.requirement,
+  };
+}
+
 function toOptionalLocalizedText(value: LocalizedTextDraft) {
   return {
     en: value.en.trim() || undefined,
@@ -93,7 +121,7 @@ export function createComponentContractDraft(
     purpose: normalizeLocalizedText(contract.purpose),
     usageGuidelines: normalizeLocalizedText(contract.usageGuidelines ?? {}),
     contentGuidelines: normalizeLocalizedText(contract.contentGuidelines ?? {}),
-    anatomy: contract.anatomy,
+    anatomy: contract.anatomy.map(normalizeAnatomyPart),
     variants: contract.variants.map((variant) => ({
       key: variant.key,
       label: normalizeLocalizedText(variant.label),
@@ -137,8 +165,12 @@ export function createComponentContractFromDraft(
       draft.contentGuidelines,
     ),
     anatomy: draft.anatomy
-      .map((item) => item.trim())
-      .filter((item) => item.length > 0),
+      .filter((part) => part.key.trim().length > 0)
+      .map((part) => ({
+        key: part.key.trim(),
+        label: toOptionalLocalizedText(part.label),
+        requirement: part.requirement,
+      })),
     variants: draft.variants
       .filter((variant) => variant.key.trim().length > 0)
       .map((variant) => ({
@@ -193,6 +225,17 @@ export function createComponentContractFromDraft(
   return {
     status: 'success',
     contract: parsedContract.data,
+  };
+}
+
+export function createEmptyAnatomyPartDraft(): ComponentAnatomyPartDraft {
+  return {
+    key: '',
+    label: {
+      en: '',
+      fr: '',
+    },
+    requirement: 'optional',
   };
 }
 

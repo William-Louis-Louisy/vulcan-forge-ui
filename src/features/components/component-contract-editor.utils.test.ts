@@ -2,6 +2,7 @@ import {
   createEmptyStateDraft,
   createEmptyVariantDraft,
   createComponentContractDraft,
+  createEmptyAnatomyPartDraft,
   createComponentContractFromDraft,
   createEmptyForbiddenPatternDraft,
   createEmptyAccessibilityRuleDraft,
@@ -65,7 +66,7 @@ const buttonContract: ComponentContract = {
 };
 
 describe('component contract editor utils', () => {
-  it('creates an editable draft from a component contract', () => {
+  it('normalizes legacy anatomy strings into structured editable parts', () => {
     expect(createComponentContractDraft(buttonContract)).toMatchObject({
       type: 'button',
       name: 'Button',
@@ -74,16 +75,52 @@ describe('component contract editor utils', () => {
         en: 'Triggers an action.',
         fr: 'Déclenche une action.',
       },
-      usageGuidelines: {
-        en: 'Use for clear user actions.',
-        fr: 'Utiliser pour des actions utilisateur claires.',
-      },
-      contentGuidelines: {
-        en: 'Start labels with a verb.',
-        fr: 'Commencer les labels par un verbe.',
-      },
-      anatomy: ['root', 'label'],
+      anatomy: [
+        {
+          key: 'root',
+          label: {
+            en: 'root',
+            fr: '',
+          },
+          requirement: 'required',
+        },
+        {
+          key: 'label',
+          label: {
+            en: 'label',
+            fr: '',
+          },
+          requirement: 'required',
+        },
+      ],
     });
+  });
+
+  it('preserves structured anatomy labels and requirements', () => {
+    const draft = createComponentContractDraft({
+      ...buttonContract,
+      anatomy: [
+        {
+          key: 'icon-leading',
+          label: {
+            en: 'Leading icon',
+            fr: 'Icône de début',
+          },
+          requirement: 'optional',
+        },
+      ],
+    });
+
+    expect(draft.anatomy).toEqual([
+      {
+        key: 'icon-leading',
+        label: {
+          en: 'Leading icon',
+          fr: 'Icône de début',
+        },
+        requirement: 'optional',
+      },
+    ]);
   });
 
   it('normalizes missing optional guidelines to empty localized drafts', () => {
@@ -97,8 +134,18 @@ describe('component contract editor utils', () => {
     expect(draft.contentGuidelines).toEqual({ en: '', fr: '' });
   });
 
-  it('creates a valid component contract from a draft', () => {
+  it('creates a valid component contract with structured anatomy from a draft', () => {
     const draft = createComponentContractDraft(buttonContract);
+    draft.anatomy = [
+      {
+        key: 'root',
+        label: {
+          en: 'Root',
+          fr: 'Racine',
+        },
+        requirement: 'required',
+      },
+    ];
 
     expect(createComponentContractFromDraft(draft)).toMatchObject({
       status: 'success',
@@ -106,14 +153,16 @@ describe('component contract editor utils', () => {
         type: 'button',
         name: 'Button',
         status: 'ready',
-        usageGuidelines: {
-          en: 'Use for clear user actions.',
-          fr: 'Utiliser pour des actions utilisateur claires.',
-        },
-        contentGuidelines: {
-          en: 'Start labels with a verb.',
-          fr: 'Commencer les labels par un verbe.',
-        },
+        anatomy: [
+          {
+            key: 'root',
+            label: {
+              en: 'Root',
+              fr: 'Racine',
+            },
+            requirement: 'required',
+          },
+        ],
       },
     });
   });
@@ -135,6 +184,24 @@ describe('component contract editor utils', () => {
     expect(result.contract.contentGuidelines).toBeUndefined();
   });
 
+  it('returns validation errors when an anatomy key has no localized label', () => {
+    const draft = createComponentContractDraft(buttonContract);
+    draft.anatomy = [
+      {
+        key: 'icon-leading',
+        label: {
+          en: '',
+          fr: '',
+        },
+        requirement: 'optional',
+      },
+    ];
+
+    expect(createComponentContractFromDraft(draft)).toMatchObject({
+      status: 'error',
+    });
+  });
+
   it('returns validation errors for invalid drafts', () => {
     const draft = createComponentContractDraft(buttonContract);
     draft.name = '';
@@ -145,6 +212,14 @@ describe('component contract editor utils', () => {
   });
 
   it('creates empty nested draft items', () => {
+    expect(createEmptyAnatomyPartDraft()).toEqual({
+      key: '',
+      label: {
+        en: '',
+        fr: '',
+      },
+      requirement: 'optional',
+    });
     expect(createEmptyVariantDraft()).toMatchObject({ key: '' });
     expect(createEmptyStateDraft()).toMatchObject({ key: '' });
     expect(createEmptyAccessibilityRuleDraft()).toMatchObject({
