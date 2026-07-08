@@ -423,7 +423,11 @@ function CardPreview({
           aria-hidden="true"
           className={[
             'bg-action-primary/15 shrink-0 rounded-sm',
-            size === 'small' ? 'size-5' : size === 'large' ? 'size-8' : 'size-6',
+            size === 'small'
+              ? 'size-5'
+              : size === 'large'
+                ? 'size-8'
+                : 'size-6',
           ].join(' ')}
         />
         <div className="min-w-0 flex-1">
@@ -435,12 +439,12 @@ function CardPreview({
       </div>
 
       <div className="mt-2 space-y-1">
-        <span className="bg-background-emphasis block h-1.5 w-full rounded-full" />
-        <span className="bg-background-emphasis block h-1.5 w-3/4 rounded-full" />
+        <span className="bg-background-sunken block h-1.5 w-full rounded-full" />
+        <span className="bg-background-sunken block h-1.5 w-3/4 rounded-full" />
       </div>
 
       <footer className="border-border-subtle mt-2 flex items-center justify-between border-t pt-2">
-        <span className="bg-background-emphasis block h-1.5 w-8 rounded-full" />
+        <span className="bg-background-sunken block h-1.5 w-8 rounded-full" />
         {isInteractive ? (
           <span className="bg-action-primary/15 text-action-primary rounded px-1.5 py-0.5 text-[0.5rem] font-semibold">
             →
@@ -469,7 +473,8 @@ function AlertPreview({
   const tone = getAlertPreviewTone(variantKey);
   const toneClassNames: Record<AlertPreviewTone, string> = {
     info: 'border-action-info/30 bg-action-info/10 text-action-info',
-    success: 'border-action-success/30 bg-action-success/10 text-action-success',
+    success:
+      'border-action-success/30 bg-action-success/10 text-action-success',
     warning:
       'border-action-warning/30 bg-action-warning/10 text-action-warning',
     danger: 'border-action-danger/30 bg-action-danger/10 text-action-danger',
@@ -486,7 +491,11 @@ function AlertPreview({
       style={getStructuralTokenStyles(previewTokenStyles)}
       className={[
         'flex w-full items-start rounded-md border',
-        size === 'small' ? 'gap-1.5 p-2' : size === 'large' ? 'gap-2.5 p-3.5' : 'gap-2 p-3',
+        size === 'small'
+          ? 'gap-1.5 p-2'
+          : size === 'large'
+            ? 'gap-2.5 p-3.5'
+            : 'gap-2 p-3',
         toneClassNames[tone],
         isDisabled ? 'opacity-45' : '',
       ].join(' ')}
@@ -535,7 +544,11 @@ function DialogPreview({
         style={previewTokenStyles}
         className={[
           'border-border-subtle bg-surface-primary text-content-primary w-full rounded-md border shadow-md',
-          size === 'small' ? 'max-w-28 p-2' : size === 'large' ? 'max-w-44 p-3' : 'max-w-36 p-2.5',
+          size === 'small'
+            ? 'max-w-28 p-2'
+            : size === 'large'
+              ? 'max-w-44 p-3'
+              : 'max-w-36 p-2.5',
         ].join(' ')}
       >
         <header className="flex items-center justify-between gap-2">
@@ -549,8 +562,8 @@ function DialogPreview({
         </header>
 
         <div className="mt-2 space-y-1">
-          <span className="bg-background-emphasis block h-1.5 w-full rounded-full" />
-          <span className="bg-background-emphasis block h-1.5 w-2/3 rounded-full" />
+          <span className="bg-background-sunken block h-1.5 w-full rounded-full" />
+          <span className="bg-background-sunken block h-1.5 w-2/3 rounded-full" />
         </div>
 
         <footer className="mt-2 flex items-center justify-end gap-1">
