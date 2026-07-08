@@ -30,4 +30,4 @@ export const componentGuidelineMessages = {
       },
     },
   },
-} as const satisfies Record<Locale, MessageObject>;
+} satisfies Record<Locale, MessageObject>;
