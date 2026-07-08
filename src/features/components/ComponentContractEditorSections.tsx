@@ -269,11 +269,7 @@ function LocalizedContentSection({
           onChange={(value) =>
             setDraft({
               ...draft,
-              purpose: updateLocalizedText(
-                draft.purpose,
-                activeLocale,
-                value,
-              ),
+              purpose: updateLocalizedText(draft.purpose, activeLocale, value),
             })
           }
         />
@@ -550,7 +546,7 @@ function EditableTag({
   const width = `${Math.max(3, value.length + 1)}ch`;
 
   return (
-    <span className="border-border-subtle bg-surface-primary inline-flex min-h-7 items-center rounded-full border pl-2.5 pr-1">
+    <span className="border-border-subtle bg-surface-primary inline-flex min-h-7 items-center rounded-full border pr-1 pl-2.5">
       <input
         aria-label={label}
         value={value}
@@ -1018,9 +1014,7 @@ function CompactTextarea({
     <label className="grid min-w-0 gap-1.5">
       <span
         className={
-          hideLabel
-            ? 'sr-only'
-            : 'text-content-secondary text-xs font-semibold'
+          hideLabel ? 'sr-only' : 'text-content-secondary text-xs font-semibold'
         }
       >
         {label}
