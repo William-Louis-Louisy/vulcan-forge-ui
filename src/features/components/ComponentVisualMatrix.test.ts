@@ -1,6 +1,78 @@
 import { describe, expect, it } from 'vitest';
-import { createPreviewTokenStyles } from './ComponentVisualMatrix';
+import type { ComponentRegistryItem } from './components-registry.utils';
+import {
+  createPreviewTokenStyles,
+  createVisualMatrixAxes,
+  getPreviewSizeCategory,
+} from './ComponentVisualMatrix';
 import type { ComponentTokenBindingResolution } from './component-token-bindings.utils';
+
+describe('createVisualMatrixAxes', () => {
+  it('uses documented variants, sizes and states', () => {
+    const contract = {
+      variants: [
+        {
+          key: 'primary',
+          label: {
+            en: 'Primary',
+          },
+        },
+      ],
+      sizes: [
+        {
+          key: 'sm',
+          label: {
+            en: 'Small',
+          },
+        },
+      ],
+      states: [
+        {
+          key: 'disabled',
+          label: {
+            en: 'Disabled',
+          },
+        },
+      ],
+    } as ComponentRegistryItem['contract'];
+
+    expect(createVisualMatrixAxes(contract)).toMatchObject({
+      variants: [{ key: 'primary' }],
+      sizes: [{ key: 'sm' }],
+      states: [{ key: 'disabled' }],
+      hasFallback: false,
+    });
+  });
+
+  it('provides a default variant and medium size for incomplete contracts', () => {
+    const contract = {
+      variants: [],
+      sizes: [],
+      states: [],
+    } as unknown as ComponentRegistryItem['contract'];
+
+    expect(createVisualMatrixAxes(contract)).toMatchObject({
+      variants: [{ key: 'default' }],
+      sizes: [{ key: 'md' }],
+      states: [],
+      hasFallback: true,
+    });
+  });
+});
+
+describe('getPreviewSizeCategory', () => {
+  it.each([
+    ['xs', 'small'],
+    ['sm', 'small'],
+    ['compact', 'small'],
+    ['md', 'medium'],
+    ['default', 'medium'],
+    ['lg', 'large'],
+    ['xl', 'large'],
+  ])('maps %s to the %s preview category', (sizeKey, expected) => {
+    expect(getPreviewSizeCategory(sizeKey)).toBe(expected);
+  });
+});
 
 describe('createPreviewTokenStyles', () => {
   it('maps resolved token bindings to preview CSS styles', () => {
