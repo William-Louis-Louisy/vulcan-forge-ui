@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@/components/ui';
 import type {
   ComponentAnatomyPartDraft,
   ComponentContractEditorDraft,
@@ -35,14 +36,32 @@ export function ComponentAnatomyEditor({
   setDraft,
 }: ComponentAnatomyEditorProps) {
   return (
-    <section className="min-w-0">
-      <h3 className="text-lg font-semibold tracking-tight">{labels.title}</h3>
-      <p className="text-content-secondary mt-2 text-sm leading-6">
-        {labels.description}
-      </p>
+    <section className="border-border-subtle min-w-0 border-t pt-5">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h3 className="text-base font-semibold tracking-tight">
+            {labels.title}
+          </h3>
+          <p className="text-content-secondary mt-1 text-xs leading-5">
+            {labels.description}
+          </p>
+        </div>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() =>
+            setDraft({
+              ...draft,
+              anatomy: [...draft.anatomy, createEmptyAnatomyPartDraft()],
+            })
+          }
+        >
+          + {labels.add}
+        </Button>
+      </div>
 
-      <div className="border-border-subtle mt-4 min-w-0 overflow-hidden rounded-xl border">
-        <div className="bg-background-subtle text-content-tertiary hidden min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_10rem_2.5rem] gap-3 border-b px-3 py-2 text-xs font-semibold tracking-wide uppercase md:grid">
+      <div className="border-border-subtle mt-3 min-w-0 overflow-hidden rounded-md border">
+        <div className="bg-background-subtle text-content-tertiary hidden min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_8rem_2rem] gap-2 border-b px-3 py-2 text-[0.6875rem] font-medium md:grid">
           <span>{labels.key}</span>
           <span>{labels.label}</span>
           <span>{labels.requirement}</span>
@@ -50,9 +69,9 @@ export function ComponentAnatomyEditor({
         </div>
 
         {draft.anatomy.length === 0 ? (
-          <div className="text-content-secondary px-3 py-4 text-sm">
+          <p className="text-content-tertiary px-3 py-4 text-xs">
             {labels.description}
-          </div>
+          </p>
         ) : (
           <div className="divide-border-subtle min-w-0 divide-y">
             {draft.anatomy.map((part, index) => (
@@ -79,19 +98,6 @@ export function ComponentAnatomyEditor({
           </div>
         )}
       </div>
-
-      <button
-        type="button"
-        onClick={() =>
-          setDraft({
-            ...draft,
-            anatomy: [...draft.anatomy, createEmptyAnatomyPartDraft()],
-          })
-        }
-        className="border-border-subtle text-content-secondary hover:text-content-primary mt-4 rounded-xl border px-4 py-2 text-sm font-semibold transition"
-      >
-        {labels.add}
-      </button>
     </section>
   );
 }
@@ -110,21 +116,21 @@ function AnatomyPartRow({
   onRemove: () => void;
 }) {
   return (
-    <div className="grid min-w-0 gap-3 px-3 py-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_10rem_2.5rem] md:items-end">
-      <label className="grid min-w-0 gap-1.5">
-        <span className="text-content-tertiary text-xs font-semibold md:hidden">
+    <div className="grid min-w-0 gap-2 px-3 py-2.5 md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_8rem_2rem] md:items-end">
+      <label className="grid min-w-0 gap-1 md:block">
+        <span className="text-content-tertiary text-[0.6875rem] font-medium md:sr-only">
           {labels.key}
         </span>
         <input
           aria-label={labels.key}
           value={part.key}
           onChange={(event) => onChange({ ...part, key: event.target.value })}
-          className="border-border-subtle bg-background-app min-h-10 w-full min-w-0 rounded-lg border px-3 font-mono text-sm"
+          className={`${fieldClassName} font-mono`}
         />
       </label>
 
-      <label className="grid min-w-0 gap-1.5">
-        <span className="text-content-tertiary text-xs font-semibold md:hidden">
+      <label className="grid min-w-0 gap-1 md:block">
+        <span className="text-content-tertiary text-[0.6875rem] font-medium md:sr-only">
           {labels.label}
         </span>
         <input
@@ -139,12 +145,12 @@ function AnatomyPartRow({
               },
             })
           }
-          className="border-border-subtle bg-background-app min-h-10 w-full min-w-0 rounded-lg border px-3 text-sm"
+          className={fieldClassName}
         />
       </label>
 
-      <label className="grid min-w-0 gap-1.5">
-        <span className="text-content-tertiary text-xs font-semibold md:hidden">
+      <label className="grid min-w-0 gap-1 md:block">
+        <span className="text-content-tertiary text-[0.6875rem] font-medium md:sr-only">
           {labels.requirement}
         </span>
         <select
@@ -157,7 +163,7 @@ function AnatomyPartRow({
                 .value as ComponentAnatomyPartDraft['requirement'],
             })
           }
-          className="border-border-subtle bg-background-app min-h-10 w-full min-w-0 rounded-lg border px-3 text-sm"
+          className={fieldClassName}
         >
           <option value="required">{labels.requirements.required}</option>
           <option value="optional">{labels.requirements.optional}</option>
@@ -169,11 +175,13 @@ function AnatomyPartRow({
         type="button"
         onClick={onRemove}
         aria-label={labels.remove}
-        className="text-action-danger hover:bg-action-danger/10 min-h-10 rounded-lg px-3 text-sm font-semibold transition md:px-0"
+        className="text-content-tertiary hover:bg-action-danger/10 hover:text-action-danger flex size-9 items-center justify-center rounded-md text-lg transition"
       >
         <span aria-hidden="true">×</span>
-        <span className="ml-2 md:sr-only">{labels.remove}</span>
       </button>
     </div>
   );
 }
+
+const fieldClassName =
+  'border-border-subtle bg-background-subtle focus:border-border-focus focus:bg-surface-primary min-h-9 w-full min-w-0 rounded-md border px-2.5 text-[0.8125rem] outline-none transition';
