@@ -34,6 +34,47 @@ export const componentSizeSchema = z.object({
   description: localizedStringSchema.optional(),
 });
 
+export const componentAnatomyRequirementSchema = z.enum([
+  'required',
+  'optional',
+  'derived',
+]);
+
+const structuredComponentAnatomyPartSchema = z.object({
+  key: z.string().trim().min(1, { message: 'anatomyKeyRequired' }),
+  label: localizedStringSchema,
+  requirement: componentAnatomyRequirementSchema.default('required'),
+});
+
+export const componentAnatomyPartSchema = z
+  .preprocess((value) => {
+    if (typeof value !== 'string') {
+      return value;
+    }
+
+    const key = value.trim();
+
+    return {
+      key,
+      label: {
+        en: key,
+      },
+      requirement: 'required',
+    };
+  }, structuredComponentAnatomyPartSchema)
+  .transform((part) => {
+    const normalizedPart = { ...part };
+
+    Object.defineProperty(normalizedPart, 'toString', {
+      configurable: false,
+      enumerable: false,
+      value: () => normalizedPart.key,
+      writable: false,
+    });
+
+    return normalizedPart;
+  });
+
 export const componentTokenBindingSchema = z.object({
   key: z.string().trim().min(1, { message: 'tokenBindingKeyRequired' }),
   tokenType: designTokenTypeSchema,
@@ -60,7 +101,7 @@ export const componentContractSchema = z.object({
   usageGuidelines: localizedStringSchema.optional(),
   contentGuidelines: localizedStringSchema.optional(),
   status: componentContractStatusSchema.default('draft'),
-  anatomy: z.array(z.string().trim().min(1)).default([]),
+  anatomy: z.array(componentAnatomyPartSchema).default([]),
   variants: z.array(componentVariantSchema).default([]),
   sizes: z.array(componentSizeSchema).default([]),
   states: z.array(componentStateSchema).default([]),
@@ -70,6 +111,13 @@ export const componentContractSchema = z.object({
 });
 
 export type ComponentSize = z.infer<typeof componentSizeSchema>;
-export type ComponentContract = z.infer<typeof componentContractSchema>;
+export type ComponentAnatomyPart = z.infer<typeof componentAnatomyPartSchema>;
+export type ComponentAnatomyRequirement = z.infer<
+  typeof componentAnatomyRequirementSchema
+>;
+type ParsedComponentContract = z.infer<typeof componentContractSchema>;
+export type ComponentContract = Omit<ParsedComponentContract, 'anatomy'> & {
+  anatomy: Array<ComponentAnatomyPart | string>;
+};
 export type ComponentContractType = z.infer<typeof componentContractTypeSchema>;
 export type ComponentTokenBinding = z.infer<typeof componentTokenBindingSchema>;
