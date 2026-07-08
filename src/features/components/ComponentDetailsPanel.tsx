@@ -1,10 +1,8 @@
 import type { Locale } from '@/i18n/routing';
-import { resolveLocalizedStringWithFallback } from '@/domain/i18n';
 import { ComponentContractEditorBoundary } from './ComponentContractEditorBoundary';
 import type { ComponentRegistryItem } from './components-registry.utils';
 import type { ComponentTokenOption } from './component-token-bindings.utils';
 import type { ComponentContractEditorLabels } from './ComponentContractEditor';
-import { toResolvableLocalizedString } from './components-registry-page.utils';
 import { StatusBadge } from '@/app/[locale]/app/projects/[projectSlug]/components/page';
 import type { ComponentsRegistryTranslator } from '@/app/[locale]/app/projects/[projectSlug]/components/page';
 
@@ -21,29 +19,22 @@ export function ComponentDetails({
   component: ComponentRegistryItem;
   tokenOptions: ComponentTokenOption[];
 }) {
-  const purpose = resolveLocalizedStringWithFallback({
-    localizedString: toResolvableLocalizedString(component.contract.purpose),
-    locale,
-  });
-
   return (
-    <article className="px-6 py-4">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <p className="text-content-tertiary text-sm font-semibold tracking-[0.18em] uppercase">
-            {t(`categories.${component.category}`)}
-          </p>
-          <h2 className="mt-2 text-3xl font-semibold tracking-tight">
+    <article className="min-w-0 px-6 py-5">
+      <header className="border-border-subtle flex min-w-0 flex-col gap-3 border-b pb-5 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="text-[1.625rem] font-semibold tracking-tight">
             {component.name}
-          </h2>
-          <p className="text-content-secondary mt-3 max-w-2xl text-sm leading-6">
-            {purpose.value}
+          </h1>
+          <p className="text-content-tertiary mt-1.5 truncate font-mono text-xs">
+            {component.type} · {t(`categories.${component.category}`)}
           </p>
         </div>
 
         <StatusBadge t={t} status={component.status} />
-      </div>
-      <div className="mt-8">
+      </header>
+
+      <div className="mt-5 min-w-0">
         <ComponentContractEditorBoundary
           componentId={component.id}
           locale={locale}
@@ -100,9 +91,16 @@ function createComponentContractEditorLabels(
         derived: t('editor.anatomy.requirements.derived'),
       },
     },
+    collections: {
+      title: t('editor.collections.title'),
+    },
     variants: {
       title: t('editor.variants.title'),
       add: t('editor.variants.add'),
+    },
+    sizes: {
+      title: t('editor.sizes.title'),
+      add: t('editor.sizes.add'),
     },
     states: {
       title: t('editor.states.title'),
