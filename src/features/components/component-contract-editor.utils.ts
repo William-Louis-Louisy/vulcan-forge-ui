@@ -168,9 +168,21 @@ export function createComponentContractDraftFingerprint(
 ): string {
   return JSON.stringify({
     ...draft,
-    variants: draft.variants.map(({ draftId: _draftId, ...variant }) => variant),
-    sizes: draft.sizes.map(({ draftId: _draftId, ...size }) => size),
-    states: draft.states.map(({ draftId: _draftId, ...state }) => state),
+    variants: draft.variants.map(({ key, label, description }) => ({
+      key,
+      label,
+      description,
+    })),
+    sizes: draft.sizes.map(({ key, label, description }) => ({
+      key,
+      label,
+      description,
+    })),
+    states: draft.states.map(({ key, label, description }) => ({
+      key,
+      label,
+      description,
+    })),
   });
 }
 
