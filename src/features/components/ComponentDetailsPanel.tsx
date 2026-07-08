@@ -21,7 +21,7 @@ export function ComponentDetails({
 }) {
   return (
     <article className="min-w-0 px-6 py-5">
-      <div className="mx-auto w-full max-w-[48rem]">
+      <div className="mx-auto w-full max-w-3xl">
         <header className="border-border-subtle flex min-w-0 flex-col gap-3 border-b pb-5 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
             <h1 className="text-[1.625rem] font-semibold tracking-tight">
