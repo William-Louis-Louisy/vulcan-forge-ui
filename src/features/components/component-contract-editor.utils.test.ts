@@ -16,6 +16,14 @@ const buttonContract: ComponentContract = {
     en: 'Triggers an action.',
     fr: 'Déclenche une action.',
   },
+  usageGuidelines: {
+    en: 'Use for clear user actions.',
+    fr: 'Utiliser pour des actions utilisateur claires.',
+  },
+  contentGuidelines: {
+    en: 'Start labels with a verb.',
+    fr: 'Commencer les labels par un verbe.',
+  },
   status: 'ready',
   anatomy: ['root', 'label'],
   variants: [
@@ -66,8 +74,27 @@ describe('component contract editor utils', () => {
         en: 'Triggers an action.',
         fr: 'Déclenche une action.',
       },
+      usageGuidelines: {
+        en: 'Use for clear user actions.',
+        fr: 'Utiliser pour des actions utilisateur claires.',
+      },
+      contentGuidelines: {
+        en: 'Start labels with a verb.',
+        fr: 'Commencer les labels par un verbe.',
+      },
       anatomy: ['root', 'label'],
     });
+  });
+
+  it('normalizes missing optional guidelines to empty localized drafts', () => {
+    const draft = createComponentContractDraft({
+      ...buttonContract,
+      usageGuidelines: undefined,
+      contentGuidelines: undefined,
+    });
+
+    expect(draft.usageGuidelines).toEqual({ en: '', fr: '' });
+    expect(draft.contentGuidelines).toEqual({ en: '', fr: '' });
   });
 
   it('creates a valid component contract from a draft', () => {
@@ -79,8 +106,33 @@ describe('component contract editor utils', () => {
         type: 'button',
         name: 'Button',
         status: 'ready',
+        usageGuidelines: {
+          en: 'Use for clear user actions.',
+          fr: 'Utiliser pour des actions utilisateur claires.',
+        },
+        contentGuidelines: {
+          en: 'Start labels with a verb.',
+          fr: 'Commencer les labels par un verbe.',
+        },
       },
     });
+  });
+
+  it('omits empty optional guidelines from the validated contract', () => {
+    const draft = createComponentContractDraft(buttonContract);
+    draft.usageGuidelines = { en: ' ', fr: '' };
+    draft.contentGuidelines = { en: '', fr: ' ' };
+
+    const result = createComponentContractFromDraft(draft);
+
+    expect(result.status).toBe('success');
+
+    if (result.status !== 'success') {
+      return;
+    }
+
+    expect(result.contract.usageGuidelines).toBeUndefined();
+    expect(result.contract.contentGuidelines).toBeUndefined();
   });
 
   it('returns validation errors for invalid drafts', () => {
