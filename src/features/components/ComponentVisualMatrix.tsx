@@ -8,8 +8,7 @@ import type { ComponentRegistryItem } from './components-registry.utils';
 import { toResolvableLocalizedString } from './components-registry-page.utils';
 import type { ComponentTokenBindingResolution } from './component-token-bindings.utils';
 
-type ComponentVariant =
-  ComponentRegistryItem['contract']['variants'][number];
+type ComponentVariant = ComponentRegistryItem['contract']['variants'][number];
 type ComponentSize = ComponentRegistryItem['contract']['sizes'][number];
 
 export type ComponentVisualMatrixLabels = {
@@ -41,8 +40,7 @@ export function createVisualMatrixAxes(
       contract.variants.length > 0 ? contract.variants : [fallbackVariant],
     sizes: contract.sizes.length > 0 ? contract.sizes : [fallbackSize],
     states: contract.states,
-    hasFallback:
-      contract.variants.length === 0 || contract.sizes.length === 0,
+    hasFallback: contract.variants.length === 0 || contract.sizes.length === 0,
   };
 }
 
@@ -134,11 +132,7 @@ export function ComponentVisualMatrix({
                 <th
                   scope="row"
                   className="text-content-tertiary w-20 min-w-20 px-1 py-2 text-left font-mono text-[0.6875rem] font-medium"
-                  title={resolveMatrixLabel(
-                    locale,
-                    variant.label,
-                    variant.key,
-                  )}
+                  title={resolveMatrixLabel(locale, variant.label, variant.key)}
                 >
                   {variant.key}
                 </th>
@@ -244,6 +238,7 @@ export function ComponentPreview({
     normalizedStateKey.includes('invalid');
   const isOpen = normalizedStateKey.includes('open');
   const isLoading = normalizedStateKey.includes('loading');
+  const isHover = normalizedStateKey.includes('hover');
   const isActive = normalizedStateKey.includes('active');
   const size = getPreviewSizeCategory(sizeKey);
   const previewTokenStyles = createPreviewTokenStyles(tokenBindingResolution);
@@ -351,9 +346,12 @@ export function ComponentPreview({
       type="button"
       disabled={isDisabled}
       aria-busy={isLoading || undefined}
-      style={variantTone === 'primary' ? previewTokenStyles : structuralTokenStyles}
+      tabIndex={-1}
+      style={
+        variantTone === 'primary' ? previewTokenStyles : structuralTokenStyles
+      }
       className={[
-        'whitespace-nowrap rounded-md border font-semibold transition',
+        'rounded-md border font-semibold whitespace-nowrap transition',
         size === 'small'
           ? 'min-h-8 px-2.5 py-1 text-[0.6875rem]'
           : size === 'large'
@@ -364,9 +362,10 @@ export function ComponentPreview({
           : variantTone === 'danger'
             ? 'border-action-danger bg-action-danger text-content-inverse'
             : variantTone === 'ghost'
-              ? 'border-transparent bg-transparent text-content-primary'
+              ? 'text-content-primary border-transparent bg-transparent'
               : 'border-border-subtle bg-surface-primary text-content-primary',
         isFocus ? 'ring-action-primary/30 ring-2' : '',
+        isHover ? 'shadow-sm brightness-95' : '',
         isActive ? 'translate-y-px' : '',
         isDisabled ? 'cursor-not-allowed opacity-45' : '',
       ].join(' ')}
