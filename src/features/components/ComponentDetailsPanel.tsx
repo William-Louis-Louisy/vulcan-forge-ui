@@ -91,6 +91,14 @@ function createComponentContractEditorLabels(
       title: t('editor.anatomy.title'),
       description: t('editor.anatomy.description'),
       add: t('editor.anatomy.add'),
+      key: t('editor.anatomy.key'),
+      label: t('editor.anatomy.label'),
+      requirement: t('editor.anatomy.requirement'),
+      requirements: {
+        required: t('editor.anatomy.requirements.required'),
+        optional: t('editor.anatomy.requirements.optional'),
+        derived: t('editor.anatomy.requirements.derived'),
+      },
     },
     variants: {
       title: t('editor.variants.title'),
