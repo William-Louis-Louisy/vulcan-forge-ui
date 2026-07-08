@@ -98,7 +98,7 @@ export default async function ComponentsRegistryPage({
       ) : null}
 
       {registry.items.length > 0 ? (
-        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto xl:grid xl:h-full xl:grid-cols-[15rem_minmax(0,1fr)_22rem] xl:overflow-hidden">
+        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto xl:grid xl:h-full xl:grid-cols-[16rem_minmax(0,48rem)_minmax(24rem,1fr)] xl:overflow-hidden">
           <aside className="border-border-subtle min-h-0 border-b xl:h-full xl:overflow-y-auto xl:border-r xl:border-b-0">
             <ComponentList
               t={t}

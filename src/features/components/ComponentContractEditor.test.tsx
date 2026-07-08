@@ -72,16 +72,27 @@ const labels: ComponentContractEditorLabels = {
       derived: 'Derived',
     },
   },
+  collections: {
+    title: 'Variants & states',
+    editDetails: 'Edit localized labels and descriptions',
+  },
   variants: {
     title: 'Variants',
+    axis: 'intent',
     add: 'Add variant',
+  },
+  sizes: {
+    title: 'Sizes',
+    axis: 'size',
+    add: 'Add size',
   },
   states: {
     title: 'States',
+    axis: 'states',
     add: 'Add state',
   },
   accessibility: {
-    title: 'Accessibility',
+    title: 'Accessibility contract',
     add: 'Add accessibility rule',
     severity: 'Severity',
   },
@@ -205,7 +216,7 @@ const tokenOptions = [
 ];
 
 describe('ComponentContractEditor', () => {
-  it('renders localized content and structured anatomy fields', () => {
+  it('renders localized content and compact contract sections', () => {
     render(
       <ComponentContractEditor
         locale="en"
@@ -217,13 +228,13 @@ describe('ComponentContractEditor', () => {
     );
 
     expect(screen.getByLabelText('Name')).toHaveValue('Button');
-    expect(screen.getByLabelText('Purpose — EN')).toHaveValue(
+    expect(screen.getByLabelText('Purpose · EN')).toHaveValue(
       'Triggers an action.',
     );
-    expect(screen.getByLabelText('Usage guidelines — EN')).toHaveValue(
+    expect(screen.getByLabelText('Usage guidelines · EN')).toHaveValue(
       'Use for clear user actions.',
     );
-    expect(screen.getByLabelText('Content guidelines — EN')).toHaveValue(
+    expect(screen.getByLabelText('Content guidelines · EN')).toHaveValue(
       'Start labels with a verb.',
     );
     expect(screen.getAllByLabelText('Anatomy key')[0]).toHaveValue('root');
@@ -231,12 +242,15 @@ describe('ComponentContractEditor', () => {
     expect(screen.getAllByLabelText('Anatomy requirement')[0]).toHaveValue(
       'required',
     );
-    expect(screen.getByText('Variants')).toBeInTheDocument();
-    expect(screen.getByText('Accessibility')).toBeInTheDocument();
+    expect(screen.getByText('Variants & states')).toBeInTheDocument();
+    expect(screen.getByText('intent')).toBeInTheDocument();
+    expect(screen.getByText('size')).toBeInTheDocument();
+    expect(screen.getByText('states')).toBeInTheDocument();
+    expect(screen.getByText('Accessibility contract')).toBeInTheDocument();
     expect(screen.getByText('Localized content')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'EN' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'FR' })).toBeInTheDocument();
-    expect(screen.queryByLabelText('Purpose — FR')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Purpose · FR')).not.toBeInTheDocument();
   });
 
   it('switches localized content and anatomy labels together', async () => {
@@ -252,13 +266,13 @@ describe('ComponentContractEditor', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'FR' }));
 
-    expect(screen.getByLabelText('Purpose — FR')).toHaveValue(
+    expect(screen.getByLabelText('Purpose · FR')).toHaveValue(
       'Déclenche une action.',
     );
-    expect(screen.getByLabelText('Usage guidelines — FR')).toHaveValue(
+    expect(screen.getByLabelText('Usage guidelines · FR')).toHaveValue(
       'Utiliser pour des actions utilisateur claires.',
     );
-    expect(screen.getByLabelText('Content guidelines — FR')).toHaveValue(
+    expect(screen.getByLabelText('Content guidelines · FR')).toHaveValue(
       'Commencer les labels par un verbe.',
     );
     expect(screen.getAllByLabelText('Anatomy label')[0]).toHaveValue('Racine');
@@ -276,7 +290,7 @@ describe('ComponentContractEditor', () => {
     );
 
     await userEvent.click(
-      screen.getByRole('button', { name: 'Add anatomy item' }),
+      screen.getByRole('button', { name: /Add anatomy item/ }),
     );
 
     const anatomyKeys = screen.getAllByLabelText('Anatomy key');
@@ -284,6 +298,26 @@ describe('ComponentContractEditor', () => {
 
     expect(anatomyKeys).toHaveLength(3);
     expect(anatomyRequirements[2]).toHaveValue('optional');
+  });
+
+  it('adds an editable size tag', async () => {
+    render(
+      <ComponentContractEditor
+        locale="en"
+        projectSlug="project"
+        contract={contract}
+        labels={labels}
+        tokenOptions={tokenOptions}
+      />,
+    );
+
+    const initialKeyFields = screen.getAllByLabelText('Key');
+
+    await userEvent.click(screen.getByRole('button', { name: /Add size/ }));
+
+    expect(screen.getAllByLabelText('Key')).toHaveLength(
+      initialKeyFields.length + 1,
+    );
   });
 
   it('shows an unsaved notice after editing an anatomy requirement', () => {
@@ -354,7 +388,7 @@ describe('ComponentContractEditor', () => {
     );
 
     await userEvent.click(
-      screen.getByRole('button', { name: 'Add visual token' }),
+      screen.getByRole('button', { name: /Add visual token/ }),
     );
 
     expect(screen.getByLabelText('Token type')).toBeInTheDocument();
