@@ -299,7 +299,17 @@ describe('ComponentContractEditor', () => {
       />,
     );
 
-    fireEvent.change(screen.getAllByLabelText('Anatomy requirement')[0], {
+    const [firstAnatomyRequirement] = screen.getAllByLabelText(
+      'Anatomy requirement',
+    );
+
+    expect(firstAnatomyRequirement).toBeDefined();
+
+    if (!firstAnatomyRequirement) {
+      return;
+    }
+
+    fireEvent.change(firstAnatomyRequirement, {
       target: {
         value: 'derived',
       },
