@@ -16,23 +16,16 @@ export type ComponentAnatomyPartDraft = {
   requirement: ComponentAnatomyRequirement;
 };
 
-export type ComponentVariantDraft = {
+type ComponentCollectionDraft = {
+  draftId: string;
   key: string;
   label: LocalizedTextDraft;
   description: LocalizedTextDraft;
 };
 
-export type ComponentStateDraft = {
-  key: string;
-  label: LocalizedTextDraft;
-  description: LocalizedTextDraft;
-};
-
-export type ComponentSizeDraft = {
-  key: string;
-  label: LocalizedTextDraft;
-  description: LocalizedTextDraft;
-};
+export type ComponentVariantDraft = ComponentCollectionDraft;
+export type ComponentStateDraft = ComponentCollectionDraft;
+export type ComponentSizeDraft = ComponentCollectionDraft;
 
 export type ComponentTokenBindingDraft = {
   key: string;
@@ -72,6 +65,21 @@ export type ComponentContractDraftValidationResult =
       status: 'error';
       errors: string[];
     };
+
+let draftItemSequence = 0;
+
+function createDraftItemId(prefix: 'variant' | 'size' | 'state') {
+  draftItemSequence += 1;
+
+  return `${prefix}-new-${draftItemSequence}`;
+}
+
+function createExistingDraftItemId(
+  prefix: 'variant' | 'size' | 'state',
+  index: number,
+) {
+  return `${prefix}-${index}`;
+}
 
 function normalizeLocalizedText(value: {
   en?: string | undefined;
@@ -122,17 +130,20 @@ export function createComponentContractDraft(
     usageGuidelines: normalizeLocalizedText(contract.usageGuidelines ?? {}),
     contentGuidelines: normalizeLocalizedText(contract.contentGuidelines ?? {}),
     anatomy: contract.anatomy.map(normalizeAnatomyPart),
-    variants: contract.variants.map((variant) => ({
+    variants: contract.variants.map((variant, index) => ({
+      draftId: createExistingDraftItemId('variant', index),
       key: variant.key,
       label: normalizeLocalizedText(variant.label),
       description: normalizeLocalizedText(variant.description ?? {}),
     })),
-    sizes: contract.sizes.map((size) => ({
+    sizes: contract.sizes.map((size, index) => ({
+      draftId: createExistingDraftItemId('size', index),
       key: size.key,
       label: normalizeLocalizedText(size.label),
       description: normalizeLocalizedText(size.description ?? {}),
     })),
-    states: contract.states.map((state) => ({
+    states: contract.states.map((state, index) => ({
+      draftId: createExistingDraftItemId('state', index),
       key: state.key,
       label: normalizeLocalizedText(state.label),
       description: normalizeLocalizedText(state.description ?? {}),
@@ -150,6 +161,17 @@ export function createComponentContractDraft(
     })),
     forbiddenPatterns: contract.forbiddenPatterns.map(normalizeLocalizedText),
   };
+}
+
+export function createComponentContractDraftFingerprint(
+  draft: ComponentContractEditorDraft,
+): string {
+  return JSON.stringify({
+    ...draft,
+    variants: draft.variants.map(({ draftId: _draftId, ...variant }) => variant),
+    sizes: draft.sizes.map(({ draftId: _draftId, ...size }) => size),
+    states: draft.states.map(({ draftId: _draftId, ...state }) => state),
+  });
 }
 
 export function createComponentContractFromDraft(
@@ -241,6 +263,7 @@ export function createEmptyAnatomyPartDraft(): ComponentAnatomyPartDraft {
 
 export function createEmptyVariantDraft(): ComponentVariantDraft {
   return {
+    draftId: createDraftItemId('variant'),
     key: '',
     label: {
       en: '',
@@ -255,6 +278,7 @@ export function createEmptyVariantDraft(): ComponentVariantDraft {
 
 export function createEmptyStateDraft(): ComponentStateDraft {
   return {
+    draftId: createDraftItemId('state'),
     key: '',
     label: {
       en: '',
@@ -269,6 +293,7 @@ export function createEmptyStateDraft(): ComponentStateDraft {
 
 export function createEmptySizeDraft(): ComponentSizeDraft {
   return {
+    draftId: createDraftItemId('size'),
     key: '',
     label: {
       en: '',
