@@ -136,14 +136,16 @@ describe('component contract editor utils', () => {
 
   it('creates a valid component contract with structured anatomy from a draft', () => {
     const draft = createComponentContractDraft(buttonContract);
-    draft.anatomy[0] = {
-      key: 'root',
-      label: {
-        en: 'Root',
-        fr: 'Racine',
+    draft.anatomy = [
+      {
+        key: 'root',
+        label: {
+          en: 'Root',
+          fr: 'Racine',
+        },
+        requirement: 'required',
       },
-      requirement: 'required',
-    };
+    ];
 
     expect(createComponentContractFromDraft(draft)).toMatchObject({
       status: 'success',
