@@ -116,6 +116,7 @@ function AnatomyPartRow({
           {labels.key}
         </span>
         <input
+          aria-label={labels.key}
           value={part.key}
           onChange={(event) => onChange({ ...part, key: event.target.value })}
           className="border-border-subtle bg-background-app min-h-10 rounded-lg border px-3 font-mono text-sm"
@@ -127,6 +128,7 @@ function AnatomyPartRow({
           {labels.label}
         </span>
         <input
+          aria-label={labels.label}
           value={part.label[activeLocale]}
           onChange={(event) =>
             onChange({
@@ -146,6 +148,7 @@ function AnatomyPartRow({
           {labels.requirement}
         </span>
         <select
+          aria-label={labels.requirement}
           value={part.requirement}
           onChange={(event) =>
             onChange({
