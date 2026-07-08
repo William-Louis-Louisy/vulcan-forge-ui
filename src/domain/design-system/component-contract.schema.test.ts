@@ -134,7 +134,7 @@ describe('componentContractSchema', () => {
       anatomy: ['root', 'label'],
     });
 
-    expect(contract.anatomy).toMatchObject([
+    expect(contract.anatomy).toEqual([
       {
         key: 'root',
         label: {
@@ -150,7 +150,9 @@ describe('componentContractSchema', () => {
         requirement: 'required',
       },
     ]);
-    expect(contract.anatomy.join(', ')).toBe('root, label');
+    expect(JSON.parse(JSON.stringify(contract.anatomy))).toEqual(
+      contract.anatomy,
+    );
   });
 
   it('keeps guideline fields optional for existing contracts', () => {
