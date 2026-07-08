@@ -74,17 +74,21 @@ const labels: ComponentContractEditorLabels = {
   },
   collections: {
     title: 'Variants & states',
+    editDetails: 'Edit localized labels and descriptions',
   },
   variants: {
     title: 'Variants',
+    axis: 'intent',
     add: 'Add variant',
   },
   sizes: {
     title: 'Sizes',
+    axis: 'size',
     add: 'Add size',
   },
   states: {
     title: 'States',
+    axis: 'states',
     add: 'Add state',
   },
   accessibility: {
@@ -239,7 +243,9 @@ describe('ComponentContractEditor', () => {
       'required',
     );
     expect(screen.getByText('Variants & states')).toBeInTheDocument();
-    expect(screen.getByText('Sizes')).toBeInTheDocument();
+    expect(screen.getByText('intent')).toBeInTheDocument();
+    expect(screen.getByText('size')).toBeInTheDocument();
+    expect(screen.getByText('states')).toBeInTheDocument();
     expect(screen.getByText('Accessibility contract')).toBeInTheDocument();
     expect(screen.getByText('Localized content')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'EN' })).toBeInTheDocument();
@@ -288,13 +294,15 @@ describe('ComponentContractEditor', () => {
     );
 
     const anatomyKeys = screen.getAllByLabelText('Anatomy key');
-    const anatomyRequirements = screen.getAllByLabelText('Anatomy requirement');
+    const anatomyRequirements = screen.getAllByLabelText(
+      'Anatomy requirement',
+    );
 
     expect(anatomyKeys).toHaveLength(3);
     expect(anatomyRequirements[2]).toHaveValue('optional');
   });
 
-  it('adds an editable size row', async () => {
+  it('adds an editable size tag', async () => {
     render(
       <ComponentContractEditor
         locale="en"
