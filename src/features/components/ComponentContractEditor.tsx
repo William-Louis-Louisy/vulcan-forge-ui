@@ -44,6 +44,10 @@ type PendingCollectionFocus = {
   selectionEnd: number | null;
 };
 
+function getCollectionDraftItems(draft: ComponentContractEditorDraft) {
+  return [...draft.variants, ...draft.sizes, ...draft.states];
+}
+
 export function ComponentContractEditor({
   locale,
   projectSlug,
@@ -84,10 +88,16 @@ export function ComponentContractEditor({
         activeElement.getAttribute('aria-label') === labels.fields.key
       ) {
         const inputIndex = getCollectionKeyInputs().indexOf(activeElement);
+        const activeDraftItem = getCollectionDraftItems(draft)[inputIndex];
+        const nextInputIndex = activeDraftItem
+          ? getCollectionDraftItems(nextDraft).findIndex(
+              (item) => item.draftId === activeDraftItem.draftId,
+            )
+          : inputIndex;
 
-        if (inputIndex >= 0) {
+        if (nextInputIndex >= 0) {
           pendingCollectionFocusRef.current = {
-            inputIndex,
+            inputIndex: nextInputIndex,
             selectionStart: activeElement.selectionStart,
             selectionEnd: activeElement.selectionEnd,
           };
@@ -96,7 +106,7 @@ export function ComponentContractEditor({
 
       setDraft(nextDraft);
     },
-    [getCollectionKeyInputs, labels.fields.key],
+    [draft, getCollectionKeyInputs, labels.fields.key],
   );
 
   useLayoutEffect(() => {
