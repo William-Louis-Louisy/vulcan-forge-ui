@@ -7,6 +7,7 @@ import type { ComponentContract } from '@/domain/design-system';
 import type { ComponentTokenOption } from './component-token-bindings.utils';
 import {
   createComponentContractDraft,
+  createComponentContractDraftFingerprint,
   createComponentContractFromDraft,
   type ComponentContractEditorDraft,
 } from './component-contract-editor.utils';
@@ -64,7 +65,8 @@ export function ComponentContractEditor({
   const contractPayload =
     validation.status === 'success' ? JSON.stringify(validation.contract) : '';
   const hasUnsavedChanges =
-    JSON.stringify(draft) !== JSON.stringify(savedDraft);
+    createComponentContractDraftFingerprint(draft) !==
+    createComponentContractDraftFingerprint(savedDraft);
   const saveContextId = `component-contract:${projectSlug}:${contract.type}`;
   const saveStatus = getComponentContractEditorSaveStatus({
     isPending,
