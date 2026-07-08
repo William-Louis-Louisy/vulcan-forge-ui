@@ -5,6 +5,9 @@ export const componentGuidelineMessages = {
   en: {
     ComponentsRegistryPage: {
       editor: {
+        accessibility: {
+          title: 'Accessibility contract',
+        },
         anatomy: {
           key: 'Key',
           label: 'Label',
@@ -15,6 +18,9 @@ export const componentGuidelineMessages = {
             required: 'Required',
           },
         },
+        collections: {
+          title: 'Variants & states',
+        },
         description:
           'Edit the localized content and contract rules for this component.',
         localizedContent: {
@@ -22,12 +28,19 @@ export const componentGuidelineMessages = {
           purpose: 'Purpose',
           usageGuidelines: 'Usage guidelines',
         },
+        sizes: {
+          add: 'Add size',
+          title: 'Sizes',
+        },
       },
     },
   },
   fr: {
     ComponentsRegistryPage: {
       editor: {
+        accessibility: {
+          title: 'Contrat d’accessibilité',
+        },
         anatomy: {
           key: 'Clé',
           label: 'Label',
@@ -38,6 +51,9 @@ export const componentGuidelineMessages = {
             required: 'Requis',
           },
         },
+        collections: {
+          title: 'Variantes et états',
+        },
         description:
           'Modifiez le contenu localisé et les règles de contrat de ce composant.',
         localizedContent: {
@@ -46,6 +62,10 @@ export const componentGuidelineMessages = {
           purpose: 'Objectif',
           title: 'Contenu localisé',
           usageGuidelines: 'Règles d’usage',
+        },
+        sizes: {
+          add: 'Ajouter une taille',
+          title: 'Tailles',
         },
       },
     },
