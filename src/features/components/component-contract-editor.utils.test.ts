@@ -4,6 +4,7 @@ import {
   createComponentContractDraft,
   createEmptyAnatomyPartDraft,
   createComponentContractFromDraft,
+  createComponentContractDraftFingerprint,
   createEmptyForbiddenPatternDraft,
   createEmptyAccessibilityRuleDraft,
 } from './component-contract-editor.utils';
@@ -220,8 +221,14 @@ describe('component contract editor utils', () => {
       },
       requirement: 'optional',
     });
-    expect(createEmptyVariantDraft()).toMatchObject({ key: '' });
-    expect(createEmptyStateDraft()).toMatchObject({ key: '' });
+    expect(createEmptyVariantDraft()).toMatchObject({
+      draftId: expect.any(String),
+      key: '',
+    });
+    expect(createEmptyStateDraft()).toMatchObject({
+      draftId: expect.any(String),
+      key: '',
+    });
     expect(createEmptyAccessibilityRuleDraft()).toMatchObject({
       key: '',
       severity: 'warning',
@@ -230,6 +237,18 @@ describe('component contract editor utils', () => {
       en: '',
       fr: '',
     });
+  });
+
+  it('does not treat internal draft identities as persisted changes', () => {
+    const firstDraft = createComponentContractDraft(buttonContract);
+    const secondDraft = createComponentContractDraft(buttonContract);
+
+    firstDraft.variants[0]!.draftId = 'variant-custom';
+    firstDraft.states[0]!.draftId = 'state-custom';
+
+    expect(createComponentContractDraftFingerprint(firstDraft)).toBe(
+      createComponentContractDraftFingerprint(secondDraft),
+    );
   });
 
   it('creates a draft that preserves sizes and token bindings', () => {
@@ -253,8 +272,9 @@ describe('component contract editor utils', () => {
       ],
     });
 
-    expect(draft.sizes).toEqual([
+    expect(draft.sizes).toMatchObject([
       {
+        draftId: expect.any(String),
         key: 'md',
         label: {
           en: 'Medium',
