@@ -41,6 +41,16 @@ export const componentGuidelineMessages = {
           axis: 'intent',
         },
       },
+      foundationsPreview: {
+        baseState: 'Base',
+        description:
+          'Preview documented variants across the available component sizes.',
+        eyebrow: 'Visual matrix',
+        incompleteMatrixNotice:
+          'This matrix uses a fallback axis because this component does not document variants or sizes yet.',
+        state: 'State',
+        title: 'Visual matrix',
+      },
     },
   },
   fr: {
@@ -83,6 +93,16 @@ export const componentGuidelineMessages = {
         variants: {
           axis: 'intention',
         },
+      },
+      foundationsPreview: {
+        baseState: 'Base',
+        description:
+          'Prévisualisez les variantes documentées pour chaque taille disponible.',
+        eyebrow: 'Matrice visuelle',
+        incompleteMatrixNotice:
+          'Cette matrice utilise un axe de secours car ce composant ne documente pas encore ses variantes ou ses tailles.',
+        state: 'État',
+        title: 'Matrice visuelle',
       },
     },
   },
