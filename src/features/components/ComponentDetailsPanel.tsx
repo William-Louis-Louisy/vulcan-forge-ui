@@ -86,8 +86,6 @@ function createComponentContractEditorLabels(
       title: t('editor.basics.title'),
       name: t('editor.basics.name'),
       status: t('editor.basics.status'),
-      purposeEn: t('editor.basics.purposeEn'),
-      purposeFr: t('editor.basics.purposeFr'),
     },
     anatomy: {
       title: t('editor.anatomy.title'),
@@ -134,7 +132,9 @@ function createComponentContractEditorLabels(
     localizedContent: {
       title: t('editor.localizedContent.title'),
       editing: t('editor.localizedContent.editing'),
-      schemaNotice: t('editor.localizedContent.schemaNotice'),
+      purpose: t('editor.localizedContent.purpose'),
+      usageGuidelines: t('editor.localizedContent.usageGuidelines'),
+      contentGuidelines: t('editor.localizedContent.contentGuidelines'),
       locales: {
         en: t('editor.localizedContent.locales.en'),
         fr: t('editor.localizedContent.locales.fr'),

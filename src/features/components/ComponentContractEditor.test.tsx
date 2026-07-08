@@ -28,8 +28,9 @@ const labels: ComponentContractEditorLabels = {
   localizedContent: {
     title: 'Localized content',
     editing: 'Editing:',
-    schemaNotice:
-      'Usage guidelines and Content guidelines are not persisted yet.',
+    purpose: 'Purpose',
+    usageGuidelines: 'Usage guidelines',
+    contentGuidelines: 'Content guidelines',
     locales: {
       en: 'EN',
       fr: 'FR',
@@ -57,8 +58,6 @@ const labels: ComponentContractEditorLabels = {
     title: 'Basics',
     name: 'Name',
     status: 'Status',
-    purposeEn: 'Purpose EN',
-    purposeFr: 'Purpose FR',
   },
   anatomy: {
     title: 'Anatomy',
@@ -119,6 +118,14 @@ const contract: ComponentContract = {
     en: 'Triggers an action.',
     fr: 'Déclenche une action.',
   },
+  usageGuidelines: {
+    en: 'Use for clear user actions.',
+    fr: 'Utiliser pour des actions utilisateur claires.',
+  },
+  contentGuidelines: {
+    en: 'Start labels with a verb.',
+    fr: 'Commencer les labels par un verbe.',
+  },
   status: 'ready',
   anatomy: ['root', 'label'],
   variants: [
@@ -159,66 +166,87 @@ const contract: ComponentContract = {
   tokenBindings: [],
 };
 
+const tokenOptions = [
+  {
+    type: 'color' as const,
+    path: 'color.background.default',
+    label: 'color.background.default',
+  },
+  {
+    type: 'radius' as const,
+    path: 'radius.md',
+    label: 'radius.md',
+  },
+];
+
 describe('ComponentContractEditor', () => {
-  it('renders editable component contract fields', () => {
+  it('renders localized purpose and guideline fields', () => {
     render(
       <ComponentContractEditor
         locale="en"
         projectSlug="project"
         contract={contract}
         labels={labels}
-        tokenOptions={[
-          {
-            type: 'color',
-            path: 'color.background.default',
-            label: 'color.background.default',
-          },
-          {
-            type: 'radius',
-            path: 'radius.md',
-            label: 'radius.md',
-          },
-        ]}
+        tokenOptions={tokenOptions}
       />,
     );
 
     expect(screen.getByLabelText('Name')).toHaveValue('Button');
-    expect(screen.getByLabelText('Purpose EN')).toHaveValue(
+    expect(screen.getByLabelText('Purpose — EN')).toHaveValue(
       'Triggers an action.',
+    );
+    expect(screen.getByLabelText('Usage guidelines — EN')).toHaveValue(
+      'Use for clear user actions.',
+    );
+    expect(screen.getByLabelText('Content guidelines — EN')).toHaveValue(
+      'Start labels with a verb.',
     );
     expect(screen.getByText('Variants')).toBeInTheDocument();
     expect(screen.getByText('Accessibility')).toBeInTheDocument();
     expect(screen.getByText('Localized content')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'EN' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'FR' })).toBeInTheDocument();
-    expect(screen.queryByLabelText('Purpose FR')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Purpose — FR')).not.toBeInTheDocument();
   });
 
-  it('shows an unsaved notice after editing a field', () => {
+  it('switches all localized contract fields together', async () => {
     render(
       <ComponentContractEditor
         locale="en"
         projectSlug="project"
         contract={contract}
         labels={labels}
-        tokenOptions={[
-          {
-            type: 'color',
-            path: 'color.background.default',
-            label: 'color.background.default',
-          },
-          {
-            type: 'radius',
-            path: 'radius.md',
-            label: 'radius.md',
-          },
-        ]}
+        tokenOptions={tokenOptions}
       />,
     );
 
-    fireEvent.change(screen.getByLabelText('Name'), {
+    await userEvent.click(screen.getByRole('button', { name: 'FR' }));
+
+    expect(screen.getByLabelText('Purpose — FR')).toHaveValue(
+      'Déclenche une action.',
+    );
+    expect(screen.getByLabelText('Usage guidelines — FR')).toHaveValue(
+      'Utiliser pour des actions utilisateur claires.',
+    );
+    expect(screen.getByLabelText('Content guidelines — FR')).toHaveValue(
+      'Commencer les labels par un verbe.',
+    );
+  });
+
+  it('shows an unsaved notice after editing a guideline', () => {
+    render(
+      <ComponentContractEditor
+        locale="en"
+        projectSlug="project"
+        contract={contract}
+        labels={labels}
+        tokenOptions={tokenOptions}
+      />,
+    );
+
+    fireEvent.change(screen.getByLabelText('Usage guidelines — EN'), {
       target: {
-        value: 'Primary Button',
+        value: 'Use for one clear action per context.',
       },
     });
 
@@ -234,18 +262,7 @@ describe('ComponentContractEditor', () => {
         projectSlug="project"
         contract={contract}
         labels={labels}
-        tokenOptions={[
-          {
-            type: 'color',
-            path: 'color.background.default',
-            label: 'color.background.default',
-          },
-          {
-            type: 'radius',
-            path: 'radius.md',
-            label: 'radius.md',
-          },
-        ]}
+        tokenOptions={tokenOptions}
       />,
     );
 
@@ -269,18 +286,7 @@ describe('ComponentContractEditor', () => {
         projectSlug="demo"
         contract={contract}
         labels={labels}
-        tokenOptions={[
-          {
-            type: 'color',
-            path: 'color.background.default',
-            label: 'color.background.default',
-          },
-          {
-            type: 'radius',
-            path: 'radius.md',
-            label: 'radius.md',
-          },
-        ]}
+        tokenOptions={tokenOptions}
       />,
     );
 

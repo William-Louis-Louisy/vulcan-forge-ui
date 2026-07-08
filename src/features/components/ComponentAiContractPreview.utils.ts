@@ -7,10 +7,7 @@ type AiContractMissingSourceDataKey =
   | 'accessibilityRules'
   | 'forbiddenPatterns';
 
-type AiContractModelGapKey =
-  | 'usageGuidelines'
-  | 'contentGuidelines'
-  | 'tokenBindings';
+type AiContractModelGapKey = 'tokenBindings';
 
 export function getComponentAiContractMissingSourceData(
   component: ComponentRegistryItem,
@@ -41,5 +38,5 @@ export function getComponentAiContractMissingSourceData(
 }
 
 export function getComponentAiContractModelGaps(): AiContractModelGapKey[] {
-  return ['usageGuidelines', 'contentGuidelines', 'tokenBindings'];
+  return ['tokenBindings'];
 }

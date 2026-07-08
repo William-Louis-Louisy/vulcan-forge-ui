@@ -34,8 +34,6 @@ export type ComponentContractEditorLabels = {
     title: string;
     name: string;
     status: string;
-    purposeEn: string;
-    purposeFr: string;
   };
   anatomy: {
     title: string;
@@ -97,7 +95,9 @@ export type ComponentContractEditorLabels = {
   localizedContent: {
     title: string;
     editing: string;
-    schemaNotice: string;
+    purpose: string;
+    usageGuidelines: string;
+    contentGuidelines: string;
     locales: {
       en: string;
       fr: string;
@@ -579,6 +579,7 @@ function AccessibilityRuleEditor({
 }
 
 function LocalizedTextEditor({
+  labels,
   value,
   labelEn,
   labelFr,
@@ -607,7 +608,9 @@ function LocalizedTextEditor({
         />
       </div>
 
-      {onRemove ? <RemoveButton label="Remove" onClick={onRemove} /> : null}
+      {onRemove ? (
+        <RemoveButton label={labels.fields.remove} onClick={onRemove} />
+      ) : null}
     </div>
   );
 }
@@ -756,6 +759,8 @@ function LocalizedContentSection({
   setActiveLocale: (locale: 'en' | 'fr') => void;
   setDraft: (draft: ComponentContractEditorDraft) => void;
 }) {
+  const localeLabel = labels.localizedContent.locales[activeLocale];
+
   return (
     <EditorSection title={labels.localizedContent.title}>
       <div className="flex flex-wrap items-center gap-3">
@@ -786,13 +791,9 @@ function LocalizedContentSection({
         </div>
       </div>
 
-      <div className="mt-5">
+      <div className="mt-5 grid gap-4">
         <TextareaInput
-          label={
-            activeLocale === 'fr'
-              ? labels.basics.purposeFr
-              : labels.basics.purposeEn
-          }
+          label={`${labels.localizedContent.purpose} — ${localeLabel}`}
           value={draft.purpose[activeLocale]}
           onChange={(value) =>
             setDraft({
@@ -804,11 +805,35 @@ function LocalizedContentSection({
             })
           }
         />
-      </div>
 
-      <p className="text-content-tertiary mt-3 text-xs leading-5">
-        {labels.localizedContent.schemaNotice}
-      </p>
+        <TextareaInput
+          label={`${labels.localizedContent.usageGuidelines} — ${localeLabel}`}
+          value={draft.usageGuidelines[activeLocale]}
+          onChange={(value) =>
+            setDraft({
+              ...draft,
+              usageGuidelines: {
+                ...draft.usageGuidelines,
+                [activeLocale]: value,
+              },
+            })
+          }
+        />
+
+        <TextareaInput
+          label={`${labels.localizedContent.contentGuidelines} — ${localeLabel}`}
+          value={draft.contentGuidelines[activeLocale]}
+          onChange={(value) =>
+            setDraft({
+              ...draft,
+              contentGuidelines: {
+                ...draft.contentGuidelines,
+                [activeLocale]: value,
+              },
+            })
+          }
+        />
+      </div>
     </EditorSection>
   );
 }

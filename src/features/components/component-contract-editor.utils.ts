@@ -45,6 +45,8 @@ export type ComponentContractEditorDraft = {
   name: string;
   status: ComponentContract['status'];
   purpose: LocalizedTextDraft;
+  usageGuidelines: LocalizedTextDraft;
+  contentGuidelines: LocalizedTextDraft;
   anatomy: string[];
   variants: ComponentVariantDraft[];
   states: ComponentStateDraft[];
@@ -89,6 +91,8 @@ export function createComponentContractDraft(
     name: contract.name,
     status: contract.status,
     purpose: normalizeLocalizedText(contract.purpose),
+    usageGuidelines: normalizeLocalizedText(contract.usageGuidelines ?? {}),
+    contentGuidelines: normalizeLocalizedText(contract.contentGuidelines ?? {}),
     anatomy: contract.anatomy,
     variants: contract.variants.map((variant) => ({
       key: variant.key,
@@ -128,6 +132,10 @@ export function createComponentContractFromDraft(
     name: draft.name.trim(),
     status: draft.status,
     purpose: toOptionalLocalizedText(draft.purpose),
+    usageGuidelines: toOptionalLocalizedTextOrUndefined(draft.usageGuidelines),
+    contentGuidelines: toOptionalLocalizedTextOrUndefined(
+      draft.contentGuidelines,
+    ),
     anatomy: draft.anatomy
       .map((item) => item.trim())
       .filter((item) => item.length > 0),

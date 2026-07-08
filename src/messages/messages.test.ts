@@ -1,6 +1,8 @@
 import enMessages from './en.json';
 import frMessages from './fr.json';
 import { describe, expect, it } from 'vitest';
+import { mergeMessages, type MessageObject } from './merge-messages';
+import { componentGuidelineMessages } from './component-guidelines';
 
 type JsonValue = string | number | boolean | null | JsonObject | JsonValue[];
 
@@ -40,10 +42,21 @@ function getEmptyStringPaths(value: JsonObject, prefix = ''): string[] {
   });
 }
 
+const localizedMessages = {
+  en: mergeMessages(
+    enMessages as MessageObject,
+    componentGuidelineMessages.en,
+  ) as unknown as JsonObject,
+  fr: mergeMessages(
+    frMessages as MessageObject,
+    componentGuidelineMessages.fr,
+  ) as unknown as JsonObject,
+};
+
 describe('localized messages', () => {
   it('uses English as the reference message structure', () => {
-    const enKeys = getKeyPaths(enMessages).sort();
-    const frKeys = getKeyPaths(frMessages).sort();
+    const enKeys = getKeyPaths(localizedMessages.en).sort();
+    const frKeys = getKeyPaths(localizedMessages.fr).sort();
 
     const missingInFrench = enKeys.filter((key) => !frKeys.includes(key));
     const extraInFrench = frKeys.filter((key) => !enKeys.includes(key));
@@ -53,16 +66,16 @@ describe('localized messages', () => {
   });
 
   it('does not contain empty English messages', () => {
-    expect(getEmptyStringPaths(enMessages)).toEqual([]);
+    expect(getEmptyStringPaths(localizedMessages.en)).toEqual([]);
   });
 
   it('does not contain empty French messages', () => {
-    expect(getEmptyStringPaths(frMessages)).toEqual([]);
+    expect(getEmptyStringPaths(localizedMessages.fr)).toEqual([]);
   });
 
   it('does not contain obsolete DS-090 contrast placeholders', () => {
-    const serializedEnglishMessages = JSON.stringify(enMessages);
-    const serializedFrenchMessages = JSON.stringify(frMessages);
+    const serializedEnglishMessages = JSON.stringify(localizedMessages.en);
+    const serializedFrenchMessages = JSON.stringify(localizedMessages.fr);
 
     expect(serializedEnglishMessages).not.toContain('DS-090');
     expect(serializedFrenchMessages).not.toContain('DS-090');
