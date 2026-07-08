@@ -19,6 +19,7 @@ export const componentGuidelineMessages = {
           },
         },
         collections: {
+          editDetails: 'Edit localized labels and descriptions',
           title: 'Variants & states',
         },
         description:
@@ -30,7 +31,14 @@ export const componentGuidelineMessages = {
         },
         sizes: {
           add: 'Add size',
+          axis: 'size',
           title: 'Sizes',
+        },
+        states: {
+          axis: 'states',
+        },
+        variants: {
+          axis: 'intent',
         },
       },
     },
@@ -52,6 +60,7 @@ export const componentGuidelineMessages = {
           },
         },
         collections: {
+          editDetails: 'Modifier les labels et descriptions localisés',
           title: 'Variantes et états',
         },
         description:
@@ -65,7 +74,14 @@ export const componentGuidelineMessages = {
         },
         sizes: {
           add: 'Ajouter une taille',
+          axis: 'taille',
           title: 'Tailles',
+        },
+        states: {
+          axis: 'états',
+        },
+        variants: {
+          axis: 'intention',
         },
       },
     },
