@@ -46,11 +46,11 @@ const localizedMessages = {
   en: mergeMessages(
     enMessages as MessageObject,
     componentGuidelineMessages.en,
-  ) as JsonObject,
+  ) as unknown as JsonObject,
   fr: mergeMessages(
     frMessages as MessageObject,
     componentGuidelineMessages.fr,
-  ) as JsonObject,
+  ) as unknown as JsonObject,
 };
 
 describe('localized messages', () => {
