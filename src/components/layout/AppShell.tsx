@@ -68,7 +68,7 @@ export function AppShell({
 
           <div
             data-save-context-scroll-container="app"
-            className="min-w-0 flex-1 overflow-y-auto"
+            className="relative min-w-0 flex-1 overflow-y-auto"
           >
             <main>{children}</main>
           </div>
