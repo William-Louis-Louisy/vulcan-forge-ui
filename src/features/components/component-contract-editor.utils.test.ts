@@ -87,11 +87,11 @@ describe('component contract editor utils', () => {
   });
 
   it('normalizes missing optional guidelines to empty localized drafts', () => {
-    const draft = createComponentContractDraft({
-      ...buttonContract,
-      usageGuidelines: undefined,
-      contentGuidelines: undefined,
-    });
+    const legacyContract = { ...buttonContract };
+    delete legacyContract.usageGuidelines;
+    delete legacyContract.contentGuidelines;
+
+    const draft = createComponentContractDraft(legacyContract);
 
     expect(draft.usageGuidelines).toEqual({ en: '', fr: '' });
     expect(draft.contentGuidelines).toEqual({ en: '', fr: '' });
