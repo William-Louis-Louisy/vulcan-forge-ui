@@ -184,4 +184,4 @@ function AnatomyPartRow({
 }
 
 const fieldClassName =
-  'border-border-subtle bg-background-subtle focus:border-border-focus focus:bg-surface-primary min-h-9 w-full min-w-0 rounded-md border px-2.5 text-[0.8125rem] outline-none transition';
+  'border-border-subtle bg-surface-primary focus:border-action-primary min-h-9 w-full min-w-0 rounded-md border px-3 text-[0.8125rem] outline-none transition';
