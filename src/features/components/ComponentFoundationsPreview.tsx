@@ -1,8 +1,5 @@
 import type { Locale } from '@/i18n/routing';
-import {
-  ComponentVisualMatrix,
-  createVisualMatrixAxes,
-} from './ComponentVisualMatrix';
+import { ComponentVisualMatrix } from './ComponentVisualMatrix';
 import type { ComponentRegistryItem } from './components-registry.utils';
 import type { ComponentTokenBindingResolution } from './component-token-bindings.utils';
 import type { ComponentsRegistryTranslator } from '@/app/[locale]/app/projects/[projectSlug]/components/page';
@@ -18,7 +15,9 @@ export function ComponentFoundationsPreviewShell({
   component: ComponentRegistryItem;
   tokenBindingResolution: ComponentTokenBindingResolution;
 }) {
-  const { hasFallback } = createVisualMatrixAxes(component.contract);
+  const hasFallback =
+    component.contract.variants.length === 0 ||
+    component.contract.sizes.length === 0;
 
   return (
     <section className="border-border-subtle border-b p-4">
