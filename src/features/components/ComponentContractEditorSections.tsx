@@ -1,6 +1,6 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { Button } from '@/components/ui';
 import { ComponentAnatomyEditor } from './ComponentAnatomyEditor';
 import {
@@ -45,17 +45,21 @@ export type ComponentContractEditorLabels = {
   };
   collections: {
     title: string;
+    editDetails: string;
   };
   variants: {
     title: string;
+    axis: string;
     add: string;
   };
   sizes: {
     title: string;
+    axis: string;
     add: string;
   };
   states: {
     title: string;
+    axis: string;
     add: string;
   };
   accessibility: {
@@ -205,7 +209,7 @@ function MetadataEditor({
   return (
     <section
       aria-label={labels.metadata.title}
-      className="border-border-subtle grid min-w-0 gap-3 border-b pb-5 sm:grid-cols-[minmax(0,1fr)_12rem]"
+      className="border-border-subtle grid min-w-0 gap-3 border-b pb-5 sm:grid-cols-[minmax(0,1fr)_11rem]"
     >
       <CompactInput
         label={labels.basics.name}
@@ -214,7 +218,7 @@ function MetadataEditor({
       />
 
       <label className="grid min-w-0 gap-1.5">
-        <span className="text-content-secondary text-xs font-medium">
+        <span className="text-content-secondary text-xs font-semibold">
           {labels.basics.status}
         </span>
         <select
@@ -261,7 +265,7 @@ function LocalizedContentSection({
         <CompactTextarea
           label={`${labels.localizedContent.purpose} · ${localeLabel}`}
           value={draft.purpose[activeLocale]}
-          rows={3}
+          rows={2}
           onChange={(value) =>
             setDraft({
               ...draft,
@@ -277,7 +281,7 @@ function LocalizedContentSection({
         <CompactTextarea
           label={`${labels.localizedContent.usageGuidelines} · ${localeLabel}`}
           value={draft.usageGuidelines[activeLocale]}
-          rows={3}
+          rows={2}
           onChange={(value) =>
             setDraft({
               ...draft,
@@ -359,9 +363,10 @@ function VariantsSizesStatesSection({
   return (
     <EditorSection title={labels.collections.title}>
       <div className="grid gap-4">
-        <CollectionGroup
-          title={labels.variants.title}
+        <TagCollectionRow
+          axisLabel={labels.variants.axis}
           addLabel={labels.variants.add}
+          editDetailsLabel={labels.collections.editDetails}
           labels={labels}
           activeLocale={activeLocale}
           items={draft.variants}
@@ -374,9 +379,10 @@ function VariantsSizesStatesSection({
           onChange={(variants) => setDraft({ ...draft, variants })}
         />
 
-        <CollectionGroup
-          title={labels.sizes.title}
+        <TagCollectionRow
+          axisLabel={labels.sizes.axis}
           addLabel={labels.sizes.add}
+          editDetailsLabel={labels.collections.editDetails}
           labels={labels}
           activeLocale={activeLocale}
           items={draft.sizes}
@@ -389,9 +395,10 @@ function VariantsSizesStatesSection({
           onChange={(sizes) => setDraft({ ...draft, sizes })}
         />
 
-        <CollectionGroup
-          title={labels.states.title}
+        <TagCollectionRow
+          axisLabel={labels.states.axis}
           addLabel={labels.states.add}
+          editDetailsLabel={labels.collections.editDetails}
           labels={labels}
           activeLocale={activeLocale}
           items={draft.states}
@@ -413,17 +420,19 @@ type CollectionItem =
   | ComponentSizeDraft
   | ComponentStateDraft;
 
-function CollectionGroup<Item extends CollectionItem>({
-  title,
+function TagCollectionRow<Item extends CollectionItem>({
+  axisLabel,
   addLabel,
+  editDetailsLabel,
   labels,
   activeLocale,
   items,
   onAdd,
   onChange,
 }: {
-  title: string;
+  axisLabel: string;
   addLabel: string;
+  editDetailsLabel: string;
   labels: ComponentContractEditorLabels;
   activeLocale: 'en' | 'fr';
   items: Item[];
@@ -438,38 +447,50 @@ function CollectionGroup<Item extends CollectionItem>({
       : labels.fields.descriptionFr;
 
   return (
-    <div className="grid min-w-0 gap-2 sm:grid-cols-[6rem_minmax(0,1fr)] sm:items-start">
-      <div className="flex items-center justify-between gap-2 pt-2 sm:block">
-        <p className="text-content-secondary text-xs font-medium">{title}</p>
-        <Button variant="ghost" size="sm" onClick={onAdd} className="sm:mt-2">
-          + {addLabel}
-        </Button>
-      </div>
+    <div className="grid min-w-0 gap-2 sm:grid-cols-[7rem_minmax(0,1fr)] sm:items-start">
+      <p className="text-content-secondary pt-1.5 text-xs font-semibold">
+        {axisLabel}
+      </p>
 
-      <div className="border-border-subtle min-w-0 overflow-hidden rounded-md border">
-        {items.length === 0 ? (
+      <div className="min-w-0">
+        <div className="flex min-w-0 flex-wrap gap-1.5">
+          {items.map((item, index) => (
+            <EditableTag
+              key={`${item.key}-${index}`}
+              value={item.key}
+              label={labels.fields.key}
+              removeLabel={labels.fields.remove}
+              onChange={(key) => {
+                const nextItems = [...items];
+                nextItems[index] = { ...item, key } as Item;
+                onChange(nextItems);
+              }}
+              onRemove={() =>
+                onChange(items.filter((_, itemIndex) => itemIndex !== index))
+              }
+            />
+          ))}
+
           <button
             type="button"
             onClick={onAdd}
-            className="text-content-tertiary hover:bg-background-subtle w-full px-3 py-3 text-left text-xs transition"
+            className="border-border-subtle bg-surface-primary text-content-tertiary hover:border-border-default hover:text-content-primary min-h-7 rounded-full border border-dashed px-2.5 font-mono text-[0.6875rem] transition"
           >
             + {addLabel}
           </button>
-        ) : (
-          <div className="divide-border-subtle divide-y">
-            {items.map((item, index) => (
-              <div key={`${item.key}-${index}`} className="min-w-0 px-3 py-2.5">
-                <div className="grid min-w-0 gap-2 sm:grid-cols-[minmax(7rem,0.8fr)_minmax(8rem,1.2fr)_2rem] sm:items-end">
-                  <CompactInput
-                    label={labels.fields.key}
-                    value={item.key}
-                    mono
-                    onChange={(key) => {
-                      const nextItems = [...items];
-                      nextItems[index] = { ...item, key } as Item;
-                      onChange(nextItems);
-                    }}
-                  />
+        </div>
+
+        {items.length > 0 ? (
+          <details className="mt-2">
+            <summary className="text-content-tertiary hover:text-content-secondary cursor-pointer list-none text-[0.6875rem] font-medium">
+              {editDetailsLabel}
+            </summary>
+            <div className="border-border-subtle bg-surface-primary mt-2 divide-y overflow-hidden rounded-md border">
+              {items.map((item, index) => (
+                <div
+                  key={`${item.key}-details-${index}`}
+                  className="grid min-w-0 gap-2 px-3 py-3 md:grid-cols-[minmax(8rem,1fr)_minmax(12rem,1.6fr)]"
+                >
                   <CompactInput
                     label={labelField}
                     value={item.label[activeLocale]}
@@ -486,45 +507,66 @@ function CollectionGroup<Item extends CollectionItem>({
                       onChange(nextItems);
                     }}
                   />
-                  <RemoveIconButton
-                    label={labels.fields.remove}
-                    onClick={() =>
-                      onChange(items.filter((_, itemIndex) => itemIndex !== index))
-                    }
+                  <CompactTextarea
+                    label={descriptionField}
+                    value={item.description[activeLocale]}
+                    rows={2}
+                    onChange={(value) => {
+                      const nextItems = [...items];
+                      nextItems[index] = {
+                        ...item,
+                        description: updateLocalizedText(
+                          item.description,
+                          activeLocale,
+                          value,
+                        ),
+                      } as Item;
+                      onChange(nextItems);
+                    }}
                   />
                 </div>
-
-                <details className="group mt-1.5">
-                  <summary className="text-content-tertiary hover:text-content-secondary cursor-pointer list-none text-[0.6875rem] font-medium">
-                    {descriptionField}
-                  </summary>
-                  <div className="mt-2">
-                    <CompactTextarea
-                      label={descriptionField}
-                      hideLabel
-                      value={item.description[activeLocale]}
-                      rows={2}
-                      onChange={(value) => {
-                        const nextItems = [...items];
-                        nextItems[index] = {
-                          ...item,
-                          description: updateLocalizedText(
-                            item.description,
-                            activeLocale,
-                            value,
-                          ),
-                        } as Item;
-                        onChange(nextItems);
-                      }}
-                    />
-                  </div>
-                </details>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          </details>
+        ) : null}
       </div>
     </div>
+  );
+}
+
+function EditableTag({
+  value,
+  label,
+  removeLabel,
+  onChange,
+  onRemove,
+}: {
+  value: string;
+  label: string;
+  removeLabel: string;
+  onChange: (value: string) => void;
+  onRemove: () => void;
+}) {
+  const width = `${Math.max(3, value.length + 1)}ch`;
+
+  return (
+    <span className="border-border-subtle bg-surface-primary inline-flex min-h-7 items-center rounded-full border pl-2.5 pr-1">
+      <input
+        aria-label={label}
+        value={value}
+        style={{ width } as CSSProperties}
+        onChange={(event) => onChange(event.target.value)}
+        className="text-content-primary min-w-0 bg-transparent font-mono text-[0.6875rem] outline-none"
+      />
+      <button
+        type="button"
+        aria-label={removeLabel}
+        onClick={onRemove}
+        className="text-content-tertiary hover:text-action-danger flex size-5 items-center justify-center rounded-full text-sm transition"
+      >
+        <span aria-hidden="true">×</span>
+      </button>
+    </span>
   );
 }
 
@@ -534,11 +576,6 @@ function AccessibilitySection({
   activeLocale,
   setDraft,
 }: Omit<EditorProps, 'setActiveLocale' | 'tokenOptions'>) {
-  const descriptionLabel =
-    activeLocale === 'en'
-      ? labels.fields.descriptionEn
-      : labels.fields.descriptionFr;
-
   return (
     <EditorSection
       title={labels.accessibility.title}
@@ -560,9 +597,9 @@ function AccessibilitySection({
         </Button>
       }
     >
-      <div className="border-border-subtle min-w-0 overflow-hidden rounded-md border">
+      <div className="grid min-w-0 gap-3 md:grid-cols-2">
         {draft.accessibility.map((rule, index) => (
-          <AccessibilityRuleRow
+          <AccessibilityRuleCard
             key={`${rule.key}-${index}`}
             labels={labels}
             activeLocale={activeLocale}
@@ -582,18 +619,12 @@ function AccessibilitySection({
             }
           />
         ))}
-
-        {draft.accessibility.length === 0 ? (
-          <p className="text-content-tertiary px-3 py-4 text-xs">
-            {descriptionLabel}
-          </p>
-        ) : null}
       </div>
     </EditorSection>
   );
 }
 
-function AccessibilityRuleRow({
+function AccessibilityRuleCard({
   labels,
   activeLocale,
   rule,
@@ -612,50 +643,57 @@ function AccessibilityRuleRow({
       : labels.fields.descriptionFr;
 
   return (
-    <div className="border-border-subtle grid min-w-0 gap-2 border-b px-3 py-3 last:border-b-0 lg:grid-cols-[minmax(7rem,0.8fr)_minmax(12rem,1.8fr)_8rem_2rem] lg:items-end">
-      <CompactInput
-        label={labels.fields.key}
-        value={rule.key}
-        mono
-        onChange={(key) => onChange({ ...rule, key })}
-      />
-      <CompactTextarea
-        label={descriptionLabel}
-        value={rule.description[activeLocale]}
-        rows={2}
-        onChange={(value) =>
-          onChange({
-            ...rule,
-            description: updateLocalizedText(
-              rule.description,
-              activeLocale,
-              value,
-            ),
-          })
-        }
-      />
-      <label className="grid min-w-0 gap-1.5">
-        <span className="text-content-secondary text-xs font-medium">
-          {labels.accessibility.severity}
-        </span>
-        <select
-          value={rule.severity}
-          onChange={(event) =>
+    <article className="border-border-subtle bg-surface-primary min-w-0 rounded-md border p-3">
+      <div className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_7.5rem_2rem] sm:items-end">
+        <CompactInput
+          label={labels.fields.key}
+          value={rule.key}
+          mono
+          onChange={(key) => onChange({ ...rule, key })}
+        />
+
+        <label className="grid min-w-0 gap-1.5">
+          <span className="text-content-secondary text-xs font-semibold">
+            {labels.accessibility.severity}
+          </span>
+          <select
+            value={rule.severity}
+            onChange={(event) =>
+              onChange({
+                ...rule,
+                severity: event.target
+                  .value as ComponentAccessibilityRuleDraft['severity'],
+              })
+            }
+            className={fieldClassName}
+          >
+            <option value="info">{labels.severities.info}</option>
+            <option value="warning">{labels.severities.warning}</option>
+            <option value="critical">{labels.severities.critical}</option>
+          </select>
+        </label>
+
+        <RemoveIconButton label={labels.fields.remove} onClick={onRemove} />
+      </div>
+
+      <div className="mt-2.5">
+        <CompactTextarea
+          label={descriptionLabel}
+          value={rule.description[activeLocale]}
+          rows={3}
+          onChange={(value) =>
             onChange({
               ...rule,
-              severity: event.target
-                .value as ComponentAccessibilityRuleDraft['severity'],
+              description: updateLocalizedText(
+                rule.description,
+                activeLocale,
+                value,
+              ),
             })
           }
-          className={fieldClassName}
-        >
-          <option value="info">{labels.severities.info}</option>
-          <option value="warning">{labels.severities.warning}</option>
-          <option value="critical">{labels.severities.critical}</option>
-        </select>
-      </label>
-      <RemoveIconButton label={labels.fields.remove} onClick={onRemove} />
-    </div>
+        />
+      </div>
+    </article>
   );
 }
 
@@ -827,7 +865,7 @@ function TokenBindingRow({
           onChange={(key) => onChange({ ...binding, key })}
         />
         <label className="grid min-w-0 gap-1.5">
-          <span className="text-content-secondary text-xs font-medium">
+          <span className="text-content-secondary text-xs font-semibold">
             {labels.visualTokens.tokenType}
           </span>
           <select
@@ -849,7 +887,7 @@ function TokenBindingRow({
           </select>
         </label>
         <label className="grid min-w-0 gap-1.5">
-          <span className="text-content-secondary text-xs font-medium">
+          <span className="text-content-secondary text-xs font-semibold">
             {labels.visualTokens.tokenPath}
           </span>
           <select
@@ -951,7 +989,9 @@ function CompactInput({
 }) {
   return (
     <label className="grid min-w-0 gap-1.5">
-      <span className="text-content-secondary text-xs font-medium">{label}</span>
+      <span className="text-content-secondary text-xs font-semibold">
+        {label}
+      </span>
       <input
         value={value}
         onChange={(event) => onChange(event.target.value)}
@@ -980,7 +1020,7 @@ function CompactTextarea({
         className={
           hideLabel
             ? 'sr-only'
-            : 'text-content-secondary text-xs font-medium'
+            : 'text-content-secondary text-xs font-semibold'
         }
       >
         {label}
@@ -1026,4 +1066,4 @@ function updateLocalizedText(
 }
 
 const fieldClassName =
-  'border-border-subtle bg-background-subtle focus:border-border-focus focus:bg-surface-primary min-h-9 w-full min-w-0 rounded-md border px-2.5 text-[0.8125rem] outline-none transition';
+  'border-border-subtle bg-surface-primary focus:border-action-primary min-h-9 w-full min-w-0 rounded-md border px-3 text-[0.8125rem] outline-none transition';
