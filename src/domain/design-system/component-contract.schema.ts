@@ -46,34 +46,21 @@ const structuredComponentAnatomyPartSchema = z.object({
   requirement: componentAnatomyRequirementSchema.default('required'),
 });
 
-export const componentAnatomyPartSchema = z
-  .preprocess((value) => {
-    if (typeof value !== 'string') {
-      return value;
-    }
+export const componentAnatomyPartSchema = z.preprocess((value) => {
+  if (typeof value !== 'string') {
+    return value;
+  }
 
-    const key = value.trim();
+  const key = value.trim();
 
-    return {
-      key,
-      label: {
-        en: key,
-      },
-      requirement: 'required',
-    };
-  }, structuredComponentAnatomyPartSchema)
-  .transform((part) => {
-    const normalizedPart = { ...part };
-
-    Object.defineProperty(normalizedPart, 'toString', {
-      configurable: false,
-      enumerable: false,
-      value: () => normalizedPart.key,
-      writable: false,
-    });
-
-    return normalizedPart;
-  });
+  return {
+    key,
+    label: {
+      en: key,
+    },
+    requirement: 'required',
+  };
+}, structuredComponentAnatomyPartSchema);
 
 export const componentTokenBindingSchema = z.object({
   key: z.string().trim().min(1, { message: 'tokenBindingKeyRequired' }),
