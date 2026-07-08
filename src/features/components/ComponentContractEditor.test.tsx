@@ -63,6 +63,14 @@ const labels: ComponentContractEditorLabels = {
     title: 'Anatomy',
     description: 'Edit anatomy parts.',
     add: 'Add anatomy item',
+    key: 'Anatomy key',
+    label: 'Anatomy label',
+    requirement: 'Anatomy requirement',
+    requirements: {
+      required: 'Required',
+      optional: 'Optional',
+      derived: 'Derived',
+    },
   },
   variants: {
     title: 'Variants',
@@ -127,7 +135,24 @@ const contract: ComponentContract = {
     fr: 'Commencer les labels par un verbe.',
   },
   status: 'ready',
-  anatomy: ['root', 'label'],
+  anatomy: [
+    {
+      key: 'root',
+      label: {
+        en: 'Root',
+        fr: 'Racine',
+      },
+      requirement: 'required',
+    },
+    {
+      key: 'icon-leading',
+      label: {
+        en: 'Leading icon',
+        fr: 'Icône de début',
+      },
+      requirement: 'optional',
+    },
+  ],
   variants: [
     {
       key: 'primary',
@@ -180,7 +205,7 @@ const tokenOptions = [
 ];
 
 describe('ComponentContractEditor', () => {
-  it('renders localized purpose and guideline fields', () => {
+  it('renders localized content and structured anatomy fields', () => {
     render(
       <ComponentContractEditor
         locale="en"
@@ -201,6 +226,11 @@ describe('ComponentContractEditor', () => {
     expect(screen.getByLabelText('Content guidelines — EN')).toHaveValue(
       'Start labels with a verb.',
     );
+    expect(screen.getAllByLabelText('Anatomy key')[0]).toHaveValue('root');
+    expect(screen.getAllByLabelText('Anatomy label')[0]).toHaveValue('Root');
+    expect(screen.getAllByLabelText('Anatomy requirement')[0]).toHaveValue(
+      'required',
+    );
     expect(screen.getByText('Variants')).toBeInTheDocument();
     expect(screen.getByText('Accessibility')).toBeInTheDocument();
     expect(screen.getByText('Localized content')).toBeInTheDocument();
@@ -209,7 +239,7 @@ describe('ComponentContractEditor', () => {
     expect(screen.queryByLabelText('Purpose — FR')).not.toBeInTheDocument();
   });
 
-  it('switches all localized contract fields together', async () => {
+  it('switches localized content and anatomy labels together', async () => {
     render(
       <ComponentContractEditor
         locale="en"
@@ -231,9 +261,10 @@ describe('ComponentContractEditor', () => {
     expect(screen.getByLabelText('Content guidelines — FR')).toHaveValue(
       'Commencer les labels par un verbe.',
     );
+    expect(screen.getAllByLabelText('Anatomy label')[0]).toHaveValue('Racine');
   });
 
-  it('shows an unsaved notice after editing a guideline', () => {
+  it('adds a structured anatomy part with an optional requirement', async () => {
     render(
       <ComponentContractEditor
         locale="en"
@@ -244,9 +275,33 @@ describe('ComponentContractEditor', () => {
       />,
     );
 
-    fireEvent.change(screen.getByLabelText('Usage guidelines — EN'), {
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Add anatomy item' }),
+    );
+
+    const anatomyKeys = screen.getAllByLabelText('Anatomy key');
+    const anatomyRequirements = screen.getAllByLabelText(
+      'Anatomy requirement',
+    );
+
+    expect(anatomyKeys).toHaveLength(3);
+    expect(anatomyRequirements[2]).toHaveValue('optional');
+  });
+
+  it('shows an unsaved notice after editing an anatomy requirement', () => {
+    render(
+      <ComponentContractEditor
+        locale="en"
+        projectSlug="project"
+        contract={contract}
+        labels={labels}
+        tokenOptions={tokenOptions}
+      />,
+    );
+
+    fireEvent.change(screen.getAllByLabelText('Anatomy requirement')[0], {
       target: {
-        value: 'Use for one clear action per context.',
+        value: 'derived',
       },
     });
 
