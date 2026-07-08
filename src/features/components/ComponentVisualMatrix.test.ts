@@ -3,7 +3,9 @@ import type { ComponentRegistryItem } from './components-registry.utils';
 import {
   createPreviewTokenStyles,
   createVisualMatrixAxes,
+  getAlertPreviewTone,
   getPreviewSizeCategory,
+  isInteractiveCardVariant,
 } from './ComponentVisualMatrix';
 import type { ComponentTokenBindingResolution } from './component-token-bindings.utils';
 
@@ -71,6 +73,24 @@ describe('getPreviewSizeCategory', () => {
     ['xl', 'large'],
   ])('maps %s to the %s preview category', (sizeKey, expected) => {
     expect(getPreviewSizeCategory(sizeKey)).toBe(expected);
+  });
+});
+
+describe('component-specific preview recipes', () => {
+  it.each([
+    ['info', 'info'],
+    ['success', 'success'],
+    ['warning', 'warning'],
+    ['danger', 'danger'],
+    ['destructive', 'danger'],
+  ])('maps the %s alert variant to the %s tone', (variant, expected) => {
+    expect(getAlertPreviewTone(variant)).toBe(expected);
+  });
+
+  it('recognizes interactive card variants without affecting default cards', () => {
+    expect(isInteractiveCardVariant('interactive')).toBe(true);
+    expect(isInteractiveCardVariant('clickable')).toBe(true);
+    expect(isInteractiveCardVariant('default')).toBe(false);
   });
 });
 
