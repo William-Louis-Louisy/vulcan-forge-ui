@@ -57,6 +57,8 @@ export const componentContractSchema = z.object({
   type: componentContractTypeSchema,
   name: z.string().trim().min(1, { message: 'componentNameRequired' }),
   purpose: localizedStringSchema,
+  usageGuidelines: localizedStringSchema.optional(),
+  contentGuidelines: localizedStringSchema.optional(),
   status: componentContractStatusSchema.default('draft'),
   anatomy: z.array(z.string().trim().min(1)).default([]),
   variants: z.array(componentVariantSchema).default([]),
