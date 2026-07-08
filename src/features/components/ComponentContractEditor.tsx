@@ -1,129 +1,26 @@
 'use client';
 
-import {
-  createEmptyStateDraft,
-  createEmptyVariantDraft,
-  createComponentContractDraft,
-  createEmptyTokenBindingDraft,
-  createComponentContractFromDraft,
-  createEmptyForbiddenPatternDraft,
-  createEmptyAccessibilityRuleDraft,
-  type LocalizedTextDraft,
-  type ComponentStateDraft,
-  type ComponentVariantDraft,
-  type ComponentTokenBindingDraft,
-  type ComponentContractEditorDraft,
-  type ComponentAccessibilityRuleDraft,
-} from './component-contract-editor.utils';
+import { useActionState, useMemo, useState } from 'react';
+import { Button } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
 import type { ComponentContract } from '@/domain/design-system';
-import { useActionState, useMemo, useState, type ReactNode } from 'react';
 import type { ComponentTokenOption } from './component-token-bindings.utils';
+import {
+  createComponentContractDraft,
+  createComponentContractFromDraft,
+  type ComponentContractEditorDraft,
+} from './component-contract-editor.utils';
+import {
+  ComponentContractEditorSections,
+  type ComponentContractEditorLabels,
+} from './ComponentContractEditorSections';
 import { updateComponentContractAction } from './update-component-contract.action';
-import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 import { initialUpdateComponentContractActionState } from './update-component-contract.state';
-import { useProjectSaveStatus } from '@/components/layout/ProjectTopbarBreadcrumb';
 import { getComponentContractEditorSaveStatus } from './component-contract-editor-save-status';
-import { ComponentAnatomyEditor } from './ComponentAnatomyEditor';
+import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
+import { useProjectSaveStatus } from '@/components/layout/ProjectTopbarBreadcrumb';
 
-export type ComponentContractEditorLabels = {
-  title: string;
-  description: string;
-  unsavedNotice: string;
-  validationTitle: string;
-  basics: {
-    title: string;
-    name: string;
-    status: string;
-  };
-  anatomy: {
-    title: string;
-    description: string;
-    add: string;
-    key: string;
-    label: string;
-    requirement: string;
-    requirements: {
-      required: string;
-      optional: string;
-      derived: string;
-    };
-  };
-  variants: {
-    title: string;
-    add: string;
-  };
-  states: {
-    title: string;
-    add: string;
-  };
-  accessibility: {
-    title: string;
-    add: string;
-    severity: string;
-  };
-  forbiddenPatterns: {
-    title: string;
-    add: string;
-  };
-  fields: {
-    key: string;
-    labelEn: string;
-    labelFr: string;
-    descriptionEn: string;
-    descriptionFr: string;
-    patternEn: string;
-    patternFr: string;
-    remove: string;
-  };
-  statuses: {
-    draft: string;
-    ready: string;
-    deprecated: string;
-  };
-  severities: {
-    info: string;
-    warning: string;
-    critical: string;
-  };
-  save: {
-    action: string;
-    saving: string;
-    saved: string;
-    unsaved: string;
-    invalid: string;
-    errors: {
-      unauthorized: string;
-      projectNotFound: string;
-      componentContractNotFound: string;
-      invalidPayload: string;
-      invalidContract: string;
-      unexpected: string;
-    };
-  };
-  localizedContent: {
-    title: string;
-    editing: string;
-    purpose: string;
-    usageGuidelines: string;
-    contentGuidelines: string;
-    locales: {
-      en: string;
-      fr: string;
-    };
-  };
-  metadata: {
-    title: string;
-  };
-  visualTokens: {
-    title: string;
-    description: string;
-    add: string;
-    tokenType: string;
-    tokenPath: string;
-    selectToken: string;
-  };
-};
+export type { ComponentContractEditorLabels } from './ComponentContractEditorSections';
 
 type ComponentContractEditorProps = {
   locale: Locale;
@@ -149,10 +46,8 @@ export function ComponentContractEditor({
     () => createComponentContractDraft(contract),
     [contract],
   );
-
   const [draft, setDraft] =
     useState<ComponentContractEditorDraft>(initialDraft);
-
   const [activeLocale, setActiveLocale] = useState<'en' | 'fr'>(
     locale === 'fr' ? 'fr' : 'en',
   );
@@ -161,22 +56,16 @@ export function ComponentContractEditor({
     state.status === 'success' && state.savedContract
       ? state.savedContract
       : contract;
-
   const savedDraft = useMemo(
     () => createComponentContractDraft(savedContract),
     [savedContract],
   );
-
   const validation = createComponentContractFromDraft(draft);
-
   const contractPayload =
     validation.status === 'success' ? JSON.stringify(validation.contract) : '';
-
   const hasUnsavedChanges =
     JSON.stringify(draft) !== JSON.stringify(savedDraft);
-
   const saveContextId = `component-contract:${projectSlug}:${contract.type}`;
-
   const saveStatus = getComponentContractEditorSaveStatus({
     isPending,
     hasUnsavedChanges,
@@ -189,20 +78,11 @@ export function ComponentContractEditor({
   const preserveSaveContext = usePreserveSaveContext(saveContextId);
 
   return (
-    <section className="p-4">
-      <div>
-        <p className="text-content-tertiary text-sm font-semibold tracking-[0.18em] uppercase">
-          {labels.title}
-        </p>
-        <p className="text-content-secondary mt-2 text-sm leading-6">
-          {labels.description}
-        </p>
-      </div>
-
+    <section className="min-w-0">
       {hasUnsavedChanges ? (
         <p
           role="status"
-          className="text-action-warning mt-4 text-sm font-semibold"
+          className="text-action-warning mb-4 text-xs font-semibold"
         >
           {labels.unsavedNotice}
         </p>
@@ -211,10 +91,10 @@ export function ComponentContractEditor({
       {validation.status === 'error' ? (
         <div
           role="alert"
-          className="border-action-danger/30 bg-action-danger/10 text-action-danger mt-4 rounded-2xl border p-4 text-sm"
+          className="border-action-danger/30 bg-action-danger/5 text-action-danger mb-4 rounded-md border px-3 py-2.5 text-xs"
         >
           <p className="font-semibold">{labels.validationTitle}</p>
-          <ul className="mt-2 list-disc pl-5">
+          <ul className="mt-1.5 list-disc space-y-1 pl-4">
             {validation.errors.map((error, index) => (
               <li key={`${error}-${index}`}>{error}</li>
             ))}
@@ -222,854 +102,69 @@ export function ComponentContractEditor({
         </div>
       ) : null}
 
-      <div className="mt-8 grid gap-8">
-        <LocalizedContentSection
-          labels={labels}
-          draft={draft}
-          activeLocale={activeLocale}
-          setActiveLocale={setActiveLocale}
-          setDraft={setDraft}
-        />
-
-        <MetadataSection labels={labels} draft={draft} setDraft={setDraft} />
-
-        <ComponentAnatomyEditor
-          labels={{
-            ...labels.anatomy,
-            remove: labels.fields.remove,
-          }}
-          activeLocale={activeLocale}
-          draft={draft}
-          setDraft={setDraft}
-        />
-
-        <VariantsAndStatesSection
-          labels={labels}
-          draft={draft}
-          setDraft={setDraft}
-        />
-
-        <VisualTokensSection
-          labels={labels}
-          draft={draft}
-          setDraft={setDraft}
-          tokenOptions={tokenOptions}
-        />
-
-        <AccessibilitySection
-          labels={labels}
-          draft={draft}
-          setDraft={setDraft}
-        />
-
-        <ForbiddenPatternsSection
-          labels={labels}
-          draft={draft}
-          setDraft={setDraft}
-        />
-      </div>
+      <ComponentContractEditorSections
+        labels={labels}
+        draft={draft}
+        setDraft={setDraft}
+        activeLocale={activeLocale}
+        setActiveLocale={setActiveLocale}
+        tokenOptions={tokenOptions}
+      />
 
       <form
         action={formAction}
         onSubmitCapture={preserveSaveContext}
-        className="border-border-subtle mt-8 rounded-2xl border p-4"
+        className="border-border-subtle bg-background-app/95 sticky bottom-0 z-10 mt-6 flex min-w-0 flex-col gap-2 border-t py-3 backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between"
       >
         <input type="hidden" name="locale" value={locale} />
         <input type="hidden" name="projectSlug" value={projectSlug} />
         <input type="hidden" name="componentType" value={draft.type} />
         <input type="hidden" name="contract" value={contractPayload} />
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm font-semibold">
-              {hasUnsavedChanges ? labels.save.unsaved : labels.save.saved}
+        <div aria-live="polite" className="min-w-0 text-xs">
+          <p className="flex items-center gap-2 font-semibold">
+            <span
+              aria-hidden="true"
+              className={[
+                'size-1.5 shrink-0 rounded-full',
+                isPending
+                  ? 'bg-action-warning'
+                  : hasUnsavedChanges
+                    ? 'bg-content-tertiary'
+                    : 'bg-action-success',
+              ].join(' ')}
+            />
+            {isPending
+              ? labels.save.saving
+              : hasUnsavedChanges
+                ? labels.save.unsaved
+                : labels.save.saved}
+          </p>
+
+          {validation.status === 'error' ? (
+            <p className="text-action-danger mt-1 font-medium">
+              {labels.save.invalid}
             </p>
-
-            {validation.status === 'error' ? (
-              <p className="text-action-danger mt-1 text-sm font-semibold">
-                {labels.save.invalid}
-              </p>
-            ) : null}
-          </div>
-
-          <button
-            type="submit"
-            disabled={
-              isPending || validation.status === 'error' || !hasUnsavedChanges
-            }
-            className="bg-action-primary text-action-primary-content disabled:bg-background-subtle disabled:text-content-tertiary rounded-xl px-4 py-2 text-sm font-semibold transition disabled:cursor-not-allowed"
-          >
-            {isPending ? labels.save.saving : labels.save.action}
-          </button>
-        </div>
-
-        {state.status === 'success' ? (
-          <p
-            role="status"
-            className="text-action-success mt-4 text-sm font-semibold"
-          >
-            {labels.save.saved}
-          </p>
-        ) : null}
-
-        {state.formError ? (
-          <p
-            role="alert"
-            className="text-action-danger mt-4 text-sm font-semibold"
-          >
-            {labels.save.errors[state.formError]}
-          </p>
-        ) : null}
-      </form>
-    </section>
-  );
-}
-
-function AccessibilitySection({
-  labels,
-  draft,
-  setDraft,
-}: {
-  labels: ComponentContractEditorLabels;
-  draft: ComponentContractEditorDraft;
-  setDraft: (draft: ComponentContractEditorDraft) => void;
-}) {
-  return (
-    <EditableListSection
-      title={labels.accessibility.title}
-      addLabel={labels.accessibility.add}
-      onAdd={() =>
-        setDraft({
-          ...draft,
-          accessibility: [
-            ...draft.accessibility,
-            createEmptyAccessibilityRuleDraft(),
-          ],
-        })
-      }
-    >
-      {draft.accessibility.map((rule, index) => (
-        <AccessibilityRuleEditor
-          key={`${rule.key}-${index}`}
-          labels={labels}
-          rule={rule}
-          onChange={(nextRule) => {
-            const nextRules = [...draft.accessibility];
-            nextRules[index] = nextRule;
-            setDraft({ ...draft, accessibility: nextRules });
-          }}
-          onRemove={() =>
-            setDraft({
-              ...draft,
-              accessibility: draft.accessibility.filter(
-                (_, itemIndex) => itemIndex !== index,
-              ),
-            })
-          }
-        />
-      ))}
-    </EditableListSection>
-  );
-}
-
-function ForbiddenPatternsSection({
-  labels,
-  draft,
-  setDraft,
-}: {
-  labels: ComponentContractEditorLabels;
-  draft: ComponentContractEditorDraft;
-  setDraft: (draft: ComponentContractEditorDraft) => void;
-}) {
-  return (
-    <EditableListSection
-      title={labels.forbiddenPatterns.title}
-      addLabel={labels.forbiddenPatterns.add}
-      onAdd={() =>
-        setDraft({
-          ...draft,
-          forbiddenPatterns: [
-            ...draft.forbiddenPatterns,
-            createEmptyForbiddenPatternDraft(),
-          ],
-        })
-      }
-    >
-      {draft.forbiddenPatterns.map((pattern, index) => (
-        <LocalizedTextEditor
-          key={`${pattern.en}-${pattern.fr}-${index}`}
-          labels={labels}
-          value={pattern}
-          labelEn={labels.fields.patternEn}
-          labelFr={labels.fields.patternFr}
-          onChange={(nextPattern) => {
-            const nextPatterns = [...draft.forbiddenPatterns];
-            nextPatterns[index] = nextPattern;
-            setDraft({ ...draft, forbiddenPatterns: nextPatterns });
-          }}
-          onRemove={() =>
-            setDraft({
-              ...draft,
-              forbiddenPatterns: draft.forbiddenPatterns.filter(
-                (_, itemIndex) => itemIndex !== index,
-              ),
-            })
-          }
-        />
-      ))}
-    </EditableListSection>
-  );
-}
-
-function VariantEditor({
-  labels,
-  variant,
-  onChange,
-  onRemove,
-}: {
-  labels: ComponentContractEditorLabels;
-  variant: ComponentVariantDraft;
-  onChange: (variant: ComponentVariantDraft) => void;
-  onRemove: () => void;
-}) {
-  return (
-    <NestedEditorCard onRemove={onRemove} removeLabel={labels.fields.remove}>
-      <TextInput
-        label={labels.fields.key}
-        value={variant.key}
-        onChange={(key) => onChange({ ...variant, key })}
-      />
-      <LocalizedTextEditor
-        labels={labels}
-        value={variant.label}
-        labelEn={labels.fields.labelEn}
-        labelFr={labels.fields.labelFr}
-        onChange={(label) => onChange({ ...variant, label })}
-      />
-      <LocalizedTextEditor
-        labels={labels}
-        value={variant.description}
-        labelEn={labels.fields.descriptionEn}
-        labelFr={labels.fields.descriptionFr}
-        onChange={(description) => onChange({ ...variant, description })}
-      />
-    </NestedEditorCard>
-  );
-}
-
-function StateEditor({
-  labels,
-  state,
-  onChange,
-  onRemove,
-}: {
-  labels: ComponentContractEditorLabels;
-  state: ComponentStateDraft;
-  onChange: (state: ComponentStateDraft) => void;
-  onRemove: () => void;
-}) {
-  return (
-    <NestedEditorCard onRemove={onRemove} removeLabel={labels.fields.remove}>
-      <TextInput
-        label={labels.fields.key}
-        value={state.key}
-        onChange={(key) => onChange({ ...state, key })}
-      />
-      <LocalizedTextEditor
-        labels={labels}
-        value={state.label}
-        labelEn={labels.fields.labelEn}
-        labelFr={labels.fields.labelFr}
-        onChange={(label) => onChange({ ...state, label })}
-      />
-      <LocalizedTextEditor
-        labels={labels}
-        value={state.description}
-        labelEn={labels.fields.descriptionEn}
-        labelFr={labels.fields.descriptionFr}
-        onChange={(description) => onChange({ ...state, description })}
-      />
-    </NestedEditorCard>
-  );
-}
-
-function AccessibilityRuleEditor({
-  labels,
-  rule,
-  onChange,
-  onRemove,
-}: {
-  labels: ComponentContractEditorLabels;
-  rule: ComponentAccessibilityRuleDraft;
-  onChange: (rule: ComponentAccessibilityRuleDraft) => void;
-  onRemove: () => void;
-}) {
-  return (
-    <NestedEditorCard onRemove={onRemove} removeLabel={labels.fields.remove}>
-      <TextInput
-        label={labels.fields.key}
-        value={rule.key}
-        onChange={(key) => onChange({ ...rule, key })}
-      />
-
-      <label className="grid gap-2">
-        <span className="text-sm font-semibold">
-          {labels.accessibility.severity}
-        </span>
-        <select
-          value={rule.severity}
-          onChange={(event) =>
-            onChange({
-              ...rule,
-              severity: event.target
-                .value as ComponentAccessibilityRuleDraft['severity'],
-            })
-          }
-          className="border-border-subtle bg-background-subtle min-h-11 rounded-xl border px-3 text-sm"
-        >
-          <option value="info">{labels.severities.info}</option>
-          <option value="warning">{labels.severities.warning}</option>
-          <option value="critical">{labels.severities.critical}</option>
-        </select>
-      </label>
-
-      <LocalizedTextEditor
-        labels={labels}
-        value={rule.description}
-        labelEn={labels.fields.descriptionEn}
-        labelFr={labels.fields.descriptionFr}
-        onChange={(description) => onChange({ ...rule, description })}
-      />
-    </NestedEditorCard>
-  );
-}
-
-function LocalizedTextEditor({
-  labels,
-  value,
-  labelEn,
-  labelFr,
-  onChange,
-  onRemove,
-}: {
-  labels: ComponentContractEditorLabels;
-  value: LocalizedTextDraft;
-  labelEn: string;
-  labelFr: string;
-  onChange: (value: LocalizedTextDraft) => void;
-  onRemove?: () => void;
-}) {
-  return (
-    <div className="grid gap-3">
-      <div className="grid gap-3 md:grid-cols-2">
-        <TextareaInput
-          label={labelEn}
-          value={value.en}
-          onChange={(en) => onChange({ ...value, en })}
-        />
-        <TextareaInput
-          label={labelFr}
-          value={value.fr}
-          onChange={(fr) => onChange({ ...value, fr })}
-        />
-      </div>
-
-      {onRemove ? (
-        <RemoveButton label={labels.fields.remove} onClick={onRemove} />
-      ) : null}
-    </div>
-  );
-}
-
-function EditorSection({
-  title,
-  description,
-  children,
-}: {
-  title: string;
-  description?: string;
-  children: ReactNode;
-}) {
-  return (
-    <section>
-      <h3 className="text-lg font-semibold tracking-tight">{title}</h3>
-      {description ? (
-        <p className="text-content-secondary mt-2 text-sm leading-6">
-          {description}
-        </p>
-      ) : null}
-      <div className="mt-4">{children}</div>
-    </section>
-  );
-}
-
-function EditableListSection({
-  title,
-  addLabel,
-  onAdd,
-  children,
-}: {
-  title: string;
-  addLabel: string;
-  onAdd: () => void;
-  children: ReactNode;
-}) {
-  return (
-    <EditorSection title={title}>
-      <div className="grid gap-4">{children}</div>
-      <AddButton label={addLabel} onClick={onAdd} />
-    </EditorSection>
-  );
-}
-
-function NestedEditorCard({
-  onRemove,
-  removeLabel,
-  children,
-}: {
-  onRemove: () => void;
-  removeLabel: string;
-  children: ReactNode;
-}) {
-  return (
-    <div className="p-4">
-      <div className="grid gap-4">{children}</div>
-      <RemoveButton label={removeLabel} onClick={onRemove} />
-    </div>
-  );
-}
-
-function TextInput({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-}) {
-  return (
-    <label className="grid w-full gap-2">
-      <span className="text-sm font-semibold">{label}</span>
-      <input
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        className="border-border-subtle bg-background-subtle min-h-11 rounded-xl border px-3 text-sm"
-      />
-    </label>
-  );
-}
-
-function TextareaInput({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-}) {
-  return (
-    <label className="grid gap-2">
-      <span className="text-sm font-semibold">{label}</span>
-      <textarea
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        rows={3}
-        className="border-border-subtle bg-background-subtle min-h-24 rounded-xl border px-3 py-2 text-sm"
-      />
-    </label>
-  );
-}
-
-function AddButton({ label, onClick }: { label: string; onClick: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="border-border-subtle text-content-secondary hover:text-content-primary mt-4 rounded-xl border px-4 py-2 text-sm font-semibold transition"
-    >
-      {label}
-    </button>
-  );
-}
-
-function RemoveButton({
-  label,
-  onClick,
-}: {
-  label: string;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="text-action-danger mt-3 text-sm font-semibold"
-    >
-      {label}
-    </button>
-  );
-}
-
-function LocalizedContentSection({
-  labels,
-  draft,
-  activeLocale,
-  setActiveLocale,
-  setDraft,
-}: {
-  labels: ComponentContractEditorLabels;
-  draft: ComponentContractEditorDraft;
-  activeLocale: 'en' | 'fr';
-  setActiveLocale: (locale: 'en' | 'fr') => void;
-  setDraft: (draft: ComponentContractEditorDraft) => void;
-}) {
-  const localeLabel = labels.localizedContent.locales[activeLocale];
-
-  return (
-    <EditorSection title={labels.localizedContent.title}>
-      <div className="flex flex-wrap items-center gap-3">
-        <span className="text-content-secondary text-sm">
-          {labels.localizedContent.editing}
-        </span>
-
-        <div className="border-border-subtle bg-background-subtle inline-flex rounded-xl border p-1">
-          {(['fr', 'en'] as const).map((localeOption) => {
-            const isActive = activeLocale === localeOption;
-
-            return (
-              <button
-                key={localeOption}
-                type="button"
-                onClick={() => setActiveLocale(localeOption)}
-                className={[
-                  'rounded-lg px-3 py-1.5 text-sm font-semibold transition',
-                  isActive
-                    ? 'bg-content-primary text-background-app'
-                    : 'text-content-secondary hover:text-content-primary',
-                ].join(' ')}
-              >
-                {labels.localizedContent.locales[localeOption]}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      <div className="mt-5 grid gap-4">
-        <TextareaInput
-          label={`${labels.localizedContent.purpose} — ${localeLabel}`}
-          value={draft.purpose[activeLocale]}
-          onChange={(value) =>
-            setDraft({
-              ...draft,
-              purpose: {
-                ...draft.purpose,
-                [activeLocale]: value,
-              },
-            })
-          }
-        />
-
-        <TextareaInput
-          label={`${labels.localizedContent.usageGuidelines} — ${localeLabel}`}
-          value={draft.usageGuidelines[activeLocale]}
-          onChange={(value) =>
-            setDraft({
-              ...draft,
-              usageGuidelines: {
-                ...draft.usageGuidelines,
-                [activeLocale]: value,
-              },
-            })
-          }
-        />
-
-        <TextareaInput
-          label={`${labels.localizedContent.contentGuidelines} — ${localeLabel}`}
-          value={draft.contentGuidelines[activeLocale]}
-          onChange={(value) =>
-            setDraft({
-              ...draft,
-              contentGuidelines: {
-                ...draft.contentGuidelines,
-                [activeLocale]: value,
-              },
-            })
-          }
-        />
-      </div>
-    </EditorSection>
-  );
-}
-
-function MetadataSection({
-  labels,
-  draft,
-  setDraft,
-}: {
-  labels: ComponentContractEditorLabels;
-  draft: ComponentContractEditorDraft;
-  setDraft: (draft: ComponentContractEditorDraft) => void;
-}) {
-  return (
-    <EditorSection title={labels.metadata.title}>
-      <div className="grid gap-4 md:grid-cols-2">
-        <TextInput
-          label={labels.basics.name}
-          value={draft.name}
-          onChange={(value) => setDraft({ ...draft, name: value })}
-        />
-
-        <label className="grid gap-2">
-          <span className="text-sm font-semibold">{labels.basics.status}</span>
-
-          <select
-            value={draft.status}
-            onChange={(event) =>
-              setDraft({
-                ...draft,
-                status: event.target
-                  .value as ComponentContractEditorDraft['status'],
-              })
-            }
-            className="border-border-subtle bg-background-subtle min-h-11 rounded-xl border px-3 text-sm"
-          >
-            <option value="draft">{labels.statuses.draft}</option>
-            <option value="ready">{labels.statuses.ready}</option>
-            <option value="deprecated">{labels.statuses.deprecated}</option>
-          </select>
-        </label>
-      </div>
-    </EditorSection>
-  );
-}
-
-function VariantsAndStatesSection({
-  labels,
-  draft,
-  setDraft,
-}: {
-  labels: ComponentContractEditorLabels;
-  draft: ComponentContractEditorDraft;
-  setDraft: (draft: ComponentContractEditorDraft) => void;
-}) {
-  return (
-    <EditorSection title={`${labels.variants.title} & ${labels.states.title}`}>
-      <div className="grid gap-4">
-        <EditableListSection
-          title={labels.variants.title}
-          addLabel={labels.variants.add}
-          onAdd={() =>
-            setDraft({
-              ...draft,
-              variants: [...draft.variants, createEmptyVariantDraft()],
-            })
-          }
-        >
-          {draft.variants.map((variant, index) => (
-            <VariantEditor
-              key={`${variant.key}-${index}`}
-              labels={labels}
-              variant={variant}
-              onChange={(nextVariant) => {
-                const nextVariants = [...draft.variants];
-                nextVariants[index] = nextVariant;
-                setDraft({ ...draft, variants: nextVariants });
-              }}
-              onRemove={() =>
-                setDraft({
-                  ...draft,
-                  variants: draft.variants.filter(
-                    (_, itemIndex) => itemIndex !== index,
-                  ),
-                })
-              }
-            />
-          ))}
-        </EditableListSection>
-
-        <EditableListSection
-          title={labels.states.title}
-          addLabel={labels.states.add}
-          onAdd={() =>
-            setDraft({
-              ...draft,
-              states: [...draft.states, createEmptyStateDraft()],
-            })
-          }
-        >
-          {draft.states.map((state, index) => (
-            <StateEditor
-              key={`${state.key}-${index}`}
-              labels={labels}
-              state={state}
-              onChange={(nextState) => {
-                const nextStates = [...draft.states];
-                nextStates[index] = nextState;
-                setDraft({ ...draft, states: nextStates });
-              }}
-              onRemove={() =>
-                setDraft({
-                  ...draft,
-                  states: draft.states.filter(
-                    (_, itemIndex) => itemIndex !== index,
-                  ),
-                })
-              }
-            />
-          ))}
-        </EditableListSection>
-      </div>
-    </EditorSection>
-  );
-}
-
-function VisualTokensSection({
-  labels,
-  draft,
-  setDraft,
-  tokenOptions,
-}: {
-  labels: ComponentContractEditorLabels;
-  draft: ComponentContractEditorDraft;
-  setDraft: (draft: ComponentContractEditorDraft) => void;
-  tokenOptions: ComponentTokenOption[];
-}) {
-  return (
-    <EditableListSection
-      title={labels.visualTokens.title}
-      addLabel={labels.visualTokens.add}
-      onAdd={() =>
-        setDraft({
-          ...draft,
-          tokenBindings: [
-            ...draft.tokenBindings,
-            createEmptyTokenBindingDraft(),
-          ],
-        })
-      }
-    >
-      {draft.tokenBindings.length === 0 ? (
-        <p className="text-content-secondary text-sm leading-6">
-          {labels.visualTokens.description}
-        </p>
-      ) : null}
-
-      {draft.tokenBindings.map((binding, index) => (
-        <TokenBindingEditor
-          key={`${binding.key}-${binding.tokenPath}-${index}`}
-          labels={labels}
-          binding={binding}
-          tokenOptions={tokenOptions}
-          onChange={(nextBinding) => {
-            const nextBindings = [...draft.tokenBindings];
-            nextBindings[index] = nextBinding;
-            setDraft({ ...draft, tokenBindings: nextBindings });
-          }}
-          onRemove={() =>
-            setDraft({
-              ...draft,
-              tokenBindings: draft.tokenBindings.filter(
-                (_, itemIndex) => itemIndex !== index,
-              ),
-            })
-          }
-        />
-      ))}
-    </EditableListSection>
-  );
-}
-
-function TokenBindingEditor({
-  labels,
-  binding,
-  onChange,
-  onRemove,
-  tokenOptions,
-}: {
-  labels: ComponentContractEditorLabels;
-  binding: ComponentTokenBindingDraft;
-  tokenOptions: ComponentTokenOption[];
-  onChange: (binding: ComponentTokenBindingDraft) => void;
-  onRemove: () => void;
-}) {
-  const tokenOptionsForType = tokenOptions.filter(
-    (tokenOption) => tokenOption.type === binding.tokenType,
-  );
-
-  const hasCurrentTokenPath = tokenOptionsForType.some(
-    (tokenOption) => tokenOption.path === binding.tokenPath,
-  );
-
-  return (
-    <NestedEditorCard onRemove={onRemove} removeLabel={labels.fields.remove}>
-      <TextInput
-        label={labels.fields.key}
-        value={binding.key}
-        onChange={(key) => onChange({ ...binding, key })}
-      />
-
-      <label className="grid gap-2">
-        <span className="text-sm font-semibold">
-          {labels.visualTokens.tokenType}
-        </span>
-        <select
-          value={binding.tokenType}
-          onChange={(event) =>
-            onChange({
-              ...binding,
-              tokenType: event.target
-                .value as ComponentTokenBindingDraft['tokenType'],
-            })
-          }
-          className="border-border-subtle bg-background-subtle min-h-11 rounded-xl border px-3 text-sm"
-        >
-          <option value="color">color</option>
-          <option value="spacing">spacing</option>
-          <option value="radius">radius</option>
-          <option value="typography">typography</option>
-          <option value="motion">motion</option>
-        </select>
-      </label>
-
-      <label className="grid gap-2">
-        <span className="text-sm font-semibold">
-          {labels.visualTokens.tokenPath}
-        </span>
-
-        <select
-          value={binding.tokenPath}
-          onChange={(event) =>
-            onChange({
-              ...binding,
-              tokenPath: event.target.value,
-            })
-          }
-          className="border-border-subtle bg-background-subtle min-h-11 rounded-xl border px-3 text-sm"
-        >
-          <option value="">{labels.visualTokens.selectToken}</option>
-
-          {!hasCurrentTokenPath && binding.tokenPath ? (
-            <option value={binding.tokenPath}>{binding.tokenPath}</option>
           ) : null}
 
-          {tokenOptionsForType.map((tokenOption) => (
-            <option key={tokenOption.path} value={tokenOption.path}>
-              {tokenOption.label}
-            </option>
-          ))}
-        </select>
-      </label>
+          {state.formError ? (
+            <p role="alert" className="text-action-danger mt-1 font-medium">
+              {labels.save.errors[state.formError]}
+            </p>
+          ) : null}
+        </div>
 
-      <LocalizedTextEditor
-        labels={labels}
-        value={binding.description}
-        labelEn={labels.fields.descriptionEn}
-        labelFr={labels.fields.descriptionFr}
-        onChange={(description) => onChange({ ...binding, description })}
-      />
-    </NestedEditorCard>
+        <Button
+          type="submit"
+          size="sm"
+          disabled={
+            isPending || validation.status === 'error' || !hasUnsavedChanges
+          }
+          className="shrink-0"
+        >
+          {isPending ? labels.save.saving : labels.save.action}
+        </Button>
+      </form>
+    </section>
   );
 }
