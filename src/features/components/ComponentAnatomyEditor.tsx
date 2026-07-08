@@ -35,14 +35,14 @@ export function ComponentAnatomyEditor({
   setDraft,
 }: ComponentAnatomyEditorProps) {
   return (
-    <section>
+    <section className="min-w-0">
       <h3 className="text-lg font-semibold tracking-tight">{labels.title}</h3>
       <p className="text-content-secondary mt-2 text-sm leading-6">
         {labels.description}
       </p>
 
-      <div className="border-border-subtle mt-4 overflow-hidden rounded-xl border">
-        <div className="bg-background-subtle text-content-tertiary hidden grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_10rem_2.5rem] gap-3 border-b px-3 py-2 text-xs font-semibold tracking-wide uppercase md:grid">
+      <div className="border-border-subtle mt-4 min-w-0 overflow-hidden rounded-xl border">
+        <div className="bg-background-subtle text-content-tertiary hidden min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_10rem_2.5rem] gap-3 border-b px-3 py-2 text-xs font-semibold tracking-wide uppercase md:grid">
           <span>{labels.key}</span>
           <span>{labels.label}</span>
           <span>{labels.requirement}</span>
@@ -54,7 +54,7 @@ export function ComponentAnatomyEditor({
             {labels.description}
           </div>
         ) : (
-          <div className="divide-border-subtle divide-y">
+          <div className="divide-border-subtle min-w-0 divide-y">
             {draft.anatomy.map((part, index) => (
               <AnatomyPartRow
                 key={`${part.key}-${index}`}
@@ -110,8 +110,8 @@ function AnatomyPartRow({
   onRemove: () => void;
 }) {
   return (
-    <div className="grid gap-3 px-3 py-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_10rem_2.5rem] md:items-end">
-      <label className="grid gap-1.5">
+    <div className="grid min-w-0 gap-3 px-3 py-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_10rem_2.5rem] md:items-end">
+      <label className="grid min-w-0 gap-1.5">
         <span className="text-content-tertiary text-xs font-semibold md:hidden">
           {labels.key}
         </span>
@@ -119,11 +119,11 @@ function AnatomyPartRow({
           aria-label={labels.key}
           value={part.key}
           onChange={(event) => onChange({ ...part, key: event.target.value })}
-          className="border-border-subtle bg-background-app min-h-10 rounded-lg border px-3 font-mono text-sm"
+          className="border-border-subtle bg-background-app min-h-10 w-full min-w-0 rounded-lg border px-3 font-mono text-sm"
         />
       </label>
 
-      <label className="grid gap-1.5">
+      <label className="grid min-w-0 gap-1.5">
         <span className="text-content-tertiary text-xs font-semibold md:hidden">
           {labels.label}
         </span>
@@ -139,11 +139,11 @@ function AnatomyPartRow({
               },
             })
           }
-          className="border-border-subtle bg-background-app min-h-10 rounded-lg border px-3 text-sm"
+          className="border-border-subtle bg-background-app min-h-10 w-full min-w-0 rounded-lg border px-3 text-sm"
         />
       </label>
 
-      <label className="grid gap-1.5">
+      <label className="grid min-w-0 gap-1.5">
         <span className="text-content-tertiary text-xs font-semibold md:hidden">
           {labels.requirement}
         </span>
@@ -157,7 +157,7 @@ function AnatomyPartRow({
                 .value as ComponentAnatomyPartDraft['requirement'],
             })
           }
-          className="border-border-subtle bg-background-app min-h-10 rounded-lg border px-3 text-sm"
+          className="border-border-subtle bg-background-app min-h-10 w-full min-w-0 rounded-lg border px-3 text-sm"
         >
           <option value="required">{labels.requirements.required}</option>
           <option value="optional">{labels.requirements.optional}</option>
