@@ -24,6 +24,7 @@ import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveC
 import { initialUpdateComponentContractActionState } from './update-component-contract.state';
 import { useProjectSaveStatus } from '@/components/layout/ProjectTopbarBreadcrumb';
 import { getComponentContractEditorSaveStatus } from './component-contract-editor-save-status';
+import { ComponentAnatomyEditor } from './ComponentAnatomyEditor';
 
 export type ComponentContractEditorLabels = {
   title: string;
@@ -39,6 +40,14 @@ export type ComponentContractEditorLabels = {
     title: string;
     description: string;
     add: string;
+    key: string;
+    label: string;
+    requirement: string;
+    requirements: {
+      required: string;
+      optional: string;
+      derived: string;
+    };
   };
   variants: {
     title: string;
@@ -224,7 +233,15 @@ export function ComponentContractEditor({
 
         <MetadataSection labels={labels} draft={draft} setDraft={setDraft} />
 
-        <AnatomySection labels={labels} draft={draft} setDraft={setDraft} />
+        <ComponentAnatomyEditor
+          labels={{
+            ...labels.anatomy,
+            remove: labels.fields.remove,
+          }}
+          activeLocale={activeLocale}
+          draft={draft}
+          setDraft={setDraft}
+        />
 
         <VariantsAndStatesSection
           labels={labels}
@@ -305,57 +322,6 @@ export function ComponentContractEditor({
         ) : null}
       </form>
     </section>
-  );
-}
-
-function AnatomySection({
-  labels,
-  draft,
-  setDraft,
-}: {
-  labels: ComponentContractEditorLabels;
-  draft: ComponentContractEditorDraft;
-  setDraft: (draft: ComponentContractEditorDraft) => void;
-}) {
-  return (
-    <EditorSection
-      title={labels.anatomy.title}
-      description={labels.anatomy.description}
-    >
-      <div className="grid gap-3">
-        {draft.anatomy.map((item, index) => (
-          <div key={`${item}-${index}`} className="flex gap-2">
-            <TextInput
-              label={`${labels.anatomy.title} ${index + 1}`}
-              value={item}
-              onChange={(value) => {
-                const nextAnatomy = [...draft.anatomy];
-                nextAnatomy[index] = value;
-                setDraft({ ...draft, anatomy: nextAnatomy });
-              }}
-            />
-            <RemoveButton
-              label={labels.fields.remove}
-              onClick={() =>
-                setDraft({
-                  ...draft,
-                  anatomy: draft.anatomy.filter(
-                    (_, itemIndex) => itemIndex !== index,
-                  ),
-                })
-              }
-            />
-          </div>
-        ))}
-
-        <AddButton
-          label={labels.anatomy.add}
-          onClick={() =>
-            setDraft({ ...draft, anatomy: [...draft.anatomy, ''] })
-          }
-        />
-      </div>
-    </EditorSection>
   );
 }
 
