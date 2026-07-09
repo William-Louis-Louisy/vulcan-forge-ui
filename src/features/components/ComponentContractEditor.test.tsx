@@ -294,7 +294,9 @@ describe('ComponentContractEditor', () => {
     );
 
     const anatomyKeys = screen.getAllByLabelText('Anatomy key');
-    const anatomyRequirements = screen.getAllByLabelText('Anatomy requirement');
+    const anatomyRequirements = screen.getAllByLabelText(
+      'Anatomy requirement',
+    );
 
     expect(anatomyKeys).toHaveLength(3);
     expect(anatomyRequirements[2]).toHaveValue('optional');
@@ -335,7 +337,9 @@ describe('ComponentContractEditor', () => {
 
     await user.click(screen.getByRole('button', { name: /Add variant/ }));
 
-    const newVariantInput = screen.getAllByLabelText('Key').at(-1);
+    const newVariantInput = screen
+      .getAllByLabelText('Key')
+      .find((input) => (input as HTMLInputElement).value === '');
 
     expect(newVariantInput).toBeDefined();
 
@@ -346,10 +350,7 @@ describe('ComponentContractEditor', () => {
     await user.click(newVariantInput);
     await user.keyboard('ghost');
 
-    const updatedVariantInput = screen.getAllByLabelText('Key').at(-1);
-
-    expect(updatedVariantInput).toHaveValue('ghost');
-    expect(updatedVariantInput).toHaveFocus();
+    expect(screen.getByDisplayValue('ghost')).toHaveFocus();
   });
 
   it('shows an unsaved notice after editing an anatomy requirement', () => {
