@@ -1,6 +1,12 @@
 'use client';
 
-import { useEffect, useRef, useState, useTransition } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
 import { MagnifyingGlassIcon } from '@phosphor-icons/react';
 import { useSearchParams } from 'next/navigation';
 import { usePathname, useRouter } from '@/i18n/navigation';
@@ -17,6 +23,7 @@ export function ComponentRegistryFilter({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const searchParamsString = searchParams.toString();
   const [query, setQuery] = useState(value);
   const [isPending, startTransition] = useTransition();
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -25,28 +32,31 @@ export function ComponentRegistryFilter({
     setQuery(value);
   }, [value]);
 
-  const navigate = (nextQuery: string) => {
-    const normalizedQuery = nextQuery.trim();
-    const currentQuery = searchParams.get('q')?.trim() ?? '';
+  const navigate = useCallback(
+    (nextQuery: string) => {
+      const normalizedQuery = nextQuery.trim();
+      const params = new URLSearchParams(searchParamsString);
+      const currentQuery = params.get('q')?.trim() ?? '';
 
-    if (normalizedQuery === currentQuery) {
-      return;
-    }
+      if (normalizedQuery === currentQuery) {
+        return;
+      }
 
-    const params = new URLSearchParams(searchParams.toString());
+      if (normalizedQuery) {
+        params.set('q', normalizedQuery);
+      } else {
+        params.delete('q');
+      }
 
-    if (normalizedQuery) {
-      params.set('q', normalizedQuery);
-    } else {
-      params.delete('q');
-    }
+      const href =
+        params.size > 0 ? `${pathname}?${params.toString()}` : pathname;
 
-    const href = params.size > 0 ? `${pathname}?${params.toString()}` : pathname;
-
-    startTransition(() => {
-      router.replace(href, { scroll: false });
-    });
-  };
+      startTransition(() => {
+        router.replace(href, { scroll: false });
+      });
+    },
+    [pathname, router, searchParamsString],
+  );
 
   useEffect(() => {
     if (debounceRef.current) {
@@ -60,7 +70,7 @@ export function ComponentRegistryFilter({
         clearTimeout(debounceRef.current);
       }
     };
-  }, [query]);
+  }, [navigate, query]);
 
   return (
     <form
