@@ -5,7 +5,6 @@ import {
   createVisualMatrixAxes,
   getAlertPreviewTone,
   getPreviewSizeCategory,
-  getPreviewWidthClassName,
   isInteractiveCardVariant,
 } from './ComponentVisualMatrix';
 import type { ComponentTokenBindingResolution } from './component-token-bindings.utils';
@@ -74,12 +73,6 @@ describe('getPreviewSizeCategory', () => {
     ['xl', 'large'],
   ])('maps %s to the %s preview category', (sizeKey, expected) => {
     expect(getPreviewSizeCategory(sizeKey)).toBe(expected);
-  });
-
-  it('assigns visibly distinct widths to each preview category', () => {
-    expect(getPreviewWidthClassName('small')).toBe('w-28');
-    expect(getPreviewWidthClassName('medium')).toBe('w-36');
-    expect(getPreviewWidthClassName('large')).toBe('w-48');
   });
 });
 

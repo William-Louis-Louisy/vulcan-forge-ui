@@ -70,18 +70,6 @@ export function getPreviewSizeCategory(sizeKey: string): PreviewSize {
   return 'medium';
 }
 
-export function getPreviewWidthClassName(size: PreviewSize): string {
-  if (size === 'small') {
-    return 'w-28';
-  }
-
-  if (size === 'large') {
-    return 'w-48';
-  }
-
-  return 'w-36';
-}
-
 export function getAlertPreviewTone(variantKey: string): AlertPreviewTone {
   const normalizedVariantKey = variantKey.toLowerCase();
 
@@ -293,17 +281,17 @@ export function ComponentPreview({
 
   if (type === 'textField') {
     return (
-      <div className={`${getPreviewWidthClassName(size)} min-w-0`}>
+      <div className="w-full min-w-0">
         <span className="sr-only">{name}</span>
         <div
           style={previewTokenStyles}
           className={[
-            'flex w-full items-center rounded-md border text-left',
+            'flex w-full items-center rounded-md border px-2 text-left',
             size === 'small'
-              ? 'min-h-8 px-2 text-[0.6875rem]'
+              ? 'min-h-8 text-[0.6875rem]'
               : size === 'large'
-                ? 'min-h-12 px-4 text-sm'
-                : 'min-h-9 px-3 text-xs',
+                ? 'min-h-11 text-sm'
+                : 'min-h-9 text-xs',
             isError
               ? 'border-action-danger text-action-danger'
               : isFocus
@@ -377,8 +365,8 @@ export function ComponentPreview({
         size === 'small'
           ? 'min-h-8 px-2.5 py-1 text-[0.6875rem]'
           : size === 'large'
-            ? 'min-h-12 px-5 py-2.5 text-sm'
-            : 'min-h-9 px-3.5 py-1.5 text-xs',
+            ? 'min-h-10 px-4 py-2 text-sm'
+            : 'min-h-9 px-3 py-1.5 text-xs',
         variantTone === 'primary'
           ? 'border-action-primary bg-action-primary text-action-primary-content'
           : variantTone === 'danger'
@@ -420,9 +408,8 @@ function CardPreview({
     <article
       style={previewTokenStyles}
       className={[
-        'bg-surface-primary text-content-primary overflow-hidden rounded-md border transition',
-        getPreviewWidthClassName(size),
-        size === 'small' ? 'p-2' : size === 'large' ? 'p-4' : 'p-3',
+        'bg-surface-primary text-content-primary w-full overflow-hidden rounded-md border transition',
+        size === 'small' ? 'p-2' : size === 'large' ? 'p-3.5' : 'p-3',
         isFocus && isInteractive
           ? 'border-action-primary ring-action-primary/25 ring-2'
           : 'border-border-subtle',
@@ -431,12 +418,7 @@ function CardPreview({
         isDisabled ? 'opacity-45' : '',
       ].join(' ')}
     >
-      <div
-        className={[
-          'flex items-center',
-          size === 'small' ? 'gap-1.5' : size === 'large' ? 'gap-3' : 'gap-2',
-        ].join(' ')}
-      >
+      <div className="flex items-center gap-2">
         <span
           aria-hidden="true"
           className={[
@@ -444,75 +426,27 @@ function CardPreview({
             size === 'small'
               ? 'size-5'
               : size === 'large'
-                ? 'size-10'
-                : 'size-7',
+                ? 'size-8'
+                : 'size-6',
           ].join(' ')}
         />
         <div className="min-w-0 flex-1">
-          <p
-            className={[
-              'truncate font-semibold',
-              size === 'small'
-                ? 'text-[0.625rem]'
-                : size === 'large'
-                  ? 'text-sm'
-                  : 'text-[0.6875rem]',
-            ].join(' ')}
-          >
-            {name}
-          </p>
-          <p
-            className={[
-              'text-content-tertiary truncate font-mono',
-              size === 'large' ? 'text-[0.6875rem]' : 'text-[0.5625rem]',
-            ].join(' ')}
-          >
+          <p className="truncate text-[0.6875rem] font-semibold">{name}</p>
+          <p className="text-content-tertiary truncate font-mono text-[0.5625rem]">
             {variantKey}
           </p>
         </div>
       </div>
 
-      <div
-        className={[
-          'space-y-1',
-          size === 'large' ? 'mt-4' : size === 'small' ? 'mt-2' : 'mt-3',
-        ].join(' ')}
-      >
-        <span
-          className={[
-            'bg-background-sunken block w-full rounded-full',
-            size === 'large' ? 'h-2' : 'h-1.5',
-          ].join(' ')}
-        />
-        <span
-          className={[
-            'bg-background-sunken block w-3/4 rounded-full',
-            size === 'large' ? 'h-2' : 'h-1.5',
-          ].join(' ')}
-        />
+      <div className="mt-2 space-y-1">
+        <span className="bg-background-sunken block h-1.5 w-full rounded-full" />
+        <span className="bg-background-sunken block h-1.5 w-3/4 rounded-full" />
       </div>
 
-      <footer
-        className={[
-          'border-border-subtle flex items-center justify-between border-t',
-          size === 'large' ? 'mt-4 pt-3' : 'mt-2 pt-2',
-        ].join(' ')}
-      >
-        <span
-          className={[
-            'bg-background-sunken block rounded-full',
-            size === 'large' ? 'h-2 w-12' : 'h-1.5 w-8',
-          ].join(' ')}
-        />
+      <footer className="border-border-subtle mt-2 flex items-center justify-between border-t pt-2">
+        <span className="bg-background-sunken block h-1.5 w-8 rounded-full" />
         {isInteractive ? (
-          <span
-            className={[
-              'bg-action-primary/15 text-action-primary rounded font-semibold',
-              size === 'large'
-                ? 'px-2 py-1 text-[0.625rem]'
-                : 'px-1.5 py-0.5 text-[0.5rem]',
-            ].join(' ')}
-          >
+          <span className="bg-action-primary/15 text-action-primary rounded px-1.5 py-0.5 text-[0.5rem] font-semibold">
             →
           </span>
         ) : null}
@@ -556,12 +490,11 @@ function AlertPreview({
     <div
       style={getStructuralTokenStyles(previewTokenStyles)}
       className={[
-        'flex items-start rounded-md border',
-        getPreviewWidthClassName(size),
+        'flex w-full items-start rounded-md border',
         size === 'small'
           ? 'gap-1.5 p-2'
           : size === 'large'
-            ? 'gap-3 p-4'
+            ? 'gap-2.5 p-3.5'
             : 'gap-2 p-3',
         toneClassNames[tone],
         isDisabled ? 'opacity-45' : '',
@@ -569,34 +502,13 @@ function AlertPreview({
     >
       <span
         aria-hidden="true"
-        className={[
-          'flex shrink-0 items-center justify-center rounded-full border border-current font-bold',
-          size === 'small'
-            ? 'size-3.5 text-[0.5rem]'
-            : size === 'large'
-              ? 'size-6 text-xs'
-              : 'size-4 text-[0.5625rem]',
-        ].join(' ')}
+        className="flex size-4 shrink-0 items-center justify-center rounded-full border border-current text-[0.5625rem] font-bold"
       >
         {isLoading ? '…' : toneIcon[tone]}
       </span>
       <div className="min-w-0 flex-1">
-        <p
-          className={[
-            'truncate font-semibold',
-            size === 'large' ? 'text-sm' : 'text-[0.6875rem]',
-          ].join(' ')}
-        >
-          {name}
-        </p>
-        <p
-          className={[
-            'truncate opacity-80',
-            size === 'large'
-              ? 'mt-1 text-xs'
-              : 'mt-0.5 text-[0.5625rem]',
-          ].join(' ')}
-        >
+        <p className="truncate text-[0.6875rem] font-semibold">{name}</p>
+        <p className="mt-0.5 truncate text-[0.5625rem] opacity-80">
           {variantKey}
         </p>
       </div>
@@ -624,12 +536,7 @@ function DialogPreview({
   return (
     <div
       className={[
-        'bg-content-primary/10 flex items-center justify-center rounded-md',
-        size === 'small'
-          ? 'min-h-20 w-32 p-2'
-          : size === 'large'
-            ? 'min-h-36 w-56 p-4'
-            : 'min-h-24 w-44 p-3',
+        'bg-content-primary/10 flex w-full items-center justify-center rounded-md p-2',
         isClosed ? 'opacity-45' : '',
       ].join(' ')}
     >
@@ -637,65 +544,33 @@ function DialogPreview({
         style={previewTokenStyles}
         className={[
           'border-border-subtle bg-surface-primary text-content-primary w-full rounded-md border shadow-md',
-          size === 'small' ? 'p-2' : size === 'large' ? 'p-4' : 'p-3',
+          size === 'small'
+            ? 'max-w-28 p-2'
+            : size === 'large'
+              ? 'max-w-44 p-3'
+              : 'max-w-36 p-2.5',
         ].join(' ')}
       >
         <header className="flex items-center justify-between gap-2">
-          <p
-            className={[
-              'truncate font-semibold',
-              size === 'large' ? 'text-sm' : 'text-[0.625rem]',
-            ].join(' ')}
-          >
-            {name}
-          </p>
+          <p className="truncate text-[0.625rem] font-semibold">{name}</p>
           <span
             aria-hidden="true"
-            className={[
-              'text-content-tertiary leading-none',
-              size === 'large' ? 'text-sm' : 'text-[0.625rem]',
-            ].join(' ')}
+            className="text-content-tertiary text-[0.625rem] leading-none"
           >
             ×
           </span>
         </header>
 
-        <div
-          className={[
-            'space-y-1',
-            size === 'large' ? 'mt-4' : 'mt-2',
-          ].join(' ')}
-        >
-          <span
-            className={[
-              'bg-background-sunken block w-full rounded-full',
-              size === 'large' ? 'h-2' : 'h-1.5',
-            ].join(' ')}
-          />
-          <span
-            className={[
-              'bg-background-sunken block w-2/3 rounded-full',
-              size === 'large' ? 'h-2' : 'h-1.5',
-            ].join(' ')}
-          />
+        <div className="mt-2 space-y-1">
+          <span className="bg-background-sunken block h-1.5 w-full rounded-full" />
+          <span className="bg-background-sunken block h-1.5 w-2/3 rounded-full" />
         </div>
 
-        <footer
-          className={[
-            'flex items-center justify-end',
-            size === 'large' ? 'mt-4 gap-2' : 'mt-2 gap-1',
-          ].join(' ')}
-        >
+        <footer className="mt-2 flex items-center justify-end gap-1">
+          <span className="border-border-subtle bg-surface-primary h-4 w-7 rounded border" />
           <span
             className={[
-              'border-border-subtle bg-surface-primary rounded border',
-              size === 'large' ? 'h-6 w-10' : 'h-4 w-7',
-            ].join(' ')}
-          />
-          <span
-            className={[
-              'rounded',
-              size === 'large' ? 'h-6 w-12' : 'h-4 w-8',
+              'h-4 w-8 rounded',
               isDanger ? 'bg-action-danger' : 'bg-action-primary',
             ].join(' ')}
           >
