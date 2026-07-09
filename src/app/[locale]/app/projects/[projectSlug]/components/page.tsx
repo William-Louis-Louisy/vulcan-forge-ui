@@ -17,6 +17,7 @@ import { ComponentDetails } from '@/features/components/ComponentDetailsPanel';
 import { ComponentList } from '@/features/components/ComponentRegistryNavigation';
 import { ComponentAiContractShell } from '@/features/components/ComponentAiContractPreview';
 import { ComponentRegistryState } from '@/features/components/ComponentRegistryState';
+import { ComponentRegistryCreateButton } from '@/features/components/ComponentRegistryCreateButton';
 import { ComponentContractPreviewProvider } from '@/features/components/ComponentContractPreviewContext';
 import { getComponentsRegistryPageData } from '@/features/components/components-registry.queries';
 import { createComponentTokenOptions } from '@/features/components/component-token-bindings.utils';
@@ -95,6 +96,25 @@ export default async function ComponentsRegistryPage({
     registry.items[0] ??
     null;
 
+  const createComponentLabels = {
+    ariaLabel: t('list.create.ariaLabel'),
+    unavailable: t('list.create.unavailable'),
+    title: t('list.create.title'),
+    description: t('list.create.description'),
+    type: t('list.create.type'),
+    cancel: t('list.create.cancel'),
+    submit: t('list.create.submit'),
+    submitting: t('list.create.submitting'),
+    errors: {
+      unauthorized: t('list.create.errors.unauthorized'),
+      projectNotFound: t('list.create.errors.projectNotFound'),
+      componentNotFound: t('list.create.errors.componentNotFound'),
+      componentAlreadyExists: t('list.create.errors.componentAlreadyExists'),
+      invalidPayload: t('list.create.errors.invalidPayload'),
+      unexpected: t('list.create.errors.unexpected'),
+    },
+  };
+
   return (
     <section className="flex h-[calc(100dvh-3rem)] min-h-0 flex-col overflow-hidden xl:absolute xl:inset-0 xl:h-auto">
       {registry.invalidCount > 0 ? (
@@ -155,6 +175,15 @@ export default async function ComponentsRegistryPage({
           <ComponentRegistryState
             title={t('states.emptyTitle')}
             description={t('states.emptyDescription')}
+            action={
+              <ComponentRegistryCreateButton
+                locale={locale}
+                projectSlug={pageData.project.slug}
+                options={availableComponentTypes}
+                labels={createComponentLabels}
+                triggerLabel={t('list.create.submit')}
+              />
+            }
           />
         </div>
       )}
