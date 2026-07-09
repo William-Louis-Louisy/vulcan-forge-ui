@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import type { Locale } from '@/i18n/routing';
 import { ComponentVisualMatrix } from './ComponentVisualMatrix';
 import type { ComponentRegistryItem } from './components-registry.utils';
@@ -13,30 +14,16 @@ type RawTokenSet = {
   tokens: unknown;
 };
 
-export type ComponentFoundationsPreviewLabels = {
-  title: string;
-  noTokenBindingsNotice: string;
-  incompleteMatrixNotice: string;
-  baseState: string;
-  state: string;
-  resolvedTokens: string;
-  tokenBindingWarning: (values: {
-    missing: number;
-    invalid: number;
-  }) => string;
-};
-
 export function ComponentFoundationsPreviewClient({
-  labels,
   locale,
   component,
   rawTokenSets,
 }: {
-  labels: ComponentFoundationsPreviewLabels;
   locale: Locale;
   component: ComponentRegistryItem;
   rawTokenSets: RawTokenSet[];
 }) {
+  const t = useTranslations('ComponentsRegistryPage');
   const previewContext = useComponentContractPreview();
   const contract = previewContext?.contract ?? component.contract;
   const previewComponent = useMemo(
@@ -62,18 +49,18 @@ export function ComponentFoundationsPreviewClient({
   return (
     <section className="border-border-subtle border-b p-4">
       <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.16em] uppercase">
-        {labels.title}
+        {t('foundationsPreview.title')}
       </p>
 
       {contract.tokenBindings.length === 0 ? (
         <div className="border-border-subtle bg-background-subtle text-content-secondary mt-3 rounded-md border px-3 py-2 text-xs leading-5">
-          {labels.noTokenBindingsNotice}
+          {t('foundationsPreview.noTokenBindingsNotice')}
         </div>
       ) : null}
 
       {hasFallback ? (
         <div className="border-action-warning/30 bg-action-warning/10 text-action-warning mt-3 rounded-md border px-3 py-2 text-xs leading-5">
-          {labels.incompleteMatrixNotice}
+          {t('foundationsPreview.incompleteMatrixNotice')}
         </div>
       ) : null}
 
@@ -82,8 +69,8 @@ export function ComponentFoundationsPreviewClient({
           locale={locale}
           component={previewComponent}
           labels={{
-            baseState: labels.baseState,
-            state: labels.state,
+            baseState: t('foundationsPreview.baseState'),
+            state: t('foundationsPreview.state'),
           }}
           tokenBindingResolution={tokenBindingResolution}
         />
@@ -92,7 +79,7 @@ export function ComponentFoundationsPreviewClient({
       {Object.keys(tokenBindingResolution.bindings).length > 0 ? (
         <div className="border-border-subtle bg-background-subtle mt-4 rounded-lg border p-3">
           <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase">
-            {labels.resolvedTokens}
+            {t('foundationsPreview.resolvedTokens')}
           </p>
 
           <dl className="mt-3 grid gap-2">
@@ -114,7 +101,7 @@ export function ComponentFoundationsPreviewClient({
       {tokenBindingResolution.missingBindings.length > 0 ||
       tokenBindingResolution.invalidTokenSetsCount > 0 ? (
         <div className="border-action-warning/30 bg-action-warning/10 text-action-warning mt-3 rounded-md border px-3 py-2 text-xs leading-5">
-          {labels.tokenBindingWarning({
+          {t('foundationsPreview.tokenBindingWarning', {
             missing: tokenBindingResolution.missingBindings.length,
             invalid: tokenBindingResolution.invalidTokenSetsCount,
           })}
