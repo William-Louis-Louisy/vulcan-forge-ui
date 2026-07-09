@@ -34,11 +34,13 @@ export function ComponentRegistryCreateButton({
   projectSlug,
   options,
   labels,
+  triggerLabel,
 }: {
   locale: Locale;
   projectSlug: string;
   options: ComponentTypeOption[];
   labels: CreateComponentLabels;
+  triggerLabel?: string;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const router = useRouter();
@@ -62,16 +64,29 @@ export function ComponentRegistryCreateButton({
 
   return (
     <>
-      <button
-        type="button"
-        disabled={isDisabled}
-        aria-label={labels.ariaLabel}
-        title={isDisabled ? labels.unavailable : labels.ariaLabel}
-        onClick={() => dialogRef.current?.showModal()}
-        className="border-border-subtle bg-surface-primary text-content-secondary hover:border-border-default hover:text-content-primary flex size-8 shrink-0 items-center justify-center rounded-md border transition disabled:cursor-not-allowed disabled:opacity-45"
-      >
-        <PlusIcon aria-hidden="true" size={15} weight="bold" />
-      </button>
+      {triggerLabel ? (
+        <Button
+          type="button"
+          size="sm"
+          disabled={isDisabled}
+          title={isDisabled ? labels.unavailable : labels.ariaLabel}
+          onClick={() => dialogRef.current?.showModal()}
+        >
+          <PlusIcon aria-hidden="true" size={14} weight="bold" />
+          <span className="ml-1.5">{triggerLabel}</span>
+        </Button>
+      ) : (
+        <button
+          type="button"
+          disabled={isDisabled}
+          aria-label={labels.ariaLabel}
+          title={isDisabled ? labels.unavailable : labels.ariaLabel}
+          onClick={() => dialogRef.current?.showModal()}
+          className="border-border-subtle bg-surface-primary text-content-secondary hover:border-border-default hover:text-content-primary flex size-8 shrink-0 items-center justify-center rounded-md border transition disabled:cursor-not-allowed disabled:opacity-45"
+        >
+          <PlusIcon aria-hidden="true" size={15} weight="bold" />
+        </button>
+      )}
 
       <dialog
         ref={dialogRef}
