@@ -294,9 +294,7 @@ describe('ComponentContractEditor', () => {
     );
 
     const anatomyKeys = screen.getAllByLabelText('Anatomy key');
-    const anatomyRequirements = screen.getAllByLabelText(
-      'Anatomy requirement',
-    );
+    const anatomyRequirements = screen.getAllByLabelText('Anatomy requirement');
 
     expect(anatomyKeys).toHaveLength(3);
     expect(anatomyRequirements[2]).toHaveValue('optional');

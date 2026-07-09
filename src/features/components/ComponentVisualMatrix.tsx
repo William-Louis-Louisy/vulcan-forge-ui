@@ -1,7 +1,7 @@
 'use client';
 
-import type { CSSProperties } from 'react';
 import { useState } from 'react';
+import type { CSSProperties } from 'react';
 import type { Locale } from '@/i18n/routing';
 import { resolveLocalizedStringWithFallback } from '@/domain/i18n';
 import type { ComponentRegistryItem } from './components-registry.utils';
@@ -175,7 +175,7 @@ export function ComponentVisualMatrix({
 
                 {sizes.map((size) => (
                   <td key={`${variant.key}-${size.key}`} className="p-1.5">
-                    <div className="border-border-subtle bg-background-app flex min-h-20 min-w-24 items-center justify-center rounded-md border p-2">
+                    <div className="flex min-h-20 min-w-24 items-center justify-center">
                       <ComponentPreview
                         type={component.type}
                         name={component.name}
