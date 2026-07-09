@@ -320,6 +320,37 @@ describe('ComponentContractEditor', () => {
     );
   });
 
+  it('keeps a new variant pill focused during continuous typing', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <ComponentContractEditor
+        locale="en"
+        projectSlug="project"
+        contract={contract}
+        labels={labels}
+        tokenOptions={tokenOptions}
+      />,
+    );
+
+    await user.click(screen.getByRole('button', { name: /Add variant/ }));
+
+    const newVariantInput = screen
+      .getAllByLabelText('Key')
+      .find((input) => (input as HTMLInputElement).value === '');
+
+    expect(newVariantInput).toBeDefined();
+
+    if (!newVariantInput) {
+      return;
+    }
+
+    await user.click(newVariantInput);
+    await user.keyboard('ghost');
+
+    expect(screen.getByDisplayValue('ghost')).toHaveFocus();
+  });
+
   it('shows an unsaved notice after editing an anatomy requirement', () => {
     render(
       <ComponentContractEditor
