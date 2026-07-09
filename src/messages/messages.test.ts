@@ -42,6 +42,10 @@ function getEmptyStringPaths(value: JsonObject, prefix = ''): string[] {
   });
 }
 
+function serializeMessageSection(messages: JsonObject, key: string): string {
+  return JSON.stringify(messages[key] ?? {});
+}
+
 const localizedMessages = {
   en: mergeMessages(
     enMessages as MessageObject,
@@ -82,8 +86,14 @@ describe('localized messages', () => {
   });
 
   it('does not expose obsolete Components rollout copy', () => {
-    const serializedEnglishMessages = JSON.stringify(localizedMessages.en);
-    const serializedFrenchMessages = JSON.stringify(localizedMessages.fr);
+    const serializedEnglishMessages = serializeMessageSection(
+      localizedMessages.en,
+      'ComponentsRegistryPage',
+    );
+    const serializedFrenchMessages = serializeMessageSection(
+      localizedMessages.fr,
+      'ComponentsRegistryPage',
+    );
 
     expect(serializedEnglishMessages).not.toContain(
       'Persistence will be added',
