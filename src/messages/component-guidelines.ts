@@ -94,6 +94,10 @@ export const componentGuidelineMessages = {
         variants: {
           axis: 'intent',
         },
+        visualTokens: {
+          description:
+            'Map design system tokens to the supported preview roles: background, foreground, border, radius, padding, paddingX, paddingY, duration or motion.',
+        },
       },
       foundationsPreview: {
         baseState: 'Base',
@@ -264,6 +268,10 @@ export const componentGuidelineMessages = {
         },
         variants: {
           axis: 'intention',
+        },
+        visualTokens: {
+          description:
+            'Associez les tokens du design system aux rôles de preview pris en charge : background, foreground, border, radius, padding, paddingX, paddingY, duration ou motion.',
         },
       },
       foundationsPreview: {
