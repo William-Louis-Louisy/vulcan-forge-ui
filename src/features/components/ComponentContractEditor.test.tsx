@@ -1,6 +1,15 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type { ComponentContract } from '@/domain/design-system';
 import { fireEvent, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+
+const routerMocks = vi.hoisted(() => ({
+  refresh: vi.fn(),
+}));
+
+vi.mock('@/i18n/navigation', () => ({
+  useRouter: () => routerMocks,
+}));
 
 vi.mock('@/components/layout/ProjectTopbarBreadcrumb', () => ({
   useProjectSaveStatus: vi.fn(),
@@ -18,7 +27,6 @@ import {
   ComponentContractEditor,
   type ComponentContractEditorLabels,
 } from './ComponentContractEditor';
-import userEvent from '@testing-library/user-event';
 
 const labels: ComponentContractEditorLabels = {
   title: 'Component contract editor',
@@ -430,5 +438,38 @@ describe('ComponentContractEditor', () => {
     expect(
       screen.getByRole('option', { name: 'color.background.default' }),
     ).toBeInTheDocument();
+  });
+
+  it('keeps a visual token key focused during continuous typing', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <ComponentContractEditor
+        locale="en"
+        projectSlug="demo"
+        contract={contract}
+        labels={labels}
+        tokenOptions={tokenOptions}
+      />,
+    );
+
+    await user.click(
+      screen.getByRole('button', { name: /Add visual token/ }),
+    );
+
+    const tokenKeyInput = screen
+      .getAllByLabelText('Key')
+      .find((input) => (input as HTMLInputElement).value === '');
+
+    expect(tokenKeyInput).toBeDefined();
+
+    if (!tokenKeyInput) {
+      return;
+    }
+
+    await user.click(tokenKeyInput);
+    await user.keyboard('background');
+
+    expect(screen.getByDisplayValue('background')).toHaveFocus();
   });
 });
