@@ -75,7 +75,6 @@ export function ComponentList({
       </div>
 
       <ComponentRegistryFilter
-        key={filterQuery}
         value={filterQuery}
         placeholder={t('list.filterPlaceholder')}
         submitLabel={t('list.filterSubmit')}
