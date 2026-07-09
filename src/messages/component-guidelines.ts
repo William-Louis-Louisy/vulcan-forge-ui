@@ -57,6 +57,23 @@ export const componentGuidelineMessages = {
           editDetails: 'Edit localized labels and descriptions',
           title: 'Variants & states',
         },
+        delete: {
+          ariaLabel: 'Delete {name}',
+          cancel: 'Cancel',
+          description:
+            'Delete {name} and its full component contract. This action cannot be undone.',
+          errors: {
+            componentAlreadyExists: 'This component already exists.',
+            componentNotFound: 'This component no longer exists.',
+            invalidPayload: 'The deletion request is invalid.',
+            projectNotFound: 'The design system could not be found.',
+            unauthorized: 'You must be signed in to delete this component.',
+            unexpected: 'Unable to delete this component. Try again.',
+          },
+          submit: 'Delete component',
+          submitting: 'Deleting…',
+          title: 'Delete component?',
+        },
         description:
           'Edit the localized content and contract rules for this component.',
         localizedContent: {
@@ -92,6 +109,29 @@ export const componentGuidelineMessages = {
           'No visual token binding is defined for this component yet.',
         state: 'State',
         title: 'Visual matrix',
+      },
+      list: {
+        create: {
+          ariaLabel: 'Add a component',
+          cancel: 'Cancel',
+          description:
+            'Choose one of the component types that is not yet part of this design system.',
+          errors: {
+            componentAlreadyExists:
+              'This component type already exists in the design system.',
+            componentNotFound: 'The component template could not be found.',
+            invalidPayload: 'Choose a valid component type.',
+            projectNotFound: 'The design system could not be found.',
+            unauthorized: 'You must be signed in to add a component.',
+            unexpected: 'Unable to add this component. Try again.',
+          },
+          submit: 'Add component',
+          submitting: 'Adding…',
+          title: 'Add a component',
+          type: 'Component type',
+          unavailable: 'All supported component types are already present.',
+        },
+        filterSubmit: 'Filter components',
       },
       states: {
         emptyDescription:
@@ -181,6 +221,25 @@ export const componentGuidelineMessages = {
           editDetails: 'Modifier les labels et descriptions localisés',
           title: 'Variantes et états',
         },
+        delete: {
+          ariaLabel: 'Supprimer {name}',
+          cancel: 'Annuler',
+          description:
+            'Supprimez {name} et l’intégralité de son contrat de composant. Cette action est irréversible.',
+          errors: {
+            componentAlreadyExists: 'Ce composant existe déjà.',
+            componentNotFound: 'Ce composant n’existe plus.',
+            invalidPayload: 'La demande de suppression est invalide.',
+            projectNotFound: 'Le design system est introuvable.',
+            unauthorized:
+              'Vous devez être connecté pour supprimer ce composant.',
+            unexpected:
+              'Impossible de supprimer ce composant. Veuillez réessayer.',
+          },
+          submit: 'Supprimer le composant',
+          submitting: 'Suppression…',
+          title: 'Supprimer le composant ?',
+        },
         description:
           'Modifiez le contenu localisé et les règles de contrat de ce composant.',
         localizedContent: {
@@ -223,6 +282,30 @@ export const componentGuidelineMessages = {
         title: 'Matrice visuelle',
       },
       list: {
+        create: {
+          ariaLabel: 'Ajouter un composant',
+          cancel: 'Annuler',
+          description:
+            'Choisissez un type de composant qui ne fait pas encore partie de ce design system.',
+          errors: {
+            componentAlreadyExists:
+              'Ce type de composant existe déjà dans le design system.',
+            componentNotFound: 'Le modèle de composant est introuvable.',
+            invalidPayload: 'Choisissez un type de composant valide.',
+            projectNotFound: 'Le design system est introuvable.',
+            unauthorized:
+              'Vous devez être connecté pour ajouter un composant.',
+            unexpected:
+              'Impossible d’ajouter ce composant. Veuillez réessayer.',
+          },
+          submit: 'Ajouter le composant',
+          submitting: 'Ajout…',
+          title: 'Ajouter un composant',
+          type: 'Type de composant',
+          unavailable:
+            'Tous les types de composants pris en charge sont déjà présents.',
+        },
+        filterSubmit: 'Filtrer les composants',
         warningSummary:
           '{count, plural, one {# avertissement} other {# avertissements}}',
       },
