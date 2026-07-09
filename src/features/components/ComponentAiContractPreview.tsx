@@ -52,7 +52,7 @@ export function ComponentAiContractShell({
       {preview.missingSourceData.length > 0 ? (
         <div className="border-action-warning/30 bg-action-warning/10 text-action-warning mt-3 rounded-md border px-3 py-2.5 text-xs leading-5">
           <p className="font-semibold">{t('aiContract.incomplete.title')}</p>
-          <p className="mt-0.5 text-current/90">
+          <p className="mt-0.5 opacity-90">
             {t('aiContract.incomplete.description')}
           </p>
           <ul className="mt-2 grid gap-1">
