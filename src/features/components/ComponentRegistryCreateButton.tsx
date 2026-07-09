@@ -48,7 +48,7 @@ export function ComponentRegistryCreateButton({
     createComponentContractAction,
     initialCreateComponentContractActionState,
   );
-  const isDisabled = options.length === 0;
+  const hasAvailableType = options.length > 0;
 
   useEffect(() => {
     if (state.status !== 'success' || !state.componentType) {
@@ -68,8 +68,7 @@ export function ComponentRegistryCreateButton({
         <Button
           type="button"
           size="sm"
-          disabled={isDisabled}
-          title={isDisabled ? labels.unavailable : labels.ariaLabel}
+          title={labels.ariaLabel}
           onClick={() => dialogRef.current?.showModal()}
         >
           <PlusIcon aria-hidden="true" size={14} weight="bold" />
@@ -78,11 +77,10 @@ export function ComponentRegistryCreateButton({
       ) : (
         <button
           type="button"
-          disabled={isDisabled}
           aria-label={labels.ariaLabel}
-          title={isDisabled ? labels.unavailable : labels.ariaLabel}
+          title={labels.ariaLabel}
           onClick={() => dialogRef.current?.showModal()}
-          className="border-border-subtle bg-surface-primary text-content-secondary hover:border-border-default hover:text-content-primary flex size-8 shrink-0 items-center justify-center rounded-md border transition disabled:cursor-not-allowed disabled:opacity-45"
+          className="border-border-subtle bg-surface-primary text-content-secondary hover:border-border-default hover:text-content-primary flex size-8 shrink-0 items-center justify-center rounded-md border transition"
         >
           <PlusIcon aria-hidden="true" size={15} weight="bold" />
         </button>
@@ -100,26 +98,28 @@ export function ComponentRegistryCreateButton({
             {labels.title}
           </h2>
           <p className="text-content-secondary mt-2 text-sm leading-6">
-            {labels.description}
+            {hasAvailableType ? labels.description : labels.unavailable}
           </p>
 
-          <label className="mt-5 grid gap-1.5">
-            <span className="text-content-secondary text-xs font-semibold">
-              {labels.type}
-            </span>
-            <select
-              name="componentType"
-              required
-              defaultValue={options[0]?.type}
-              className="border-border-subtle bg-surface-primary focus:border-action-primary min-h-10 rounded-md border px-3 text-sm outline-none"
-            >
-              {options.map((option) => (
-                <option key={option.type} value={option.type}>
-                  {option.name}
-                </option>
-              ))}
-            </select>
-          </label>
+          {hasAvailableType ? (
+            <label className="mt-5 grid gap-1.5">
+              <span className="text-content-secondary text-xs font-semibold">
+                {labels.type}
+              </span>
+              <select
+                name="componentType"
+                required
+                defaultValue={options[0]?.type}
+                className="border-border-subtle bg-surface-primary focus:border-action-primary min-h-10 rounded-md border px-3 text-sm outline-none"
+              >
+                {options.map((option) => (
+                  <option key={option.type} value={option.type}>
+                    {option.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ) : null}
 
           {state.error ? (
             <p role="alert" className="text-action-danger mt-3 text-xs font-medium">
@@ -137,9 +137,11 @@ export function ComponentRegistryCreateButton({
             >
               {labels.cancel}
             </Button>
-            <Button type="submit" size="sm" disabled={isPending}>
-              {isPending ? labels.submitting : labels.submit}
-            </Button>
+            {hasAvailableType ? (
+              <Button type="submit" size="sm" disabled={isPending}>
+                {isPending ? labels.submitting : labels.submit}
+              </Button>
+            ) : null}
           </div>
         </form>
       </dialog>
