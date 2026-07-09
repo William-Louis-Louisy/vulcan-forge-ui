@@ -2,22 +2,33 @@ import type {
   ComponentRegistryItem,
   ComponentRegistryCategoryGroup,
 } from './components-registry.utils';
+import type { ComponentContractType } from '@/domain/design-system';
+import type { Locale } from '@/i18n/routing';
 import { Link } from '@/i18n/navigation';
 import { StatusBadge } from '@/app/[locale]/app/projects/[projectSlug]/components/page';
 import type { ComponentsRegistryTranslator } from '@/app/[locale]/app/projects/[projectSlug]/components/page';
+import { ComponentRegistryCreateButton } from './ComponentRegistryCreateButton';
+import { ComponentRegistryFilter } from './ComponentRegistryFilter';
 
 export function ComponentList({
   t,
+  locale,
   projectSlug,
   componentGroups,
   selectedComponentType,
   filterQuery,
+  availableComponentTypes,
 }: {
   t: ComponentsRegistryTranslator;
+  locale: Locale;
   projectSlug: string;
   componentGroups: ComponentRegistryCategoryGroup[];
   selectedComponentType: string | null;
   filterQuery: string;
+  availableComponentTypes: Array<{
+    type: ComponentContractType;
+    name: string;
+  }>;
 }) {
   const componentCount = componentGroups.reduce(
     (count, group) => count + group.items.length,
@@ -36,25 +47,38 @@ export function ComponentList({
           </span>
         </div>
 
-        <button
-          type="button"
-          disabled
-          aria-label={t('list.addDisabled')}
-          className="border-border-subtle bg-background-subtle text-content-tertiary flex size-8 shrink-0 items-center justify-center rounded-md border text-base font-semibold opacity-70"
-        >
-          +
-        </button>
+        <ComponentRegistryCreateButton
+          locale={locale}
+          projectSlug={projectSlug}
+          options={availableComponentTypes}
+          labels={{
+            ariaLabel: t('list.create.ariaLabel'),
+            unavailable: t('list.create.unavailable'),
+            title: t('list.create.title'),
+            description: t('list.create.description'),
+            type: t('list.create.type'),
+            cancel: t('list.create.cancel'),
+            submit: t('list.create.submit'),
+            submitting: t('list.create.submitting'),
+            errors: {
+              unauthorized: t('list.create.errors.unauthorized'),
+              projectNotFound: t('list.create.errors.projectNotFound'),
+              componentNotFound: t('list.create.errors.componentNotFound'),
+              componentAlreadyExists: t(
+                'list.create.errors.componentAlreadyExists',
+              ),
+              invalidPayload: t('list.create.errors.invalidPayload'),
+              unexpected: t('list.create.errors.unexpected'),
+            },
+          }}
+        />
       </div>
 
-      <form action={`/app/projects/${projectSlug}/components`} className="mt-3">
-        <input
-          type="search"
-          name="q"
-          defaultValue={filterQuery}
-          placeholder={t('list.filterPlaceholder')}
-          className="border-border-subtle bg-background-subtle focus:border-action-primary min-h-9 w-full rounded-md border px-3 text-sm outline-none"
-        />
-      </form>
+      <ComponentRegistryFilter
+        value={filterQuery}
+        placeholder={t('list.filterPlaceholder')}
+        submitLabel={t('list.filterSubmit')}
+      />
 
       {componentGroups.length > 0 ? (
         <div className="mt-5 grid gap-5">
