@@ -6,13 +6,13 @@ export default function ComponentsRegistryLoading() {
   const t = useTranslations('ComponentsRegistryPage');
 
   return (
-    <section className="h-[calc(100vh-3rem)] min-h-0 overflow-hidden">
+    <section className="flex h-[calc(100dvh-3rem)] min-h-0 flex-col overflow-hidden xl:absolute xl:inset-0 xl:h-auto">
       <p className="sr-only" role="status">
         {t('states.loading')}
       </p>
 
-      <div className="flex h-full min-h-0 flex-col overflow-y-auto xl:grid xl:grid-cols-[15rem_minmax(0,1fr)_22rem] xl:overflow-hidden">
-        <aside className="border-border-subtle border-b p-4 xl:border-r xl:border-b-0">
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto xl:grid xl:h-full xl:grid-cols-[16rem_minmax(0,48rem)_minmax(24rem,1fr)] xl:overflow-hidden">
+        <aside className="border-border-subtle min-h-0 border-b p-4 xl:h-full xl:overflow-hidden xl:border-r xl:border-b-0">
           <div className="flex items-center justify-between gap-3">
             <div className="bg-background-subtle h-5 w-24 animate-pulse rounded-md" />
             <div className="bg-background-subtle size-8 animate-pulse rounded-md" />
@@ -27,22 +27,27 @@ export default function ComponentsRegistryLoading() {
           </div>
         </aside>
 
-        <main className="border-border-subtle border-b p-6 xl:border-b-0">
-          <div className="bg-background-subtle h-3 w-20 animate-pulse rounded-md" />
-          <div className="bg-background-subtle mt-3 h-8 w-44 animate-pulse rounded-md" />
-          <div className="bg-background-subtle mt-4 h-4 max-w-xl animate-pulse rounded-md" />
-          <div className="mt-8 grid gap-6">
-            <div className="bg-background-subtle h-36 animate-pulse rounded-md" />
-            <div className="bg-background-subtle h-48 animate-pulse rounded-md" />
-            <div className="bg-background-subtle h-48 animate-pulse rounded-md" />
+        <main className="border-border-subtle min-h-0 min-w-0 border-b p-4 xl:h-full xl:overflow-hidden xl:border-b-0">
+          <div className="bg-background-subtle h-3 w-24 animate-pulse rounded-md" />
+          <div className="bg-background-subtle mt-3 h-7 w-40 animate-pulse rounded-md" />
+          <div className="bg-background-subtle mt-3 h-4 max-w-lg animate-pulse rounded-md" />
+          <div className="mt-6 grid gap-4">
+            <div className="bg-background-subtle h-28 animate-pulse rounded-md" />
+            <div className="bg-background-subtle h-44 animate-pulse rounded-md" />
+            <div className="bg-background-subtle h-44 animate-pulse rounded-md" />
           </div>
         </main>
 
-        <aside className="border-border-subtle border-t p-4 xl:border-t-0 xl:border-l">
-          <div className="bg-background-subtle h-3 w-20 animate-pulse rounded-md" />
-          <div className="bg-background-subtle mt-3 h-6 w-32 animate-pulse rounded-md" />
-          <div className="bg-background-subtle mt-5 h-56 animate-pulse rounded-md" />
-          <div className="bg-background-subtle mt-6 h-64 animate-pulse rounded-md" />
+        <aside className="border-border-subtle grid min-h-0 content-start gap-6 border-t p-4 xl:h-full xl:overflow-hidden xl:border-t-0 xl:border-l">
+          <div>
+            <div className="bg-background-subtle h-3 w-24 animate-pulse rounded-md" />
+            <div className="bg-background-subtle mt-3 h-48 animate-pulse rounded-md" />
+            <div className="bg-background-subtle mt-4 h-24 animate-pulse rounded-md" />
+          </div>
+          <div>
+            <div className="bg-background-subtle h-3 w-20 animate-pulse rounded-md" />
+            <div className="bg-background-subtle mt-3 h-56 animate-pulse rounded-md" />
+          </div>
         </aside>
       </div>
     </section>
