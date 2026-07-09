@@ -28,6 +28,7 @@ export type ComponentStateDraft = ComponentCollectionDraft;
 export type ComponentSizeDraft = ComponentCollectionDraft;
 
 export type ComponentTokenBindingDraft = {
+  draftId: string;
   key: string;
   tokenType: ComponentContract['tokenBindings'][number]['tokenType'];
   tokenPath: string;
@@ -68,16 +69,15 @@ export type ComponentContractDraftValidationResult =
 
 let draftItemSequence = 0;
 
-function createDraftItemId(prefix: 'variant' | 'size' | 'state') {
+type DraftItemPrefix = 'variant' | 'size' | 'state' | 'token-binding';
+
+function createDraftItemId(prefix: DraftItemPrefix) {
   draftItemSequence += 1;
 
   return `${prefix}-new-${draftItemSequence}`;
 }
 
-function createExistingDraftItemId(
-  prefix: 'variant' | 'size' | 'state',
-  index: number,
-) {
+function createExistingDraftItemId(prefix: DraftItemPrefix, index: number) {
   return `${prefix}-${index}`;
 }
 
@@ -148,7 +148,8 @@ export function createComponentContractDraft(
       label: normalizeLocalizedText(state.label),
       description: normalizeLocalizedText(state.description ?? {}),
     })),
-    tokenBindings: contract.tokenBindings.map((binding) => ({
+    tokenBindings: contract.tokenBindings.map((binding, index) => ({
+      draftId: createExistingDraftItemId('token-binding', index),
       key: binding.key,
       tokenType: binding.tokenType,
       tokenPath: binding.tokenPath,
@@ -183,6 +184,14 @@ export function createComponentContractDraftFingerprint(
       label,
       description,
     })),
+    tokenBindings: draft.tokenBindings.map(
+      ({ key, tokenType, tokenPath, description }) => ({
+        key,
+        tokenType,
+        tokenPath,
+        description,
+      }),
+    ),
   });
 }
 
@@ -320,6 +329,7 @@ export function createEmptySizeDraft(): ComponentSizeDraft {
 
 export function createEmptyTokenBindingDraft(): ComponentTokenBindingDraft {
   return {
+    draftId: createDraftItemId('token-binding'),
     key: '',
     tokenType: 'color',
     tokenPath: '',
