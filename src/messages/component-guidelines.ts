@@ -4,6 +4,33 @@ import type { MessageObject } from './merge-messages';
 export const componentGuidelineMessages = {
   en: {
     ComponentsRegistryPage: {
+      aiContract: {
+        incomplete: {
+          description:
+            'Complete these fields before treating this preview as a strict implementation contract.',
+          title: 'Incomplete source data',
+        },
+        missingSourceData: {
+          contentGuidelines: 'Missing content guidelines',
+          purpose: 'Missing purpose',
+          sizes: 'Missing sizes',
+          tokenBindings: 'Missing visual token bindings',
+          usageGuidelines: 'Missing usage guidelines',
+        },
+        ruleLabels: {
+          accessibility: 'Accessibility',
+          anatomy: 'Use only anatomy parts',
+          contentGuidelines: 'Content',
+          forbidden: 'Never',
+          purpose: 'Purpose',
+          sizes: 'Use only sizes',
+          states: 'Support only states',
+          strictRules: 'strict rules',
+          tokenBindings: 'Use only token bindings',
+          usageGuidelines: 'Usage',
+          variants: 'Use only variants',
+        },
+      },
       editor: {
         accessibility: {
           title: 'Accessibility contract',
@@ -57,6 +84,33 @@ export const componentGuidelineMessages = {
   },
   fr: {
     ComponentsRegistryPage: {
+      aiContract: {
+        incomplete: {
+          description:
+            'Complétez ces champs avant de considérer cet aperçu comme un contrat d’implémentation strict.',
+          title: 'Données sources incomplètes',
+        },
+        missingSourceData: {
+          contentGuidelines: 'Règles de contenu manquantes',
+          purpose: 'Objectif manquant',
+          sizes: 'Tailles manquantes',
+          tokenBindings: 'Bindings de tokens visuels manquants',
+          usageGuidelines: 'Règles d’usage manquantes',
+        },
+        ruleLabels: {
+          accessibility: 'Accessibilité',
+          anatomy: 'Utiliser uniquement les parties anatomiques',
+          contentGuidelines: 'Contenu',
+          forbidden: 'Ne jamais',
+          purpose: 'Objectif',
+          sizes: 'Utiliser uniquement les tailles',
+          states: 'Prendre en charge uniquement les états',
+          strictRules: 'règles strictes',
+          tokenBindings: 'Utiliser uniquement les bindings de tokens',
+          usageGuidelines: 'Usage',
+          variants: 'Utiliser uniquement les variantes',
+        },
+      },
       editor: {
         accessibility: {
           title: 'Contrat d’accessibilité',
