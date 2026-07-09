@@ -141,7 +141,10 @@ export function ComponentContractEditor({
     () => createComponentContractDraft(savedContract),
     [savedContract],
   );
-  const validation = createComponentContractFromDraft(draft);
+  const validation = useMemo(
+    () => createComponentContractFromDraft(draft),
+    [draft],
+  );
   const contractPayload =
     validation.status === 'success' ? JSON.stringify(validation.contract) : '';
   const hasUnsavedChanges =
@@ -159,7 +162,7 @@ export function ComponentContractEditor({
     if (validation.status === 'success') {
       previewContext?.setContract(validation.contract);
     }
-  }, [contractPayload, previewContext, validation]);
+  }, [previewContext, validation]);
 
   useEffect(() => {
     if (state.status !== 'success' || !state.savedContract) {
