@@ -177,7 +177,9 @@ describe('getComponentAiContractMissingSourceData', () => {
       },
     };
 
-    expect(getComponentAiContractMissingSourceData(incompleteComponent)).toEqual([
+    expect(
+      getComponentAiContractMissingSourceData(incompleteComponent),
+    ).toEqual([
       'purpose',
       'usageGuidelines',
       'contentGuidelines',
