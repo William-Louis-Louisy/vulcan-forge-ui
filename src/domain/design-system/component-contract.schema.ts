@@ -108,3 +108,9 @@ export type ComponentContract = Omit<ParsedComponentContract, 'anatomy'> & {
 };
 export type ComponentContractType = z.infer<typeof componentContractTypeSchema>;
 export type ComponentTokenBinding = z.infer<typeof componentTokenBindingSchema>;
+
+export function getComponentAnatomyPartKey(
+  part: ComponentAnatomyPart | string,
+): string {
+  return typeof part === 'string' ? part : part.key;
+}
