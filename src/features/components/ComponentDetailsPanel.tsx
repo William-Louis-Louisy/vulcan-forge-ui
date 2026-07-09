@@ -3,6 +3,7 @@ import { ComponentContractEditorBoundary } from './ComponentContractEditorBounda
 import type { ComponentRegistryItem } from './components-registry.utils';
 import type { ComponentTokenOption } from './component-token-bindings.utils';
 import type { ComponentContractEditorLabels } from './ComponentContractEditor';
+import { DeleteComponentContractButton } from './DeleteComponentContractButton';
 import { StatusBadge } from '@/app/[locale]/app/projects/[projectSlug]/components/page';
 import type { ComponentsRegistryTranslator } from '@/app/[locale]/app/projects/[projectSlug]/components/page';
 
@@ -32,7 +33,40 @@ export function ComponentDetails({
             </p>
           </div>
 
-          <StatusBadge t={t} status={component.status} />
+          <div className="flex shrink-0 items-center gap-2">
+            <StatusBadge t={t} status={component.status} />
+            <DeleteComponentContractButton
+              locale={locale}
+              projectSlug={projectSlug}
+              componentType={component.type}
+              labels={{
+                ariaLabel: t('editor.delete.ariaLabel', {
+                  name: component.name,
+                }),
+                title: t('editor.delete.title'),
+                description: t('editor.delete.description', {
+                  name: component.name,
+                }),
+                cancel: t('editor.delete.cancel'),
+                submit: t('editor.delete.submit'),
+                submitting: t('editor.delete.submitting'),
+                errors: {
+                  unauthorized: t('editor.delete.errors.unauthorized'),
+                  projectNotFound: t(
+                    'editor.delete.errors.projectNotFound',
+                  ),
+                  componentNotFound: t(
+                    'editor.delete.errors.componentNotFound',
+                  ),
+                  componentAlreadyExists: t(
+                    'editor.delete.errors.componentAlreadyExists',
+                  ),
+                  invalidPayload: t('editor.delete.errors.invalidPayload'),
+                  unexpected: t('editor.delete.errors.unexpected'),
+                },
+              }}
+            />
+          </div>
         </header>
 
         <div className="mt-5 min-w-0">
