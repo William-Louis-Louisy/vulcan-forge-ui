@@ -4,6 +4,10 @@ import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
 import { routing, type Locale } from '@/i18n/routing';
 import {
+  mvpComponentContractSeeds,
+  type ComponentContractType,
+} from '@/domain/design-system';
+import {
   createComponentRegistryItems,
   groupComponentRegistryItemsByCategory,
   type ComponentRegistryItem,
@@ -13,11 +17,11 @@ import { ComponentDetails } from '@/features/components/ComponentDetailsPanel';
 import { ComponentList } from '@/features/components/ComponentRegistryNavigation';
 import { ComponentAiContractShell } from '@/features/components/ComponentAiContractPreview';
 import { ComponentRegistryState } from '@/features/components/ComponentRegistryState';
+import { ComponentContractPreviewProvider } from '@/features/components/ComponentContractPreviewContext';
 import { getComponentsRegistryPageData } from '@/features/components/components-registry.queries';
 import { createComponentTokenOptions } from '@/features/components/component-token-bindings.utils';
 import { filterComponentRegistryItems } from '@/features/components/components-registry-page.utils';
 import { ComponentFoundationsPreviewShell } from '@/features/components/ComponentFoundationsPreview';
-import { createComponentTokenBindingResolution } from '@/features/components/component-token-bindings.utils';
 
 type ComponentsRegistryPageProps = {
   params: Promise<{
@@ -65,8 +69,16 @@ export default async function ComponentsRegistryPage({
   }
 
   const componentTokenOptions = createComponentTokenOptions(pageData.tokenSets);
-
   const registry = createComponentRegistryItems(pageData.componentContracts);
+  const existingComponentTypes = new Set<ComponentContractType>(
+    registry.items.map((item) => item.type),
+  );
+  const availableComponentTypes = mvpComponentContractSeeds
+    .filter((seed) => !existingComponentTypes.has(seed.type))
+    .map((seed) => ({
+      type: seed.type,
+      name: seed.name,
+    }));
 
   const filteredRegistryItems = filterComponentRegistryItems({
     items: registry.items,
@@ -83,13 +95,6 @@ export default async function ComponentsRegistryPage({
     registry.items[0] ??
     null;
 
-  const tokenBindingResolution = selectedComponent
-    ? createComponentTokenBindingResolution({
-        bindings: selectedComponent.contract.tokenBindings,
-        rawTokenSets: pageData.tokenSets,
-      })
-    : null;
-
   return (
     <section className="flex h-[calc(100dvh-3rem)] min-h-0 flex-col overflow-hidden xl:absolute xl:inset-0 xl:h-auto">
       {registry.invalidCount > 0 ? (
@@ -103,55 +108,47 @@ export default async function ComponentsRegistryPage({
           <aside className="border-border-subtle min-h-0 border-b xl:h-full xl:overflow-y-auto xl:border-r xl:border-b-0">
             <ComponentList
               t={t}
+              locale={locale}
               projectSlug={pageData.project.slug}
               componentGroups={componentGroups}
               selectedComponentType={selectedComponent?.type ?? null}
               filterQuery={componentFilterQuery}
+              availableComponentTypes={availableComponentTypes}
             />
           </aside>
 
-          <main
-            data-save-context-scroll-container={
-              selectedComponent
-                ? `component-contract:${pageData.project.slug}:${selectedComponent.type}`
-                : undefined
-            }
-            className="min-h-0 min-w-0 border-b xl:overflow-y-auto xl:border-b-0"
-          >
-            {selectedComponent ? (
-              <ComponentDetails
-                t={t}
-                locale={locale}
-                component={selectedComponent}
-                projectSlug={pageData.project.slug}
-                tokenOptions={componentTokenOptions}
-              />
-            ) : null}
-          </main>
-
-          <aside className="border-border-subtle grid min-h-0 content-start gap-6 border-t xl:h-full xl:overflow-y-auto xl:border-t-0 xl:border-l">
-            {selectedComponent ? (
-              <>
-                <ComponentFoundationsPreviewShell
+          {selectedComponent ? (
+            <ComponentContractPreviewProvider
+              key={selectedComponent.id}
+              initialContract={selectedComponent.contract}
+            >
+              <main
+                data-save-context-scroll-container={`component-contract:${pageData.project.slug}:${selectedComponent.type}`}
+                className="min-h-0 min-w-0 border-b xl:overflow-y-auto xl:border-b-0"
+              >
+                <ComponentDetails
                   t={t}
                   locale={locale}
                   component={selectedComponent}
-                  tokenBindingResolution={
-                    tokenBindingResolution ?? {
-                      bindings: {},
-                      missingBindings: [],
-                      invalidTokenSetsCount: 0,
-                    }
-                  }
+                  projectSlug={pageData.project.slug}
+                  tokenOptions={componentTokenOptions}
+                />
+              </main>
+
+              <aside className="border-border-subtle grid min-h-0 content-start gap-6 border-t xl:h-full xl:overflow-y-auto xl:border-t-0 xl:border-l">
+                <ComponentFoundationsPreviewShell
+                  locale={locale}
+                  component={selectedComponent}
+                  rawTokenSets={pageData.tokenSets}
                 />
                 <ComponentAiContractShell
                   t={t}
                   locale={locale}
                   component={selectedComponent}
                 />
-              </>
-            ) : null}
-          </aside>
+              </aside>
+            </ComponentContractPreviewProvider>
+          ) : null}
         </div>
       ) : (
         <div className="flex min-h-0 flex-1 items-center justify-center overflow-y-auto p-4 md:p-6">
