@@ -1,3 +1,4 @@
+import { getComponentAnatomyPartKey } from '@/domain/design-system';
 import { resolveLocalizedStringWithFallback } from '@/domain/i18n';
 import type { Locale } from '@/i18n/routing';
 import type { ComponentRegistryItem } from './components-registry.utils';
@@ -72,9 +73,7 @@ export function createComponentAiContractPreview({
   if (contract.anatomy.length > 0) {
     rules.push(
       `${copy.anatomy}: ${formatCodeList(
-        contract.anatomy.map((part) =>
-          typeof part === 'string' ? part : part.key,
-        ),
+        contract.anatomy.map(getComponentAnatomyPartKey),
       )}`,
     );
   }
