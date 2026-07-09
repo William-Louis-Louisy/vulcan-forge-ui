@@ -60,6 +60,7 @@ export function ComponentContractEditor({
   );
   const router = useRouter();
   const previewContext = useComponentContractPreview();
+  const setPreviewContract = previewContext?.setContract;
 
   const initialDraft = useMemo(
     () => createComponentContractDraft(contract),
@@ -100,9 +101,15 @@ export function ComponentContractEditor({
         }
       }
 
+      const nextValidation = createComponentContractFromDraft(nextDraft);
+
+      if (nextValidation.status === 'success') {
+        setPreviewContract?.(nextValidation.contract);
+      }
+
       setDraft(nextDraft);
     },
-    [getCollectionKeyInputs, labels.fields.key],
+    [getCollectionKeyInputs, labels.fields.key, setPreviewContract],
   );
 
   useLayoutEffect(() => {
@@ -157,12 +164,6 @@ export function ComponentContractEditor({
     hasValidationError: validation.status === 'error',
     hasFormError: Boolean(state.formError),
   });
-
-  useEffect(() => {
-    if (validation.status === 'success') {
-      previewContext?.setContract(validation.contract);
-    }
-  }, [previewContext, validation]);
 
   useEffect(() => {
     if (state.status !== 'success' || !state.savedContract) {
