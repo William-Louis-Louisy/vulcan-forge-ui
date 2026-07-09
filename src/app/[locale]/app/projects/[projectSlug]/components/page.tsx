@@ -8,10 +8,11 @@ import {
   groupComponentRegistryItemsByCategory,
   type ComponentRegistryItem,
 } from '@/features/components/components-registry.utils';
-import { Badge, EmptyState, Notice } from '@/components/ui';
+import { Badge, Notice } from '@/components/ui';
 import { ComponentDetails } from '@/features/components/ComponentDetailsPanel';
 import { ComponentList } from '@/features/components/ComponentRegistryNavigation';
 import { ComponentAiContractShell } from '@/features/components/ComponentAiContractPreview';
+import { ComponentRegistryState } from '@/features/components/ComponentRegistryState';
 import { getComponentsRegistryPageData } from '@/features/components/components-registry.queries';
 import { createComponentTokenOptions } from '@/features/components/component-token-bindings.utils';
 import { filterComponentRegistryItems } from '@/features/components/components-registry-page.utils';
@@ -153,8 +154,8 @@ export default async function ComponentsRegistryPage({
           </aside>
         </div>
       ) : (
-        <div className="flex min-h-0 flex-1 items-center justify-center p-6">
-          <EmptyState
+        <div className="flex min-h-0 flex-1 items-center justify-center overflow-y-auto p-4 md:p-6">
+          <ComponentRegistryState
             title={t('states.emptyTitle')}
             description={t('states.emptyDescription')}
           />
