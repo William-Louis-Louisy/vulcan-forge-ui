@@ -28,10 +28,6 @@ export function ComponentRegistryFilter({
   const [isPending, startTransition] = useTransition();
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    setQuery(value);
-  }, [value]);
-
   const navigate = useCallback(
     (nextQuery: string) => {
       const normalizedQuery = nextQuery.trim();
