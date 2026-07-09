@@ -80,4 +80,29 @@ describe('localized messages', () => {
     expect(serializedEnglishMessages).not.toContain('DS-090');
     expect(serializedFrenchMessages).not.toContain('DS-090');
   });
+
+  it('does not expose obsolete Components rollout copy', () => {
+    const serializedEnglishMessages = JSON.stringify(localizedMessages.en);
+    const serializedFrenchMessages = JSON.stringify(localizedMessages.fr);
+
+    expect(serializedEnglishMessages).not.toContain(
+      'Persistence will be added',
+    );
+    expect(serializedEnglishMessages).not.toContain(
+      'not persisted in the model yet',
+    );
+    expect(serializedEnglishMessages).not.toContain('DS-150-09-04');
+    expect(serializedEnglishMessages).not.toContain('coming next');
+    expect(serializedEnglishMessages).not.toContain('not modeled yet');
+
+    expect(serializedFrenchMessages).not.toContain(
+      'La persistance sera ajoutée',
+    );
+    expect(serializedFrenchMessages).not.toContain(
+      'ne sont pas encore persistés',
+    );
+    expect(serializedFrenchMessages).not.toContain('DS-150-09-04');
+    expect(serializedFrenchMessages).not.toContain('à venir');
+    expect(serializedFrenchMessages).not.toContain('non encore modélisées');
+  });
 });
