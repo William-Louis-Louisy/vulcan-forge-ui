@@ -36,13 +36,13 @@ export function ComponentList({
   );
 
   return (
-    <section className="p-4">
-      <div className="flex items-center justify-between gap-3">
+    <section className="min-w-0 p-3 sm:p-4">
+      <div className="flex min-w-0 items-center justify-between gap-3">
         <div className="flex min-w-0 items-baseline gap-2">
           <h2 className="truncate text-lg font-semibold tracking-tight">
             {t('list.title')}
           </h2>
-          <span className="text-content-tertiary text-xs font-medium">
+          <span className="text-content-tertiary shrink-0 text-xs font-medium">
             {componentCount}
           </span>
         </div>
@@ -80,7 +80,7 @@ export function ComponentList({
       />
 
       {componentGroups.length > 0 ? (
-        <div className="mt-5 grid gap-5">
+        <div className="mt-5 grid min-w-0 gap-5 sm:grid-cols-2 lg:grid-cols-1">
           {componentGroups.map((group) => (
             <ComponentCategorySection
               key={group.category}
@@ -115,12 +115,12 @@ function ComponentCategorySection({
   filterQuery: string;
 }) {
   return (
-    <section>
-      <h3 className="text-content-tertiary text-[11px] font-semibold tracking-[0.16em] uppercase">
+    <section className="min-w-0">
+      <h3 className="text-content-tertiary truncate text-[11px] font-semibold tracking-[0.16em] uppercase">
         {t(`categories.${group.category}`)}
       </h3>
 
-      <div className="mt-2 grid">
+      <div className="mt-2 grid min-w-0">
         {group.items.map((component) => (
           <ComponentNavigationRow
             key={component.id}
@@ -158,14 +158,16 @@ function ComponentNavigationRow({
       })}
       aria-current={isSelected ? 'page' : undefined}
       className={[
-        'border-l-2 px-3 py-2.5 transition',
+        'block min-w-0 border-l-2 px-3 py-2.5 transition',
         isSelected
           ? 'border-action-primary bg-action-primary/10'
           : 'hover:bg-background-subtle border-transparent',
       ].join(' ')}
     >
       <div className="flex min-w-0 items-center justify-between gap-3">
-        <h4 className="truncate text-sm font-semibold">{component.name}</h4>
+        <h4 className="min-w-0 truncate text-sm font-semibold">
+          {component.name}
+        </h4>
         <StatusBadge t={t} status={component.status} />
       </div>
     </Link>
