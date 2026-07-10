@@ -88,9 +88,9 @@ export function ComponentRegistryCreateButton({
 
       <dialog
         ref={dialogRef}
-        className="border-border-default bg-background-app text-content-primary m-auto w-[min(28rem,calc(100%-2rem))] rounded-xl border p-0 shadow-2xl backdrop:bg-black/60"
+        className="border-border-default bg-background-app text-content-primary m-auto max-h-[calc(100dvh-2rem)] w-[min(28rem,calc(100%-2rem))] overflow-y-auto rounded-xl border p-0 shadow-2xl backdrop:bg-black/60"
       >
-        <form action={formAction} className="p-5">
+        <form action={formAction} className="p-4 sm:p-5">
           <input type="hidden" name="locale" value={locale} />
           <input type="hidden" name="projectSlug" value={projectSlug} />
 
@@ -102,7 +102,7 @@ export function ComponentRegistryCreateButton({
           </p>
 
           {hasAvailableType ? (
-            <label className="mt-5 grid gap-1.5">
+            <label className="mt-5 grid min-w-0 gap-1.5">
               <span className="text-content-secondary text-xs font-semibold">
                 {labels.type}
               </span>
@@ -110,7 +110,7 @@ export function ComponentRegistryCreateButton({
                 name="componentType"
                 required
                 defaultValue={options[0]?.type}
-                className="border-border-subtle bg-surface-primary focus:border-action-primary min-h-10 rounded-md border px-3 text-sm outline-none"
+                className="border-border-subtle bg-surface-primary focus:border-action-primary min-h-10 min-w-0 rounded-md border px-3 text-sm outline-none"
               >
                 {options.map((option) => (
                   <option key={option.type} value={option.type}>
@@ -130,18 +130,24 @@ export function ComponentRegistryCreateButton({
             </p>
           ) : null}
 
-          <div className="mt-6 flex justify-end gap-2">
+          <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
             <Button
               type="button"
               variant="ghost"
               size="sm"
               disabled={isPending}
               onClick={() => dialogRef.current?.close()}
+              className="w-full sm:w-auto"
             >
               {labels.cancel}
             </Button>
             {hasAvailableType ? (
-              <Button type="submit" size="sm" disabled={isPending}>
+              <Button
+                type="submit"
+                size="sm"
+                disabled={isPending}
+                className="w-full sm:w-auto"
+              >
                 {isPending ? labels.submitting : labels.submit}
               </Button>
             ) : null}
