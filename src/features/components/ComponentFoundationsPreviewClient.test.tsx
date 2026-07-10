@@ -2,7 +2,10 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import type { ComponentContract } from '@/domain/design-system';
-import { ComponentContractPreviewProvider, useComponentContractPreview } from './ComponentContractPreviewContext';
+import {
+  ComponentContractPreviewProvider,
+  useComponentContractPreview,
+} from './ComponentContractPreviewContext';
 import { ComponentFoundationsPreviewClient } from './ComponentFoundationsPreviewClient';
 import type { ComponentRegistryItem } from './components-registry.utils';
 
@@ -124,5 +127,43 @@ describe('ComponentFoundationsPreviewClient', () => {
 
     expect(previewButton).toHaveStyle({ backgroundColor: '#ff0000' });
     expect(screen.getByText('#ff0000')).toBeInTheDocument();
+  });
+
+  it('warns when an Alert has no semantic status palette', () => {
+    const alertContract: ComponentContract = {
+      ...contract,
+      type: 'alert',
+      name: 'Alert',
+      variants: [
+        {
+          key: 'info',
+          label: {
+            en: 'Info',
+          },
+        },
+      ],
+    };
+    const alertComponent: ComponentRegistryItem = {
+      ...component,
+      id: 'alert',
+      type: 'alert',
+      name: 'Alert',
+      category: 'feedback',
+      contract: alertContract,
+    };
+
+    render(
+      <ComponentContractPreviewProvider initialContract={alertContract}>
+        <ComponentFoundationsPreviewClient
+          locale="en"
+          component={alertComponent}
+          rawTokenSets={rawTokenSets}
+        />
+      </ComponentContractPreviewProvider>,
+    );
+
+    expect(
+      screen.getByText('foundationsPreview.missingStatusColorsNotice'),
+    ).toBeInTheDocument();
   });
 });
