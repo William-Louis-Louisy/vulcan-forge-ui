@@ -42,7 +42,12 @@ const fallbackSize: ComponentSize = {
 
 const emptySemanticPalette: ComponentPreviewSemanticPalette = {
   action: {},
-  status: {},
+  status: {
+    info: 'var(--vf-action-info)',
+    success: 'var(--vf-action-success)',
+    warning: 'var(--vf-action-warning)',
+    danger: 'var(--vf-action-danger)',
+  },
   missingStatusTones: ['info', 'success', 'warning', 'danger'],
 };
 
