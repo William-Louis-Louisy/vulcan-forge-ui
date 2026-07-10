@@ -53,8 +53,10 @@ export type ComponentPreviewStatusTone =
   (typeof componentPreviewStatusTones)[number];
 
 export type ComponentPreviewSemanticPalette = {
-  action: Partial<Record<'primary' | 'secondary' | 'danger', string>>;
-  status: Partial<Record<ComponentPreviewStatusTone, string>>;
+  action: Partial<
+    Record<'primary' | 'secondary' | 'danger', string | undefined>
+  >;
+  status: Partial<Record<ComponentPreviewStatusTone, string | undefined>>;
   missingStatusTones: ComponentPreviewStatusTone[];
 };
 
@@ -318,7 +320,7 @@ export function createComponentPreviewSemanticPalette(
 
       return value ? [[tone, value]] : [];
     }),
-  ) as Partial<Record<ComponentPreviewStatusTone, string>>;
+  ) as Partial<Record<ComponentPreviewStatusTone, string | undefined>>;
 
   return {
     action: {
