@@ -116,16 +116,16 @@ export default async function ComponentsRegistryPage({
   };
 
   return (
-    <section className="flex h-[calc(100dvh-3rem)] min-h-0 flex-col overflow-hidden xl:absolute xl:inset-0 xl:h-auto">
+    <section className="flex min-h-0 flex-col xl:absolute xl:inset-0 xl:h-auto xl:overflow-hidden">
       {registry.invalidCount > 0 ? (
-        <Notice tone="warning" className="m-4 shrink-0 font-semibold">
+        <Notice tone="warning" className="m-3 shrink-0 font-semibold sm:m-4">
           {t('invalidContractsWarning', { count: registry.invalidCount })}
         </Notice>
       ) : null}
 
       {registry.items.length > 0 ? (
-        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto xl:grid xl:h-full xl:grid-cols-[16rem_minmax(0,48rem)_minmax(24rem,1fr)] xl:overflow-hidden">
-          <aside className="border-border-subtle min-h-0 border-b xl:h-full xl:overflow-y-auto xl:border-r xl:border-b-0">
+        <div className="flex min-h-0 flex-1 flex-col lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] xl:h-full xl:grid-cols-[16rem_minmax(0,48rem)_minmax(24rem,1fr)] xl:overflow-hidden">
+          <aside className="border-border-subtle min-h-0 min-w-0 border-b lg:row-span-2 lg:border-r lg:border-b-0 xl:row-span-1 xl:h-full xl:overflow-y-auto">
             <ComponentList
               t={t}
               locale={locale}
@@ -144,7 +144,7 @@ export default async function ComponentsRegistryPage({
             >
               <main
                 data-save-context-scroll-container={`component-contract:${pageData.project.slug}:${selectedComponent.type}`}
-                className="min-h-0 min-w-0 border-b xl:overflow-y-auto xl:border-b-0"
+                className="min-h-0 min-w-0 lg:col-start-2 xl:col-start-auto xl:overflow-y-auto"
               >
                 <ComponentDetails
                   t={t}
@@ -155,7 +155,7 @@ export default async function ComponentsRegistryPage({
                 />
               </main>
 
-              <aside className="border-border-subtle grid min-h-0 content-start gap-6 border-t xl:h-full xl:overflow-y-auto xl:border-t-0 xl:border-l">
+              <aside className="border-border-subtle grid min-h-0 min-w-0 content-start gap-6 border-t lg:col-start-2 xl:col-start-auto xl:h-full xl:overflow-y-auto xl:border-t-0 xl:border-l">
                 <ComponentFoundationsPreviewShell
                   locale={locale}
                   component={selectedComponent}
@@ -171,7 +171,7 @@ export default async function ComponentsRegistryPage({
           ) : null}
         </div>
       ) : (
-        <div className="flex min-h-0 flex-1 items-center justify-center overflow-y-auto p-4 md:p-6">
+        <div className="flex min-h-80 flex-1 items-center justify-center p-4 md:p-6">
           <ComponentRegistryState
             title={t('states.emptyTitle')}
             description={t('states.emptyDescription')}
