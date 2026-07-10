@@ -40,12 +40,12 @@ export function ComponentAiContractShell({
   ].join('\n');
 
   return (
-    <section className="p-4 pt-0">
+    <section className="min-w-0 px-3 pb-4 sm:px-4">
       <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.16em] uppercase">
         {t('aiContract.eyebrow')}
       </p>
 
-      <pre className="mt-3 overflow-x-auto rounded-md bg-[var(--vf-color-stone-900)] p-3 font-mono text-[0.6875rem] leading-[1.55] whitespace-pre-wrap text-[var(--vf-color-stone-150)]">
+      <pre className="mt-3 max-w-full overflow-x-auto rounded-md bg-[var(--vf-color-stone-900)] p-3 font-mono text-[0.6875rem] leading-[1.55] whitespace-pre-wrap text-[var(--vf-color-stone-150)] [overflow-wrap:anywhere]">
         {contractText}
       </pre>
 
@@ -57,9 +57,11 @@ export function ComponentAiContractShell({
           </p>
           <ul className="mt-2 grid gap-1">
             {preview.missingSourceData.map((item) => (
-              <li key={item} className="flex items-start gap-1.5">
+              <li key={item} className="flex min-w-0 items-start gap-1.5">
                 <span aria-hidden="true">–</span>
-                <span>{t(`aiContract.missingSourceData.${item}`)}</span>
+                <span className="min-w-0 [overflow-wrap:anywhere]">
+                  {t(`aiContract.missingSourceData.${item}`)}
+                </span>
               </li>
             ))}
           </ul>
