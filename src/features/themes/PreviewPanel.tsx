@@ -47,6 +47,7 @@ export type PreviewPanelLabels = {
 type PreviewPanelProps = {
   themes: PreviewTheme[];
   labels: PreviewPanelLabels;
+  variant?: 'standalone' | 'rail';
 };
 
 type PreviewStyle = CSSProperties & {
@@ -69,7 +70,11 @@ function createPreviewStyle(colors: PreviewThemeColors): PreviewStyle {
   };
 }
 
-export function PreviewPanel({ themes, labels }: PreviewPanelProps) {
+export function PreviewPanel({
+  themes,
+  labels,
+  variant = 'standalone',
+}: PreviewPanelProps) {
   const [activeMode, setActiveMode] = useState<ThemeMode>(() =>
     getDefaultPreviewThemeMode(themes),
   );
@@ -79,11 +84,24 @@ export function PreviewPanel({ themes, labels }: PreviewPanelProps) {
       themes.find((theme) => theme.mode === activeMode) ?? themes[0] ?? null,
     [activeMode, themes],
   );
+  const isRail = variant === 'rail';
 
   if (!activeTheme) {
     return (
-      <section className="border-border-default rounded-3xl border border-dashed p-8 text-center">
-        <h2 className="text-2xl font-semibold tracking-tight">
+      <section
+        className={
+          isRail
+            ? 'border-border-subtle min-w-0 border-b p-4 text-center'
+            : 'border-border-default rounded-3xl border border-dashed p-8 text-center'
+        }
+      >
+        <h2
+          className={
+            isRail
+              ? 'text-lg font-semibold tracking-tight'
+              : 'text-2xl font-semibold tracking-tight'
+          }
+        >
           {labels.title}
         </h2>
         <p className="text-content-secondary mx-auto mt-3 max-w-xl text-sm leading-6">
@@ -98,20 +116,39 @@ export function PreviewPanel({ themes, labels }: PreviewPanelProps) {
   return (
     <section
       aria-labelledby="preview-panel-title"
-      className="border-border-subtle bg-surface-primary shadow-soft rounded-3xl border p-5 lg:p-6"
+      className={
+        isRail
+          ? 'border-border-subtle min-w-0 border-b p-4'
+          : 'border-border-subtle bg-surface-primary shadow-soft rounded-3xl border p-5 lg:p-6'
+      }
     >
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-content-tertiary text-sm font-semibold tracking-[0.18em] uppercase">
+      <div
+        className={
+          isRail
+            ? 'grid min-w-0 gap-3'
+            : 'flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between'
+        }
+      >
+        <div className="min-w-0">
+          <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.16em] uppercase">
             Preview
           </p>
           <h2
             id="preview-panel-title"
-            className="mt-2 text-2xl font-semibold tracking-tight"
+            className={
+              isRail
+                ? 'mt-1 text-lg font-semibold tracking-tight'
+                : 'mt-2 text-2xl font-semibold tracking-tight'
+            }
           >
             {labels.title}
           </h2>
-          <p className="text-content-secondary mt-2 max-w-2xl text-sm leading-6">
+          <p
+            className={[
+              'text-content-secondary mt-2 text-sm leading-6',
+              isRail ? '' : 'max-w-2xl',
+            ].join(' ')}
+          >
             {labels.description}
           </p>
         </div>
@@ -128,12 +165,21 @@ export function PreviewPanel({ themes, labels }: PreviewPanelProps) {
       </div>
 
       <div
-        className="mt-6 rounded-3xl border border-(--preview-border) bg-(--preview-background) p-4 text-(--preview-content) transition-colors sm:p-6"
+        className={[
+          'border border-(--preview-border) bg-(--preview-background) text-(--preview-content) transition-colors',
+          isRail ? 'mt-4 rounded-md p-3' : 'mt-6 rounded-3xl p-4 sm:p-6',
+        ].join(' ')}
         style={previewStyle}
       >
-        <div className="grid gap-4 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-          <div className="grid gap-4">
-            <PreviewBlock title={labels.components.button}>
+        <div
+          className={
+            isRail
+              ? 'grid gap-3'
+              : 'grid gap-4 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]'
+          }
+        >
+          <div className={isRail ? 'grid gap-3' : 'grid gap-4'}>
+            <PreviewBlock title={labels.components.button} compact={isRail}>
               <div className="flex flex-wrap gap-3">
                 <button
                   type="button"
@@ -151,7 +197,7 @@ export function PreviewPanel({ themes, labels }: PreviewPanelProps) {
               </div>
             </PreviewBlock>
 
-            <PreviewBlock title={labels.components.textField}>
+            <PreviewBlock title={labels.components.textField} compact={isRail}>
               <label
                 htmlFor="preview-text-field"
                 className="text-sm font-semibold text-(--preview-content)"
@@ -162,7 +208,7 @@ export function PreviewPanel({ themes, labels }: PreviewPanelProps) {
                 id="preview-text-field"
                 readOnly
                 value={labels.textField.placeholder}
-                className="mt-2 min-h-11 w-full rounded-xl border border-(--preview-border) bg-(--preview-surface) px-3 text-sm text-(--preview-content) outline-none"
+                className="mt-2 min-h-11 w-full min-w-0 rounded-xl border border-(--preview-border) bg-(--preview-surface) px-3 text-sm text-(--preview-content) outline-none"
               />
               <p className="mt-2 text-xs text-(--preview-muted)">
                 {labels.textField.helper}
@@ -170,8 +216,8 @@ export function PreviewPanel({ themes, labels }: PreviewPanelProps) {
             </PreviewBlock>
           </div>
 
-          <div className="grid gap-4">
-            <PreviewBlock title={labels.components.card}>
+          <div className={isRail ? 'grid gap-3' : 'grid gap-4'}>
+            <PreviewBlock title={labels.components.card} compact={isRail}>
               <article className="rounded-2xl border border-(--preview-border) bg-(--preview-surface) p-4">
                 <h3 className="text-lg font-semibold tracking-tight text-(--preview-content)">
                   {labels.card.title}
@@ -188,7 +234,7 @@ export function PreviewPanel({ themes, labels }: PreviewPanelProps) {
               </article>
             </PreviewBlock>
 
-            <PreviewBlock title={labels.components.alert}>
+            <PreviewBlock title={labels.components.alert} compact={isRail}>
               <div
                 role="status"
                 className="rounded-2xl border border-(--preview-accent) bg-(--preview-accent)/20 p-4"
@@ -210,13 +256,20 @@ export function PreviewPanel({ themes, labels }: PreviewPanelProps) {
 
 function PreviewBlock({
   title,
+  compact,
   children,
 }: {
   title: string;
+  compact: boolean;
   children: ReactNode;
 }) {
   return (
-    <section className="rounded-2xl border border-(--preview-border) bg-(--preview-surface) p-4">
+    <section
+      className={[
+        'border border-(--preview-border) bg-(--preview-surface)',
+        compact ? 'rounded-md p-3' : 'rounded-2xl p-4',
+      ].join(' ')}
+    >
       <h3 className="mb-4 text-xs font-semibold tracking-[0.18em] text-(--preview-muted) uppercase">
         {title}
       </h3>
