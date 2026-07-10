@@ -86,7 +86,7 @@ export function ThemeTokenReferenceEditor({
       action={formAction}
       onSubmitCapture={preserveSaveContext}
       data-theme-mapping-row={colorKey}
-      className="border-border-subtle bg-surface-primary min-w-0 border-b px-3 py-3 last:border-b-0 sm:px-4"
+      className="border-border-subtle bg-surface-primary min-w-0 rounded-md border px-3 py-3 sm:px-4"
     >
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="projectSlug" value={projectSlug} />
