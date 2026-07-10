@@ -77,7 +77,6 @@ export function ComponentList({
       <ComponentRegistryFilter
         value={filterQuery}
         placeholder={t('list.filterPlaceholder')}
-        submitLabel={t('list.filterSubmit')}
       />
 
       {componentGroups.length > 0 ? (
