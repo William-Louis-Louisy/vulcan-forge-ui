@@ -60,10 +60,7 @@ function createLocalizedMessages(
     themePreviewMessages[locale],
   );
 
-  return mergeMessages(
-    baseMessages,
-    scopedMessages,
-  ) as unknown as JsonObject;
+  return mergeMessages(baseMessages, scopedMessages) as unknown as JsonObject;
 }
 
 const localizedMessages = {

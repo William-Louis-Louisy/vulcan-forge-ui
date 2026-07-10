@@ -85,15 +85,14 @@ export function createPreviewTheme({
       colorKey: key,
       colorTokenOptions,
     });
-    const semanticAccentFallback = key === 'accent' ? resolvedPrimaryAction : null;
+    const semanticAccentFallback =
+      key === 'accent' ? resolvedPrimaryAction : null;
 
     return {
       key,
       rawValue,
-      value:
-        resolvedValue ?? semanticAccentFallback ?? fallbackColors[key],
-      status:
-        resolvedValue || semanticAccentFallback ? 'resolved' : 'fallback',
+      value: resolvedValue ?? semanticAccentFallback ?? fallbackColors[key],
+      status: resolvedValue || semanticAccentFallback ? 'resolved' : 'fallback',
     } satisfies PreviewThemePaletteEntry;
   });
 
@@ -160,8 +159,7 @@ export function getReadableAccentContent(accent: string): string {
   const red = Number.parseInt(normalizedAccent.slice(0, 2), 16);
   const green = Number.parseInt(normalizedAccent.slice(2, 4), 16);
   const blue = Number.parseInt(normalizedAccent.slice(4, 6), 16);
-  const luminance =
-    (0.2126 * red + 0.7152 * green + 0.0722 * blue) / 255;
+  const luminance = (0.2126 * red + 0.7152 * green + 0.0722 * blue) / 255;
 
   return luminance > 0.52 ? '#111111' : '#ffffff';
 }

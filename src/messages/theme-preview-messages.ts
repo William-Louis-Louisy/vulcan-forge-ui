@@ -32,7 +32,7 @@ export const themePreviewMessages = {
         resolvedBadge: 'Résolu',
         fallbackBadge: 'Fallback',
         fallbackNotice:
-          "Des couleurs de fallback sont affichées pour : {keys}. Complétez ou corrigez ces associations dans l’éditeur.",
+          'Des couleurs de fallback sont affichées pour : {keys}. Complétez ou corrigez ces associations dans l’éditeur.',
         paletteKeys: {
           background: 'Arrière-plan',
           surface: 'Surface',

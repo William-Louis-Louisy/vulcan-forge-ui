@@ -102,9 +102,7 @@ export function PreviewPanel({
             : 'border-border-default rounded-xl border border-dashed p-8 text-center'
         }
       >
-        <h2 className="text-lg font-semibold tracking-tight">
-          {labels.title}
-        </h2>
+        <h2 className="text-lg font-semibold tracking-tight">{labels.title}</h2>
         <p className="text-content-secondary mx-auto mt-2 max-w-xl text-sm leading-6">
           {labels.empty}
         </p>
@@ -215,7 +213,7 @@ export function PreviewPanel({
         ) : null}
 
         <div
-          className="border border-(--preview-border) bg-(--preview-background) text-(--preview-content) min-w-0 overflow-hidden rounded-lg transition-colors"
+          className="min-w-0 overflow-hidden rounded-lg border border-(--preview-border) bg-(--preview-background) text-(--preview-content) transition-colors"
           style={previewStyle}
         >
           <div className="flex items-center justify-between border-b border-(--preview-border) bg-(--preview-surface) px-3 py-2">
@@ -359,7 +357,7 @@ function PreviewBlock({
   children: ReactNode;
 }) {
   return (
-    <section className="border border-(--preview-border) bg-(--preview-surface) min-w-0 rounded-md p-3">
+    <section className="min-w-0 rounded-md border border-(--preview-border) bg-(--preview-surface) p-3">
       <h3 className="mb-2.5 text-[0.625rem] font-semibold tracking-[0.14em] text-(--preview-muted) uppercase">
         {title}
       </h3>
