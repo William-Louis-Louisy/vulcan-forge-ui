@@ -206,7 +206,10 @@ export function ThemeTokenReferenceEditor({
       ) : null}
 
       {state.formError ? (
-        <p role="alert" className="text-action-danger mt-2 text-xs font-semibold">
+        <p
+          role="alert"
+          className="text-action-danger mt-2 text-xs font-semibold"
+        >
           {labels.errors[state.formError]}
         </p>
       ) : null}

@@ -79,9 +79,7 @@ describe('ThemeTokenReferenceEditor', () => {
     ).toBeInTheDocument();
     expect(screen.getByText('background')).toBeInTheDocument();
     expect(
-      screen.getByText(
-        'Current reference: {color.semantic.background.app}',
-      ),
+      screen.getByText('Current reference: {color.semantic.background.app}'),
     ).toBeInTheDocument();
     expect(
       screen.getByRole('img', { name: 'Resolved value: #f7f3eb' }),
@@ -104,9 +102,7 @@ describe('ThemeTokenReferenceEditor', () => {
       screen.getByRole('img', { name: 'Resolved value: #ffffff' }),
     ).toBeInTheDocument();
     expect(screen.getByText('Unsaved')).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: 'Save mapping' }),
-    ).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Save mapping' })).toBeEnabled();
   });
 
   it('disables mapping controls when no resolved color token is available', () => {
