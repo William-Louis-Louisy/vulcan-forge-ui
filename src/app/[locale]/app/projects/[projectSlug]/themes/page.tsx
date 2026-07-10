@@ -381,7 +381,7 @@ function ContrastPairRow({
           <p className="text-sm font-semibold">
             {t(`contrast.pairs.${pair.key}`)}
           </p>
-          <p className="text-content-tertiary mt-1 break-words text-xs">
+          <p className="text-content-tertiary mt-1 text-xs break-words">
             {pair.foregroundReferencePath
               ? `{${pair.foregroundReferencePath}}`
               : pair.foregroundKey}{' '}
