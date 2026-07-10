@@ -5,8 +5,8 @@ export const themePreviewMessages = {
         eyebrow: 'Live preview',
         activeTheme: 'Active theme',
         palette: 'Resolved palette',
-        resolvedSummary: '{resolved}/{total} mapped colors',
-        fallbackSummary: '{count, plural, one {# fallback} other {# fallbacks}}',
+        mappedColors: 'mapped colors',
+        fallbackColors: 'fallback colors',
         resolvedBadge: 'Resolved',
         fallbackBadge: 'Fallback',
         fallbackNotice:
@@ -27,8 +27,8 @@ export const themePreviewMessages = {
         eyebrow: 'Aperçu en direct',
         activeTheme: 'Thème actif',
         palette: 'Palette résolue',
-        resolvedSummary: '{resolved}/{total} couleurs associées',
-        fallbackSummary: '{count, plural, one {# fallback} other {# fallbacks}}',
+        mappedColors: 'couleurs associées',
+        fallbackColors: 'couleurs de fallback',
         resolvedBadge: 'Résolu',
         fallbackBadge: 'Fallback',
         fallbackNotice:
