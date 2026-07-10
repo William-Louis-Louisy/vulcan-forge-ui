@@ -46,7 +46,10 @@ const semanticPalette: ComponentPreviewSemanticPalette = {
     danger: '#b43a2a',
   },
   status: {
+    info: 'var(--vf-action-info)',
     success: '#3f7a4f',
+    warning: 'var(--vf-action-warning)',
+    danger: 'var(--vf-action-danger)',
   },
   missingStatusTones: ['info', 'warning', 'danger'],
 };
