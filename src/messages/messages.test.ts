@@ -3,6 +3,7 @@ import frMessages from './fr.json';
 import { describe, expect, it } from 'vitest';
 import { mergeMessages, type MessageObject } from './merge-messages';
 import { componentGuidelineMessages } from './component-guidelines';
+import { componentPreviewMessages } from './component-preview-messages';
 
 type JsonValue = string | number | boolean | null | JsonObject | JsonValue[];
 
@@ -46,15 +47,21 @@ function serializeMessageSection(messages: JsonObject, key: string): string {
   return JSON.stringify(messages[key] ?? {});
 }
 
+function createLocalizedMessages(
+  baseMessages: MessageObject,
+  locale: 'en' | 'fr',
+): JsonObject {
+  const componentMessages = mergeMessages(
+    componentGuidelineMessages[locale],
+    componentPreviewMessages[locale],
+  );
+
+  return mergeMessages(baseMessages, componentMessages) as unknown as JsonObject;
+}
+
 const localizedMessages = {
-  en: mergeMessages(
-    enMessages as MessageObject,
-    componentGuidelineMessages.en,
-  ) as unknown as JsonObject,
-  fr: mergeMessages(
-    frMessages as MessageObject,
-    componentGuidelineMessages.fr,
-  ) as unknown as JsonObject,
+  en: createLocalizedMessages(enMessages as MessageObject, 'en'),
+  fr: createLocalizedMessages(frMessages as MessageObject, 'fr'),
 };
 
 describe('localized messages', () => {
