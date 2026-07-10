@@ -12,7 +12,7 @@ export default function ComponentsRegistryError({
   const t = useTranslations('ComponentsRegistryPage');
 
   return (
-    <section className="flex h-[calc(100dvh-3rem)] min-h-0 items-center justify-center overflow-y-auto p-4 md:p-6 xl:absolute xl:inset-0 xl:h-auto">
+    <section className="flex min-h-80 items-center justify-center p-4 md:p-6 xl:absolute xl:inset-0 xl:min-h-0">
       <ComponentRegistryState
         role="alert"
         tone="danger"
