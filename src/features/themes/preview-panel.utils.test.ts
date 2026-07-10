@@ -2,6 +2,7 @@ import {
   createPreviewTheme,
   createPreviewThemes,
   getDefaultPreviewThemeMode,
+  getReadableAccentContent,
 } from './preview-panel.utils';
 import { describe, expect, it } from 'vitest';
 import type { ThemeEditorTheme } from './themes-editor.utils';
@@ -41,13 +42,13 @@ const darkTheme: ThemeEditorTheme = {
 };
 
 describe('preview panel utils', () => {
-  it('creates preview theme colors from theme tokens', () => {
-    expect(
-      createPreviewTheme({
-        theme: lightTheme,
-        colorTokenSetTokens: [],
-      }),
-    ).toMatchObject({
+  it('creates a fully resolved preview palette from theme tokens', () => {
+    const previewTheme = createPreviewTheme({
+      theme: lightTheme,
+      colorTokenSetTokens: [],
+    });
+
+    expect(previewTheme).toMatchObject({
       mode: 'light',
       colors: {
         background: '#f7f3eb',
@@ -55,41 +56,97 @@ describe('preview panel utils', () => {
         content: '#111827',
         muted: '#3a4454',
         accent: '#ff8731',
+        accentContent: '#111111',
       },
+      resolvedColorCount: 5,
+      fallbackColorKeys: [],
     });
+    expect(previewTheme.palette.map((entry) => entry.status)).toEqual([
+      'resolved',
+      'resolved',
+      'resolved',
+      'resolved',
+      'resolved',
+    ]);
   });
 
   it('uses a resolved semantic action color when the theme accent references it', () => {
-    expect(
-      createPreviewTheme({
-        theme: {
-          id: 'light-theme',
-          mode: 'light',
-          name: 'Light',
-          tokens: {
-            color: {
-              accent: '{color.semantic.action.primary}',
-            },
+    const previewTheme = createPreviewTheme({
+      theme: {
+        id: 'light-theme',
+        mode: 'light',
+        name: 'Light',
+        tokens: {
+          color: {
+            accent: '{color.semantic.action.primary}',
           },
-          updatedAt: new Date('2026-01-01T00:00:00.000Z'),
         },
-        colorTokenSetTokens: [
-          {
-            path: 'color.primitive.brand.primary',
-            type: 'color',
-            value: '#00aaff',
-            status: 'ready',
+        updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+      },
+      colorTokenSetTokens: [
+        {
+          path: 'color.primitive.brand.primary',
+          type: 'color',
+          value: '#00aaff',
+          status: 'ready',
+        },
+        {
+          path: 'color.semantic.action.primary',
+          type: 'color',
+          value: '{color.primitive.brand.primary}',
+          reference: '{color.primitive.brand.primary}',
+          status: 'ready',
+        },
+      ],
+    });
+
+    expect(previewTheme.colors.accent).toBe('#00aaff');
+    expect(
+      previewTheme.palette.find((entry) => entry.key === 'accent'),
+    ).toMatchObject({
+      status: 'resolved',
+      value: '#00aaff',
+    });
+  });
+
+  it('tracks missing and unresolved mappings while rendering safe fallbacks', () => {
+    const previewTheme = createPreviewTheme({
+      theme: {
+        id: 'dark-theme',
+        mode: 'dark',
+        name: 'Dark',
+        tokens: {
+          color: {
+            background: '{color.missing.background}',
+            content: 'not-a-color',
+            accent: '#003366',
           },
-          {
-            path: 'color.semantic.action.primary',
-            type: 'color',
-            value: '{color.primitive.brand.primary}',
-            reference: '{color.primitive.brand.primary}',
-            status: 'ready',
-          },
-        ],
-      }).colors.accent,
-    ).toBe('#00aaff');
+        },
+        updatedAt,
+      },
+      colorTokenSetTokens: [],
+    });
+
+    expect(previewTheme.fallbackColorKeys).toEqual([
+      'background',
+      'surface',
+      'content',
+      'muted',
+    ]);
+    expect(previewTheme.resolvedColorCount).toBe(1);
+    expect(previewTheme.colors).toMatchObject({
+      background: '#070707',
+      surface: '#1e1e1e',
+      content: '#e2e7ef',
+      muted: '#a0b1ca',
+      accent: '#003366',
+      accentContent: '#ffffff',
+    });
+  });
+
+  it('selects readable foreground colors for light and dark accents', () => {
+    expect(getReadableAccentContent('#ff8731')).toBe('#111111');
+    expect(getReadableAccentContent('#003366')).toBe('#ffffff');
   });
 
   it('sorts preview themes light then dark', () => {
@@ -102,35 +159,11 @@ describe('preview panel utils', () => {
   });
 
   it('returns light as the default preview theme mode when available', () => {
-    expect(
-      getDefaultPreviewThemeMode([
-        {
-          id: 'dark-theme',
-          mode: 'dark',
-          name: 'Dark',
-          colors: {
-            background: '#070707',
-            surface: '#1e1e1e',
-            content: '#e2e7ef',
-            muted: '#a0b1ca',
-            accent: '#ff8731',
-            border: '#303030',
-          },
-        },
-        {
-          id: 'light-theme',
-          mode: 'light',
-          name: 'Light',
-          colors: {
-            background: '#f7f3eb',
-            surface: '#ffffff',
-            content: '#111827',
-            muted: '#3a4454',
-            accent: '#ff8731',
-            border: '#d9d2c4',
-          },
-        },
-      ]),
-    ).toBe('light');
+    const previewThemes = createPreviewThemes({
+      themes: [darkTheme, lightTheme],
+      colorTokenSetTokens: [],
+    });
+
+    expect(getDefaultPreviewThemeMode(previewThemes)).toBe('light');
   });
 });

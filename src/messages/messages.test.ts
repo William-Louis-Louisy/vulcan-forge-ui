@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { mergeMessages, type MessageObject } from './merge-messages';
 import { componentGuidelineMessages } from './component-guidelines';
 import { componentPreviewMessages } from './component-preview-messages';
+import { themePreviewMessages } from './theme-preview-messages';
 
 type JsonValue = string | number | boolean | null | JsonObject | JsonValue[];
 
@@ -51,15 +52,15 @@ function createLocalizedMessages(
   baseMessages: MessageObject,
   locale: 'en' | 'fr',
 ): JsonObject {
-  const componentMessages = mergeMessages(
-    componentGuidelineMessages[locale],
-    componentPreviewMessages[locale],
+  const scopedMessages = mergeMessages(
+    mergeMessages(
+      componentGuidelineMessages[locale],
+      componentPreviewMessages[locale],
+    ),
+    themePreviewMessages[locale],
   );
 
-  return mergeMessages(
-    baseMessages,
-    componentMessages,
-  ) as unknown as JsonObject;
+  return mergeMessages(baseMessages, scopedMessages) as unknown as JsonObject;
 }
 
 const localizedMessages = {

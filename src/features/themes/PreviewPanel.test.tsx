@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
+import { NextIntlClientProvider } from 'next-intl';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { themePreviewMessages } from '@/messages/theme-preview-messages';
 import type { PreviewTheme } from './preview-panel.utils';
 import { PreviewPanel, type PreviewPanelLabels } from './PreviewPanel';
 
@@ -49,8 +52,44 @@ const themes: PreviewTheme[] = [
       content: '#111827',
       muted: '#3a4454',
       accent: '#ff8731',
+      accentContent: '#111111',
+      accentSoft: 'color-mix(in srgb, #ff8731 16%, #ffffff)',
       border: '#d9d2c4',
     },
+    palette: [
+      {
+        key: 'background',
+        value: '#f7f3eb',
+        rawValue: '{color.primitive.neutral.50}',
+        status: 'resolved',
+      },
+      {
+        key: 'surface',
+        value: '#ffffff',
+        rawValue: '{color.primitive.neutral.0}',
+        status: 'resolved',
+      },
+      {
+        key: 'content',
+        value: '#111827',
+        rawValue: '{color.primitive.neutral.950}',
+        status: 'resolved',
+      },
+      {
+        key: 'muted',
+        value: '#3a4454',
+        rawValue: '{color.primitive.neutral.700}',
+        status: 'resolved',
+      },
+      {
+        key: 'accent',
+        value: '#ff8731',
+        rawValue: '{color.primitive.accent.primary}',
+        status: 'resolved',
+      },
+    ],
+    resolvedColorCount: 5,
+    fallbackColorKeys: [],
   },
   {
     id: 'dark',
@@ -62,14 +101,62 @@ const themes: PreviewTheme[] = [
       content: '#e2e7ef',
       muted: '#a0b1ca',
       accent: '#ff8731',
+      accentContent: '#111111',
+      accentSoft: 'color-mix(in srgb, #ff8731 16%, #1e1e1e)',
       border: '#303030',
     },
+    palette: [
+      {
+        key: 'background',
+        value: '#070707',
+        rawValue: '{color.primitive.neutral.950}',
+        status: 'resolved',
+      },
+      {
+        key: 'surface',
+        value: '#1e1e1e',
+        rawValue: '{color.primitive.neutral.900}',
+        status: 'resolved',
+      },
+      {
+        key: 'content',
+        value: '#e2e7ef',
+        rawValue: '{color.primitive.neutral.100}',
+        status: 'resolved',
+      },
+      {
+        key: 'muted',
+        value: '#a0b1ca',
+        rawValue: '{color.missing.muted}',
+        status: 'fallback',
+      },
+      {
+        key: 'accent',
+        value: '#ff8731',
+        rawValue: '{color.primitive.accent.primary}',
+        status: 'resolved',
+      },
+    ],
+    resolvedColorCount: 4,
+    fallbackColorKeys: ['muted'],
   },
 ];
 
+function renderPreviewPanel() {
+  return render(
+    <NextIntlClientProvider
+      locale="en"
+      timeZone="UTC"
+      messages={JSON.parse(JSON.stringify(themePreviewMessages.en))}
+    >
+      <PreviewPanel themes={themes} labels={labels} />
+    </NextIntlClientProvider>,
+  );
+}
+
 describe('PreviewPanel', () => {
-  it('renders core component previews', () => {
-    render(<PreviewPanel themes={themes} labels={labels} />);
+  it('renders core component previews and resolved palette metadata', () => {
+    renderPreviewPanel();
 
     expect(
       screen.getByRole('heading', { name: 'Component preview' }),
@@ -78,10 +165,15 @@ describe('PreviewPanel', () => {
     expect(screen.getByLabelText('Email address')).toBeInTheDocument();
     expect(screen.getByText('Design system card')).toBeInTheDocument();
     expect(screen.getByRole('status')).toBeInTheDocument();
+    expect(
+      screen.getByLabelText('Background: #f7f3eb (Resolved)'),
+    ).toBeInTheDocument();
+    expect(screen.getByText('5/5')).toBeInTheDocument();
   });
 
-  it('renders accessible theme mode controls', () => {
-    render(<PreviewPanel themes={themes} labels={labels} />);
+  it('switches modes and surfaces fallback mappings', async () => {
+    const user = userEvent.setup();
+    renderPreviewPanel();
 
     expect(
       screen.getByRole('group', { name: 'Preview theme mode' }),
@@ -90,9 +182,19 @@ describe('PreviewPanel', () => {
       'aria-pressed',
       'true',
     );
+
+    await user.click(screen.getByRole('button', { name: 'Dark theme' }));
+
     expect(screen.getByRole('button', { name: 'Dark theme' })).toHaveAttribute(
       'aria-pressed',
-      'false',
+      'true',
     );
+    expect(screen.getByText('4/5')).toBeInTheDocument();
+    expect(
+      screen.getByText(/Fallback colors are displayed for: Muted/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByLabelText('Muted: #a0b1ca (Fallback)'),
+    ).toBeInTheDocument();
   });
 });

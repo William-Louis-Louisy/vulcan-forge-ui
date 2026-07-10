@@ -1,7 +1,10 @@
 import {
   createThemeColorTokenOptions,
+  getThemeColorRawValue,
   getThemeColorValue,
   sortThemesByMode,
+  themeColorKeys,
+  type ThemeColorKey,
   type ThemeEditorTheme,
   type ThemeMode,
 } from './themes-editor.utils';
@@ -12,7 +15,16 @@ export type PreviewThemeColors = {
   content: string;
   muted: string;
   accent: string;
+  accentContent: string;
+  accentSoft: string;
   border: string;
+};
+
+export type PreviewThemePaletteEntry = {
+  key: ThemeColorKey;
+  value: string;
+  rawValue: string | null;
+  status: 'resolved' | 'fallback';
 };
 
 export type PreviewTheme = {
@@ -20,9 +32,17 @@ export type PreviewTheme = {
   mode: ThemeMode;
   name: string;
   colors: PreviewThemeColors;
+  palette: PreviewThemePaletteEntry[];
+  resolvedColorCount: number;
+  fallbackColorKeys: ThemeColorKey[];
 };
 
-const fallbackThemeColors: Record<ThemeMode, PreviewThemeColors> = {
+type PreviewThemeBaseColors = Pick<
+  PreviewThemeColors,
+  'background' | 'surface' | 'content' | 'muted' | 'accent' | 'border'
+>;
+
+const fallbackThemeColors: Record<ThemeMode, PreviewThemeBaseColors> = {
   light: {
     background: '#f7f3eb',
     surface: '#ffffff',
@@ -50,51 +70,57 @@ export function createPreviewTheme({
 }): PreviewTheme {
   const fallbackColors = fallbackThemeColors[theme.mode];
   const colorTokenOptions = createThemeColorTokenOptions(colorTokenSetTokens);
-
   const resolvedPrimaryAction =
     colorTokenOptions.find(
       (option) => option.path === 'color.semantic.action.primary',
     )?.value ?? null;
 
-  const resolvedAccent =
-    getThemeColorValue({
+  const palette = themeColorKeys.map((key) => {
+    const rawValue = getThemeColorRawValue({
       tokens: theme.tokens,
-      colorKey: 'accent',
+      colorKey: key,
+    });
+    const resolvedValue = getThemeColorValue({
+      tokens: theme.tokens,
+      colorKey: key,
       colorTokenOptions,
-    }) ?? resolvedPrimaryAction;
+    });
+    const semanticAccentFallback =
+      key === 'accent' ? resolvedPrimaryAction : null;
+
+    return {
+      key,
+      rawValue,
+      value: resolvedValue ?? semanticAccentFallback ?? fallbackColors[key],
+      status: resolvedValue || semanticAccentFallback ? 'resolved' : 'fallback',
+    } satisfies PreviewThemePaletteEntry;
+  });
+
+  const paletteByKey = Object.fromEntries(
+    palette.map((entry) => [entry.key, entry.value]),
+  ) as Record<ThemeColorKey, string>;
+  const fallbackColorKeys = palette
+    .filter((entry) => entry.status === 'fallback')
+    .map((entry) => entry.key);
+  const accentContent = getReadableAccentContent(paletteByKey.accent);
 
   return {
     id: theme.id,
     mode: theme.mode,
     name: theme.name,
     colors: {
-      background:
-        getThemeColorValue({
-          tokens: theme.tokens,
-          colorKey: 'background',
-          colorTokenOptions,
-        }) ?? fallbackColors.background,
-      surface:
-        getThemeColorValue({
-          tokens: theme.tokens,
-          colorKey: 'surface',
-          colorTokenOptions,
-        }) ?? fallbackColors.surface,
-      content:
-        getThemeColorValue({
-          tokens: theme.tokens,
-          colorKey: 'content',
-          colorTokenOptions,
-        }) ?? fallbackColors.content,
-      muted:
-        getThemeColorValue({
-          tokens: theme.tokens,
-          colorKey: 'muted',
-          colorTokenOptions,
-        }) ?? fallbackColors.muted,
-      accent: resolvedAccent ?? fallbackColors.accent,
+      background: paletteByKey.background,
+      surface: paletteByKey.surface,
+      content: paletteByKey.content,
+      muted: paletteByKey.muted,
+      accent: paletteByKey.accent,
+      accentContent,
+      accentSoft: `color-mix(in srgb, ${paletteByKey.accent} 16%, ${paletteByKey.surface})`,
       border: fallbackColors.border,
     },
+    palette,
+    resolvedColorCount: palette.length - fallbackColorKeys.length,
+    fallbackColorKeys,
   };
 }
 
@@ -121,4 +147,19 @@ export function getDefaultPreviewThemeMode(
     themes[0]?.mode ??
     'light'
   );
+}
+
+export function getReadableAccentContent(accent: string): string {
+  const normalizedAccent = accent.trim().replace('#', '');
+
+  if (!/^[0-9a-fA-F]{6}$/.test(normalizedAccent)) {
+    return '#111111';
+  }
+
+  const red = Number.parseInt(normalizedAccent.slice(0, 2), 16);
+  const green = Number.parseInt(normalizedAccent.slice(2, 4), 16);
+  const blue = Number.parseInt(normalizedAccent.slice(4, 6), 16);
+  const luminance = (0.2126 * red + 0.7152 * green + 0.0722 * blue) / 255;
+
+  return luminance > 0.52 ? '#111111' : '#ffffff';
 }
