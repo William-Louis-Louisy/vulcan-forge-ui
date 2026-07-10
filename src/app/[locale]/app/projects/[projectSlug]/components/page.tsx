@@ -18,6 +18,7 @@ import { ComponentList } from '@/features/components/ComponentRegistryNavigation
 import { ComponentAiContractShell } from '@/features/components/ComponentAiContractPreview';
 import { ComponentRegistryState } from '@/features/components/ComponentRegistryState';
 import { ComponentRegistryCreateButton } from '@/features/components/ComponentRegistryCreateButton';
+import { ComponentResponsiveWorkspace } from '@/features/components/ComponentResponsiveWorkspace';
 import { ComponentContractPreviewProvider } from '@/features/components/ComponentContractPreviewContext';
 import { getComponentsRegistryPageData } from '@/features/components/components-registry.queries';
 import { createComponentTokenOptions } from '@/features/components/component-token-bindings.utils';
@@ -123,39 +124,40 @@ export default async function ComponentsRegistryPage({
         </Notice>
       ) : null}
 
-      {registry.items.length > 0 ? (
-        <div className="flex min-h-0 flex-1 flex-col lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] xl:h-full xl:grid-cols-[16rem_minmax(0,48rem)_minmax(24rem,1fr)] xl:overflow-hidden">
-          <aside className="border-border-subtle min-h-0 min-w-0 border-b lg:row-span-2 lg:border-r lg:border-b-0 xl:row-span-1 xl:h-full xl:overflow-y-auto">
-            <ComponentList
-              t={t}
-              locale={locale}
-              projectSlug={pageData.project.slug}
-              componentGroups={componentGroups}
-              selectedComponentType={selectedComponent?.type ?? null}
-              filterQuery={componentFilterQuery}
-              availableComponentTypes={availableComponentTypes}
-            />
-          </aside>
-
-          {selectedComponent ? (
-            <ComponentContractPreviewProvider
-              key={selectedComponent.id}
-              initialContract={selectedComponent.contract}
-            >
-              <main
-                data-save-context-scroll-container={`component-contract:${pageData.project.slug}:${selectedComponent.type}`}
-                className="min-h-0 min-w-0 lg:col-start-2 xl:col-start-auto xl:overflow-y-auto"
-              >
-                <ComponentDetails
-                  t={t}
-                  locale={locale}
-                  component={selectedComponent}
-                  projectSlug={pageData.project.slug}
-                  tokenOptions={componentTokenOptions}
-                />
-              </main>
-
-              <aside className="border-border-subtle grid min-h-0 min-w-0 content-start gap-6 border-t lg:col-start-2 xl:col-start-auto xl:h-full xl:overflow-y-auto xl:border-t-0 xl:border-l">
+      {registry.items.length > 0 && selectedComponent ? (
+        <ComponentContractPreviewProvider
+          key={selectedComponent.id}
+          initialContract={selectedComponent.contract}
+        >
+          <ComponentResponsiveWorkspace
+            labels={{
+              registry: t('list.title'),
+              editor: t('editor.title'),
+              preview: t('foundationsPreview.title'),
+            }}
+            editorScrollContextId={`component-contract:${pageData.project.slug}:${selectedComponent.type}`}
+            registry={
+              <ComponentList
+                t={t}
+                locale={locale}
+                projectSlug={pageData.project.slug}
+                componentGroups={componentGroups}
+                selectedComponentType={selectedComponent.type}
+                filterQuery={componentFilterQuery}
+                availableComponentTypes={availableComponentTypes}
+              />
+            }
+            editor={
+              <ComponentDetails
+                t={t}
+                locale={locale}
+                component={selectedComponent}
+                projectSlug={pageData.project.slug}
+                tokenOptions={componentTokenOptions}
+              />
+            }
+            preview={
+              <>
                 <ComponentFoundationsPreviewShell
                   locale={locale}
                   component={selectedComponent}
@@ -166,10 +168,10 @@ export default async function ComponentsRegistryPage({
                   locale={locale}
                   component={selectedComponent}
                 />
-              </aside>
-            </ComponentContractPreviewProvider>
-          ) : null}
-        </div>
+              </>
+            }
+          />
+        </ComponentContractPreviewProvider>
       ) : (
         <div className="flex min-h-80 flex-1 items-center justify-center p-4 md:p-6">
           <ComponentRegistryState
