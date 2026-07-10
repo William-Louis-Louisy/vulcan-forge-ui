@@ -24,7 +24,7 @@ export function ThemeSwitcher({
     <div
       role="group"
       aria-label={labels.groupLabel}
-      className="border-border-subtle bg-background-subtle inline-flex rounded-2xl border p-1"
+      className="border-border-subtle bg-background-subtle inline-flex w-fit rounded-md border p-0.5"
     >
       {modes.map((mode) => {
         const isActive = mode === activeMode;
@@ -36,10 +36,10 @@ export function ThemeSwitcher({
             aria-pressed={isActive}
             onClick={() => onModeChange(mode)}
             className={[
-              'rounded-xl px-4 py-2 text-sm font-semibold transition',
+              'min-h-7 rounded-sm px-2.5 text-xs font-semibold transition',
               isActive
                 ? 'bg-action-primary text-action-primary-content'
-                : 'text-content-secondary hover:text-content-primary',
+                : 'text-content-secondary hover:bg-background-app hover:text-content-primary',
             ].join(' ')}
           >
             {labels.modes[mode]}
