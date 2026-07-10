@@ -36,9 +36,9 @@ export function ComponentAnatomyEditor({
   setDraft,
 }: ComponentAnatomyEditorProps) {
   return (
-    <section className="border-border-subtle min-w-0 border-t pt-5">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
+    <section className="border-border-subtle min-w-0 border-t pt-4 sm:pt-5">
+      <div className="flex min-w-0 flex-col items-start gap-3 sm:flex-row sm:justify-between">
+        <div className="min-w-0">
           <h3 className="text-base font-semibold tracking-tight">
             {labels.title}
           </h3>
@@ -49,6 +49,7 @@ export function ComponentAnatomyEditor({
         <Button
           variant="secondary"
           size="sm"
+          className="w-full sm:w-auto"
           onClick={() =>
             setDraft({
               ...draft,
@@ -175,7 +176,7 @@ function AnatomyPartRow({
         type="button"
         onClick={onRemove}
         aria-label={labels.remove}
-        className="text-content-tertiary hover:bg-action-danger/10 hover:text-action-danger flex size-9 items-center justify-center rounded-md text-lg transition"
+        className="text-content-tertiary hover:bg-action-danger/10 hover:text-action-danger flex size-9 items-center justify-center justify-self-end rounded-md text-lg transition md:justify-self-auto"
       >
         <span aria-hidden="true">×</span>
       </button>
