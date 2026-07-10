@@ -1,5 +1,4 @@
-import { act, render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ComponentRegistryFilter } from './ComponentRegistryFilter';
 
@@ -24,11 +23,8 @@ afterEach(() => {
 });
 
 describe('ComponentRegistryFilter', () => {
-  it('filters after a short debounce and exposes a submit button', async () => {
+  it('filters after a short debounce and exposes a submit button', () => {
     vi.useFakeTimers();
-    const user = userEvent.setup({
-      advanceTimers: vi.advanceTimersByTime,
-    });
 
     render(
       <ComponentRegistryFilter
@@ -38,9 +34,11 @@ describe('ComponentRegistryFilter', () => {
       />,
     );
 
-    const input = screen.getByRole('searchbox');
-
-    await user.type(input, 'card');
+    fireEvent.change(screen.getByRole('searchbox'), {
+      target: {
+        value: 'card',
+      },
+    });
 
     expect(navigationMocks.replace).not.toHaveBeenCalled();
 
