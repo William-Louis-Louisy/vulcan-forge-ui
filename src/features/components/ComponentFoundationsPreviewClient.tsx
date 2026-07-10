@@ -57,7 +57,7 @@ export function ComponentFoundationsPreviewClient({
     .join(', ');
 
   return (
-    <section className="border-border-subtle border-b p-4">
+    <section className="border-border-subtle min-w-0 border-b p-3 sm:p-4">
       <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.16em] uppercase">
         {t('foundationsPreview.title')}
       </p>
@@ -76,14 +76,14 @@ export function ComponentFoundationsPreviewClient({
 
       {component.type === 'alert' &&
       semanticPalette.missingStatusTones.length > 0 ? (
-        <div className="border-action-warning/30 bg-action-warning/10 text-action-warning mt-3 rounded-md border px-3 py-2 text-xs leading-5">
+        <div className="border-action-warning/30 bg-action-warning/10 text-action-warning mt-3 rounded-md border px-3 py-2 text-xs leading-5 [overflow-wrap:anywhere]">
           {t('foundationsPreview.missingStatusColorsNotice', {
             paths: missingStatusTokenPaths,
           })}
         </div>
       ) : null}
 
-      <div className="mt-3">
+      <div className="mt-3 min-w-0 max-w-full">
         <ComponentVisualMatrix
           locale={locale}
           component={previewComponent}
@@ -97,19 +97,21 @@ export function ComponentFoundationsPreviewClient({
       </div>
 
       {Object.keys(tokenBindingResolution.bindings).length > 0 ? (
-        <div className="border-border-subtle bg-background-subtle mt-4 rounded-lg border p-3">
+        <div className="border-border-subtle bg-background-subtle mt-4 min-w-0 rounded-lg border p-3">
           <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase">
             {t('foundationsPreview.resolvedTokens')}
           </p>
 
-          <dl className="mt-3 grid gap-2">
+          <dl className="mt-3 grid min-w-0 gap-2">
             {Object.values(tokenBindingResolution.bindings).map((binding) => (
               <div
                 key={binding.key}
-                className="flex items-center justify-between gap-3 text-xs"
+                className="flex min-w-0 items-center justify-between gap-3 text-xs"
               >
-                <dt className="text-content-secondary">{binding.key}</dt>
-                <dd className="text-content-primary max-w-40 truncate font-mono text-[0.6875rem]">
+                <dt className="text-content-secondary min-w-0 truncate">
+                  {binding.key}
+                </dt>
+                <dd className="text-content-primary max-w-[55%] min-w-0 truncate font-mono text-[0.6875rem]">
                   {String(binding.resolvedValue)}
                 </dd>
               </div>
