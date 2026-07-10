@@ -53,10 +53,8 @@ export type ComponentPreviewStatusTone =
   (typeof componentPreviewStatusTones)[number];
 
 export type ComponentPreviewSemanticPalette = {
-  action: Partial<
-    Record<'primary' | 'secondary' | 'danger', string | undefined>
-  >;
-  status: Partial<Record<ComponentPreviewStatusTone, string | undefined>>;
+  action: Partial<Record<'primary' | 'secondary' | 'danger', string>>;
+  status: Record<ComponentPreviewStatusTone, string>;
   missingStatusTones: ComponentPreviewStatusTone[];
 };
 
@@ -313,25 +311,32 @@ export function createComponentPreviewSemanticPalette(
       ];
     }),
   );
-
-  const status = Object.fromEntries(
+  const semanticStatus = Object.fromEntries(
     componentPreviewStatusTones.flatMap((tone) => {
       const value = findSemanticStatusColor(colors, tone);
 
       return value ? [[tone, value]] : [];
     }),
-  ) as Partial<Record<ComponentPreviewStatusTone, string | undefined>>;
+  ) as Partial<Record<ComponentPreviewStatusTone, string>>;
+  const primaryAction = findSemanticActionColor(colors, 'primary');
+  const secondaryAction = findSemanticActionColor(colors, 'secondary');
+  const dangerAction =
+    findSemanticActionColor(colors, 'danger') ?? semanticStatus.danger;
 
   return {
     action: {
-      primary: findSemanticActionColor(colors, 'primary'),
-      secondary: findSemanticActionColor(colors, 'secondary'),
-      danger:
-        findSemanticActionColor(colors, 'danger') ?? status.danger,
+      ...(primaryAction ? { primary: primaryAction } : {}),
+      ...(secondaryAction ? { secondary: secondaryAction } : {}),
+      ...(dangerAction ? { danger: dangerAction } : {}),
     },
-    status,
+    status: {
+      info: semanticStatus.info ?? 'var(--vf-action-info)',
+      success: semanticStatus.success ?? 'var(--vf-action-success)',
+      warning: semanticStatus.warning ?? 'var(--vf-action-warning)',
+      danger: semanticStatus.danger ?? 'var(--vf-action-danger)',
+    },
     missingStatusTones: componentPreviewStatusTones.filter(
-      (tone) => !status[tone],
+      (tone) => !semanticStatus[tone],
     ),
   };
 }
