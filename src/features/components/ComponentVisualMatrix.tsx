@@ -315,7 +315,9 @@ export function ComponentPreview({
           style={previewTokenStyles}
           className={[
             'flex w-full items-center border text-left',
-            hasDefinedStyle(previewTokenStyles.borderRadius) ? '' : 'rounded-md',
+            hasDefinedStyle(previewTokenStyles.borderRadius)
+              ? ''
+              : 'rounded-md',
             hasHorizontalPadding(previewTokenStyles) ? '' : 'px-2',
             size === 'small'
               ? 'min-h-8 text-[0.6875rem]'
@@ -476,9 +478,7 @@ function CardPreview({
         hasDefinedStyle(previewTokenStyles.backgroundColor)
           ? ''
           : 'bg-surface-primary',
-        hasDefinedStyle(previewTokenStyles.color)
-          ? ''
-          : 'text-content-primary',
+        hasDefinedStyle(previewTokenStyles.color) ? '' : 'text-content-primary',
         hasDefinedStyle(previewTokenStyles.borderRadius) ? '' : 'rounded-md',
         hasHorizontalPadding(previewTokenStyles)
           ? ''
@@ -604,11 +604,7 @@ function AlertPreview({
             : size === 'large'
               ? 'py-3.5'
               : 'py-3',
-        size === 'small'
-          ? 'gap-1.5'
-          : size === 'large'
-            ? 'gap-2.5'
-            : 'gap-2',
+        size === 'small' ? 'gap-1.5' : size === 'large' ? 'gap-2.5' : 'gap-2',
         toneClassNames[tone],
         isDisabled ? 'opacity-45' : '',
       ].join(' ')}
@@ -814,5 +810,7 @@ function hasHorizontalPadding(styles: CSSProperties): boolean {
 }
 
 function hasVerticalPadding(styles: CSSProperties): boolean {
-  return hasDefinedStyle(styles.padding) || hasDefinedStyle(styles.paddingBlock);
+  return (
+    hasDefinedStyle(styles.padding) || hasDefinedStyle(styles.paddingBlock)
+  );
 }

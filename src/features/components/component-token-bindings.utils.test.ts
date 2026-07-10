@@ -214,11 +214,7 @@ describe('component-token-bindings utils', () => {
 
     expect(palette.action.primary).toBe('#2563eb');
     expect(palette.status.success).toBe('#16a34a');
-    expect(palette.missingStatusTones).toEqual([
-      'info',
-      'warning',
-      'danger',
-    ]);
+    expect(palette.missingStatusTones).toEqual(['info', 'warning', 'danger']);
   });
 
   it('creates token options from raw token sets', () => {

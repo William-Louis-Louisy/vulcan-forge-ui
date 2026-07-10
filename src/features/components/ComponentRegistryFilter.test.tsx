@@ -26,9 +26,7 @@ describe('ComponentRegistryFilter', () => {
   it('filters after a short debounce without a submit control', () => {
     vi.useFakeTimers();
 
-    render(
-      <ComponentRegistryFilter value="" placeholder="Filter..." />,
-    );
+    render(<ComponentRegistryFilter value="" placeholder="Filter..." />);
 
     fireEvent.change(screen.getByRole('searchbox'), {
       target: {

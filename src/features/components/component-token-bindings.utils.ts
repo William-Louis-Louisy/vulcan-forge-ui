@@ -240,7 +240,10 @@ export function createComponentTokenBindingResolution({
 export function normalizeComponentPreviewTokenRole(
   key: string,
 ): ComponentPreviewTokenRole | null {
-  const normalizedKey = key.trim().replace(/[\s._-]+/g, '').toLowerCase();
+  const normalizedKey = key
+    .trim()
+    .replace(/[\s._-]+/g, '')
+    .toLowerCase();
 
   const roleAliases: Record<string, ComponentPreviewTokenRole> = {
     background: 'background',

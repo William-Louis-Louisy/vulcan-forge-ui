@@ -45,7 +45,7 @@ export function ComponentAiContractShell({
         {t('aiContract.eyebrow')}
       </p>
 
-      <pre className="mt-3 max-w-full overflow-x-auto rounded-md bg-[var(--vf-color-stone-900)] p-3 font-mono text-[0.6875rem] leading-[1.55] whitespace-pre-wrap text-[var(--vf-color-stone-150)] [overflow-wrap:anywhere]">
+      <pre className="mt-3 max-w-full overflow-x-auto rounded-md bg-[var(--vf-color-stone-900)] p-3 font-mono text-[0.6875rem] leading-[1.55] [overflow-wrap:anywhere] whitespace-pre-wrap text-[var(--vf-color-stone-150)]">
         {contractText}
       </pre>
 

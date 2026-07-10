@@ -56,7 +56,10 @@ function createLocalizedMessages(
     componentPreviewMessages[locale],
   );
 
-  return mergeMessages(baseMessages, componentMessages) as unknown as JsonObject;
+  return mergeMessages(
+    baseMessages,
+    componentMessages,
+  ) as unknown as JsonObject;
 }
 
 const localizedMessages = {

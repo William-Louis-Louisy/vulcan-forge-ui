@@ -83,7 +83,7 @@ export function ComponentFoundationsPreviewClient({
         </div>
       ) : null}
 
-      <div className="mt-3 min-w-0 max-w-full">
+      <div className="mt-3 max-w-full min-w-0">
         <ComponentVisualMatrix
           locale={locale}
           component={previewComponent}
