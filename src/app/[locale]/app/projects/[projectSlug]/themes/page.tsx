@@ -29,6 +29,7 @@ import { createPreviewThemes } from '@/features/themes/preview-panel.utils';
 import { getThemesEditorPageData } from '@/features/themes/themes-editor.queries';
 import { ThemeTokenReferenceEditor } from '@/features/themes/ThemeTokenReferenceEditor';
 import { SemanticColorTokenAliasEditor } from '@/features/tokens/SemanticColorTokenAliasEditor';
+import { ThemesResponsiveWorkspace } from '@/features/themes/ThemesResponsiveWorkspace';
 
 type ThemesEditorPageProps = {
   params: Promise<{
@@ -93,129 +94,148 @@ export default async function ThemesEditorPage({
   );
 
   return (
-    <section className="mx-auto max-w-7xl">
-      <div className="mt-8">
-        <p className="text-action-primary text-sm font-semibold tracking-[0.24em] uppercase">
-          {t('eyebrow')}
-        </p>
+    <section className="flex min-h-0 flex-col xl:absolute xl:inset-0 xl:h-auto xl:overflow-hidden">
+      <ThemesResponsiveWorkspace
+        labels={{
+          editor: t('themeMapping.title'),
+          preview: t('preview.title'),
+        }}
+        editor={
+          <div className="min-w-0 px-4 py-4 sm:px-6 sm:py-5">
+            <div className="mx-auto w-full max-w-5xl min-w-0">
+              <header className="border-border-subtle min-w-0 border-b pb-5">
+                <p className="text-action-primary text-[0.6875rem] font-semibold tracking-[0.16em] uppercase">
+                  {t('eyebrow')}
+                </p>
 
-        <h1 className="mt-4 text-4xl font-semibold tracking-tight">
-          {t('title', { projectName: pageData.project.name })}
-        </h1>
+                <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-[1.625rem]">
+                  {t('title', { projectName: pageData.project.name })}
+                </h1>
 
-        <p className="text-content-secondary mt-4 max-w-3xl">
-          {t('description')}
-        </p>
-      </div>
+                <p className="text-content-secondary mt-2 max-w-3xl text-sm leading-6">
+                  {t('description')}
+                </p>
+              </header>
 
-      <div className="mt-10">
-        <PreviewPanel
-          themes={previewThemes}
-          labels={createPreviewPanelLabels(t)}
-        />
-      </div>
+              <div className="mt-5 grid min-w-0 gap-5">
+                {themes.map((theme) => (
+                  <ThemeCard
+                    key={theme.id}
+                    t={t}
+                    locale={locale}
+                    projectSlug={pageData.project.slug}
+                    theme={theme}
+                    colorTokenOptions={themeColorTokenOptions}
+                  />
+                ))}
+              </div>
 
-      <div className="mt-10 grid gap-6 lg:grid-cols-2">
-        {themes.map((theme) => (
-          <ThemeCard
-            key={theme.id}
-            t={t}
-            locale={locale}
-            projectSlug={pageData.project.slug}
-            theme={theme}
-            colorTokenOptions={themeColorTokenOptions}
-          />
-        ))}
-      </div>
+              <section className="border-border-subtle bg-surface-primary shadow-soft mt-5 min-w-0 rounded-3xl border p-4 sm:p-6">
+                <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                  <div className="min-w-0">
+                    <p className="text-content-tertiary text-sm font-semibold tracking-[0.18em] uppercase">
+                      {t('semanticTokens.eyebrow')}
+                    </p>
+                    <h2 className="mt-2 text-2xl font-semibold tracking-tight">
+                      {t('semanticTokens.title')}
+                    </h2>
+                  </div>
 
-      <section className="border-border-subtle bg-surface-primary shadow-soft mt-10 rounded-3xl border p-6">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="text-content-tertiary text-sm font-semibold tracking-[0.18em] uppercase">
-              {t('semanticTokens.eyebrow')}
-            </p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-              {t('semanticTokens.title')}
-            </h2>
-          </div>
+                  <p className="text-content-secondary text-sm">
+                    {t('semanticTokens.count', {
+                      count: semanticColorRows.length,
+                    })}
+                  </p>
+                </div>
 
-          <p className="text-content-secondary text-sm">
-            {t('semanticTokens.count', { count: semanticColorRows.length })}
-          </p>
-        </div>
+                {colorRowsResult.isReadable ? (
+                  <div className="mt-6 grid min-w-0 gap-4">
+                    {semanticColorRows.length > 0 ? (
+                      semanticColorRows.map((row) => {
+                        const currentReference =
+                          row.reference ??
+                          (typeof row.rawValue === 'string'
+                            ? row.rawValue
+                            : '');
 
-        {colorRowsResult.isReadable ? (
-          <div className="mt-6 grid gap-4">
-            {semanticColorRows.length > 0 ? (
-              semanticColorRows.map((row) => {
-                const currentReference =
-                  row.reference ??
-                  (typeof row.rawValue === 'string' ? row.rawValue : '');
+                        const currentReferencePath = currentReference
+                          ? tokenReferenceToPath(currentReference)
+                          : null;
 
-                const currentReferencePath = currentReference
-                  ? tokenReferenceToPath(currentReference)
-                  : null;
+                        const resolvedColorValue = currentReference
+                          ? getResolvedColorValueForReference({
+                              reference: currentReference,
+                              primitiveOptions: primitiveColorAliasOptions,
+                            })
+                          : null;
 
-                const resolvedColorValue = currentReference
-                  ? getResolvedColorValueForReference({
-                      reference: currentReference,
-                      primitiveOptions: primitiveColorAliasOptions,
-                    })
-                  : null;
+                        return (
+                          <article
+                            key={row.id}
+                            className="border-border-subtle bg-background-subtle min-w-0 rounded-2xl border p-4"
+                          >
+                            <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] lg:items-start">
+                              <div className="min-w-0">
+                                <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
+                                  {t('semanticTokens.path')}
+                                </p>
+                                <h3 className="wrap-break-words mt-1 font-mono text-sm font-semibold">
+                                  {row.path}
+                                </h3>
 
-                return (
-                  <article
-                    key={row.id}
-                    className="border-border-subtle bg-background-subtle rounded-2xl border p-4"
-                  >
-                    <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] lg:items-start">
-                      <div>
-                        <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
-                          {t('semanticTokens.path')}
-                        </p>
-                        <h3 className="wrap-break-words mt-1 font-mono text-sm font-semibold">
-                          {row.path}
-                        </h3>
+                                <p className="text-content-tertiary mt-4 text-xs font-semibold tracking-[0.18em] uppercase">
+                                  {t('semanticTokens.currentAlias')}
+                                </p>
+                                <p className="text-content-secondary wrap-break-words mt-1 font-mono text-sm">
+                                  {currentReference ||
+                                    t('semanticTokens.noAlias')}
+                                </p>
 
-                        <p className="text-content-tertiary mt-4 text-xs font-semibold tracking-[0.18em] uppercase">
-                          {t('semanticTokens.currentAlias')}
-                        </p>
-                        <p className="text-content-secondary wrap-break-words mt-1 font-mono text-sm">
-                          {currentReference || t('semanticTokens.noAlias')}
-                        </p>
+                                <ResolvedColorPreview
+                                  t={t}
+                                  resolvedColorValue={resolvedColorValue}
+                                />
+                              </div>
 
-                        <ResolvedColorPreview
-                          t={t}
-                          resolvedColorValue={resolvedColorValue}
-                        />
-                      </div>
-
-                      <SemanticColorTokenAliasEditor
-                        locale={locale}
-                        projectSlug={pageData.project.slug}
-                        tokenPath={row.path}
-                        initialReferencePath={currentReferencePath ?? ''}
-                        resolvedColorValue={resolvedColorValue}
-                        primitiveOptions={primitiveColorAliasOptions}
+                              <SemanticColorTokenAliasEditor
+                                locale={locale}
+                                projectSlug={pageData.project.slug}
+                                tokenPath={row.path}
+                                initialReferencePath={
+                                  currentReferencePath ?? ''
+                                }
+                                resolvedColorValue={resolvedColorValue}
+                                primitiveOptions={primitiveColorAliasOptions}
+                              />
+                            </div>
+                          </article>
+                        );
+                      })
+                    ) : (
+                      <EmptyState
+                        title={t('semanticTokens.emptyTitle')}
+                        description={t('semanticTokens.emptyDescription')}
                       />
-                    </div>
-                  </article>
-                );
-              })
-            ) : (
-              <EmptyState
-                title={t('semanticTokens.emptyTitle')}
-                description={t('semanticTokens.emptyDescription')}
-              />
-            )}
+                    )}
+                  </div>
+                ) : (
+                  <EmptyState
+                    title={t('semanticTokens.invalidTitle')}
+                    description={t('semanticTokens.invalidDescription')}
+                  />
+                )}
+              </section>
+            </div>
           </div>
-        ) : (
-          <EmptyState
-            title={t('semanticTokens.invalidTitle')}
-            description={t('semanticTokens.invalidDescription')}
+        }
+        preview={
+          <PreviewPanel
+            variant="rail"
+            themes={previewThemes}
+            labels={createPreviewPanelLabels(t)}
           />
-        )}
-      </section>
+        }
+      />
     </section>
   );
 }
@@ -240,25 +260,25 @@ function ThemeCard({
   const isDefaultTheme = theme.mode === 'light';
 
   return (
-    <article className="border-border-subtle bg-surface-primary shadow-soft rounded-3xl border p-6">
-      <div className="flex items-start justify-between gap-4">
-        <div>
+    <article className="border-border-subtle bg-surface-primary shadow-soft min-w-0 rounded-3xl border p-4 sm:p-6">
+      <div className="flex min-w-0 items-start justify-between gap-4">
+        <div className="min-w-0">
           <p className="text-content-tertiary text-sm font-semibold tracking-[0.18em] uppercase">
             {t(`themes.${theme.mode}`)}
           </p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight">
+          <h2 className="mt-2 truncate text-2xl font-semibold tracking-tight">
             {theme.name}
           </h2>
         </div>
 
         {isDefaultTheme ? (
-          <span className="border-action-primary/30 bg-action-primary/10 text-action-primary rounded-full border px-3 py-1 text-xs font-semibold">
+          <span className="border-action-primary/30 bg-action-primary/10 text-action-primary shrink-0 rounded-full border px-3 py-1 text-xs font-semibold">
             {t('themes.defaultBadge')}
           </span>
         ) : null}
       </div>
 
-      <div className="mt-6">
+      <div className="mt-6 min-w-0">
         <h3 className="text-content-tertiary text-sm font-semibold tracking-[0.18em] uppercase">
           {t('themeMapping.title')}
         </h3>
@@ -267,7 +287,7 @@ function ThemeCard({
           {t('themeMapping.description')}
         </p>
 
-        <div className="mt-4 grid gap-3">
+        <div className="mt-4 grid min-w-0 gap-3">
           {themeColorKeys.map((colorKey) => {
             const rawValue = getThemeColorRawValue({
               tokens: theme.tokens,
@@ -328,7 +348,7 @@ function ThemeCard({
         </div>
       </div>
 
-      <div className="mt-6">
+      <div className="mt-6 min-w-0">
         <h3 className="text-content-tertiary text-sm font-semibold tracking-[0.18em] uppercase">
           {t('contrast.title')}
         </h3>
@@ -337,7 +357,7 @@ function ThemeCard({
           {t('contrast.description')}
         </p>
 
-        <div className="mt-4 grid gap-3">
+        <div className="mt-4 grid min-w-0 gap-3">
           {contrastPairs.map((pair) => (
             <ContrastPairRow key={pair.key} t={t} pair={pair} />
           ))}
@@ -355,13 +375,13 @@ function ContrastPairRow({
   pair: ThemeColorPair;
 }) {
   return (
-    <div className="border-border-subtle bg-background-subtle rounded-2xl border p-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
+    <div className="border-border-subtle bg-background-subtle min-w-0 rounded-2xl border p-4">
+      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
           <p className="text-sm font-semibold">
             {t(`contrast.pairs.${pair.key}`)}
           </p>
-          <p className="text-content-tertiary mt-1 text-xs">
+          <p className="text-content-tertiary mt-1 text-xs break-words">
             {pair.foregroundReferencePath
               ? `{${pair.foregroundReferencePath}}`
               : pair.foregroundKey}{' '}
@@ -372,7 +392,7 @@ function ContrastPairRow({
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex min-w-0 flex-wrap items-center gap-3">
           <ColorPreview
             label={t('contrast.foreground')}
             value={pair.foregroundValue}
@@ -456,19 +476,19 @@ function ColorPreview({
   value: string | null;
 }) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex min-w-0 items-center gap-2">
       {value ? (
         <span
           role="img"
           aria-label={`${label}: ${value}`}
-          className="border-border-subtle size-5 rounded-full border"
+          className="border-border-subtle size-5 shrink-0 rounded-full border"
           style={{ backgroundColor: value }}
         />
       ) : (
-        <span className="border-border-default size-5 rounded-full border border-dashed" />
+        <span className="border-border-default size-5 shrink-0 rounded-full border border-dashed" />
       )}
 
-      <span className="text-content-secondary font-mono text-xs">
+      <span className="text-content-secondary min-w-0 truncate font-mono text-xs">
         {value ?? '—'}
       </span>
     </div>
@@ -491,14 +511,14 @@ function ResolvedColorPreview({
   }
 
   return (
-    <div className="text-content-secondary mt-4 flex items-center gap-2 text-xs">
+    <div className="text-content-secondary mt-4 flex min-w-0 items-center gap-2 text-xs">
       <span
         role="img"
         aria-label={`${t('semanticTokens.resolvedValue')}: ${resolvedColorValue}`}
-        className="border-border-subtle size-5 rounded-full border"
+        className="border-border-subtle size-5 shrink-0 rounded-full border"
         style={{ backgroundColor: resolvedColorValue }}
       />
-      <span>
+      <span className="min-w-0 truncate">
         {t('semanticTokens.resolvedValue')}: {resolvedColorValue}
       </span>
     </div>
@@ -513,7 +533,7 @@ function EmptyState({
   description: string;
 }) {
   return (
-    <div className="border-border-default rounded-2xl border border-dashed p-8 text-center">
+    <div className="border-border-default min-w-0 rounded-2xl border border-dashed p-6 text-center sm:p-8">
       <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
       <p className="text-content-secondary mx-auto mt-3 max-w-xl text-sm leading-6">
         {description}
