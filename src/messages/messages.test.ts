@@ -5,6 +5,7 @@ import { mergeMessages, type MessageObject } from './merge-messages';
 import { componentGuidelineMessages } from './component-guidelines';
 import { componentPreviewMessages } from './component-preview-messages';
 import { themePreviewMessages } from './theme-preview-messages';
+import { themeEditorMessages } from './theme-editor-messages';
 
 type JsonValue = string | number | boolean | null | JsonObject | JsonValue[];
 
@@ -54,10 +55,13 @@ function createLocalizedMessages(
 ): JsonObject {
   const scopedMessages = mergeMessages(
     mergeMessages(
-      componentGuidelineMessages[locale],
-      componentPreviewMessages[locale],
+      mergeMessages(
+        componentGuidelineMessages[locale],
+        componentPreviewMessages[locale],
+      ),
+      themePreviewMessages[locale],
     ),
-    themePreviewMessages[locale],
+    themeEditorMessages[locale],
   );
 
   return mergeMessages(baseMessages, scopedMessages) as unknown as JsonObject;
@@ -94,6 +98,24 @@ describe('localized messages', () => {
 
     expect(serializedEnglishMessages).not.toContain('DS-090');
     expect(serializedFrenchMessages).not.toContain('DS-090');
+  });
+
+  it('does not expose obsolete Themes contrast rollout copy', () => {
+    const serializedEnglishMessages = serializeMessageSection(
+      localizedMessages.en,
+      'ThemesEditorPage',
+    );
+    const serializedFrenchMessages = serializeMessageSection(
+      localizedMessages.fr,
+      'ThemesEditorPage',
+    );
+
+    expect(serializedEnglishMessages).not.toContain(
+      'will be calculated in the accessibility epic',
+    );
+    expect(serializedFrenchMessages).not.toContain(
+      'seront calculés dans l’épic accessibilité',
+    );
   });
 
   it('does not expose obsolete Components rollout copy', () => {
