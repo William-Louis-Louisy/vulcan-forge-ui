@@ -5,7 +5,10 @@ import { useTranslations } from 'next-intl';
 import type { Locale } from '@/i18n/routing';
 import { ComponentVisualMatrix } from './ComponentVisualMatrix';
 import type { ComponentRegistryItem } from './components-registry.utils';
-import { createComponentTokenBindingResolution } from './component-token-bindings.utils';
+import {
+  createComponentPreviewSemanticPalette,
+  createComponentTokenBindingResolution,
+} from './component-token-bindings.utils';
 import { useComponentContractPreview } from './ComponentContractPreviewContext';
 
 type RawTokenSet = {
@@ -43,8 +46,15 @@ export function ComponentFoundationsPreviewClient({
       }),
     [contract.tokenBindings, rawTokenSets],
   );
+  const semanticPalette = useMemo(
+    () => createComponentPreviewSemanticPalette(rawTokenSets),
+    [rawTokenSets],
+  );
   const hasFallback =
     contract.variants.length === 0 || contract.sizes.length === 0;
+  const missingStatusTokenPaths = semanticPalette.missingStatusTones
+    .map((tone) => `color.semantic.status.${tone}`)
+    .join(', ');
 
   return (
     <section className="border-border-subtle border-b p-4">
@@ -64,6 +74,15 @@ export function ComponentFoundationsPreviewClient({
         </div>
       ) : null}
 
+      {component.type === 'alert' &&
+      semanticPalette.missingStatusTones.length > 0 ? (
+        <div className="border-action-warning/30 bg-action-warning/10 text-action-warning mt-3 rounded-md border px-3 py-2 text-xs leading-5">
+          {t('foundationsPreview.missingStatusColorsNotice', {
+            paths: missingStatusTokenPaths,
+          })}
+        </div>
+      ) : null}
+
       <div className="mt-3">
         <ComponentVisualMatrix
           locale={locale}
@@ -73,6 +92,7 @@ export function ComponentFoundationsPreviewClient({
             state: t('foundationsPreview.state'),
           }}
           tokenBindingResolution={tokenBindingResolution}
+          semanticPalette={semanticPalette}
         />
       </div>
 
