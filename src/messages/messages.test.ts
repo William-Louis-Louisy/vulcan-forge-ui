@@ -3,6 +3,7 @@ import frMessages from './fr.json';
 import { describe, expect, it } from 'vitest';
 import { mergeMessages, type MessageObject } from './merge-messages';
 import { componentGuidelineMessages } from './component-guidelines';
+import { componentPreviewMessages } from './component-preview-messages';
 
 type JsonValue = string | number | boolean | null | JsonObject | JsonValue[];
 
@@ -42,15 +43,28 @@ function getEmptyStringPaths(value: JsonObject, prefix = ''): string[] {
   });
 }
 
+function serializeMessageSection(messages: JsonObject, key: string): string {
+  return JSON.stringify(messages[key] ?? {});
+}
+
+function createLocalizedMessages(
+  baseMessages: MessageObject,
+  locale: 'en' | 'fr',
+): JsonObject {
+  const componentMessages = mergeMessages(
+    componentGuidelineMessages[locale],
+    componentPreviewMessages[locale],
+  );
+
+  return mergeMessages(
+    baseMessages,
+    componentMessages,
+  ) as unknown as JsonObject;
+}
+
 const localizedMessages = {
-  en: mergeMessages(
-    enMessages as MessageObject,
-    componentGuidelineMessages.en,
-  ) as unknown as JsonObject,
-  fr: mergeMessages(
-    frMessages as MessageObject,
-    componentGuidelineMessages.fr,
-  ) as unknown as JsonObject,
+  en: createLocalizedMessages(enMessages as MessageObject, 'en'),
+  fr: createLocalizedMessages(frMessages as MessageObject, 'fr'),
 };
 
 describe('localized messages', () => {
@@ -79,5 +93,36 @@ describe('localized messages', () => {
 
     expect(serializedEnglishMessages).not.toContain('DS-090');
     expect(serializedFrenchMessages).not.toContain('DS-090');
+  });
+
+  it('does not expose obsolete Components rollout copy', () => {
+    const serializedEnglishMessages = serializeMessageSection(
+      localizedMessages.en,
+      'ComponentsRegistryPage',
+    );
+    const serializedFrenchMessages = serializeMessageSection(
+      localizedMessages.fr,
+      'ComponentsRegistryPage',
+    );
+
+    expect(serializedEnglishMessages).not.toContain(
+      'Persistence will be added',
+    );
+    expect(serializedEnglishMessages).not.toContain(
+      'not persisted in the model yet',
+    );
+    expect(serializedEnglishMessages).not.toContain('DS-150-09-04');
+    expect(serializedEnglishMessages).not.toContain('coming next');
+    expect(serializedEnglishMessages).not.toContain('not modeled yet');
+
+    expect(serializedFrenchMessages).not.toContain(
+      'La persistance sera ajoutée',
+    );
+    expect(serializedFrenchMessages).not.toContain(
+      'ne sont pas encore persistés',
+    );
+    expect(serializedFrenchMessages).not.toContain('DS-150-09-04');
+    expect(serializedFrenchMessages).not.toContain('à venir');
+    expect(serializedFrenchMessages).not.toContain('non encore modélisées');
   });
 });

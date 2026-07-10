@@ -6,6 +6,7 @@ import {
   createComponentContractFromDraft,
   createComponentContractDraftFingerprint,
   createEmptyForbiddenPatternDraft,
+  createEmptyTokenBindingDraft,
   createEmptyAccessibilityRuleDraft,
 } from './component-contract-editor.utils';
 import { describe, expect, it } from 'vitest';
@@ -229,6 +230,12 @@ describe('component contract editor utils', () => {
       draftId: expect.any(String),
       key: '',
     });
+    expect(createEmptyTokenBindingDraft()).toMatchObject({
+      draftId: expect.any(String),
+      key: '',
+      tokenType: 'color',
+      tokenPath: '',
+    });
     expect(createEmptyAccessibilityRuleDraft()).toMatchObject({
       key: '',
       severity: 'warning',
@@ -240,11 +247,30 @@ describe('component contract editor utils', () => {
   });
 
   it('does not treat internal draft identities as persisted changes', () => {
-    const firstDraft = createComponentContractDraft(buttonContract);
-    const secondDraft = createComponentContractDraft(buttonContract);
+    const firstDraft = createComponentContractDraft({
+      ...buttonContract,
+      tokenBindings: [
+        {
+          key: 'radius',
+          tokenType: 'radius',
+          tokenPath: 'radius.md',
+        },
+      ],
+    });
+    const secondDraft = createComponentContractDraft({
+      ...buttonContract,
+      tokenBindings: [
+        {
+          key: 'radius',
+          tokenType: 'radius',
+          tokenPath: 'radius.md',
+        },
+      ],
+    });
 
     firstDraft.variants[0]!.draftId = 'variant-custom';
     firstDraft.states[0]!.draftId = 'state-custom';
+    firstDraft.tokenBindings[0]!.draftId = 'token-binding-custom';
 
     expect(createComponentContractDraftFingerprint(firstDraft)).toBe(
       createComponentContractDraftFingerprint(secondDraft),
@@ -287,8 +313,9 @@ describe('component contract editor utils', () => {
       },
     ]);
 
-    expect(draft.tokenBindings).toEqual([
+    expect(draft.tokenBindings).toMatchObject([
       {
+        draftId: expect.any(String),
         key: 'radius',
         tokenType: 'radius',
         tokenPath: 'radius.md',

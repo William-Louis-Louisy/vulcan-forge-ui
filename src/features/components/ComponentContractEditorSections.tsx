@@ -1,23 +1,23 @@
 'use client';
 
-import type { CSSProperties, ReactNode } from 'react';
 import { Button } from '@/components/ui';
-import { ComponentAnatomyEditor } from './ComponentAnatomyEditor';
 import {
-  createEmptyAccessibilityRuleDraft,
-  createEmptyForbiddenPatternDraft,
   createEmptySizeDraft,
   createEmptyStateDraft,
-  createEmptyTokenBindingDraft,
   createEmptyVariantDraft,
-  type ComponentAccessibilityRuleDraft,
-  type ComponentContractEditorDraft,
+  createEmptyTokenBindingDraft,
+  createEmptyForbiddenPatternDraft,
+  createEmptyAccessibilityRuleDraft,
   type ComponentSizeDraft,
-  type ComponentStateDraft,
-  type ComponentTokenBindingDraft,
-  type ComponentVariantDraft,
   type LocalizedTextDraft,
+  type ComponentStateDraft,
+  type ComponentVariantDraft,
+  type ComponentTokenBindingDraft,
+  type ComponentContractEditorDraft,
+  type ComponentAccessibilityRuleDraft,
 } from './component-contract-editor.utils';
+import type { CSSProperties, ReactNode } from 'react';
+import { ComponentAnatomyEditor } from './ComponentAnatomyEditor';
 import type { ComponentTokenOption } from './component-token-bindings.utils';
 
 export type ComponentContractEditorLabels = {
@@ -647,7 +647,6 @@ function AccessibilityRuleCard({
           mono
           onChange={(key) => onChange({ ...rule, key })}
         />
-
         <label className="grid min-w-0 gap-1.5">
           <span className="text-content-secondary text-xs font-semibold">
             {labels.accessibility.severity}
@@ -668,22 +667,21 @@ function AccessibilityRuleCard({
             <option value="critical">{labels.severities.critical}</option>
           </select>
         </label>
-
         <RemoveIconButton label={labels.fields.remove} onClick={onRemove} />
       </div>
 
-      <div className="mt-2.5">
+      <div className="mt-2">
         <CompactTextarea
           label={descriptionLabel}
           value={rule.description[activeLocale]}
-          rows={3}
-          onChange={(value) =>
+          rows={2}
+          onChange={(description) =>
             onChange({
               ...rule,
               description: updateLocalizedText(
                 rule.description,
                 activeLocale,
-                value,
+                description,
               ),
             })
           }
@@ -705,7 +703,6 @@ function ForbiddenPatternsSection({
   return (
     <EditorSection
       title={labels.forbiddenPatterns.title}
-      tone="danger"
       action={
         <Button
           variant="secondary"
@@ -724,11 +721,11 @@ function ForbiddenPatternsSection({
         </Button>
       }
     >
-      <div className="border-action-danger/20 bg-action-danger/5 divide-action-danger/15 min-w-0 divide-y overflow-hidden rounded-md border">
+      <div className="grid min-w-0 gap-3">
         {draft.forbiddenPatterns.map((pattern, index) => (
           <div
-            key={`${pattern.en}-${pattern.fr}-${index}`}
-            className="grid min-w-0 gap-2 px-3 py-3 sm:grid-cols-[minmax(0,1fr)_2rem] sm:items-end"
+            key={index}
+            className="grid min-w-0 gap-2 md:grid-cols-[minmax(0,1fr)_2rem] md:items-end"
           >
             <CompactTextarea
               label={patternLabel}
@@ -794,7 +791,7 @@ function VisualTokensSection({
       <div className="border-border-subtle min-w-0 overflow-hidden rounded-md border">
         {draft.tokenBindings.map((binding, index) => (
           <TokenBindingRow
-            key={`${binding.key}-${binding.tokenPath}-${index}`}
+            key={binding.draftId}
             labels={labels}
             activeLocale={activeLocale}
             binding={binding}
@@ -948,7 +945,7 @@ function EditorSection({
   children: ReactNode;
 }) {
   return (
-    <section className="border-border-subtle min-w-0 border-t pt-5">
+    <section className="min-w-0 pt-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <h3

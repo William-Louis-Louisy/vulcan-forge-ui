@@ -1,18 +1,23 @@
 'use client';
 
-import { useState } from 'react';
-import type { CSSProperties } from 'react';
+import { useState, type CSSProperties } from 'react';
 import type { Locale } from '@/i18n/routing';
 import { resolveLocalizedStringWithFallback } from '@/domain/i18n';
 import type { ComponentRegistryItem } from './components-registry.utils';
 import { toResolvableLocalizedString } from './components-registry-page.utils';
-import type { ComponentTokenBindingResolution } from './component-token-bindings.utils';
+import {
+  getComponentPreviewBinding,
+  type ComponentPreviewSemanticPalette,
+  type ComponentPreviewStatusTone,
+  type ComponentPreviewTokenRole,
+  type ComponentTokenBindingResolution,
+} from './component-token-bindings.utils';
 
 type ComponentVariant = ComponentRegistryItem['contract']['variants'][number];
 type ComponentSize = ComponentRegistryItem['contract']['sizes'][number];
 
 type PreviewSize = 'small' | 'medium' | 'large';
-export type AlertPreviewTone = 'info' | 'success' | 'warning' | 'danger';
+export type AlertPreviewTone = ComponentPreviewStatusTone;
 
 export type ComponentVisualMatrixLabels = {
   baseState: string;
@@ -33,6 +38,17 @@ const fallbackSize: ComponentSize = {
     en: 'Medium',
     fr: 'Moyen',
   },
+};
+
+const emptySemanticPalette: ComponentPreviewSemanticPalette = {
+  action: {},
+  status: {
+    info: 'var(--vf-action-info)',
+    success: 'var(--vf-action-success)',
+    warning: 'var(--vf-action-warning)',
+    danger: 'var(--vf-action-danger)',
+  },
+  missingStatusTones: ['info', 'success', 'warning', 'danger'],
 };
 
 export function createVisualMatrixAxes(
@@ -110,11 +126,13 @@ export function ComponentVisualMatrix({
   component,
   labels,
   tokenBindingResolution,
+  semanticPalette,
 }: {
   locale: Locale;
   component: ComponentRegistryItem;
   labels: ComponentVisualMatrixLabels;
   tokenBindingResolution: ComponentTokenBindingResolution;
+  semanticPalette: ComponentPreviewSemanticPalette;
 }) {
   const { variants, sizes, states } = createVisualMatrixAxes(
     component.contract,
@@ -183,6 +201,7 @@ export function ComponentVisualMatrix({
                         sizeKey={size.key}
                         stateKey={stateKey}
                         tokenBindingResolution={tokenBindingResolution}
+                        semanticPalette={semanticPalette}
                       />
                     </div>
                   </td>
@@ -211,9 +230,12 @@ function resolveMatrixLabel(
 
 export function getResolvedStyleValue(
   tokenBindingResolution: ComponentTokenBindingResolution,
-  key: string,
+  role: ComponentPreviewTokenRole,
 ): string | number | undefined {
-  const value = tokenBindingResolution.bindings[key]?.resolvedValue;
+  const value = getComponentPreviewBinding(
+    tokenBindingResolution,
+    role,
+  )?.resolvedValue;
 
   if (typeof value === 'string' || typeof value === 'number') {
     return value;
@@ -224,9 +246,12 @@ export function getResolvedStyleValue(
 
 export function getResolvedStringStyleValue(
   tokenBindingResolution: ComponentTokenBindingResolution,
-  key: string,
+  role: ComponentPreviewTokenRole,
 ): string | undefined {
-  const value = tokenBindingResolution.bindings[key]?.resolvedValue;
+  const value = getComponentPreviewBinding(
+    tokenBindingResolution,
+    role,
+  )?.resolvedValue;
 
   return typeof value === 'string' ? value : undefined;
 }
@@ -258,6 +283,7 @@ export function ComponentPreview({
   sizeKey,
   stateKey,
   tokenBindingResolution,
+  semanticPalette = emptySemanticPalette,
 }: {
   type: ComponentRegistryItem['type'];
   name: string;
@@ -265,6 +291,7 @@ export function ComponentPreview({
   sizeKey: string;
   stateKey: string;
   tokenBindingResolution: ComponentTokenBindingResolution;
+  semanticPalette?: ComponentPreviewSemanticPalette;
 }) {
   const normalizedStateKey = stateKey.toLowerCase();
   const isDisabled = normalizedStateKey.includes('disabled');
@@ -284,9 +311,14 @@ export function ComponentPreview({
       <div className="w-full min-w-0">
         <span className="sr-only">{name}</span>
         <div
+          data-preview-component="textField"
           style={previewTokenStyles}
           className={[
-            'flex w-full items-center rounded-md border px-2 text-left',
+            'flex w-full items-center border text-left',
+            hasDefinedStyle(previewTokenStyles.borderRadius)
+              ? ''
+              : 'rounded-md',
+            hasHorizontalPadding(previewTokenStyles) ? '' : 'px-2',
             size === 'small'
               ? 'min-h-8 text-[0.6875rem]'
               : size === 'large'
@@ -331,6 +363,7 @@ export function ComponentPreview({
         isDisabled={isDisabled}
         isLoading={isLoading}
         previewTokenStyles={previewTokenStyles}
+        statusColor={semanticPalette.status[getAlertPreviewTone(variantKey)]}
       />
     );
   }
@@ -344,12 +377,31 @@ export function ComponentPreview({
         isClosed={isClosed}
         isLoading={isLoading}
         previewTokenStyles={previewTokenStyles}
+        semanticPalette={semanticPalette}
       />
     );
   }
 
   const variantTone = getButtonVariantTone(variantKey);
   const structuralTokenStyles = getStructuralTokenStyles(previewTokenStyles);
+  const semanticActionColor =
+    variantTone === 'danger'
+      ? semanticPalette.action.danger
+      : variantTone === 'primary'
+        ? semanticPalette.action.primary
+        : undefined;
+  const semanticActionStyles = semanticActionColor
+    ? {
+        backgroundColor: semanticActionColor,
+        borderColor: semanticActionColor,
+      }
+    : {};
+  const buttonStyles =
+    variantTone === 'primary'
+      ? mergeDefinedStyles(semanticActionStyles, previewTokenStyles)
+      : variantTone === 'danger'
+        ? mergeDefinedStyles(semanticActionStyles, structuralTokenStyles)
+        : structuralTokenStyles;
 
   return (
     <button
@@ -357,16 +409,29 @@ export function ComponentPreview({
       disabled={isDisabled}
       aria-busy={isLoading || undefined}
       tabIndex={-1}
-      style={
-        variantTone === 'primary' ? previewTokenStyles : structuralTokenStyles
-      }
+      style={buttonStyles}
       className={[
-        'rounded-md border font-semibold whitespace-nowrap transition',
+        'border font-semibold whitespace-nowrap transition',
+        hasDefinedStyle(buttonStyles.borderRadius) ? '' : 'rounded-md',
+        hasHorizontalPadding(buttonStyles)
+          ? ''
+          : size === 'small'
+            ? 'px-2.5'
+            : size === 'large'
+              ? 'px-4'
+              : 'px-3',
+        hasVerticalPadding(buttonStyles)
+          ? ''
+          : size === 'small'
+            ? 'py-1'
+            : size === 'large'
+              ? 'py-2'
+              : 'py-1.5',
         size === 'small'
-          ? 'min-h-8 px-2.5 py-1 text-[0.6875rem]'
+          ? 'min-h-8 text-[0.6875rem]'
           : size === 'large'
-            ? 'min-h-10 px-4 py-2 text-sm'
-            : 'min-h-9 px-3 py-1.5 text-xs',
+            ? 'min-h-10 text-sm'
+            : 'min-h-9 text-xs',
         variantTone === 'primary'
           ? 'border-action-primary bg-action-primary text-action-primary-content'
           : variantTone === 'danger'
@@ -406,10 +471,29 @@ function CardPreview({
 
   return (
     <article
+      data-preview-component="card"
       style={previewTokenStyles}
       className={[
-        'bg-surface-primary text-content-primary w-full overflow-hidden rounded-md border transition',
-        size === 'small' ? 'p-2' : size === 'large' ? 'p-3.5' : 'p-3',
+        'w-full overflow-hidden border transition',
+        hasDefinedStyle(previewTokenStyles.backgroundColor)
+          ? ''
+          : 'bg-surface-primary',
+        hasDefinedStyle(previewTokenStyles.color) ? '' : 'text-content-primary',
+        hasDefinedStyle(previewTokenStyles.borderRadius) ? '' : 'rounded-md',
+        hasHorizontalPadding(previewTokenStyles)
+          ? ''
+          : size === 'small'
+            ? 'px-2'
+            : size === 'large'
+              ? 'px-3.5'
+              : 'px-3',
+        hasVerticalPadding(previewTokenStyles)
+          ? ''
+          : size === 'small'
+            ? 'py-2'
+            : size === 'large'
+              ? 'py-3.5'
+              : 'py-3',
         isFocus && isInteractive
           ? 'border-action-primary ring-action-primary/25 ring-2'
           : 'border-border-subtle',
@@ -462,6 +546,7 @@ function AlertPreview({
   isDisabled,
   isLoading,
   previewTokenStyles,
+  statusColor,
 }: {
   name: string;
   variantKey: string;
@@ -469,6 +554,7 @@ function AlertPreview({
   isDisabled: boolean;
   isLoading: boolean;
   previewTokenStyles: CSSProperties;
+  statusColor?: string;
 }) {
   const tone = getAlertPreviewTone(variantKey);
   const toneClassNames: Record<AlertPreviewTone, string> = {
@@ -485,17 +571,40 @@ function AlertPreview({
     warning: '!',
     danger: '×',
   };
+  const semanticStatusStyles = statusColor
+    ? {
+        color: statusColor,
+        borderColor: `color-mix(in srgb, ${statusColor} 35%, transparent)`,
+        backgroundColor: `color-mix(in srgb, ${statusColor} 12%, transparent)`,
+      }
+    : {};
+  const alertStyles = mergeDefinedStyles(
+    semanticStatusStyles,
+    previewTokenStyles,
+  );
 
   return (
     <div
-      style={getStructuralTokenStyles(previewTokenStyles)}
+      data-preview-component="alert"
+      style={alertStyles}
       className={[
-        'flex w-full items-start rounded-md border',
-        size === 'small'
-          ? 'gap-1.5 p-2'
-          : size === 'large'
-            ? 'gap-2.5 p-3.5'
-            : 'gap-2 p-3',
+        'flex w-full items-start border',
+        hasDefinedStyle(alertStyles.borderRadius) ? '' : 'rounded-md',
+        hasHorizontalPadding(alertStyles)
+          ? ''
+          : size === 'small'
+            ? 'px-2'
+            : size === 'large'
+              ? 'px-3.5'
+              : 'px-3',
+        hasVerticalPadding(alertStyles)
+          ? ''
+          : size === 'small'
+            ? 'py-2'
+            : size === 'large'
+              ? 'py-3.5'
+              : 'py-3',
+        size === 'small' ? 'gap-1.5' : size === 'large' ? 'gap-2.5' : 'gap-2',
         toneClassNames[tone],
         isDisabled ? 'opacity-45' : '',
       ].join(' ')}
@@ -523,6 +632,7 @@ function DialogPreview({
   isClosed,
   isLoading,
   previewTokenStyles,
+  semanticPalette,
 }: {
   name: string;
   variantKey: string;
@@ -530,8 +640,14 @@ function DialogPreview({
   isClosed: boolean;
   isLoading: boolean;
   previewTokenStyles: CSSProperties;
+  semanticPalette: ComponentPreviewSemanticPalette;
 }) {
   const isDanger = getButtonVariantTone(variantKey) === 'danger';
+  const primaryActionColor = isDanger
+    ? semanticPalette.action.danger
+    : semanticPalette.action.primary;
+  const secondaryActionColor =
+    semanticPalette.action.secondary ?? semanticPalette.action.primary;
 
   return (
     <div
@@ -541,14 +657,36 @@ function DialogPreview({
       ].join(' ')}
     >
       <section
+        data-preview-component="dialog"
         style={previewTokenStyles}
         className={[
-          'border-border-subtle bg-surface-primary text-content-primary w-full rounded-md border shadow-md',
+          'border-border-subtle w-full border shadow-md',
+          hasDefinedStyle(previewTokenStyles.backgroundColor)
+            ? ''
+            : 'bg-surface-primary',
+          hasDefinedStyle(previewTokenStyles.color)
+            ? ''
+            : 'text-content-primary',
+          hasDefinedStyle(previewTokenStyles.borderRadius) ? '' : 'rounded-md',
+          hasHorizontalPadding(previewTokenStyles)
+            ? ''
+            : size === 'small'
+              ? 'px-2'
+              : size === 'large'
+                ? 'px-3'
+                : 'px-2.5',
+          hasVerticalPadding(previewTokenStyles)
+            ? ''
+            : size === 'small'
+              ? 'py-2'
+              : size === 'large'
+                ? 'py-3'
+                : 'py-2.5',
           size === 'small'
-            ? 'max-w-28 p-2'
+            ? 'max-w-28'
             : size === 'large'
-              ? 'max-w-44 p-3'
-              : 'max-w-36 p-2.5',
+              ? 'max-w-44'
+              : 'max-w-36',
         ].join(' ')}
       >
         <header className="flex items-center justify-between gap-2">
@@ -567,8 +705,25 @@ function DialogPreview({
         </div>
 
         <footer className="mt-2 flex items-center justify-end gap-1">
-          <span className="border-border-subtle bg-surface-primary h-4 w-7 rounded border" />
           <span
+            style={
+              secondaryActionColor
+                ? {
+                    borderColor: secondaryActionColor,
+                    backgroundColor: `color-mix(in srgb, ${secondaryActionColor} 10%, transparent)`,
+                  }
+                : undefined
+            }
+            className="border-border-subtle bg-surface-primary h-4 w-7 rounded border"
+          />
+          <span
+            style={
+              primaryActionColor
+                ? {
+                    backgroundColor: primaryActionColor,
+                  }
+                : undefined
+            }
             className={[
               'h-4 w-8 rounded',
               isDanger ? 'bg-action-danger' : 'bg-action-primary',
@@ -620,4 +775,42 @@ function getStructuralTokenStyles(styles: CSSProperties): CSSProperties {
     paddingBlock: styles.paddingBlock,
     transitionDuration: styles.transitionDuration,
   };
+}
+
+function mergeDefinedStyles(
+  ...styles: Array<CSSProperties | undefined>
+): CSSProperties {
+  const mergedStyles: CSSProperties = {};
+
+  for (const style of styles) {
+    if (!style) {
+      continue;
+    }
+
+    for (const [property, value] of Object.entries(style)) {
+      if (value !== undefined && value !== null && value !== '') {
+        Object.assign(mergedStyles, {
+          [property]: value,
+        });
+      }
+    }
+  }
+
+  return mergedStyles;
+}
+
+function hasDefinedStyle(value: CSSProperties[keyof CSSProperties]): boolean {
+  return value !== undefined && value !== null && value !== '';
+}
+
+function hasHorizontalPadding(styles: CSSProperties): boolean {
+  return (
+    hasDefinedStyle(styles.padding) || hasDefinedStyle(styles.paddingInline)
+  );
+}
+
+function hasVerticalPadding(styles: CSSProperties): boolean {
+  return (
+    hasDefinedStyle(styles.padding) || hasDefinedStyle(styles.paddingBlock)
+  );
 }

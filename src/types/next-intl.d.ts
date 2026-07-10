@@ -1,6 +1,7 @@
 import type { routing } from '../i18n/routing';
 import type baseMessages from '../messages/en.json';
 import type { componentGuidelineMessages } from '../messages/component-guidelines';
+import type { componentPreviewMessages } from '../messages/component-preview-messages';
 
 type DeepMerge<Left, Right> = {
   [Key in keyof Left | keyof Right]: Key extends keyof Right
@@ -16,10 +17,12 @@ type DeepMerge<Left, Right> = {
       : never;
 };
 
-type Messages = DeepMerge<
-  typeof baseMessages,
-  (typeof componentGuidelineMessages)['en']
+type ComponentMessages = DeepMerge<
+  (typeof componentGuidelineMessages)['en'],
+  (typeof componentPreviewMessages)['en']
 >;
+
+type Messages = DeepMerge<typeof baseMessages, ComponentMessages>;
 
 declare module 'next-intl' {
   interface AppConfig {

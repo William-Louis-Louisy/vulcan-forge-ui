@@ -1,7 +1,10 @@
 import {
   parseComponentTokenSets,
   createComponentTokenOptions,
+  getComponentPreviewBinding,
   resolveComponentTokenBindings,
+  normalizeComponentPreviewTokenRole,
+  createComponentPreviewSemanticPalette,
   createComponentTokenBindingResolution,
 } from './component-token-bindings.utils';
 import { describe, expect, it } from 'vitest';
@@ -18,10 +21,30 @@ const colorTokenSet: DesignTokenSet = {
       status: 'ready',
     },
     {
+      path: 'color.primitive.green.500',
+      type: 'color',
+      value: '#16a34a',
+      status: 'ready',
+    },
+    {
       path: 'color.background.default',
       type: 'color',
       value: '{color.primitive.blue.500}',
       reference: '{color.primitive.blue.500}',
+      status: 'ready',
+    },
+    {
+      path: 'color.semantic.action.primary',
+      type: 'color',
+      value: '{color.primitive.blue.500}',
+      reference: '{color.primitive.blue.500}',
+      status: 'ready',
+    },
+    {
+      path: 'color.semantic.status.success',
+      type: 'color',
+      value: '{color.primitive.green.500}',
+      reference: '{color.primitive.green.500}',
       status: 'ready',
     },
   ],
@@ -147,6 +170,53 @@ describe('component-token-bindings utils', () => {
     expect(result.bindings.background?.resolvedValue).toBe('#2563eb');
   });
 
+  it('normalizes common visual role aliases', () => {
+    expect(normalizeComponentPreviewTokenRole('background-color')).toBe(
+      'background',
+    );
+    expect(normalizeComponentPreviewTokenRole('borderRadius')).toBe('radius');
+    expect(normalizeComponentPreviewTokenRole('padding-inline')).toBe(
+      'paddingX',
+    );
+  });
+
+  it('finds a resolved binding through its normalized preview role', () => {
+    const resolution = createComponentTokenBindingResolution({
+      bindings: [
+        {
+          key: 'background-color',
+          tokenType: 'color',
+          tokenPath: 'color.background.default',
+        },
+      ],
+      rawTokenSets: [
+        {
+          type: colorTokenSet.type,
+          name: colorTokenSet.name,
+          tokens: colorTokenSet.tokens,
+        },
+      ],
+    });
+
+    expect(
+      getComponentPreviewBinding(resolution, 'background')?.resolvedValue,
+    ).toBe('#2563eb');
+  });
+
+  it('creates semantic action and status palettes with missing tone metadata', () => {
+    const palette = createComponentPreviewSemanticPalette([
+      {
+        type: colorTokenSet.type,
+        name: colorTokenSet.name,
+        tokens: colorTokenSet.tokens,
+      },
+    ]);
+
+    expect(palette.action.primary).toBe('#2563eb');
+    expect(palette.status.success).toBe('#16a34a');
+    expect(palette.missingStatusTones).toEqual(['info', 'warning', 'danger']);
+  });
+
   it('creates token options from raw token sets', () => {
     expect(
       createComponentTokenOptions([
@@ -156,17 +226,12 @@ describe('component-token-bindings utils', () => {
           tokens: colorTokenSet.tokens,
         },
       ]),
-    ).toEqual([
-      {
-        type: 'color',
-        path: 'color.primitive.blue.500',
-        label: 'color.primitive.blue.500',
-      },
-      {
-        type: 'color',
-        path: 'color.background.default',
-        label: 'color.background.default',
-      },
-    ]);
+    ).toEqual(
+      colorTokenSet.tokens.map((token) => ({
+        type: token.type,
+        path: token.path,
+        label: token.path,
+      })),
+    );
   });
 });

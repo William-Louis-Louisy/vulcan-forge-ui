@@ -3,6 +3,7 @@
 import {
   useActionState,
   useCallback,
+  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -10,6 +11,7 @@ import {
 } from 'react';
 import { Button } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
+import { useRouter } from '@/i18n/navigation';
 import type { ComponentContract } from '@/domain/design-system';
 import type { ComponentTokenOption } from './component-token-bindings.utils';
 import {
@@ -27,6 +29,7 @@ import { initialUpdateComponentContractActionState } from './update-component-co
 import { getComponentContractEditorSaveStatus } from './component-contract-editor-save-status';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 import { useProjectSaveStatus } from '@/components/layout/ProjectTopbarBreadcrumb';
+import { useComponentContractPreview } from './ComponentContractPreviewContext';
 
 export type { ComponentContractEditorLabels } from './ComponentContractEditorSections';
 
@@ -44,10 +47,6 @@ type PendingCollectionFocus = {
   selectionEnd: number | null;
 };
 
-function getCollectionDraftItems(draft: ComponentContractEditorDraft) {
-  return [...draft.variants, ...draft.sizes, ...draft.states];
-}
-
 export function ComponentContractEditor({
   locale,
   projectSlug,
@@ -59,6 +58,9 @@ export function ComponentContractEditor({
     updateComponentContractAction,
     initialUpdateComponentContractActionState,
   );
+  const router = useRouter();
+  const previewContext = useComponentContractPreview();
+  const setPreviewContract = previewContext?.setContract;
 
   const initialDraft = useMemo(
     () => createComponentContractDraft(contract),
@@ -67,6 +69,7 @@ export function ComponentContractEditor({
   const [draft, setDraft] =
     useState<ComponentContractEditorDraft>(initialDraft);
   const pendingCollectionFocusRef = useRef<PendingCollectionFocus | null>(null);
+  const lastRefreshedContractRef = useRef<string | null>(null);
   const [activeLocale, setActiveLocale] = useState<'en' | 'fr'>(
     locale === 'fr' ? 'fr' : 'en',
   );
@@ -88,25 +91,25 @@ export function ComponentContractEditor({
         activeElement.getAttribute('aria-label') === labels.fields.key
       ) {
         const inputIndex = getCollectionKeyInputs().indexOf(activeElement);
-        const activeDraftItem = getCollectionDraftItems(draft)[inputIndex];
-        const nextInputIndex = activeDraftItem
-          ? getCollectionDraftItems(nextDraft).findIndex(
-              (item) => item.draftId === activeDraftItem.draftId,
-            )
-          : inputIndex;
 
-        if (nextInputIndex >= 0) {
+        if (inputIndex >= 0) {
           pendingCollectionFocusRef.current = {
-            inputIndex: nextInputIndex,
+            inputIndex,
             selectionStart: activeElement.selectionStart,
             selectionEnd: activeElement.selectionEnd,
           };
         }
       }
 
+      const nextValidation = createComponentContractFromDraft(nextDraft);
+
+      if (nextValidation.status === 'success') {
+        setPreviewContract?.(nextValidation.contract);
+      }
+
       setDraft(nextDraft);
     },
-    [draft, getCollectionKeyInputs, labels.fields.key],
+    [getCollectionKeyInputs, labels.fields.key, setPreviewContract],
   );
 
   useLayoutEffect(() => {
@@ -145,7 +148,10 @@ export function ComponentContractEditor({
     () => createComponentContractDraft(savedContract),
     [savedContract],
   );
-  const validation = createComponentContractFromDraft(draft);
+  const validation = useMemo(
+    () => createComponentContractFromDraft(draft),
+    [draft],
+  );
   const contractPayload =
     validation.status === 'success' ? JSON.stringify(validation.contract) : '';
   const hasUnsavedChanges =
@@ -158,6 +164,21 @@ export function ComponentContractEditor({
     hasValidationError: validation.status === 'error',
     hasFormError: Boolean(state.formError),
   });
+
+  useEffect(() => {
+    if (state.status !== 'success' || !state.savedContract) {
+      return;
+    }
+
+    const savedContractFingerprint = JSON.stringify(state.savedContract);
+
+    if (lastRefreshedContractRef.current === savedContractFingerprint) {
+      return;
+    }
+
+    lastRefreshedContractRef.current = savedContractFingerprint;
+    router.refresh();
+  }, [router, state.savedContract, state.status]);
 
   useProjectSaveStatus(saveContextId, saveStatus);
 

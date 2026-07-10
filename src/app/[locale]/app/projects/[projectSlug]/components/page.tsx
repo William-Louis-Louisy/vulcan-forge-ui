@@ -4,19 +4,26 @@ import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
 import { routing, type Locale } from '@/i18n/routing';
 import {
+  mvpComponentContractSeeds,
+  type ComponentContractType,
+} from '@/domain/design-system';
+import {
   createComponentRegistryItems,
   groupComponentRegistryItemsByCategory,
   type ComponentRegistryItem,
 } from '@/features/components/components-registry.utils';
-import { Badge, EmptyState, Notice } from '@/components/ui';
+import { Badge, Notice } from '@/components/ui';
 import { ComponentDetails } from '@/features/components/ComponentDetailsPanel';
 import { ComponentList } from '@/features/components/ComponentRegistryNavigation';
 import { ComponentAiContractShell } from '@/features/components/ComponentAiContractPreview';
+import { ComponentRegistryState } from '@/features/components/ComponentRegistryState';
+import { ComponentRegistryCreateButton } from '@/features/components/ComponentRegistryCreateButton';
+import { ComponentResponsiveWorkspace } from '@/features/components/ComponentResponsiveWorkspace';
+import { ComponentContractPreviewProvider } from '@/features/components/ComponentContractPreviewContext';
 import { getComponentsRegistryPageData } from '@/features/components/components-registry.queries';
 import { createComponentTokenOptions } from '@/features/components/component-token-bindings.utils';
 import { filterComponentRegistryItems } from '@/features/components/components-registry-page.utils';
 import { ComponentFoundationsPreviewShell } from '@/features/components/ComponentFoundationsPreview';
-import { createComponentTokenBindingResolution } from '@/features/components/component-token-bindings.utils';
 
 type ComponentsRegistryPageProps = {
   params: Promise<{
@@ -64,8 +71,16 @@ export default async function ComponentsRegistryPage({
   }
 
   const componentTokenOptions = createComponentTokenOptions(pageData.tokenSets);
-
   const registry = createComponentRegistryItems(pageData.componentContracts);
+  const existingComponentTypes = new Set<ComponentContractType>(
+    registry.items.map((item) => item.type),
+  );
+  const availableComponentTypes = mvpComponentContractSeeds
+    .filter((seed) => !existingComponentTypes.has(seed.type))
+    .map((seed) => ({
+      type: seed.type,
+      name: seed.name,
+    }));
 
   const filteredRegistryItems = filterComponentRegistryItems({
     items: registry.items,
@@ -82,42 +97,57 @@ export default async function ComponentsRegistryPage({
     registry.items[0] ??
     null;
 
-  const tokenBindingResolution = selectedComponent
-    ? createComponentTokenBindingResolution({
-        bindings: selectedComponent.contract.tokenBindings,
-        rawTokenSets: pageData.tokenSets,
-      })
-    : null;
+  const createComponentLabels = {
+    ariaLabel: t('list.create.ariaLabel'),
+    unavailable: t('list.create.unavailable'),
+    title: t('list.create.title'),
+    description: t('list.create.description'),
+    type: t('list.create.type'),
+    cancel: t('list.create.cancel'),
+    submit: t('list.create.submit'),
+    submitting: t('list.create.submitting'),
+    errors: {
+      unauthorized: t('list.create.errors.unauthorized'),
+      projectNotFound: t('list.create.errors.projectNotFound'),
+      componentNotFound: t('list.create.errors.componentNotFound'),
+      componentAlreadyExists: t('list.create.errors.componentAlreadyExists'),
+      invalidPayload: t('list.create.errors.invalidPayload'),
+      unexpected: t('list.create.errors.unexpected'),
+    },
+  };
 
   return (
-    <section className="flex h-[calc(100dvh-3rem)] min-h-0 flex-col overflow-hidden xl:absolute xl:inset-0 xl:h-auto">
+    <section className="flex min-h-0 flex-col xl:absolute xl:inset-0 xl:h-auto xl:overflow-hidden">
       {registry.invalidCount > 0 ? (
-        <Notice tone="warning" className="m-4 shrink-0 font-semibold">
+        <Notice tone="warning" className="m-3 shrink-0 font-semibold sm:m-4">
           {t('invalidContractsWarning', { count: registry.invalidCount })}
         </Notice>
       ) : null}
 
-      {registry.items.length > 0 ? (
-        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto xl:grid xl:h-full xl:grid-cols-[16rem_minmax(0,48rem)_minmax(24rem,1fr)] xl:overflow-hidden">
-          <aside className="border-border-subtle min-h-0 border-b xl:h-full xl:overflow-y-auto xl:border-r xl:border-b-0">
-            <ComponentList
-              t={t}
-              projectSlug={pageData.project.slug}
-              componentGroups={componentGroups}
-              selectedComponentType={selectedComponent?.type ?? null}
-              filterQuery={componentFilterQuery}
-            />
-          </aside>
-
-          <main
-            data-save-context-scroll-container={
-              selectedComponent
-                ? `component-contract:${pageData.project.slug}:${selectedComponent.type}`
-                : undefined
+      {registry.items.length > 0 && selectedComponent ? (
+        <ComponentContractPreviewProvider
+          key={selectedComponent.id}
+          initialContract={selectedComponent.contract}
+        >
+          <ComponentResponsiveWorkspace
+            labels={{
+              registry: t('list.title'),
+              editor: t('editor.title'),
+              preview: t('foundationsPreview.title'),
+            }}
+            editorScrollContextId={`component-contract:${pageData.project.slug}:${selectedComponent.type}`}
+            registry={
+              <ComponentList
+                t={t}
+                locale={locale}
+                projectSlug={pageData.project.slug}
+                componentGroups={componentGroups}
+                selectedComponentType={selectedComponent.type}
+                filterQuery={componentFilterQuery}
+                availableComponentTypes={availableComponentTypes}
+              />
             }
-            className="min-h-0 min-w-0 border-b xl:overflow-y-auto xl:border-b-0"
-          >
-            {selectedComponent ? (
+            editor={
               <ComponentDetails
                 t={t}
                 locale={locale}
@@ -125,23 +155,13 @@ export default async function ComponentsRegistryPage({
                 projectSlug={pageData.project.slug}
                 tokenOptions={componentTokenOptions}
               />
-            ) : null}
-          </main>
-
-          <aside className="border-border-subtle grid min-h-0 content-start gap-6 border-t xl:h-full xl:overflow-y-auto xl:border-t-0 xl:border-l">
-            {selectedComponent ? (
+            }
+            preview={
               <>
                 <ComponentFoundationsPreviewShell
-                  t={t}
                   locale={locale}
                   component={selectedComponent}
-                  tokenBindingResolution={
-                    tokenBindingResolution ?? {
-                      bindings: {},
-                      missingBindings: [],
-                      invalidTokenSetsCount: 0,
-                    }
-                  }
+                  rawTokenSets={pageData.tokenSets}
                 />
                 <ComponentAiContractShell
                   t={t}
@@ -149,14 +169,23 @@ export default async function ComponentsRegistryPage({
                   component={selectedComponent}
                 />
               </>
-            ) : null}
-          </aside>
-        </div>
+            }
+          />
+        </ComponentContractPreviewProvider>
       ) : (
-        <div className="flex min-h-0 flex-1 items-center justify-center p-6">
-          <EmptyState
+        <div className="flex min-h-80 flex-1 items-center justify-center p-4 md:p-6">
+          <ComponentRegistryState
             title={t('states.emptyTitle')}
             description={t('states.emptyDescription')}
+            action={
+              <ComponentRegistryCreateButton
+                locale={locale}
+                projectSlug={pageData.project.slug}
+                options={availableComponentTypes}
+                labels={createComponentLabels}
+                triggerLabel={t('list.create.submit')}
+              />
+            }
           />
         </div>
       )}

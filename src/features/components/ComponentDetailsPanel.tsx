@@ -3,6 +3,7 @@ import { ComponentContractEditorBoundary } from './ComponentContractEditorBounda
 import type { ComponentRegistryItem } from './components-registry.utils';
 import type { ComponentTokenOption } from './component-token-bindings.utils';
 import type { ComponentContractEditorLabels } from './ComponentContractEditor';
+import { DeleteComponentContractButton } from './DeleteComponentContractButton';
 import { StatusBadge } from '@/app/[locale]/app/projects/[projectSlug]/components/page';
 import type { ComponentsRegistryTranslator } from '@/app/[locale]/app/projects/[projectSlug]/components/page';
 
@@ -20,11 +21,11 @@ export function ComponentDetails({
   tokenOptions: ComponentTokenOption[];
 }) {
   return (
-    <article className="min-w-0 px-6 py-5">
-      <div className="mx-auto w-full max-w-3xl">
-        <header className="border-border-subtle flex min-w-0 flex-col gap-3 border-b pb-5 sm:flex-row sm:items-start sm:justify-between">
+    <article className="min-w-0 px-4 py-4 sm:px-6 sm:py-5">
+      <div className="mx-auto w-full max-w-3xl min-w-0">
+        <header className="border-border-subtle flex min-w-0 flex-col gap-3 border-b pb-4 sm:flex-row sm:items-start sm:justify-between sm:pb-5">
           <div className="min-w-0">
-            <h1 className="text-[1.625rem] font-semibold tracking-tight">
+            <h1 className="truncate text-2xl font-semibold tracking-tight sm:text-[1.625rem]">
               {component.name}
             </h1>
             <p className="text-content-tertiary mt-1.5 truncate font-mono text-xs">
@@ -32,10 +33,41 @@ export function ComponentDetails({
             </p>
           </div>
 
-          <StatusBadge t={t} status={component.status} />
+          <div className="flex shrink-0 items-center gap-2 self-start">
+            <StatusBadge t={t} status={component.status} />
+            <DeleteComponentContractButton
+              locale={locale}
+              projectSlug={projectSlug}
+              componentType={component.type}
+              labels={{
+                ariaLabel: t('editor.delete.ariaLabel', {
+                  name: component.name,
+                }),
+                title: t('editor.delete.title'),
+                description: t('editor.delete.description', {
+                  name: component.name,
+                }),
+                cancel: t('editor.delete.cancel'),
+                submit: t('editor.delete.submit'),
+                submitting: t('editor.delete.submitting'),
+                errors: {
+                  unauthorized: t('editor.delete.errors.unauthorized'),
+                  projectNotFound: t('editor.delete.errors.projectNotFound'),
+                  componentNotFound: t(
+                    'editor.delete.errors.componentNotFound',
+                  ),
+                  componentAlreadyExists: t(
+                    'editor.delete.errors.componentAlreadyExists',
+                  ),
+                  invalidPayload: t('editor.delete.errors.invalidPayload'),
+                  unexpected: t('editor.delete.errors.unexpected'),
+                },
+              }}
+            />
+          </div>
         </header>
 
-        <div className="mt-5 min-w-0">
+        <div className="mt-4 min-w-0 sm:mt-5">
           <ComponentContractEditorBoundary
             componentId={component.id}
             locale={locale}
