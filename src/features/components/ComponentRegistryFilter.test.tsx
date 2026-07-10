@@ -23,15 +23,11 @@ afterEach(() => {
 });
 
 describe('ComponentRegistryFilter', () => {
-  it('filters after a short debounce and exposes a submit button', () => {
+  it('filters after a short debounce without a submit control', () => {
     vi.useFakeTimers();
 
     render(
-      <ComponentRegistryFilter
-        value=""
-        placeholder="Filter..."
-        submitLabel="Filter components"
-      />,
+      <ComponentRegistryFilter value="" placeholder="Filter..." />,
     );
 
     fireEvent.change(screen.getByRole('searchbox'), {
@@ -50,8 +46,6 @@ describe('ComponentRegistryFilter', () => {
       '/app/projects/demo/components?component=button&q=card',
       { scroll: false },
     );
-    expect(
-      screen.getByRole('button', { name: 'Filter components' }),
-    ).toBeInTheDocument();
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 });
