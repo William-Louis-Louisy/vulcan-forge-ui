@@ -1,7 +1,8 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { ThemeSwitcher } from './ThemeSwitcher';
-import type { ThemeColorKey, ThemeMode } from './themes-editor.utils';
+import type { ThemeMode } from './themes-editor.utils';
 import { useMemo, useState, type CSSProperties, type ReactNode } from 'react';
 import {
   getDefaultPreviewThemeMode,
@@ -13,15 +14,6 @@ import {
 export type PreviewPanelLabels = {
   title: string;
   description: string;
-  eyebrow: string;
-  activeTheme: string;
-  palette: string;
-  mappedColors: string;
-  fallbackColors: string;
-  resolvedBadge: string;
-  fallbackBadge: string;
-  fallbackNotices: Partial<Record<ThemeMode, string>>;
-  paletteKeys: Record<ThemeColorKey, string>;
   modeLabel: string;
   modes: {
     light: string;
@@ -89,6 +81,7 @@ export function PreviewPanel({
   labels,
   variant = 'standalone',
 }: PreviewPanelProps) {
+  const t = useTranslations('ThemesEditorPage.preview');
   const [activeMode, setActiveMode] = useState<ThemeMode>(() =>
     getDefaultPreviewThemeMode(themes),
   );
@@ -120,7 +113,9 @@ export function PreviewPanel({
   }
 
   const previewStyle = createPreviewStyle(activeTheme.colors);
-  const fallbackNotice = labels.fallbackNotices[activeTheme.mode] ?? null;
+  const fallbackKeys = activeTheme.fallbackColorKeys
+    .map((key) => t(`paletteKeys.${key}`))
+    .join(', ');
 
   return (
     <section
@@ -134,7 +129,7 @@ export function PreviewPanel({
       <header className="border-border-subtle grid min-w-0 gap-3 border-b p-4">
         <div className="min-w-0">
           <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.16em] uppercase">
-            {labels.eyebrow}
+            {t('eyebrow')}
           </p>
           <h2
             id="preview-panel-title"
@@ -162,7 +157,7 @@ export function PreviewPanel({
         <div className="flex min-w-0 items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase">
-              {labels.activeTheme}
+              {t('activeTheme')}
             </p>
             <p className="mt-1 truncate text-sm font-semibold">
               {activeTheme.name}
@@ -177,11 +172,11 @@ export function PreviewPanel({
               <span className="text-content-primary font-semibold">
                 {activeTheme.resolvedColorCount}/{activeTheme.palette.length}
               </span>{' '}
-              {labels.mappedColors}
+              {t('mappedColors')}
             </p>
             {activeTheme.fallbackColorKeys.length > 0 ? (
               <p className="text-action-warning font-semibold">
-                {activeTheme.fallbackColorKeys.length} {labels.fallbackColors}
+                {activeTheme.fallbackColorKeys.length} {t('fallbackColors')}
               </p>
             ) : null}
           </div>
@@ -192,7 +187,7 @@ export function PreviewPanel({
             id="preview-palette-title"
             className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase"
           >
-            {labels.palette}
+            {t('palette')}
           </h3>
 
           <div
@@ -205,17 +200,17 @@ export function PreviewPanel({
               <PaletteSwatch
                 key={entry.key}
                 entry={entry}
-                label={labels.paletteKeys[entry.key]}
-                resolvedLabel={labels.resolvedBadge}
-                fallbackLabel={labels.fallbackBadge}
+                label={t(`paletteKeys.${entry.key}`)}
+                resolvedLabel={t('resolvedBadge')}
+                fallbackLabel={t('fallbackBadge')}
               />
             ))}
           </div>
         </section>
 
-        {activeTheme.fallbackColorKeys.length > 0 && fallbackNotice ? (
+        {activeTheme.fallbackColorKeys.length > 0 ? (
           <p className="border-action-warning/30 bg-action-warning/10 text-action-warning rounded-md border px-3 py-2 text-xs leading-5">
-            {fallbackNotice}
+            {t('fallbackNotice', { keys: fallbackKeys })}
           </p>
         ) : null}
 
