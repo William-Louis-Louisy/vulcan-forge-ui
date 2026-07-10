@@ -21,11 +21,11 @@ export function ComponentDetails({
   tokenOptions: ComponentTokenOption[];
 }) {
   return (
-    <article className="min-w-0 px-6 py-5">
-      <div className="mx-auto w-full max-w-3xl">
-        <header className="border-border-subtle flex min-w-0 flex-col gap-3 border-b pb-5 sm:flex-row sm:items-start sm:justify-between">
+    <article className="min-w-0 px-4 py-4 sm:px-6 sm:py-5">
+      <div className="mx-auto w-full max-w-3xl min-w-0">
+        <header className="border-border-subtle flex min-w-0 flex-col gap-3 border-b pb-4 sm:flex-row sm:items-start sm:justify-between sm:pb-5">
           <div className="min-w-0">
-            <h1 className="text-[1.625rem] font-semibold tracking-tight">
+            <h1 className="truncate text-2xl font-semibold tracking-tight sm:text-[1.625rem]">
               {component.name}
             </h1>
             <p className="text-content-tertiary mt-1.5 truncate font-mono text-xs">
@@ -33,7 +33,7 @@ export function ComponentDetails({
             </p>
           </div>
 
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2 self-start">
             <StatusBadge t={t} status={component.status} />
             <DeleteComponentContractButton
               locale={locale}
@@ -67,7 +67,7 @@ export function ComponentDetails({
           </div>
         </header>
 
-        <div className="mt-5 min-w-0">
+        <div className="mt-4 min-w-0 sm:mt-5">
           <ComponentContractEditorBoundary
             componentId={component.id}
             locale={locale}
