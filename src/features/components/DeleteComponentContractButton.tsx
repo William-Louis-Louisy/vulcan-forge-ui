@@ -57,17 +57,19 @@ export function DeleteComponentContractButton({
         aria-label={labels.ariaLabel}
         title={labels.ariaLabel}
         onClick={() => dialogRef.current?.showModal()}
-        className="border-action-danger/30 text-action-danger hover:bg-action-danger/10 flex shrink-0 items-center justify-center gap-3 rounded-md border px-3 py-2 transition"
+        className="border-action-danger/30 text-action-danger hover:bg-action-danger/10 flex shrink-0 items-center justify-center gap-2 rounded-md border px-2.5 py-2 transition sm:gap-3 sm:px-3"
       >
         <TrashIcon aria-hidden="true" size={14} />
-        <span className="text-sm font-medium">{labels.submit}</span>
+        <span className="hidden text-sm font-medium sm:inline">
+          {labels.submit}
+        </span>
       </button>
 
       <dialog
         ref={dialogRef}
-        className="border-border-default bg-background-app text-content-primary m-auto w-[min(28rem,calc(100%-2rem))] rounded-xl border p-0 shadow-2xl backdrop:bg-black/60"
+        className="border-border-default bg-background-app text-content-primary m-auto max-h-[calc(100dvh-2rem)] w-[min(28rem,calc(100%-2rem))] overflow-y-auto rounded-xl border p-0 shadow-2xl backdrop:bg-black/60"
       >
-        <form action={formAction} className="p-5">
+        <form action={formAction} className="p-4 sm:p-5">
           <input type="hidden" name="locale" value={locale} />
           <input type="hidden" name="projectSlug" value={projectSlug} />
           <input type="hidden" name="componentType" value={componentType} />
@@ -88,13 +90,14 @@ export function DeleteComponentContractButton({
             </p>
           ) : null}
 
-          <div className="mt-6 flex justify-end gap-2">
+          <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
             <Button
               type="button"
               variant="ghost"
               size="sm"
               disabled={isPending}
               onClick={() => dialogRef.current?.close()}
+              className="w-full sm:w-auto"
             >
               {labels.cancel}
             </Button>
@@ -103,6 +106,7 @@ export function DeleteComponentContractButton({
               variant="danger"
               size="sm"
               disabled={isPending}
+              className="w-full sm:w-auto"
             >
               {isPending ? labels.submitting : labels.submit}
             </Button>
