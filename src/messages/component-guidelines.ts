@@ -301,8 +301,7 @@ export const componentGuidelineMessages = {
             componentNotFound: 'Le modèle de composant est introuvable.',
             invalidPayload: 'Choisissez un type de composant valide.',
             projectNotFound: 'Le design system est introuvable.',
-            unauthorized:
-              'Vous devez être connecté pour ajouter un composant.',
+            unauthorized: 'Vous devez être connecté pour ajouter un composant.',
             unexpected:
               'Impossible d’ajouter ce composant. Veuillez réessayer.',
           },

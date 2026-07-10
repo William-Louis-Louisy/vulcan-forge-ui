@@ -52,9 +52,7 @@ export function ComponentDetails({
                 submitting: t('editor.delete.submitting'),
                 errors: {
                   unauthorized: t('editor.delete.errors.unauthorized'),
-                  projectNotFound: t(
-                    'editor.delete.errors.projectNotFound',
-                  ),
+                  projectNotFound: t('editor.delete.errors.projectNotFound'),
                   componentNotFound: t(
                     'editor.delete.errors.componentNotFound',
                   ),

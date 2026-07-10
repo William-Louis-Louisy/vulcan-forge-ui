@@ -122,7 +122,10 @@ export function ComponentRegistryCreateButton({
           ) : null}
 
           {state.error ? (
-            <p role="alert" className="text-action-danger mt-3 text-xs font-medium">
+            <p
+              role="alert"
+              className="text-action-danger mt-3 text-xs font-medium"
+            >
               {labels.errors[state.error]}
             </p>
           ) : null}

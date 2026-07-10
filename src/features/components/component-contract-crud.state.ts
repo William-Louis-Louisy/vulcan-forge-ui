@@ -19,13 +19,15 @@ export type DeleteComponentContractActionState = {
   error: ComponentContractMutationError | null;
 };
 
-export const initialCreateComponentContractActionState: CreateComponentContractActionState = {
-  status: 'idle',
-  error: null,
-  componentType: null,
-};
+export const initialCreateComponentContractActionState: CreateComponentContractActionState =
+  {
+    status: 'idle',
+    error: null,
+    componentType: null,
+  };
 
-export const initialDeleteComponentContractActionState: DeleteComponentContractActionState = {
-  status: 'idle',
-  error: null,
-};
+export const initialDeleteComponentContractActionState: DeleteComponentContractActionState =
+  {
+    status: 'idle',
+    error: null,
+  };

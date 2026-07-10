@@ -1,23 +1,23 @@
 'use client';
 
-import type { CSSProperties, ReactNode } from 'react';
 import { Button } from '@/components/ui';
-import { ComponentAnatomyEditor } from './ComponentAnatomyEditor';
 import {
-  createEmptyAccessibilityRuleDraft,
-  createEmptyForbiddenPatternDraft,
   createEmptySizeDraft,
   createEmptyStateDraft,
-  createEmptyTokenBindingDraft,
   createEmptyVariantDraft,
-  type ComponentAccessibilityRuleDraft,
-  type ComponentContractEditorDraft,
+  createEmptyTokenBindingDraft,
+  createEmptyForbiddenPatternDraft,
+  createEmptyAccessibilityRuleDraft,
   type ComponentSizeDraft,
-  type ComponentStateDraft,
-  type ComponentTokenBindingDraft,
-  type ComponentVariantDraft,
   type LocalizedTextDraft,
+  type ComponentStateDraft,
+  type ComponentVariantDraft,
+  type ComponentTokenBindingDraft,
+  type ComponentContractEditorDraft,
+  type ComponentAccessibilityRuleDraft,
 } from './component-contract-editor.utils';
+import type { CSSProperties, ReactNode } from 'react';
+import { ComponentAnatomyEditor } from './ComponentAnatomyEditor';
 import type { ComponentTokenOption } from './component-token-bindings.utils';
 
 export type ComponentContractEditorLabels = {
@@ -698,9 +698,7 @@ function ForbiddenPatternsSection({
   setDraft,
 }: Omit<EditorProps, 'setActiveLocale' | 'tokenOptions'>) {
   const patternLabel =
-    activeLocale === 'en'
-      ? labels.fields.patternEn
-      : labels.fields.patternFr;
+    activeLocale === 'en' ? labels.fields.patternEn : labels.fields.patternFr;
 
   return (
     <EditorSection
@@ -947,7 +945,7 @@ function EditorSection({
   children: ReactNode;
 }) {
   return (
-    <section className="border-border-subtle min-w-0 border-t pt-5">
+    <section className="min-w-0 pt-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <h3

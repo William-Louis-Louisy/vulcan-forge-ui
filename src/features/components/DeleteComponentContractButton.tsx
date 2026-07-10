@@ -1,16 +1,16 @@
 'use client';
 
-import { useActionState, useEffect, useRef } from 'react';
-import { TrashIcon } from '@phosphor-icons/react';
 import { Button } from '@/components/ui';
-import type { Locale } from '@/i18n/routing';
-import { useRouter } from '@/i18n/navigation';
-import type { ComponentContractType } from '@/domain/design-system';
-import { deleteComponentContractAction } from './component-contract-crud.actions';
 import {
   initialDeleteComponentContractActionState,
   type ComponentContractMutationError,
 } from './component-contract-crud.state';
+import type { Locale } from '@/i18n/routing';
+import { useRouter } from '@/i18n/navigation';
+import { TrashIcon } from '@phosphor-icons/react';
+import { useActionState, useEffect, useRef } from 'react';
+import type { ComponentContractType } from '@/domain/design-system';
+import { deleteComponentContractAction } from './component-contract-crud.actions';
 
 type DeleteComponentLabels = {
   ariaLabel: string;
@@ -57,9 +57,10 @@ export function DeleteComponentContractButton({
         aria-label={labels.ariaLabel}
         title={labels.ariaLabel}
         onClick={() => dialogRef.current?.showModal()}
-        className="border-action-danger/30 text-action-danger hover:bg-action-danger/10 flex size-8 shrink-0 items-center justify-center rounded-md border transition"
+        className="border-action-danger/30 text-action-danger hover:bg-action-danger/10 flex shrink-0 items-center justify-center gap-3 rounded-md border px-3 py-2 transition"
       >
-        <TrashIcon aria-hidden="true" size={15} />
+        <TrashIcon aria-hidden="true" size={14} />
+        <span className="text-sm font-medium">{labels.submit}</span>
       </button>
 
       <dialog
@@ -79,7 +80,10 @@ export function DeleteComponentContractButton({
           </p>
 
           {state.error ? (
-            <p role="alert" className="text-action-danger mt-3 text-xs font-medium">
+            <p
+              role="alert"
+              className="text-action-danger mt-3 text-xs font-medium"
+            >
               {labels.errors[state.error]}
             </p>
           ) : null}

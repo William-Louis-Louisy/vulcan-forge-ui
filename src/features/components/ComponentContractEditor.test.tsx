@@ -453,9 +453,7 @@ describe('ComponentContractEditor', () => {
       />,
     );
 
-    await user.click(
-      screen.getByRole('button', { name: /Add visual token/ }),
-    );
+    await user.click(screen.getByRole('button', { name: /Add visual token/ }));
 
     const tokenKeyInput = screen
       .getAllByLabelText('Key')
