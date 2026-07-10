@@ -70,6 +70,12 @@ export function ThemeTokenReferenceEditor({
   const hasUnsavedChanges = selectedTokenPath !== initialValue;
   const hasOptions = options.length > 0;
   const inputId = `${themeId}-${colorKey}-token-reference`;
+  const displayedResolvedValue = selectedOption?.value ?? resolvedValue ?? null;
+  const displayedReference = selectedTokenPath
+    ? `{${selectedTokenPath}}`
+    : initialReferencePath
+      ? `{${initialReferencePath}}`
+      : '—';
 
   const preserveSaveContext = usePreserveSaveContext(
     `theme-token-reference:${projectSlug}:${themeId}:${colorKey}`,
@@ -79,117 +85,131 @@ export function ThemeTokenReferenceEditor({
     <form
       action={formAction}
       onSubmitCapture={preserveSaveContext}
-      className="border-border-subtle bg-background-subtle rounded-2xl border p-4"
+      data-theme-mapping-row={colorKey}
+      className="border-border-subtle bg-surface-primary min-w-0 border-b px-3 py-3 last:border-b-0 sm:px-4"
     >
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="projectSlug" value={projectSlug} />
       <input type="hidden" name="themeId" value={themeId} />
       <input type="hidden" name="colorKey" value={colorKey} />
 
-      <div className="grid gap-4">
-        <div>
-          <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
+      <div className="grid min-w-0 gap-3 xl:grid-cols-[minmax(7rem,0.65fr)_minmax(16rem,1.7fr)_minmax(8rem,0.8fr)_auto] xl:items-center">
+        <div className="min-w-0">
+          <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase">
             {labels.slotLabel}
           </p>
-
-          <p className="mt-1 font-mono text-sm font-semibold">{colorKey}</p>
+          <div className="mt-1 flex min-w-0 items-center gap-2">
+            <span
+              aria-hidden="true"
+              className="border-border-subtle size-5 shrink-0 rounded-full border"
+              style={{
+                backgroundColor: displayedResolvedValue ?? 'transparent',
+              }}
+            />
+            <span className="truncate font-mono text-sm font-semibold">
+              {colorKey}
+            </span>
+          </div>
         </div>
 
-        <div>
-          <label htmlFor={inputId} className="text-sm font-semibold">
+        <div className="min-w-0">
+          <label
+            htmlFor={inputId}
+            className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase"
+          >
             {labels.selectLabel}
           </label>
 
-          <div className="mt-2 flex items-center gap-3">
-            <span
-              aria-hidden="true"
-              className="border-border-subtle size-6 shrink-0 rounded-full border"
-              style={{
-                backgroundColor:
-                  selectedOption?.value ?? resolvedValue ?? 'transparent',
-              }}
-            />
+          <select
+            id={inputId}
+            name="tokenPath"
+            value={selectedTokenPath}
+            disabled={!hasOptions}
+            onChange={(event) => setSelectedTokenPath(event.target.value)}
+            className="border-border-default bg-surface-primary text-content-primary mt-1 min-h-10 w-full min-w-0 rounded-md border px-3 font-mono text-xs"
+          >
+            <option value="">{labels.placeholder}</option>
 
-            <select
-              id={inputId}
-              name="tokenPath"
-              value={selectedTokenPath}
-              disabled={!hasOptions}
-              onChange={(event) => setSelectedTokenPath(event.target.value)}
-              className="border-border-default bg-surface-primary text-content-primary min-h-11 w-full rounded-lg border px-3 font-mono text-sm"
-            >
-              <option value="">{labels.placeholder}</option>
+            {options.map((option) => (
+              <option key={option.path} value={option.path}>
+                {option.label} — {option.value}
+              </option>
+            ))}
+          </select>
 
-              {options.map((option) => (
-                <option key={option.path} value={option.path}>
-                  {option.label} — {option.value}
-                </option>
-              ))}
-            </select>
-          </div>
+          <p className="text-content-tertiary mt-1 min-w-0 truncate font-mono text-[0.6875rem]">
+            {labels.currentReference}: {displayedReference}
+          </p>
 
           {!hasOptions ? (
-            <p className="text-action-warning mt-2 text-xs font-semibold">
+            <p className="text-action-warning mt-1 text-xs font-semibold">
               {labels.noOptions}
             </p>
           ) : null}
         </div>
 
-        <div className="grid gap-2 text-xs">
-          <p className="text-content-secondary">
-            {labels.currentReference}:{' '}
-            <span className="font-mono">
-              {initialReferencePath ? `{${initialReferencePath}}` : '—'}
-            </span>
+        <div className="min-w-0">
+          <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase">
+            {labels.resolvedValue}
           </p>
+          <div className="mt-1 flex min-w-0 items-center gap-2">
+            <span
+              role="img"
+              aria-label={`${labels.resolvedValue}: ${displayedResolvedValue ?? '—'}`}
+              className="border-border-subtle size-5 shrink-0 rounded-full border"
+              style={{
+                backgroundColor: displayedResolvedValue ?? 'transparent',
+              }}
+            />
+            <span className="text-content-secondary min-w-0 truncate font-mono text-xs">
+              {displayedResolvedValue ?? '—'}
+            </span>
+          </div>
 
           {legacyDirectValue && !initialReferencePath ? (
-            <p className="text-action-warning font-semibold">
-              {labels.legacyDirectValue}:{' '}
-              <span className="font-mono">{legacyDirectValue}</span>
+            <p className="text-action-warning mt-1 min-w-0 truncate text-[0.6875rem] font-semibold">
+              {labels.legacyDirectValue}: {legacyDirectValue}
             </p>
           ) : null}
-
-          <p className="text-content-secondary">
-            {labels.resolvedValue}:{' '}
-            <span className="font-mono">
-              {selectedOption?.value ?? resolvedValue ?? '—'}
-            </span>
-          </p>
-
-          <p
-            className={
-              hasUnsavedChanges
-                ? 'text-action-warning font-semibold'
-                : 'text-content-tertiary'
-            }
-          >
-            {hasUnsavedChanges ? labels.unsaved : labels.saved}
-          </p>
         </div>
 
-        <Button
-          type="submit"
-          disabled={isPending || !hasUnsavedChanges || !selectedTokenPath}
-        >
-          {isPending ? labels.saving : labels.save}
-        </Button>
-
-        {state.status === 'success' ? (
-          <p
-            role="status"
-            className="text-action-success text-xs font-semibold"
+        <div className="flex min-w-0 items-center justify-between gap-3 xl:justify-end">
+          <span
+            className={[
+              'shrink-0 rounded-full px-2 py-1 text-[0.6875rem] font-semibold',
+              hasUnsavedChanges
+                ? 'bg-action-warning/10 text-action-warning'
+                : 'bg-action-success/10 text-action-success',
+            ].join(' ')}
           >
-            {labels.saved}
-          </p>
-        ) : null}
+            {hasUnsavedChanges ? labels.unsaved : labels.saved}
+          </span>
 
-        {state.formError ? (
-          <p role="alert" className="text-action-danger text-xs font-semibold">
-            {labels.errors[state.formError]}
-          </p>
-        ) : null}
+          <Button
+            type="submit"
+            size="sm"
+            disabled={isPending || !hasUnsavedChanges || !selectedTokenPath}
+            className="shrink-0"
+          >
+            {isPending ? labels.saving : labels.save}
+          </Button>
+        </div>
       </div>
+
+      {state.status === 'success' ? (
+        <p
+          role="status"
+          className="text-action-success mt-2 text-xs font-semibold"
+        >
+          {labels.saved}
+        </p>
+      ) : null}
+
+      {state.formError ? (
+        <p role="alert" className="text-action-danger mt-2 text-xs font-semibold">
+          {labels.errors[state.formError]}
+        </p>
+      ) : null}
     </form>
   );
 }
