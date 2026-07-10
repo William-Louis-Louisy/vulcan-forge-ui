@@ -7,18 +7,15 @@ import {
   useState,
   useTransition,
 } from 'react';
-import { MagnifyingGlassIcon } from '@phosphor-icons/react';
 import { useSearchParams } from 'next/navigation';
 import { usePathname, useRouter } from '@/i18n/navigation';
 
 export function ComponentRegistryFilter({
   value,
   placeholder,
-  submitLabel,
 }: {
   value: string;
   placeholder: string;
-  submitLabel: string;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -69,35 +66,14 @@ export function ComponentRegistryFilter({
   }, [navigate, query]);
 
   return (
-    <form
-      className="relative mt-3"
-      onSubmit={(event) => {
-        event.preventDefault();
-
-        if (debounceRef.current) {
-          clearTimeout(debounceRef.current);
-        }
-
-        navigate(query);
-      }}
-    >
-      <input
-        type="search"
-        name="q"
-        value={query}
-        placeholder={placeholder}
-        onChange={(event) => setQuery(event.target.value)}
-        aria-busy={isPending || undefined}
-        className="border-border-subtle bg-background-subtle focus:border-action-primary min-h-9 w-full rounded-md border pr-10 pl-3 text-sm outline-none"
-      />
-      <button
-        type="submit"
-        aria-label={submitLabel}
-        title={submitLabel}
-        className="text-content-tertiary hover:text-content-primary absolute inset-y-0 right-0 flex w-9 items-center justify-center transition"
-      >
-        <MagnifyingGlassIcon aria-hidden="true" size={15} />
-      </button>
-    </form>
+    <input
+      type="search"
+      name="q"
+      value={query}
+      placeholder={placeholder}
+      onChange={(event) => setQuery(event.target.value)}
+      aria-busy={isPending || undefined}
+      className="border-border-subtle bg-background-subtle focus:border-action-primary mt-3 min-h-9 w-full rounded-md border px-3 text-sm outline-none"
+    />
   );
 }
