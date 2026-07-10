@@ -3,6 +3,7 @@ import type baseMessages from '../messages/en.json';
 import type { componentGuidelineMessages } from '../messages/component-guidelines';
 import type { componentPreviewMessages } from '../messages/component-preview-messages';
 import type { themePreviewMessages } from '../messages/theme-preview-messages';
+import type { themeEditorMessages } from '../messages/theme-editor-messages';
 
 type DeepMerge<Left, Right> = {
   [Key in keyof Left | keyof Right]: Key extends keyof Right
@@ -23,10 +24,12 @@ type ComponentMessages = DeepMerge<
   (typeof componentPreviewMessages)['en']
 >;
 
-type ScopedMessages = DeepMerge<
-  ComponentMessages,
-  (typeof themePreviewMessages)['en']
+type ThemeMessages = DeepMerge<
+  (typeof themePreviewMessages)['en'],
+  (typeof themeEditorMessages)['en']
 >;
+
+type ScopedMessages = DeepMerge<ComponentMessages, ThemeMessages>;
 
 type Messages = DeepMerge<typeof baseMessages, ScopedMessages>;
 
