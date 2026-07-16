@@ -58,19 +58,29 @@ export const themeContrastPairDefinitions = [
     backgroundKey: 'background',
   },
   {
+    key: 'contentOnSurface',
+    foregroundKey: 'content',
+    backgroundKey: 'surface',
+  },
+  {
     key: 'mutedOnBackground',
     foregroundKey: 'muted',
     backgroundKey: 'background',
   },
   {
-    key: 'contentOnSurface',
-    foregroundKey: 'content',
+    key: 'mutedOnSurface',
+    foregroundKey: 'muted',
     backgroundKey: 'surface',
   },
   {
     key: 'accentOnBackground',
     foregroundKey: 'accent',
     backgroundKey: 'background',
+  },
+  {
+    key: 'accentOnSurface',
+    foregroundKey: 'accent',
+    backgroundKey: 'surface',
   },
 ] as const satisfies readonly {
   key: string;
