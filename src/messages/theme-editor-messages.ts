@@ -1,9 +1,22 @@
 export const themeEditorMessages = {
   en: {
     ThemesEditorPage: {
+      description:
+        'Map existing color tokens to light and dark theme roles, preview core components and review WCAG contrast.',
+      workspace: {
+        navigationLabel: 'Theme editor sections',
+      },
       themes: {
         count: '{count, plural, =0 {No theme} one {# theme} other {# themes}}',
         navigationLabel: 'Theme modes',
+        emptyTitle: 'No theme is configured',
+        emptyDescription:
+          'This project does not currently contain a light or dark theme. Theme editing and preview are unavailable until theme data is configured.',
+      },
+      themeMapping: {
+        noTokenOptionsTitle: 'No usable color token',
+        noTokenOptionsDescription:
+          'Theme roles require at least one color token that resolves to a valid HEX value. Create or repair color tokens before editing these mappings.',
       },
       contrast: {
         title: 'Contrast matrix',
@@ -24,10 +37,23 @@ export const themeEditorMessages = {
   },
   fr: {
     ThemesEditorPage: {
+      description:
+        'Associez les tokens couleur existants aux rôles des thèmes clair et sombre, prévisualisez les composants principaux et vérifiez les contrastes WCAG.',
+      workspace: {
+        navigationLabel: 'Sections de l’éditeur de thèmes',
+      },
       themes: {
         count:
           '{count, plural, =0 {Aucun thème} one {# thème} other {# thèmes}}',
         navigationLabel: 'Modes de thème',
+        emptyTitle: 'Aucun thème configuré',
+        emptyDescription:
+          'Ce projet ne contient actuellement aucun thème clair ou sombre. L’édition et la prévisualisation resteront indisponibles tant que les données de thème ne seront pas configurées.',
+      },
+      themeMapping: {
+        noTokenOptionsTitle: 'Aucun token couleur utilisable',
+        noTokenOptionsDescription:
+          'Les rôles du thème nécessitent au moins un token couleur résolu en valeur HEX valide. Créez ou corrigez les tokens couleur avant de modifier ces mappings.',
       },
       contrast: {
         title: 'Matrice de contraste',
