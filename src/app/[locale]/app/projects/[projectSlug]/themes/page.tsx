@@ -68,7 +68,7 @@ export default async function ThemesEditorPage({
   );
 
   return (
-    <section className="h-[calc(100vh-3rem)] min-h-0 overflow-hidden">
+    <section className="flex min-h-0 flex-col xl:absolute xl:inset-0 xl:h-auto xl:overflow-hidden">
       <ThemesResponsiveWorkspace
         labels={{
           editor: t('themeMapping.title'),
@@ -234,7 +234,9 @@ function ThemeEditorPanel({
             fail: t('contrast.grades.fail'),
           },
           pairLabels: {
-            contentOnBackground: t('contrast.pairs.contentOnBackground'),
+            contentOnBackground: t(
+              'contrast.pairs.contentOnBackground',
+            ),
             contentOnSurface: t('contrast.pairs.contentOnSurface'),
             mutedOnBackground: t('contrast.pairs.mutedOnBackground'),
             mutedOnSurface: t('contrast.pairs.mutedOnSurface'),
