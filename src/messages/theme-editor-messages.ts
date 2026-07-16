@@ -33,6 +33,9 @@ export const themeEditorMessages = {
           accentOnSurface: 'Accent on surface',
         },
       },
+      states: {
+        errorEyebrow: 'Themes unavailable',
+      },
     },
   },
   fr: {
@@ -69,6 +72,9 @@ export const themeEditorMessages = {
           mutedOnSurface: 'Contenu atténué sur surface',
           accentOnSurface: 'Accent sur surface',
         },
+      },
+      states: {
+        errorEyebrow: 'Thèmes indisponibles',
       },
     },
   },
