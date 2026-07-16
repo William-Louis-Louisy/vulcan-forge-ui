@@ -20,6 +20,12 @@ const labels: ThemeContrastMatrixLabels = {
     warning: 'Warning',
     fail: 'Fail',
   },
+  grades: {
+    aaa: 'AAA',
+    aa: 'AA',
+    largeOnly: 'Large text only',
+    fail: 'Fail',
+  },
   pairLabels: {
     contentOnBackground: 'Content on background',
     contentOnSurface: 'Content on surface',
@@ -109,10 +115,10 @@ describe('ThemeContrastMatrix', () => {
     expect(screen.getAllByText('14.80:1')).toHaveLength(2);
     expect(screen.getAllByText('Content on background')).toHaveLength(1);
     expect(
-      container.querySelectorAll('[data-contrast-status="pass"]'),
+      container.querySelectorAll('[data-contrast-grade="aaa"]'),
     ).toHaveLength(4);
     expect(
-      container.querySelectorAll('[data-contrast-status="fail"]'),
+      container.querySelectorAll('[data-contrast-grade="fail"]'),
     ).toHaveLength(2);
   });
 
