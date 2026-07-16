@@ -4,6 +4,7 @@ import type {
 } from './themes-editor.utils';
 
 type ContrastStatus = 'pass' | 'warning' | 'fail';
+type ContrastGrade = 'aaa' | 'aa' | 'largeOnly' | 'fail';
 
 export type ThemeContrastMatrixLabels = {
   title: string;
@@ -15,6 +16,7 @@ export type ThemeContrastMatrixLabels = {
   ratio: (ratio: string) => string;
   requiredRatio: (required: string) => string;
   statuses: Record<ContrastStatus, string>;
+  grades: Record<ContrastGrade, string>;
   pairLabels: Record<string, string>;
   colorLabels: Record<ThemeColorKey, string>;
 };
@@ -31,12 +33,28 @@ function uniqueColorKeys(
   return Array.from(new Set(pairs.map((pair) => pair[key])));
 }
 
-function getStatusClassName(status: ContrastStatus) {
-  if (status === 'pass') {
+function getGrade(ratio: number): ContrastGrade {
+  if (ratio >= 7) {
+    return 'aaa';
+  }
+
+  if (ratio >= 4.5) {
+    return 'aa';
+  }
+
+  if (ratio >= 3) {
+    return 'largeOnly';
+  }
+
+  return 'fail';
+}
+
+function getGradeClassName(grade: ContrastGrade) {
+  if (grade === 'aaa' || grade === 'aa') {
     return 'bg-action-success/10 text-action-success';
   }
 
-  if (status === 'warning') {
+  if (grade === 'largeOnly') {
     return 'bg-action-warning/10 text-action-warning';
   }
 
@@ -53,8 +71,11 @@ export function ThemeContrastMatrix({
 }: ThemeContrastMatrixProps) {
   const foregroundKeys = uniqueColorKeys(pairs, 'foregroundKey');
   const backgroundKeys = uniqueColorKeys(pairs, 'backgroundKey');
-  const passedCount = pairs.filter(
-    (pair) => pair.contrast?.status === 'pass',
+  const compliantCount = pairs.filter(
+    (pair) =>
+      pair.contrast?.isValid &&
+      pair.contrast.ratio !== null &&
+      pair.contrast.ratio >= 4.5,
   ).length;
 
   return (
@@ -70,7 +91,7 @@ export function ThemeContrastMatrix({
         </div>
 
         <span className="bg-action-success/10 text-action-success w-fit shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold">
-          {passedCount}/{pairs.length} {labels.statuses.pass}
+          {compliantCount}/{pairs.length} {labels.grades.aa}+
         </span>
       </div>
 
@@ -101,7 +122,10 @@ export function ThemeContrastMatrix({
           </thead>
           <tbody>
             {foregroundKeys.map((foregroundKey) => (
-              <tr key={foregroundKey} className="border-border-subtle border-b last:border-b-0">
+              <tr
+                key={foregroundKey}
+                className="border-border-subtle border-b last:border-b-0"
+              >
                 <th
                   scope="row"
                   className="bg-surface-primary px-3 py-3 font-mono font-semibold"
@@ -157,16 +181,22 @@ function ContrastMatrixCell({
     );
   }
 
+  const grade = getGrade(pair.contrast.ratio);
+
   return (
-    <div className="grid gap-1.5" data-contrast-status={pair.contrast.status}>
-      <div className="flex items-center gap-2">
-        <span className="font-semibold">
-          {pair.contrast.ratio.toFixed(2)}:1
-        </span>
+    <div
+      className="grid gap-1.5"
+      data-contrast-status={pair.contrast.status}
+      data-contrast-grade={grade}
+    >
+      <div className="flex flex-wrap items-center gap-2">
         <span
-          className={`rounded-full px-2 py-0.5 text-[0.6875rem] font-semibold ${getStatusClassName(pair.contrast.status)}`}
+          className={`rounded-full px-2 py-0.5 text-[0.6875rem] font-semibold ${getGradeClassName(grade)}`}
         >
-          {labels.statuses[pair.contrast.status]}
+          {labels.grades[grade]}
+        </span>
+        <span className="text-content-secondary font-mono font-semibold">
+          {pair.contrast.ratio.toFixed(2)}:1
         </span>
       </div>
       <span className="text-content-tertiary">
