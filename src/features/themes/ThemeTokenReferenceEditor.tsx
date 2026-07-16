@@ -20,6 +20,7 @@ type ThemeTokenReferenceEditorProps = {
   legacyDirectValue: string | null;
   resolvedValue: string | null;
   options: ThemeColorTokenOption[];
+  showNoOptionsMessage?: boolean;
   labels: {
     slotLabel: string;
     selectLabel: string;
@@ -52,6 +53,7 @@ export function ThemeTokenReferenceEditor({
   legacyDirectValue,
   resolvedValue,
   options,
+  showNoOptionsMessage = true,
   labels,
 }: ThemeTokenReferenceEditorProps) {
   const [state, formAction, isPending] = useActionState(
@@ -141,7 +143,7 @@ export function ThemeTokenReferenceEditor({
             {labels.currentReference}: {displayedReference}
           </p>
 
-          {!hasOptions ? (
+          {!hasOptions && showNoOptionsMessage ? (
             <p className="text-action-warning mt-1 text-xs font-semibold">
               {labels.noOptions}
             </p>
