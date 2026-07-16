@@ -48,7 +48,7 @@ describe('themes editor utils', () => {
     ).toBeNull();
   });
 
-  it('returns key contrast preview pairs', () => {
+  it('returns the complete background and surface contrast matrix pairs', () => {
     expect(
       getThemeContrastPairs({
         tokens: {
@@ -68,19 +68,29 @@ describe('themes editor utils', () => {
         backgroundValue: '#070707',
       },
       {
+        key: 'contentOnSurface',
+        foregroundValue: '#E2E7EF',
+        backgroundValue: '#1E1E1E',
+      },
+      {
         key: 'mutedOnBackground',
         foregroundValue: '#A0B1CA',
         backgroundValue: '#070707',
       },
       {
-        key: 'contentOnSurface',
-        foregroundValue: '#E2E7EF',
+        key: 'mutedOnSurface',
+        foregroundValue: '#A0B1CA',
         backgroundValue: '#1E1E1E',
       },
       {
         key: 'accentOnBackground',
         foregroundValue: '#FF8731',
         backgroundValue: '#070707',
+      },
+      {
+        key: 'accentOnSurface',
+        foregroundValue: '#FF8731',
+        backgroundValue: '#1E1E1E',
       },
     ]);
   });

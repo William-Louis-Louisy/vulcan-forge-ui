@@ -12,23 +12,15 @@ import {
   getThemeColorRawValue,
   getThemeColorReferencePath,
   createThemeColorTokenOptions,
-  type ThemeColorPair,
   type ThemeEditorTheme,
 } from '@/features/themes/themes-editor.utils';
-import {
-  createTokenRows,
-  tokenReferenceToPath,
-  isEditableSemanticColorTokenRow,
-  getResolvedColorValueForReference,
-  getPrimitiveColorTokenAliasOptions,
-} from '@/features/tokens/tokens-editor.utils';
 import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
 import { routing, type Locale } from '@/i18n/routing';
 import { createPreviewThemes } from '@/features/themes/preview-panel.utils';
 import { getThemesEditorPageData } from '@/features/themes/themes-editor.queries';
 import { ThemeTokenReferenceEditor } from '@/features/themes/ThemeTokenReferenceEditor';
-import { SemanticColorTokenAliasEditor } from '@/features/tokens/SemanticColorTokenAliasEditor';
+import { ThemeContrastMatrix } from '@/features/themes/ThemeContrastMatrix';
 import { ThemesResponsiveWorkspace } from '@/features/themes/ThemesResponsiveWorkspace';
 
 type ThemesEditorPageProps = {
@@ -57,7 +49,6 @@ export default async function ThemesEditorPage({
   }
 
   const t = await getTranslations('ThemesEditorPage');
-
   const pageData = await getThemesEditorPageData({
     userId: session.user.id,
     projectSlug,
@@ -68,29 +59,12 @@ export default async function ThemesEditorPage({
   }
 
   const themes = sortThemesByMode(pageData.themes);
-
   const previewThemes = createPreviewThemes({
     themes,
     colorTokenSetTokens: pageData.colorTokenSet?.tokens ?? [],
   });
-
-  const colorRowsResult = pageData.colorTokenSet
-    ? createTokenRows(pageData.colorTokenSet.tokens)
-    : {
-        rows: [],
-        isReadable: false,
-      };
-
-  const primitiveColorAliasOptions = getPrimitiveColorTokenAliasOptions(
-    colorRowsResult.rows,
-  );
-
   const themeColorTokenOptions = createThemeColorTokenOptions(
     pageData.colorTokenSet?.tokens ?? [],
-  );
-
-  const semanticColorRows = colorRowsResult.rows.filter(
-    isEditableSemanticColorTokenRow,
   );
 
   return (
@@ -99,135 +73,24 @@ export default async function ThemesEditorPage({
         labels={{
           editor: t('themeMapping.title'),
           preview: t('preview.title'),
+          themeNavigation: t('themes.navigationLabel'),
         }}
-        editor={
-          <div className="min-w-0 px-4 py-4 sm:px-6 sm:py-5">
-            <div className="mx-auto w-full max-w-5xl min-w-0">
-              <header className="border-border-subtle min-w-0 border-b pb-5">
-                <p className="text-action-primary text-[0.6875rem] font-semibold tracking-[0.16em] uppercase">
-                  {t('eyebrow')}
-                </p>
-
-                <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-[1.625rem]">
-                  {t('title', { projectName: pageData.project.name })}
-                </h1>
-
-                <p className="text-content-secondary mt-2 max-w-3xl text-sm leading-6">
-                  {t('description')}
-                </p>
-              </header>
-
-              <div className="mt-5 grid min-w-0 gap-5">
-                {themes.map((theme) => (
-                  <ThemeCard
-                    key={theme.id}
-                    t={t}
-                    locale={locale}
-                    projectSlug={pageData.project.slug}
-                    theme={theme}
-                    colorTokenOptions={themeColorTokenOptions}
-                  />
-                ))}
-              </div>
-
-              <section className="border-border-subtle bg-surface-primary shadow-soft mt-5 min-w-0 rounded-3xl border p-4 sm:p-6">
-                <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-                  <div className="min-w-0">
-                    <p className="text-content-tertiary text-sm font-semibold tracking-[0.18em] uppercase">
-                      {t('semanticTokens.eyebrow')}
-                    </p>
-                    <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-                      {t('semanticTokens.title')}
-                    </h2>
-                  </div>
-
-                  <p className="text-content-secondary text-sm">
-                    {t('semanticTokens.count', {
-                      count: semanticColorRows.length,
-                    })}
-                  </p>
-                </div>
-
-                {colorRowsResult.isReadable ? (
-                  <div className="mt-6 grid min-w-0 gap-4">
-                    {semanticColorRows.length > 0 ? (
-                      semanticColorRows.map((row) => {
-                        const currentReference =
-                          row.reference ??
-                          (typeof row.rawValue === 'string'
-                            ? row.rawValue
-                            : '');
-
-                        const currentReferencePath = currentReference
-                          ? tokenReferenceToPath(currentReference)
-                          : null;
-
-                        const resolvedColorValue = currentReference
-                          ? getResolvedColorValueForReference({
-                              reference: currentReference,
-                              primitiveOptions: primitiveColorAliasOptions,
-                            })
-                          : null;
-
-                        return (
-                          <article
-                            key={row.id}
-                            className="border-border-subtle bg-background-subtle min-w-0 rounded-2xl border p-4"
-                          >
-                            <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] lg:items-start">
-                              <div className="min-w-0">
-                                <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
-                                  {t('semanticTokens.path')}
-                                </p>
-                                <h3 className="wrap-break-words mt-1 font-mono text-sm font-semibold">
-                                  {row.path}
-                                </h3>
-
-                                <p className="text-content-tertiary mt-4 text-xs font-semibold tracking-[0.18em] uppercase">
-                                  {t('semanticTokens.currentAlias')}
-                                </p>
-                                <p className="text-content-secondary wrap-break-words mt-1 font-mono text-sm">
-                                  {currentReference ||
-                                    t('semanticTokens.noAlias')}
-                                </p>
-
-                                <ResolvedColorPreview
-                                  t={t}
-                                  resolvedColorValue={resolvedColorValue}
-                                />
-                              </div>
-
-                              <SemanticColorTokenAliasEditor
-                                locale={locale}
-                                projectSlug={pageData.project.slug}
-                                tokenPath={row.path}
-                                initialReferencePath={
-                                  currentReferencePath ?? ''
-                                }
-                                resolvedColorValue={resolvedColorValue}
-                                primitiveOptions={primitiveColorAliasOptions}
-                              />
-                            </div>
-                          </article>
-                        );
-                      })
-                    ) : (
-                      <EmptyState
-                        title={t('semanticTokens.emptyTitle')}
-                        description={t('semanticTokens.emptyDescription')}
-                      />
-                    )}
-                  </div>
-                ) : (
-                  <EmptyState
-                    title={t('semanticTokens.invalidTitle')}
-                    description={t('semanticTokens.invalidDescription')}
-                  />
-                )}
-              </section>
-            </div>
-          </div>
-        }
+        title={t('title', { projectName: pageData.project.name })}
+        description={t('description')}
+        summary={t('themes.count', { count: themes.length })}
+        themes={themes.map((theme) => ({
+          id: theme.id,
+          label: t(`themes.${theme.mode}`),
+          content: (
+            <ThemeEditorPanel
+              t={t}
+              locale={locale}
+              projectSlug={pageData.project.slug}
+              theme={theme}
+              colorTokenOptions={themeColorTokenOptions}
+            />
+          ),
+        }))}
         preview={
           <PreviewPanel
             variant="rail"
@@ -240,7 +103,7 @@ export default async function ThemesEditorPage({
   );
 }
 
-function ThemeCard({
+function ThemeEditorPanel({
   t,
   locale,
   projectSlug,
@@ -260,45 +123,44 @@ function ThemeCard({
   const isDefaultTheme = theme.mode === 'light';
 
   return (
-    <article className="border-border-subtle bg-surface-primary shadow-soft min-w-0 rounded-3xl border p-4 sm:p-6">
+    <div className="min-w-0 px-4 py-4 md:px-6 xl:px-7">
       <div className="flex min-w-0 items-start justify-between gap-4">
         <div className="min-w-0">
-          <p className="text-content-tertiary text-sm font-semibold tracking-[0.18em] uppercase">
+          <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.16em] uppercase">
             {t(`themes.${theme.mode}`)}
           </p>
-          <h2 className="mt-2 truncate text-2xl font-semibold tracking-tight">
+          <h2 className="mt-1 truncate text-lg font-semibold tracking-tight">
             {theme.name}
           </h2>
         </div>
 
         {isDefaultTheme ? (
-          <span className="border-action-primary/30 bg-action-primary/10 text-action-primary shrink-0 rounded-full border px-3 py-1 text-xs font-semibold">
+          <span className="border-action-primary/30 bg-action-primary/10 text-action-primary shrink-0 rounded-full border px-2.5 py-1 text-xs font-semibold">
             {t('themes.defaultBadge')}
           </span>
         ) : null}
       </div>
 
-      <div className="mt-6 min-w-0">
-        <h3 className="text-content-tertiary text-sm font-semibold tracking-[0.18em] uppercase">
-          {t('themeMapping.title')}
-        </h3>
+      <section className="border-border-subtle bg-surface-primary mt-4 min-w-0 rounded-md border">
+        <header className="border-border-subtle border-b p-4">
+          <h3 className="text-sm font-semibold tracking-tight">
+            {t('themeMapping.title')}
+          </h3>
+          <p className="text-content-secondary mt-1 text-xs leading-5">
+            {t('themeMapping.description')}
+          </p>
+        </header>
 
-        <p className="text-content-secondary mt-2 text-sm leading-6">
-          {t('themeMapping.description')}
-        </p>
-
-        <div className="mt-4 grid min-w-0 gap-3">
+        <div className="grid min-w-0 gap-2 p-3 sm:p-4">
           {themeColorKeys.map((colorKey) => {
             const rawValue = getThemeColorRawValue({
               tokens: theme.tokens,
               colorKey,
             });
-
             const referencePath = getThemeColorReferencePath({
               tokens: theme.tokens,
               colorKey,
             });
-
             const resolvedValue = getThemeColorValue({
               tokens: theme.tokens,
               colorKey,
@@ -346,198 +208,48 @@ function ThemeCard({
             );
           })}
         </div>
-      </div>
+      </section>
 
-      <div className="mt-6 min-w-0">
-        <h3 className="text-content-tertiary text-sm font-semibold tracking-[0.18em] uppercase">
-          {t('contrast.title')}
-        </h3>
-
-        <p className="text-content-secondary mt-2 text-sm leading-6">
-          {t('contrast.description')}
-        </p>
-
-        <div className="mt-4 grid min-w-0 gap-3">
-          {contrastPairs.map((pair) => (
-            <ContrastPairRow key={pair.key} t={t} pair={pair} />
-          ))}
-        </div>
-      </div>
-    </article>
-  );
-}
-
-function ContrastPairRow({
-  t,
-  pair,
-}: {
-  t: ThemesEditorTranslator;
-  pair: ThemeColorPair;
-}) {
-  return (
-    <div className="border-border-subtle bg-background-subtle min-w-0 rounded-2xl border p-4">
-      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="min-w-0">
-          <p className="text-sm font-semibold">
-            {t(`contrast.pairs.${pair.key}`)}
-          </p>
-          <p className="text-content-tertiary mt-1 text-xs break-words">
-            {pair.foregroundReferencePath
-              ? `{${pair.foregroundReferencePath}}`
-              : pair.foregroundKey}{' '}
-            /{' '}
-            {pair.backgroundReferencePath
-              ? `{${pair.backgroundReferencePath}}`
-              : pair.backgroundKey}
-          </p>
-        </div>
-
-        <div className="flex min-w-0 flex-wrap items-center gap-3">
-          <ColorPreview
-            label={t('contrast.foreground')}
-            value={pair.foregroundValue}
-          />
-          <ColorPreview
-            label={t('contrast.background')}
-            value={pair.backgroundValue}
-          />
-        </div>
-      </div>
-
-      <ContrastRatioSummary t={t} pair={pair} />
-    </div>
-  );
-}
-
-function ContrastRatioSummary({
-  t,
-  pair,
-}: {
-  t: ThemesEditorTranslator;
-  pair: ThemeColorPair;
-}) {
-  if (!pair.foregroundValue || !pair.backgroundValue) {
-    return (
-      <p className="text-action-warning mt-3 text-xs font-semibold">
-        {t('contrast.missingColors')}
-      </p>
-    );
-  }
-
-  if (!pair.contrast?.isValid || pair.contrast.ratio === null) {
-    return (
-      <p className="text-action-danger mt-3 text-xs font-semibold">
-        {t('contrast.invalidColors')}
-      </p>
-    );
-  }
-
-  return (
-    <div className="mt-3 flex flex-col gap-1">
-      <span
-        className={[
-          'w-fit rounded-full px-2.5 py-1 text-xs font-semibold',
-          pair.contrast.status === 'pass'
-            ? 'bg-action-success/10 text-action-success'
-            : '',
-          pair.contrast.status === 'warning'
-            ? 'bg-action-warning/10 text-action-warning'
-            : '',
-          pair.contrast.status === 'fail'
-            ? 'bg-action-danger/10 text-action-danger'
-            : '',
-        ]
-          .filter(Boolean)
-          .join(' ')}
-      >
-        {t(`contrast.status.${pair.contrast.status}`)}
-      </span>
-
-      <p className="text-content-secondary text-xs font-semibold">
-        {t('contrast.ratio', {
-          ratio: pair.contrast.ratio.toFixed(2),
-        })}
-      </p>
-
-      <p className="text-content-tertiary text-xs">
-        {t('contrast.requiredRatio', {
-          required: pair.contrast.requiredRatio.toFixed(1),
-        })}
-      </p>
-    </div>
-  );
-}
-
-function ColorPreview({
-  label,
-  value,
-}: {
-  label: string;
-  value: string | null;
-}) {
-  return (
-    <div className="flex min-w-0 items-center gap-2">
-      {value ? (
-        <span
-          role="img"
-          aria-label={`${label}: ${value}`}
-          className="border-border-subtle size-5 shrink-0 rounded-full border"
-          style={{ backgroundColor: value }}
-        />
-      ) : (
-        <span className="border-border-default size-5 shrink-0 rounded-full border border-dashed" />
-      )}
-
-      <span className="text-content-secondary min-w-0 truncate font-mono text-xs">
-        {value ?? '—'}
-      </span>
-    </div>
-  );
-}
-
-function ResolvedColorPreview({
-  t,
-  resolvedColorValue,
-}: {
-  t: ThemesEditorTranslator;
-  resolvedColorValue: string | null;
-}) {
-  if (!resolvedColorValue) {
-    return (
-      <p className="text-action-warning mt-4 text-xs font-semibold">
-        {t('semanticTokens.unresolved')}
-      </p>
-    );
-  }
-
-  return (
-    <div className="text-content-secondary mt-4 flex min-w-0 items-center gap-2 text-xs">
-      <span
-        role="img"
-        aria-label={`${t('semanticTokens.resolvedValue')}: ${resolvedColorValue}`}
-        className="border-border-subtle size-5 shrink-0 rounded-full border"
-        style={{ backgroundColor: resolvedColorValue }}
+      <ThemeContrastMatrix
+        pairs={contrastPairs}
+        labels={{
+          title: t('contrast.title'),
+          description: t('contrast.description'),
+          foreground: t('contrast.foreground'),
+          background: t('contrast.background'),
+          missingColors: t('contrast.missingColors'),
+          invalidColors: t('contrast.invalidColors'),
+          ratio: (ratio) => t('contrast.ratio', { ratio }),
+          requiredRatio: (required) =>
+            t('contrast.requiredRatio', { required }),
+          statuses: {
+            pass: t('contrast.status.pass'),
+            warning: t('contrast.status.warning'),
+            fail: t('contrast.status.fail'),
+          },
+          grades: {
+            aaa: t('contrast.grades.aaa'),
+            aa: t('contrast.grades.aa'),
+            largeOnly: t('contrast.grades.largeOnly'),
+            fail: t('contrast.grades.fail'),
+          },
+          pairLabels: {
+            contentOnBackground: t('contrast.pairs.contentOnBackground'),
+            contentOnSurface: t('contrast.pairs.contentOnSurface'),
+            mutedOnBackground: t('contrast.pairs.mutedOnBackground'),
+            mutedOnSurface: t('contrast.pairs.mutedOnSurface'),
+            accentOnBackground: t('contrast.pairs.accentOnBackground'),
+            accentOnSurface: t('contrast.pairs.accentOnSurface'),
+          },
+          colorLabels: {
+            background: t('themeMapping.keys.background'),
+            surface: t('themeMapping.keys.surface'),
+            content: t('themeMapping.keys.content'),
+            muted: t('themeMapping.keys.muted'),
+            accent: t('themeMapping.keys.accent'),
+          },
+        }}
       />
-      <span className="min-w-0 truncate">
-        {t('semanticTokens.resolvedValue')}: {resolvedColorValue}
-      </span>
-    </div>
-  );
-}
-
-function EmptyState({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="border-border-default min-w-0 rounded-2xl border border-dashed p-6 text-center sm:p-8">
-      <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
-      <p className="text-content-secondary mx-auto mt-3 max-w-xl text-sm leading-6">
-        {description}
-      </p>
     </div>
   );
 }
