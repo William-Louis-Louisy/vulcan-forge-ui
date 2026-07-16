@@ -35,9 +35,7 @@ export function ThemesResponsiveWorkspace({
 }: ThemesResponsiveWorkspaceProps) {
   const [activePanel, setActivePanel] =
     useState<ThemesWorkspacePanel>('editor');
-  const [activeThemeId, setActiveThemeId] = useState(
-    themes[0]?.id ?? '',
-  );
+  const [activeThemeId, setActiveThemeId] = useState(themes[0]?.id ?? '');
   const activeTheme =
     themes.find((theme) => theme.id === activeThemeId) ?? themes[0] ?? null;
 
@@ -73,7 +71,7 @@ export function ThemesResponsiveWorkspace({
         })}
       </div>
 
-      <div className="min-h-0 flex-1 lg:grid lg:grid-cols-[minmax(0,1fr)_20rem] xl:grid-cols-[minmax(0,1fr)_26rem] lg:overflow-hidden">
+      <div className="min-h-0 flex-1 lg:grid lg:grid-cols-[minmax(0,1fr)_20rem] lg:overflow-hidden xl:grid-cols-[minmax(0,1fr)_26rem]">
         <section
           id="themes-workspace-panel-editor"
           role="tabpanel"
@@ -120,7 +118,7 @@ export function ThemesResponsiveWorkspace({
                         'border-b-2 px-3 py-2 text-sm font-semibold whitespace-nowrap transition',
                         isActive
                           ? 'border-action-primary text-content-primary'
-                          : 'border-transparent text-content-tertiary hover:text-content-primary',
+                          : 'text-content-tertiary hover:text-content-primary border-transparent',
                       ].join(' ')}
                     >
                       {theme.label}

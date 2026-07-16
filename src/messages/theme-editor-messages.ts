@@ -2,8 +2,7 @@ export const themeEditorMessages = {
   en: {
     ThemesEditorPage: {
       themes: {
-        count:
-          '{count, plural, =0 {No theme} one {# theme} other {# themes}}',
+        count: '{count, plural, =0 {No theme} one {# theme} other {# themes}}',
         navigationLabel: 'Theme modes',
       },
       contrast: {

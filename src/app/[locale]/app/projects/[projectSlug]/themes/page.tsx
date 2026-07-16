@@ -234,9 +234,7 @@ function ThemeEditorPanel({
             fail: t('contrast.grades.fail'),
           },
           pairLabels: {
-            contentOnBackground: t(
-              'contrast.pairs.contentOnBackground',
-            ),
+            contentOnBackground: t('contrast.pairs.contentOnBackground'),
             contentOnSurface: t('contrast.pairs.contentOnSurface'),
             mutedOnBackground: t('contrast.pairs.mutedOnBackground'),
             mutedOnSurface: t('contrast.pairs.mutedOnSurface'),

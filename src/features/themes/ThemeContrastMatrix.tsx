@@ -1,7 +1,4 @@
-import type {
-  ThemeColorKey,
-  ThemeColorPair,
-} from './themes-editor.utils';
+import type { ThemeColorKey, ThemeColorPair } from './themes-editor.utils';
 
 type ContrastStatus = 'pass' | 'warning' | 'fail';
 type ContrastGrade = 'aaa' | 'aa' | 'largeOnly' | 'fail';
@@ -61,7 +58,10 @@ function getGradeClassName(grade: ContrastGrade) {
   return 'bg-action-danger/10 text-action-danger';
 }
 
-function formatReference(referencePath: string | null, colorKey: ThemeColorKey) {
+function formatReference(
+  referencePath: string | null,
+  colorKey: ThemeColorKey,
+) {
   return referencePath ? `{${referencePath}}` : colorKey;
 }
 
@@ -220,8 +220,9 @@ function ContrastPairCard({
           <h4 className="text-sm font-semibold">
             {labels.pairLabels[pair.key] ?? pair.key}
           </h4>
-          <p className="text-content-tertiary mt-1 break-words font-mono text-[0.6875rem]">
-            {formatReference(pair.foregroundReferencePath, pair.foregroundKey)} /{' '}
+          <p className="text-content-tertiary mt-1 font-mono text-[0.6875rem] break-words">
+            {formatReference(pair.foregroundReferencePath, pair.foregroundKey)}{' '}
+            /{' '}
             {formatReference(pair.backgroundReferencePath, pair.backgroundKey)}
           </p>
         </div>
@@ -244,16 +245,19 @@ function ColorPairSwatches({
 }) {
   return (
     <div className="flex shrink-0 items-center gap-1.5">
-      <ColorSwatch
-        label={labels.foreground}
-        value={pair.foregroundValue}
-      />
+      <ColorSwatch label={labels.foreground} value={pair.foregroundValue} />
       <ColorSwatch label={labels.background} value={pair.backgroundValue} />
     </div>
   );
 }
 
-function ColorSwatch({ label, value }: { label: string; value: string | null }) {
+function ColorSwatch({
+  label,
+  value,
+}: {
+  label: string;
+  value: string | null;
+}) {
   return value ? (
     <span
       role="img"
