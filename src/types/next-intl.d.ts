@@ -19,6 +19,18 @@ type DeepMerge<Left, Right> = {
       : never;
 };
 
+type WidenMessageValues<Value> = Value extends string
+  ? string
+  : Value extends number
+    ? number
+    : Value extends boolean
+      ? boolean
+      : Value extends readonly unknown[]
+        ? { [Index in keyof Value]: WidenMessageValues<Value[Index]> }
+        : Value extends Record<string, unknown>
+          ? { [Key in keyof Value]: WidenMessageValues<Value[Key]> }
+          : Value;
+
 type ComponentMessages = DeepMerge<
   (typeof componentGuidelineMessages)['en'],
   (typeof componentPreviewMessages)['en']
@@ -31,7 +43,9 @@ type ThemeMessages = DeepMerge<
 
 type ScopedMessages = DeepMerge<ComponentMessages, ThemeMessages>;
 
-type Messages = DeepMerge<typeof baseMessages, ScopedMessages>;
+type Messages = WidenMessageValues<
+  DeepMerge<typeof baseMessages, ScopedMessages>
+>;
 
 declare module 'next-intl' {
   interface AppConfig {
