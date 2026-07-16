@@ -233,12 +233,16 @@ function ThemeEditorPanel({
             largeOnly: t('contrast.grades.largeOnly'),
             fail: t('contrast.grades.fail'),
           },
-          pairLabels: Object.fromEntries(
-            contrastPairs.map((pair) => [
-              pair.key,
-              t(`contrast.pairs.${pair.key}`),
-            ]),
-          ),
+          pairLabels: {
+            contentOnBackground: t(
+              'contrast.pairs.contentOnBackground',
+            ),
+            contentOnSurface: t('contrast.pairs.contentOnSurface'),
+            mutedOnBackground: t('contrast.pairs.mutedOnBackground'),
+            mutedOnSurface: t('contrast.pairs.mutedOnSurface'),
+            accentOnBackground: t('contrast.pairs.accentOnBackground'),
+            accentOnSurface: t('contrast.pairs.accentOnSurface'),
+          },
           colorLabels: {
             background: t('themeMapping.keys.background'),
             surface: t('themeMapping.keys.surface'),
