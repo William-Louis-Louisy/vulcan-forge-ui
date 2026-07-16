@@ -57,6 +57,9 @@ function renderEditor({
   availableOptions?: typeof options;
   showNoOptionsMessage?: boolean;
 } = {}) {
+  const optionalProps =
+    showNoOptionsMessage === undefined ? {} : { showNoOptionsMessage };
+
   return render(
     <ThemeTokenReferenceEditor
       locale="en"
@@ -67,8 +70,8 @@ function renderEditor({
       legacyDirectValue={null}
       resolvedValue={resolvedValue}
       options={availableOptions}
-      showNoOptionsMessage={showNoOptionsMessage}
       labels={labels}
+      {...optionalProps}
     />,
   );
 }
