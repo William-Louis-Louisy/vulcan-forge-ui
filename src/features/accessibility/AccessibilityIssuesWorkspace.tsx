@@ -37,15 +37,20 @@ export function AccessibilityIssuesWorkspace({
     }),
   );
 
-  const { ratioValue: _ratioValue, ...serializableDetails } = labels.details;
-
   return (
     <AccessibilityIssuesWorkspaceClient
       issues={issues}
       ratioLabels={ratioLabels}
       labels={{
         ...labels,
-        details: serializableDetails,
+        details: {
+          tokenPath: labels.details.tokenPath,
+          foreground: labels.details.foreground,
+          background: labels.details.background,
+          foregroundValue: labels.details.foregroundValue,
+          backgroundValue: labels.details.backgroundValue,
+          ratio: labels.details.ratio,
+        },
       }}
     />
   );
