@@ -1,4 +1,5 @@
 import { auth } from '@/auth';
+import { Notice } from '@/components/ui';
 import { hasLocale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
@@ -8,6 +9,7 @@ import {
   type AccessibilityCenterIssue,
   type AccessibilityCenterReport,
 } from '@/features/accessibility/accessibility-center.utils';
+import { AccessibilityIssuesWorkspace } from '@/features/accessibility/AccessibilityIssuesWorkspace';
 import { SaveAccessibilityReportButton } from '@/features/accessibility/SaveAccessibilityReportButton';
 import { getAccessibilityCenterPageData } from '@/features/accessibility/accessibility-center.queries';
 
@@ -46,7 +48,6 @@ export default async function AccessibilityCenterPage({
   }
 
   const t = await getTranslations('AccessibilityCenterPage');
-
   const pageData = await getAccessibilityCenterPageData({
     userId: session.user.id,
     projectSlug,
@@ -60,50 +61,78 @@ export default async function AccessibilityCenterPage({
     colorTokenSetTokens: pageData.colorTokenSet?.tokens ?? [],
     themes: pageData.themes,
   });
-
   const labels = createAccessibilityCenterLabels(t);
 
   return (
-    <section className="mx-auto max-w-7xl">
-      <div className="mt-8">
-        <p className="text-action-primary text-sm font-semibold tracking-[0.24em] uppercase">
-          {t('eyebrow')}
-        </p>
+    <section className="flex min-h-0 flex-col xl:absolute xl:inset-0 xl:h-auto xl:overflow-hidden">
+      <header className="border-border-subtle bg-background-app shrink-0 border-b px-4 py-4 md:px-6 xl:px-7 xl:py-5">
+        <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0">
+            <p className="text-action-primary text-[0.6875rem] font-semibold tracking-[0.16em] uppercase">
+              {t('eyebrow')}
+            </p>
+            <h1 className="mt-1 text-[26px] font-semibold tracking-[-0.015em]">
+              {t('title', { projectName: pageData.project.name })}
+            </h1>
+            <p className="text-content-tertiary mt-1 max-w-3xl text-sm leading-6">
+              {t('description')}
+            </p>
+          </div>
 
-        <h1 className="mt-4 text-4xl font-semibold tracking-tight">
-          {t('title', { projectName: pageData.project.name })}
-        </h1>
+          <SaveAccessibilityReportButton
+            locale={locale}
+            projectSlug={pageData.project.slug}
+          />
+        </div>
+      </header>
 
-        <p className="text-content-secondary mt-4 max-w-3xl">
-          {t('description')}
-        </p>
-      </div>
+      <main className="min-h-0 min-w-0 flex-1 overflow-y-auto">
+        <div className="grid min-w-0 gap-4 p-4 md:p-6 xl:p-7">
+          <Notice
+            tone="warning"
+            title={t('auditNotice.title')}
+            className="rounded-md py-3"
+          >
+            {t('auditNotice.description')}
+          </Notice>
 
-      <div className="border-action-warning/30 bg-action-warning/10 text-content-secondary shadow-soft mt-8 rounded-3xl border p-5 text-sm leading-6">
-        <strong className="text-content-primary">
-          {t('auditNotice.title')}
-        </strong>{' '}
-        {t('auditNotice.description')}
-      </div>
+          <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+            <ScoreCard t={t} report={report} />
+            <LatestAccessibilityReportCard
+              t={t}
+              locale={locale}
+              latestReport={pageData.latestAccessibilityReport}
+            />
+          </div>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-        <SaveAccessibilityReportButton
-          locale={locale}
-          projectSlug={pageData.project.slug}
-        />
+          <AccessibilityIssuesWorkspace
+            issues={report.issues}
+            labels={{
+              title: t('issues.title'),
+              detailTitle: t('issues.detailTitle'),
+              count: t('issues.count', { count: report.issues.length }),
+              emptyTitle: t('issues.emptyTitle'),
+              emptyDescription: t('issues.emptyDescription'),
+              pairs: labels.pairs,
+              issueCodes: labels.issueCodes,
+              issueFixes: labels.issueFixes,
+              severities: labels.severities,
+              details: {
+                tokenPath: t('issueDetails.tokenPath'),
+                foreground: t('issueDetails.foreground'),
+                background: t('issueDetails.background'),
+                foregroundValue: t('issueDetails.foregroundValue'),
+                backgroundValue: t('issueDetails.backgroundValue'),
+                ratio: t('issueDetails.ratio'),
+                ratioValue: (ratio, required) =>
+                  t('issueDetails.ratioValue', { ratio, required }),
+              },
+            }}
+          />
 
-        <LatestAccessibilityReportCard
-          t={t}
-          latestReport={pageData.latestAccessibilityReport}
-        />
-      </div>
-
-      <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
-        <ScoreCard t={t} report={report} />
-        <IssuesPanel t={t} report={report} labels={labels} />
-      </div>
-
-      <ContrastPairsPanel t={t} report={report} labels={labels} />
+          <ContrastPairsPanel t={t} report={report} labels={labels} />
+        </div>
+      </main>
     </section>
   );
 }
@@ -114,9 +143,11 @@ function createAccessibilityCenterLabels(
   return {
     pairs: {
       contentOnBackground: t('pairs.contentOnBackground'),
-      mutedOnBackground: t('pairs.mutedOnBackground'),
       contentOnSurface: t('pairs.contentOnSurface'),
+      mutedOnBackground: t('pairs.mutedOnBackground'),
+      mutedOnSurface: t('pairs.mutedOnSurface'),
       accentOnBackground: t('pairs.accentOnBackground'),
+      accentOnSurface: t('pairs.accentOnSurface'),
     },
     issueCodes: {
       missingForegroundColor: t('issues.codes.missingForegroundColor'),
@@ -151,27 +182,39 @@ function ScoreCard({
   report: AccessibilityCenterReport;
 }) {
   return (
-    <article className="border-border-subtle bg-surface-primary shadow-soft rounded-3xl border p-6">
-      <p className="text-content-tertiary text-sm font-semibold tracking-[0.18em] uppercase">
-        {t('score.eyebrow')}
-      </p>
+    <article className="border-border-subtle bg-surface-primary min-w-0 rounded-md border p-4 sm:p-5">
+      <div className="flex min-w-0 items-start justify-between gap-4">
+        <div>
+          <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase">
+            {t('score.eyebrow')}
+          </p>
+          <div className="mt-1 flex items-end gap-1.5">
+            <span className="text-4xl font-semibold tracking-tight">
+              {report.score}
+            </span>
+            <span className="text-content-tertiary pb-1 text-sm">/100</span>
+          </div>
+        </div>
 
-      <div className="mt-4 flex items-end gap-2">
-        <span className="text-6xl font-semibold tracking-tight">
-          {report.score}
+        <span
+          className={[
+            'rounded-full px-2.5 py-1 text-xs font-semibold',
+            report.status === 'healthy'
+              ? 'bg-action-success/10 text-action-success'
+              : report.status === 'critical'
+                ? 'bg-action-danger/10 text-action-danger'
+                : 'bg-action-warning/10 text-action-warning',
+          ].join(' ')}
+        >
+          {t(`score.status.${report.status}`)}
         </span>
-        <span className="text-content-secondary pb-2">/100</span>
       </div>
 
-      <p className="mt-4 text-lg font-semibold">
-        {t(`score.status.${report.status}`)}
-      </p>
-
-      <p className="text-content-secondary mt-3 text-sm leading-6">
+      <p className="text-content-secondary mt-3 text-xs leading-5">
         {t('score.description')}
       </p>
 
-      <div className="mt-6 grid grid-cols-2 gap-3">
+      <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-2">
         <ScoreMetric
           label={t('score.totalIssues')}
           value={String(report.issues.length)}
@@ -195,173 +238,75 @@ function ScoreCard({
 
 function ScoreMetric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="border-border-subtle bg-background-subtle rounded-2xl border p-4">
-      <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
+    <div className="border-border-subtle bg-background-subtle min-w-0 rounded-md border p-3">
+      <p className="text-content-tertiary truncate text-[0.6875rem] font-semibold tracking-[0.12em] uppercase">
         {label}
       </p>
-      <p className="mt-2 text-2xl font-semibold">{value}</p>
+      <p className="mt-1 text-lg font-semibold">{value}</p>
     </div>
   );
 }
 
-function IssuesPanel({
+function LatestAccessibilityReportCard({
   t,
-  report,
-  labels,
+  locale,
+  latestReport,
 }: {
   t: AccessibilityCenterTranslator;
-  report: AccessibilityCenterReport;
-  labels: AccessibilityCenterLabels;
+  locale: Locale;
+  latestReport: {
+    id: string;
+    status: 'pass' | 'warning' | 'fail';
+    score: number;
+    issues: unknown;
+    createdAt: Date;
+  } | null;
 }) {
   return (
-    <section className="border-border-subtle bg-surface-primary shadow-soft rounded-3xl border p-6">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-content-tertiary text-sm font-semibold tracking-[0.18em] uppercase">
-            {t('issues.eyebrow')}
-          </p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-            {t('issues.title')}
-          </h2>
-        </div>
-
-        <p className="text-content-secondary text-sm">
-          {t('issues.count', { count: report.issues.length })}
-        </p>
+    <article className="border-border-subtle bg-surface-primary min-w-0 rounded-md border p-4 sm:p-5">
+      <div className="flex items-center justify-between gap-4">
+        <h2 className="text-sm font-semibold tracking-tight">
+          {t('latestReport.title')}
+        </h2>
+        {latestReport ? (
+          <span className="text-content-tertiary text-xs font-semibold">
+            {latestReport.createdAt.toLocaleDateString(locale)}
+          </span>
+        ) : null}
       </div>
 
-      {report.issues.length > 0 ? (
-        <div className="mt-6 grid gap-4">
-          {report.issues.map((issue) => (
-            <IssueCard key={issue.id} issue={issue} labels={labels} t={t} />
-          ))}
+      {latestReport ? (
+        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+          <ReportMetric
+            label={t('latestReport.score')}
+            value={`${latestReport.score}/100`}
+          />
+          <ReportMetric
+            label={t('latestReport.status')}
+            value={t(`latestReport.statuses.${latestReport.status}`)}
+          />
+          <ReportMetric
+            label={t('latestReport.savedAt')}
+            value={latestReport.createdAt.toLocaleDateString(locale)}
+          />
         </div>
       ) : (
-        <div className="border-border-default mt-6 rounded-2xl border border-dashed p-8 text-center">
-          <h3 className="text-xl font-semibold tracking-tight">
-            {t('issues.emptyTitle')}
-          </h3>
-          <p className="text-content-secondary mx-auto mt-3 max-w-xl text-sm leading-6">
-            {t('issues.emptyDescription')}
-          </p>
-        </div>
+        <p className="text-content-secondary mt-4 text-sm leading-6">
+          {t('latestReport.empty')}
+        </p>
       )}
-    </section>
+    </article>
   );
 }
 
-function IssueCard({
-  t,
-  issue,
-  labels,
-}: {
-  t: AccessibilityCenterTranslator;
-  issue: AccessibilityCenterIssue;
-  labels: AccessibilityCenterLabels;
-}) {
-  const pairLabel = issue.pairId ? labels.pairs[issue.pairId] : null;
-
+function ReportMetric({ label, value }: { label: string; value: string }) {
   return (
-    <article className="border-border-subtle bg-background-subtle rounded-2xl border p-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <p className="text-sm font-semibold">
-            {labels.issueCodes[issue.code]}
-          </p>
-
-          {pairLabel ? (
-            <p className="text-content-secondary mt-1 text-sm">{pairLabel}</p>
-          ) : null}
-
-          {issue.themeName ? (
-            <p className="text-content-tertiary mt-1 text-xs font-semibold tracking-[0.18em] uppercase">
-              {issue.themeName}
-            </p>
-          ) : null}
-
-          {issue.tokenPath ? (
-            <p className="text-content-secondary wrap-break-words mt-1 font-mono text-xs">
-              {issue.tokenPath}
-            </p>
-          ) : null}
-        </div>
-
-        <span
-          className={[
-            'inline-flex rounded-full border px-3 py-1 text-xs font-semibold',
-            issue.severity === 'critical'
-              ? 'border-action-danger/30 bg-action-danger/10 text-action-danger'
-              : 'border-action-warning/30 bg-action-warning/10 text-action-warning',
-          ].join(' ')}
-        >
-          {labels.severities[issue.severity]}
-        </span>
-      </div>
-
-      <p className="text-content-secondary mt-4 text-sm leading-6">
-        {labels.issueFixes[issue.code]}
+    <div className="border-border-subtle bg-background-subtle min-w-0 rounded-md border p-3">
+      <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.12em] uppercase">
+        {label}
       </p>
-
-      {issue.foregroundTokenPath || issue.backgroundTokenPath ? (
-        <dl className="text-content-tertiary mt-4 grid gap-2 text-xs">
-          {issue.foregroundTokenPath ? (
-            <div>
-              <dt className="font-semibold">{t('issueDetails.foreground')}</dt>
-              <dd className="wrap-break-words font-mono">
-                {issue.foregroundTokenPath}
-              </dd>
-            </div>
-          ) : null}
-
-          {issue.backgroundTokenPath ? (
-            <div>
-              <dt className="font-semibold">{t('issueDetails.background')}</dt>
-              <dd className="wrap-break-words font-mono">
-                {issue.backgroundTokenPath}
-              </dd>
-            </div>
-          ) : null}
-        </dl>
-      ) : null}
-
-      {issue.foregroundValue || issue.backgroundValue ? (
-        <dl className="text-content-tertiary mt-4 grid gap-2 text-xs">
-          {issue.foregroundValue ? (
-            <div>
-              <dt className="font-semibold">
-                {t('issueDetails.foregroundValue')}
-              </dt>
-              <dd className="wrap-break-words font-mono">
-                {issue.foregroundValue}
-              </dd>
-            </div>
-          ) : null}
-
-          {issue.backgroundValue ? (
-            <div>
-              <dt className="font-semibold">
-                {t('issueDetails.backgroundValue')}
-              </dt>
-              <dd className="wrap-break-words font-mono">
-                {issue.backgroundValue}
-              </dd>
-            </div>
-          ) : null}
-
-          {issue.ratio !== null && issue.requiredRatio !== null ? (
-            <div>
-              <dt className="font-semibold">{t('issueDetails.ratio')}</dt>
-              <dd className="wrap-break-words font-mono">
-                {t('issueDetails.ratioValue', {
-                  ratio: issue.ratio.toFixed(2),
-                  required: issue.requiredRatio.toFixed(1),
-                })}
-              </dd>
-            </div>
-          ) : null}
-        </dl>
-      ) : null}
-    </article>
+      <p className="mt-1 truncate text-sm font-semibold">{value}</p>
+    </div>
   );
 }
 
@@ -375,168 +320,113 @@ function ContrastPairsPanel({
   labels: AccessibilityCenterLabels;
 }) {
   return (
-    <section className="border-border-subtle bg-surface-primary shadow-soft mt-8 rounded-3xl border p-6">
-      <h2 className="text-2xl font-semibold tracking-tight">
-        {t('pairs.title')}
-      </h2>
+    <section className="border-border-subtle bg-surface-primary min-w-0 rounded-md border">
+      <header className="border-border-subtle border-b px-4 py-3">
+        <h2 className="text-sm font-semibold tracking-tight">
+          {t('pairs.title')}
+        </h2>
+        <p className="text-content-secondary mt-1 text-xs leading-5">
+          {t('pairs.description')}
+        </p>
+      </header>
 
-      <p className="text-content-secondary mt-3 max-w-3xl text-sm leading-6">
-        {t('pairs.description')}
-      </p>
-
-      <div className="mt-6 grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-2 p-3 sm:hidden">
         {report.contrastPairs.map((pair) => (
-          <article
+          <ContrastPairSummary
             key={pair.id}
-            className="border-border-subtle bg-background-subtle rounded-2xl border p-4"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
-                  {pair.themeName}
-                </p>
-
-                <h3 className="mt-1 font-semibold">
-                  {labels.pairs[pair.pairId]}
-                </h3>
-
-                <p className="text-content-tertiary mt-1 text-xs">
-                  {pair.foregroundRole} / {pair.backgroundRole}
-                </p>
-              </div>
-
-              <span className="border-border-subtle rounded-full border px-3 py-1 text-xs font-semibold">
-                {t(`pairs.status.${pair.status}`)}
-              </span>
-            </div>
-
-            <div className="mt-4 grid gap-3">
-              <ColorValue
-                label={t('pairs.foreground')}
-                value={pair.foregroundValue}
-                tokenPath={pair.foregroundTokenPath}
-              />
-
-              <ColorValue
-                label={t('pairs.background')}
-                value={pair.backgroundValue}
-                tokenPath={pair.backgroundTokenPath}
-              />
-            </div>
-
-            <p className="text-content-secondary mt-4 text-sm">
-              {pair.ratio !== null && pair.requiredRatio !== null
-                ? t('pairs.ratio', {
-                    ratio: pair.ratio.toFixed(2),
-                    required: pair.requiredRatio.toFixed(1),
-                  })
-                : t('pairs.noRatio')}
-            </p>
-          </article>
+            t={t}
+            pair={pair}
+            label={labels.pairs[pair.pairId] ?? pair.pairId}
+          />
         ))}
+      </div>
+
+      <div className="hidden min-w-0 overflow-x-auto sm:block">
+        <table className="w-full min-w-[42rem] border-collapse text-left text-xs">
+          <thead className="bg-background-subtle text-content-tertiary">
+            <tr>
+              <th className="px-4 py-2 font-semibold">{t('pairs.title')}</th>
+              <th className="px-4 py-2 font-semibold">{t('pairs.foreground')}</th>
+              <th className="px-4 py-2 font-semibold">{t('pairs.background')}</th>
+              <th className="px-4 py-2 font-semibold">{t('issueDetails.ratio')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {report.contrastPairs.map((pair) => (
+              <tr
+                key={pair.id}
+                className="border-border-subtle border-t first:border-t-0"
+              >
+                <td className="px-4 py-3">
+                  <p className="font-semibold">
+                    {labels.pairs[pair.pairId] ?? pair.pairId}
+                  </p>
+                  <p className="text-content-tertiary mt-1">{pair.themeName}</p>
+                </td>
+                <td className="px-4 py-3 font-mono">
+                  {pair.foregroundValue ?? '—'}
+                </td>
+                <td className="px-4 py-3 font-mono">
+                  {pair.backgroundValue ?? '—'}
+                </td>
+                <td className="px-4 py-3">
+                  <PairStatus t={t} pair={pair} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </section>
   );
 }
 
-function ColorValue({
+function ContrastPairSummary({
+  t,
+  pair,
   label,
-  value,
-  tokenPath,
 }: {
+  t: AccessibilityCenterTranslator;
+  pair: AccessibilityCenterReport['contrastPairs'][number];
   label: string;
-  value: string | null;
-  tokenPath?: string | null;
 }) {
   return (
-    <div className="border-border-subtle rounded-xl border p-3">
-      <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
-        {label}
-      </p>
-
-      {tokenPath ? (
-        <p className="text-content-tertiary mt-2 font-mono text-xs break-all">
-          {tokenPath}
-        </p>
-      ) : null}
-
-      <div className="mt-2 flex items-center gap-2">
-        {value ? (
-          <span
-            role="img"
-            aria-label={`${label}: ${value}`}
-            className="border-border-subtle size-5 rounded-full border"
-            style={{ backgroundColor: value }}
-          />
-        ) : null}
-
-        <span className="text-content-secondary font-mono text-xs break-all">
-          {value ?? '—'}
-        </span>
+    <article className="border-border-subtle bg-background-subtle rounded-md border p-3">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h3 className="text-sm font-semibold">{label}</h3>
+          <p className="text-content-tertiary mt-1 text-xs">{pair.themeName}</p>
+        </div>
+        <PairStatus t={t} pair={pair} />
       </div>
-    </div>
+    </article>
   );
 }
 
-function LatestAccessibilityReportCard({
+function PairStatus({
   t,
-  latestReport,
+  pair,
 }: {
   t: AccessibilityCenterTranslator;
-  latestReport: {
-    id: string;
-    status: 'pass' | 'warning' | 'fail';
-    score: number;
-    issues: unknown;
-    createdAt: Date;
-  } | null;
+  pair: AccessibilityCenterReport['contrastPairs'][number];
 }) {
   return (
-    <article className="border-border-subtle bg-surface-primary shadow-soft rounded-3xl border p-5">
-      <h2 className="text-xl font-semibold tracking-tight">
-        {t('latestReport.title')}
-      </h2>
-
-      {latestReport ? (
-        <div className="mt-4 grid gap-3">
-          <p className="text-content-secondary text-sm">
-            {t('latestReport.description')}
-          </p>
-
-          <div className="grid grid-cols-3 gap-3">
-            <div className="border-border-subtle bg-background-subtle rounded-2xl border p-3">
-              <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
-                {t('latestReport.score')}
-              </p>
-              <p className="mt-2 text-2xl font-semibold">
-                {latestReport.score}
-              </p>
-            </div>
-
-            <div className="border-border-subtle bg-background-subtle rounded-2xl border p-3">
-              <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
-                {t('latestReport.status')}
-              </p>
-              <p className="mt-2 text-sm font-semibold">
-                {t(`latestReport.statuses.${latestReport.status}`)}
-              </p>
-            </div>
-
-            <div className="border-border-subtle bg-background-subtle rounded-2xl border p-3">
-              <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
-                {t('latestReport.savedAt')}
-              </p>
-              <p className="mt-2 text-sm font-semibold">
-                {latestReport.createdAt.toLocaleDateString()}
-              </p>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <p className="text-content-secondary mt-4 text-sm leading-6">
-          {t('latestReport.empty')}
-        </p>
-      )}
-    </article>
+    <div className="flex flex-wrap items-center gap-2">
+      <span
+        className={[
+          'rounded-full px-2 py-0.5 text-[0.6875rem] font-semibold',
+          pair.status === 'pass'
+            ? 'bg-action-success/10 text-action-success'
+            : pair.status === 'fail'
+              ? 'bg-action-danger/10 text-action-danger'
+              : 'bg-action-warning/10 text-action-warning',
+        ].join(' ')}
+      >
+        {t(`pairs.status.${pair.status}`)}
+      </span>
+      <span className="text-content-secondary font-mono text-xs font-semibold">
+        {pair.ratio !== null ? `${pair.ratio.toFixed(2)}:1` : '—'}
+      </span>
+    </div>
   );
 }
