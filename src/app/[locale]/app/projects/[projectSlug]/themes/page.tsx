@@ -163,7 +163,7 @@ function ThemeEditorPanel({
           <p>{t('themeMapping.noTokenOptionsDescription')}</p>
           <AppLink
             href={`/app/projects/${projectSlug}/tokens`}
-            className="border-action-warning/40 mt-3 inline-flex min-h-9 items-center justify-center rounded-md border px-3 text-xs font-semibold transition hover:bg-action-warning/10 focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="border-action-warning/40 hover:bg-action-warning/10 mt-3 inline-flex min-h-9 items-center justify-center rounded-md border px-3 text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2"
           >
             {t('openTokensEditor')}
           </AppLink>

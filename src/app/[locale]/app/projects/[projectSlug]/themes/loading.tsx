@@ -39,7 +39,7 @@ export default function ThemesEditorLoading() {
             </div>
           </header>
 
-          <main className="min-h-0 min-w-0 flex-1 p-4 lg:overflow-y-auto md:px-6 xl:px-7">
+          <main className="min-h-0 min-w-0 flex-1 p-4 md:px-6 lg:overflow-y-auto xl:px-7">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <div className="bg-background-subtle h-3 w-14 animate-pulse rounded-md" />

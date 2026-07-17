@@ -189,7 +189,7 @@ export function ThemesResponsiveWorkspace({
                           'border-b-2 px-3 py-2 text-sm font-semibold whitespace-nowrap transition',
                           'focus-visible:outline-border-focus focus-visible:outline-2 focus-visible:outline-offset-[-2px]',
                           isActive
-                            ? 'border-action-primary text-content-primary'
+                            ? 'border-content-primary text-content-primary'
                             : 'text-content-tertiary hover:text-content-primary border-transparent',
                         ].join(' ')}
                       >
