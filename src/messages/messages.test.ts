@@ -6,6 +6,7 @@ import { componentGuidelineMessages } from './component-guidelines';
 import { componentPreviewMessages } from './component-preview-messages';
 import { themePreviewMessages } from './theme-preview-messages';
 import { themeEditorMessages } from './theme-editor-messages';
+import { accessibilityCenterMessages } from './accessibility-center-messages';
 
 type JsonValue = string | number | boolean | null | JsonObject | JsonValue[];
 
@@ -56,12 +57,15 @@ function createLocalizedMessages(
   const scopedMessages = mergeMessages(
     mergeMessages(
       mergeMessages(
-        componentGuidelineMessages[locale],
-        componentPreviewMessages[locale],
+        mergeMessages(
+          componentGuidelineMessages[locale],
+          componentPreviewMessages[locale],
+        ),
+        themePreviewMessages[locale],
       ),
-      themePreviewMessages[locale],
+      themeEditorMessages[locale],
     ),
-    themeEditorMessages[locale],
+    accessibilityCenterMessages[locale],
   );
 
   return mergeMessages(baseMessages, scopedMessages) as unknown as JsonObject;
