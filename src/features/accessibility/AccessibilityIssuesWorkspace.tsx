@@ -6,6 +6,7 @@ import type { AccessibilityCenterIssue } from './accessibility-center.utils';
 
 type AccessibilityIssuesLabels = {
   title: string;
+  detailTitle: string;
   count: string;
   emptyTitle: string;
   emptyDescription: string;
@@ -14,6 +15,7 @@ type AccessibilityIssuesLabels = {
   issueFixes: Record<AccessibilityCenterIssue['code'], string>;
   severities: Record<AccessibilityCenterIssue['severity'], string>;
   details: {
+    tokenPath: string;
     foreground: string;
     background: string;
     foregroundValue: string;
@@ -157,7 +159,7 @@ function IssueDetail({
       <div className="flex min-w-0 items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase">
-            {labels.title}
+            {labels.detailTitle}
           </p>
           <h3 className="mt-1 text-base font-semibold tracking-tight">
             {labels.issueCodes[issue.code]}
@@ -181,6 +183,7 @@ function IssueDetail({
       </p>
 
       <dl className="border-border-subtle mt-4 grid min-w-0 gap-3 border-t pt-4 text-xs">
+        <DetailRow label={labels.details.tokenPath} value={issue.tokenPath} />
         <DetailRow
           label={labels.details.foreground}
           value={issue.foregroundTokenPath}
@@ -197,7 +200,6 @@ function IssueDetail({
           label={labels.details.backgroundValue}
           value={issue.backgroundValue}
         />
-        <DetailRow label={labels.details.foreground} value={issue.tokenPath} />
 
         {issue.ratio !== null && issue.requiredRatio !== null ? (
           <DetailRow
