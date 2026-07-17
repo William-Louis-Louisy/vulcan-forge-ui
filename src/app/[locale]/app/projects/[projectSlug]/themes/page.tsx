@@ -1,5 +1,7 @@
 import { auth } from '@/auth';
 import { hasLocale } from 'next-intl';
+import { EmptyState, Notice } from '@/components/ui';
+import { AppLink } from '@/components/navigation/AppLink';
 import {
   PreviewPanel,
   type PreviewPanelLabels,
@@ -73,6 +75,7 @@ export default async function ThemesEditorPage({
         labels={{
           editor: t('themeMapping.title'),
           preview: t('preview.title'),
+          workspaceNavigation: t('workspace.navigationLabel'),
           themeNavigation: t('themes.navigationLabel'),
         }}
         title={t('title', { projectName: pageData.project.name })}
@@ -91,6 +94,15 @@ export default async function ThemesEditorPage({
             />
           ),
         }))}
+        emptyState={
+          <div className="p-4 md:p-6 xl:p-7">
+            <EmptyState
+              title={t('themes.emptyTitle')}
+              description={t('themes.emptyDescription')}
+              className="mx-auto max-w-2xl"
+            />
+          </div>
+        }
         preview={
           <PreviewPanel
             variant="rail"
@@ -121,6 +133,7 @@ function ThemeEditorPanel({
     colorTokenOptions,
   });
   const isDefaultTheme = theme.mode === 'light';
+  const hasColorTokenOptions = colorTokenOptions.length > 0;
 
   return (
     <div className="min-w-0 px-4 py-4 md:px-6 xl:px-7">
@@ -140,6 +153,22 @@ function ThemeEditorPanel({
           </span>
         ) : null}
       </div>
+
+      {!hasColorTokenOptions ? (
+        <Notice
+          tone="warning"
+          title={t('themeMapping.noTokenOptionsTitle')}
+          className="mt-4 rounded-md"
+        >
+          <p>{t('themeMapping.noTokenOptionsDescription')}</p>
+          <AppLink
+            href={`/app/projects/${projectSlug}/tokens`}
+            className="border-action-warning/40 hover:bg-action-warning/10 mt-3 inline-flex min-h-9 items-center justify-center rounded-md border px-3 text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2"
+          >
+            {t('openTokensEditor')}
+          </AppLink>
+        </Notice>
+      ) : null}
 
       <section className="border-border-subtle bg-surface-primary mt-4 min-w-0 rounded-md border">
         <header className="border-border-subtle border-b p-4">
@@ -178,6 +207,7 @@ function ThemeEditorPanel({
                 legacyDirectValue={referencePath ? null : rawValue}
                 resolvedValue={resolvedValue}
                 options={colorTokenOptions}
+                showNoOptionsMessage={false}
                 labels={{
                   slotLabel: t('themeMapping.slotLabel'),
                   selectLabel: t('themeMapping.selectLabel', {

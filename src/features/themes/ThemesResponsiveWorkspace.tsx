@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type ReactNode } from 'react';
+import { useState, type KeyboardEvent, type ReactNode } from 'react';
 
 type ThemesWorkspacePanel = 'editor' | 'preview';
 
@@ -14,16 +14,63 @@ type ThemesResponsiveWorkspaceProps = {
   labels: {
     editor: string;
     preview: string;
+    workspaceNavigation: string;
     themeNavigation: string;
   };
   title: string;
   description: string;
   summary: string;
   themes: ThemeWorkspaceItem[];
+  emptyState: ReactNode;
   preview: ReactNode;
 };
 
 const panels: ThemesWorkspacePanel[] = ['editor', 'preview'];
+
+function handleTabKeyDown<T extends string>({
+  event,
+  items,
+  currentItem,
+  onSelect,
+  getTabId,
+}: {
+  event: KeyboardEvent<HTMLButtonElement>;
+  items: readonly T[];
+  currentItem: T;
+  onSelect: (item: T) => void;
+  getTabId: (item: T) => string;
+}) {
+  if (items.length === 0) {
+    return;
+  }
+
+  const currentIndex = Math.max(items.indexOf(currentItem), 0);
+  let nextIndex: number | null = null;
+
+  if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+    nextIndex = (currentIndex + 1) % items.length;
+  } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+    nextIndex = (currentIndex - 1 + items.length) % items.length;
+  } else if (event.key === 'Home') {
+    nextIndex = 0;
+  } else if (event.key === 'End') {
+    nextIndex = items.length - 1;
+  }
+
+  if (nextIndex === null) {
+    return;
+  }
+
+  event.preventDefault();
+  const nextItem = items[nextIndex];
+
+  if (!nextItem) {
+    return;
+  }
+
+  onSelect(nextItem);
+  document.getElementById(getTabId(nextItem))?.focus();
+}
 
 export function ThemesResponsiveWorkspace({
   labels,
@@ -31,6 +78,7 @@ export function ThemesResponsiveWorkspace({
   description,
   summary,
   themes,
+  emptyState,
   preview,
 }: ThemesResponsiveWorkspaceProps) {
   const [activePanel, setActivePanel] =
@@ -38,12 +86,13 @@ export function ThemesResponsiveWorkspace({
   const [activeThemeId, setActiveThemeId] = useState(themes[0]?.id ?? '');
   const activeTheme =
     themes.find((theme) => theme.id === activeThemeId) ?? themes[0] ?? null;
+  const themeIds = themes.map((theme) => theme.id);
 
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden">
       <div
         role="tablist"
-        aria-label={labels.editor}
+        aria-label={labels.workspaceNavigation}
         className="border-border-subtle bg-background-app/95 z-20 grid shrink-0 grid-cols-2 gap-1 border-b p-2 backdrop-blur-sm lg:hidden"
       >
         {panels.map((panel) => {
@@ -55,11 +104,22 @@ export function ThemesResponsiveWorkspace({
               id={`themes-workspace-tab-${panel}`}
               type="button"
               role="tab"
+              tabIndex={isActive ? 0 : -1}
               aria-selected={isActive}
               aria-controls={`themes-workspace-panel-${panel}`}
               onClick={() => setActivePanel(panel)}
+              onKeyDown={(event) =>
+                handleTabKeyDown({
+                  event,
+                  items: panels,
+                  currentItem: panel,
+                  onSelect: setActivePanel,
+                  getTabId: (item) => `themes-workspace-tab-${item}`,
+                })
+              }
               className={[
                 'min-h-9 min-w-0 truncate rounded-md px-3 text-xs font-semibold transition',
+                'focus-visible:outline-border-focus focus-visible:outline-2 focus-visible:outline-offset-2',
                 isActive
                   ? 'bg-content-primary text-background-app'
                   : 'text-content-secondary hover:bg-background-subtle hover:text-content-primary',
@@ -97,35 +157,48 @@ export function ThemesResponsiveWorkspace({
                 </p>
               </div>
 
-              <div
-                role="tablist"
-                aria-label={labels.themeNavigation}
-                className="mt-3 flex min-w-0 gap-1 overflow-x-auto"
-              >
-                {themes.map((theme) => {
-                  const isActive = theme.id === activeTheme?.id;
+              {themes.length > 0 ? (
+                <div
+                  role="tablist"
+                  aria-label={labels.themeNavigation}
+                  className="mt-3 flex min-w-0 gap-1 overflow-x-auto"
+                >
+                  {themes.map((theme) => {
+                    const isActive = theme.id === activeTheme?.id;
 
-                  return (
-                    <button
-                      key={theme.id}
-                      id={`theme-editor-tab-${theme.id}`}
-                      type="button"
-                      role="tab"
-                      aria-selected={isActive}
-                      aria-controls={`theme-editor-panel-${theme.id}`}
-                      onClick={() => setActiveThemeId(theme.id)}
-                      className={[
-                        'border-b-2 px-3 py-2 text-sm font-semibold whitespace-nowrap transition',
-                        isActive
-                          ? 'border-action-primary text-content-primary'
-                          : 'text-content-tertiary hover:text-content-primary border-transparent',
-                      ].join(' ')}
-                    >
-                      {theme.label}
-                    </button>
-                  );
-                })}
-              </div>
+                    return (
+                      <button
+                        key={theme.id}
+                        id={`theme-editor-tab-${theme.id}`}
+                        type="button"
+                        role="tab"
+                        tabIndex={isActive ? 0 : -1}
+                        aria-selected={isActive}
+                        aria-controls={`theme-editor-panel-${theme.id}`}
+                        onClick={() => setActiveThemeId(theme.id)}
+                        onKeyDown={(event) =>
+                          handleTabKeyDown({
+                            event,
+                            items: themeIds,
+                            currentItem: theme.id,
+                            onSelect: setActiveThemeId,
+                            getTabId: (item) => `theme-editor-tab-${item}`,
+                          })
+                        }
+                        className={[
+                          'border-b-2 px-3 py-2 text-sm font-semibold whitespace-nowrap transition',
+                          'focus-visible:outline-border-focus focus-visible:outline-2 focus-visible:outline-offset-[-2px]',
+                          isActive
+                            ? 'border-content-primary text-content-primary'
+                            : 'text-content-tertiary hover:text-content-primary border-transparent',
+                        ].join(' ')}
+                      >
+                        {theme.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : null}
             </div>
           </header>
 
@@ -138,7 +211,9 @@ export function ThemesResponsiveWorkspace({
               >
                 {activeTheme.content}
               </div>
-            ) : null}
+            ) : (
+              emptyState
+            )}
           </main>
         </section>
 

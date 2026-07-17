@@ -100,7 +100,7 @@ describe('localized messages', () => {
     expect(serializedFrenchMessages).not.toContain('DS-090');
   });
 
-  it('does not expose obsolete Themes contrast rollout copy', () => {
+  it('does not expose obsolete Themes rollout or responsibility copy', () => {
     const serializedEnglishMessages = serializeMessageSection(
       localizedMessages.en,
       'ThemesEditorPage',
@@ -115,6 +115,12 @@ describe('localized messages', () => {
     );
     expect(serializedFrenchMessages).not.toContain(
       'seront calculés dans l’épic accessibilité',
+    );
+    expect(serializedEnglishMessages).not.toContain(
+      'map semantic color tokens',
+    );
+    expect(serializedFrenchMessages).not.toContain(
+      'mappez les tokens couleur sémantiques',
     );
   });
 

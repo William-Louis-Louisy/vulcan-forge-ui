@@ -50,11 +50,16 @@ function renderEditor({
   initialReferencePath = 'color.semantic.background.app',
   resolvedValue = '#f7f3eb',
   availableOptions = options,
+  showNoOptionsMessage,
 }: {
   initialReferencePath?: string | null;
   resolvedValue?: string | null;
   availableOptions?: typeof options;
+  showNoOptionsMessage?: boolean;
 } = {}) {
+  const optionalProps =
+    showNoOptionsMessage === undefined ? {} : { showNoOptionsMessage };
+
   return render(
     <ThemeTokenReferenceEditor
       locale="en"
@@ -66,6 +71,7 @@ function renderEditor({
       resolvedValue={resolvedValue}
       options={availableOptions}
       labels={labels}
+      {...optionalProps}
     />,
   );
 }
@@ -115,5 +121,19 @@ describe('ThemeTokenReferenceEditor', () => {
     expect(screen.getByLabelText('Choose token for Background')).toBeDisabled();
     expect(screen.getByText('No color tokens available')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Save mapping' })).toBeDisabled();
+  });
+
+  it('can defer the no-options warning to the parent section', () => {
+    renderEditor({
+      initialReferencePath: null,
+      resolvedValue: null,
+      availableOptions: [],
+      showNoOptionsMessage: false,
+    });
+
+    expect(screen.getByLabelText('Choose token for Background')).toBeDisabled();
+    expect(
+      screen.queryByText('No color tokens available'),
+    ).not.toBeInTheDocument();
   });
 });
