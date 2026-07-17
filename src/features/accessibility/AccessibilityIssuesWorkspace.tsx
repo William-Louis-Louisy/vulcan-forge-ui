@@ -21,17 +21,18 @@ type AccessibilityIssuesLabels = {
     foregroundValue: string;
     backgroundValue: string;
     ratio: string;
-    ratioValue: (ratio: string, required: string) => string;
   };
 };
 
 type AccessibilityIssuesWorkspaceProps = {
   issues: AccessibilityCenterIssue[];
+  ratioLabels: Record<string, string>;
   labels: AccessibilityIssuesLabels;
 };
 
 export function AccessibilityIssuesWorkspace({
   issues,
+  ratioLabels,
   labels,
 }: AccessibilityIssuesWorkspaceProps) {
   const [selectedIssueId, setSelectedIssueId] = useState(issues[0]?.id ?? null);
@@ -115,7 +116,11 @@ export function AccessibilityIssuesWorkspace({
       </div>
 
       {selectedIssue ? (
-        <IssueDetail issue={selectedIssue} labels={labels} />
+        <IssueDetail
+          issue={selectedIssue}
+          ratioLabel={ratioLabels[selectedIssue.id] ?? null}
+          labels={labels}
+        />
       ) : null}
     </section>
   );
@@ -144,9 +149,11 @@ function SeverityBadge({
 
 function IssueDetail({
   issue,
+  ratioLabel,
   labels,
 }: {
   issue: AccessibilityCenterIssue;
+  ratioLabel: string | null;
   labels: AccessibilityIssuesLabels;
 }) {
   const pairLabel = issue.pairId ? labels.pairs[issue.pairId] : null;
@@ -200,16 +207,7 @@ function IssueDetail({
           label={labels.details.backgroundValue}
           value={issue.backgroundValue}
         />
-
-        {issue.ratio !== null && issue.requiredRatio !== null ? (
-          <DetailRow
-            label={labels.details.ratio}
-            value={labels.details.ratioValue(
-              issue.ratio.toFixed(2),
-              issue.requiredRatio.toFixed(1),
-            )}
-          />
-        ) : null}
+        <DetailRow label={labels.details.ratio} value={ratioLabel} />
       </dl>
     </aside>
   );
