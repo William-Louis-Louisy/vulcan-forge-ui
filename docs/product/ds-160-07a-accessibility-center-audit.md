@@ -16,18 +16,33 @@ The Accessibility artboard shows a dense project workspace with:
 - a manual checklist area;
 - responsive behavior without page-level horizontal overflow.
 
+The 1440px implementation review also exposed a structural layout regression: the issue-detail rail was taller than a short issue table, so the following contrast table started only after the rail height and left a large empty block in the main column.
+
 ## Current implementation
 
-The current page already provides:
+The current page provides:
 
 - a computed accessibility score and status;
 - automated issues derived from token resolution and theme contrast;
 - persisted report history through the save-report action;
 - localized issue labels and recommendations;
+- selectable issues and a dedicated detail rail;
+- accessible color swatches beside HEX values;
 - key contrast-pair details;
 - loading and error routes.
 
-The current visual structure is a single long document composed of large rounded cards. Issues are displayed as independent cards, so there is no selected issue or dedicated detail rail.
+## DS-160-07-A1b layout correction
+
+The corrected workspace uses one responsive layout contract:
+
+- compact layouts render issues, selected issue detail, then key contrast pairs;
+- desktop renders a main column containing issues followed immediately by key contrast pairs;
+- the selected issue detail occupies an independent sticky rail;
+- the detail rail height no longer controls the vertical position of the contrast table;
+- the validation summary is compacted so the report workspace receives visual priority;
+- the loading skeleton mirrors the same composition.
+
+The implementation deliberately avoids fixed page heights, negative margins, and absolute positioning for report content.
 
 ## Product-model boundary
 
@@ -35,16 +50,11 @@ The current domain model does not contain persisted manual-checklist results. DS
 
 The manual-checklist block shown in the mockup therefore remains a later product-model enhancement. This ticket keeps the existing assisted-check disclaimer prominent and aligns only the data that genuinely exists.
 
-## Implementation scope
+## Follow-up roadmap
 
-- replace the marketing-style page header with the compact project-editor hierarchy;
-- introduce a controlled desktop workspace with a main report area and issue-detail rail;
-- make automated issues selectable without changing report generation logic;
-- compact the score, latest-report, issue and contrast surfaces;
-- align loading and error states with the same controlled frame;
-- preserve the report-save server action and save-context behavior;
-- preserve FR/EN labels and visible focus states;
-- keep mobile and tablet layouts free from page-level horizontal overflow.
+- DS-160-07-A2: expand automated accessibility rules across Tokens, Components and Themes;
+- DS-160-07-A3: add a persisted manual accessibility checklist;
+- DS-160-07-A4: add report history, comparison and score evolution.
 
 ## Non-goals
 
@@ -57,9 +67,10 @@ The manual-checklist block shown in the mockup therefore remains a later product
 
 ## Acceptance targets
 
-- desktop: report content and issue detail coexist without a second page scrollbar;
+- desktop: issues and key contrast pairs remain contiguous in the main column;
+- desktop: the issue detail remains visible in a sticky rail without creating a blank block;
 - tablet: the issue detail remains readable and the report stacks cleanly;
-- mobile: issues and details remain usable without horizontal overflow;
+- mobile: the order remains issues, detail, contrast pairs without horizontal overflow;
 - the first issue is selected by default when issues exist;
 - selecting an issue updates the detail region and visible selected state;
 - empty issue state remains explicit;
