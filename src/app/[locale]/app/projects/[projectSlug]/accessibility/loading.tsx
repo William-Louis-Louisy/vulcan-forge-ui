@@ -25,18 +25,15 @@ export default function AccessibilityCenterLoading() {
       <main className="min-h-0 min-w-0 flex-1 overflow-y-auto">
         <div className="grid gap-4 p-4 md:p-6 xl:p-7">
           <div className="bg-action-warning/10 h-14 animate-pulse rounded-md" />
+          <div className="bg-surface-primary h-44 animate-pulse rounded-md" />
 
-          <div className="grid gap-4 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
-            <div className="bg-surface-primary h-56 animate-pulse rounded-md" />
-            <div className="bg-surface-primary h-56 animate-pulse rounded-md" />
+          <div className="flex min-w-0 flex-col gap-4 xl:grid xl:grid-cols-[minmax(0,1fr)_23rem] xl:items-start">
+            <div className="contents xl:flex xl:min-w-0 xl:flex-col xl:gap-4">
+              <div className="bg-surface-primary order-1 h-52 animate-pulse rounded-md xl:order-none" />
+              <div className="bg-surface-primary order-3 h-72 animate-pulse rounded-md xl:order-none" />
+            </div>
+            <div className="bg-background-sunken order-2 h-[28rem] animate-pulse rounded-md xl:order-none" />
           </div>
-
-          <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_22rem]">
-            <div className="bg-surface-primary h-80 animate-pulse rounded-md" />
-            <div className="bg-background-sunken h-80 animate-pulse rounded-md" />
-          </div>
-
-          <div className="bg-surface-primary h-72 animate-pulse rounded-md" />
         </div>
       </main>
     </section>
