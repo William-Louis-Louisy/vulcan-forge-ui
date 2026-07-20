@@ -11,11 +11,13 @@ type AccessibilityIssuesLabels = AccessibilityIssuesClientLabels & {
 };
 
 type AccessibilityIssuesWorkspaceProps = {
+  projectSlug: string;
   issues: AccessibilityCenterIssue[];
   labels: AccessibilityIssuesLabels;
 };
 
 export function AccessibilityIssuesWorkspace({
+  projectSlug,
   issues,
   labels,
 }: AccessibilityIssuesWorkspaceProps) {
@@ -39,6 +41,7 @@ export function AccessibilityIssuesWorkspace({
 
   return (
     <AccessibilityIssuesWorkspaceClient
+      projectSlug={projectSlug}
       issues={issues}
       ratioLabels={ratioLabels}
       labels={{
