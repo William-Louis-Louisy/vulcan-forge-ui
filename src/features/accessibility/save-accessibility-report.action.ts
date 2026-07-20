@@ -3,7 +3,12 @@
 import { auth } from '@/auth';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/server/db/prisma';
-import { defaultAppLocale, isAppLocale } from '@/domain/i18n';
+import {
+  defaultAppLocale,
+  isAppLocale,
+  type AppLocale,
+} from '@/domain/i18n';
+import type { ComponentContractType } from '@/domain/design-system';
 import type { ThemeMode } from '@/features/themes/themes-editor.utils';
 import { createAccessibilityCenterReport } from './accessibility-center.utils';
 import type { SaveAccessibilityReportActionState } from './save-accessibility-report.state';
@@ -51,6 +56,8 @@ export async function saveAccessibilityReportAction(
     },
     select: {
       id: true,
+      defaultLocale: true,
+      supportedLocales: true,
       themes: {
         select: {
           id: true,
@@ -61,14 +68,26 @@ export async function saveAccessibilityReportAction(
         },
       },
       tokenSets: {
-        where: {
-          type: 'color',
+        orderBy: {
+          type: 'asc',
         },
         select: {
           id: true,
+          type: true,
+          name: true,
           tokens: true,
         },
-        take: 1,
+      },
+      componentContracts: {
+        orderBy: {
+          type: 'asc',
+        },
+        select: {
+          id: true,
+          type: true,
+          name: true,
+          contract: true,
+        },
       },
     },
   });
@@ -81,7 +100,9 @@ export async function saveAccessibilityReportAction(
     };
   }
 
-  const colorTokenSet = project.tokenSets[0];
+  const colorTokenSet = project.tokenSets.find(
+    (tokenSet) => tokenSet.type === 'color',
+  );
 
   if (!colorTokenSet) {
     return {
@@ -99,6 +120,20 @@ export async function saveAccessibilityReportAction(
       name: theme.name,
       tokens: theme.tokens,
       updatedAt: theme.updatedAt,
+    })),
+    defaultLocale: project.defaultLocale as AppLocale,
+    supportedLocales: project.supportedLocales as AppLocale[],
+    tokenSets: project.tokenSets.map((tokenSet) => ({
+      id: tokenSet.id,
+      type: tokenSet.type,
+      name: tokenSet.name,
+      tokens: tokenSet.tokens,
+    })),
+    componentContracts: project.componentContracts.map((componentContract) => ({
+      id: componentContract.id,
+      type: componentContract.type as ComponentContractType,
+      name: componentContract.name,
+      contract: componentContract.contract,
     })),
   });
 
