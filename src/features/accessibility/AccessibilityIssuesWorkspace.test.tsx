@@ -1,8 +1,22 @@
-import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import type { AnchorHTMLAttributes, ReactNode } from 'react';
+import { render, screen, within } from '@testing-library/react';
 import { AccessibilityIssuesWorkspace } from './AccessibilityIssuesWorkspace';
 import type { AccessibilityCenterIssue } from './accessibility-center.utils';
+
+type MockAppLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
+  href: string;
+  children?: ReactNode;
+};
+
+vi.mock('@/components/navigation/AppLink', () => ({
+  AppLink: ({ href, children, ...props }: MockAppLinkProps) => (
+    <a href={href} {...props}>
+      {children}
+    </a>
+  ),
+}));
 
 const issues: AccessibilityCenterIssue[] = [
   {
