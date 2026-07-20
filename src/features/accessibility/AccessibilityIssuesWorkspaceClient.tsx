@@ -78,9 +78,7 @@ export function AccessibilityIssuesWorkspaceClient({
     <section
       className={[
         'flex min-w-0 flex-col gap-4 xl:grid xl:items-start',
-        selectedIssue
-          ? 'xl:grid-cols-[minmax(0,1fr)_23rem]'
-          : 'xl:grid-cols-1',
+        selectedIssue ? 'xl:grid-cols-[minmax(0,1fr)_23rem]' : 'xl:grid-cols-1',
       ].join(' ')}
     >
       <div className="contents xl:flex xl:min-w-0 xl:flex-col xl:gap-4">
@@ -214,9 +212,7 @@ function IssuesPanel({
               <th className="px-4 py-2 font-semibold">
                 {labels.columns.scope}
               </th>
-              <th className="px-4 py-2 font-semibold">
-                {labels.columns.rule}
-              </th>
+              <th className="px-4 py-2 font-semibold">{labels.columns.rule}</th>
               <th className="px-4 py-2 font-semibold">
                 {labels.columns.affected}
               </th>
