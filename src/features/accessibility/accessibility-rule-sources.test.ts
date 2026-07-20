@@ -47,12 +47,12 @@ describe('createAccessibilityRuleSources', () => {
     expect(sources.invalidComponentContracts).toEqual([]);
     expect(sources.tokenSets).toHaveLength(1);
     expect(sources.componentContracts).toHaveLength(1);
-    expect(sources.tokensByPath.get('color.semantic.action.primary')).toMatchObject(
-      {
-        type: 'color',
-        status: 'ready',
-      },
-    );
+    expect(
+      sources.tokensByPath.get('color.semantic.action.primary'),
+    ).toMatchObject({
+      type: 'color',
+      status: 'ready',
+    });
   });
 
   it('keeps malformed token sets and component contracts traceable', () => {
