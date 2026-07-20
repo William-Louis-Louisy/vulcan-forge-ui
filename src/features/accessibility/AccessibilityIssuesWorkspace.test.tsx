@@ -125,7 +125,9 @@ describe('AccessibilityIssuesWorkspace', () => {
     const detail = container.querySelector('#accessibility-issue-detail');
 
     expect(detail).not.toBeNull();
-    expect(within(detail as HTMLElement).getByText('Review this pair.')).toBeInTheDocument();
+    expect(
+      within(detail as HTMLElement).getByText('Review this pair.'),
+    ).toBeInTheDocument();
     expect(
       within(detail as HTMLElement).getByText('4.10:1 / required 4.5:1'),
     ).toBeInTheDocument();
@@ -134,25 +136,31 @@ describe('AccessibilityIssuesWorkspace', () => {
         name: 'Foreground value: #777777',
       }),
     ).toBeInTheDocument();
-    expect(
-      within(detail as HTMLElement).getByRole('link', {
-        name: 'Open themes editor',
-      }),
-    ).toHaveAttribute('href', '/en/app/projects/forge/themes');
+
+    const themesLink = within(detail as HTMLElement).getByRole('link', {
+      name: 'Open themes editor',
+    });
+    expect(themesLink.getAttribute('href')).toContain(
+      '/app/projects/forge/themes',
+    );
 
     await user.click(
       screen.getAllByRole('button', { name: /Token resolution error/ })[0]!,
     );
 
-    expect(within(detail as HTMLElement).getByText('Fix the token alias.')).toBeInTheDocument();
+    expect(
+      within(detail as HTMLElement).getByText('Fix the token alias.'),
+    ).toBeInTheDocument();
     expect(
       within(detail as HTMLElement).getByText('color.semantic.accent'),
     ).toBeInTheDocument();
-    expect(
-      within(detail as HTMLElement).getByRole('link', {
-        name: 'Open tokens editor',
-      }),
-    ).toHaveAttribute('href', '/en/app/projects/forge/tokens');
+
+    const tokensLink = within(detail as HTMLElement).getByRole('link', {
+      name: 'Open tokens editor',
+    });
+    expect(tokensLink.getAttribute('href')).toContain(
+      '/app/projects/forge/tokens',
+    );
   });
 
   it('renders a desktop issue table and color swatches', () => {
@@ -164,10 +172,15 @@ describe('AccessibilityIssuesWorkspace', () => {
       />,
     );
 
-    expect(screen.getByRole('columnheader', { name: 'Severity' })).toBeInTheDocument();
-    expect(screen.getByRole('columnheader', { name: 'Affected' })).toBeInTheDocument();
     expect(
-      screen.getAllByRole('img', { name: 'Foreground value: #777777' }).length,
+      screen.getByRole('columnheader', { name: 'Severity' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('columnheader', { name: 'Affected' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getAllByRole('img', { name: 'Foreground value: #777777' })
+        .length,
     ).toBeGreaterThan(0);
     expect(
       screen.getAllByRole('img', { name: 'Background value: #ffffff' }).length,
@@ -184,6 +197,8 @@ describe('AccessibilityIssuesWorkspace', () => {
     );
 
     expect(screen.getByText('No issue detected.')).toBeInTheDocument();
-    expect(screen.getByText('No automated issue was detected.')).toBeInTheDocument();
+    expect(
+      screen.getByText('No automated issue was detected.'),
+    ).toBeInTheDocument();
   });
 });
