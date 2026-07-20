@@ -1,5 +1,5 @@
 import { auth } from '@/auth';
-import { Notice } from '@/components/ui';
+import { ColorValueSwatch, Notice } from '@/components/ui';
 import { hasLocale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
@@ -96,16 +96,15 @@ export default async function AccessibilityCenterPage({
             {t('auditNotice.description')}
           </Notice>
 
-          <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
-            <ScoreCard t={t} report={report} />
-            <LatestAccessibilityReportCard
-              t={t}
-              locale={locale}
-              latestReport={pageData.latestAccessibilityReport}
-            />
-          </div>
+          <ValidationSummaryCard
+            t={t}
+            locale={locale}
+            report={report}
+            latestReport={pageData.latestAccessibilityReport}
+          />
 
           <AccessibilityIssuesWorkspace
+            projectSlug={pageData.project.slug}
             issues={report.issues}
             labels={{
               title: t('issues.title'),
@@ -113,6 +112,24 @@ export default async function AccessibilityCenterPage({
               count: t('issues.count', { count: report.issues.length }),
               emptyTitle: t('issues.emptyTitle'),
               emptyDescription: t('issues.emptyDescription'),
+              automatic: t('issues.automatic'),
+              recommendation: t('issues.recommendation'),
+              columns: {
+                severity: t('issues.columns.severity'),
+                scope: t('issues.columns.scope'),
+                rule: t('issues.columns.rule'),
+                affected: t('issues.columns.affected'),
+              },
+              actions: {
+                openTokens: t('issues.actions.openTokens'),
+                openThemes: t('issues.actions.openThemes'),
+              },
+              scopes: {
+                themeContrast: t('issues.scopes.themeContrast'),
+                tokenResolution: t('issues.scopes.tokenResolution'),
+                tokenSet: t('issues.scopes.tokenSet'),
+                theme: t('issues.scopes.theme'),
+              },
               pairs: labels.pairs,
               issueCodes: labels.issueCodes,
               issueFixes: labels.issueFixes,
@@ -174,86 +191,15 @@ function createAccessibilityCenterLabels(
   };
 }
 
-function ScoreCard({
-  t,
-  report,
-}: {
-  t: AccessibilityCenterTranslator;
-  report: AccessibilityCenterReport;
-}) {
-  return (
-    <article className="border-border-subtle bg-surface-primary min-w-0 rounded-md border p-4 sm:p-5">
-      <div className="flex min-w-0 items-start justify-between gap-4">
-        <div>
-          <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase">
-            {t('score.eyebrow')}
-          </p>
-          <div className="mt-1 flex items-end gap-1.5">
-            <span className="text-4xl font-semibold tracking-tight">
-              {report.score}
-            </span>
-            <span className="text-content-tertiary pb-1 text-sm">/100</span>
-          </div>
-        </div>
-
-        <span
-          className={[
-            'rounded-full px-2.5 py-1 text-xs font-semibold',
-            report.status === 'healthy'
-              ? 'bg-action-success/10 text-action-success'
-              : report.status === 'critical'
-                ? 'bg-action-danger/10 text-action-danger'
-                : 'bg-action-warning/10 text-action-warning',
-          ].join(' ')}
-        >
-          {t(`score.status.${report.status}`)}
-        </span>
-      </div>
-
-      <p className="text-content-secondary mt-3 text-xs leading-5">
-        {t('score.description')}
-      </p>
-
-      <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-2">
-        <ScoreMetric
-          label={t('score.totalIssues')}
-          value={String(report.issues.length)}
-        />
-        <ScoreMetric
-          label={t('score.criticalIssues')}
-          value={String(report.summary.criticalIssues)}
-        />
-        <ScoreMetric
-          label={t('score.passedPairs')}
-          value={String(report.summary.passedPairs)}
-        />
-        <ScoreMetric
-          label={t('score.failedPairs')}
-          value={String(report.summary.failedPairs)}
-        />
-      </div>
-    </article>
-  );
-}
-
-function ScoreMetric({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="border-border-subtle bg-background-subtle min-w-0 rounded-md border p-3">
-      <p className="text-content-tertiary truncate text-[0.6875rem] font-semibold tracking-[0.12em] uppercase">
-        {label}
-      </p>
-      <p className="mt-1 text-lg font-semibold">{value}</p>
-    </div>
-  );
-}
-
-function LatestAccessibilityReportCard({
+function ValidationSummaryCard({
   t,
   locale,
+  report,
   latestReport,
 }: {
   t: AccessibilityCenterTranslator;
   locale: Locale;
+  report: AccessibilityCenterReport;
   latestReport: {
     id: string;
     status: 'pass' | 'warning' | 'fail';
@@ -263,49 +209,94 @@ function LatestAccessibilityReportCard({
   } | null;
 }) {
   return (
-    <article className="border-border-subtle bg-surface-primary min-w-0 rounded-md border p-4 sm:p-5">
-      <div className="flex items-center justify-between gap-4">
+    <article className="border-border-subtle bg-surface-primary min-w-0 rounded-md border">
+      <header className="border-border-subtle flex min-w-0 items-center justify-between gap-4 border-b px-4 py-3">
         <h2 className="text-sm font-semibold tracking-tight">
-          {t('latestReport.title')}
+          {t('score.validationSummary')}
         </h2>
-        {latestReport ? (
-          <span className="text-content-tertiary text-xs font-semibold">
-            {latestReport.createdAt.toLocaleDateString(locale)}
-          </span>
-        ) : null}
-      </div>
+        <span
+          className={[
+            'shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold',
+            report.status === 'healthy'
+              ? 'bg-action-success/10 text-action-success'
+              : report.status === 'critical'
+                ? 'bg-action-danger/10 text-action-danger'
+                : 'bg-action-warning/10 text-action-warning',
+          ].join(' ')}
+        >
+          {t(`score.status.${report.status}`)}
+        </span>
+      </header>
 
-      {latestReport ? (
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
-          <ReportMetric
-            label={t('latestReport.score')}
-            value={`${latestReport.score}/100`}
+      <div className="grid min-w-0 gap-4 p-4 md:grid-cols-[10rem_minmax(0,1fr)] sm:p-5">
+        <div className="min-w-0">
+          <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase">
+            {t('score.eyebrow')}
+          </p>
+          <div className="mt-1 flex items-end gap-1.5">
+            <span className="text-5xl font-semibold tracking-tight">
+              {report.score}
+            </span>
+            <span className="text-content-tertiary pb-1 text-sm">/100</span>
+          </div>
+          <p className="text-content-secondary mt-3 text-xs leading-5">
+            {t('score.description')}
+          </p>
+        </div>
+
+        <div className="grid min-w-0 grid-cols-2 gap-2 lg:grid-cols-4">
+          <ValidationMetric
+            label={t('score.automatedChecks')}
+            value={String(report.issues.length)}
           />
-          <ReportMetric
-            label={t('latestReport.status')}
-            value={t(`latestReport.statuses.${latestReport.status}`)}
+          <ValidationMetric
+            label={t('score.contrastChecks')}
+            value={`${report.summary.passedPairs}/${report.summary.pairCount}`}
           />
-          <ReportMetric
-            label={t('latestReport.savedAt')}
-            value={latestReport.createdAt.toLocaleDateString(locale)}
+          <ValidationMetric
+            label={t('score.criticalIssues')}
+            value={String(report.summary.criticalIssues)}
+          />
+          <ValidationMetric
+            label={t('score.warningIssues')}
+            value={String(report.summary.warningIssues)}
           />
         </div>
-      ) : (
-        <p className="text-content-secondary mt-4 text-sm leading-6">
-          {t('latestReport.empty')}
-        </p>
-      )}
+      </div>
+
+      <div className="border-border-subtle grid min-w-0 gap-3 border-t px-4 py-3 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-center sm:px-5">
+        <div className="min-w-0">
+          <p className="text-sm font-semibold">{t('latestReport.title')}</p>
+          <p className="text-content-tertiary mt-1 text-xs">
+            {latestReport
+              ? t('latestReport.description')
+              : t('latestReport.empty')}
+          </p>
+        </div>
+
+        {latestReport ? (
+          <>
+            <span className="text-content-secondary text-xs font-semibold">
+              {latestReport.score}/100 ·{' '}
+              {t(`latestReport.statuses.${latestReport.status}`)}
+            </span>
+            <span className="text-content-tertiary text-xs font-semibold">
+              {latestReport.createdAt.toLocaleDateString(locale)}
+            </span>
+          </>
+        ) : null}
+      </div>
     </article>
   );
 }
 
-function ReportMetric({ label, value }: { label: string; value: string }) {
+function ValidationMetric({ label, value }: { label: string; value: string }) {
   return (
     <div className="border-border-subtle bg-background-subtle min-w-0 rounded-md border p-3">
-      <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.12em] uppercase">
+      <p className="text-content-tertiary truncate text-[0.6875rem] font-semibold tracking-[0.12em] uppercase">
         {label}
       </p>
-      <p className="mt-1 truncate text-sm font-semibold">{value}</p>
+      <p className="mt-1 text-lg font-semibold">{value}</p>
     </div>
   );
 }
@@ -348,7 +339,9 @@ function ContrastPairsPanel({
               <th className="px-4 py-2 font-semibold">{t('pairs.title')}</th>
               <th className="px-4 py-2 font-semibold">{t('pairs.foreground')}</th>
               <th className="px-4 py-2 font-semibold">{t('pairs.background')}</th>
-              <th className="px-4 py-2 font-semibold">{t('issueDetails.ratio')}</th>
+              <th className="px-4 py-2 font-semibold">
+                {t('issueDetails.ratio')}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -363,11 +356,17 @@ function ContrastPairsPanel({
                   </p>
                   <p className="text-content-tertiary mt-1">{pair.themeName}</p>
                 </td>
-                <td className="px-4 py-3 font-mono">
-                  {pair.foregroundValue ?? '—'}
+                <td className="px-4 py-3">
+                  <ColorValueSwatch
+                    label={t('pairs.foreground')}
+                    value={pair.foregroundValue}
+                  />
                 </td>
-                <td className="px-4 py-3 font-mono">
-                  {pair.backgroundValue ?? '—'}
+                <td className="px-4 py-3">
+                  <ColorValueSwatch
+                    label={t('pairs.background')}
+                    value={pair.backgroundValue}
+                  />
                 </td>
                 <td className="px-4 py-3">
                   <PairStatus t={t} pair={pair} />
@@ -398,6 +397,17 @@ function ContrastPairSummary({
           <p className="text-content-tertiary mt-1 text-xs">{pair.themeName}</p>
         </div>
         <PairStatus t={t} pair={pair} />
+      </div>
+
+      <div className="mt-3 grid gap-2 sm:grid-cols-2">
+        <ColorValueSwatch
+          label={t('pairs.foreground')}
+          value={pair.foregroundValue}
+        />
+        <ColorValueSwatch
+          label={t('pairs.background')}
+          value={pair.backgroundValue}
+        />
       </div>
     </article>
   );
