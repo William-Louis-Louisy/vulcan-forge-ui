@@ -2,6 +2,8 @@ export { Button } from './Button';
 export type { ButtonProps } from './Button';
 export { Badge } from './Badge';
 export type { BadgeProps } from './Badge';
+export { ColorValueSwatch } from './ColorValueSwatch';
+export type { ColorValueSwatchProps } from './ColorValueSwatch';
 export { EmptyState } from './EmptyState';
 export type { EmptyStateProps } from './EmptyState';
 export { Notice } from './Notice';
