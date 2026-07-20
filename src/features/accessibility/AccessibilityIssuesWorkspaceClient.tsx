@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { AppLink } from '@/components/navigation/AppLink';
 import { ColorValueSwatch, EmptyState } from '@/components/ui';
@@ -43,6 +44,7 @@ type AccessibilityIssuesWorkspaceClientProps = {
   issues: AccessibilityCenterIssue[];
   ratioLabels: Record<string, string>;
   labels: AccessibilityIssuesClientLabels;
+  children?: ReactNode;
 };
 
 function getAffectedLabel(
@@ -66,11 +68,72 @@ export function AccessibilityIssuesWorkspaceClient({
   issues,
   ratioLabels,
   labels,
+  children,
 }: AccessibilityIssuesWorkspaceClientProps) {
   const [selectedIssueId, setSelectedIssueId] = useState(issues[0]?.id ?? null);
   const selectedIssue =
     issues.find((issue) => issue.id === selectedIssueId) ?? issues[0] ?? null;
 
+  return (
+    <section
+      className={[
+        'flex min-w-0 flex-col gap-4 xl:grid xl:items-start',
+        selectedIssue
+          ? 'xl:grid-cols-[minmax(0,1fr)_23rem]'
+          : 'xl:grid-cols-1',
+      ].join(' ')}
+    >
+      <div className="contents xl:flex xl:min-w-0 xl:flex-col xl:gap-4">
+        <div
+          data-accessibility-layout-slot="issues"
+          className="order-1 min-w-0 xl:order-none"
+        >
+          <IssuesPanel
+            issues={issues}
+            selectedIssue={selectedIssue}
+            labels={labels}
+            onSelectIssue={setSelectedIssueId}
+          />
+        </div>
+
+        {children ? (
+          <div
+            data-accessibility-layout-slot="secondary"
+            className="order-3 min-w-0 xl:order-none"
+          >
+            {children}
+          </div>
+        ) : null}
+      </div>
+
+      {selectedIssue ? (
+        <div
+          data-accessibility-layout-slot="detail"
+          className="order-2 min-w-0 xl:order-none"
+        >
+          <IssueDetail
+            projectSlug={projectSlug}
+            issue={selectedIssue}
+            ratioLabel={ratioLabels[selectedIssue.id] ?? null}
+            labels={labels}
+          />
+        </div>
+      ) : null}
+    </section>
+  );
+}
+
+function IssuesPanel({
+  issues,
+  selectedIssue,
+  labels,
+  onSelectIssue,
+}: {
+  issues: AccessibilityCenterIssue[];
+  selectedIssue: AccessibilityCenterIssue | null;
+  labels: AccessibilityIssuesClientLabels;
+  onSelectIssue: (issueId: string) => void;
+}) {
   if (issues.length === 0) {
     return (
       <section className="border-border-subtle bg-surface-primary rounded-md border p-4 sm:p-5">
@@ -92,139 +155,126 @@ export function AccessibilityIssuesWorkspaceClient({
   }
 
   return (
-    <section className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1fr)_23rem] xl:items-start">
-      <div className="border-border-subtle bg-surface-primary min-w-0 rounded-md border">
-        <header className="border-border-subtle flex items-center justify-between gap-4 border-b px-4 py-3">
-          <h2 className="text-sm font-semibold tracking-tight">
-            {labels.title}
-          </h2>
-          <span className="text-content-tertiary text-xs font-semibold">
-            {labels.count}
-          </span>
-        </header>
+    <section className="border-border-subtle bg-surface-primary min-w-0 rounded-md border">
+      <header className="border-border-subtle flex items-center justify-between gap-4 border-b px-4 py-3">
+        <h2 className="text-sm font-semibold tracking-tight">{labels.title}</h2>
+        <span className="text-content-tertiary text-xs font-semibold">
+          {labels.count}
+        </span>
+      </header>
 
-        <div className="divide-border-subtle divide-y lg:hidden">
-          {issues.map((issue) => {
-            const isSelected = issue.id === selectedIssue?.id;
+      <div className="divide-border-subtle divide-y lg:hidden">
+        {issues.map((issue) => {
+          const isSelected = issue.id === selectedIssue?.id;
 
-            return (
-              <button
-                key={issue.id}
-                type="button"
-                aria-pressed={isSelected}
-                aria-controls="accessibility-issue-detail"
-                onClick={() => setSelectedIssueId(issue.id)}
-                className={[
-                  'grid w-full min-w-0 gap-3 px-4 py-3 text-left transition',
-                  'focus-visible:outline-border-focus focus-visible:relative focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-2px]',
-                  isSelected
-                    ? 'bg-action-primary/5'
-                    : 'hover:bg-background-subtle',
-                ].join(' ')}
-              >
-                <span className="flex flex-wrap items-center gap-2">
-                  <SeverityBadge issue={issue} labels={labels} />
-                  <span className="border-border-subtle bg-background-subtle text-content-secondary rounded-full border px-2 py-1 text-[0.6875rem] font-semibold">
-                    {labels.scopes[issue.scope]}
-                  </span>
+          return (
+            <button
+              key={issue.id}
+              type="button"
+              aria-pressed={isSelected}
+              aria-controls="accessibility-issue-detail"
+              onClick={() => onSelectIssue(issue.id)}
+              className={[
+                'grid w-full min-w-0 gap-3 px-4 py-3 text-left transition',
+                'focus-visible:outline-border-focus focus-visible:relative focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-2px]',
+                isSelected
+                  ? 'bg-action-primary/5'
+                  : 'hover:bg-background-subtle',
+              ].join(' ')}
+            >
+              <span className="flex flex-wrap items-center gap-2">
+                <SeverityBadge issue={issue} labels={labels} />
+                <span className="border-border-subtle bg-background-subtle text-content-secondary rounded-full border px-2 py-1 text-[0.6875rem] font-semibold">
+                  {labels.scopes[issue.scope]}
                 </span>
+              </span>
 
-                <span className="min-w-0">
-                  <span className="block text-sm font-semibold">
-                    {labels.issueCodes[issue.code]}
-                  </span>
-                  <span className="text-content-tertiary mt-1 block font-mono text-xs break-words">
-                    {getAffectedLabel(issue, labels)}
-                  </span>
+              <span className="min-w-0">
+                <span className="block text-sm font-semibold">
+                  {labels.issueCodes[issue.code]}
                 </span>
+                <span className="text-content-tertiary mt-1 block font-mono text-xs break-words">
+                  {getAffectedLabel(issue, labels)}
+                </span>
+              </span>
 
-                <IssueColorSwatches issue={issue} labels={labels} />
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="hidden min-w-0 overflow-x-auto lg:block">
-          <table className="w-full min-w-[48rem] border-collapse text-left text-xs">
-            <thead className="bg-background-subtle text-content-tertiary">
-              <tr>
-                <th className="px-4 py-2 font-semibold">
-                  {labels.columns.severity}
-                </th>
-                <th className="px-4 py-2 font-semibold">
-                  {labels.columns.scope}
-                </th>
-                <th className="px-4 py-2 font-semibold">
-                  {labels.columns.rule}
-                </th>
-                <th className="px-4 py-2 font-semibold">
-                  {labels.columns.affected}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {issues.map((issue) => {
-                const isSelected = issue.id === selectedIssue?.id;
-
-                return (
-                  <tr
-                    key={issue.id}
-                    onClick={() => setSelectedIssueId(issue.id)}
-                    className={[
-                      'border-border-subtle cursor-pointer border-t transition',
-                      isSelected
-                        ? 'bg-action-primary/5'
-                        : 'hover:bg-background-subtle',
-                    ].join(' ')}
-                  >
-                    <td className="px-4 py-3 align-top">
-                      <SeverityBadge issue={issue} labels={labels} />
-                    </td>
-                    <td className="text-content-secondary px-4 py-3 align-top font-semibold">
-                      {labels.scopes[issue.scope]}
-                    </td>
-                    <td className="px-4 py-3 align-top">
-                      <button
-                        type="button"
-                        aria-pressed={isSelected}
-                        aria-controls="accessibility-issue-detail"
-                        onClick={() => setSelectedIssueId(issue.id)}
-                        className="text-content-primary focus-visible:outline-border-focus rounded-sm text-left text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2"
-                      >
-                        {labels.issueCodes[issue.code]}
-                      </button>
-                      {issue.themeName ? (
-                        <p className="text-content-tertiary mt-1 text-xs font-semibold">
-                          {issue.themeName}
-                        </p>
-                      ) : null}
-                    </td>
-                    <td className="px-4 py-3 align-top">
-                      <p className="text-content-secondary max-w-md font-mono text-xs break-words">
-                        {getAffectedLabel(issue, labels)}
-                      </p>
-                      <IssueColorSwatches
-                        issue={issue}
-                        labels={labels}
-                        className="mt-2"
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+              <IssueColorSwatches issue={issue} labels={labels} />
+            </button>
+          );
+        })}
       </div>
 
-      {selectedIssue ? (
-        <IssueDetail
-          projectSlug={projectSlug}
-          issue={selectedIssue}
-          ratioLabel={ratioLabels[selectedIssue.id] ?? null}
-          labels={labels}
-        />
-      ) : null}
+      <div className="hidden min-w-0 overflow-x-auto lg:block">
+        <table className="w-full min-w-[48rem] border-collapse text-left text-xs">
+          <thead className="bg-background-subtle text-content-tertiary">
+            <tr>
+              <th className="px-4 py-2 font-semibold">
+                {labels.columns.severity}
+              </th>
+              <th className="px-4 py-2 font-semibold">
+                {labels.columns.scope}
+              </th>
+              <th className="px-4 py-2 font-semibold">
+                {labels.columns.rule}
+              </th>
+              <th className="px-4 py-2 font-semibold">
+                {labels.columns.affected}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {issues.map((issue) => {
+              const isSelected = issue.id === selectedIssue?.id;
+
+              return (
+                <tr
+                  key={issue.id}
+                  onClick={() => onSelectIssue(issue.id)}
+                  className={[
+                    'border-border-subtle cursor-pointer border-t transition',
+                    isSelected
+                      ? 'bg-action-primary/5'
+                      : 'hover:bg-background-subtle',
+                  ].join(' ')}
+                >
+                  <td className="px-4 py-3 align-top">
+                    <SeverityBadge issue={issue} labels={labels} />
+                  </td>
+                  <td className="text-content-secondary px-4 py-3 align-top font-semibold">
+                    {labels.scopes[issue.scope]}
+                  </td>
+                  <td className="px-4 py-3 align-top">
+                    <button
+                      type="button"
+                      aria-pressed={isSelected}
+                      aria-controls="accessibility-issue-detail"
+                      onClick={() => onSelectIssue(issue.id)}
+                      className="text-content-primary focus-visible:outline-border-focus rounded-sm text-left text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2"
+                    >
+                      {labels.issueCodes[issue.code]}
+                    </button>
+                    {issue.themeName ? (
+                      <p className="text-content-tertiary mt-1 text-xs font-semibold">
+                        {issue.themeName}
+                      </p>
+                    ) : null}
+                  </td>
+                  <td className="px-4 py-3 align-top">
+                    <p className="text-content-secondary max-w-md font-mono text-xs break-words">
+                      {getAffectedLabel(issue, labels)}
+                    </p>
+                    <IssueColorSwatches
+                      issue={issue}
+                      labels={labels}
+                      className="mt-2"
+                    />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </section>
   );
 }
