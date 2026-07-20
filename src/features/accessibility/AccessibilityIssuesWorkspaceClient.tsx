@@ -75,7 +75,9 @@ export function AccessibilityIssuesWorkspaceClient({
     return (
       <section className="border-border-subtle bg-surface-primary rounded-md border p-4 sm:p-5">
         <div className="flex items-center justify-between gap-4">
-          <h2 className="text-sm font-semibold tracking-tight">{labels.title}</h2>
+          <h2 className="text-sm font-semibold tracking-tight">
+            {labels.title}
+          </h2>
           <span className="text-content-tertiary text-xs font-semibold">
             {labels.count}
           </span>
@@ -93,7 +95,9 @@ export function AccessibilityIssuesWorkspaceClient({
     <section className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1fr)_23rem] xl:items-start">
       <div className="border-border-subtle bg-surface-primary min-w-0 rounded-md border">
         <header className="border-border-subtle flex items-center justify-between gap-4 border-b px-4 py-3">
-          <h2 className="text-sm font-semibold tracking-tight">{labels.title}</h2>
+          <h2 className="text-sm font-semibold tracking-tight">
+            {labels.title}
+          </h2>
           <span className="text-content-tertiary text-xs font-semibold">
             {labels.count}
           </span>
@@ -129,7 +133,7 @@ export function AccessibilityIssuesWorkspaceClient({
                   <span className="block text-sm font-semibold">
                     {labels.issueCodes[issue.code]}
                   </span>
-                  <span className="text-content-tertiary mt-1 block break-words font-mono text-xs">
+                  <span className="text-content-tertiary mt-1 block font-mono text-xs break-words">
                     {getAffectedLabel(issue, labels)}
                   </span>
                 </span>
@@ -147,8 +151,12 @@ export function AccessibilityIssuesWorkspaceClient({
                 <th className="px-4 py-2 font-semibold">
                   {labels.columns.severity}
                 </th>
-                <th className="px-4 py-2 font-semibold">{labels.columns.scope}</th>
-                <th className="px-4 py-2 font-semibold">{labels.columns.rule}</th>
+                <th className="px-4 py-2 font-semibold">
+                  {labels.columns.scope}
+                </th>
+                <th className="px-4 py-2 font-semibold">
+                  {labels.columns.rule}
+                </th>
                 <th className="px-4 py-2 font-semibold">
                   {labels.columns.affected}
                 </th>
@@ -192,7 +200,7 @@ export function AccessibilityIssuesWorkspaceClient({
                       ) : null}
                     </td>
                     <td className="px-4 py-3 align-top">
-                      <p className="text-content-secondary max-w-md break-words font-mono text-xs">
+                      <p className="text-content-secondary max-w-md font-mono text-xs break-words">
                         {getAffectedLabel(issue, labels)}
                       </p>
                       <IssueColorSwatches
@@ -385,7 +393,7 @@ function DetailRow({ label, value }: { label: string; value: string | null }) {
   return (
     <div className="min-w-0">
       <dt className="text-content-tertiary font-semibold">{label}</dt>
-      <dd className="text-content-secondary mt-1 break-words font-mono">
+      <dd className="text-content-secondary mt-1 font-mono break-words">
         {value}
       </dd>
     </div>

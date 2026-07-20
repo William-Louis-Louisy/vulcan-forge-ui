@@ -228,7 +228,7 @@ function ValidationSummaryCard({
         </span>
       </header>
 
-      <div className="grid min-w-0 gap-4 p-4 md:grid-cols-[10rem_minmax(0,1fr)] sm:p-5">
+      <div className="grid min-w-0 gap-4 p-4 sm:p-5 md:grid-cols-[10rem_minmax(0,1fr)]">
         <div className="min-w-0">
           <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase">
             {t('score.eyebrow')}
@@ -337,8 +337,12 @@ function ContrastPairsPanel({
           <thead className="bg-background-subtle text-content-tertiary">
             <tr>
               <th className="px-4 py-2 font-semibold">{t('pairs.title')}</th>
-              <th className="px-4 py-2 font-semibold">{t('pairs.foreground')}</th>
-              <th className="px-4 py-2 font-semibold">{t('pairs.background')}</th>
+              <th className="px-4 py-2 font-semibold">
+                {t('pairs.foreground')}
+              </th>
+              <th className="px-4 py-2 font-semibold">
+                {t('pairs.background')}
+              </th>
               <th className="px-4 py-2 font-semibold">
                 {t('issueDetails.ratio')}
               </th>

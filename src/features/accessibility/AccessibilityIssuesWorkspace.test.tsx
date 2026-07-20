@@ -179,8 +179,7 @@ describe('AccessibilityIssuesWorkspace', () => {
       screen.getByRole('columnheader', { name: 'Affected' }),
     ).toBeInTheDocument();
     expect(
-      screen.getAllByRole('img', { name: 'Foreground value: #777777' })
-        .length,
+      screen.getAllByRole('img', { name: 'Foreground value: #777777' }).length,
     ).toBeGreaterThan(0);
     expect(
       screen.getAllByRole('img', { name: 'Background value: #ffffff' }).length,
