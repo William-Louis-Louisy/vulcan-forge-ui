@@ -200,6 +200,38 @@ describe('AccessibilityIssuesWorkspace', () => {
     ).toBeGreaterThan(0);
   });
 
+  it('keeps the compact order while stacking secondary report content in the desktop main column', () => {
+    const { container } = render(
+      <AccessibilityIssuesWorkspace
+        projectSlug="forge"
+        issues={issues}
+        labels={labels}
+      >
+        <section>Key contrast pairs</section>
+      </AccessibilityIssuesWorkspace>,
+    );
+
+    const issuesSlot = container.querySelector(
+      '[data-accessibility-layout-slot="issues"]',
+    );
+    const detailSlot = container.querySelector(
+      '[data-accessibility-layout-slot="detail"]',
+    );
+    const secondarySlot = container.querySelector(
+      '[data-accessibility-layout-slot="secondary"]',
+    );
+
+    expect(issuesSlot).toHaveClass('order-1', 'xl:order-none');
+    expect(detailSlot).toHaveClass('order-2', 'xl:order-none');
+    expect(secondarySlot).toHaveClass('order-3', 'xl:order-none');
+    expect(issuesSlot?.parentElement).toHaveClass(
+      'contents',
+      'xl:flex',
+      'xl:flex-col',
+    );
+    expect(screen.getByText('Key contrast pairs')).toBeInTheDocument();
+  });
+
   it('renders the localized empty state when there are no issues', () => {
     render(
       <AccessibilityIssuesWorkspace
