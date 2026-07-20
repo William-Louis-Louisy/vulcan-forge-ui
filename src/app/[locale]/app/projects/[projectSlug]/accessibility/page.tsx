@@ -145,9 +145,9 @@ export default async function AccessibilityCenterPage({
                   t('issueDetails.ratioValue', { ratio, required }),
               },
             }}
-          />
-
-          <ContrastPairsPanel t={t} report={report} labels={labels} />
+          >
+            <ContrastPairsPanel t={t} report={report} labels={labels} />
+          </AccessibilityIssuesWorkspace>
         </div>
       </main>
     </section>
@@ -210,7 +210,7 @@ function ValidationSummaryCard({
 }) {
   return (
     <article className="border-border-subtle bg-surface-primary min-w-0 rounded-md border">
-      <header className="border-border-subtle flex min-w-0 items-center justify-between gap-4 border-b px-4 py-3">
+      <header className="border-border-subtle flex min-w-0 items-center justify-between gap-4 border-b px-4 py-2.5">
         <h2 className="text-sm font-semibold tracking-tight">
           {t('score.validationSummary')}
         </h2>
@@ -228,18 +228,18 @@ function ValidationSummaryCard({
         </span>
       </header>
 
-      <div className="grid min-w-0 gap-4 p-4 sm:p-5 md:grid-cols-[10rem_minmax(0,1fr)]">
+      <div className="grid min-w-0 gap-3 p-3 sm:p-4 md:grid-cols-[8.5rem_minmax(0,1fr)]">
         <div className="min-w-0">
           <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase">
             {t('score.eyebrow')}
           </p>
           <div className="mt-1 flex items-end gap-1.5">
-            <span className="text-5xl font-semibold tracking-tight">
+            <span className="text-4xl font-semibold tracking-tight">
               {report.score}
             </span>
             <span className="text-content-tertiary pb-1 text-sm">/100</span>
           </div>
-          <p className="text-content-secondary mt-3 text-xs leading-5">
+          <p className="text-content-secondary mt-2 text-xs leading-5">
             {t('score.description')}
           </p>
         </div>
@@ -264,7 +264,7 @@ function ValidationSummaryCard({
         </div>
       </div>
 
-      <div className="border-border-subtle grid min-w-0 gap-3 border-t px-4 py-3 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-center sm:px-5">
+      <div className="border-border-subtle grid min-w-0 gap-3 border-t px-4 py-2.5 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-center">
         <div className="min-w-0">
           <p className="text-sm font-semibold">{t('latestReport.title')}</p>
           <p className="text-content-tertiary mt-1 text-xs">
@@ -292,11 +292,11 @@ function ValidationSummaryCard({
 
 function ValidationMetric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="border-border-subtle bg-background-subtle min-w-0 rounded-md border p-3">
+    <div className="border-border-subtle bg-background-subtle min-w-0 rounded-md border p-2.5">
       <p className="text-content-tertiary truncate text-[0.6875rem] font-semibold tracking-[0.12em] uppercase">
         {label}
       </p>
-      <p className="mt-1 text-lg font-semibold">{value}</p>
+      <p className="mt-1 text-base font-semibold">{value}</p>
     </div>
   );
 }
