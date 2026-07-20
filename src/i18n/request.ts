@@ -6,6 +6,7 @@ import { componentGuidelineMessages } from '@/messages/component-guidelines';
 import { componentPreviewMessages } from '@/messages/component-preview-messages';
 import { themePreviewMessages } from '@/messages/theme-preview-messages';
 import { themeEditorMessages } from '@/messages/theme-editor-messages';
+import { accessibilityCenterMessages } from '@/messages/accessibility-center-messages';
 
 const messagesByLocale = {
   en: () => import('../messages/en.json').then((module) => module.default),
@@ -26,12 +27,15 @@ export default getRequestConfig(async ({ requestLocale }) => {
   const scopedMessages = mergeMessages(
     mergeMessages(
       mergeMessages(
-        componentGuidelineMessages[locale],
-        componentPreviewMessages[locale],
+        mergeMessages(
+          componentGuidelineMessages[locale],
+          componentPreviewMessages[locale],
+        ),
+        themePreviewMessages[locale],
       ),
-      themePreviewMessages[locale],
+      themeEditorMessages[locale],
     ),
-    themeEditorMessages[locale],
+    accessibilityCenterMessages[locale],
   );
 
   return {

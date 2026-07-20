@@ -4,6 +4,7 @@ import type { componentGuidelineMessages } from '../messages/component-guideline
 import type { componentPreviewMessages } from '../messages/component-preview-messages';
 import type { themePreviewMessages } from '../messages/theme-preview-messages';
 import type { themeEditorMessages } from '../messages/theme-editor-messages';
+import type { accessibilityCenterMessages } from '../messages/accessibility-center-messages';
 
 type DeepMerge<Left, Right> = {
   [Key in keyof Left | keyof Right]: Key extends keyof Right
@@ -41,7 +42,12 @@ type ThemeMessages = DeepMerge<
   (typeof themeEditorMessages)['en']
 >;
 
-type ScopedMessages = DeepMerge<ComponentMessages, ThemeMessages>;
+type ProductMessages = DeepMerge<
+  ThemeMessages,
+  (typeof accessibilityCenterMessages)['en']
+>;
+
+type ScopedMessages = DeepMerge<ComponentMessages, ProductMessages>;
 
 type Messages = WidenMessageValues<
   DeepMerge<typeof baseMessages, ScopedMessages>

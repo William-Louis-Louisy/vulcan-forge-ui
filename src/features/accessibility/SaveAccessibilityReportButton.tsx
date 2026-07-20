@@ -32,30 +32,19 @@ export function SaveAccessibilityReportButton({
     <form
       action={formAction}
       onSubmitCapture={preserveSaveContext}
-      className="border-border-subtle bg-surface-primary shadow-soft rounded-3xl border p-5"
+      className="flex min-w-0 flex-col items-end gap-2"
     >
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="projectSlug" value={projectSlug} />
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-xl font-semibold tracking-tight">
-            {t('saveReport.title')}
-          </h2>
-          <p className="text-content-secondary mt-2 text-sm leading-6">
-            {t('saveReport.description')}
-          </p>
-        </div>
-
-        <Button type="submit" disabled={isPending}>
-          {isPending ? t('saveReport.saving') : t('saveReport.action')}
-        </Button>
-      </div>
+      <Button type="submit" size="sm" disabled={isPending}>
+        {isPending ? t('saveReport.saving') : t('saveReport.action')}
+      </Button>
 
       {state.status === 'success' && state.savedReport ? (
         <p
           role="status"
-          className="text-action-success mt-4 text-sm font-semibold"
+          className="text-action-success max-w-sm text-right text-xs font-semibold"
         >
           {t('saveReport.success', {
             score: state.savedReport.score,
@@ -67,7 +56,7 @@ export function SaveAccessibilityReportButton({
       {state.formError ? (
         <p
           role="alert"
-          className="text-action-danger mt-4 text-sm font-semibold"
+          className="text-action-danger max-w-sm text-right text-xs font-semibold"
         >
           {t(`saveReport.errors.${state.formError}`)}
         </p>
