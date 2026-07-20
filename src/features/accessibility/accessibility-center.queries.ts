@@ -1,20 +1,38 @@
 import { prisma } from '@/server/db/prisma';
+import type { AppLocale } from '@/domain/i18n';
+import type { ComponentContractType } from '@/domain/design-system';
 import type {
   ThemeMode,
   ThemeEditorTheme,
 } from '@/features/themes/themes-editor.utils';
+
+export type AccessibilityCenterTokenSetData = {
+  id: string;
+  type: string;
+  name: string;
+  tokens: unknown;
+};
+
+export type AccessibilityCenterComponentContractData = {
+  id: string;
+  type: ComponentContractType;
+  name: string;
+  contract: unknown;
+  updatedAt: Date;
+};
 
 export type AccessibilityCenterPageData = {
   project: {
     id: string;
     name: string;
     slug: string;
+    defaultLocale: AppLocale;
+    supportedLocales: AppLocale[];
   };
-  colorTokenSet: {
-    id: string;
-    tokens: unknown;
-  } | null;
+  colorTokenSet: AccessibilityCenterTokenSetData | null;
+  tokenSets: AccessibilityCenterTokenSetData[];
   themes: ThemeEditorTheme[];
+  componentContracts: AccessibilityCenterComponentContractData[];
   latestAccessibilityReport: {
     id: string;
     status: 'pass' | 'warning' | 'fail';
@@ -46,7 +64,12 @@ export async function getAccessibilityCenterPageData({
       id: true,
       name: true,
       slug: true,
+      defaultLocale: true,
+      supportedLocales: true,
       themes: {
+        orderBy: {
+          mode: 'asc',
+        },
         select: {
           id: true,
           mode: true,
@@ -56,14 +79,27 @@ export async function getAccessibilityCenterPageData({
         },
       },
       tokenSets: {
-        where: {
-          type: 'color',
+        orderBy: {
+          type: 'asc',
         },
         select: {
           id: true,
+          type: true,
+          name: true,
           tokens: true,
         },
-        take: 1,
+      },
+      componentContracts: {
+        orderBy: {
+          type: 'asc',
+        },
+        select: {
+          id: true,
+          type: true,
+          name: true,
+          contract: true,
+          updatedAt: true,
+        },
       },
       accessibilityReports: {
         orderBy: {
@@ -85,11 +121,20 @@ export async function getAccessibilityCenterPageData({
     return null;
   }
 
+  const tokenSets = project.tokenSets.map((tokenSet) => ({
+    id: tokenSet.id,
+    type: tokenSet.type,
+    name: tokenSet.name,
+    tokens: tokenSet.tokens,
+  }));
+
   return {
     project: {
       id: project.id,
       name: project.name,
       slug: project.slug,
+      defaultLocale: project.defaultLocale as AppLocale,
+      supportedLocales: project.supportedLocales as AppLocale[],
     },
     themes: project.themes.map((theme) => ({
       id: theme.id,
@@ -98,7 +143,16 @@ export async function getAccessibilityCenterPageData({
       tokens: theme.tokens,
       updatedAt: theme.updatedAt,
     })),
-    colorTokenSet: project.tokenSets[0] ?? null,
+    colorTokenSet:
+      tokenSets.find((tokenSet) => tokenSet.type === 'color') ?? null,
+    tokenSets,
+    componentContracts: project.componentContracts.map((componentContract) => ({
+      id: componentContract.id,
+      type: componentContract.type as ComponentContractType,
+      name: componentContract.name,
+      contract: componentContract.contract,
+      updatedAt: componentContract.updatedAt,
+    })),
     latestAccessibilityReport: project.accessibilityReports[0] ?? null,
   };
 }
