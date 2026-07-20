@@ -179,4 +179,90 @@ describe('createAccessibilityCenterReport', () => {
       ]),
     );
   });
+
+  it('merges expanded token and component checks into score and summary', () => {
+    const colorTokens = [
+      {
+        path: 'color.semantic.action.primary',
+        type: 'color',
+        value: '#7c3aed',
+        description: {
+          en: 'Primary action color',
+        },
+        status: 'ready',
+      },
+    ];
+    const report = createAccessibilityCenterReport({
+      colorTokenSetTokens: colorTokens,
+      themes: [],
+      defaultLocale: 'en',
+      supportedLocales: ['en', 'fr'],
+      tokenSets: [
+        {
+          id: 'color-set',
+          type: 'color',
+          name: 'Colors',
+          tokens: colorTokens,
+        },
+      ],
+      componentContracts: [
+        {
+          id: 'button-contract',
+          type: 'button',
+          name: 'Button',
+          contract: {
+            type: 'button',
+            name: 'Button',
+            purpose: {
+              en: 'Triggers an action',
+              fr: 'Déclenche une action',
+            },
+            states: [
+              {
+                key: 'focus-visible',
+                label: {
+                  en: 'Focus visible',
+                  fr: 'Focus visible',
+                },
+              },
+            ],
+            accessibility: [
+              {
+                key: 'accessible-name',
+                description: {
+                  en: 'Expose an accessible name',
+                  fr: 'Expose un nom accessible',
+                },
+                severity: 'critical',
+              },
+            ],
+            tokenBindings: [
+              {
+                key: 'background',
+                tokenType: 'color',
+                tokenPath: 'color.semantic.action.primary',
+              },
+            ],
+          },
+        },
+      ],
+    });
+
+    expect(report.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          code: 'missingTokenDescription',
+          tokenPath: 'color.semantic.action.primary',
+          missingLocales: ['fr'],
+        }),
+        expect.objectContaining({
+          code: 'missingThemes',
+          severity: 'critical',
+        }),
+      ]),
+    );
+    expect(report.summary.warningIssues).toBe(1);
+    expect(report.summary.criticalIssues).toBe(1);
+    expect(report.score).toBe(65);
+  });
 });
