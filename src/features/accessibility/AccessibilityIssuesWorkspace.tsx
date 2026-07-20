@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import type { AccessibilityCenterIssue } from './accessibility-center.utils';
 import {
   AccessibilityIssuesWorkspaceClient,
@@ -14,12 +15,14 @@ type AccessibilityIssuesWorkspaceProps = {
   projectSlug: string;
   issues: AccessibilityCenterIssue[];
   labels: AccessibilityIssuesLabels;
+  children?: ReactNode;
 };
 
 export function AccessibilityIssuesWorkspace({
   projectSlug,
   issues,
   labels,
+  children,
 }: AccessibilityIssuesWorkspaceProps) {
   const ratioLabels = Object.fromEntries(
     issues.flatMap((issue) => {
@@ -55,6 +58,8 @@ export function AccessibilityIssuesWorkspace({
           ratio: labels.details.ratio,
         },
       }}
-    />
+    >
+      {children}
+    </AccessibilityIssuesWorkspaceClient>
   );
 }
