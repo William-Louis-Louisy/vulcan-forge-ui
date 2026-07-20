@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { AccessibilityIssuesWorkspace } from './AccessibilityIssuesWorkspace';
@@ -51,8 +51,31 @@ const labels = {
   count: '2 issues',
   emptyTitle: 'No issue detected.',
   emptyDescription: 'No automated issue was detected.',
+  automatic: 'Automated check',
+  recommendation: 'Recommended action',
+  columns: {
+    severity: 'Severity',
+    scope: 'Scope',
+    rule: 'Rule',
+    affected: 'Affected',
+  },
+  actions: {
+    openTokens: 'Open tokens editor',
+    openThemes: 'Open themes editor',
+  },
+  scopes: {
+    themeContrast: 'Theme contrast',
+    tokenResolution: 'Token resolution',
+    tokenSet: 'Token set',
+    theme: 'Theme',
+  },
   pairs: {
     contentOnBackground: 'Content on background',
+    contentOnSurface: 'Content on surface',
+    mutedOnBackground: 'Secondary content on background',
+    mutedOnSurface: 'Secondary content on surface',
+    accentOnBackground: 'Accent on background',
+    accentOnSurface: 'Accent on surface',
   },
   issueCodes: {
     missingForegroundColor: 'Missing foreground color',
@@ -91,19 +114,74 @@ const labels = {
 describe('AccessibilityIssuesWorkspace', () => {
   it('selects the first issue and updates the detail panel', async () => {
     const user = userEvent.setup();
-    render(<AccessibilityIssuesWorkspace issues={issues} labels={labels} />);
+    const { container } = render(
+      <AccessibilityIssuesWorkspace
+        projectSlug="forge"
+        issues={issues}
+        labels={labels}
+      />,
+    );
 
-    expect(screen.getByText('Review this pair.')).toBeInTheDocument();
-    expect(screen.getByText('4.10:1 / required 4.5:1')).toBeInTheDocument();
+    const detail = container.querySelector('#accessibility-issue-detail');
 
-    await user.click(screen.getByRole('button', { name: /Token resolution error/ }));
+    expect(detail).not.toBeNull();
+    expect(within(detail as HTMLElement).getByText('Review this pair.')).toBeInTheDocument();
+    expect(
+      within(detail as HTMLElement).getByText('4.10:1 / required 4.5:1'),
+    ).toBeInTheDocument();
+    expect(
+      within(detail as HTMLElement).getByRole('img', {
+        name: 'Foreground value: #777777',
+      }),
+    ).toBeInTheDocument();
+    expect(
+      within(detail as HTMLElement).getByRole('link', {
+        name: 'Open themes editor',
+      }),
+    ).toHaveAttribute('href', '/en/app/projects/forge/themes');
 
-    expect(screen.getByText('Fix the token alias.')).toBeInTheDocument();
-    expect(screen.getAllByText('color.semantic.accent')).toHaveLength(2);
+    await user.click(
+      screen.getAllByRole('button', { name: /Token resolution error/ })[0]!,
+    );
+
+    expect(within(detail as HTMLElement).getByText('Fix the token alias.')).toBeInTheDocument();
+    expect(
+      within(detail as HTMLElement).getByText('color.semantic.accent'),
+    ).toBeInTheDocument();
+    expect(
+      within(detail as HTMLElement).getByRole('link', {
+        name: 'Open tokens editor',
+      }),
+    ).toHaveAttribute('href', '/en/app/projects/forge/tokens');
+  });
+
+  it('renders a desktop issue table and color swatches', () => {
+    render(
+      <AccessibilityIssuesWorkspace
+        projectSlug="forge"
+        issues={issues}
+        labels={labels}
+      />,
+    );
+
+    expect(screen.getByRole('columnheader', { name: 'Severity' })).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: 'Affected' })).toBeInTheDocument();
+    expect(
+      screen.getAllByRole('img', { name: 'Foreground value: #777777' }).length,
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getAllByRole('img', { name: 'Background value: #ffffff' }).length,
+    ).toBeGreaterThan(0);
   });
 
   it('renders the localized empty state when there are no issues', () => {
-    render(<AccessibilityIssuesWorkspace issues={[]} labels={labels} />);
+    render(
+      <AccessibilityIssuesWorkspace
+        projectSlug="forge"
+        issues={[]}
+        labels={labels}
+      />,
+    );
 
     expect(screen.getByText('No issue detected.')).toBeInTheDocument();
     expect(screen.getByText('No automated issue was detected.')).toBeInTheDocument();
