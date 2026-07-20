@@ -23,6 +23,7 @@ export type AccessibilityIssuesClientLabels = {
   actions: {
     openTokens: string;
     openThemes: string;
+    openComponents: string;
   };
   scopes: Record<AccessibilityCenterIssue['scope'], string>;
   pairs: Record<NonNullable<AccessibilityCenterIssue['pairId']>, string>;
@@ -31,11 +32,24 @@ export type AccessibilityIssuesClientLabels = {
   severities: Record<AccessibilityCenterIssue['severity'], string>;
   details: {
     tokenPath: string;
+    tokenSet: string;
+    component: string;
+    componentType: string;
+    affectedField: string;
+    affectedCount: string;
+    missingLocales: string;
+    bindingKey: string;
+    expectedTokenType: string;
+    actualTokenType: string;
     foreground: string;
     background: string;
     foregroundValue: string;
     backgroundValue: string;
     ratio: string;
+    fields: Record<
+      NonNullable<AccessibilityCenterIssue['affectedField']>,
+      string
+    >;
   };
 };
 
@@ -53,8 +67,14 @@ function getAffectedLabel(
 ) {
   const pairLabel = issue.pairId ? labels.pairs[issue.pairId] : null;
 
+  if (issue.componentName && issue.bindingKey) {
+    return `${issue.componentName} · ${issue.bindingKey}`;
+  }
+
   return (
     issue.tokenPath ??
+    issue.componentName ??
+    issue.tokenSetName ??
     issue.foregroundTokenPath ??
     issue.backgroundTokenPath ??
     pairLabel ??
@@ -333,6 +353,38 @@ function IssueColorSwatches({
   );
 }
 
+function getIssueSource({
+  projectSlug,
+  issue,
+  labels,
+}: {
+  projectSlug: string;
+  issue: AccessibilityCenterIssue;
+  labels: AccessibilityIssuesClientLabels;
+}) {
+  if (
+    issue.scope === 'componentContract' ||
+    issue.scope === 'componentBinding'
+  ) {
+    return {
+      href: `/app/projects/${projectSlug}/components`,
+      label: labels.actions.openComponents,
+    };
+  }
+
+  if (issue.scope === 'theme' || issue.scope === 'themeContrast') {
+    return {
+      href: `/app/projects/${projectSlug}/themes`,
+      label: labels.actions.openThemes,
+    };
+  }
+
+  return {
+    href: `/app/projects/${projectSlug}/tokens`,
+    label: labels.actions.openTokens,
+  };
+}
+
 function IssueDetail({
   projectSlug,
   issue,
@@ -345,14 +397,14 @@ function IssueDetail({
   labels: AccessibilityIssuesClientLabels;
 }) {
   const pairLabel = issue.pairId ? labels.pairs[issue.pairId] : null;
-  const opensThemes =
-    issue.scope === 'theme' || issue.scope === 'themeContrast';
-  const sourceHref = opensThemes
-    ? `/app/projects/${projectSlug}/themes`
-    : `/app/projects/${projectSlug}/tokens`;
-  const sourceLabel = opensThemes
-    ? labels.actions.openThemes
-    : labels.actions.openTokens;
+  const source = getIssueSource({ projectSlug, issue, labels });
+  const affectedField = issue.affectedField
+    ? labels.details.fields[issue.affectedField]
+    : null;
+  const missingLocales =
+    issue.missingLocales && issue.missingLocales.length > 0
+      ? issue.missingLocales.map((locale) => locale.toUpperCase()).join(', ')
+      : null;
 
   return (
     <aside
@@ -402,6 +454,33 @@ function IssueDetail({
 
       <dl className="border-border-subtle mt-4 grid min-w-0 gap-3 border-t pt-4 text-xs">
         <DetailRow label={labels.details.tokenPath} value={issue.tokenPath} />
+        <DetailRow label={labels.details.tokenSet} value={issue.tokenSetName} />
+        <DetailRow label={labels.details.component} value={issue.componentName} />
+        <DetailRow
+          label={labels.details.componentType}
+          value={issue.componentType}
+        />
+        <DetailRow
+          label={labels.details.affectedField}
+          value={affectedField}
+        />
+        <DetailRow
+          label={labels.details.affectedCount}
+          value={issue.affectedCount}
+        />
+        <DetailRow
+          label={labels.details.missingLocales}
+          value={missingLocales}
+        />
+        <DetailRow label={labels.details.bindingKey} value={issue.bindingKey} />
+        <DetailRow
+          label={labels.details.expectedTokenType}
+          value={issue.expectedTokenType}
+        />
+        <DetailRow
+          label={labels.details.actualTokenType}
+          value={issue.actualTokenType}
+        />
         <DetailRow
           label={labels.details.foreground}
           value={issue.foregroundTokenPath}
@@ -422,17 +501,23 @@ function IssueDetail({
       </dl>
 
       <AppLink
-        href={sourceHref}
+        href={source.href}
         className="border-border-default bg-surface-primary text-content-primary hover:bg-surface-secondary focus-visible:outline-border-focus mt-4 inline-flex min-h-9 items-center justify-center rounded-md border px-3 text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2"
       >
-        {sourceLabel}
+        {source.label}
       </AppLink>
     </aside>
   );
 }
 
-function DetailRow({ label, value }: { label: string; value: string | null }) {
-  if (!value) {
+function DetailRow({
+  label,
+  value,
+}: {
+  label: string;
+  value: string | number | null | undefined;
+}) {
+  if (value === null || value === undefined || value === '') {
     return null;
   }
 
