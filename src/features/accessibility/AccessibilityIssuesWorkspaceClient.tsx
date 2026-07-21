@@ -6,6 +6,9 @@ import { AppLink } from '@/components/navigation/AppLink';
 import { ColorValueSwatch, EmptyState } from '@/components/ui';
 import type { AccessibilityCenterIssue } from './accessibility-center.utils';
 
+const issueDetailControlIds =
+  'accessibility-issue-detail accessibility-issue-detail-rail';
+
 export type AccessibilityIssuesClientLabels = {
   title: string;
   detailTitle: string;
@@ -58,8 +61,12 @@ type AccessibilityIssuesWorkspaceClientProps = {
   issues: AccessibilityCenterIssue[];
   ratioLabels: Record<string, string>;
   labels: AccessibilityIssuesClientLabels;
+  header?: ReactNode;
+  beforeIssues?: ReactNode;
   children?: ReactNode;
 };
+
+type IssueDetailVariant = 'compact' | 'rail';
 
 function getAffectedLabel(
   issue: AccessibilityCenterIssue,
@@ -88,6 +95,8 @@ export function AccessibilityIssuesWorkspaceClient({
   issues,
   ratioLabels,
   labels,
+  header,
+  beforeIssues,
   children,
 }: AccessibilityIssuesWorkspaceClientProps) {
   const [selectedIssueId, setSelectedIssueId] = useState(issues[0]?.id ?? null);
@@ -95,49 +104,88 @@ export function AccessibilityIssuesWorkspaceClient({
     issues.find((issue) => issue.id === selectedIssueId) ?? issues[0] ?? null;
 
   return (
-    <section
+    <div
+      data-accessibility-layout-slot="workspace"
       className={[
-        'flex min-w-0 flex-col gap-4 xl:grid xl:items-start',
-        selectedIssue ? 'xl:grid-cols-[minmax(0,1fr)_23rem]' : 'xl:grid-cols-1',
+        'flex min-h-0 min-w-0 flex-1 flex-col',
+        'xl:grid xl:h-full xl:overflow-hidden',
+        selectedIssue
+          ? 'xl:grid-cols-[minmax(0,1fr)_23rem]'
+          : 'xl:grid-cols-1',
       ].join(' ')}
     >
-      <div className="contents xl:flex xl:min-w-0 xl:flex-col xl:gap-4">
-        <div
-          data-accessibility-layout-slot="issues"
-          className="order-1 min-w-0 xl:order-none"
-        >
-          <IssuesPanel
-            issues={issues}
-            selectedIssue={selectedIssue}
-            labels={labels}
-            onSelectIssue={setSelectedIssueId}
-          />
-        </div>
-
-        {children ? (
-          <div
-            data-accessibility-layout-slot="secondary"
-            className="order-3 min-w-0 xl:order-none"
-          >
-            {children}
+      <section
+        data-accessibility-layout-slot="main"
+        className="flex min-h-0 min-w-0 flex-col xl:overflow-hidden"
+      >
+        {header ? (
+          <div data-accessibility-layout-slot="header" className="shrink-0">
+            {header}
           </div>
         ) : null}
-      </div>
+
+        <main className="min-h-0 min-w-0 flex-1 overflow-y-auto">
+          <div className="grid min-w-0 gap-4 p-4 md:p-6 xl:p-7">
+            {beforeIssues ? (
+              <div
+                data-accessibility-layout-slot="before-issues"
+                className="min-w-0"
+              >
+                {beforeIssues}
+              </div>
+            ) : null}
+
+            <div
+              data-accessibility-layout-slot="issues"
+              className="order-1 min-w-0"
+            >
+              <IssuesPanel
+                issues={issues}
+                selectedIssue={selectedIssue}
+                labels={labels}
+                onSelectIssue={setSelectedIssueId}
+              />
+            </div>
+
+            {selectedIssue ? (
+              <div
+                data-accessibility-layout-slot="detail-compact"
+                className="order-2 min-w-0 xl:hidden"
+              >
+                <IssueDetail
+                  id="accessibility-issue-detail"
+                  variant="compact"
+                  projectSlug={projectSlug}
+                  issue={selectedIssue}
+                  ratioLabel={ratioLabels[selectedIssue.id] ?? null}
+                  labels={labels}
+                />
+              </div>
+            ) : null}
+
+            {children ? (
+              <div
+                data-accessibility-layout-slot="secondary"
+                className="order-3 min-w-0"
+              >
+                {children}
+              </div>
+            ) : null}
+          </div>
+        </main>
+      </section>
 
       {selectedIssue ? (
-        <div
-          data-accessibility-layout-slot="detail"
-          className="order-2 min-w-0 xl:order-none"
-        >
-          <IssueDetail
-            projectSlug={projectSlug}
-            issue={selectedIssue}
-            ratioLabel={ratioLabels[selectedIssue.id] ?? null}
-            labels={labels}
-          />
-        </div>
+        <IssueDetail
+          id="accessibility-issue-detail-rail"
+          variant="rail"
+          projectSlug={projectSlug}
+          issue={selectedIssue}
+          ratioLabel={ratioLabels[selectedIssue.id] ?? null}
+          labels={labels}
+        />
       ) : null}
-    </section>
+    </div>
   );
 }
 
@@ -190,7 +238,7 @@ function IssuesPanel({
               key={issue.id}
               type="button"
               aria-pressed={isSelected}
-              aria-controls="accessibility-issue-detail"
+              aria-controls={issueDetailControlIds}
               onClick={() => onSelectIssue(issue.id)}
               className={[
                 'grid w-full min-w-0 gap-3 px-4 py-3 text-left transition',
@@ -263,7 +311,7 @@ function IssuesPanel({
                     <button
                       type="button"
                       aria-pressed={isSelected}
-                      aria-controls="accessibility-issue-detail"
+                      aria-controls={issueDetailControlIds}
                       onClick={() => onSelectIssue(issue.id)}
                       className="text-content-primary focus-visible:outline-border-focus rounded-sm text-left text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2"
                     >
@@ -386,11 +434,15 @@ function getIssueSource({
 }
 
 function IssueDetail({
+  id,
+  variant,
   projectSlug,
   issue,
   ratioLabel,
   labels,
 }: {
+  id: string;
+  variant: IssueDetailVariant;
   projectSlug: string;
   issue: AccessibilityCenterIssue;
   ratioLabel: string | null;
@@ -405,107 +457,124 @@ function IssueDetail({
     issue.missingLocales && issue.missingLocales.length > 0
       ? issue.missingLocales.map((locale) => locale.toUpperCase()).join(', ')
       : null;
+  const isRail = variant === 'rail';
 
   return (
     <aside
-      id="accessibility-issue-detail"
+      id={id}
       aria-live="polite"
-      className="border-border-subtle bg-background-sunken min-w-0 rounded-md border p-4 xl:sticky xl:top-4"
+      data-accessibility-layout-slot={isRail ? 'detail-rail' : undefined}
+      className={
+        isRail
+          ? 'border-border-subtle bg-background-sunken hidden h-full min-h-0 min-w-0 overflow-y-auto border-l xl:block'
+          : 'border-border-subtle bg-background-sunken min-w-0 rounded-md border p-4'
+      }
     >
-      <div className="flex min-w-0 items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase">
-            {labels.detailTitle}
-          </p>
-          <h3 className="mt-1 text-base font-semibold tracking-tight">
-            {labels.issueCodes[issue.code]}
-          </h3>
+      <div className={isRail ? 'p-4 xl:p-5' : undefined}>
+        <div className="flex min-w-0 items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase">
+              {labels.detailTitle}
+            </p>
+            <h3 className="mt-1 text-base font-semibold tracking-tight">
+              {labels.issueCodes[issue.code]}
+            </h3>
+          </div>
+          <SeverityBadge issue={issue} labels={labels} />
         </div>
-        <SeverityBadge issue={issue} labels={labels} />
+
+        <div className="mt-3 flex flex-wrap gap-2">
+          <span className="border-border-subtle bg-surface-primary text-content-secondary rounded-full border px-2 py-1 text-[0.6875rem] font-semibold">
+            {labels.automatic}
+          </span>
+          <span className="border-border-subtle bg-surface-primary text-content-secondary rounded-full border px-2 py-1 text-[0.6875rem] font-semibold">
+            {labels.scopes[issue.scope]}
+          </span>
+        </div>
+
+        {pairLabel ? (
+          <p className="text-content-secondary mt-3 text-sm">{pairLabel}</p>
+        ) : null}
+
+        {issue.themeName ? (
+          <p className="text-content-tertiary mt-1 text-xs font-semibold">
+            {issue.themeName}
+          </p>
+        ) : null}
+
+        <div className="border-border-subtle mt-4 border-t pt-4">
+          <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.12em] uppercase">
+            {labels.recommendation}
+          </p>
+          <p className="text-content-secondary mt-2 text-sm leading-6">
+            {labels.issueFixes[issue.code]}
+          </p>
+        </div>
+
+        <dl className="border-border-subtle mt-4 grid min-w-0 gap-3 border-t pt-4 text-xs">
+          <DetailRow label={labels.details.tokenPath} value={issue.tokenPath} />
+          <DetailRow
+            label={labels.details.tokenSet}
+            value={issue.tokenSetName}
+          />
+          <DetailRow
+            label={labels.details.component}
+            value={issue.componentName}
+          />
+          <DetailRow
+            label={labels.details.componentType}
+            value={issue.componentType}
+          />
+          <DetailRow
+            label={labels.details.affectedField}
+            value={affectedField}
+          />
+          <DetailRow
+            label={labels.details.affectedCount}
+            value={issue.affectedCount}
+          />
+          <DetailRow
+            label={labels.details.missingLocales}
+            value={missingLocales}
+          />
+          <DetailRow
+            label={labels.details.bindingKey}
+            value={issue.bindingKey}
+          />
+          <DetailRow
+            label={labels.details.expectedTokenType}
+            value={issue.expectedTokenType}
+          />
+          <DetailRow
+            label={labels.details.actualTokenType}
+            value={issue.actualTokenType}
+          />
+          <DetailRow
+            label={labels.details.foreground}
+            value={issue.foregroundTokenPath}
+          />
+          <ColorDetailRow
+            label={labels.details.foregroundValue}
+            value={issue.foregroundValue}
+          />
+          <DetailRow
+            label={labels.details.background}
+            value={issue.backgroundTokenPath}
+          />
+          <ColorDetailRow
+            label={labels.details.backgroundValue}
+            value={issue.backgroundValue}
+          />
+          <DetailRow label={labels.details.ratio} value={ratioLabel} />
+        </dl>
+
+        <AppLink
+          href={source.href}
+          className="border-border-default bg-surface-primary text-content-primary hover:bg-surface-secondary focus-visible:outline-border-focus mt-4 inline-flex min-h-9 items-center justify-center rounded-md border px-3 text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2"
+        >
+          {source.label}
+        </AppLink>
       </div>
-
-      <div className="mt-3 flex flex-wrap gap-2">
-        <span className="border-border-subtle bg-surface-primary text-content-secondary rounded-full border px-2 py-1 text-[0.6875rem] font-semibold">
-          {labels.automatic}
-        </span>
-        <span className="border-border-subtle bg-surface-primary text-content-secondary rounded-full border px-2 py-1 text-[0.6875rem] font-semibold">
-          {labels.scopes[issue.scope]}
-        </span>
-      </div>
-
-      {pairLabel ? (
-        <p className="text-content-secondary mt-3 text-sm">{pairLabel}</p>
-      ) : null}
-
-      {issue.themeName ? (
-        <p className="text-content-tertiary mt-1 text-xs font-semibold">
-          {issue.themeName}
-        </p>
-      ) : null}
-
-      <div className="border-border-subtle mt-4 border-t pt-4">
-        <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.12em] uppercase">
-          {labels.recommendation}
-        </p>
-        <p className="text-content-secondary mt-2 text-sm leading-6">
-          {labels.issueFixes[issue.code]}
-        </p>
-      </div>
-
-      <dl className="border-border-subtle mt-4 grid min-w-0 gap-3 border-t pt-4 text-xs">
-        <DetailRow label={labels.details.tokenPath} value={issue.tokenPath} />
-        <DetailRow label={labels.details.tokenSet} value={issue.tokenSetName} />
-        <DetailRow
-          label={labels.details.component}
-          value={issue.componentName}
-        />
-        <DetailRow
-          label={labels.details.componentType}
-          value={issue.componentType}
-        />
-        <DetailRow label={labels.details.affectedField} value={affectedField} />
-        <DetailRow
-          label={labels.details.affectedCount}
-          value={issue.affectedCount}
-        />
-        <DetailRow
-          label={labels.details.missingLocales}
-          value={missingLocales}
-        />
-        <DetailRow label={labels.details.bindingKey} value={issue.bindingKey} />
-        <DetailRow
-          label={labels.details.expectedTokenType}
-          value={issue.expectedTokenType}
-        />
-        <DetailRow
-          label={labels.details.actualTokenType}
-          value={issue.actualTokenType}
-        />
-        <DetailRow
-          label={labels.details.foreground}
-          value={issue.foregroundTokenPath}
-        />
-        <ColorDetailRow
-          label={labels.details.foregroundValue}
-          value={issue.foregroundValue}
-        />
-        <DetailRow
-          label={labels.details.background}
-          value={issue.backgroundTokenPath}
-        />
-        <ColorDetailRow
-          label={labels.details.backgroundValue}
-          value={issue.backgroundValue}
-        />
-        <DetailRow label={labels.details.ratio} value={ratioLabel} />
-      </dl>
-
-      <AppLink
-        href={source.href}
-        className="border-border-default bg-surface-primary text-content-primary hover:bg-surface-secondary focus-visible:outline-border-focus mt-4 inline-flex min-h-9 items-center justify-center rounded-md border px-3 text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2"
-      >
-        {source.label}
-      </AppLink>
     </aside>
   );
 }
