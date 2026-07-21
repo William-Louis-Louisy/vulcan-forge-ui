@@ -223,9 +223,7 @@ describe('AccessibilityIssuesWorkspace', () => {
       within(railDetail as HTMLElement).getByText('Review this pair.'),
     ).toBeInTheDocument();
     expect(
-      within(compactDetail as HTMLElement).getByText(
-        '4.10:1 / required 4.5:1',
-      ),
+      within(compactDetail as HTMLElement).getByText('4.10:1 / required 4.5:1'),
     ).toBeInTheDocument();
     expect(
       within(compactDetail as HTMLElement).getByRole('img', {
@@ -389,9 +387,7 @@ describe('AccessibilityIssuesWorkspace', () => {
       screen.getByText('No automated issue was detected.'),
     ).toBeInTheDocument();
     expect(
-      container.querySelector(
-        '[data-accessibility-layout-slot="detail-rail"]',
-      ),
+      container.querySelector('[data-accessibility-layout-slot="detail-rail"]'),
     ).toBeNull();
   });
 });

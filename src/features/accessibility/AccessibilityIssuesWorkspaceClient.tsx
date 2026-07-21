@@ -109,9 +109,7 @@ export function AccessibilityIssuesWorkspaceClient({
       className={[
         'flex min-h-0 min-w-0 flex-1 flex-col',
         'xl:grid xl:h-full xl:overflow-hidden',
-        selectedIssue
-          ? 'xl:grid-cols-[minmax(0,1fr)_23rem]'
-          : 'xl:grid-cols-1',
+        selectedIssue ? 'xl:grid-cols-[minmax(0,1fr)_23rem]' : 'xl:grid-cols-1',
       ].join(' ')}
     >
       <section
