@@ -15,6 +15,8 @@ type AccessibilityIssuesWorkspaceProps = {
   projectSlug: string;
   issues: AccessibilityCenterIssue[];
   labels: AccessibilityIssuesLabels;
+  header?: ReactNode;
+  beforeIssues?: ReactNode;
   children?: ReactNode;
 };
 
@@ -22,6 +24,8 @@ export function AccessibilityIssuesWorkspace({
   projectSlug,
   issues,
   labels,
+  header,
+  beforeIssues,
   children,
 }: AccessibilityIssuesWorkspaceProps) {
   const ratioLabels = Object.fromEntries(
@@ -68,6 +72,8 @@ export function AccessibilityIssuesWorkspace({
           fields: labels.details.fields,
         },
       }}
+      header={header}
+      beforeIssues={beforeIssues}
     >
       {children}
     </AccessibilityIssuesWorkspaceClient>
