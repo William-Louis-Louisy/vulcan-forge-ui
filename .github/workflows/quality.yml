@@ -42,72 +42,18 @@ jobs:
       - name: Format Exports alignment
         run: npm run format
 
-      - name: Restore standard Quality workflow
-        run: |
-          cat > .github/workflows/quality.yml <<'EOF'
-          name: Quality
-
-          on:
-            pull_request:
-              branches:
-                - main
-            push:
-              branches:
-                - main
-
-          concurrency:
-            group: quality-${{ github.workflow }}-${{ github.ref }}
-            cancel-in-progress: true
-
-          jobs:
-            quality:
-              name: Quality checks
-              runs-on: ubuntu-latest
-              timeout-minutes: 10
-
-              permissions:
-                contents: read
-
-              env:
-                DATABASE_URL: postgresql://vulcan:vulcan_dev_password@localhost:5432/vulcan_forge_ui?schema=public
-
-              steps:
-                - name: Checkout repository
-                  uses: actions/checkout@v6
-
-                - name: Setup Node.js
-                  uses: actions/setup-node@v4
-                  with:
-                    node-version-file: '.nvmrc'
-                    cache: npm
-
-                - name: Install dependencies
-                  run: npm ci
-
-                - name: Generate Prisma Client
-                  run: npm run db:generate
-
-                - name: Run lint
-                  run: npm run lint
-
-                - name: Run typecheck
-                  run: npm run typecheck
-
-                - name: Check formatting
-                  run: npm run format:check
-
-                - name: Run tests
-                  run: npm run test
-
-                - name: Build application
-                  run: npm run build
-          EOF
-
-      - name: Commit formatted files
+      - name: Commit formatted Exports files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
+          git add \
+            docs/product/ds-160-07c-exports-alignment-audit.md \
+            'src/app/[locale]/app/projects/[projectSlug]/exports/error.tsx' \
+            'src/app/[locale]/app/projects/[projectSlug]/exports/loading.tsx' \
+            'src/app/[locale]/app/projects/[projectSlug]/exports/page.tsx' \
+            src/features/exports/ExportCenterClient.tsx \
+            src/features/exports/export-center-workspace-labels.ts \
+            src/features/exports/export-center-workspace-labels.test.ts
           if git diff --cached --quiet; then
             echo "No formatting changes to commit."
           else
