@@ -37,7 +37,15 @@ The control must:
 - show the current critical and warning counts;
 - show each penalty, the total penalty and displayed score;
 - expose the negative raw result when the visible score has been floored;
-- repeat that the score is not a WCAG compliance percentage or certification.
+- repeat that the score is not a WCAG compliance percentage or certification;
+- remain fully contained within the mobile viewport;
+- use an internal vertical scroll when its content is taller than the available mobile viewport.
+
+## Responsive positioning
+
+On narrow viewports, the explanation behaves as a viewport-centered non-modal dialog with horizontal insets. Its maximum height is constrained by the dynamic viewport height so browser chrome and short devices cannot clip the content.
+
+From the `sm` breakpoint, it returns to the compact anchored-popover treatment beside the score label.
 
 ## Domain clarification
 
@@ -59,6 +67,7 @@ Centralize the base score and penalty values in a dedicated accessibility-score 
 - the explanation is localized in FR and EN;
 - click, keyboard, Escape and focus-return behavior are covered;
 - normal and floored scores are covered by automated tests;
+- mobile viewport containment is covered by the component contract test;
 - responsive and bilingual visual QA remains manual before merge.
 
 ## Acceptance targets
@@ -67,6 +76,8 @@ Centralize the base score and penalty values in a dedicated accessibility-score 
 - the formula and current deductions are available in FR and EN;
 - mouse, touch and keyboard users can open the explanation;
 - Escape dismissal restores focus to the trigger;
+- the mobile panel does not create horizontal overflow;
+- long content remains reachable on short mobile viewports;
 - the score generator and UI use the same constants and breakdown;
 - the existing report score and status thresholds remain unchanged;
 - unit and component tests cover normal and floored scores;
