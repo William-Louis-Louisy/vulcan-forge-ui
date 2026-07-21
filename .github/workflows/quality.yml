@@ -74,7 +74,7 @@ jobs:
         if: failure()
         run: |
           npm run format
-          git diff -- .github/workflows/quality.yml src/domain/i18n/localized-content.ts > formatting.patch
+          git diff > formatting.patch
 
       - name: Upload formatting diagnostics
         if: always() && hashFiles('formatting.patch') != ''
