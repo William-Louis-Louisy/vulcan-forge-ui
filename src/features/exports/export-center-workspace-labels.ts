@@ -5,6 +5,7 @@ export type ExportCenterWorkspaceLabels = {
   allFormatsAvailable: string;
   generatedFromModel: string;
   ready: string;
+  needsReview: string;
   preview: string;
   selected: string;
   codePreview: string;
@@ -27,7 +28,7 @@ export type ExportCenterWorkspaceLabels = {
   locale: string;
   noRecentExports: string;
   diagnosticsSummary: string;
-  closeDiagnostics: string;
+  diagnosticsCount: string;
 };
 
 const labels = {
@@ -37,6 +38,7 @@ const labels = {
     generatedFromModel:
       'Six MVP formats generated from the same model. Re-export after token, theme or content changes.',
     ready: 'Ready',
+    needsReview: 'Needs review',
     preview: 'Preview',
     selected: 'Selected',
     codePreview: 'Code preview',
@@ -61,7 +63,7 @@ const labels = {
     locale: 'Locale',
     noRecentExports: 'No export has been recorded for this project yet.',
     diagnosticsSummary: 'Generation diagnostics',
-    closeDiagnostics: 'Close diagnostics',
+    diagnosticsCount: '{count} items to review',
   },
   fr: {
     pageTitle: 'Exports',
@@ -69,6 +71,7 @@ const labels = {
     generatedFromModel:
       'Six formats MVP générés depuis le même modèle. Régénérez-les après une modification des tokens, thèmes ou contenus.',
     ready: 'Prêt',
+    needsReview: 'À vérifier',
     preview: 'Prévisualiser',
     selected: 'Sélectionné',
     codePreview: 'Aperçu du code',
@@ -93,7 +96,7 @@ const labels = {
     locale: 'Langue',
     noRecentExports: 'Aucun export n’a encore été enregistré pour ce projet.',
     diagnosticsSummary: 'Diagnostics de génération',
-    closeDiagnostics: 'Fermer les diagnostics',
+    diagnosticsCount: '{count} éléments à vérifier',
   },
 } satisfies Record<AppLocale, ExportCenterWorkspaceLabels>;
 
@@ -126,4 +129,8 @@ export function formatExportCharacterCount(
   locale: AppLocale,
 ): string {
   return content.length.toLocaleString(locale);
+}
+
+export function formatDiagnosticsCount(label: string, count: number): string {
+  return label.replace('{count}', String(count));
 }
