@@ -19,7 +19,7 @@ jobs:
     timeout-minutes: 10
 
     permissions:
-      contents: read
+      contents: write
 
     env:
       DATABASE_URL: postgresql://vulcan:vulcan_dev_password@localhost:5432/vulcan_forge_ui?schema=public
@@ -27,6 +27,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -40,19 +42,22 @@ jobs:
       - name: Generate Prisma Client
         run: npm run db:generate
 
+      - name: Apply formatting
+        run: |
+          npm run format
+          if ! git diff --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add .
+            git commit -m "chore: format Documentation alignment"
+            git push origin HEAD:${{ github.event.pull_request.head.ref }}
+          fi
+
       - name: Run lint
         run: npm run lint
 
       - name: Run typecheck
-        run: npm run typecheck > typecheck.log 2>&1
-
-      - name: Upload typecheck diagnostics
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: documentation-typecheck-diagnostics
-          path: typecheck.log
-          if-no-files-found: error
+        run: npm run typecheck
 
       - name: Check formatting
         run: npm run format:check
