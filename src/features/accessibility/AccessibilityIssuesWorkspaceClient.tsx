@@ -455,15 +455,15 @@ function IssueDetail({
       <dl className="border-border-subtle mt-4 grid min-w-0 gap-3 border-t pt-4 text-xs">
         <DetailRow label={labels.details.tokenPath} value={issue.tokenPath} />
         <DetailRow label={labels.details.tokenSet} value={issue.tokenSetName} />
-        <DetailRow label={labels.details.component} value={issue.componentName} />
+        <DetailRow
+          label={labels.details.component}
+          value={issue.componentName}
+        />
         <DetailRow
           label={labels.details.componentType}
           value={issue.componentType}
         />
-        <DetailRow
-          label={labels.details.affectedField}
-          value={affectedField}
-        />
+        <DetailRow label={labels.details.affectedField} value={affectedField} />
         <DetailRow
           label={labels.details.affectedCount}
           value={issue.affectedCount}

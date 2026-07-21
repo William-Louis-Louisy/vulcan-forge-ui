@@ -199,7 +199,9 @@ function createInvalidTokenSetIssues(
 function createTokenResolutionIssues(
   sources: AccessibilityRuleSources,
 ): ExpandedAccessibilityIssue[] {
-  const allTokens = sources.tokenSets.flatMap(({ tokenSet }) => tokenSet.tokens);
+  const allTokens = sources.tokenSets.flatMap(
+    ({ tokenSet }) => tokenSet.tokens,
+  );
 
   if (allTokens.length === 0) {
     return [];
@@ -207,13 +209,16 @@ function createTokenResolutionIssues(
 
   const tokenSetByPath = new Map(
     sources.tokenSets.flatMap(({ id, tokenSet }) =>
-      tokenSet.tokens.map((token) => [
-        token.path,
-        {
-          id,
-          name: tokenSet.name,
-        },
-      ] as const),
+      tokenSet.tokens.map(
+        (token) =>
+          [
+            token.path,
+            {
+              id,
+              name: tokenSet.name,
+            },
+          ] as const,
+      ),
     ),
   );
 
@@ -240,9 +245,7 @@ function createTokenResolutionIssues(
   });
 }
 
-function getComponentLocalizedFieldValues(
-  contract: ComponentContract,
-): Array<{
+function getComponentLocalizedFieldValues(contract: ComponentContract): Array<{
   field: Extract<
     ExpandedAccessibilityIssueField,
     'purpose' | 'anatomy' | 'variants' | 'sizes' | 'states'
@@ -318,7 +321,10 @@ function createComponentLocalizationIssues({
 }
 
 function normalizeStateKey(key: string): string {
-  return key.trim().replace(/[\s._-]+/g, '').toLowerCase();
+  return key
+    .trim()
+    .replace(/[\s._-]+/g, '')
+    .toLowerCase();
 }
 
 function hasFocusVisibleState(contract: ComponentContract): boolean {
@@ -384,8 +390,7 @@ function createComponentContractIssues(
       issues.push(
         createExpandedIssue({
           code: 'missingComponentFocusVisibleState',
-          severity:
-            source.contract.type === 'dialog' ? 'warning' : 'critical',
+          severity: source.contract.type === 'dialog' ? 'warning' : 'critical',
           scope: 'componentContract',
           tokenPath: null,
           tokenSetId: null,

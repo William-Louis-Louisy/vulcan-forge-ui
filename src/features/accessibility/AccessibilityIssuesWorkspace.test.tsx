@@ -260,7 +260,9 @@ describe('AccessibilityIssuesWorkspace', () => {
     const detail = container.querySelector('#accessibility-issue-detail');
 
     expect(detail).not.toBeNull();
-    expect(within(detail as HTMLElement).getByText('Button')).toBeInTheDocument();
+    expect(
+      within(detail as HTMLElement).getByText('Button'),
+    ).toBeInTheDocument();
     expect(
       within(detail as HTMLElement).getByText('Focus-visible state'),
     ).toBeInTheDocument();

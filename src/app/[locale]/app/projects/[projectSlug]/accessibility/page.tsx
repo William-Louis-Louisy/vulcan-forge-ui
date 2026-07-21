@@ -219,9 +219,7 @@ function createAccessibilityCenterLabels(
       unresolvedComponentTokenBinding: t(
         'issues.codes.unresolvedComponentTokenBinding',
       ),
-      componentTokenTypeMismatch: t(
-        'issues.codes.componentTokenTypeMismatch',
-      ),
+      componentTokenTypeMismatch: t('issues.codes.componentTokenTypeMismatch'),
     },
     issueFixes: {
       missingForegroundColor: t('issues.fixes.missingForegroundColor'),
@@ -246,9 +244,7 @@ function createAccessibilityCenterLabels(
       unresolvedComponentTokenBinding: t(
         'issues.fixes.unresolvedComponentTokenBinding',
       ),
-      componentTokenTypeMismatch: t(
-        'issues.fixes.componentTokenTypeMismatch',
-      ),
+      componentTokenTypeMismatch: t('issues.fixes.componentTokenTypeMismatch'),
     },
     severities: {
       warning: t('severity.warning'),

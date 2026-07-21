@@ -126,7 +126,8 @@ export const accessibilityCenterMessages = {
           invalidTokenSet: 'Jeu de tokens invalide',
           invalidComponentContract: 'Contrat de composant invalide',
           missingComponentLocalization: 'Traduction de composant manquante',
-          missingComponentAccessibilityRules: 'Règles d’accessibilité manquantes',
+          missingComponentAccessibilityRules:
+            'Règles d’accessibilité manquantes',
           missingComponentFocusVisibleState: 'État focus-visible manquant',
           unresolvedComponentTokenBinding: 'Liaison de token non résolue',
           componentTokenTypeMismatch: 'Type de token incompatible',

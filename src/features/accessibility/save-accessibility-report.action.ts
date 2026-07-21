@@ -3,11 +3,7 @@
 import { auth } from '@/auth';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/server/db/prisma';
-import {
-  defaultAppLocale,
-  isAppLocale,
-  type AppLocale,
-} from '@/domain/i18n';
+import { defaultAppLocale, isAppLocale, type AppLocale } from '@/domain/i18n';
 import type { ComponentContractType } from '@/domain/design-system';
 import type { ThemeMode } from '@/features/themes/themes-editor.utils';
 import { createAccessibilityCenterReport } from './accessibility-center.utils';
