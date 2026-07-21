@@ -43,9 +43,11 @@ The control must:
 
 ## Responsive positioning
 
-On narrow viewports, the explanation behaves as a viewport-centered non-modal dialog with horizontal insets. Its maximum height is constrained by the dynamic viewport height so browser chrome and short devices cannot clip the content.
+On narrow viewports, the explanation uses a bottom-sheet treatment instead of floating over the score card. It is anchored to the bottom edge, uses an elevated surface with rounded top corners and displays a dimmed, blurred backdrop so the explanatory content is clearly separated from the page beneath it.
 
-From the `sm` breakpoint, it returns to the compact anchored-popover treatment beside the score label.
+The sheet is constrained to the dynamic viewport height, supports internal scrolling and adds safe-area padding for devices with a bottom inset. Tapping the backdrop closes it through the existing outside-pointer behavior.
+
+From the `sm` breakpoint, it returns to the compact anchored-popover treatment beside the score label without a backdrop.
 
 ## Domain clarification
 
@@ -67,7 +69,7 @@ Centralize the base score and penalty values in a dedicated accessibility-score 
 - the explanation is localized in FR and EN;
 - click, keyboard, Escape and focus-return behavior are covered;
 - normal and floored scores are covered by automated tests;
-- mobile viewport containment is covered by the component contract test;
+- the mobile bottom-sheet positioning and backdrop are covered by the component contract test;
 - responsive and bilingual visual QA remains manual before merge.
 
 ## Acceptance targets
@@ -76,6 +78,7 @@ Centralize the base score and penalty values in a dedicated accessibility-score 
 - the formula and current deductions are available in FR and EN;
 - mouse, touch and keyboard users can open the explanation;
 - Escape dismissal restores focus to the trigger;
+- the mobile sheet is visually separated from the page by an overlay;
 - the mobile panel does not create horizontal overflow;
 - long content remains reachable on short mobile viewports;
 - the score generator and UI use the same constants and breakdown;
