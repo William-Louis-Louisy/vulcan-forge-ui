@@ -10,6 +10,7 @@ import {
   type AccessibilityCenterReport,
 } from '@/features/accessibility/accessibility-center.utils';
 import { AccessibilityIssuesWorkspace } from '@/features/accessibility/AccessibilityIssuesWorkspace';
+import { AccessibilityScoreExplanation } from '@/features/accessibility/AccessibilityScoreExplanation';
 import { SaveAccessibilityReportButton } from '@/features/accessibility/SaveAccessibilityReportButton';
 import { getAccessibilityCenterPageData } from '@/features/accessibility/accessibility-center.queries';
 
@@ -292,9 +293,34 @@ function ValidationSummaryCard({
 
       <div className="grid min-w-0 gap-3 p-3 sm:p-4 md:grid-cols-[8.5rem_minmax(0,1fr)]">
         <div className="min-w-0">
-          <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase">
-            {t('score.eyebrow')}
-          </p>
+          <div className="flex items-center gap-1.5">
+            <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase">
+              {t('score.eyebrow')}
+            </p>
+            <AccessibilityScoreExplanation
+              breakdown={report.scoreBreakdown}
+              labels={{
+                trigger: t('score.help.trigger'),
+                title: t('score.help.title'),
+                description: t('score.help.description'),
+                formula: t('score.help.formula'),
+                baseScore: t('score.help.baseScore'),
+                criticalIssues: t('score.help.criticalIssues', {
+                  count: report.scoreBreakdown.criticalIssues,
+                }),
+                warningIssues: t('score.help.warningIssues', {
+                  count: report.scoreBreakdown.warningIssues,
+                }),
+                totalPenalty: t('score.help.totalPenalty'),
+                currentScore: t('score.help.currentScore'),
+                floorNotice: t('score.help.floorNotice', {
+                  score: report.scoreBreakdown.rawScore,
+                }),
+                disclaimer: t('score.help.disclaimer'),
+                close: t('score.help.close'),
+              }}
+            />
+          </div>
           <div className="mt-1 flex items-end gap-1.5">
             <span className="text-4xl font-semibold tracking-tight">
               {report.score}
