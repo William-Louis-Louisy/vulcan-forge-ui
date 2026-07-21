@@ -62,7 +62,7 @@ A calm design system.
     const table = screen.getByRole('table');
     expect(within(table).getByText('color.content')).toBeInTheDocument();
     expect(within(table).getByText('Primary content')).toBeInTheDocument();
-    expect(screen.getByText('Status:')).toHaveElementType('strong');
+    expect(screen.getByText('Status:').tagName).toBe('STRONG');
     expect(
       screen.getByText('color.content', { selector: 'code' }),
     ).toBeInTheDocument();
