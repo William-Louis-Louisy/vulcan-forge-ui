@@ -2,8 +2,11 @@ import { z } from 'zod';
 import {
   designTokenSchema,
   resolveDesignTokens,
+  type ComponentContractType,
+  type DesignTokenType,
   type TokenResolutionError,
 } from '@/domain/design-system';
+import type { AppLocale } from '@/domain/i18n';
 import type {
   ThemeMode,
   ThemeColorKey,
@@ -15,6 +18,17 @@ import {
   getThemeContrastPairs,
   createThemeColorTokenOptions,
 } from '@/features/themes/themes-editor.utils';
+import {
+  createExpandedAccessibilityIssues,
+  type ExpandedAccessibilityIssue,
+  type ExpandedAccessibilityIssueCode,
+  type ExpandedAccessibilityIssueField,
+  type ExpandedAccessibilityIssueScope,
+} from './accessibility-automated-rules';
+import type {
+  AccessibilityRuleComponentContractSource,
+  AccessibilityRuleTokenSetSource,
+} from './accessibility-rule-sources';
 
 const designTokenArraySchema = z.array(designTokenSchema);
 
@@ -25,7 +39,8 @@ export type AccessibilityCenterIssueCode =
   | 'contrastFail'
   | 'tokenResolutionError'
   | 'invalidColorTokenSet'
-  | 'missingThemes';
+  | 'missingThemes'
+  | ExpandedAccessibilityIssueCode;
 
 export type AccessibilityCenterIssueSeverity = 'warning' | 'critical';
 
@@ -33,7 +48,8 @@ export type AccessibilityCenterIssueScope =
   | 'themeContrast'
   | 'tokenResolution'
   | 'tokenSet'
-  | 'theme';
+  | 'theme'
+  | ExpandedAccessibilityIssueScope;
 
 export type AccessibilityCenterIssue = {
   id: string;
@@ -53,6 +69,17 @@ export type AccessibilityCenterIssue = {
   ratio: number | null;
   requiredRatio: number | null;
   tokenPath: string | null;
+  tokenSetId?: string | null;
+  tokenSetName?: string | null;
+  componentId?: string | null;
+  componentType?: ComponentContractType | null;
+  componentName?: string | null;
+  affectedField?: ExpandedAccessibilityIssueField | null;
+  affectedCount?: number | null;
+  missingLocales?: AppLocale[];
+  bindingKey?: string | null;
+  expectedTokenType?: DesignTokenType | null;
+  actualTokenType?: DesignTokenType | null;
 };
 
 export type AccessibilityCenterContrastPairStatus =
@@ -101,6 +128,10 @@ export type AccessibilityCenterReport = {
 export type CreateAccessibilityCenterReportInput = {
   colorTokenSetTokens: unknown;
   themes: ThemeEditorTheme[];
+  defaultLocale?: AppLocale;
+  supportedLocales?: AppLocale[];
+  tokenSets?: AccessibilityRuleTokenSetSource[];
+  componentContracts?: AccessibilityRuleComponentContractSource[];
 };
 
 function scoreFromIssues(issues: readonly AccessibilityCenterIssue[]): number {
@@ -242,6 +273,26 @@ function mapTokenResolutionError(
     ratio: null,
     requiredRatio: null,
     tokenPath: error.tokenPath,
+  };
+}
+
+function mapExpandedIssue(
+  issue: ExpandedAccessibilityIssue,
+): AccessibilityCenterIssue {
+  return {
+    ...issue,
+    themeId: null,
+    themeMode: null,
+    themeName: null,
+    pairId: null,
+    foregroundRole: null,
+    backgroundRole: null,
+    foregroundTokenPath: null,
+    backgroundTokenPath: null,
+    foregroundValue: null,
+    backgroundValue: null,
+    ratio: null,
+    requiredRatio: null,
   };
 }
 
@@ -395,11 +446,21 @@ function createSummary({
 export function createAccessibilityCenterReport({
   colorTokenSetTokens,
   themes,
+  defaultLocale = 'en',
+  supportedLocales = [defaultLocale],
+  tokenSets,
+  componentContracts = [],
 }: CreateAccessibilityCenterReportInput): AccessibilityCenterReport {
   const parsedTokens = designTokenArraySchema.safeParse(colorTokenSetTokens);
+  const expandedIssues = createExpandedAccessibilityIssues({
+    defaultLocale,
+    supportedLocales,
+    tokenSets: tokenSets ?? [],
+    componentContracts,
+  }).map(mapExpandedIssue);
 
   if (!parsedTokens.success) {
-    const issues = [createTokenSetIssue()];
+    const issues = [createTokenSetIssue(), ...expandedIssues];
     const score = scoreFromIssues(issues);
 
     return {
@@ -444,8 +505,13 @@ export function createAccessibilityCenterReport({
     );
   });
 
+  const fallbackTokenResolutionIssues =
+    tokenSets === undefined
+      ? resolvedTokens.errors.map(mapTokenResolutionError)
+      : [];
   const issues = [
-    ...resolvedTokens.errors.map(mapTokenResolutionError),
+    ...fallbackTokenResolutionIssues,
+    ...expandedIssues,
     ...themeIssues,
     ...(sortedThemes.length === 0 ? [createMissingThemesIssue()] : []),
   ];

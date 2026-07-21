@@ -60,6 +60,10 @@ export default async function AccessibilityCenterPage({
   const report = createAccessibilityCenterReport({
     colorTokenSetTokens: pageData.colorTokenSet?.tokens ?? [],
     themes: pageData.themes,
+    defaultLocale: pageData.project.defaultLocale,
+    supportedLocales: pageData.project.supportedLocales,
+    tokenSets: pageData.tokenSets,
+    componentContracts: pageData.componentContracts,
   });
   const labels = createAccessibilityCenterLabels(t);
 
@@ -123,12 +127,16 @@ export default async function AccessibilityCenterPage({
               actions: {
                 openTokens: t('issues.actions.openTokens'),
                 openThemes: t('issues.actions.openThemes'),
+                openComponents: t('issues.actions.openComponents'),
               },
               scopes: {
                 themeContrast: t('issues.scopes.themeContrast'),
                 tokenResolution: t('issues.scopes.tokenResolution'),
                 tokenSet: t('issues.scopes.tokenSet'),
                 theme: t('issues.scopes.theme'),
+                tokenDocumentation: t('issues.scopes.tokenDocumentation'),
+                componentContract: t('issues.scopes.componentContract'),
+                componentBinding: t('issues.scopes.componentBinding'),
               },
               pairs: labels.pairs,
               issueCodes: labels.issueCodes,
@@ -136,11 +144,33 @@ export default async function AccessibilityCenterPage({
               severities: labels.severities,
               details: {
                 tokenPath: t('issueDetails.tokenPath'),
+                tokenSet: t('issueDetails.tokenSet'),
+                component: t('issueDetails.component'),
+                componentType: t('issueDetails.componentType'),
+                affectedField: t('issueDetails.affectedField'),
+                affectedCount: t('issueDetails.affectedCount'),
+                missingLocales: t('issueDetails.missingLocales'),
+                bindingKey: t('issueDetails.bindingKey'),
+                expectedTokenType: t('issueDetails.expectedTokenType'),
+                actualTokenType: t('issueDetails.actualTokenType'),
                 foreground: t('issueDetails.foreground'),
                 background: t('issueDetails.background'),
                 foregroundValue: t('issueDetails.foregroundValue'),
                 backgroundValue: t('issueDetails.backgroundValue'),
                 ratio: t('issueDetails.ratio'),
+                fields: {
+                  description: t('issueDetails.fields.description'),
+                  tokenSet: t('issueDetails.fields.tokenSet'),
+                  contract: t('issueDetails.fields.contract'),
+                  purpose: t('issueDetails.fields.purpose'),
+                  anatomy: t('issueDetails.fields.anatomy'),
+                  variants: t('issueDetails.fields.variants'),
+                  sizes: t('issueDetails.fields.sizes'),
+                  states: t('issueDetails.fields.states'),
+                  accessibility: t('issueDetails.fields.accessibility'),
+                  focusVisible: t('issueDetails.fields.focusVisible'),
+                  tokenBindings: t('issueDetails.fields.tokenBindings'),
+                },
                 ratioValue: (ratio, required) =>
                   t('issueDetails.ratioValue', { ratio, required }),
               },
@@ -174,6 +204,22 @@ function createAccessibilityCenterLabels(
       tokenResolutionError: t('issues.codes.tokenResolutionError'),
       invalidColorTokenSet: t('issues.codes.invalidColorTokenSet'),
       missingThemes: t('issues.codes.missingThemes'),
+      missingTokenDescription: t('issues.codes.missingTokenDescription'),
+      invalidTokenSet: t('issues.codes.invalidTokenSet'),
+      invalidComponentContract: t('issues.codes.invalidComponentContract'),
+      missingComponentLocalization: t(
+        'issues.codes.missingComponentLocalization',
+      ),
+      missingComponentAccessibilityRules: t(
+        'issues.codes.missingComponentAccessibilityRules',
+      ),
+      missingComponentFocusVisibleState: t(
+        'issues.codes.missingComponentFocusVisibleState',
+      ),
+      unresolvedComponentTokenBinding: t(
+        'issues.codes.unresolvedComponentTokenBinding',
+      ),
+      componentTokenTypeMismatch: t('issues.codes.componentTokenTypeMismatch'),
     },
     issueFixes: {
       missingForegroundColor: t('issues.fixes.missingForegroundColor'),
@@ -183,6 +229,22 @@ function createAccessibilityCenterLabels(
       tokenResolutionError: t('issues.fixes.tokenResolutionError'),
       invalidColorTokenSet: t('issues.fixes.invalidColorTokenSet'),
       missingThemes: t('issues.fixes.missingThemes'),
+      missingTokenDescription: t('issues.fixes.missingTokenDescription'),
+      invalidTokenSet: t('issues.fixes.invalidTokenSet'),
+      invalidComponentContract: t('issues.fixes.invalidComponentContract'),
+      missingComponentLocalization: t(
+        'issues.fixes.missingComponentLocalization',
+      ),
+      missingComponentAccessibilityRules: t(
+        'issues.fixes.missingComponentAccessibilityRules',
+      ),
+      missingComponentFocusVisibleState: t(
+        'issues.fixes.missingComponentFocusVisibleState',
+      ),
+      unresolvedComponentTokenBinding: t(
+        'issues.fixes.unresolvedComponentTokenBinding',
+      ),
+      componentTokenTypeMismatch: t('issues.fixes.componentTokenTypeMismatch'),
     },
     severities: {
       warning: t('severity.warning'),

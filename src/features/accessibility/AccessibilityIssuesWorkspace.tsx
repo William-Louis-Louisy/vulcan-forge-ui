@@ -51,11 +51,21 @@ export function AccessibilityIssuesWorkspace({
         ...labels,
         details: {
           tokenPath: labels.details.tokenPath,
+          tokenSet: labels.details.tokenSet,
+          component: labels.details.component,
+          componentType: labels.details.componentType,
+          affectedField: labels.details.affectedField,
+          affectedCount: labels.details.affectedCount,
+          missingLocales: labels.details.missingLocales,
+          bindingKey: labels.details.bindingKey,
+          expectedTokenType: labels.details.expectedTokenType,
+          actualTokenType: labels.details.actualTokenType,
           foreground: labels.details.foreground,
           background: labels.details.background,
           foregroundValue: labels.details.foregroundValue,
           backgroundValue: labels.details.backgroundValue,
           ratio: labels.details.ratio,
+          fields: labels.details.fields,
         },
       }}
     >

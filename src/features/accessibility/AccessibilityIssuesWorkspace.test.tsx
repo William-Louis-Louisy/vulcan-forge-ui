@@ -59,6 +59,35 @@ const issues: AccessibilityCenterIssue[] = [
   },
 ];
 
+const componentIssue: AccessibilityCenterIssue = {
+  id: 'componentContract:missingComponentFocusVisibleState:button-contract',
+  code: 'missingComponentFocusVisibleState',
+  severity: 'critical',
+  scope: 'componentContract',
+  themeId: null,
+  themeMode: null,
+  themeName: null,
+  pairId: null,
+  foregroundRole: null,
+  backgroundRole: null,
+  foregroundTokenPath: null,
+  backgroundTokenPath: null,
+  foregroundValue: null,
+  backgroundValue: null,
+  ratio: null,
+  requiredRatio: null,
+  tokenPath: null,
+  componentId: 'button-contract',
+  componentType: 'button',
+  componentName: 'Button',
+  affectedField: 'focusVisible',
+  affectedCount: null,
+  missingLocales: [],
+  bindingKey: null,
+  expectedTokenType: null,
+  actualTokenType: null,
+};
+
 const labels = {
   title: 'Issues to review',
   detailTitle: 'Issue detail',
@@ -76,12 +105,16 @@ const labels = {
   actions: {
     openTokens: 'Open tokens editor',
     openThemes: 'Open themes editor',
+    openComponents: 'Open components registry',
   },
   scopes: {
     themeContrast: 'Theme contrast',
     tokenResolution: 'Token resolution',
     tokenSet: 'Token set',
     theme: 'Theme',
+    tokenDocumentation: 'Token documentation',
+    componentContract: 'Component contract',
+    componentBinding: 'Component binding',
   },
   pairs: {
     contentOnBackground: 'Content on background',
@@ -99,6 +132,14 @@ const labels = {
     tokenResolutionError: 'Token resolution error',
     invalidColorTokenSet: 'Invalid color token set',
     missingThemes: 'Missing themes',
+    missingTokenDescription: 'Missing token description',
+    invalidTokenSet: 'Invalid token set',
+    invalidComponentContract: 'Invalid component contract',
+    missingComponentLocalization: 'Missing component localization',
+    missingComponentAccessibilityRules: 'Missing accessibility rules',
+    missingComponentFocusVisibleState: 'Missing focus-visible state',
+    unresolvedComponentTokenBinding: 'Unresolved component token binding',
+    componentTokenTypeMismatch: 'Component token type mismatch',
   },
   issueFixes: {
     missingForegroundColor: 'Add a foreground color.',
@@ -108,6 +149,14 @@ const labels = {
     tokenResolutionError: 'Fix the token alias.',
     invalidColorTokenSet: 'Repair the token set.',
     missingThemes: 'Add a theme.',
+    missingTokenDescription: 'Document the token.',
+    invalidTokenSet: 'Repair the token set.',
+    invalidComponentContract: 'Repair the component contract.',
+    missingComponentLocalization: 'Complete component translations.',
+    missingComponentAccessibilityRules: 'Document accessibility rules.',
+    missingComponentFocusVisibleState: 'Add a focus-visible state.',
+    unresolvedComponentTokenBinding: 'Point to an existing token.',
+    componentTokenTypeMismatch: 'Align the token types.',
   },
   severities: {
     warning: 'Warning',
@@ -115,11 +164,33 @@ const labels = {
   },
   details: {
     tokenPath: 'Token path',
+    tokenSet: 'Token set',
+    component: 'Component',
+    componentType: 'Component type',
+    affectedField: 'Affected field',
+    affectedCount: 'Affected items',
+    missingLocales: 'Missing languages',
+    bindingKey: 'Binding key',
+    expectedTokenType: 'Expected token type',
+    actualTokenType: 'Actual token type',
     foreground: 'Foreground',
     background: 'Background',
     foregroundValue: 'Foreground value',
     backgroundValue: 'Background value',
     ratio: 'Ratio',
+    fields: {
+      description: 'Description',
+      tokenSet: 'Token set data',
+      contract: 'Contract data',
+      purpose: 'Purpose',
+      anatomy: 'Anatomy labels',
+      variants: 'Variant labels',
+      sizes: 'Size labels',
+      states: 'State labels',
+      accessibility: 'Accessibility rules',
+      focusVisible: 'Focus-visible state',
+      tokenBindings: 'Token bindings',
+    },
     ratioValue: (ratio: string, required: string) =>
       `${ratio}:1 / required ${required}:1`,
   },
@@ -174,6 +245,33 @@ describe('AccessibilityIssuesWorkspace', () => {
     });
     expect(tokensLink.getAttribute('href')).toContain(
       '/app/projects/forge/tokens',
+    );
+  });
+
+  it('opens the components registry and exposes component context', () => {
+    const { container } = render(
+      <AccessibilityIssuesWorkspace
+        projectSlug="forge"
+        issues={[componentIssue]}
+        labels={{ ...labels, count: '1 issue' }}
+      />,
+    );
+
+    const detail = container.querySelector('#accessibility-issue-detail');
+
+    expect(detail).not.toBeNull();
+    expect(
+      within(detail as HTMLElement).getByText('Button'),
+    ).toBeInTheDocument();
+    expect(
+      within(detail as HTMLElement).getByText('Focus-visible state'),
+    ).toBeInTheDocument();
+
+    const componentsLink = within(detail as HTMLElement).getByRole('link', {
+      name: 'Open components registry',
+    });
+    expect(componentsLink.getAttribute('href')).toContain(
+      '/app/projects/forge/components',
     );
   });
 
