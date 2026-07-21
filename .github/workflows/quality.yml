@@ -19,7 +19,7 @@ jobs:
     timeout-minutes: 10
 
     permissions:
-      contents: write
+      contents: read
 
     env:
       DATABASE_URL: postgresql://vulcan:vulcan_dev_password@localhost:5432/vulcan_forge_ui?schema=public
@@ -27,8 +27,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-        with:
-          ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -47,20 +45,6 @@ jobs:
 
       - name: Run typecheck
         run: npm run typecheck
-
-      - name: Format files
-        run: npm run format
-
-      - name: Commit formatting changes
-        run: |
-          git add .
-          if git diff --cached --quiet; then
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "style(accessibility): format A2 changes"
-          git push origin HEAD:${{ github.head_ref || github.ref_name }}
 
       - name: Check formatting
         run: npm run format:check
