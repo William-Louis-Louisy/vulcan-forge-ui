@@ -1,6 +1,7 @@
 import type { AppLocale } from '@/domain/i18n';
 
 export type DocumentationWorkspaceLabels = {
+  pageTitle: string;
   format: string;
   markdown: string;
   markdownDescription: string;
@@ -15,11 +16,11 @@ export type DocumentationWorkspaceLabels = {
   translationFallbacks: string;
   sourceIssues: string;
   noSourceIssues: string;
-  closeDetails: string;
 };
 
 const labels = {
   en: {
+    pageTitle: 'Documentation',
     format: 'Format',
     markdown: 'Markdown',
     markdownDescription: 'Plain .md — readable on GitHub.',
@@ -35,9 +36,9 @@ const labels = {
     translationFallbacks: 'Translation fallbacks',
     sourceIssues: 'Source data issues',
     noSourceIssues: 'No source data issue detected.',
-    closeDetails: 'Close details',
   },
   fr: {
+    pageTitle: 'Documentation',
     format: 'Format',
     markdown: 'Markdown',
     markdownDescription: 'Fichier .md simple — lisible sur GitHub.',
@@ -53,7 +54,6 @@ const labels = {
     translationFallbacks: 'Fallbacks de traduction',
     sourceIssues: 'Problèmes des données source',
     noSourceIssues: 'Aucun problème de données source détecté.',
-    closeDetails: 'Fermer les détails',
   },
 } satisfies Record<AppLocale, DocumentationWorkspaceLabels>;
 
