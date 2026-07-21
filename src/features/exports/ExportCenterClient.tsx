@@ -280,9 +280,7 @@ export function ExportCenterClient({
   });
   const outputByFormat = useMemo(
     () =>
-      new Map(
-        exportOutputs.map((output) => [output.format, output] as const),
-      ),
+      new Map(exportOutputs.map((output) => [output.format, output] as const)),
     [exportOutputs],
   );
 
@@ -492,7 +490,9 @@ export function ExportCenterClient({
                   <div className="text-content-tertiary mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.6875rem]">
                     <span className="font-mono">{output.fileName}</span>
                     <span aria-hidden="true">·</span>
-                    <span>{formatExportFileSize(output.content, pageLocale)}</span>
+                    <span>
+                      {formatExportFileSize(output.content, pageLocale)}
+                    </span>
                     {presentation.platforms.map((platform) => (
                       <span
                         key={platform}
@@ -561,7 +561,10 @@ export function ExportCenterClient({
             </p>
           ) : null}
           {copyStatus?.state === 'error' ? (
-            <p role="alert" className="text-action-danger text-xs font-semibold">
+            <p
+              role="alert"
+              className="text-action-danger text-xs font-semibold"
+            >
               {t('copy.error')}
             </p>
           ) : null}
@@ -571,7 +574,10 @@ export function ExportCenterClient({
             </p>
           ) : null}
           {logStatus === 'error' ? (
-            <p role="alert" className="text-action-danger text-xs font-semibold">
+            <p
+              role="alert"
+              className="text-action-danger text-xs font-semibold"
+            >
               {t('logs.error')}
             </p>
           ) : null}
@@ -626,11 +632,7 @@ export function ExportCenterClient({
               onClick={() => downloadExportContent(selectedOutput)}
               className="size-9 px-0"
             >
-              <DownloadSimpleIcon
-                aria-hidden="true"
-                size={17}
-                weight="bold"
-              />
+              <DownloadSimpleIcon aria-hidden="true" size={17} weight="bold" />
             </Button>
           </div>
         </header>
@@ -895,7 +897,10 @@ function PreviewMetric({ label, value }: { label: string; value: string }) {
       <p className="text-content-tertiary text-[0.625rem] font-semibold tracking-[0.1em] uppercase">
         {label}
       </p>
-      <p className="mt-1 truncate font-mono text-xs font-semibold" title={value}>
+      <p
+        className="mt-1 truncate font-mono text-xs font-semibold"
+        title={value}
+      >
         {value}
       </p>
     </div>
