@@ -22,8 +22,7 @@ const labels = {
 describe('AccessibilityScoreExplanation', () => {
   it('opens an accessible score breakdown and closes it with Escape', async () => {
     const user = userEvent.setup();
-
-    render(
+    const { container } = render(
       <AccessibilityScoreExplanation
         breakdown={createAccessibilityScoreBreakdown({
           criticalIssues: 4,
@@ -42,13 +41,19 @@ describe('AccessibilityScoreExplanation', () => {
     await user.click(trigger);
 
     const dialog = screen.getByRole('dialog', { name: labels.title });
+    const mobileBackdrop = container.querySelector(
+      '[aria-hidden="true"].fixed.inset-0',
+    );
 
     expect(dialog).toBeInTheDocument();
+    expect(mobileBackdrop).toBeInTheDocument();
     expect(dialog).toHaveClass(
       'fixed',
-      'inset-x-4',
-      'max-h-[calc(100dvh-2rem)]',
+      'inset-x-0',
+      'bottom-0',
+      'max-h-[min(85dvh,42rem)]',
       'overflow-y-auto',
+      'rounded-t-xl',
       'sm:absolute',
       'sm:inset-x-auto',
     );
