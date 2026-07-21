@@ -83,7 +83,9 @@ The first visual review identified four compact-column issues that are part of t
 - generation, copy, download and saved-profile behavior remain intact;
 - Rendered and Source previews use the same generated Markdown;
 - generated filename and character count are visible in the preview toolbar;
+- a single supported locale is presented as a deliberate static project constraint;
 - locale and section controls are keyboard accessible;
+- compact actions share a consistent hit area and icon scale;
 - compact layouts stack without horizontal page overflow;
 - loading and error states use the same workspace direction;
 - FR and EN remain complete;
