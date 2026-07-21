@@ -41,9 +41,17 @@ describe('AccessibilityScoreExplanation', () => {
 
     await user.click(trigger);
 
-    expect(
-      screen.getByRole('dialog', { name: labels.title }),
-    ).toBeInTheDocument();
+    const dialog = screen.getByRole('dialog', { name: labels.title });
+
+    expect(dialog).toBeInTheDocument();
+    expect(dialog).toHaveClass(
+      'fixed',
+      'inset-x-4',
+      'max-h-[calc(100dvh-2rem)]',
+      'overflow-y-auto',
+      'sm:absolute',
+      'sm:inset-x-auto',
+    );
     expect(screen.getByText('−100')).toBeInTheDocument();
     expect(screen.getByText('−30')).toBeInTheDocument();
     expect(screen.getByText('−130')).toBeInTheDocument();
