@@ -22,34 +22,8 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
-      - name: Extract and apply implementation script
-        shell: bash
-        run: |
-          python - <<'EXTRACT'
-          from pathlib import Path
-
-          workflow = Path('.github/workflows/apply-ds-160-07a2b.yml').read_text(
-              encoding='utf-8'
-          )
-          lines = workflow.splitlines()
-          start = lines.index("          python - <<'PY'") + 1
-          end = lines.index('          PY', start)
-          script = '\n'.join(line[10:] for line in lines[start:end]) + '\n'
-          Path('/tmp/apply-ds-160-07a2b.py').write_text(script, encoding='utf-8')
-          EXTRACT
-          set +e
-          python /tmp/apply-ds-160-07a2b.py 2>&1 | tee /tmp/a2b-apply.log
-          status=${PIPESTATUS[0]}
-          set -e
-          exit "$status"
-
-      - name: Upload implementation diagnostics
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: ds-160-07a2b-apply-log
-          path: /tmp/a2b-apply.log
-          if-no-files-found: warn
+      - name: Apply implementation patch
+        run: python scripts/apply-ds-160-07a2b.py
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -72,6 +46,7 @@ jobs:
           rm .github/workflows/apply-ds-160-07a2b.yml
           rm .github/workflows/run-ds-160-07a2b.yml
           rm docs/product/ds-160-07a2b-pr-placeholder.md
+          rm scripts/apply-ds-160-07a2b.py
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add --all
