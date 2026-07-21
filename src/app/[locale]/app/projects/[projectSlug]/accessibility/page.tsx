@@ -70,117 +70,117 @@ export default async function AccessibilityCenterPage({
 
   return (
     <section className="flex min-h-0 flex-col xl:absolute xl:inset-0 xl:h-auto xl:overflow-hidden">
-      <header className="border-border-subtle bg-background-app shrink-0 border-b px-4 py-4 md:px-6 xl:px-7 xl:py-5">
-        <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="min-w-0">
-            <p className="text-action-primary text-[0.6875rem] font-semibold tracking-[0.16em] uppercase">
-              {t('eyebrow')}
-            </p>
-            <h1 className="mt-1 text-[26px] font-semibold tracking-[-0.015em]">
-              {t('title', { projectName: pageData.project.name })}
-            </h1>
-            <p className="text-content-tertiary mt-1 max-w-3xl text-sm leading-6">
-              {t('description')}
-            </p>
+      <AccessibilityIssuesWorkspace
+        projectSlug={pageData.project.slug}
+        issues={report.issues}
+        header={
+          <header className="border-border-subtle bg-background-app shrink-0 border-b px-4 py-4 md:px-6 xl:px-7 xl:py-5">
+            <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div className="min-w-0">
+                <p className="text-action-primary text-[0.6875rem] font-semibold tracking-[0.16em] uppercase">
+                  {t('eyebrow')}
+                </p>
+                <h1 className="mt-1 text-[26px] font-semibold tracking-[-0.015em]">
+                  {t('title', { projectName: pageData.project.name })}
+                </h1>
+                <p className="text-content-tertiary mt-1 max-w-3xl text-sm leading-6">
+                  {t('description')}
+                </p>
+              </div>
+
+              <SaveAccessibilityReportButton
+                locale={locale}
+                projectSlug={pageData.project.slug}
+              />
+            </div>
+          </header>
+        }
+        beforeIssues={
+          <div className="grid min-w-0 gap-4">
+            <Notice
+              tone="warning"
+              title={t('auditNotice.title')}
+              className="rounded-md py-3"
+            >
+              {t('auditNotice.description')}
+            </Notice>
+
+            <ValidationSummaryCard
+              t={t}
+              locale={locale}
+              report={report}
+              latestReport={pageData.latestAccessibilityReport}
+            />
           </div>
-
-          <SaveAccessibilityReportButton
-            locale={locale}
-            projectSlug={pageData.project.slug}
-          />
-        </div>
-      </header>
-
-      <main className="min-h-0 min-w-0 flex-1 overflow-y-auto">
-        <div className="grid min-w-0 gap-4 p-4 md:p-6 xl:p-7">
-          <Notice
-            tone="warning"
-            title={t('auditNotice.title')}
-            className="rounded-md py-3"
-          >
-            {t('auditNotice.description')}
-          </Notice>
-
-          <ValidationSummaryCard
-            t={t}
-            locale={locale}
-            report={report}
-            latestReport={pageData.latestAccessibilityReport}
-          />
-
-          <AccessibilityIssuesWorkspace
-            projectSlug={pageData.project.slug}
-            issues={report.issues}
-            labels={{
-              title: t('issues.title'),
-              detailTitle: t('issues.detailTitle'),
-              count: t('issues.count', { count: report.issues.length }),
-              emptyTitle: t('issues.emptyTitle'),
-              emptyDescription: t('issues.emptyDescription'),
-              automatic: t('issues.automatic'),
-              recommendation: t('issues.recommendation'),
-              columns: {
-                severity: t('issues.columns.severity'),
-                scope: t('issues.columns.scope'),
-                rule: t('issues.columns.rule'),
-                affected: t('issues.columns.affected'),
-              },
-              actions: {
-                openTokens: t('issues.actions.openTokens'),
-                openThemes: t('issues.actions.openThemes'),
-                openComponents: t('issues.actions.openComponents'),
-              },
-              scopes: {
-                themeContrast: t('issues.scopes.themeContrast'),
-                tokenResolution: t('issues.scopes.tokenResolution'),
-                tokenSet: t('issues.scopes.tokenSet'),
-                theme: t('issues.scopes.theme'),
-                tokenDocumentation: t('issues.scopes.tokenDocumentation'),
-                componentContract: t('issues.scopes.componentContract'),
-                componentBinding: t('issues.scopes.componentBinding'),
-              },
-              pairs: labels.pairs,
-              issueCodes: labels.issueCodes,
-              issueFixes: labels.issueFixes,
-              severities: labels.severities,
-              details: {
-                tokenPath: t('issueDetails.tokenPath'),
-                tokenSet: t('issueDetails.tokenSet'),
-                component: t('issueDetails.component'),
-                componentType: t('issueDetails.componentType'),
-                affectedField: t('issueDetails.affectedField'),
-                affectedCount: t('issueDetails.affectedCount'),
-                missingLocales: t('issueDetails.missingLocales'),
-                bindingKey: t('issueDetails.bindingKey'),
-                expectedTokenType: t('issueDetails.expectedTokenType'),
-                actualTokenType: t('issueDetails.actualTokenType'),
-                foreground: t('issueDetails.foreground'),
-                background: t('issueDetails.background'),
-                foregroundValue: t('issueDetails.foregroundValue'),
-                backgroundValue: t('issueDetails.backgroundValue'),
-                ratio: t('issueDetails.ratio'),
-                fields: {
-                  description: t('issueDetails.fields.description'),
-                  tokenSet: t('issueDetails.fields.tokenSet'),
-                  contract: t('issueDetails.fields.contract'),
-                  purpose: t('issueDetails.fields.purpose'),
-                  anatomy: t('issueDetails.fields.anatomy'),
-                  variants: t('issueDetails.fields.variants'),
-                  sizes: t('issueDetails.fields.sizes'),
-                  states: t('issueDetails.fields.states'),
-                  accessibility: t('issueDetails.fields.accessibility'),
-                  focusVisible: t('issueDetails.fields.focusVisible'),
-                  tokenBindings: t('issueDetails.fields.tokenBindings'),
-                },
-                ratioValue: (ratio, required) =>
-                  t('issueDetails.ratioValue', { ratio, required }),
-              },
-            }}
-          >
-            <ContrastPairsPanel t={t} report={report} labels={labels} />
-          </AccessibilityIssuesWorkspace>
-        </div>
-      </main>
+        }
+        labels={{
+          title: t('issues.title'),
+          detailTitle: t('issues.detailTitle'),
+          count: t('issues.count', { count: report.issues.length }),
+          emptyTitle: t('issues.emptyTitle'),
+          emptyDescription: t('issues.emptyDescription'),
+          automatic: t('issues.automatic'),
+          recommendation: t('issues.recommendation'),
+          columns: {
+            severity: t('issues.columns.severity'),
+            scope: t('issues.columns.scope'),
+            rule: t('issues.columns.rule'),
+            affected: t('issues.columns.affected'),
+          },
+          actions: {
+            openTokens: t('issues.actions.openTokens'),
+            openThemes: t('issues.actions.openThemes'),
+            openComponents: t('issues.actions.openComponents'),
+          },
+          scopes: {
+            themeContrast: t('issues.scopes.themeContrast'),
+            tokenResolution: t('issues.scopes.tokenResolution'),
+            tokenSet: t('issues.scopes.tokenSet'),
+            theme: t('issues.scopes.theme'),
+            tokenDocumentation: t('issues.scopes.tokenDocumentation'),
+            componentContract: t('issues.scopes.componentContract'),
+            componentBinding: t('issues.scopes.componentBinding'),
+          },
+          pairs: labels.pairs,
+          issueCodes: labels.issueCodes,
+          issueFixes: labels.issueFixes,
+          severities: labels.severities,
+          details: {
+            tokenPath: t('issueDetails.tokenPath'),
+            tokenSet: t('issueDetails.tokenSet'),
+            component: t('issueDetails.component'),
+            componentType: t('issueDetails.componentType'),
+            affectedField: t('issueDetails.affectedField'),
+            affectedCount: t('issueDetails.affectedCount'),
+            missingLocales: t('issueDetails.missingLocales'),
+            bindingKey: t('issueDetails.bindingKey'),
+            expectedTokenType: t('issueDetails.expectedTokenType'),
+            actualTokenType: t('issueDetails.actualTokenType'),
+            foreground: t('issueDetails.foreground'),
+            background: t('issueDetails.background'),
+            foregroundValue: t('issueDetails.foregroundValue'),
+            backgroundValue: t('issueDetails.backgroundValue'),
+            ratio: t('issueDetails.ratio'),
+            fields: {
+              description: t('issueDetails.fields.description'),
+              tokenSet: t('issueDetails.fields.tokenSet'),
+              contract: t('issueDetails.fields.contract'),
+              purpose: t('issueDetails.fields.purpose'),
+              anatomy: t('issueDetails.fields.anatomy'),
+              variants: t('issueDetails.fields.variants'),
+              sizes: t('issueDetails.fields.sizes'),
+              states: t('issueDetails.fields.states'),
+              accessibility: t('issueDetails.fields.accessibility'),
+              focusVisible: t('issueDetails.fields.focusVisible'),
+              tokenBindings: t('issueDetails.fields.tokenBindings'),
+            },
+            ratioValue: (ratio, required) =>
+              t('issueDetails.ratioValue', { ratio, required }),
+          },
+        }}
+      >
+        <ContrastPairsPanel t={t} report={report} labels={labels} />
+      </AccessibilityIssuesWorkspace>
     </section>
   );
 }

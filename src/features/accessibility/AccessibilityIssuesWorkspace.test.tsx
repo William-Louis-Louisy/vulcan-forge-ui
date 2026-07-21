@@ -197,7 +197,7 @@ const labels = {
 };
 
 describe('AccessibilityIssuesWorkspace', () => {
-  it('selects the first issue and updates the detail panel', async () => {
+  it('selects the first issue and updates both responsive detail regions', async () => {
     const user = userEvent.setup();
     const { container } = render(
       <AccessibilityIssuesWorkspace
@@ -207,22 +207,31 @@ describe('AccessibilityIssuesWorkspace', () => {
       />,
     );
 
-    const detail = container.querySelector('#accessibility-issue-detail');
+    const compactDetail = container.querySelector(
+      '#accessibility-issue-detail',
+    );
+    const railDetail = container.querySelector(
+      '#accessibility-issue-detail-rail',
+    );
 
-    expect(detail).not.toBeNull();
+    expect(compactDetail).not.toBeNull();
+    expect(railDetail).not.toBeNull();
     expect(
-      within(detail as HTMLElement).getByText('Review this pair.'),
+      within(compactDetail as HTMLElement).getByText('Review this pair.'),
     ).toBeInTheDocument();
     expect(
-      within(detail as HTMLElement).getByText('4.10:1 / required 4.5:1'),
+      within(railDetail as HTMLElement).getByText('Review this pair.'),
     ).toBeInTheDocument();
     expect(
-      within(detail as HTMLElement).getByRole('img', {
+      within(compactDetail as HTMLElement).getByText('4.10:1 / required 4.5:1'),
+    ).toBeInTheDocument();
+    expect(
+      within(compactDetail as HTMLElement).getByRole('img', {
         name: 'Foreground value: #777777',
       }),
     ).toBeInTheDocument();
 
-    const themesLink = within(detail as HTMLElement).getByRole('link', {
+    const themesLink = within(compactDetail as HTMLElement).getByRole('link', {
       name: 'Open themes editor',
     });
     expect(themesLink.getAttribute('href')).toContain(
@@ -234,13 +243,16 @@ describe('AccessibilityIssuesWorkspace', () => {
     );
 
     expect(
-      within(detail as HTMLElement).getByText('Fix the token alias.'),
+      within(compactDetail as HTMLElement).getByText('Fix the token alias.'),
     ).toBeInTheDocument();
     expect(
-      within(detail as HTMLElement).getByText('color.semantic.accent'),
+      within(railDetail as HTMLElement).getByText('Fix the token alias.'),
+    ).toBeInTheDocument();
+    expect(
+      within(compactDetail as HTMLElement).getByText('color.semantic.accent'),
     ).toBeInTheDocument();
 
-    const tokensLink = within(detail as HTMLElement).getByRole('link', {
+    const tokensLink = within(compactDetail as HTMLElement).getByRole('link', {
       name: 'Open tokens editor',
     });
     expect(tokensLink.getAttribute('href')).toContain(
@@ -298,40 +310,71 @@ describe('AccessibilityIssuesWorkspace', () => {
     ).toBeGreaterThan(0);
   });
 
-  it('keeps the compact order while stacking secondary report content in the desktop main column', () => {
+  it('uses a page-level rail on desktop and preserves compact content order', () => {
     const { container } = render(
       <AccessibilityIssuesWorkspace
         projectSlug="forge"
         issues={issues}
         labels={labels}
+        header={<header>Accessibility header</header>}
+        beforeIssues={<section>Validation summary</section>}
       >
         <section>Key contrast pairs</section>
       </AccessibilityIssuesWorkspace>,
     );
 
+    const workspace = container.querySelector(
+      '[data-accessibility-layout-slot="workspace"]',
+    );
+    const main = container.querySelector(
+      '[data-accessibility-layout-slot="main"]',
+    );
+    const header = container.querySelector(
+      '[data-accessibility-layout-slot="header"]',
+    );
+    const beforeIssues = container.querySelector(
+      '[data-accessibility-layout-slot="before-issues"]',
+    );
     const issuesSlot = container.querySelector(
       '[data-accessibility-layout-slot="issues"]',
     );
-    const detailSlot = container.querySelector(
-      '[data-accessibility-layout-slot="detail"]',
+    const compactDetail = container.querySelector(
+      '[data-accessibility-layout-slot="detail-compact"]',
     );
     const secondarySlot = container.querySelector(
       '[data-accessibility-layout-slot="secondary"]',
     );
-
-    expect(issuesSlot).toHaveClass('order-1', 'xl:order-none');
-    expect(detailSlot).toHaveClass('order-2', 'xl:order-none');
-    expect(secondarySlot).toHaveClass('order-3', 'xl:order-none');
-    expect(issuesSlot?.parentElement).toHaveClass(
-      'contents',
-      'xl:flex',
-      'xl:flex-col',
+    const detailRail = container.querySelector(
+      '[data-accessibility-layout-slot="detail-rail"]',
     );
+
+    expect(workspace).toHaveClass(
+      'xl:grid',
+      'xl:h-full',
+      'xl:overflow-hidden',
+      'xl:grid-cols-[minmax(0,1fr)_23rem]',
+    );
+    expect(main).toHaveClass('xl:overflow-hidden');
+    expect(header).toHaveClass('shrink-0');
+    expect(beforeIssues).not.toBeNull();
+    expect(issuesSlot).toHaveClass('order-1');
+    expect(compactDetail).toHaveClass('order-2', 'xl:hidden');
+    expect(secondarySlot).toHaveClass('order-3');
+    expect(detailRail).toHaveClass(
+      'hidden',
+      'h-full',
+      'overflow-y-auto',
+      'border-l',
+      'xl:block',
+    );
+    expect(detailRail).not.toHaveClass('rounded-md');
+    expect(screen.getByText('Accessibility header')).toBeInTheDocument();
+    expect(screen.getByText('Validation summary')).toBeInTheDocument();
     expect(screen.getByText('Key contrast pairs')).toBeInTheDocument();
   });
 
-  it('renders the localized empty state when there are no issues', () => {
-    render(
+  it('renders the localized empty state without an empty detail rail', () => {
+    const { container } = render(
       <AccessibilityIssuesWorkspace
         projectSlug="forge"
         issues={[]}
@@ -343,5 +386,8 @@ describe('AccessibilityIssuesWorkspace', () => {
     expect(
       screen.getByText('No automated issue was detected.'),
     ).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-accessibility-layout-slot="detail-rail"]'),
+    ).toBeNull();
   });
 });
