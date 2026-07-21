@@ -52,6 +52,15 @@ Centralize the base score and penalty values in a dedicated accessibility-score 
 - no persistence-schema change;
 - no report-history comparison.
 
+## Implementation status
+
+- score constants and breakdown are centralized;
+- the report and explanatory control consume the same breakdown;
+- the explanation is localized in FR and EN;
+- click, keyboard, Escape and focus-return behavior are covered;
+- normal and floored scores are covered by automated tests;
+- responsive and bilingual visual QA remains manual before merge.
+
 ## Acceptance targets
 
 - a `0/100` score can be explained from the visible issue counts;
