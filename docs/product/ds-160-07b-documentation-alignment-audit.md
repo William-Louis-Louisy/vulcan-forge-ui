@@ -68,6 +68,15 @@ Source-quality and missing-translation signals remain available but are compress
 - localized FR/EN labels;
 - no loss of issue paths or severity information.
 
+## Visual QA refinements
+
+The first visual review identified four compact-column issues that are part of the alignment contract:
+
+- a project with one supported locale uses a static full-width language status instead of an incomplete-looking segmented control;
+- copy and download shortcuts use the same 44px action height as Generate and expose clearly legible 20px icons;
+- action feedback is grouped with the action row and disappears when empty, preserving a regular vertical rhythm;
+- saved documentation preferences use a compact vertical card with a full-width action instead of squeezing copy and button into competing columns.
+
 ## Acceptance targets
 
 - page visually follows the mockup's two-surface editor layout;

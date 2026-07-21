@@ -197,11 +197,12 @@ export function DocumentationGeneratorClient({
           </p>
         </header>
 
-        <div className="mt-6 grid gap-6">
+        <div className="mt-6 flex flex-col gap-5">
           <LocaleControl
             supportedLocales={documentationInput.project.supportedLocales}
             selectedLocale={documentationLocale}
             missingTranslations={generatedDocumentation.missingTranslations}
+            singleLocaleDescription={workspaceLabels.singleLocaleDescription}
             onSelect={selectLocale}
           />
 
@@ -212,50 +213,71 @@ export function DocumentationGeneratorClient({
 
           <FormatControl labels={workspaceLabels} />
 
-          <div className="grid grid-cols-[minmax(0,1fr)_auto_auto] gap-2">
-            <Button
-              type="button"
-              onClick={generatePreview}
-              disabled={selectedSections.length === 0}
-              className="gap-2"
-            >
-              <ArrowClockwiseIcon aria-hidden="true" size={16} weight="bold" />
-              {workspaceLabels.generate}
-            </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              aria-label={t('actions.copy')}
-              title={t('actions.copy')}
-              onClick={copyMarkdown}
-              className="size-10 px-0"
-            >
-              <CopyIcon aria-hidden="true" size={16} weight="bold" />
-            </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              aria-label={t('actions.download')}
-              title={t('actions.download')}
-              onClick={downloadMarkdown}
-              className="size-10 px-0"
-            >
-              <DownloadSimpleIcon aria-hidden="true" size={16} weight="bold" />
-            </Button>
-          </div>
+          <div className="grid gap-2">
+            <div className="grid grid-cols-[minmax(0,1fr)_auto_auto] gap-2">
+              <Button
+                type="button"
+                onClick={generatePreview}
+                disabled={selectedSections.length === 0}
+                className="h-11 gap-2"
+              >
+                <ArrowClockwiseIcon
+                  aria-hidden="true"
+                  size={18}
+                  weight="bold"
+                />
+                {workspaceLabels.generate}
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                aria-label={t('actions.copy')}
+                title={t('actions.copy')}
+                onClick={copyMarkdown}
+                className="size-11 px-0"
+              >
+                <CopyIcon
+                  aria-hidden="true"
+                  size={20}
+                  weight="bold"
+                  className="size-5 shrink-0"
+                />
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                aria-label={t('actions.download')}
+                title={t('actions.download')}
+                onClick={downloadMarkdown}
+                className="size-11 px-0"
+              >
+                <DownloadSimpleIcon
+                  aria-hidden="true"
+                  size={20}
+                  weight="bold"
+                  className="size-5 shrink-0"
+                />
+              </Button>
+            </div>
 
-          <div aria-live="polite" className="min-h-5 text-xs font-semibold">
-            {generationStatus ? (
-              <p className="text-action-success">{workspaceLabels.generated}</p>
-            ) : null}
-            {copyStatus === 'success' ? (
-              <p className="text-action-success">{t('copy.success')}</p>
-            ) : null}
-            {copyStatus === 'error' ? (
-              <p role="alert" className="text-action-danger">
-                {t('copy.error')}
-              </p>
-            ) : null}
+            <div
+              aria-live="polite"
+              className="min-h-5 text-xs font-semibold empty:hidden"
+            >
+              {generationStatus ? (
+                <p className="text-action-success">
+                  {workspaceLabels.generated}
+                </p>
+              ) : null}
+              {copyStatus === 'success' ? (
+                <p className="text-action-success">{t('copy.success')}</p>
+              ) : null}
+              {copyStatus === 'error' ? (
+                <p role="alert" className="text-action-danger">
+                  {t('copy.error')}
+                </p>
+              ) : null}
+            </div>
           </div>
 
           <PreferencesForm
@@ -344,51 +366,74 @@ function LocaleControl({
   supportedLocales,
   selectedLocale,
   missingTranslations,
+  singleLocaleDescription,
   onSelect,
 }: {
   supportedLocales: readonly AppLocale[];
   selectedLocale: AppLocale;
   missingTranslations: MarkdownDocumentationMissingTranslation[];
+  singleLocaleDescription: string;
   onSelect: (locale: AppLocale) => void;
 }) {
   const t = useTranslations('DocumentationGeneratorPage');
+  const isSingleLocale = supportedLocales.length === 1;
 
   return (
     <fieldset>
       <legend className="text-sm font-semibold">
         {t('controls.locale.legend')}
       </legend>
-      <div className="border-border-subtle bg-background-subtle mt-3 grid grid-cols-2 rounded-md border p-1">
-        {supportedLocales.map((locale) => {
-          const isSelected = selectedLocale === locale;
+      {isSingleLocale ? (
+        <div className="border-border-subtle bg-surface-primary mt-3 flex min-h-11 items-center gap-3 rounded-md border px-3">
+          <span
+            aria-hidden="true"
+            className="bg-action-success size-2 shrink-0 rounded-full"
+          />
+          <span className="text-sm font-semibold">
+            {t(`controls.locale.options.${selectedLocale}`)}
+          </span>
+          <span className="text-content-tertiary ml-auto text-[0.625rem] font-semibold tracking-[0.12em] uppercase">
+            {selectedLocale}
+          </span>
+        </div>
+      ) : (
+        <div className="border-border-subtle bg-background-subtle mt-3 grid grid-cols-2 rounded-md border p-1">
+          {supportedLocales.map((locale) => {
+            const isSelected = selectedLocale === locale;
 
-          return (
-            <label key={locale} className="cursor-pointer">
-              <input
-                type="radio"
-                name="documentationLocale"
-                value={locale}
-                checked={isSelected}
-                onChange={() => onSelect(locale)}
-                className="sr-only"
-              />
-              <span
-                className={[
-                  'focus-within:outline-border-focus flex min-h-9 items-center justify-center rounded-sm px-3 text-xs font-semibold transition focus-within:outline-2 focus-within:outline-offset-2',
-                  isSelected
-                    ? 'bg-content-primary text-background-app'
-                    : 'text-content-secondary hover:text-content-primary',
-                ].join(' ')}
-              >
-                {t(`controls.locale.options.${locale}`)}
-              </span>
-            </label>
-          );
-        })}
-      </div>
+            return (
+              <label key={locale} className="cursor-pointer">
+                <input
+                  type="radio"
+                  name="documentationLocale"
+                  value={locale}
+                  checked={isSelected}
+                  onChange={() => onSelect(locale)}
+                  className="sr-only"
+                />
+                <span
+                  className={[
+                    'focus-within:outline-border-focus flex min-h-9 items-center justify-center rounded-sm px-3 text-xs font-semibold transition focus-within:outline-2 focus-within:outline-offset-2',
+                    isSelected
+                      ? 'bg-content-primary text-background-app'
+                      : 'text-content-secondary hover:text-content-primary',
+                  ].join(' ')}
+                >
+                  {t(`controls.locale.options.${locale}`)}
+                </span>
+              </label>
+            );
+          })}
+        </div>
+      )}
+      {isSingleLocale ? (
+        <p className="text-content-tertiary mt-2 text-xs leading-5">
+          {singleLocaleDescription}
+        </p>
+      ) : null}
       <p
         className={[
-          'mt-2 text-xs leading-5',
+          isSingleLocale ? 'mt-1 text-xs leading-5' : 'mt-2 text-xs leading-5',
           missingTranslations.length > 0
             ? 'text-action-warning'
             : 'text-action-success',
@@ -511,13 +556,13 @@ function PreferencesForm({
     <form
       action={formAction}
       onSubmitCapture={onSubmitCapture}
-      className="border-border-subtle border-t pt-4"
+      className="border-border-subtle bg-surface-primary rounded-md border p-3"
     >
       <input type="hidden" name="locale" value={documentationLocale} />
       <input type="hidden" name="projectSlug" value={projectSlug} />
       <input type="hidden" name="profile" value={serializedProfile} />
 
-      <div className="flex items-start justify-between gap-3">
+      <div className="grid gap-3">
         <div className="min-w-0">
           <p className="text-xs font-semibold">
             {hasUnsavedPreferences
@@ -535,7 +580,7 @@ function PreferencesForm({
           disabled={
             isPending || selectedSectionCount === 0 || !hasUnsavedPreferences
           }
-          className="shrink-0"
+          className="w-full"
         >
           {isPending ? t('preferences.saving') : t('preferences.save')}
         </Button>

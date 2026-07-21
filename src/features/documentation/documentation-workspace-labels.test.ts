@@ -9,6 +9,9 @@ describe('documentation workspace labels', () => {
     expect(getDocumentationWorkspaceLabels('en').rendered).toBe('Rendered');
     expect(getDocumentationWorkspaceLabels('fr').rendered).toBe('Rendu');
     expect(getDocumentationWorkspaceLabels('fr').generate).toBe('Générer');
+    expect(
+      getDocumentationWorkspaceLabels('fr').singleLocaleDescription,
+    ).toContain('seule langue activée');
   });
 
   it('formats the generated character count', () => {

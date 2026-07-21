@@ -11,6 +11,7 @@ export type DocumentationWorkspaceLabels = {
   source: string;
   characterCount: string;
   previewModes: string;
+  singleLocaleDescription: string;
   diagnostics: string;
   diagnosticsDescription: string;
   translationFallbacks: string;
@@ -30,6 +31,8 @@ const labels = {
     source: 'Source',
     characterCount: '{count} characters',
     previewModes: 'Documentation preview mode',
+    singleLocaleDescription:
+      'This is the only language enabled for this project.',
     diagnostics: 'Generation diagnostics',
     diagnosticsDescription:
       'Review source completeness and localized fallback usage.',
@@ -48,6 +51,7 @@ const labels = {
     source: 'Source',
     characterCount: '{count} caractères',
     previewModes: 'Mode de prévisualisation de la documentation',
+    singleLocaleDescription: 'C’est la seule langue activée pour ce projet.',
     diagnostics: 'Diagnostics de génération',
     diagnosticsDescription:
       'Vérifiez la complétude des sources et les fallbacks de traduction.',
