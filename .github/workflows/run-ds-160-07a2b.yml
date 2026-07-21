@@ -23,7 +23,12 @@ jobs:
           ref: ${{ github.head_ref }}
 
       - name: Apply implementation patch
-        run: python scripts/apply-ds-160-07a2b.py
+        shell: bash
+        run: |
+          python scripts/apply-ds-160-07a2b.py
+          rm scripts/apply-ds-160-07a2b.py
+          rm .github/workflows/apply-ds-160-07a2b.yml
+          rm docs/product/ds-160-07a2b-pr-placeholder.md
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -43,10 +48,7 @@ jobs:
       - name: Commit validated implementation
         shell: bash
         run: |
-          rm .github/workflows/apply-ds-160-07a2b.yml
           rm .github/workflows/run-ds-160-07a2b.yml
-          rm docs/product/ds-160-07a2b-pr-placeholder.md
-          rm scripts/apply-ds-160-07a2b.py
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add --all
