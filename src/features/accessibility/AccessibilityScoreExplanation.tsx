@@ -87,7 +87,7 @@ export function AccessibilityScoreExplanation({
           id={panelId}
           role="dialog"
           aria-labelledby={titleId}
-          className="border-border-subtle bg-surface-primary absolute top-8 left-0 z-30 w-[min(21rem,calc(100vw-2rem))] rounded-md border p-4 shadow-lg"
+          className="border-border-subtle bg-surface-primary fixed inset-x-4 top-1/2 z-30 max-h-[calc(100dvh-2rem)] -translate-y-1/2 overflow-y-auto rounded-md border p-4 shadow-lg sm:absolute sm:inset-x-auto sm:top-8 sm:left-0 sm:max-h-none sm:w-[min(21rem,calc(100vw-2rem))] sm:translate-y-0 sm:overflow-visible"
         >
           <header className="flex items-start justify-between gap-3">
             <div className="min-w-0">
