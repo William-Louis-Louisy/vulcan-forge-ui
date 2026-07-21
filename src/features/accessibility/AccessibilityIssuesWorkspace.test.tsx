@@ -363,9 +363,9 @@ describe('AccessibilityIssuesWorkspace', () => {
     expect(detailRail).toHaveClass(
       'hidden',
       'h-full',
+      'overflow-y-auto',
       'border-l',
       'xl:block',
-      'xl:overflow-y-auto',
     );
     expect(detailRail).not.toHaveClass('rounded-md');
     expect(screen.getByText('Accessibility header')).toBeInTheDocument();
