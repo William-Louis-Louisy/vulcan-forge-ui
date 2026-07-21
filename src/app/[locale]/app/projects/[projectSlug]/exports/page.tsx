@@ -1,6 +1,5 @@
 import { auth } from '@/auth';
 import { hasLocale } from 'next-intl';
-import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
 import { routing, type Locale } from '@/i18n/routing';
 import { ExportCenterClient } from '@/features/exports/ExportCenterClient';
@@ -29,8 +28,6 @@ export default async function ExportCenterPage({
     redirect(`/${locale}/login`);
   }
 
-  const t = await getTranslations('ExportCenterPage');
-
   const pageData = await getExportCenterPageData({
     userId: session.user.id,
     projectSlug,
@@ -41,23 +38,7 @@ export default async function ExportCenterPage({
   }
 
   return (
-    <section className="mx-auto max-w-7xl">
-      <div className="mt-8">
-        <p className="text-action-primary text-sm font-semibold tracking-[0.24em] uppercase">
-          {t('eyebrow')}
-        </p>
-
-        <h1 className="mt-4 text-4xl font-semibold tracking-tight">
-          {t('title', {
-            projectName: pageData.exportCenterInput.project.name,
-          })}
-        </h1>
-
-        <p className="text-content-secondary mt-4 max-w-3xl">
-          {t('description')}
-        </p>
-      </div>
-
+    <section className="min-h-0 xl:absolute xl:inset-0 xl:h-auto xl:overflow-hidden">
       <ExportCenterClient
         projectSlug={pageData.projectSlug}
         fallbackLocale={pageData.fallbackLocale}
