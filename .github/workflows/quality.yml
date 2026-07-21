@@ -62,7 +62,30 @@ jobs:
           retention-days: 1
 
       - name: Check formatting
-        run: npm run format:check
+        shell: bash
+        run: |
+          set +e
+          npm run format:check > format-check.log 2>&1
+          status=$?
+          cat format-check.log
+          exit "$status"
+
+      - name: Generate formatting patch
+        if: failure()
+        run: |
+          npm run format
+          git diff -- .github/workflows/quality.yml src/domain/i18n/localized-content.ts > formatting.patch
+
+      - name: Upload formatting diagnostics
+        if: always() && hashFiles('formatting.patch') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: formatting-diagnostics
+          path: |
+            format-check.log
+            formatting.patch
+          if-no-files-found: error
+          retention-days: 1
 
       - name: Run tests
         run: npm run test
