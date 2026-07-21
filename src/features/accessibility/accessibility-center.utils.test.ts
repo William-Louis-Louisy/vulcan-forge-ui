@@ -264,5 +264,16 @@ describe('createAccessibilityCenterReport', () => {
     expect(report.summary.warningIssues).toBe(1);
     expect(report.summary.criticalIssues).toBe(1);
     expect(report.score).toBe(65);
+    expect(report.scoreBreakdown).toEqual({
+      baseScore: 100,
+      criticalIssues: 1,
+      warningIssues: 1,
+      criticalPenalty: 25,
+      warningPenalty: 10,
+      totalPenalty: 35,
+      rawScore: 65,
+      score: 65,
+      isFloored: false,
+    });
   });
 });

@@ -90,6 +90,24 @@ export const accessibilityCenterMessages = {
         automatedChecks: 'Automated issues',
         contrastChecks: 'Contrast passed',
         warningIssues: 'Warnings',
+        help: {
+          trigger: 'Explain the indicative score',
+          title: 'How the score is calculated',
+          description:
+            'The score starts at 100 and applies a fixed deduction for every automated issue detected in the current project data.',
+          formula: '100 − (critical issues × 25) − (warnings × 10)',
+          baseScore: 'Starting score',
+          criticalIssues:
+            '{count, plural, one {# critical issue} other {# critical issues}}',
+          warningIssues: '{count, plural, one {# warning} other {# warnings}}',
+          totalPenalty: 'Total deduction',
+          currentScore: 'Displayed score',
+          floorNotice:
+            'The raw result is {score}. The displayed score is floored at 0.',
+          disclaimer:
+            'This is a prioritization signal, not a percentage of WCAG compliance. It does not replace a complete manual audit.',
+          close: 'Close score explanation',
+        },
       },
     },
   },
@@ -185,6 +203,25 @@ export const accessibilityCenterMessages = {
         automatedChecks: 'Problèmes automatisés',
         contrastChecks: 'Contrastes validés',
         warningIssues: 'Avertissements',
+        help: {
+          trigger: 'Expliquer le score indicatif',
+          title: 'Comment le score est calculé',
+          description:
+            'Le score part de 100 et applique une pénalité fixe à chaque problème automatisé détecté dans les données actuelles du projet.',
+          formula: '100 − (problèmes critiques × 25) − (avertissements × 10)',
+          baseScore: 'Score de départ',
+          criticalIssues:
+            '{count, plural, one {# problème critique} other {# problèmes critiques}}',
+          warningIssues:
+            '{count, plural, one {# avertissement} other {# avertissements}}',
+          totalPenalty: 'Pénalité totale',
+          currentScore: 'Score affiché',
+          floorNotice:
+            'Le résultat brut est de {score}. Le score affiché est ramené à 0.',
+          disclaimer:
+            'Il s’agit d’un signal de priorisation, pas d’un pourcentage de conformité WCAG. Il ne remplace pas un audit manuel complet.',
+          close: 'Fermer l’explication du score',
+        },
       },
     },
   },

@@ -29,6 +29,10 @@ import type {
   AccessibilityRuleComponentContractSource,
   AccessibilityRuleTokenSetSource,
 } from './accessibility-rule-sources';
+import {
+  createAccessibilityScoreBreakdown,
+  type AccessibilityScoreBreakdown,
+} from './accessibility-score';
 
 const designTokenArraySchema = z.array(designTokenSchema);
 
@@ -118,6 +122,7 @@ export type AccessibilityCenterSummary = {
 
 export type AccessibilityCenterReport = {
   score: number;
+  scoreBreakdown: AccessibilityScoreBreakdown;
   status: 'healthy' | 'needsAttention' | 'critical';
   issues: AccessibilityCenterIssue[];
   contrastPairs: AccessibilityCenterContrastPair[];
@@ -134,12 +139,15 @@ export type CreateAccessibilityCenterReportInput = {
   componentContracts?: AccessibilityRuleComponentContractSource[];
 };
 
-function scoreFromIssues(issues: readonly AccessibilityCenterIssue[]): number {
-  const penalty = issues.reduce((total, issue) => {
-    return total + (issue.severity === 'critical' ? 25 : 10);
-  }, 0);
-
-  return Math.max(0, 100 - penalty);
+function scoreBreakdownFromIssues(
+  issues: readonly AccessibilityCenterIssue[],
+): AccessibilityScoreBreakdown {
+  return createAccessibilityScoreBreakdown({
+    criticalIssues: issues.filter((issue) => issue.severity === 'critical')
+      .length,
+    warningIssues: issues.filter((issue) => issue.severity === 'warning')
+      .length,
+  });
 }
 
 function statusFromScore(score: number): AccessibilityCenterReport['status'] {
@@ -461,10 +469,11 @@ export function createAccessibilityCenterReport({
 
   if (!parsedTokens.success) {
     const issues = [createTokenSetIssue(), ...expandedIssues];
-    const score = scoreFromIssues(issues);
+    const scoreBreakdown = scoreBreakdownFromIssues(issues);
 
     return {
-      score,
+      score: scoreBreakdown.score,
+      scoreBreakdown,
       status: 'critical',
       issues,
       contrastPairs: [],
@@ -516,11 +525,12 @@ export function createAccessibilityCenterReport({
     ...(sortedThemes.length === 0 ? [createMissingThemesIssue()] : []),
   ];
 
-  const score = scoreFromIssues(issues);
+  const scoreBreakdown = scoreBreakdownFromIssues(issues);
 
   return {
-    score,
-    status: statusFromScore(score),
+    score: scoreBreakdown.score,
+    scoreBreakdown,
+    status: statusFromScore(scoreBreakdown.score),
     issues,
     contrastPairs: themeContrastPairs,
     summary: createSummary({
