@@ -181,7 +181,10 @@ function MarkdownBlockView({ block }: { block: MarkdownBlock }) {
         <thead className="bg-background-subtle text-content-tertiary">
           <tr>
             {block.headers.map((header, index) => (
-              <th key={`${header}-${index}`} className="px-4 py-3 font-semibold">
+              <th
+                key={`${header}-${index}`}
+                className="px-4 py-3 font-semibold"
+              >
                 {renderInlineMarkdown(header)}
               </th>
             ))}

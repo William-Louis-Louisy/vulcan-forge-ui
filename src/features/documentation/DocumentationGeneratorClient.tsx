@@ -542,12 +542,18 @@ function PreferencesForm({
       </div>
 
       {state.status === 'success' ? (
-        <p role="status" className="text-action-success mt-2 text-xs font-semibold">
+        <p
+          role="status"
+          className="text-action-success mt-2 text-xs font-semibold"
+        >
           {t('preferences.success')}
         </p>
       ) : null}
       {state.formError ? (
-        <p role="alert" className="text-action-danger mt-2 text-xs font-semibold">
+        <p
+          role="alert"
+          className="text-action-danger mt-2 text-xs font-semibold"
+        >
           {t(`preferences.errors.${state.formError}`)}
         </p>
       ) : null}
@@ -638,7 +644,9 @@ function GenerationDiagnostics({
                   key={`${missingTranslation.path}-${missingTranslation.requestedLocale}`}
                   className="border-action-warning/30 bg-action-warning/10 rounded-sm border p-2 text-xs"
                 >
-                  <p className="font-mono break-all">{missingTranslation.path}</p>
+                  <p className="font-mono break-all">
+                    {missingTranslation.path}
+                  </p>
                   <p className="text-content-secondary mt-1">
                     {missingTranslation.requestedLocale.toUpperCase()} →{' '}
                     {missingTranslation.fallbackLocale.toUpperCase()}
