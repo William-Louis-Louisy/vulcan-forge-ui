@@ -1,6 +1,8 @@
 import type { AppLocale } from './locales';
 
-export type LocalizedString = Partial<Record<AppLocale, string>>;
+export type LocalizedString = Partial<
+  Record<AppLocale, string | undefined>
+>;
 
 export type ResolvedLocalizedString = {
   value: string;
