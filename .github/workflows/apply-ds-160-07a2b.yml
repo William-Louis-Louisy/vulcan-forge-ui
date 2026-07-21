@@ -1,0 +1,744 @@
+name: Apply DS-160-07-A2b
+
+on:
+  push:
+    branches:
+      - feature/ds-160-07a2b-accessibility-score
+    paths:
+      - .github/workflows/apply-ds-160-07a2b.yml
+
+permissions:
+  contents: write
+
+jobs:
+  implement:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      DATABASE_URL: postgresql://vulcan:vulcan_dev_password@localhost:5432/vulcan_forge_ui?schema=public
+
+    steps:
+      - name: Checkout feature branch
+        uses: actions/checkout@v6
+
+      - name: Apply score explanation changes
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def replace_once(path: str, old: str, new: str) -> None:
+              file_path = Path(path)
+              content = file_path.read_text(encoding='utf-8')
+              count = content.count(old)
+              if count != 1:
+                  raise RuntimeError(f'{path}: expected one match, found {count}')
+              file_path.write_text(content.replace(old, new), encoding='utf-8')
+
+          Path('src/features/accessibility/accessibility-score.ts').write_text(r'''export const ACCESSIBILITY_SCORE_BASE = 100;
+
+export const ACCESSIBILITY_SCORE_PENALTIES = {
+  critical: 25,
+  warning: 10,
+} as const;
+
+export type AccessibilityScoreBreakdown = {
+  baseScore: number;
+  criticalIssues: number;
+  warningIssues: number;
+  criticalPenalty: number;
+  warningPenalty: number;
+  totalPenalty: number;
+  rawScore: number;
+  score: number;
+  isFloored: boolean;
+};
+
+export function createAccessibilityScoreBreakdown({
+  criticalIssues,
+  warningIssues,
+}: {
+  criticalIssues: number;
+  warningIssues: number;
+}): AccessibilityScoreBreakdown {
+  const criticalPenalty =
+    criticalIssues * ACCESSIBILITY_SCORE_PENALTIES.critical;
+  const warningPenalty = warningIssues * ACCESSIBILITY_SCORE_PENALTIES.warning;
+  const totalPenalty = criticalPenalty + warningPenalty;
+  const rawScore = ACCESSIBILITY_SCORE_BASE - totalPenalty;
+
+  return {
+    baseScore: ACCESSIBILITY_SCORE_BASE,
+    criticalIssues,
+    warningIssues,
+    criticalPenalty,
+    warningPenalty,
+    totalPenalty,
+    rawScore,
+    score: Math.max(0, rawScore),
+    isFloored: rawScore < 0,
+  };
+}
+''', encoding='utf-8')
+
+          Path('src/features/accessibility/accessibility-score.test.ts').write_text(r'''import { describe, expect, it } from 'vitest';
+import {
+  ACCESSIBILITY_SCORE_BASE,
+  ACCESSIBILITY_SCORE_PENALTIES,
+  createAccessibilityScoreBreakdown,
+} from './accessibility-score';
+
+describe('createAccessibilityScoreBreakdown', () => {
+  it('returns the full score when no issue is detected', () => {
+    expect(
+      createAccessibilityScoreBreakdown({
+        criticalIssues: 0,
+        warningIssues: 0,
+      }),
+    ).toEqual({
+      baseScore: ACCESSIBILITY_SCORE_BASE,
+      criticalIssues: 0,
+      warningIssues: 0,
+      criticalPenalty: 0,
+      warningPenalty: 0,
+      totalPenalty: 0,
+      rawScore: 100,
+      score: 100,
+      isFloored: false,
+    });
+  });
+
+  it('exposes each fixed issue penalty', () => {
+    expect(
+      createAccessibilityScoreBreakdown({
+        criticalIssues: 2,
+        warningIssues: 3,
+      }),
+    ).toEqual({
+      baseScore: 100,
+      criticalIssues: 2,
+      warningIssues: 3,
+      criticalPenalty: 2 * ACCESSIBILITY_SCORE_PENALTIES.critical,
+      warningPenalty: 3 * ACCESSIBILITY_SCORE_PENALTIES.warning,
+      totalPenalty: 80,
+      rawScore: 20,
+      score: 20,
+      isFloored: false,
+    });
+  });
+
+  it('floors the displayed score at zero while retaining the raw result', () => {
+    expect(
+      createAccessibilityScoreBreakdown({
+        criticalIssues: 4,
+        warningIssues: 3,
+      }),
+    ).toEqual({
+      baseScore: 100,
+      criticalIssues: 4,
+      warningIssues: 3,
+      criticalPenalty: 100,
+      warningPenalty: 30,
+      totalPenalty: 130,
+      rawScore: -30,
+      score: 0,
+      isFloored: true,
+    });
+  });
+});
+''', encoding='utf-8')
+
+          Path('src/features/accessibility/AccessibilityScoreExplanation.tsx').write_text(r''''use client';
+
+import { InfoIcon, XIcon } from '@phosphor-icons/react';
+import { useEffect, useId, useRef, useState } from 'react';
+import type { AccessibilityScoreBreakdown } from './accessibility-score';
+
+export type AccessibilityScoreExplanationLabels = {
+  trigger: string;
+  title: string;
+  description: string;
+  formula: string;
+  baseScore: string;
+  criticalIssues: string;
+  warningIssues: string;
+  totalPenalty: string;
+  currentScore: string;
+  floorNotice: string;
+  disclaimer: string;
+  close: string;
+};
+
+type AccessibilityScoreExplanationProps = {
+  breakdown: AccessibilityScoreBreakdown;
+  labels: AccessibilityScoreExplanationLabels;
+};
+
+export function AccessibilityScoreExplanation({
+  breakdown,
+  labels,
+}: AccessibilityScoreExplanationProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const panelId = useId();
+  const titleId = useId();
+  const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    function closeOnOutsidePointer(event: PointerEvent) {
+      if (
+        event.target instanceof Node &&
+        !rootRef.current?.contains(event.target)
+      ) {
+        setIsOpen(false);
+      }
+    }
+
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key !== 'Escape') {
+        return;
+      }
+
+      setIsOpen(false);
+      triggerRef.current?.focus();
+    }
+
+    document.addEventListener('pointerdown', closeOnOutsidePointer);
+    document.addEventListener('keydown', closeOnEscape);
+
+    return () => {
+      document.removeEventListener('pointerdown', closeOnOutsidePointer);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [isOpen]);
+
+  return (
+    <div ref={rootRef} className="relative inline-flex">
+      <button
+        ref={triggerRef}
+        type="button"
+        aria-expanded={isOpen}
+        aria-controls={panelId}
+        aria-haspopup="dialog"
+        title={labels.trigger}
+        onClick={() => setIsOpen((current) => !current)}
+        className="border-border-subtle bg-background-subtle text-content-secondary hover:border-border-strong hover:text-content-primary focus-visible:outline-border-focus inline-flex size-6 items-center justify-center rounded-full border transition focus-visible:outline-2 focus-visible:outline-offset-2"
+      >
+        <InfoIcon aria-hidden="true" size={14} weight="bold" />
+        <span className="sr-only">{labels.trigger}</span>
+      </button>
+
+      {isOpen ? (
+        <section
+          id={panelId}
+          role="dialog"
+          aria-labelledby={titleId}
+          className="border-border-subtle bg-surface-primary absolute top-8 left-0 z-30 w-[min(21rem,calc(100vw-2rem))] rounded-md border p-4 shadow-lg"
+        >
+          <header className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <h3 id={titleId} className="text-sm font-semibold tracking-tight">
+                {labels.title}
+              </h3>
+              <p className="text-content-secondary mt-1 text-xs leading-5">
+                {labels.description}
+              </p>
+            </div>
+            <button
+              type="button"
+              aria-label={labels.close}
+              onClick={() => {
+                setIsOpen(false);
+                triggerRef.current?.focus();
+              }}
+              className="text-content-tertiary hover:bg-background-subtle hover:text-content-primary focus-visible:outline-border-focus -m-1 inline-flex size-7 shrink-0 items-center justify-center rounded-sm transition focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
+              <XIcon aria-hidden="true" size={14} weight="bold" />
+            </button>
+          </header>
+
+          <p className="border-border-subtle bg-background-subtle text-content-secondary mt-3 rounded-sm border px-3 py-2 font-mono text-[0.6875rem] leading-5">
+            {labels.formula}
+          </p>
+
+          <dl className="mt-3 grid gap-2 text-xs">
+            <ScoreBreakdownRow
+              label={labels.baseScore}
+              value={String(breakdown.baseScore)}
+            />
+            <ScoreBreakdownRow
+              label={labels.criticalIssues}
+              value={`−${breakdown.criticalPenalty}`}
+            />
+            <ScoreBreakdownRow
+              label={labels.warningIssues}
+              value={`−${breakdown.warningPenalty}`}
+            />
+            <ScoreBreakdownRow
+              label={labels.totalPenalty}
+              value={`−${breakdown.totalPenalty}`}
+              emphasized
+            />
+            <ScoreBreakdownRow
+              label={labels.currentScore}
+              value={`${breakdown.score}/100`}
+              emphasized
+            />
+          </dl>
+
+          {breakdown.isFloored ? (
+            <p className="text-action-warning mt-3 text-xs leading-5 font-semibold">
+              {labels.floorNotice}
+            </p>
+          ) : null}
+
+          <p className="text-content-tertiary border-border-subtle mt-3 border-t pt-3 text-xs leading-5">
+            {labels.disclaimer}
+          </p>
+        </section>
+      ) : null}
+    </div>
+  );
+}
+
+function ScoreBreakdownRow({
+  label,
+  value,
+  emphasized = false,
+}: {
+  label: string;
+  value: string;
+  emphasized?: boolean;
+}) {
+  return (
+    <div
+      className={[
+        'flex items-baseline justify-between gap-4',
+        emphasized ? 'text-content-primary font-semibold' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
+      <dt className="text-content-secondary">{label}</dt>
+      <dd className="shrink-0 font-mono">{value}</dd>
+    </div>
+  );
+}
+''', encoding='utf-8')
+
+          Path('src/features/accessibility/AccessibilityScoreExplanation.test.tsx').write_text(r'''import userEvent from '@testing-library/user-event';
+import { render, screen } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+import { createAccessibilityScoreBreakdown } from './accessibility-score';
+import { AccessibilityScoreExplanation } from './AccessibilityScoreExplanation';
+
+const labels = {
+  trigger: 'Explain the indicative score',
+  title: 'How the score is calculated',
+  description: 'The score starts at 100.',
+  formula: '100 − (critical issues × 25) − (warnings × 10)',
+  baseScore: 'Starting score',
+  criticalIssues: '4 critical issues',
+  warningIssues: '3 warnings',
+  totalPenalty: 'Total deduction',
+  currentScore: 'Displayed score',
+  floorNotice: 'The raw result is -30. The displayed score is floored at 0.',
+  disclaimer: 'This is not a percentage of WCAG compliance.',
+  close: 'Close score explanation',
+};
+
+describe('AccessibilityScoreExplanation', () => {
+  it('opens an accessible score breakdown and closes it with Escape', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <AccessibilityScoreExplanation
+        breakdown={createAccessibilityScoreBreakdown({
+          criticalIssues: 4,
+          warningIssues: 3,
+        })}
+        labels={labels}
+      />,
+    );
+
+    const trigger = screen.getByRole('button', { name: labels.trigger });
+
+    expect(
+      screen.queryByRole('dialog', { name: labels.title }),
+    ).not.toBeInTheDocument();
+
+    await user.click(trigger);
+
+    expect(
+      screen.getByRole('dialog', { name: labels.title }),
+    ).toBeInTheDocument();
+    expect(screen.getByText('−100')).toBeInTheDocument();
+    expect(screen.getByText('−30')).toBeInTheDocument();
+    expect(screen.getByText('−130')).toBeInTheDocument();
+    expect(screen.getByText('0/100')).toBeInTheDocument();
+    expect(screen.getByText(labels.floorNotice)).toBeInTheDocument();
+
+    await user.keyboard('{Escape}');
+
+    expect(
+      screen.queryByRole('dialog', { name: labels.title }),
+    ).not.toBeInTheDocument();
+    expect(trigger).toHaveFocus();
+  });
+
+  it('does not show a floor notice when the raw score remains positive', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <AccessibilityScoreExplanation
+        breakdown={createAccessibilityScoreBreakdown({
+          criticalIssues: 1,
+          warningIssues: 1,
+        })}
+        labels={labels}
+      />,
+    );
+
+    await user.click(
+      screen.getByRole('button', {
+        name: labels.trigger,
+      }),
+    );
+
+    expect(screen.getByText('65/100')).toBeInTheDocument();
+    expect(screen.queryByText(labels.floorNotice)).not.toBeInTheDocument();
+  });
+});
+''', encoding='utf-8')
+
+          Path('docs/product/ds-160-07a2b-accessibility-score-audit.md').write_text(r'''# DS-160-07-A2b — Accessibility score explanation audit
+
+## Objective
+
+Make the automated accessibility score understandable without changing its formula or implying that it represents WCAG compliance.
+
+DS-160-07-A2 expanded the number of token, component and theme issues included in the report. Projects can consequently reach the score floor more quickly even when their contrast results have not changed.
+
+## Current formula
+
+The score currently uses fixed issue penalties:
+
+```txt
+100 - (critical issues × 25) - (warnings × 10)
+```
+
+The displayed score cannot be lower than zero.
+
+This means that:
+
+- four critical issues are enough to display `0/100`;
+- additional issues can produce a negative raw value while the visible score remains zero;
+- the score is a prioritization signal, not a percentage of successful checks;
+- `0/100` does not mean that the design system is `0%` WCAG compliant.
+
+## UI clarification
+
+Add an information control beside the indicative-score label in the validation summary.
+
+The control must:
+
+- open on click or keyboard activation;
+- expose its expanded state and controlled panel;
+- close from its dedicated close action, Escape or an outside pointer action;
+- return focus to its trigger after keyboard dismissal;
+- show the fixed formula;
+- show the current critical and warning counts;
+- show each penalty, the total penalty and displayed score;
+- expose the negative raw result when the visible score has been floored;
+- repeat that the score is not a WCAG compliance percentage or certification.
+
+## Domain clarification
+
+Centralize the base score and penalty values in a dedicated accessibility-score module. The report generator and explanatory UI must consume the same breakdown so the displayed explanation cannot drift from the calculation.
+
+## Non-goals
+
+- no score-formula redesign;
+- no weighting by rule family or affected item count;
+- no manual checklist;
+- no WCAG certification claim;
+- no persistence-schema change;
+- no report-history comparison.
+
+## Acceptance targets
+
+- a `0/100` score can be explained from the visible issue counts;
+- the formula and current deductions are available in FR and EN;
+- mouse, touch and keyboard users can open the explanation;
+- Escape dismissal restores focus to the trigger;
+- the score generator and UI use the same constants and breakdown;
+- the existing report score and status thresholds remain unchanged;
+- unit and component tests cover normal and floored scores;
+- `npm run format` and `npm run quality` pass before merge.
+''', encoding='utf-8')
+
+          replace_once(
+              'src/features/accessibility/accessibility-center.utils.ts',
+              """import type {
+  AccessibilityRuleComponentContractSource,
+  AccessibilityRuleTokenSetSource,
+} from './accessibility-rule-sources';
+""",
+              """import type {
+  AccessibilityRuleComponentContractSource,
+  AccessibilityRuleTokenSetSource,
+} from './accessibility-rule-sources';
+import {
+  createAccessibilityScoreBreakdown,
+  type AccessibilityScoreBreakdown,
+} from './accessibility-score';
+""",
+          )
+
+          replace_once(
+              'src/features/accessibility/accessibility-center.utils.ts',
+              """export type AccessibilityCenterReport = {
+  score: number;
+  status: 'healthy' | 'needsAttention' | 'critical';
+""",
+              """export type AccessibilityCenterReport = {
+  score: number;
+  scoreBreakdown: AccessibilityScoreBreakdown;
+  status: 'healthy' | 'needsAttention' | 'critical';
+""",
+          )
+
+          replace_once(
+              'src/features/accessibility/accessibility-center.utils.ts',
+              """function scoreFromIssues(issues: readonly AccessibilityCenterIssue[]): number {
+  const penalty = issues.reduce((total, issue) => {
+    return total + (issue.severity === 'critical' ? 25 : 10);
+  }, 0);
+
+  return Math.max(0, 100 - penalty);
+}
+""",
+              """function scoreBreakdownFromIssues(
+  issues: readonly AccessibilityCenterIssue[],
+): AccessibilityScoreBreakdown {
+  return createAccessibilityScoreBreakdown({
+    criticalIssues: issues.filter((issue) => issue.severity === 'critical').length,
+    warningIssues: issues.filter((issue) => issue.severity === 'warning').length,
+  });
+}
+""",
+          )
+
+          replace_once(
+              'src/features/accessibility/accessibility-center.utils.ts',
+              """  if (!parsedTokens.success) {
+    const issues = [createTokenSetIssue(), ...expandedIssues];
+    const score = scoreFromIssues(issues);
+
+    return {
+      score,
+      status: 'critical',
+""",
+              """  if (!parsedTokens.success) {
+    const issues = [createTokenSetIssue(), ...expandedIssues];
+    const scoreBreakdown = scoreBreakdownFromIssues(issues);
+
+    return {
+      score: scoreBreakdown.score,
+      scoreBreakdown,
+      status: 'critical',
+""",
+          )
+
+          replace_once(
+              'src/features/accessibility/accessibility-center.utils.ts',
+              """  const score = scoreFromIssues(issues);
+
+  return {
+    score,
+    status: statusFromScore(score),
+""",
+              """  const scoreBreakdown = scoreBreakdownFromIssues(issues);
+
+  return {
+    score: scoreBreakdown.score,
+    scoreBreakdown,
+    status: statusFromScore(scoreBreakdown.score),
+""",
+          )
+
+          replace_once(
+              'src/app/[locale]/app/projects/[projectSlug]/accessibility/page.tsx',
+              """import { AccessibilityIssuesWorkspace } from '@/features/accessibility/AccessibilityIssuesWorkspace';
+import { SaveAccessibilityReportButton } from '@/features/accessibility/SaveAccessibilityReportButton';
+""",
+              """import { AccessibilityIssuesWorkspace } from '@/features/accessibility/AccessibilityIssuesWorkspace';
+import { AccessibilityScoreExplanation } from '@/features/accessibility/AccessibilityScoreExplanation';
+import { SaveAccessibilityReportButton } from '@/features/accessibility/SaveAccessibilityReportButton';
+""",
+          )
+
+          replace_once(
+              'src/app/[locale]/app/projects/[projectSlug]/accessibility/page.tsx',
+              """          <p className=\"text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase\">
+            {t('score.eyebrow')}
+          </p>
+          <div className=\"mt-1 flex items-end gap-1.5\">
+""",
+              """          <div className=\"flex items-center gap-1.5\">
+            <p className=\"text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase\">
+              {t('score.eyebrow')}
+            </p>
+            <AccessibilityScoreExplanation
+              breakdown={report.scoreBreakdown}
+              labels={{
+                trigger: t('score.help.trigger'),
+                title: t('score.help.title'),
+                description: t('score.help.description'),
+                formula: t('score.help.formula'),
+                baseScore: t('score.help.baseScore'),
+                criticalIssues: t('score.help.criticalIssues', {
+                  count: report.scoreBreakdown.criticalIssues,
+                }),
+                warningIssues: t('score.help.warningIssues', {
+                  count: report.scoreBreakdown.warningIssues,
+                }),
+                totalPenalty: t('score.help.totalPenalty'),
+                currentScore: t('score.help.currentScore'),
+                floorNotice: t('score.help.floorNotice', {
+                  score: report.scoreBreakdown.rawScore,
+                }),
+                disclaimer: t('score.help.disclaimer'),
+                close: t('score.help.close'),
+              }}
+            />
+          </div>
+          <div className=\"mt-1 flex items-end gap-1.5\">
+""",
+          )
+
+          replace_once(
+              'src/messages/accessibility-center-messages.ts',
+              """      score: {
+        validationSummary: 'Validation summary',
+        automatedChecks: 'Automated issues',
+        contrastChecks: 'Contrast passed',
+        warningIssues: 'Warnings',
+      },
+""",
+              """      score: {
+        validationSummary: 'Validation summary',
+        automatedChecks: 'Automated issues',
+        contrastChecks: 'Contrast passed',
+        warningIssues: 'Warnings',
+        help: {
+          trigger: 'Explain the indicative score',
+          title: 'How the score is calculated',
+          description:
+            'The score starts at 100 and applies a fixed deduction for every automated issue detected in the current project data.',
+          formula: '100 − (critical issues × 25) − (warnings × 10)',
+          baseScore: 'Starting score',
+          criticalIssues:
+            '{count, plural, one {# critical issue} other {# critical issues}}',
+          warningIssues: '{count, plural, one {# warning} other {# warnings}}',
+          totalPenalty: 'Total deduction',
+          currentScore: 'Displayed score',
+          floorNotice:
+            'The raw result is {score}. The displayed score is floored at 0.',
+          disclaimer:
+            'This is a prioritization signal, not a percentage of WCAG compliance. It does not replace a complete manual audit.',
+          close: 'Close score explanation',
+        },
+      },
+""",
+          )
+
+          replace_once(
+              'src/messages/accessibility-center-messages.ts',
+              """      score: {
+        validationSummary: 'Synthèse de validation',
+        automatedChecks: 'Problèmes automatisés',
+        contrastChecks: 'Contrastes validés',
+        warningIssues: 'Avertissements',
+      },
+""",
+              """      score: {
+        validationSummary: 'Synthèse de validation',
+        automatedChecks: 'Problèmes automatisés',
+        contrastChecks: 'Contrastes validés',
+        warningIssues: 'Avertissements',
+        help: {
+          trigger: 'Expliquer le score indicatif',
+          title: 'Comment le score est calculé',
+          description:
+            'Le score part de 100 et applique une pénalité fixe à chaque problème automatisé détecté dans les données actuelles du projet.',
+          formula: '100 − (problèmes critiques × 25) − (avertissements × 10)',
+          baseScore: 'Score de départ',
+          criticalIssues:
+            '{count, plural, one {# problème critique} other {# problèmes critiques}}',
+          warningIssues:
+            '{count, plural, one {# avertissement} other {# avertissements}}',
+          totalPenalty: 'Pénalité totale',
+          currentScore: 'Score affiché',
+          floorNotice:
+            'Le résultat brut est de {score}. Le score affiché est ramené à 0.',
+          disclaimer:
+            'Il s’agit d’un signal de priorisation, pas d’un pourcentage de conformité WCAG. Il ne remplace pas un audit manuel complet.',
+          close: 'Fermer l’explication du score',
+        },
+      },
+""",
+          )
+
+          replace_once(
+              'src/features/accessibility/accessibility-center.utils.test.ts',
+              """    expect(report.summary.warningIssues).toBe(1);
+    expect(report.summary.criticalIssues).toBe(1);
+    expect(report.score).toBe(65);
+""",
+              """    expect(report.summary.warningIssues).toBe(1);
+    expect(report.summary.criticalIssues).toBe(1);
+    expect(report.score).toBe(65);
+    expect(report.scoreBreakdown).toEqual({
+      baseScore: 100,
+      criticalIssues: 1,
+      warningIssues: 1,
+      criticalPenalty: 25,
+      warningPenalty: 10,
+      totalPenalty: 35,
+      rawScore: 65,
+      score: 65,
+      isFloored: false,
+    });
+""",
+          )
+          PY
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Format implementation
+        run: npm run format
+
+      - name: Validate implementation
+        run: npm run quality
+
+      - name: Commit validated implementation
+        shell: bash
+        run: |
+          rm .github/workflows/apply-ds-160-07a2b.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add --all
+          git commit -m "feat: explain accessibility score calculation"
+          git push origin HEAD:feature/ds-160-07a2b-accessibility-score
