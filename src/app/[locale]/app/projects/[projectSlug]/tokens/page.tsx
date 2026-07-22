@@ -115,6 +115,7 @@ export default async function TokensEditorPage({
       <TokensEditorShell
         locale={locale}
         projectSlug={pageData.project.slug}
+        projectName={pageData.project.name}
         tokenSets={tokenSetViewModels}
         initialActiveTokenSetType={
           initialActiveTokenSet?.type ?? activeTokenSetType

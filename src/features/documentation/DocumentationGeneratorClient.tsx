@@ -11,7 +11,7 @@ import {
   CopyIcon,
   DownloadSimpleIcon,
 } from '@phosphor-icons/react';
-import { Button } from '@/components/ui';
+import { Button, ProjectWorkspaceHeader } from '@/components/ui';
 import {
   createDefaultDocumentationSectionSelection,
   documentationSections,
@@ -182,20 +182,12 @@ export function DocumentationGeneratorClient({
         data-documentation-layout-slot="controls"
         className="border-border-subtle bg-background-app min-w-0 border-b p-4 md:p-6 xl:h-full xl:overflow-y-auto xl:border-r xl:border-b-0"
       >
-        <header>
-          <p className="text-action-primary text-[0.6875rem] font-semibold tracking-[0.16em] uppercase">
-            {t('eyebrow')}
-          </p>
-          <h1 className="mt-1 text-[26px] font-semibold tracking-[-0.015em]">
-            {workspaceLabels.pageTitle}
-          </h1>
-          <p className="text-content-tertiary mt-1 text-sm leading-6">
-            {t('description')}
-          </p>
-          <p className="text-content-secondary mt-3 text-xs font-semibold xl:hidden">
-            {documentationInput.project.name}
-          </p>
-        </header>
+        <ProjectWorkspaceHeader
+          eyebrow={t('eyebrow')}
+          title={workspaceLabels.pageTitle}
+          description={t('description')}
+          projectName={documentationInput.project.name}
+        />
 
         <div className="mt-6 flex flex-col gap-5">
           <LocaleControl
@@ -402,7 +394,10 @@ function LocaleControl({
             const isSelected = selectedLocale === locale;
 
             return (
-              <label key={locale} className="cursor-pointer">
+              <label
+                key={locale}
+                className="focus-within:outline-border-focus cursor-pointer rounded-sm focus-within:outline-2 focus-within:outline-offset-2"
+              >
                 <input
                   type="radio"
                   name="documentationLocale"
@@ -413,7 +408,7 @@ function LocaleControl({
                 />
                 <span
                   className={[
-                    'focus-within:outline-border-focus flex min-h-9 items-center justify-center rounded-sm px-3 text-xs font-semibold transition focus-within:outline-2 focus-within:outline-offset-2',
+                    'flex min-h-9 items-center justify-center rounded-sm px-3 text-xs font-semibold transition',
                     isSelected
                       ? 'bg-content-primary text-background-app'
                       : 'text-content-secondary hover:text-content-primary',
@@ -470,7 +465,7 @@ function SectionControls({
           return (
             <label
               key={section}
-              className="hover:bg-background-subtle flex min-h-11 cursor-pointer items-center justify-between gap-4 px-3 py-2 text-sm font-medium transition"
+              className="focus-within:outline-border-focus hover:bg-background-subtle flex min-h-11 cursor-pointer items-center justify-between gap-4 px-3 py-2 text-sm font-medium transition focus-within:outline-2 focus-within:outline-offset-[-2px]"
             >
               <span>{t(`controls.sections.options.${section}`)}</span>
               <input

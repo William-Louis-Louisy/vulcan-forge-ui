@@ -1,5 +1,6 @@
 'use client';
 
+import { ProjectWorkspaceHeader } from '@/components/ui';
 import { useState, type KeyboardEvent, type ReactNode } from 'react';
 
 type ThemesWorkspacePanel = 'editor' | 'preview';
@@ -19,6 +20,7 @@ type ThemesResponsiveWorkspaceProps = {
   };
   title: string;
   description: string;
+  projectName: string;
   summary: string;
   themes: ThemeWorkspaceItem[];
   emptyState: ReactNode;
@@ -76,6 +78,7 @@ export function ThemesResponsiveWorkspace({
   labels,
   title,
   description,
+  projectName,
   summary,
   themes,
   emptyState,
@@ -141,27 +144,22 @@ export function ThemesResponsiveWorkspace({
             'min-h-0 min-w-0 flex-col lg:flex lg:overflow-hidden',
           ].join(' ')}
         >
-          <header className="border-border-subtle shrink-0 border-b px-4 pt-4 md:px-6 xl:px-7 xl:pt-5">
-            <div className="flex min-w-0 flex-col gap-1">
-              <div className="flex min-w-0 flex-col gap-2 lg:flex-row lg:items-end lg:justify-between">
-                <div className="min-w-0">
-                  <h1 className="text-[26px] font-semibold tracking-[-0.015em]">
-                    {title}
-                  </h1>
-                  <p className="text-content-tertiary mt-1 max-w-3xl text-sm leading-6">
-                    {description}
-                  </p>
-                </div>
-                <p className="text-content-secondary shrink-0 text-xs font-semibold">
-                  {summary}
-                </p>
-              </div>
-
-              {themes.length > 0 ? (
+          <ProjectWorkspaceHeader
+            variant="bar"
+            title={title}
+            description={description}
+            projectName={projectName}
+            status={
+              <span className="border-border-subtle bg-background-subtle text-content-secondary rounded-full border px-2.5 py-1 text-[0.6875rem] font-semibold">
+                {summary}
+              </span>
+            }
+            footer={
+              themes.length > 0 ? (
                 <div
                   role="tablist"
                   aria-label={labels.themeNavigation}
-                  className="mt-3 flex min-w-0 gap-1 overflow-x-auto"
+                  className="flex min-w-0 gap-1 overflow-x-auto"
                 >
                   {themes.map((theme) => {
                     const isActive = theme.id === activeTheme?.id;
@@ -198,9 +196,9 @@ export function ThemesResponsiveWorkspace({
                     );
                   })}
                 </div>
-              ) : null}
-            </div>
-          </header>
+              ) : null
+            }
+          />
 
           <main className="min-h-0 min-w-0 flex-1 overflow-y-auto">
             {activeTheme ? (

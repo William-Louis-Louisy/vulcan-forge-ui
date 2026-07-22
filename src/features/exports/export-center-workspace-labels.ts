@@ -29,6 +29,8 @@ export type ExportCenterWorkspaceLabels = {
   noRecentExports: string;
   diagnosticsSummary: string;
   diagnosticsCount: string;
+  copyFailureLog: string;
+  downloadFailureLog: string;
 };
 
 const labels = {
@@ -64,6 +66,8 @@ const labels = {
     noRecentExports: 'No export has been recorded for this project yet.',
     diagnosticsSummary: 'Generation diagnostics',
     diagnosticsCount: '{count} items to review',
+    copyFailureLog: 'Unable to copy export content to the clipboard.',
+    downloadFailureLog: 'Unable to download the export file.',
   },
   fr: {
     pageTitle: 'Exports',
@@ -97,6 +101,9 @@ const labels = {
     noRecentExports: 'Aucun export n’a encore été enregistré pour ce projet.',
     diagnosticsSummary: 'Diagnostics de génération',
     diagnosticsCount: '{count} éléments à vérifier',
+    copyFailureLog:
+      'Impossible de copier le contenu de l’export dans le presse-papiers.',
+    downloadFailureLog: 'Impossible de télécharger le fichier exporté.',
   },
 } satisfies Record<AppLocale, ExportCenterWorkspaceLabels>;
 

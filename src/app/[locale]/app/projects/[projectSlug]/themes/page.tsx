@@ -78,8 +78,9 @@ export default async function ThemesEditorPage({
           workspaceNavigation: t('workspace.navigationLabel'),
           themeNavigation: t('themes.navigationLabel'),
         }}
-        title={t('title', { projectName: pageData.project.name })}
+        title={t('workspaceTitle')}
         description={t('description')}
+        projectName={pageData.project.name}
         summary={t('themes.count', { count: themes.length })}
         themes={themes.map((theme) => ({
           id: theme.id,

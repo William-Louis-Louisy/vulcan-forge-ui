@@ -13,7 +13,7 @@ import {
   type SourceDataQualityIssue,
   type SourceDataQualityReport,
 } from '@/domain/generation/source-data-quality';
-import { Button } from '@/components/ui';
+import { Button, ProjectWorkspaceHeader } from '@/components/ui';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 import { CopyIcon, DownloadSimpleIcon } from '@phosphor-icons/react';
 import { useActionState, useMemo, useState } from 'react';
@@ -161,20 +161,12 @@ export function AiInstructionsGeneratorClient({
         data-ai-instructions-layout-slot="controls"
         className="border-border-subtle bg-background-app min-w-0 border-b p-4 md:p-6 xl:h-full xl:overflow-y-auto xl:border-r xl:border-b-0"
       >
-        <header>
-          <p className="text-action-primary text-[0.6875rem] font-semibold tracking-[0.16em] uppercase">
-            {t('eyebrow')}
-          </p>
-          <h1 className="mt-1 text-[26px] font-semibold tracking-[-0.015em]">
-            {workspaceLabels.pageTitle}
-          </h1>
-          <p className="text-content-tertiary mt-1 text-sm leading-6">
-            {t('description')}
-          </p>
-          <p className="text-content-secondary mt-3 text-xs font-semibold xl:hidden">
-            {aiInstructionsInput.project.name}
-          </p>
-        </header>
+        <ProjectWorkspaceHeader
+          eyebrow={t('eyebrow')}
+          title={workspaceLabels.pageTitle}
+          description={t('description')}
+          projectName={aiInstructionsInput.project.name}
+        />
 
         <div className="mt-6 flex flex-col gap-5">
           <LocaleControl
@@ -346,7 +338,10 @@ function LocaleControl({
             const isSelected = selectedLocale === locale;
 
             return (
-              <label key={locale} className="cursor-pointer">
+              <label
+                key={locale}
+                className="focus-within:outline-border-focus cursor-pointer rounded-sm focus-within:outline-2 focus-within:outline-offset-2"
+              >
                 <input
                   type="radio"
                   name="instructionsLocale"
@@ -357,7 +352,7 @@ function LocaleControl({
                 />
                 <span
                   className={[
-                    'focus-within:outline-border-focus flex min-h-9 items-center justify-center rounded-sm px-3 text-xs font-semibold transition focus-within:outline-2 focus-within:outline-offset-2',
+                    'flex min-h-9 items-center justify-center rounded-sm px-3 text-xs font-semibold transition',
                     isSelected
                       ? 'bg-content-primary text-background-app'
                       : 'text-content-secondary hover:text-content-primary',
@@ -418,7 +413,7 @@ function StrictnessControl({
             <label
               key={level}
               className={[
-                'flex cursor-pointer items-start gap-3 rounded-md border p-3 transition',
+                'focus-within:outline-border-focus flex cursor-pointer items-start gap-3 rounded-md border p-3 transition focus-within:outline-2 focus-within:outline-offset-2',
                 isSelected
                   ? 'border-action-primary bg-action-primary/5'
                   : 'border-border-subtle bg-surface-primary hover:border-border-strong',
@@ -481,7 +476,7 @@ function SectionsControl({
           return (
             <label
               key={section}
-              className="hover:bg-background-subtle flex min-h-11 cursor-pointer items-center justify-between gap-3 px-3 py-2 transition"
+              className="focus-within:outline-border-focus hover:bg-background-subtle flex min-h-11 cursor-pointer items-center justify-between gap-3 px-3 py-2 transition focus-within:outline-2 focus-within:outline-offset-[-2px]"
             >
               <span className="text-xs font-semibold">
                 {t(`controls.sections.options.${section}`)}

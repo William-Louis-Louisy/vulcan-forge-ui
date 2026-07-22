@@ -12,6 +12,9 @@ describe('export center workspace labels', () => {
     expect(getExportCenterWorkspaceLabels('fr').allFormatsAvailable).toContain(
       'disponibles',
     );
+    expect(getExportCenterWorkspaceLabels('fr').copyFailureLog).toContain(
+      'presse-papiers',
+    );
   });
 
   it('formats file size and character count for the selected locale', () => {
