@@ -34,8 +34,9 @@ import {
   type CreateTypographyTokenFormLabels,
 } from '../CreateTypographyTokenForm';
 import { useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import type { Locale } from '@/i18n/routing';
-import { ProjectWorkspaceHeader } from '@/components/ui';
+import { ProjectWorkspaceHeader, WorkspaceState } from '@/components/ui';
 import { TokenSetTabs } from './TokenSetTabs';
 import { TokenEditorToolbar } from './TokenEditorToolbar';
 
@@ -419,14 +420,15 @@ export function TokensEditorShell({
 }
 
 function EmptyTokenSetsState() {
+  const t = useTranslations('TokensEditorPage');
+
   return (
-    <div className="border-border-default bg-surface-primary shadow-soft rounded-3xl border border-dashed p-10 text-center">
-      <h2 className="text-2xl font-semibold tracking-tight">
-        No token sets found.
-      </h2>
-      <p className="text-content-secondary mx-auto mt-4 max-w-xl leading-7">
-        This project does not contain token sets yet.
-      </p>
-    </div>
+    <WorkspaceState
+      title={t('states.emptyTitle')}
+      description={t('states.emptyDescription')}
+      width="full"
+      dashed
+      className="shadow-soft"
+    />
   );
 }
