@@ -1,0 +1,33 @@
+name: Formatting diagnostics
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  diagnostics:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Capture formatting diagnostics
+        run: npm run format:check > format-report.txt 2>&1 || true
+
+      - name: Upload diagnostics
+        uses: actions/upload-artifact@v4
+        with:
+          name: format-report
+          path: format-report.txt
