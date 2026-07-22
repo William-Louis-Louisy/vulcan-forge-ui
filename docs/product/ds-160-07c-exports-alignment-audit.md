@@ -65,6 +65,19 @@ Unavailable mockup capabilities must not be presented as functional. Localized D
 
 The existing diagnostics remain available in a compact expandable panel tied to the selected output. Deprecated tokens remain excluded by default and can be included through a compact legacy-compatibility switch in the page header.
 
+## Visual QA refinements
+
+The first visual review added the following consistency requirements:
+
+- icon-only download actions use a `44px` hit area and an explicit `20px` icon size;
+- the preview rail body uses the sunken code surface while its header and footer use the elevated primary surface, with stronger separators;
+- the code preview applies lightweight format-aware syntax colors without adding a large highlighting dependency;
+- CSS custom-property names and Markdown/TypeScript identifiers use the product accent, while values use the success color;
+- desktop page headers do not repeat the project name already present in the project breadcrumb; the compact layout retains it for context;
+- file-extension badges receive subtle type colors: plum for CSS, blue for TypeScript and green for Markdown.
+
+The Documentation workspace follows the same responsive project-name rule so adjacent secondary pages keep a consistent header hierarchy.
+
 ## Acceptance targets
 
 - page follows the mockup's catalog + preview-rail structure;
@@ -76,6 +89,8 @@ The existing diagnostics remain available in a compact expandable panel tied to 
 - recent export logs remain visible and responsive;
 - file sizes and character counts are derived from current generated content;
 - locale-neutral and localized outputs are clearly distinguished;
+- code highlighting remains readable and preserves the exact generated source;
+- header, code body and metadata footer remain visually distinct;
 - loading and error states use the same workspace direction;
 - FR and EN remain complete;
 - targeted tests and `npm run quality` pass before merge.
