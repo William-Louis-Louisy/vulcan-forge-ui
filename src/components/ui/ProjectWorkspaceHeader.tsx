@@ -62,11 +62,9 @@ export function ProjectWorkspaceHeader({
           {description ? (
             <p
               className={[
-                'text-content-tertiary mt-1 max-w-3xl text-sm leading-6',
-                descriptionClassName,
-              ]
-                .filter(Boolean)
-                .join(' ')}
+                descriptionClassName ?? 'text-content-tertiary',
+                'mt-1 max-w-3xl text-sm leading-6',
+              ].join(' ')}
             >
               {description}
             </p>
