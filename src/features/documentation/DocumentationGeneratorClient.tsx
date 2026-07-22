@@ -192,7 +192,7 @@ export function DocumentationGeneratorClient({
           <p className="text-content-tertiary mt-1 text-sm leading-6">
             {t('description')}
           </p>
-          <p className="text-content-secondary mt-3 text-xs font-semibold">
+          <p className="text-content-secondary mt-3 text-xs font-semibold xl:hidden">
             {documentationInput.project.name}
           </p>
         </header>
