@@ -1,6 +1,7 @@
 export const accessibilityCenterMessages = {
   en: {
     AccessibilityCenterPage: {
+      workspaceTitle: 'Accessibility',
       description:
         'Review automated accessibility signals across tokens, components and themes, inspect detected issues and verify the configured contrast pairs.',
       issues: {
@@ -113,6 +114,7 @@ export const accessibilityCenterMessages = {
   },
   fr: {
     AccessibilityCenterPage: {
+      workspaceTitle: 'Accessibilité',
       description:
         'Analysez les signaux d’accessibilité automatisés des tokens, composants et thèmes, inspectez les problèmes détectés et vérifiez les contrastes configurés.',
       issues: {

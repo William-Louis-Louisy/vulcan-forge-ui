@@ -18,7 +18,7 @@ import type {
   ExportCenterLog,
 } from './export-center.queries';
 import { useLocale, useTranslations } from 'next-intl';
-import { Button } from '@/components/ui';
+import { Button, ProjectWorkspaceHeader } from '@/components/ui';
 import { useRouter } from '@/i18n/navigation';
 import type { AppLocale } from '@/domain/i18n';
 import { useMemo, useState, useTransition } from 'react';
@@ -347,7 +347,7 @@ export function ExportCenterClient({
       logExport({
         output,
         status: 'failed',
-        errorMessage: 'Unable to copy export content to clipboard.',
+        errorMessage: workspaceLabels.copyFailureLog,
       });
     }
   }
@@ -372,7 +372,7 @@ export function ExportCenterClient({
       logExport({
         output,
         status: 'failed',
-        errorMessage: 'Unable to download export content.',
+        errorMessage: workspaceLabels.downloadFailureLog,
       });
     }
   }
@@ -386,63 +386,56 @@ export function ExportCenterClient({
         data-export-layout-slot="catalog"
         className="bg-background-app min-w-0 px-4 py-5 md:px-6 md:py-6 xl:h-full xl:overflow-y-auto xl:px-8"
       >
-        <header className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-3">
-              <h1 className="text-[26px] font-semibold tracking-[-0.015em]">
-                {workspaceLabels.pageTitle}
-              </h1>
-              <span className="border-action-success/30 bg-action-success/10 text-action-success rounded-full border px-2.5 py-1 text-[0.6875rem] font-semibold">
-                {workspaceLabels.allFormatsAvailable}
-              </span>
-            </div>
-            <p className="text-content-tertiary mt-2 max-w-3xl text-sm leading-6">
-              {workspaceLabels.generatedFromModel}
-            </p>
-            <p className="text-content-secondary mt-2 text-xs font-semibold xl:hidden">
-              {exportCenterInput.project.name}
-            </p>
-          </div>
-
-          <label className="border-border-subtle bg-surface-primary flex max-w-sm cursor-pointer items-start gap-3 rounded-md border px-3 py-2.5">
-            <input
-              type="checkbox"
-              checked={includeDeprecated}
-              onChange={(event) => {
-                setIncludeDeprecated(event.currentTarget.checked);
-                setCopyStatus(null);
-                setLogStatus('idle');
-              }}
-              className="sr-only"
-            />
-            <span
-              aria-hidden="true"
-              className={[
-                'relative mt-0.5 h-5 w-9 shrink-0 rounded-full border transition',
-                includeDeprecated
-                  ? 'border-action-primary bg-action-primary'
-                  : 'border-border-default bg-background-subtle',
-              ].join(' ')}
-            >
-              <span
-                className={[
-                  'bg-action-primary-content absolute top-0.5 size-3.5 rounded-full transition-transform',
-                  includeDeprecated
-                    ? 'translate-x-[1.125rem]'
-                    : 'translate-x-0.5',
-                ].join(' ')}
+        <ProjectWorkspaceHeader
+          title={workspaceLabels.pageTitle}
+          description={workspaceLabels.generatedFromModel}
+          projectName={exportCenterInput.project.name}
+          status={
+            <span className="border-action-success/30 bg-action-success/10 text-action-success rounded-full border px-2.5 py-1 text-[0.6875rem] font-semibold">
+              {workspaceLabels.allFormatsAvailable}
+            </span>
+          }
+          actions={
+            <label className="border-border-subtle bg-surface-primary focus-within:outline-border-focus flex max-w-sm cursor-pointer items-start gap-3 rounded-md border px-3 py-2.5 focus-within:outline-2 focus-within:outline-offset-2">
+              <input
+                type="checkbox"
+                checked={includeDeprecated}
+                onChange={(event) => {
+                  setIncludeDeprecated(event.currentTarget.checked);
+                  setCopyStatus(null);
+                  setLogStatus('idle');
+                }}
+                className="sr-only"
               />
-            </span>
-            <span className="min-w-0">
-              <span className="block text-xs font-semibold">
-                {workspaceLabels.includeDeprecated}
+              <span
+                aria-hidden="true"
+                className={[
+                  'relative mt-0.5 h-5 w-9 shrink-0 rounded-full border transition',
+                  includeDeprecated
+                    ? 'border-action-primary bg-action-primary'
+                    : 'border-border-default bg-background-subtle',
+                ].join(' ')}
+              >
+                <span
+                  className={[
+                    'bg-action-primary-content absolute top-0.5 size-3.5 rounded-full transition-transform',
+                    includeDeprecated
+                      ? 'translate-x-[1.125rem]'
+                      : 'translate-x-0.5',
+                  ].join(' ')}
+                />
               </span>
-              <span className="text-content-tertiary mt-1 block text-xs leading-5">
-                {workspaceLabels.includeDeprecatedDescription}
+              <span className="min-w-0">
+                <span className="block text-xs font-semibold">
+                  {workspaceLabels.includeDeprecated}
+                </span>
+                <span className="text-content-tertiary mt-1 block text-xs leading-5">
+                  {workspaceLabels.includeDeprecatedDescription}
+                </span>
               </span>
-            </span>
-          </label>
-        </header>
+            </label>
+          }
+        />
 
         <section
           aria-label={t('controls.format.legend')}

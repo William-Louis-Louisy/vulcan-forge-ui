@@ -20,7 +20,9 @@ describe('ProjectWorkspaceHeader', () => {
     ).toBeInTheDocument();
     expect(screen.getByText('Workspace')).toBeInTheDocument();
     expect(screen.getByText('Ready')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Download' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Download' }),
+    ).toBeInTheDocument();
     expect(screen.getByText('Atlas')).toHaveClass('xl:hidden');
   });
 
@@ -33,10 +35,9 @@ describe('ProjectWorkspaceHeader', () => {
       />,
     );
 
-    expect(container.querySelector('[data-project-workspace-header]')).toHaveClass(
-      'border-b',
-      'bg-background-app',
-    );
+    expect(
+      container.querySelector('[data-project-workspace-header]'),
+    ).toHaveClass('border-b', 'bg-background-app');
     expect(
       screen.getByRole('navigation', { name: 'Token categories' }),
     ).toBeInTheDocument();

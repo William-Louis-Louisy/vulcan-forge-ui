@@ -35,6 +35,7 @@ import {
 } from '../CreateTypographyTokenForm';
 import { useMemo, useState } from 'react';
 import type { Locale } from '@/i18n/routing';
+import { ProjectWorkspaceHeader } from '@/components/ui';
 import { TokenSetTabs } from './TokenSetTabs';
 import { TokenEditorToolbar } from './TokenEditorToolbar';
 
@@ -69,6 +70,7 @@ export type TokenSetEditorViewModel = TokenSetListPanelViewModel;
 type TokensEditorShellProps = {
   locale: Locale;
   projectSlug: string;
+  projectName: string;
   tokenSets: TokenSetEditorViewModel[];
   initialActiveTokenSetType: TokenSetType;
   initialSelectedTokenPath: string | null;
@@ -79,6 +81,7 @@ type TokensEditorShellProps = {
 export function TokensEditorShell({
   locale,
   projectSlug,
+  projectName,
   tokenSets,
   initialActiveTokenSetType,
   initialSelectedTokenPath,
@@ -256,25 +259,17 @@ export function TokensEditorShell({
   return (
     <div className="flex h-full min-h-0 flex-col overflow-y-auto xl:grid xl:grid-cols-[minmax(0,1fr)_26rem] xl:overflow-hidden">
       <div className="flex min-w-0 flex-col xl:min-h-0 xl:overflow-hidden">
-        <header className="border-border-subtle shrink-0 border-b px-4 pt-4 md:px-6 xl:px-7 xl:pt-5">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-            <div>
-              <h1 className="text-[26px] font-semibold tracking-[-0.015em]">
-                {labels.header.title}
-              </h1>
-
-              <p
-                className={[
-                  'mt-1 text-sm',
-                  hasMissingEnglishDescriptions
-                    ? 'text-action-warning'
-                    : 'text-content-tertiary',
-                ].join(' ')}
-              >
-                {labels.header.summary}
-              </p>
-            </div>
-
+        <ProjectWorkspaceHeader
+          variant="bar"
+          title={labels.header.title}
+          description={labels.header.summary}
+          descriptionClassName={
+            hasMissingEnglishDescriptions
+              ? 'text-action-warning'
+              : 'text-content-tertiary'
+          }
+          projectName={projectName}
+          actions={
             <TokenEditorToolbar
               searchLabel={labels.toolbar.searchLabel}
               searchPlaceholder={labels.toolbar.searchPlaceholder}
@@ -290,9 +285,8 @@ export function TokensEditorShell({
               onNewTokenClick={handleNewTokenClick}
               onSearchChange={handleSearchChange}
             />
-          </div>
-
-          <div className="mt-4">
+          }
+          footer={
             <TokenSetTabs
               label={labels.tabs.label}
               activeTokenSetType={activeTokenSetType}
@@ -300,8 +294,8 @@ export function TokensEditorShell({
               tokenSetCounts={tokenSetCounts}
               onTokenSetChange={handleTokenSetChange}
             />
-          </div>
-        </header>
+          }
+        />
 
         <div className="flex min-h-0 flex-col py-4 md:px-6 xl:flex-1 xl:overflow-hidden xl:px-7">
           {createTokenFormType === 'color' ? (

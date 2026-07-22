@@ -1,5 +1,9 @@
 import { auth } from '@/auth';
-import { ColorValueSwatch, Notice } from '@/components/ui';
+import {
+  ColorValueSwatch,
+  Notice,
+  ProjectWorkspaceHeader,
+} from '@/components/ui';
 import { hasLocale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
@@ -74,26 +78,18 @@ export default async function AccessibilityCenterPage({
         projectSlug={pageData.project.slug}
         issues={report.issues}
         header={
-          <header className="border-border-subtle bg-background-app shrink-0 border-b px-4 py-4 md:px-6 xl:px-7 xl:py-5">
-            <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-              <div className="min-w-0">
-                <p className="text-action-primary text-[0.6875rem] font-semibold tracking-[0.16em] uppercase">
-                  {t('eyebrow')}
-                </p>
-                <h1 className="mt-1 text-[26px] font-semibold tracking-[-0.015em]">
-                  {t('title', { projectName: pageData.project.name })}
-                </h1>
-                <p className="text-content-tertiary mt-1 max-w-3xl text-sm leading-6">
-                  {t('description')}
-                </p>
-              </div>
-
+          <ProjectWorkspaceHeader
+            variant="bar"
+            title={t('workspaceTitle')}
+            description={t('description')}
+            projectName={pageData.project.name}
+            actions={
               <SaveAccessibilityReportButton
                 locale={locale}
                 projectSlug={pageData.project.slug}
               />
-            </div>
-          </header>
+            }
+          />
         }
         beforeIssues={
           <div className="grid min-w-0 gap-4">

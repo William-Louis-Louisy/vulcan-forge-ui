@@ -1,6 +1,7 @@
 export const themeEditorMessages = {
   en: {
     ThemesEditorPage: {
+      workspaceTitle: 'Themes',
       description:
         'Map existing color tokens to light and dark theme roles, preview core components and review WCAG contrast.',
       workspace: {
@@ -40,6 +41,7 @@ export const themeEditorMessages = {
   },
   fr: {
     ThemesEditorPage: {
+      workspaceTitle: 'Thèmes',
       description:
         'Associez les tokens couleur existants aux rôles des thèmes clair et sombre, prévisualisez les composants principaux et vérifiez les contrastes WCAG.',
       workspace: {
