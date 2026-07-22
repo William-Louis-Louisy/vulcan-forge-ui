@@ -11,18 +11,25 @@ export default function AiInstructionsGeneratorError({
   const t = useTranslations('AiInstructionsGeneratorPage');
 
   return (
-    <section className="border-action-danger/30 bg-action-danger/10 shadow-soft mx-auto max-w-3xl rounded-3xl border p-8">
-      <h2 className="text-action-danger text-2xl font-semibold tracking-tight">
-        {t('states.errorTitle')}
-      </h2>
+    <section className="min-h-0 xl:absolute xl:inset-0 xl:h-auto xl:overflow-hidden">
+      <div className="min-h-0 min-w-0 xl:grid xl:h-full xl:grid-cols-[20rem_minmax(0,1fr)] xl:overflow-hidden 2xl:grid-cols-[22rem_minmax(0,1fr)]">
+        <aside className="border-border-subtle bg-background-app min-w-0 border-b p-4 md:p-6 xl:h-full xl:border-r xl:border-b-0">
+          <p className="text-action-primary text-[0.6875rem] font-semibold tracking-[0.16em] uppercase">
+            {t('eyebrow')}
+          </p>
+          <h1 className="mt-1 text-[26px] font-semibold tracking-[-0.015em]">
+            {t('states.errorTitle')}
+          </h1>
+          <p className="text-content-tertiary mt-3 text-sm leading-6">
+            {t('states.errorDescription')}
+          </p>
+          <Button type="button" className="mt-5 w-full" onClick={reset}>
+            {t('states.retry')}
+          </Button>
+        </aside>
 
-      <p className="text-content-secondary mt-4 text-sm leading-6">
-        {t('states.errorDescription')}
-      </p>
-
-      <Button type="button" className="mt-6" onClick={reset}>
-        {t('states.retry')}
-      </Button>
+        <section className="border-border-subtle bg-background-sunken min-h-[32rem] border-t xl:h-full xl:min-h-0 xl:border-t-0" />
+      </div>
     </section>
   );
 }
