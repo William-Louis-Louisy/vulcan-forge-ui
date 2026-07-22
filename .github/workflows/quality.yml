@@ -42,72 +42,20 @@ jobs:
       - name: Format alignment files
         run: npm run format
 
-      - name: Restore standard workflow
-        run: |
-          cat > .github/workflows/quality.yml <<'YAML'
-          name: Quality
-
-          on:
-            pull_request:
-              branches:
-                - main
-            push:
-              branches:
-                - main
-
-          concurrency:
-            group: quality-${{ github.workflow }}-${{ github.ref }}
-            cancel-in-progress: true
-
-          jobs:
-            quality:
-              name: Quality checks
-              runs-on: ubuntu-latest
-              timeout-minutes: 10
-
-              permissions:
-                contents: read
-
-              env:
-                DATABASE_URL: postgresql://vulcan:vulcan_dev_password@localhost:5432/vulcan_forge_ui?schema=public
-
-              steps:
-                - name: Checkout repository
-                  uses: actions/checkout@v6
-
-                - name: Setup Node.js
-                  uses: actions/setup-node@v4
-                  with:
-                    node-version-file: '.nvmrc'
-                    cache: npm
-
-                - name: Install dependencies
-                  run: npm ci
-
-                - name: Generate Prisma Client
-                  run: npm run db:generate
-
-                - name: Run lint
-                  run: npm run lint
-
-                - name: Run typecheck
-                  run: npm run typecheck
-
-                - name: Check formatting
-                  run: npm run format:check
-
-                - name: Run tests
-                  run: npm run test
-
-                - name: Build application
-                  run: npm run build
-          YAML
-
       - name: Commit formatting
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
+          git add \
+            'src/app/[locale]/app/projects/[projectSlug]/ai-instructions/error.tsx' \
+            'src/app/[locale]/app/projects/[projectSlug]/ai-instructions/loading.tsx' \
+            'src/app/[locale]/app/projects/[projectSlug]/ai-instructions/page.tsx' \
+            src/features/ai-instructions/AiInstructionsCodePreview.test.tsx \
+            src/features/ai-instructions/AiInstructionsCodePreview.tsx \
+            src/features/ai-instructions/AiInstructionsGeneratorClient.tsx \
+            src/features/ai-instructions/ai-instructions-workspace-labels.test.ts \
+            src/features/ai-instructions/ai-instructions-workspace-labels.ts \
+            docs/product/ds-160-07d-ai-instructions-alignment-audit.md
           if git diff --cached --quiet; then
             echo "No formatting changes to commit."
           else
