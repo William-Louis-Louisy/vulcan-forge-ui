@@ -30,8 +30,7 @@ export function getAiInstructionsWorkspaceLabels(
       upToDate: 'À jour',
       generatedFromModel:
         'Les instructions sont générées depuis le modèle validé. Toute suggestion produite par une IA doit être relue avant utilisation.',
-      singleLocaleDescription:
-        'C’est la seule langue activée pour ce projet.',
+      singleLocaleDescription: 'C’est la seule langue activée pour ce projet.',
       diagnostics: 'Diagnostics de génération',
       diagnosticsDescription:
         'Vérifiez la complétude des sources et les fallbacks de traduction.',

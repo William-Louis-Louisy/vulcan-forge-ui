@@ -436,9 +436,7 @@ function StrictnessControl({
                 aria-hidden="true"
                 className={[
                   'mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full border',
-                  isSelected
-                    ? 'border-action-primary'
-                    : 'border-border-strong',
+                  isSelected ? 'border-action-primary' : 'border-border-strong',
                 ].join(' ')}
               >
                 {isSelected ? (
@@ -506,9 +504,7 @@ function SectionsControl({
                 <span
                   className={[
                     'bg-action-primary-content absolute top-0.5 size-3.5 rounded-full transition-transform',
-                    isSelected
-                      ? 'translate-x-[1.125rem]'
-                      : 'translate-x-0.5',
+                    isSelected ? 'translate-x-[1.125rem]' : 'translate-x-0.5',
                   ].join(' ')}
                 />
               </span>
@@ -577,13 +573,19 @@ function PreferencesForm({
       </div>
 
       {state.status === 'success' ? (
-        <p role="status" className="text-action-success mt-3 text-xs font-semibold">
+        <p
+          role="status"
+          className="text-action-success mt-3 text-xs font-semibold"
+        >
           {t('preferences.success')}
         </p>
       ) : null}
 
       {state.formError ? (
-        <p role="alert" className="text-action-danger mt-3 text-xs font-semibold">
+        <p
+          role="alert"
+          className="text-action-danger mt-3 text-xs font-semibold"
+        >
           {t(`preferences.errors.${state.formError}`)}
         </p>
       ) : null}
@@ -607,7 +609,9 @@ function GenerationDiagnosticsPanel({
     <details className="border-border-subtle bg-surface-primary rounded-md border">
       <summary className="hover:bg-background-subtle flex cursor-pointer list-none items-start justify-between gap-3 rounded-md p-3 transition">
         <span className="min-w-0">
-          <span className="block text-xs font-semibold">{labels.diagnostics}</span>
+          <span className="block text-xs font-semibold">
+            {labels.diagnostics}
+          </span>
           <span className="text-content-tertiary mt-1 block text-xs leading-5">
             {labels.diagnosticsDescription}
           </span>
