@@ -19,14 +19,16 @@ jobs:
     timeout-minutes: 10
 
     permissions:
-      contents: read
+      contents: write
 
     env:
       DATABASE_URL: postgresql://vulcan:vulcan_dev_password@localhost:5432/vulcan_forge_ui?schema=public
 
     steps:
-      - name: Checkout repository
+      - name: Checkout feature branch
         uses: actions/checkout@v6
+        with:
+          ref: ${{ github.head_ref }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -36,6 +38,24 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Apply global UI QA migration
+        run: node scripts/apply-ds-160-08-global-ui-qa.mjs
+
+      - name: Format migration
+        run: npm run format
+
+      - name: Commit migration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No migration changes to commit."
+          else
+            git commit -m "refactor(ui): harmonize project workspace headers"
+            git push origin HEAD:${{ github.head_ref }}
+          fi
 
       - name: Generate Prisma Client
         run: npm run db:generate
