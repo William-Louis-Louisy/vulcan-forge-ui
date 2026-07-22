@@ -261,7 +261,7 @@ export function TokenPreviewSwatch({
   primitiveColorAliasOptions,
 }: {
   row: TokenRowData;
-  primitiveColorAliasOptions: PrimitiveColorAliasOption[];
+  primitiveColorAliasOptions: PrimitiveColorTokenAliasOption[];
 }) {
   const value = String(row.value);
   const reference = row.reference ?? value;
