@@ -7,17 +7,23 @@ export default function AiInstructionsGeneratorLoading() {
 
   return (
     <section className="min-h-0 xl:absolute xl:inset-0 xl:h-auto xl:overflow-hidden">
-      <div className="min-h-0 min-w-0 xl:grid xl:h-full xl:grid-cols-[20rem_minmax(0,1fr)] xl:overflow-hidden 2xl:grid-cols-[22rem_minmax(0,1fr)]">
+      <p className="sr-only" role="status">
+        {t('states.loading')}
+      </p>
+
+      <div
+        aria-hidden="true"
+        className="min-h-0 min-w-0 xl:grid xl:h-full xl:grid-cols-[20rem_minmax(0,1fr)] xl:overflow-hidden 2xl:grid-cols-[22rem_minmax(0,1fr)]"
+      >
         <aside className="border-border-subtle bg-background-app min-w-0 border-b p-4 md:p-6 xl:h-full xl:border-r xl:border-b-0">
-          <p className="text-action-primary text-[0.6875rem] font-semibold tracking-[0.16em] uppercase">
-            {t('states.loading')}
-          </p>
-          <div className="mt-3 grid gap-3">
-            <div className="bg-background-subtle h-8 animate-pulse rounded-sm" />
-            <div className="bg-background-subtle h-16 animate-pulse rounded-sm" />
-            <div className="bg-background-subtle h-28 animate-pulse rounded-sm" />
-            <div className="bg-background-subtle h-44 animate-pulse rounded-sm" />
-            <div className="bg-background-subtle h-20 animate-pulse rounded-sm" />
+          <div className="bg-background-subtle h-3 w-28 animate-pulse rounded-md" />
+          <div className="bg-background-subtle mt-2 h-8 w-48 animate-pulse rounded-md" />
+          <div className="bg-background-subtle mt-3 h-14 animate-pulse rounded-md" />
+          <div className="mt-6 grid gap-5">
+            <div className="bg-surface-primary h-24 animate-pulse rounded-md" />
+            <div className="bg-surface-primary h-48 animate-pulse rounded-md" />
+            <div className="bg-surface-primary h-52 animate-pulse rounded-md" />
+            <div className="bg-surface-primary h-20 animate-pulse rounded-md" />
           </div>
         </aside>
 
