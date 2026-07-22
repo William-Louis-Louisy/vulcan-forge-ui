@@ -23,11 +23,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Capture formatting diagnostics
-        run: npm run format:check > format-report.txt 2>&1 || true
+      - name: Format workspace state
+        run: npx prettier src/components/ui/WorkspaceState.tsx --write
 
-      - name: Upload diagnostics
+      - name: Upload formatted source
         uses: actions/upload-artifact@v4
         with:
-          name: format-report
-          path: format-report.txt
+          name: formatted-workspace-state
+          path: src/components/ui/WorkspaceState.tsx
