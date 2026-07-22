@@ -564,7 +564,7 @@ export function ExportCenterClient({
                     title={t('actions.download')}
                     disabled={isLoggingExport}
                     onClick={() => downloadExportContent(output)}
-                    className="size-11 px-0"
+                    className="size-9 px-0"
                   >
                     <DownloadSimpleIcon
                       aria-hidden="true"
@@ -660,7 +660,7 @@ export function ExportCenterClient({
               title={t('actions.download')}
               disabled={isLoggingExport}
               onClick={() => downloadExportContent(selectedOutput)}
-              className="size-11 px-0"
+              className="size-9 px-0"
             >
               <DownloadSimpleIcon
                 aria-hidden="true"

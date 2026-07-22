@@ -69,7 +69,7 @@ The existing diagnostics remain available in a compact expandable panel tied to 
 
 The first visual review added the following consistency requirements:
 
-- icon-only download actions use a `44px` hit area and an explicit `20px` icon size;
+- icon-only download actions use a compact `36px` control with an explicit `20px` icon size, matching adjacent secondary actions;
 - the preview rail body uses the sunken code surface while its header and footer use the elevated primary surface, with stronger separators;
 - the code preview applies lightweight format-aware syntax colors without adding a large highlighting dependency;
 - CSS custom-property names and Markdown/TypeScript identifiers use the product accent, while values use the success color;
