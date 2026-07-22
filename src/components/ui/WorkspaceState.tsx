@@ -6,8 +6,7 @@ export type WorkspaceStateWidth = 'md' | 'lg' | 'full';
 
 const toneClassNames: Record<WorkspaceStateTone, string> = {
   default: 'border-border-default bg-surface-primary text-content-primary',
-  warning:
-    'border-action-warning/30 bg-action-warning/10 text-content-primary',
+  warning: 'border-action-warning/30 bg-action-warning/10 text-content-primary',
   danger: 'border-action-danger/30 bg-action-danger/10 text-content-primary',
 };
 
