@@ -19,16 +19,14 @@ jobs:
     timeout-minutes: 10
 
     permissions:
-      contents: write
+      contents: read
 
     env:
       DATABASE_URL: postgresql://vulcan:vulcan_dev_password@localhost:5432/vulcan_forge_ui?schema=public
 
     steps:
-      - name: Checkout feature branch
+      - name: Checkout repository
         uses: actions/checkout@v6
-        with:
-          ref: ${{ github.head_ref }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -38,27 +36,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Apply compact icon sizing
-        run: node scripts/apply-export-icon-button-size.mjs
-
-      - name: Format changed files
-        run: npx prettier src/features/exports/ExportCenterClient.tsx docs/product/ds-160-07c-exports-alignment-audit.md --write
-
-      - name: Commit sizing refinement
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add \
-            src/features/exports/ExportCenterClient.tsx \
-            docs/product/ds-160-07c-exports-alignment-audit.md \
-            scripts/apply-export-icon-button-size.mjs
-          if git diff --cached --quiet; then
-            echo "No generated changes to commit."
-          else
-            git commit -m "fix(exports): compact icon-only actions"
-            git push origin HEAD:${{ github.head_ref }}
-          fi
 
       - name: Generate Prisma Client
         run: npm run db:generate
