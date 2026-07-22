@@ -26,7 +26,7 @@ describe('ProjectWorkspaceHeader', () => {
     expect(screen.getByText('Atlas')).toHaveClass('xl:hidden');
   });
 
-  it('exposes the standard bar surface and footer slot', () => {
+  it('keeps footer navigation attached to the standard bar separator', () => {
     const { container } = render(
       <ProjectWorkspaceHeader
         variant="bar"
@@ -34,10 +34,14 @@ describe('ProjectWorkspaceHeader', () => {
         footer={<nav aria-label="Token categories" />}
       />,
     );
+    const header = container.querySelector('[data-project-workspace-header]');
 
-    expect(
-      container.querySelector('[data-project-workspace-header]'),
-    ).toHaveClass('border-b', 'bg-background-app');
+    expect(header).toHaveClass(
+      'border-b',
+      'bg-background-app',
+      'pt-4',
+    );
+    expect(header).not.toHaveClass('py-4');
     expect(
       screen.getByRole('navigation', { name: 'Token categories' }),
     ).toBeInTheDocument();
