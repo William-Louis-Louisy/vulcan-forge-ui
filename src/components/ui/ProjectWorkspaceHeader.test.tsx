@@ -36,11 +36,7 @@ describe('ProjectWorkspaceHeader', () => {
     );
     const header = container.querySelector('[data-project-workspace-header]');
 
-    expect(header).toHaveClass(
-      'border-b',
-      'bg-background-app',
-      'pt-4',
-    );
+    expect(header).toHaveClass('border-b', 'bg-background-app', 'pt-4');
     expect(header).not.toHaveClass('py-4');
     expect(
       screen.getByRole('navigation', { name: 'Token categories' }),

@@ -32,10 +32,7 @@ export function ProjectWorkspaceHeader({
   return (
     <header
       data-project-workspace-header
-      className={[
-        variant === 'bar' ? barClassName : '',
-        className,
-      ]
+      className={[variant === 'bar' ? barClassName : '', className]
         .filter(Boolean)
         .join(' ')}
     >

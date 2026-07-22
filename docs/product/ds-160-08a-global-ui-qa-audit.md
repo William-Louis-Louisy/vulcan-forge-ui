@@ -36,14 +36,14 @@ The component deliberately does not encode page-specific actions, status colors 
 
 ## Adoption matrix
 
-| Workspace | Header use | Context retained |
-| --- | --- | --- |
-| Tokens | bar + toolbar + token-set tabs | warning summary and search/create actions |
-| Themes | bar + theme count + theme tabs | responsive editor/preview navigation |
-| Accessibility | bar + save action | validation content and issue-detail rail |
-| Documentation | embedded in configuration column | eyebrow and compact project name |
-| Exports | embedded in catalog | availability status and legacy switch |
-| AI Instructions | embedded in configuration column | eyebrow and compact project name |
+| Workspace       | Header use                       | Context retained                          |
+| --------------- | -------------------------------- | ----------------------------------------- |
+| Tokens          | bar + toolbar + token-set tabs   | warning summary and search/create actions |
+| Themes          | bar + theme count + theme tabs   | responsive editor/preview navigation      |
+| Accessibility   | bar + save action                | validation content and issue-detail rail  |
+| Documentation   | embedded in configuration column | eyebrow and compact project name          |
+| Exports         | embedded in catalog              | availability status and legacy switch     |
+| AI Instructions | embedded in configuration column | eyebrow and compact project name          |
 
 Components keeps its dedicated registry/editor/preview navigation in this substep. Its three-panel shell does not expose the same page-header contract and should not be forced into the abstraction without a separate layout decision.
 
