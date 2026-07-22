@@ -12,3 +12,5 @@ export { Card } from './Card';
 export type { CardProps } from './Card';
 export { Panel } from './Panel';
 export type { PanelProps } from './Panel';
+export { ProjectWorkspaceHeader } from './ProjectWorkspaceHeader';
+export type { ProjectWorkspaceHeaderProps } from './ProjectWorkspaceHeader';
