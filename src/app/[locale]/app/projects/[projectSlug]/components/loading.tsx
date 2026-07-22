@@ -11,13 +11,19 @@ export default function ComponentsRegistryLoading() {
         {t('states.loading')}
       </p>
 
-      <div className="border-border-subtle bg-background-app grid grid-cols-3 gap-1 border-b p-2 lg:hidden">
+      <div
+        aria-hidden="true"
+        className="border-border-subtle bg-background-app grid grid-cols-3 gap-1 border-b p-2 lg:hidden"
+      >
         <div className="bg-background-subtle h-9 animate-pulse rounded-md" />
         <div className="bg-content-primary/15 h-9 animate-pulse rounded-md" />
         <div className="bg-background-subtle h-9 animate-pulse rounded-md" />
       </div>
 
-      <div className="min-h-0 flex-1 lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] xl:h-full xl:grid-cols-[16rem_minmax(0,48rem)_minmax(24rem,1fr)] xl:overflow-hidden">
+      <div
+        aria-hidden="true"
+        className="min-h-0 flex-1 lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] xl:h-full xl:grid-cols-[16rem_minmax(0,48rem)_minmax(24rem,1fr)] xl:overflow-hidden"
+      >
         <aside className="border-border-subtle hidden min-h-0 min-w-0 border-b p-3 sm:p-4 lg:row-span-2 lg:block lg:border-r lg:border-b-0 xl:row-span-1 xl:h-full xl:overflow-hidden">
           <div className="flex items-center justify-between gap-3">
             <div className="bg-background-subtle h-5 w-24 animate-pulse rounded-md" />

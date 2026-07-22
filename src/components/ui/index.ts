@@ -14,3 +14,10 @@ export { Panel } from './Panel';
 export type { PanelProps } from './Panel';
 export { ProjectWorkspaceHeader } from './ProjectWorkspaceHeader';
 export type { ProjectWorkspaceHeaderProps } from './ProjectWorkspaceHeader';
+export { WorkspaceState } from './WorkspaceState';
+export type {
+  WorkspaceStateAlignment,
+  WorkspaceStateProps,
+  WorkspaceStateTone,
+  WorkspaceStateWidth,
+} from './WorkspaceState';

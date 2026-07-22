@@ -6,6 +6,7 @@ import {
   type TokenRowData,
   type TokenSetType,
 } from '../tokens-editor.utils';
+import { WorkspaceState } from '@/components/ui';
 
 export type TokenSetListPanelLabels = {
   invalidTokensTitle: string;
@@ -69,7 +70,6 @@ function createTokenGroups({
       row,
       labels,
     });
-
     const existingGroup = groupMap.get(groupInfo.id);
 
     if (existingGroup) {
@@ -155,15 +155,14 @@ export function TokenSetListPanel({
 }: TokenSetListPanelProps) {
   if (!tokenSet.isReadable) {
     return (
-      <div className="border-action-danger/30 bg-action-danger/10 shadow-soft rounded-3xl border p-8">
-        <h2 className="text-action-danger text-2xl font-semibold tracking-tight">
-          {labels.invalidTokensTitle}
-        </h2>
-
-        <p className="text-content-secondary mt-3 max-w-2xl text-sm leading-6">
-          {labels.invalidTokensDescription}
-        </p>
-      </div>
+      <WorkspaceState
+        title={labels.invalidTokensTitle}
+        description={labels.invalidTokensDescription}
+        tone="danger"
+        align="start"
+        width="full"
+        className="shadow-soft"
+      />
     );
   }
 
@@ -244,15 +243,13 @@ export function TokenSetListPanel({
         </div>
       ) : (
         <div className="p-4 xl:min-h-0 xl:flex-1 xl:overflow-y-auto">
-          <div className="border-border-default rounded-2xl border border-dashed p-6 text-center">
-            <h3 className="text-lg font-semibold tracking-tight">
-              {labels.emptySearchTitle}
-            </h3>
-
-            <p className="text-content-secondary mx-auto mt-2 max-w-xl text-sm leading-6">
-              {labels.emptySearchDescription}
-            </p>
-          </div>
+          <WorkspaceState
+            title={labels.emptySearchTitle}
+            description={labels.emptySearchDescription}
+            width="full"
+            headingLevel={3}
+            dashed
+          />
         </div>
       )}
     </div>

@@ -1,29 +1,26 @@
 'use client';
 
+import { Button, WorkspaceState } from '@/components/ui';
 import { useTranslations } from 'next-intl';
-import { Button } from '@/components/ui';
 
-export default function TokensEditorError({
-  reset,
-}: {
-  error: Error;
-  reset: () => void;
-}) {
+export default function TokensEditorError({ reset }: { reset: () => void }) {
   const t = useTranslations('TokensEditorPage');
 
   return (
-    <section className="border-action-danger/30 bg-action-danger/10 shadow-soft mx-auto max-w-3xl rounded-3xl border p-8">
-      <h2 className="text-action-danger text-2xl font-semibold tracking-tight">
-        {t('states.errorTitle')}
-      </h2>
-
-      <p className="text-content-secondary mt-4 text-sm leading-6">
-        {t('states.errorDescription')}
-      </p>
-
-      <Button type="button" className="mt-6" onClick={reset}>
-        {t('states.retry')}
-      </Button>
+    <section className="flex min-h-80 items-center justify-center p-4 md:p-6 xl:absolute xl:inset-0 xl:min-h-0">
+      <WorkspaceState
+        role="alert"
+        tone="danger"
+        align="start"
+        headingLevel={1}
+        title={t('states.errorTitle')}
+        description={t('states.errorDescription')}
+        action={
+          <Button type="button" size="sm" onClick={reset}>
+            {t('states.retry')}
+          </Button>
+        }
+      />
     </section>
   );
 }
