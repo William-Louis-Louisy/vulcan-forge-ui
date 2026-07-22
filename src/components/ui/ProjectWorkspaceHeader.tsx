@@ -25,13 +25,15 @@ export function ProjectWorkspaceHeader({
   variant = 'embedded',
   className,
 }: ProjectWorkspaceHeaderProps) {
+  const barClassName = footer
+    ? 'border-border-subtle bg-background-app shrink-0 border-b px-4 pt-4 md:px-6 xl:px-7 xl:pt-5'
+    : 'border-border-subtle bg-background-app shrink-0 border-b px-4 py-4 md:px-6 xl:px-7 xl:py-5';
+
   return (
     <header
       data-project-workspace-header
       className={[
-        variant === 'bar'
-          ? 'border-border-subtle bg-background-app shrink-0 border-b px-4 py-4 md:px-6 xl:px-7 xl:py-5'
-          : '',
+        variant === 'bar' ? barClassName : '',
         className,
       ]
         .filter(Boolean)
