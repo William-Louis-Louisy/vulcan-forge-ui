@@ -1,7 +1,6 @@
 import { auth } from '@/auth';
 import { hasLocale } from 'next-intl';
 import type { AppLocale } from '@/domain/i18n';
-import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
 import { routing, type Locale } from '@/i18n/routing';
 import { AiInstructionsGeneratorClient } from '@/features/ai-instructions/AiInstructionsGeneratorClient';
@@ -30,8 +29,6 @@ export default async function AiInstructionsGeneratorPage({
     redirect(`/${locale}/login`);
   }
 
-  const t = await getTranslations('AiInstructionsGeneratorPage');
-
   const pageData = await getAiInstructionsGeneratorPageData({
     userId: session.user.id,
     projectSlug,
@@ -48,23 +45,7 @@ export default async function AiInstructionsGeneratorPage({
     : pageData.fallbackLocale;
 
   return (
-    <section className="mx-auto max-w-7xl">
-      <div className="mt-8">
-        <p className="text-action-primary text-sm font-semibold tracking-[0.24em] uppercase">
-          {t('eyebrow')}
-        </p>
-
-        <h1 className="mt-4 text-4xl font-semibold tracking-tight">
-          {t('title', {
-            projectName: pageData.aiInstructionsInput.project.name,
-          })}
-        </h1>
-
-        <p className="text-content-secondary mt-4 max-w-3xl">
-          {t('description')}
-        </p>
-      </div>
-
+    <section className="min-h-0 xl:absolute xl:inset-0 xl:h-auto xl:overflow-hidden">
       <AiInstructionsGeneratorClient
         projectSlug={pageData.projectSlug}
         initialProfile={{
