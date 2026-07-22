@@ -16,6 +16,7 @@ function renderWorkspace() {
       labels={labels}
       title="Themes"
       description="Map theme roles and review contrast."
+      projectName="Atlas"
       summary="2 themes"
       themes={[
         {
@@ -121,6 +122,7 @@ describe('ThemesResponsiveWorkspace', () => {
         labels={labels}
         title="Themes"
         description="Map theme roles and review contrast."
+        projectName="Atlas"
         summary="No theme"
         themes={[]}
         emptyState={<p>No themes available</p>}
