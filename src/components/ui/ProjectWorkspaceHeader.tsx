@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 export type ProjectWorkspaceHeaderProps = {
   title: ReactNode;
   description?: ReactNode;
+  descriptionClassName?: string;
   eyebrow?: ReactNode;
   projectName?: ReactNode;
   status?: ReactNode;
@@ -15,6 +16,7 @@ export type ProjectWorkspaceHeaderProps = {
 export function ProjectWorkspaceHeader({
   title,
   description,
+  descriptionClassName,
   eyebrow,
   projectName,
   status,
@@ -58,7 +60,14 @@ export function ProjectWorkspaceHeader({
           </div>
 
           {description ? (
-            <p className="text-content-tertiary mt-1 max-w-3xl text-sm leading-6">
+            <p
+              className={[
+                'text-content-tertiary mt-1 max-w-3xl text-sm leading-6',
+                descriptionClassName,
+              ]
+                .filter(Boolean)
+                .join(' ')}
+            >
               {description}
             </p>
           ) : null}
