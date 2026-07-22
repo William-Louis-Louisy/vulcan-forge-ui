@@ -38,6 +38,7 @@ import {
   getExportCenterWorkspaceLabels,
   type ExportCenterWorkspaceLabels,
 } from './export-center-workspace-labels';
+import { ExportCodePreview } from './ExportCodePreview';
 
 type CopyStatus = {
   format: ExportCenterFormat;
@@ -67,6 +68,7 @@ type ExportCenterClientProps = {
 
 type FormatPresentation = {
   extension: 'CSS' | 'TS' | 'MD';
+  extensionClassName: string;
   platforms: string[];
 };
 
@@ -107,31 +109,43 @@ function getFormatPresentation({
     case 'cssVariables':
       return {
         extension: 'CSS',
+        extensionClassName:
+          'border-fuchsia-500/30 bg-fuchsia-500/10 text-fuchsia-700 dark:text-fuchsia-300',
         platforms: [labels.web],
       };
     case 'tailwindV4':
       return {
         extension: 'CSS',
+        extensionClassName:
+          'border-fuchsia-500/30 bg-fuchsia-500/10 text-fuchsia-700 dark:text-fuchsia-300',
         platforms: [labels.web, 'Tailwind 4+'],
       };
     case 'typescriptTheme':
       return {
         extension: 'TS',
+        extensionClassName:
+          'border-sky-500/30 bg-sky-500/10 text-sky-700 dark:text-sky-300',
         platforms: [labels.web, labels.sharedPackages],
       };
     case 'reactNativeTheme':
       return {
         extension: 'TS',
+        extensionClassName:
+          'border-sky-500/30 bg-sky-500/10 text-sky-700 dark:text-sky-300',
         platforms: ['iOS', 'Android'],
       };
     case 'documentationMarkdown':
       return {
         extension: 'MD',
+        extensionClassName:
+          'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
         platforms: [labels.documentation],
       };
     case 'aiInstructions':
       return {
         extension: 'MD',
+        extensionClassName:
+          'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
         platforms: [labels.artificialIntelligence],
       };
   }
@@ -385,7 +399,7 @@ export function ExportCenterClient({
             <p className="text-content-tertiary mt-2 max-w-3xl text-sm leading-6">
               {workspaceLabels.generatedFromModel}
             </p>
-            <p className="text-content-secondary mt-2 text-xs font-semibold">
+            <p className="text-content-secondary mt-2 text-xs font-semibold xl:hidden">
               {exportCenterInput.project.name}
             </p>
           </div>
@@ -461,7 +475,12 @@ export function ExportCenterClient({
                 <div className="flex min-h-32 flex-col p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex min-w-0 items-start gap-3">
-                      <span className="border-border-subtle bg-background-sunken flex size-9 shrink-0 items-center justify-center rounded-sm border font-mono text-[0.6875rem] font-semibold">
+                      <span
+                        className={[
+                          'flex size-9 shrink-0 items-center justify-center rounded-sm border font-mono text-[0.6875rem] font-semibold',
+                          presentation.extensionClassName,
+                        ].join(' ')}
+                      >
                         {presentation.extension}
                       </span>
                       <div className="min-w-0">
@@ -529,7 +548,12 @@ export function ExportCenterClient({
                     disabled={isLoggingExport}
                     onClick={() => void copyExportContent(output)}
                   >
-                    <CopyIcon aria-hidden="true" size={16} weight="bold" />
+                    <CopyIcon
+                      aria-hidden="true"
+                      size={18}
+                      weight="bold"
+                      className="size-[1.125rem] shrink-0"
+                    />
                     {t('actions.copy')}
                   </Button>
                   <Button
@@ -540,12 +564,13 @@ export function ExportCenterClient({
                     title={t('actions.download')}
                     disabled={isLoggingExport}
                     onClick={() => downloadExportContent(output)}
-                    className="size-9 px-0"
+                    className="size-11 px-0"
                   >
                     <DownloadSimpleIcon
                       aria-hidden="true"
-                      size={17}
+                      size={20}
                       weight="bold"
+                      className="size-5 shrink-0"
                     />
                   </Button>
                 </div>
@@ -599,9 +624,9 @@ export function ExportCenterClient({
 
       <aside
         data-export-layout-slot="preview"
-        className="border-border-subtle bg-background-sunken min-w-0 border-t xl:flex xl:h-full xl:min-h-0 xl:flex-col xl:overflow-hidden xl:border-t-0 xl:border-l"
+        className="border-border-subtle bg-background-app min-w-0 border-t xl:flex xl:h-full xl:min-h-0 xl:flex-col xl:overflow-hidden xl:border-t-0 xl:border-l"
       >
-        <header className="border-border-subtle bg-background-sunken sticky top-0 z-10 flex min-w-0 flex-col gap-3 border-b px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+        <header className="border-border-default bg-surface-primary sticky top-0 z-10 flex min-w-0 flex-col gap-3 border-b px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
             <p className="text-content-tertiary text-[0.625rem] font-semibold tracking-[0.14em] uppercase">
               {workspaceLabels.codePreview}
@@ -619,7 +644,12 @@ export function ExportCenterClient({
               disabled={isLoggingExport}
               onClick={() => void copyExportContent(selectedOutput)}
             >
-              <CopyIcon aria-hidden="true" size={16} weight="bold" />
+              <CopyIcon
+                aria-hidden="true"
+                size={18}
+                weight="bold"
+                className="size-[1.125rem] shrink-0"
+              />
               {t('actions.copy')}
             </Button>
             <Button
@@ -630,21 +660,29 @@ export function ExportCenterClient({
               title={t('actions.download')}
               disabled={isLoggingExport}
               onClick={() => downloadExportContent(selectedOutput)}
-              className="size-9 px-0"
+              className="size-11 px-0"
             >
-              <DownloadSimpleIcon aria-hidden="true" size={17} weight="bold" />
+              <DownloadSimpleIcon
+                aria-hidden="true"
+                size={20}
+                weight="bold"
+                className="size-5 shrink-0"
+              />
             </Button>
           </div>
         </header>
 
         <pre
           tabIndex={0}
-          className="min-h-[34rem] min-w-0 flex-1 overflow-auto p-4 font-mono text-xs leading-6 xl:min-h-0"
+          className="bg-background-sunken min-h-[34rem] min-w-0 flex-1 overflow-auto p-4 font-mono text-xs leading-6 xl:min-h-0"
         >
-          <code>{selectedOutput.content}</code>
+          <ExportCodePreview
+            format={selectedOutput.format}
+            content={selectedOutput.content}
+          />
         </pre>
 
-        <footer className="border-border-subtle bg-background-sunken grid grid-cols-2 gap-3 border-t p-4 text-xs sm:grid-cols-4 xl:grid-cols-2 2xl:grid-cols-4">
+        <footer className="border-border-default bg-surface-primary grid grid-cols-2 gap-3 border-t p-4 text-xs sm:grid-cols-4 xl:grid-cols-2 2xl:grid-cols-4">
           <PreviewMetric
             label={workspaceLabels.fileSize}
             value={formatExportFileSize(selectedOutput.content, pageLocale)}
