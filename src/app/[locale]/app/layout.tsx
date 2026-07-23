@@ -2,11 +2,10 @@ import { auth } from '@/auth';
 import { hasLocale } from 'next-intl';
 import type { ReactNode } from 'react';
 import { routing } from '@/i18n/routing';
-import { prisma } from '@/server/db/prisma';
 import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
 import { AppShell } from '@/components/layout/AppShell';
-import type { ThemePreference } from '@/features/settings/user-settings.schema';
+import { getAppShellData } from '@/features/app-navigation/app-shell.queries';
 
 type AppLayoutProps = {
   children: ReactNode;
@@ -28,43 +27,34 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
     redirect(`/${requestedLocale}/login`);
   }
 
-  const t = await getTranslations({
-    locale: requestedLocale,
-    namespace: 'AppShell',
-  });
-
-  const userPreferences = await prisma.userPreference.findUnique({
-    where: {
-      userId: session.user.id,
-    },
-    select: {
-      themePreference: true,
-    },
-  });
-
-  const themePreference =
-    (userPreferences?.themePreference as ThemePreference | undefined) ??
-    'system';
+  const [t, appShellData] = await Promise.all([
+    getTranslations({
+      locale: requestedLocale,
+      namespace: 'AppShell',
+    }),
+    getAppShellData(session.user.id),
+  ]);
 
   return (
     <AppShell
       userEmail={session.user.email ?? t('unknownUser')}
-      workspaceName={session.user.name ?? t('unknownUser')}
-      themePreference={themePreference}
+      workspaceName={appShellData.workspaceName ?? t('sidebar.workspace')}
+      projects={appShellData.projects}
+      themePreference={appShellData.themePreference}
       labels={{
         navigationLabel: t('navigationLabel'),
         navigationItems: {
           dashboard: t('navigationItems.dashboard'),
           projects: t('navigationItems.projects'),
-          settings: t('navigationItems.settings'),
         },
         topbar: {
           export: t('topbar.export'),
-          workspaceLabel: t('topbar.workspaceLabel'),
+          settings: t('navigationItems.settings'),
           userMenuLabel: t('topbar.userMenuLabel'),
           account: t('topbar.account'),
           breadcrumb: {
             ariaLabel: t('topbar.breadcrumbLabel'),
+            allProjects: t('navigationItems.projects'),
             saveStatus: {
               saved: t('topbar.saveStatus.saved'),
               unsaved: t('topbar.saveStatus.unsaved'),
