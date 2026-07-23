@@ -90,16 +90,6 @@ export async function deleteAccountAction(
         id: session.user.id,
       },
     });
-
-    await signOut({
-      redirectTo: `/${parsedPayload.data.locale}?accountDeleted=1`,
-    });
-
-    return {
-      status: 'idle',
-      fieldErrors: {},
-      formError: null,
-    };
   } catch {
     return {
       status: 'error',
@@ -107,4 +97,14 @@ export async function deleteAccountAction(
       formError: 'unexpected',
     };
   }
+
+  await signOut({
+    redirectTo: `/${parsedPayload.data.locale}?accountDeleted=1`,
+  });
+
+  return {
+    status: 'idle',
+    fieldErrors: {},
+    formError: null,
+  };
 }
