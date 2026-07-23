@@ -28,7 +28,8 @@ export async function updateAccountProfileAction(
   if (!parsedProfile.success) {
     return {
       status: 'error',
-      fieldErrors: parsedProfile.error.flatten().fieldErrors,
+      fieldErrors: parsedProfile.error.flatten()
+        .fieldErrors as UpdateAccountProfileActionState['fieldErrors'],
       formError: 'invalidPayload',
       savedProfile: null,
     };
