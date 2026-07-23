@@ -1,8 +1,14 @@
 export type DeleteAccountField = 'confirmationEmail' | 'currentPassword';
 
+export type DeleteAccountFieldErrorKey =
+  | 'confirmationEmailMismatch'
+  | 'currentPasswordIncorrect';
+
 export type DeleteAccountActionState = {
   status: 'idle' | 'error';
-  fieldErrors: Partial<Record<DeleteAccountField, string[]>>;
+  fieldErrors: Partial<
+    Record<DeleteAccountField, DeleteAccountFieldErrorKey[]>
+  >;
   formError:
     | 'unauthorized'
     | 'accountNotFound'
