@@ -4,7 +4,6 @@ import { Badge } from '../ui';
 import {
   HouseIcon,
   FolderIcon,
-  GearSixIcon,
   WarningCircleIcon,
 } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
@@ -28,7 +27,6 @@ type ProjectEditorNavItemKey = ProjectEditorNavItem['key'];
 const navigationIcons = {
   dashboard: HouseIcon,
   projects: FolderIcon,
-  settings: GearSixIcon,
 } as const;
 
 function isActivePath(currentPathname: string, itemHref: string) {
