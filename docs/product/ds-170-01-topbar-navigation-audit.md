@@ -65,6 +65,15 @@ Focused utility tests cover:
 
 The standard Quality workflow must also pass.
 
+## Validation status
+
+- implementation: complete;
+- automated Quality workflow: pending;
+- responsive FR/EN review: pending;
+- project-switching smoke test: pending;
+- user-menu and mobile locale smoke test: pending;
+- keyboard dismissal smoke test: pending.
+
 ## Manual QA checklist
 
 Review desktop, tablet and mobile in FR and EN.
