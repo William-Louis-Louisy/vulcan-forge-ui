@@ -4,7 +4,6 @@ import { Badge } from '../ui';
 import {
   HouseIcon,
   FolderIcon,
-  GearSixIcon,
   WarningCircleIcon,
 } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
@@ -20,6 +19,7 @@ type AppShellNavigationLabels = Record<PrivateNavigationItemKey, string>;
 type AppShellNavigationProps = {
   navigationLabel: string;
   labels: AppShellNavigationLabels;
+  onNavigate?: () => void;
 };
 
 type ProjectEditorNavItem = (typeof projectEditorNavItems)[number];
@@ -28,7 +28,6 @@ type ProjectEditorNavItemKey = ProjectEditorNavItem['key'];
 const navigationIcons = {
   dashboard: HouseIcon,
   projects: FolderIcon,
-  settings: GearSixIcon,
 } as const;
 
 function isActivePath(currentPathname: string, itemHref: string) {
@@ -91,6 +90,7 @@ function isProjectEditorNavItemActive({
 export function AppShellNavigation({
   navigationLabel,
   labels,
+  onNavigate,
 }: AppShellNavigationProps) {
   const pathname = usePathname();
   const projectSlug = getCurrentProjectSlug(pathname);
@@ -120,6 +120,7 @@ export function AppShellNavigation({
           <div key={item.key}>
             <Link
               href={item.href}
+              onClick={onNavigate}
               aria-current={
                 isActive && !shouldRenderProjectNav ? 'page' : undefined
               }
@@ -169,6 +170,7 @@ export function AppShellNavigation({
                     <li key={projectItem.key}>
                       <Link
                         href={href}
+                        onClick={onNavigate}
                         aria-current={isProjectItemActive ? 'page' : undefined}
                         className={[
                           'flex min-h-8 items-center justify-between gap-3 rounded-md px-2.5 text-xs font-medium transition',

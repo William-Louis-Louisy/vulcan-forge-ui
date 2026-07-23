@@ -1,0 +1,147 @@
+# DS-170-01 — Topbar and navigation audit
+
+## Objective
+
+Remove the remaining false affordances from the application topbar and align account, project, compact and workspace navigation with their actual product scope.
+
+## Implemented behavior
+
+### Export navigation
+
+The redundant topbar Export action has been removed. Exports remains available in the project navigation on desktop and in the compact application menu.
+
+This avoids duplicating an existing destination with a visually privileged action that has no distinct workflow.
+
+### Project switcher
+
+The project breadcrumb control is now a real dropdown rather than a link styled as a selector.
+
+It:
+
+- lists every project in the authenticated user's first workspace;
+- identifies the current project;
+- links back to the Projects index;
+- preserves the current top-level editor section when changing project;
+- preserves supported Tokens `set` values;
+- collapses nested routes to their safe section root;
+- closes on outside pointer interaction;
+- closes on Escape and restores focus to its trigger.
+
+### Workspace identity
+
+The workspace item is intentionally neutralized. It remains visible as context on medium and larger screens, but no longer has button semantics, caret, hover state or dropdown affordance.
+
+A real workspace switcher is deferred until multiple-workspace behavior is designed and implemented.
+
+### Desktop account navigation
+
+Settings has been removed from the desktop sidebar and added to the desktop user menu.
+
+The Settings route remains unchanged and dedicated. From `lg` upward, the desktop user menu remains focused on account identity, Settings and sign out.
+
+### Compact application menu
+
+The account-only user menu is not displayed while the persistent sidebar is hidden. Below `lg`, a burger menu consolidates application, project and account navigation for both mobile and tablet layouts.
+
+It contains:
+
+- Dashboard and Projects;
+- the enabled sections of the current project;
+- the disabled Overview and Brand entries with their existing coming-soon treatment;
+- Settings;
+- the FR/EN locale control;
+- sign out.
+
+The menu closes after navigation, on outside pointer interaction and on Escape with focus restoration.
+
+### App shell data
+
+The shell now loads the real workspace name and a lightweight project option list. It no longer displays the authenticated user's name as a substitute for the workspace identity.
+
+## Deferred visual refinement
+
+The compact-menu information architecture, responsive breakpoint and interactions are validated. Its visual composition is intentionally considered provisional.
+
+A dedicated styling pass may revisit its layout, hierarchy, motion and presentation after the target design direction has been clarified. This deferred exploration is not a functional defect and does not block DS-170-01.
+
+## Product boundary
+
+- no Settings page redesign;
+- no Themes or Select work;
+- no Overview or Brand implementation;
+- no multi-workspace switching;
+- no Prisma schema or migration change;
+- no project business-data mutation;
+- no final visual redesign of the compact burger menu.
+
+## Automated coverage
+
+Focused utility tests cover:
+
+- preservation of a normal editor section;
+- collapse of nested routes;
+- supported token-set preservation;
+- unsupported token-set fallback;
+- root-route behavior;
+- generated target project hrefs.
+
+The standard Quality workflow must also pass. Temporary diagnostic workflows are not part of the final branch diff.
+
+## Validation status
+
+- implementation: passed;
+- automated Quality workflow: passed;
+- responsive FR/EN QA: passed;
+- project-switching smoke test: passed;
+- desktop account-menu smoke test: passed;
+- compact mobile and tablet burger-menu QA: passed;
+- keyboard dismissal and focus-restoration smoke test: passed.
+
+## Validated manual behavior
+
+### Topbar
+
+- no Export action remains in the topbar;
+- Exports remains reachable from project navigation;
+- workspace identity remains static;
+- desktop locale and user controls remain visible from `lg` upward;
+- the burger menu replaces the account-only controls below `lg`;
+- no horizontal overflow occurs on mobile or tablet widths.
+
+### Compact application menu
+
+- the menu is available at representative mobile and tablet widths;
+- Dashboard and Projects are reachable;
+- current-project sections match the desktop sidebar;
+- the active application and project destinations remain identifiable;
+- disabled Overview and Brand entries remain non-interactive;
+- Settings opens the dedicated page;
+- FR/EN switching preserves the current route;
+- sign out remains functional;
+- navigation closes the menu;
+- outside click closes the menu;
+- Escape closes the menu and restores trigger focus;
+- long French labels remain readable without horizontal overflow.
+
+### Desktop regression
+
+- the persistent sidebar, locale control and user menu appear from `lg` upward;
+- the project switcher behavior remains unchanged;
+- switching from Themes opens Themes in the target project;
+- switching from Documentation opens Documentation in the target project;
+- switching from a nested Components route opens the target Components root;
+- switching from Tokens preserves color, spacing, radius, typography or motion;
+- Settings remains available from the desktop user menu;
+- locale switching and sign out remain unchanged.
+
+## Definition of done
+
+DS-170-01 is complete because:
+
+- the standard Quality workflow passes;
+- responsive FR/EN QA passes;
+- Exports remains reachable without the redundant topbar action;
+- project switching remains stable across representative sections;
+- Settings, locale and sign out work from their responsive navigation surfaces;
+- keyboard and dismissal behavior pass;
+- the remaining burger-menu concern is explicitly tracked as a future visual-design exploration rather than an unfinished functional requirement.
