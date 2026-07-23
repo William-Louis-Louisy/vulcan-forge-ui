@@ -1,13 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { GearSixIcon } from '@phosphor-icons/react';
 
+import { LocaleSwitcher } from '@/components/i18n/LocaleSwitcher';
+import { useDismissiblePopover } from '@/components/interaction/useDismissiblePopover';
 import { LogoutButton } from '@/features/auth/logout/LogoutButton';
+import { Link } from '@/i18n/navigation';
 
 type UserMenuProps = {
   userEmail: string;
   ariaLabel: string;
   accountLabel: string;
+  settingsLabel: string;
 };
 
 function getInitials(email: string) {
@@ -34,29 +38,52 @@ export function UserMenu({
   userEmail,
   ariaLabel,
   accountLabel,
+  settingsLabel,
 }: UserMenuProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const { close, containerRef, isOpen, toggle, triggerRef } =
+    useDismissiblePopover();
   const initials = getInitials(userEmail);
+  const popoverId = 'app-user-menu';
 
   return (
-    <div className="relative">
+    <div ref={containerRef} className="relative">
       <button
+        ref={triggerRef}
         type="button"
         aria-label={ariaLabel}
         aria-expanded={isOpen}
-        onClick={() => setIsOpen((current) => !current)}
-        className="border-border-subtle bg-background-subtle text-content-secondary hover:bg-surface-secondary flex size-8 items-center justify-center rounded-full border text-xs font-semibold transition"
+        aria-controls={popoverId}
+        onClick={toggle}
+        className="border-border-subtle bg-background-subtle text-content-secondary hover:bg-surface-secondary focus-visible:outline-border-focus flex size-8 items-center justify-center rounded-full border text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2"
       >
         {initials}
       </button>
 
       {isOpen ? (
-        <div className="border-border-subtle bg-surface-primary shadow-elevated absolute top-full right-0 z-40 mt-2 min-w-56 rounded-md border p-3">
+        <div
+          id={popoverId}
+          className="border-border-subtle bg-surface-primary shadow-elevated absolute top-full right-0 z-40 mt-2 w-64 max-w-[calc(100vw-1rem)] rounded-md border p-3"
+        >
           <p className="text-content-tertiary text-[11px] font-semibold tracking-[0.16em] uppercase">
             {accountLabel}
           </p>
 
           <p className="mt-2 truncate text-sm font-semibold">{userEmail}</p>
+
+          <div className="border-border-subtle mt-3 border-t pt-3">
+            <Link
+              href="/app/settings"
+              onClick={close}
+              className="text-content-secondary hover:bg-background-subtle hover:text-content-primary focus-visible:outline-border-focus flex min-h-9 items-center gap-2 rounded-md px-2.5 text-sm font-medium transition focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
+              <GearSixIcon aria-hidden="true" size={16} />
+              <span>{settingsLabel}</span>
+            </Link>
+          </div>
+
+          <div className="border-border-subtle mt-3 border-t pt-3 sm:hidden">
+            <LocaleSwitcher fullWidth showLabel />
+          </div>
 
           <div className="border-border-subtle mt-3 border-t pt-3">
             <LogoutButton />
