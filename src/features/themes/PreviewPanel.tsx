@@ -124,7 +124,10 @@ export function PreviewPanel({
           : 'border-border-subtle bg-surface-primary shadow-soft min-w-0 rounded-xl border'
       }
     >
-      <header className="border-border-subtle grid min-w-0 gap-3 border-b p-4">
+      <header
+        data-preview-panel-header
+        className="border-border-subtle grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 gap-y-2 border-b p-4"
+      >
         <div className="min-w-0">
           <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.16em] uppercase">
             {t('eyebrow')}
@@ -135,9 +138,6 @@ export function PreviewPanel({
           >
             {labels.title}
           </h2>
-          <p className="text-content-secondary mt-1.5 text-xs leading-5">
-            {labels.description}
-          </p>
         </div>
 
         <ThemeSwitcher
@@ -149,6 +149,13 @@ export function PreviewPanel({
           }}
           onModeChange={setActiveMode}
         />
+
+        <p
+          data-preview-panel-description
+          className="text-content-secondary col-span-2 text-xs leading-5"
+        >
+          {labels.description}
+        </p>
       </header>
 
       <div className="grid min-w-0 gap-4 p-4">
