@@ -125,7 +125,7 @@ Focused tests cover:
 - formatting: passed;
 - focused and regression tests: passed;
 - production build: passed;
-- standard Quality workflow: passed on the cleaned final head;
+- standard Quality workflow: passed on the cleaned implementation head;
 - responsive FR/EN visual review: pending;
 - profile and preference persistence smoke test: pending;
 - destructive deletion smoke test: pending with disposable test data.
