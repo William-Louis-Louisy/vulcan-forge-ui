@@ -23,7 +23,7 @@ Both modes support:
 - disabled options;
 - one shared visual density, border, radius, active state and focus treatment.
 
-The Themes Light/Dark control now uses this primitive and is positioned in the preview header using the same top-right hierarchy as Documentation Rendered/Source.
+The Themes Light/Dark control now uses this primitive.
 
 ### Select
 
@@ -46,6 +46,16 @@ It supports:
 
 Swatches are supplementary. The option label and textual value remain the accessible source of truth.
 
+## Preview rail header
+
+The preview rail header uses an explicit two-column, two-row grid:
+
+- the eyebrow and title occupy the first cell;
+- Light/Dark remains aligned at the top right;
+- the description spans both columns on the second row.
+
+This lets the description use the complete rail width instead of being constrained to the narrow space beside the segmented control.
+
 ## Themes role mapping
 
 The role-mapping rows now use three explicit responsive compositions.
@@ -54,32 +64,42 @@ The role-mapping rows now use three explicit responsive compositions.
 
 Each mapping is a vertical card:
 
-1. theme slot;
+1. theme role;
 2. token selector;
 3. resolved value;
 4. state and Save action.
 
 Long references wrap instead of forcing horizontal overflow.
 
-### Tablet
+### Tablet and normal desktop workspace widths
 
 Rows use a stable two-column, two-row grid:
 
-- slot and selector on the first row;
+- role and selector on the first row;
 - resolved value and actions on the second row.
 
-This avoids compressing the desktop table into unreadable intermediate widths.
+The two-column composition remains active through normal desktop viewport sizes. The editor is only one region of the full application shell, so viewport width alone can otherwise trigger a four-column table while the actual editor panel is still narrow.
 
-### Desktop
+### Very wide desktop
 
-Rows use the compact four-zone layout:
+The compact four-zone layout is enabled from `2xl` only:
 
-- slot;
+- role;
 - token selector;
 - resolved value;
 - state and Save action.
 
-The action zone remains stable while the selector receives the flexible width.
+The action zone has an explicit minimum width and non-wrapping state text. This prevents the saved state and button from overlapping the resolved-value column.
+
+## Swatch hierarchy
+
+Color swatches remain where they provide distinct information:
+
+- in the custom Select trigger;
+- in each Select option;
+- beside the resolved value.
+
+The Theme role swatch was removed because it duplicated the currently resolved value without adding a separate meaning.
 
 ## Color-option presentation
 
@@ -111,59 +131,56 @@ Focused tests cover:
 - keyboard selection and focus restoration;
 - disabled Select behavior;
 - Themes mapping state and resolved-color updates after selection;
-- no-options behavior.
+- no-options behavior;
+- the two-row preview-header contract;
+- the delayed four-column mapping breakpoint;
+- removal of the redundant Theme role swatch.
 
 ## Validation status
 
 - implementation: complete;
-- standard Quality workflow: passed;
-- responsive FR/EN Themes review: pending;
-- custom Select pointer and keyboard smoke test: pending;
-- segmented-control pointer and keyboard smoke test: pending.
+- initial responsive FR/EN review: passed except for the targeted issues below;
+- custom Select pointer and keyboard smoke test: passed;
+- segmented-control pointer and keyboard smoke test: passed;
+- mapping persistence: passed;
+- standard Quality workflow on the corrected head: pending final verification;
+- targeted visual recheck: pending.
 
-## Manual QA checklist
+## Targeted manual QA checklist
 
-Review the Themes workspace in FR and EN on representative mobile, tablet and desktop widths.
+Review the corrected Themes workspace in FR and EN at the width that previously reproduced the overlap, then at representative mobile, tablet and wide-desktop widths.
+
+### Preview header
+
+- Light/Dark stays at the top right;
+- the description occupies the complete second row;
+- long FR and EN descriptions do not collide with the segmented control;
+- the header does not create horizontal overflow.
 
 ### Mapping rows
 
-- no horizontal overflow occurs;
-- mobile ordering remains slot, selector, resolved value, actions;
-- tablet uses the expected two-by-two composition;
-- desktop uses the compact four-zone composition;
+- no content overlap occurs at normal desktop widths;
+- the two-column layout remains active at the previously failing width;
+- the four-zone layout appears only on a genuinely wide viewport;
+- saved or unsaved status does not overlap the resolved value;
+- Save remains reachable and stable;
 - long token paths remain readable;
-- state and Save actions do not jump when changing options.
+- Theme roles no longer display a redundant swatch.
 
-### Custom Select
+### Regression smoke test
 
-- the current token path, value and swatch are visible in the trigger;
-- the dropdown is not clipped by the mapping surface;
+- the current token path, value and swatch remain visible in the Select trigger;
 - option swatches match their displayed values;
-- pointer selection updates the reference, resolved value and unsaved state;
-- Arrow Up/Down changes the active option;
-- Home and End reach the first and last options;
-- Enter and Space select;
-- typing selects the matching option prefix;
-- Escape closes and restores focus;
-- outside click closes;
-- disabled rows remain non-interactive when no color token exists.
-
-### Segmented controls
-
-- Themes Light/Dark and Documentation Rendered/Source use consistent density and active styling;
-- the Themes control is aligned at the top right of its rail header;
-- pointer activation works;
-- Arrow keys, Home and End work;
-- focus rings remain visible;
-- the preview updates to the selected theme mode.
+- pointer and keyboard selection still update the reference and resolved value;
+- saving a mapping still persists after reload;
+- Light/Dark still updates the preview.
 
 ## Definition of done
 
 DS-170-02 is complete when:
 
 - the standard Quality workflow passes on the final branch head;
-- the responsive FR/EN Themes review passes;
-- the Select pointer and keyboard smoke test passes;
-- the SegmentedControl pointer and keyboard smoke test passes;
+- the targeted preview-header and mapping-width recheck passes;
+- the validated Select and SegmentedControl interactions remain unchanged;
 - mapping persistence remains unchanged;
 - no temporary workflow remains in the final diff.
