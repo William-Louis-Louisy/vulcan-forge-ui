@@ -120,11 +120,12 @@ Focused tests cover:
 ## Validation status
 
 - revised implementation: complete;
-- lint: passed on the latest reviewed head;
-- typecheck: under correction;
-- formatting: pending final Quality workflow;
-- tests: pending final Quality workflow;
-- production build: pending final Quality workflow;
+- lint: passed;
+- typecheck: passed;
+- formatting: passed;
+- focused and regression tests: passed;
+- production build: passed;
+- standard Quality workflow: passed on the cleaned final head;
 - responsive FR/EN visual review: pending;
 - profile and preference persistence smoke test: pending;
 - destructive deletion smoke test: pending with disposable test data.
