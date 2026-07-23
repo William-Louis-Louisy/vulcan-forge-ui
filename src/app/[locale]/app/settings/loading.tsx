@@ -18,9 +18,20 @@ export default function SettingsLoading() {
           <div className="bg-background-subtle mt-3 h-4 w-full max-w-xl animate-pulse rounded-md" />
         </header>
 
-        <div className="mx-auto grid max-w-6xl gap-5 px-4 py-5 sm:px-6 sm:py-6 lg:px-8 xl:grid-cols-[minmax(15rem,0.72fr)_minmax(0,1.55fr)] xl:items-start xl:px-10">
-          <div className="border-border-subtle bg-surface-primary h-64 animate-pulse rounded-md border" />
-          <div className="border-border-subtle bg-surface-primary h-[32rem] animate-pulse rounded-md border" />
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 xl:px-10">
+          {[0, 1, 2, 3].map((section) => (
+            <div
+              key={section}
+              className="border-border-subtle grid gap-6 border-b py-8 xl:grid-cols-[minmax(12rem,0.38fr)_minmax(0,1fr)] xl:gap-12"
+            >
+              <div>
+                <div className="bg-background-subtle h-5 w-32 animate-pulse rounded-md" />
+                <div className="bg-background-subtle mt-3 h-4 w-full max-w-xs animate-pulse rounded-md" />
+                <div className="bg-background-subtle mt-2 h-4 w-4/5 max-w-xs animate-pulse rounded-md" />
+              </div>
+              <div className="bg-surface-primary border-border-subtle h-32 animate-pulse rounded-md border" />
+            </div>
+          ))}
         </div>
       </div>
     </section>
