@@ -26,7 +26,7 @@ export async function deleteAccountAction(
   if (!parsedPayload.success) {
     return {
       status: 'error',
-      fieldErrors: parsedPayload.error.flatten().fieldErrors,
+      fieldErrors: {},
       formError: 'invalidPayload',
     };
   }
