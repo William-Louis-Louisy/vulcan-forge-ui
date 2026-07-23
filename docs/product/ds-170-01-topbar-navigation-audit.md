@@ -2,13 +2,13 @@
 
 ## Objective
 
-Remove the remaining false affordances from the application topbar and align account, project, mobile and workspace navigation with their actual product scope.
+Remove the remaining false affordances from the application topbar and align account, project, compact and workspace navigation with their actual product scope.
 
 ## Implemented behavior
 
 ### Export navigation
 
-The redundant topbar Export action has been removed. Exports remains available in the project navigation on desktop and in the mobile application menu.
+The redundant topbar Export action has been removed. Exports remains available in the project navigation on desktop and in the compact application menu.
 
 This avoids duplicating an existing destination with a visually privileged action that has no distinct workflow.
 
@@ -37,11 +37,11 @@ A real workspace switcher is deferred until multiple-workspace behavior is desig
 
 Settings has been removed from the desktop sidebar and added to the desktop user menu.
 
-The Settings route remains unchanged and dedicated. The desktop user menu remains focused on account identity, Settings and sign out.
+The Settings route remains unchanged and dedicated. From `lg` upward, the desktop user menu remains focused on account identity, Settings and sign out.
 
-### Mobile application menu
+### Compact application menu
 
-The account-only user menu is no longer displayed on mobile. A burger menu now consolidates the navigation that disappears with the desktop sidebar.
+The account-only user menu is not displayed while the persistent sidebar is hidden. Below `lg`, a burger menu consolidates application, project and account navigation for both mobile and tablet layouts.
 
 It contains:
 
@@ -84,8 +84,8 @@ The standard Quality workflow must also pass. Temporary diagnostic workflows are
 
 - implementation: complete;
 - initial desktop, tablet, project-switcher and account-menu QA: passed;
-- automated Quality workflow after the mobile-menu refinement: passed;
-- focused mobile burger-menu QA: pending;
+- automated Quality workflow after the final compact-navigation breakpoint adjustment: pending;
+- focused mobile and tablet burger-menu QA: pending;
 - final keyboard dismissal smoke test: pending.
 
 ## Manual QA checklist
@@ -97,12 +97,13 @@ The broad DS-170-01 review has passed. The final focused review only needs to co
 - no Export action remains in the topbar;
 - Exports remains reachable from project navigation;
 - workspace identity remains static;
-- desktop locale and user controls remain visible from `sm` upward;
-- the burger menu replaces the avatar control below `sm`;
-- no horizontal overflow occurs on narrow screens.
+- desktop locale and user controls remain visible from `lg` upward;
+- the burger menu replaces the account-only controls below `lg`;
+- no horizontal overflow occurs on mobile or tablet widths.
 
-### Mobile application menu
+### Compact application menu
 
+- the menu is available at representative mobile and tablet widths;
 - Dashboard and Projects are reachable;
 - current-project sections match the desktop sidebar;
 - the active application and project destinations remain identifiable;
@@ -117,6 +118,7 @@ The broad DS-170-01 review has passed. The final focused review only needs to co
 
 ### Desktop regression
 
+- the persistent sidebar, locale control and user menu appear from `lg` upward;
 - the project switcher behavior remains unchanged;
 - switching from Themes opens Themes in the target project;
 - switching from Documentation opens Documentation in the target project;
@@ -130,7 +132,7 @@ The broad DS-170-01 review has passed. The final focused review only needs to co
 DS-170-01 is complete when:
 
 - the standard Quality workflow passes after the refinement;
-- the focused mobile burger-menu review passes;
+- the focused mobile and tablet burger-menu review passes;
 - Exports remains reachable without the redundant topbar action;
 - project switching remains stable across representative sections;
 - Settings, locale and sign out work from their responsive navigation surfaces;
