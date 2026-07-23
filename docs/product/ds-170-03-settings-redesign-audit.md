@@ -80,11 +80,12 @@ Focused tests cover:
 ## Validation status
 
 - implementation: complete;
-- focused Settings tests: pending Quality workflow;
-- lint: pending Quality workflow;
-- typecheck: pending Quality workflow;
-- formatting: pending Quality workflow;
-- production build: pending Quality workflow;
+- focused Settings tests: passed;
+- lint: passed;
+- typecheck: passed;
+- formatting: passed;
+- production build: passed;
+- standard Quality workflow: passed on the implementation head;
 - responsive FR/EN visual review: pending;
 - keyboard and persistence smoke test: pending.
 
