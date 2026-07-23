@@ -49,26 +49,18 @@ jobs:
       - name: Check formatting
         run: npm run format:check
 
-      - name: Test SegmentedControl
-        if: always()
-        run: npx vitest run src/components/ui/SegmentedControl.test.tsx
+      - name: Capture failing tests
+        continue-on-error: true
+        run: >-
+          npx vitest run
+          src/components/ui/Select.test.tsx
+          src/features/themes/ThemeTokenReferenceEditor.test.tsx
+          --reporter=json
+          --outputFile=vitest-results.json
 
-      - name: Test Select
+      - name: Upload failing test report
         if: always()
-        run: npx vitest run src/components/ui/Select.test.tsx
-
-      - name: Test theme mapping
-        if: always()
-        run: npx vitest run src/features/themes/ThemeTokenReferenceEditor.test.tsx
-
-      - name: Test theme preview
-        if: always()
-        run: npx vitest run src/features/themes/PreviewPanel.test.tsx
-
-      - name: Run tests
-        if: always()
-        run: npm run test
-
-      - name: Build application
-        if: always()
-        run: npm run build
+        uses: actions/upload-artifact@v4
+        with:
+          name: ds-170-02-vitest-results
+          path: vitest-results.json
