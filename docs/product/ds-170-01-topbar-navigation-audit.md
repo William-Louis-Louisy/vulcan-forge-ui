@@ -84,7 +84,7 @@ The standard Quality workflow must also pass. Temporary diagnostic workflows are
 
 - implementation: complete;
 - initial desktop, tablet, project-switcher and account-menu QA: passed;
-- automated Quality workflow after the mobile-menu refinement: pending;
+- automated Quality workflow after the mobile-menu refinement: passed;
 - focused mobile burger-menu QA: pending;
 - final keyboard dismissal smoke test: pending.
 
