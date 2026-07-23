@@ -105,26 +105,23 @@ export function ThemeTokenReferenceEditor({
       <input type="hidden" name="themeId" value={themeId} />
       <input type="hidden" name="colorKey" value={colorKey} />
 
-      <div className="grid min-w-0 gap-4 md:grid-cols-[minmax(8rem,0.65fr)_minmax(0,1.35fr)] xl:grid-cols-[minmax(8rem,0.65fr)_minmax(16rem,1.7fr)_minmax(9rem,0.8fr)_auto] xl:items-center">
-        <div className="min-w-0 md:col-start-1 md:row-start-1">
+      <div
+        data-theme-mapping-layout
+        className="grid min-w-0 gap-4 sm:grid-cols-2 2xl:grid-cols-[minmax(6rem,0.55fr)_minmax(14rem,1.65fr)_minmax(7rem,0.7fr)_minmax(10.5rem,auto)] 2xl:items-center"
+      >
+        <div
+          data-theme-role={colorKey}
+          className="min-w-0 sm:col-start-1 sm:row-start-1"
+        >
           <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase">
             {labels.slotLabel}
           </p>
-          <div className="mt-1 flex min-w-0 items-center gap-2">
-            <span
-              aria-hidden="true"
-              className="border-border-subtle size-5 shrink-0 rounded-full border"
-              style={{
-                backgroundColor: displayedResolvedValue ?? 'transparent',
-              }}
-            />
-            <span className="truncate font-mono text-sm font-semibold">
-              {colorKey}
-            </span>
-          </div>
+          <p className="mt-1 truncate font-mono text-sm font-semibold">
+            {colorKey}
+          </p>
         </div>
 
-        <div className="min-w-0 md:col-start-2 md:row-start-1">
+        <div className="min-w-0 sm:col-start-2 sm:row-start-1">
           <label
             htmlFor={inputId}
             className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase"
@@ -154,7 +151,7 @@ export function ThemeTokenReferenceEditor({
           ) : null}
         </div>
 
-        <div className="min-w-0 md:col-start-1 md:row-start-2 xl:col-start-3 xl:row-start-1">
+        <div className="min-w-0 sm:col-start-1 sm:row-start-2 2xl:col-start-3 2xl:row-start-1">
           <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase">
             {labels.resolvedValue}
           </p>
@@ -179,10 +176,10 @@ export function ThemeTokenReferenceEditor({
           ) : null}
         </div>
 
-        <div className="flex min-w-0 items-center justify-between gap-3 md:col-start-2 md:row-start-2 xl:col-start-4 xl:row-start-1 xl:justify-end">
+        <div className="flex min-w-0 items-center justify-between gap-3 sm:col-start-2 sm:row-start-2 2xl:col-start-4 2xl:row-start-1 2xl:min-w-[10.5rem] 2xl:justify-end">
           <span
             className={[
-              'shrink-0 rounded-full px-2 py-1 text-[0.6875rem] font-semibold',
+              'shrink-0 rounded-full px-2 py-1 text-[0.6875rem] font-semibold whitespace-nowrap',
               hasUnsavedChanges
                 ? 'bg-action-warning/10 text-action-warning'
                 : 'bg-action-success/10 text-action-success',
