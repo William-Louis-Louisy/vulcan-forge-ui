@@ -1,8 +1,7 @@
 'use client';
 
-import { useActionState, useEffect, useMemo, useState } from 'react';
+import { useActionState, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { useRouter } from '@/i18n/navigation';
 
 import { Button } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
@@ -30,7 +29,6 @@ export function AccountProfileForm({
   locale,
 }: AccountProfileFormProps) {
   const t = useTranslations('SettingsPage');
-  const router = useRouter();
   const preserveSaveContext = usePreserveSaveContext('account-profile');
   const [state, formAction, isPending] = useActionState(
     updateAccountProfileAction,
@@ -48,14 +46,6 @@ export function AccountProfileForm({
     currentProfile.name !== lastSavedProfile.name ||
     currentProfile.email !== lastSavedProfile.email;
   const emailChanged = currentProfile.email !== lastSavedProfile.email;
-
-  useEffect(() => {
-    if (state.status === 'success' && state.savedProfile) {
-      setName(state.savedProfile.name);
-      setEmail(state.savedProfile.email);
-      router.refresh();
-    }
-  }, [router, state.savedProfile, state.status]);
 
   const nameError = getFirstError(state.fieldErrors, 'name');
   const emailError = getFirstError(state.fieldErrors, 'email');
