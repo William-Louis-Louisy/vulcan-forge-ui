@@ -49,18 +49,8 @@ jobs:
       - name: Check formatting
         run: npm run format:check
 
-      - name: Capture failing tests
-        continue-on-error: true
-        run: >-
-          npx vitest run
-          src/components/ui/Select.test.tsx
-          src/features/themes/ThemeTokenReferenceEditor.test.tsx
-          --reporter=json
-          --outputFile=vitest-results.json
+      - name: Run tests
+        run: npm run test
 
-      - name: Upload failing test report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: ds-170-02-vitest-results
-          path: vitest-results.json
+      - name: Build application
+        run: npm run build
