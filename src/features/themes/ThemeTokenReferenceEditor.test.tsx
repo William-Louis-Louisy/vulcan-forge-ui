@@ -78,13 +78,19 @@ function renderEditor({
 }
 
 describe('ThemeTokenReferenceEditor', () => {
-  it('shows the slot, current source, resolved value and saved state together', () => {
+  it('shows mapping data without a redundant theme-role swatch', () => {
     const { container } = renderEditor();
+    const layout = container.querySelector('[data-theme-mapping-layout]');
+    const themeRole = container.querySelector('[data-theme-role="background"]');
 
     expect(
       container.querySelector('[data-theme-mapping-row="background"]'),
     ).toBeInTheDocument();
-    expect(screen.getByText('background')).toBeInTheDocument();
+    expect(layout).toHaveClass('sm:grid-cols-2');
+    expect(layout?.className).toContain('2xl:grid-cols-');
+    expect(layout?.className).not.toContain('xl:grid-cols-');
+    expect(themeRole).toHaveTextContent('background');
+    expect(themeRole?.querySelector('[aria-hidden="true"]')).toBeNull();
     expect(
       screen.getByText('Current reference: {color.semantic.background.app}'),
     ).toBeInTheDocument();
