@@ -4,7 +4,7 @@ import type {
   ThemeColorKey,
   ThemeColorTokenOption,
 } from './themes-editor.utils';
-import { Button } from '@/components/ui';
+import { Button, Select } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
 import { useActionState, useMemo, useState } from 'react';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
@@ -68,6 +68,16 @@ export function ThemeTokenReferenceEditor({
     () => options.find((option) => option.path === selectedTokenPath) ?? null,
     [options, selectedTokenPath],
   );
+  const selectOptions = useMemo(
+    () =>
+      options.map((option) => ({
+        value: option.path,
+        label: option.label,
+        description: option.value,
+        swatch: option.value,
+      })),
+    [options],
+  );
 
   const hasUnsavedChanges = selectedTokenPath !== initialValue;
   const hasOptions = options.length > 0;
@@ -95,26 +105,23 @@ export function ThemeTokenReferenceEditor({
       <input type="hidden" name="themeId" value={themeId} />
       <input type="hidden" name="colorKey" value={colorKey} />
 
-      <div className="grid min-w-0 gap-3 xl:grid-cols-[minmax(7rem,0.65fr)_minmax(16rem,1.7fr)_minmax(8rem,0.8fr)_auto] xl:items-center">
-        <div className="min-w-0">
+      <div
+        data-theme-mapping-layout
+        className="grid min-w-0 gap-4 sm:grid-cols-2 2xl:grid-cols-[minmax(6rem,0.55fr)_minmax(14rem,1.65fr)_minmax(7rem,0.7fr)_minmax(10.5rem,auto)] 2xl:items-center"
+      >
+        <div
+          data-theme-role={colorKey}
+          className="min-w-0 sm:col-start-1 sm:row-start-1"
+        >
           <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase">
             {labels.slotLabel}
           </p>
-          <div className="mt-1 flex min-w-0 items-center gap-2">
-            <span
-              aria-hidden="true"
-              className="border-border-subtle size-5 shrink-0 rounded-full border"
-              style={{
-                backgroundColor: displayedResolvedValue ?? 'transparent',
-              }}
-            />
-            <span className="truncate font-mono text-sm font-semibold">
-              {colorKey}
-            </span>
-          </div>
+          <p className="mt-1 truncate font-mono text-sm font-semibold">
+            {colorKey}
+          </p>
         </div>
 
-        <div className="min-w-0">
+        <div className="min-w-0 sm:col-start-2 sm:row-start-1">
           <label
             htmlFor={inputId}
             className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase"
@@ -122,24 +129,18 @@ export function ThemeTokenReferenceEditor({
             {labels.selectLabel}
           </label>
 
-          <select
+          <Select
             id={inputId}
             name="tokenPath"
             value={selectedTokenPath}
+            options={selectOptions}
+            placeholder={labels.placeholder}
             disabled={!hasOptions}
-            onChange={(event) => setSelectedTokenPath(event.target.value)}
-            className="border-border-default bg-surface-primary text-content-primary mt-1 min-h-10 w-full min-w-0 rounded-md border px-3 font-mono text-xs"
-          >
-            <option value="">{labels.placeholder}</option>
+            onValueChange={setSelectedTokenPath}
+            className="mt-1"
+          />
 
-            {options.map((option) => (
-              <option key={option.path} value={option.path}>
-                {option.label} — {option.value}
-              </option>
-            ))}
-          </select>
-
-          <p className="text-content-tertiary mt-1 min-w-0 truncate font-mono text-[0.6875rem]">
+          <p className="text-content-tertiary mt-1 min-w-0 font-mono text-[0.6875rem] break-all">
             {labels.currentReference}: {displayedReference}
           </p>
 
@@ -150,7 +151,7 @@ export function ThemeTokenReferenceEditor({
           ) : null}
         </div>
 
-        <div className="min-w-0">
+        <div className="min-w-0 sm:col-start-1 sm:row-start-2 2xl:col-start-3 2xl:row-start-1">
           <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase">
             {labels.resolvedValue}
           </p>
@@ -169,16 +170,16 @@ export function ThemeTokenReferenceEditor({
           </div>
 
           {legacyDirectValue && !initialReferencePath ? (
-            <p className="text-action-warning mt-1 min-w-0 truncate text-[0.6875rem] font-semibold">
+            <p className="text-action-warning mt-1 min-w-0 text-[0.6875rem] font-semibold break-all">
               {labels.legacyDirectValue}: {legacyDirectValue}
             </p>
           ) : null}
         </div>
 
-        <div className="flex min-w-0 items-center justify-between gap-3 xl:justify-end">
+        <div className="flex min-w-0 items-center justify-between gap-3 sm:col-start-2 sm:row-start-2 2xl:col-start-4 2xl:row-start-1 2xl:min-w-[10.5rem] 2xl:justify-end">
           <span
             className={[
-              'shrink-0 rounded-full px-2 py-1 text-[0.6875rem] font-semibold',
+              'shrink-0 rounded-full px-2 py-1 text-[0.6875rem] font-semibold whitespace-nowrap',
               hasUnsavedChanges
                 ? 'bg-action-warning/10 text-action-warning'
                 : 'bg-action-success/10 text-action-success',

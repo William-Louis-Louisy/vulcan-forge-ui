@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { ThemeTokenReferenceEditor } from './ThemeTokenReferenceEditor';
 
@@ -77,13 +78,28 @@ function renderEditor({
 }
 
 describe('ThemeTokenReferenceEditor', () => {
-  it('shows the slot, current source, resolved value and saved state together', () => {
+  it('shows mapping data without a redundant theme-role swatch', () => {
     const { container } = renderEditor();
+    const layout = container.querySelector('[data-theme-mapping-layout]');
+    const layoutClassNames = layout?.className.split(' ') ?? [];
+    const themeRole = container.querySelector('[data-theme-role="background"]');
 
     expect(
       container.querySelector('[data-theme-mapping-row="background"]'),
     ).toBeInTheDocument();
-    expect(screen.getByText('background')).toBeInTheDocument();
+    expect(layout).toHaveClass('sm:grid-cols-2');
+    expect(
+      layoutClassNames.some((className) =>
+        className.startsWith('2xl:grid-cols-'),
+      ),
+    ).toBe(true);
+    expect(
+      layoutClassNames.some((className) =>
+        className.startsWith('xl:grid-cols-'),
+      ),
+    ).toBe(false);
+    expect(themeRole).toHaveTextContent('background');
+    expect(themeRole?.querySelector('[aria-hidden="true"]')).toBeNull();
     expect(
       screen.getByText('Current reference: {color.semantic.background.app}'),
     ).toBeInTheDocument();
@@ -94,12 +110,18 @@ describe('ThemeTokenReferenceEditor', () => {
     expect(screen.getByRole('button', { name: 'Save mapping' })).toBeDisabled();
   });
 
-  it('updates the preview value and save state when another token is selected', () => {
+  it('updates the preview value and save state when another token is selected', async () => {
+    const user = userEvent.setup();
     renderEditor();
 
-    fireEvent.change(screen.getByLabelText('Choose token for Background'), {
-      target: { value: 'color.primitive.neutral.0' },
-    });
+    await user.click(
+      screen.getByRole('combobox', { name: 'Choose token for Background' }),
+    );
+    await user.click(
+      screen.getByRole('option', {
+        name: 'color.primitive.neutral.0 #ffffff',
+      }),
+    );
 
     expect(
       screen.getByText('Current reference: {color.primitive.neutral.0}'),
@@ -118,7 +140,9 @@ describe('ThemeTokenReferenceEditor', () => {
       availableOptions: [],
     });
 
-    expect(screen.getByLabelText('Choose token for Background')).toBeDisabled();
+    expect(
+      screen.getByRole('combobox', { name: 'Choose token for Background' }),
+    ).toBeDisabled();
     expect(screen.getByText('No color tokens available')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Save mapping' })).toBeDisabled();
   });
@@ -131,7 +155,9 @@ describe('ThemeTokenReferenceEditor', () => {
       showNoOptionsMessage: false,
     });
 
-    expect(screen.getByLabelText('Choose token for Background')).toBeDisabled();
+    expect(
+      screen.getByRole('combobox', { name: 'Choose token for Background' }),
+    ).toBeDisabled();
     expect(
       screen.queryByText('No color tokens available'),
     ).not.toBeInTheDocument();
