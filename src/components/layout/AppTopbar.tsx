@@ -1,15 +1,13 @@
 import Logo from './Logo';
 import { UserMenu } from './UserMenu';
 import type { ReactNode } from 'react';
+import { MobileAppMenu } from './MobileAppMenu';
 import { LocaleSwitcher } from '@/components/i18n/LocaleSwitcher';
-import {
-  ProjectTopbarBreadcrumbTrail,
-  ProjectTopbarExportAction,
-} from './ProjectTopbarBreadcrumb';
+import { ProjectTopbarBreadcrumbTrail } from './ProjectTopbarBreadcrumb';
 import type { ProjectTopbarBreadcrumbLabels } from './ProjectTopbarBreadcrumb';
+import type { PrivateNavigationItemKey } from '@/features/app-navigation/private-navigation';
 
 export type AppTopbarLabels = {
-  export: string;
   account: string;
   settings: string;
   userMenuLabel: string;
@@ -19,6 +17,8 @@ export type AppTopbarLabels = {
 type AppTopbarProps = {
   userEmail: string;
   labels: AppTopbarLabels;
+  navigationLabel: string;
+  navigationItems: Record<PrivateNavigationItemKey, string>;
   workspaceName?: string;
   leading?: ReactNode;
 };
@@ -26,6 +26,8 @@ type AppTopbarProps = {
 export function AppTopbar({
   userEmail,
   labels,
+  navigationLabel,
+  navigationItems,
   workspaceName = 'Atelier Lyon',
   leading,
 }: AppTopbarProps) {
@@ -47,18 +49,29 @@ export function AppTopbar({
       <ProjectTopbarBreadcrumbTrail labels={labels.breadcrumb} />
 
       <div className="ml-auto flex shrink-0 items-center gap-2">
-        <ProjectTopbarExportAction label={labels.export} />
-
         <div className="hidden sm:block">
           <LocaleSwitcher />
         </div>
 
-        <UserMenu
-          userEmail={userEmail}
-          ariaLabel={labels.userMenuLabel}
-          accountLabel={labels.account}
-          settingsLabel={labels.settings}
-        />
+        <div className="hidden sm:block">
+          <UserMenu
+            userEmail={userEmail}
+            ariaLabel={labels.userMenuLabel}
+            accountLabel={labels.account}
+            settingsLabel={labels.settings}
+          />
+        </div>
+
+        <div className="sm:hidden">
+          <MobileAppMenu
+            userEmail={userEmail}
+            ariaLabel={navigationLabel}
+            accountLabel={labels.account}
+            settingsLabel={labels.settings}
+            navigationLabel={navigationLabel}
+            navigationItems={navigationItems}
+          />
+        </div>
       </div>
     </header>
   );
