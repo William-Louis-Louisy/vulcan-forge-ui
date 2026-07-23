@@ -1,3 +1,5 @@
+import type { AccountProfileValidationMessageKey } from './account-profile.schema';
+
 export type AccountProfile = {
   name: string;
   email: string;
@@ -5,9 +7,17 @@ export type AccountProfile = {
 
 export type AccountProfileField = 'name' | 'email' | 'currentPassword';
 
+export type AccountProfileFieldErrorKey =
+  | AccountProfileValidationMessageKey
+  | 'currentPasswordRequired'
+  | 'currentPasswordIncorrect'
+  | 'emailAlreadyUsed';
+
 export type UpdateAccountProfileActionState = {
   status: 'idle' | 'success' | 'error';
-  fieldErrors: Partial<Record<AccountProfileField, string[]>>;
+  fieldErrors: Partial<
+    Record<AccountProfileField, AccountProfileFieldErrorKey[]>
+  >;
   formError:
     | 'unauthorized'
     | 'accountNotFound'
