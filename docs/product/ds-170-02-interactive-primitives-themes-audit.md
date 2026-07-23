@@ -139,41 +139,41 @@ Focused tests cover:
 ## Validation status
 
 - implementation: complete;
-- initial responsive FR/EN review: passed except for the targeted issues below;
+- responsive FR/EN Themes review: passed;
 - custom Select pointer and keyboard smoke test: passed;
 - segmented-control pointer and keyboard smoke test: passed;
 - mapping persistence: passed;
-- standard Quality workflow on the corrected head: passed;
-- targeted visual recheck: pending.
+- targeted preview-header and mapping-width visual recheck: passed;
+- standard Quality workflow on the final head: pending after this documentation update.
 
-## Targeted manual QA checklist
+## Targeted manual QA results
 
-Review the corrected Themes workspace in FR and EN at the width that previously reproduced the overlap, then at representative mobile, tablet and wide-desktop widths.
+The corrected Themes workspace was reviewed in FR and EN at the width that previously reproduced the overlap and at representative mobile, tablet and wide-desktop widths.
 
 ### Preview header
 
-- Light/Dark stays at the top right;
-- the description occupies the complete second row;
-- long FR and EN descriptions do not collide with the segmented control;
-- the header does not create horizontal overflow.
+- Light/Dark stays at the top right: passed;
+- the description occupies the complete second row: passed;
+- long FR and EN descriptions do not collide with the segmented control: passed;
+- the header does not create horizontal overflow: passed.
 
 ### Mapping rows
 
-- no content overlap occurs at normal desktop widths;
-- the two-column layout remains active at the previously failing width;
-- the four-zone layout appears only on a genuinely wide viewport;
-- saved or unsaved status does not overlap the resolved value;
-- Save remains reachable and stable;
-- long token paths remain readable;
-- Theme roles no longer display a redundant swatch.
+- no content overlap occurs at normal desktop widths: passed;
+- the two-column layout remains active at the previously failing width: passed;
+- the four-zone layout appears only on a genuinely wide viewport: passed;
+- saved or unsaved status does not overlap the resolved value: passed;
+- Save remains reachable and stable: passed;
+- long token paths remain readable: passed;
+- Theme roles no longer display a redundant swatch: passed.
 
 ### Regression smoke test
 
-- the current token path, value and swatch remain visible in the Select trigger;
-- option swatches match their displayed values;
-- pointer and keyboard selection still update the reference and resolved value;
-- saving a mapping still persists after reload;
-- Light/Dark still updates the preview.
+- the current token path, value and swatch remain visible in the Select trigger: passed;
+- option swatches match their displayed values: passed;
+- pointer and keyboard selection still update the reference and resolved value: passed;
+- saving a mapping still persists after reload: passed;
+- Light/Dark still updates the preview: passed.
 
 ## Definition of done
 
