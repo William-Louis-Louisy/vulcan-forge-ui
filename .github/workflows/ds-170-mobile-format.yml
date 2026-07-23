@@ -1,0 +1,65 @@
+name: DS-170 Mobile Formatting
+
+on:
+  push:
+    branches:
+      - feature/ds-170-01-topbar-navigation
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Format refinement sources
+        run: >-
+          npx prettier
+          'src/app/[locale]/app/layout.tsx'
+          docs/product/ds-170-01-topbar-navigation-audit.md
+          docs/product/ds-170-product-completion-polish-plan.md
+          src/components/layout/AppShell.tsx
+          src/components/layout/AppShellNavigation.tsx
+          src/components/layout/AppTopbar.tsx
+          src/components/layout/MobileAppMenu.tsx
+          src/components/layout/UserMenu.tsx
+          src/features/auth/logout/LogoutButton.tsx
+          --write
+
+      - name: Commit formatted sources
+        run: |
+          if git diff --quiet; then
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            'src/app/[locale]/app/layout.tsx' \
+            docs/product/ds-170-01-topbar-navigation-audit.md \
+            docs/product/ds-170-product-completion-polish-plan.md \
+            src/components/layout/AppShell.tsx \
+            src/components/layout/AppShellNavigation.tsx \
+            src/components/layout/AppTopbar.tsx \
+            src/components/layout/MobileAppMenu.tsx \
+            src/components/layout/UserMenu.tsx \
+            src/features/auth/logout/LogoutButton.tsx
+          git commit -m "style(navigation): format mobile menu refinement"
+          git push
