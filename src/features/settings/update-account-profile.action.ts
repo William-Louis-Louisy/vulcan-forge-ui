@@ -45,6 +45,8 @@ export async function updateAccountProfileAction(
     };
   }
 
+  let emailChanged = false;
+
   try {
     const currentUser = await prisma.user.findUnique({
       where: {
@@ -65,7 +67,7 @@ export async function updateAccountProfileAction(
       };
     }
 
-    const emailChanged = currentUser.email !== parsedProfile.data.email;
+    emailChanged = currentUser.email !== parsedProfile.data.email;
 
     if (emailChanged && !parsedProfile.data.currentPassword) {
       return {
@@ -127,22 +129,6 @@ export async function updateAccountProfileAction(
     });
 
     revalidatePath(`/${parsedProfile.data.locale}/app/settings`);
-
-    if (emailChanged) {
-      await signOut({
-        redirectTo: `/${parsedProfile.data.locale}/login?emailUpdated=1`,
-      });
-    }
-
-    return {
-      status: 'success',
-      fieldErrors: {},
-      formError: null,
-      savedProfile: {
-        name: parsedProfile.data.name,
-        email: parsedProfile.data.email,
-      },
-    };
   } catch {
     return {
       status: 'error',
@@ -151,4 +137,20 @@ export async function updateAccountProfileAction(
       savedProfile: null,
     };
   }
+
+  if (emailChanged) {
+    await signOut({
+      redirectTo: `/${parsedProfile.data.locale}/login?emailUpdated=1`,
+    });
+  }
+
+  return {
+    status: 'success',
+    fieldErrors: {},
+    formError: null,
+    savedProfile: {
+      name: parsedProfile.data.name,
+      email: parsedProfile.data.email,
+    },
+  };
 }
