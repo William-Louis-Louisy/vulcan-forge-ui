@@ -1,0 +1,38 @@
+name: DS-170-03 Typecheck Diagnostic
+
+on:
+  push:
+    branches:
+      - feature/ds-170-03-settings-redesign
+
+permissions:
+  contents: write
+
+jobs:
+  diagnose:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+      - run: npm ci
+      - run: npm run db:generate
+      - name: Capture typecheck output
+        run: |
+          set +e
+          npm run typecheck > docs/product/ds-170-03-typecheck-diagnostic.txt 2>&1
+          exit 0
+      - name: Commit diagnostic
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/product/ds-170-03-typecheck-diagnostic.txt
+          git commit -m "ci: capture DS-170-03 typecheck output"
+          git push
