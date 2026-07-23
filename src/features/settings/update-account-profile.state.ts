@@ -1,18 +1,13 @@
-import type { AccountProfileValidationMessageKey } from './account-profile.schema';
-
 export type AccountProfile = {
   name: string;
   email: string;
 };
 
+export type AccountProfileField = 'name' | 'email' | 'currentPassword';
+
 export type UpdateAccountProfileActionState = {
   status: 'idle' | 'success' | 'error';
-  fieldErrors: Partial<
-    Record<
-      'name' | 'email' | 'currentPassword',
-      AccountProfileValidationMessageKey[] | string[]
-    >
-  >;
+  fieldErrors: Partial<Record<AccountProfileField, string[]>>;
   formError:
     | 'unauthorized'
     | 'accountNotFound'
