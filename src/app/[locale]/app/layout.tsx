@@ -48,7 +48,6 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
           projects: t('navigationItems.projects'),
         },
         topbar: {
-          export: t('topbar.export'),
           settings: t('navigationItems.settings'),
           userMenuLabel: t('topbar.userMenuLabel'),
           account: t('topbar.account'),
