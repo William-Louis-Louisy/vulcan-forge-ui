@@ -1,10 +1,6 @@
 'use client';
 
-import {
-  GearSixIcon,
-  ListIcon,
-  XIcon,
-} from '@phosphor-icons/react';
+import { GearSixIcon, ListIcon, XIcon } from '@phosphor-icons/react';
 
 import { LocaleSwitcher } from '@/components/i18n/LocaleSwitcher';
 import { useDismissiblePopover } from '@/components/interaction/useDismissiblePopover';
