@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { ThemeTokenReferenceEditor } from './ThemeTokenReferenceEditor';
 
@@ -94,12 +95,18 @@ describe('ThemeTokenReferenceEditor', () => {
     expect(screen.getByRole('button', { name: 'Save mapping' })).toBeDisabled();
   });
 
-  it('updates the preview value and save state when another token is selected', () => {
+  it('updates the preview value and save state when another token is selected', async () => {
+    const user = userEvent.setup();
     renderEditor();
 
-    fireEvent.change(screen.getByLabelText('Choose token for Background'), {
-      target: { value: 'color.primitive.neutral.0' },
-    });
+    await user.click(
+      screen.getByRole('combobox', { name: 'Choose token for Background' }),
+    );
+    await user.click(
+      screen.getByRole('option', {
+        name: 'color.primitive.neutral.0 #ffffff',
+      }),
+    );
 
     expect(
       screen.getByText('Current reference: {color.primitive.neutral.0}'),
@@ -118,7 +125,9 @@ describe('ThemeTokenReferenceEditor', () => {
       availableOptions: [],
     });
 
-    expect(screen.getByLabelText('Choose token for Background')).toBeDisabled();
+    expect(
+      screen.getByRole('combobox', { name: 'Choose token for Background' }),
+    ).toBeDisabled();
     expect(screen.getByText('No color tokens available')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Save mapping' })).toBeDisabled();
   });
@@ -131,7 +140,9 @@ describe('ThemeTokenReferenceEditor', () => {
       showNoOptionsMessage: false,
     });
 
-    expect(screen.getByLabelText('Choose token for Background')).toBeDisabled();
+    expect(
+      screen.getByRole('combobox', { name: 'Choose token for Background' }),
+    ).toBeDisabled();
     expect(
       screen.queryByText('No color tokens available'),
     ).not.toBeInTheDocument();
