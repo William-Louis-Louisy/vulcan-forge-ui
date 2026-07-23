@@ -1,21 +1,24 @@
 name: DS-170 Formatting
 
 on:
-  pull_request:
+  push:
     branches:
-      - main
+      - feature/ds-170-01-topbar-navigation
 
 jobs:
   format:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
     permissions:
-      contents: read
+      contents: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          ref: feature/ds-170-01-topbar-navigation
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -45,22 +48,28 @@ jobs:
           src/features/app-navigation/private-navigation.ts
           --write
 
-      - name: Upload formatted sources
-        uses: actions/upload-artifact@v4
-        with:
-          name: ds-170-formatted-sources
-          path: |
-            docs/product/ds-170-01-topbar-navigation-audit.md
-            docs/product/ds-170-product-completion-polish-plan.md
-            src/app/[locale]/app/layout.tsx
-            src/components/i18n/LocaleSwitcher.tsx
-            src/components/interaction/useDismissiblePopover.ts
-            src/components/layout/AppShell.tsx
-            src/components/layout/AppShellNavigation.tsx
-            src/components/layout/AppTopbar.tsx
-            src/components/layout/ProjectTopbarBreadcrumb.tsx
-            src/components/layout/UserMenu.tsx
-            src/components/layout/project-switcher.utils.test.ts
-            src/components/layout/project-switcher.utils.ts
-            src/features/app-navigation/app-shell.queries.ts
+      - name: Commit formatted sources
+        run: |
+          if git diff --quiet; then
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            docs/product/ds-170-01-topbar-navigation-audit.md \
+            docs/product/ds-170-product-completion-polish-plan.md \
+            'src/app/[locale]/app/layout.tsx' \
+            src/components/i18n/LocaleSwitcher.tsx \
+            src/components/interaction/useDismissiblePopover.ts \
+            src/components/layout/AppShell.tsx \
+            src/components/layout/AppShellNavigation.tsx \
+            src/components/layout/AppTopbar.tsx \
+            src/components/layout/ProjectTopbarBreadcrumb.tsx \
+            src/components/layout/UserMenu.tsx \
+            src/components/layout/project-switcher.utils.test.ts \
+            src/components/layout/project-switcher.utils.ts \
+            src/features/app-navigation/app-shell.queries.ts \
             src/features/app-navigation/private-navigation.ts
+          git commit -m "style: format DS-170 navigation sources"
+          git push
