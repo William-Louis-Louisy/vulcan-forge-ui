@@ -143,7 +143,7 @@ Focused tests cover:
 - custom Select pointer and keyboard smoke test: passed;
 - segmented-control pointer and keyboard smoke test: passed;
 - mapping persistence: passed;
-- standard Quality workflow on the corrected head: pending final verification;
+- standard Quality workflow on the corrected head: passed;
 - targeted visual recheck: pending.
 
 ## Targeted manual QA checklist
