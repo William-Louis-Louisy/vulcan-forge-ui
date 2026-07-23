@@ -155,8 +155,8 @@ function renderPreviewPanel() {
 }
 
 describe('PreviewPanel', () => {
-  it('renders core component previews and resolved palette metadata', () => {
-    renderPreviewPanel();
+  it('renders core component previews and a two-row rail header', () => {
+    const { container } = renderPreviewPanel();
 
     expect(
       screen.getByRole('heading', { name: 'Component preview' }),
@@ -169,6 +169,12 @@ describe('PreviewPanel', () => {
       screen.getByLabelText('Background: #f7f3eb (Resolved)'),
     ).toBeInTheDocument();
     expect(screen.getByText('5/5')).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-preview-panel-header]'),
+    ).toHaveClass('grid-cols-[minmax(0,1fr)_auto]');
+    expect(
+      container.querySelector('[data-preview-panel-description]'),
+    ).toHaveClass('col-span-2');
   });
 
   it('switches modes and surfaces fallback mappings', async () => {
