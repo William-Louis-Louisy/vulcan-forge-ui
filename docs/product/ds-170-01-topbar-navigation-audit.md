@@ -63,7 +63,7 @@ Focused utility tests cover:
 - root-route behavior;
 - generated target project hrefs.
 
-The standard Quality workflow must also pass.
+The standard Quality workflow must also pass. Temporary diagnostic workflows are not part of the final branch diff.
 
 ## Validation status
 
