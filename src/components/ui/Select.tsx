@@ -43,6 +43,19 @@ function getEnabledOptionIndexes<Value extends string>(
   }, []);
 }
 
+function getInitialActiveIndex<Value extends string>({
+  options,
+  value,
+  enabledIndexes,
+}: {
+  options: readonly SelectOption<Value>[];
+  value: Value | '';
+  enabledIndexes: readonly number[];
+}) {
+  const selectedIndex = options.findIndex((option) => option.value === value);
+  return selectedIndex >= 0 ? selectedIndex : (enabledIndexes[0] ?? -1);
+}
+
 export function Select<Value extends string>({
   id,
   value,
@@ -55,7 +68,7 @@ export function Select<Value extends string>({
 }: SelectProps<Value>) {
   const generatedId = useId().replaceAll(':', '');
   const listboxId = `${id}-${generatedId}-listbox`;
-  const { close, containerRef, isOpen, setIsOpen, toggle, triggerRef } =
+  const { close, containerRef, isOpen, setIsOpen, triggerRef } =
     useDismissiblePopover();
   const selectedOption = useMemo(
     () => options.find((option) => option.value === value) ?? null,
@@ -65,21 +78,11 @@ export function Select<Value extends string>({
     () => getEnabledOptionIndexes(options),
     [options],
   );
-  const [activeIndex, setActiveIndex] = useState(() => {
-    const selectedIndex = options.findIndex((option) => option.value === value);
-    return selectedIndex >= 0 ? selectedIndex : (enabledIndexes[0] ?? -1);
-  });
+  const [activeIndex, setActiveIndex] = useState(() =>
+    getInitialActiveIndex({ options, value, enabledIndexes }),
+  );
   const typeaheadRef = useRef('');
   const typeaheadTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-
-    const selectedIndex = options.findIndex((option) => option.value === value);
-    setActiveIndex(selectedIndex >= 0 ? selectedIndex : (enabledIndexes[0] ?? -1));
-  }, [enabledIndexes, isOpen, options, value]);
 
   useEffect(() => {
     if (!isOpen || activeIndex < 0) {
@@ -90,9 +93,7 @@ export function Select<Value extends string>({
       `${listboxId}-option-${activeIndex}`,
     );
 
-    if (activeOption && 'scrollIntoView' in activeOption) {
-      activeOption.scrollIntoView({ block: 'nearest' });
-    }
+    activeOption?.scrollIntoView?.({ block: 'nearest' });
   }, [activeIndex, isOpen, listboxId]);
 
   useEffect(
@@ -111,6 +112,15 @@ export function Select<Value extends string>({
 
     setActiveIndex(index);
     setIsOpen(true);
+  }
+
+  function handleTriggerClick() {
+    if (isOpen) {
+      close();
+      return;
+    }
+
+    openWithIndex(getInitialActiveIndex({ options, value, enabledIndexes }));
   }
 
   function moveActiveOption(direction: 1 | -1) {
@@ -172,7 +182,9 @@ export function Select<Value extends string>({
       event.preventDefault();
 
       if (!isOpen) {
-        openWithIndex(activeIndex >= 0 ? activeIndex : (enabledIndexes[0] ?? -1));
+        openWithIndex(
+          getInitialActiveIndex({ options, value, enabledIndexes }),
+        );
       } else {
         moveActiveOption(1);
       }
@@ -185,9 +197,7 @@ export function Select<Value extends string>({
 
       if (!isOpen) {
         openWithIndex(
-          activeIndex >= 0
-            ? activeIndex
-            : (enabledIndexes[enabledIndexes.length - 1] ?? -1),
+          getInitialActiveIndex({ options, value, enabledIndexes }),
         );
       } else {
         moveActiveOption(-1);
@@ -221,7 +231,7 @@ export function Select<Value extends string>({
 
     if ((event.key === 'Enter' || event.key === ' ') && !isOpen) {
       event.preventDefault();
-      openWithIndex(activeIndex >= 0 ? activeIndex : (enabledIndexes[0] ?? -1));
+      openWithIndex(getInitialActiveIndex({ options, value, enabledIndexes }));
       return;
     }
 
@@ -230,7 +240,12 @@ export function Select<Value extends string>({
       return;
     }
 
-    if (event.key.length === 1 && !event.altKey && !event.ctrlKey && !event.metaKey) {
+    if (
+      event.key.length === 1 &&
+      !event.altKey &&
+      !event.ctrlKey &&
+      !event.metaKey
+    ) {
       handleTypeahead(event.key);
     }
   }
@@ -256,7 +271,7 @@ export function Select<Value extends string>({
             : undefined
         }
         disabled={disabled}
-        onClick={toggle}
+        onClick={handleTriggerClick}
         onKeyDown={handleKeyDown}
         className="border-border-default bg-surface-primary text-content-primary focus-visible:outline-border-focus flex min-h-10 w-full min-w-0 items-center gap-2 rounded-md border px-3 text-left transition hover:bg-background-subtle focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
       >
@@ -301,49 +316,49 @@ export function Select<Value extends string>({
             const isActive = index === activeIndex;
 
             return (
-              <li
-                key={option.value}
-                id={`${listboxId}-option-${index}`}
-                role="option"
-                aria-selected={isSelected}
-                aria-disabled={option.disabled || undefined}
-                onPointerMove={() => {
-                  if (!option.disabled) {
-                    setActiveIndex(index);
-                  }
-                }}
-                onClick={() => selectOption(option)}
-                className={[
-                  'flex min-h-11 min-w-0 items-center gap-2 rounded-sm px-2.5 py-2 transition',
-                  option.disabled
-                    ? 'cursor-not-allowed opacity-50'
-                    : 'cursor-pointer',
-                  isActive
-                    ? 'bg-background-subtle text-content-primary'
-                    : 'text-content-secondary',
-                ].join(' ')}
-              >
-                {option.swatch ? <SelectSwatch value={option.swatch} /> : null}
-
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate font-mono text-xs font-semibold">
-                    {option.label}
-                  </span>
-                  {option.description ? (
-                    <span className="text-content-tertiary mt-0.5 block truncate font-mono text-[0.6875rem]">
-                      {option.description}
-                    </span>
+              <li key={option.value} role="presentation">
+                <button
+                  id={`${listboxId}-option-${index}`}
+                  type="button"
+                  role="option"
+                  aria-selected={isSelected}
+                  aria-disabled={option.disabled || undefined}
+                  tabIndex={-1}
+                  disabled={option.disabled}
+                  onPointerMove={() => setActiveIndex(index)}
+                  onClick={() => selectOption(option)}
+                  className={[
+                    'flex min-h-11 w-full min-w-0 items-center gap-2 rounded-sm px-2.5 py-2 text-left transition',
+                    'disabled:cursor-not-allowed disabled:opacity-50',
+                    isActive
+                      ? 'bg-background-subtle text-content-primary'
+                      : 'text-content-secondary',
+                  ].join(' ')}
+                >
+                  {option.swatch ? (
+                    <SelectSwatch value={option.swatch} />
                   ) : null}
-                </span>
 
-                {isSelected ? (
-                  <CheckIcon
-                    aria-hidden="true"
-                    size={15}
-                    weight="bold"
-                    className="text-action-success shrink-0"
-                  />
-                ) : null}
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate font-mono text-xs font-semibold">
+                      {option.label}
+                    </span>
+                    {option.description ? (
+                      <span className="text-content-tertiary mt-0.5 block truncate font-mono text-[0.6875rem]">
+                        {option.description}
+                      </span>
+                    ) : null}
+                  </span>
+
+                  {isSelected ? (
+                    <CheckIcon
+                      aria-hidden="true"
+                      size={15}
+                      weight="bold"
+                      className="text-action-success shrink-0"
+                    />
+                  ) : null}
+                </button>
               </li>
             );
           })}
