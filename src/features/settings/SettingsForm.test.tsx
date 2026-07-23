@@ -65,7 +65,8 @@ const messages = {
       title: 'Preferences',
     },
     theme: {
-      description: 'Choose how the interface should adapt to your display preferences.',
+      description:
+        'Choose how the interface should adapt to your display preferences.',
       options: {
         dark: {
           description: 'Always use the dark interface.',
@@ -123,9 +124,7 @@ describe('SettingsForm', () => {
 
     expect(mocks.applyThemePreference).toHaveBeenLastCalledWith('dark');
     expect(screen.getByText('You have unsaved settings.')).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: 'Save settings' }),
-    ).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Save settings' })).toBeEnabled();
   });
 
   it('keeps locale selection native and keyboard reachable', async () => {

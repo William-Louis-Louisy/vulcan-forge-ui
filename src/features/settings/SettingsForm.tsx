@@ -121,9 +121,7 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
                 name="locale"
                 value={availableLocale}
                 label={t(`locale.options.${availableLocale}.label`)}
-                description={t(
-                  `locale.options.${availableLocale}.description`,
-                )}
+                description={t(`locale.options.${availableLocale}.description`)}
                 checked={locale === availableLocale}
                 disabled={isPending}
                 preview={
@@ -163,9 +161,7 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
                 key={availableThemePreference}
                 name="themePreference"
                 value={availableThemePreference}
-                label={t(
-                  `theme.options.${availableThemePreference}.label`,
-                )}
+                label={t(`theme.options.${availableThemePreference}.label`)}
                 description={t(
                   `theme.options.${availableThemePreference}.description`,
                 )}
@@ -174,9 +170,7 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
                 preview={
                   <AppearancePreview preference={availableThemePreference} />
                 }
-                onChange={() =>
-                  setThemePreference(availableThemePreference)
-                }
+                onChange={() => setThemePreference(availableThemePreference)}
               />
             ))}
           </div>

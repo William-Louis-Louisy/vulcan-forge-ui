@@ -1134,8 +1134,9 @@
     "account": {
       "email": "Email",
       "name": "Nom",
-      "title": "Compte",
-      "unknownName": "Utilisateur inconnu"
+      "title": "Profil",
+      "unknownName": "Utilisateur inconnu",
+      "description": "Votre identité personnelle pour l’espace de travail authentifié."
     },
     "description": "Gérez vos préférences de compte et le comportement par défaut de l’application.",
     "eyebrow": "Paramètres utilisateur",
@@ -1190,7 +1191,11 @@
       },
       "title": "Apparence"
     },
-    "title": "Paramètres"
+    "title": "Paramètres",
+    "preferences": {
+      "description": "Choisissez la langue et l’apparence utilisées par VulcanForgeUI.",
+      "title": "Préférences"
+    }
   },
   "SignupPage": {
     "benefits": {
