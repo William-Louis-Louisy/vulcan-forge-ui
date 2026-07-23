@@ -49,11 +49,11 @@ export function AppTopbar({
       <ProjectTopbarBreadcrumbTrail labels={labels.breadcrumb} />
 
       <div className="ml-auto flex shrink-0 items-center gap-2">
-        <div className="hidden sm:block">
+        <div className="hidden lg:block">
           <LocaleSwitcher />
         </div>
 
-        <div className="hidden sm:block">
+        <div className="hidden lg:block">
           <UserMenu
             userEmail={userEmail}
             ariaLabel={labels.userMenuLabel}
@@ -62,7 +62,7 @@ export function AppTopbar({
           />
         </div>
 
-        <div className="sm:hidden">
+        <div className="lg:hidden">
           <MobileAppMenu
             userEmail={userEmail}
             ariaLabel={navigationLabel}
