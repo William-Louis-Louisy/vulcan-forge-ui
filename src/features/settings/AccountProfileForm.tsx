@@ -10,6 +10,8 @@ import { updateAccountProfileAction } from './update-account-profile.action';
 import {
   initialUpdateAccountProfileActionState,
   type AccountProfile,
+  type AccountProfileField,
+  type UpdateAccountProfileActionState,
 } from './update-account-profile.state';
 
 type AccountProfileFormProps = {
@@ -18,8 +20,8 @@ type AccountProfileFormProps = {
 };
 
 function getFirstError(
-  errors: Record<string, string[] | undefined>,
-  field: 'name' | 'email' | 'currentPassword',
+  errors: UpdateAccountProfileActionState['fieldErrors'],
+  field: AccountProfileField,
 ) {
   return errors[field]?.[0] ?? null;
 }
