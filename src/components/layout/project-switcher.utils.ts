@@ -40,7 +40,8 @@ export function getProjectSwitchDestination({
   const [section] = pathname.slice(projectBasePath.length + 1).split('/');
 
   if (section === 'tokens') {
-    const selectedTokenSet = tokenSet && tokenSetTypes.has(tokenSet) ? tokenSet : 'color';
+    const selectedTokenSet =
+      tokenSet && tokenSetTypes.has(tokenSet) ? tokenSet : 'color';
 
     return `tokens?set=${selectedTokenSet}`;
   }

@@ -9,11 +9,7 @@ import {
   createContext,
   type ReactNode,
 } from 'react';
-import {
-  CheckIcon,
-  FolderIcon,
-  CaretDownIcon,
-} from '@phosphor-icons/react';
+import { CheckIcon, FolderIcon, CaretDownIcon } from '@phosphor-icons/react';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 

@@ -33,10 +33,7 @@ export function LocaleSwitcher({
 
   return (
     <div
-      className={[
-        fullWidth ? 'w-full' : 'inline-flex',
-        className,
-      ]
+      className={[fullWidth ? 'w-full' : 'inline-flex', className]
         .filter(Boolean)
         .join(' ')}
     >
@@ -46,7 +43,10 @@ export function LocaleSwitcher({
         </p>
       ) : null}
 
-      <nav aria-label={t('label')} className={fullWidth ? 'w-full' : 'inline-flex'}>
+      <nav
+        aria-label={t('label')}
+        className={fullWidth ? 'w-full' : 'inline-flex'}
+      >
         <ul
           className={[
             'border-border-subtle bg-surface-primary items-center gap-1 rounded-sm border',
