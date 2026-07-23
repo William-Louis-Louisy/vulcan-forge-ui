@@ -61,6 +61,8 @@ The compact menu contains:
 
 This keeps primary navigation available on both mobile and tablet instead of exposing an account-only menu while the sidebar is hidden.
 
+The functional architecture and interaction model are validated. The current visual design of the burger menu is intentionally provisional and may receive a separate styling pass after the desired hierarchy, layout and motion direction have been clarified. That future exploration does not reopen DS-170-01 unless it changes navigation behavior.
+
 ## DS-170-02 — Interactive primitives and Themes fixes
 
 ### Scope
@@ -142,6 +144,8 @@ This phase is intentionally isolated because it changes persistence and generato
 - verify all visible strings are localized;
 - maintain an explicit allowlist for intentional exceptions;
 - add focused regression tests where an issue can recur automatically.
+
+The deferred burger-menu visual exploration should be reassessed during this audit or earlier when a concrete target direction is available.
 
 ## DS-170-08 — Final user journey
 
