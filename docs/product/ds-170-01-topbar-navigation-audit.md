@@ -2,15 +2,15 @@
 
 ## Objective
 
-Remove the remaining false affordances from the application topbar and align account, project and workspace navigation with their actual product scope.
+Remove the remaining false affordances from the application topbar and align account, project, mobile and workspace navigation with their actual product scope.
 
 ## Implemented behavior
 
-### Contextual Export
+### Export navigation
 
-The topbar Export action now appears only when a project is registered in the editor shell. It navigates directly to that project's Exports workspace.
+The redundant topbar Export action has been removed. Exports remains available in the project navigation on desktop and in the mobile application menu.
 
-Outside project routes, no inactive Export button is rendered.
+This avoids duplicating an existing destination with a visually privileged action that has no distinct workflow.
 
 ### Project switcher
 
@@ -33,11 +33,26 @@ The workspace item is intentionally neutralized. It remains visible as context o
 
 A real workspace switcher is deferred until multiple-workspace behavior is designed and implemented.
 
-### Settings and locale
+### Desktop account navigation
 
-Settings has been removed from the sidebar and added to the user menu.
+Settings has been removed from the desktop sidebar and added to the desktop user menu.
 
-The Settings route remains unchanged and dedicated. On small screens, where the topbar locale control is hidden, the FR/EN control is also available inside the user menu.
+The Settings route remains unchanged and dedicated. The desktop user menu remains focused on account identity, Settings and sign out.
+
+### Mobile application menu
+
+The account-only user menu is no longer displayed on mobile. A burger menu now consolidates the navigation that disappears with the desktop sidebar.
+
+It contains:
+
+- Dashboard and Projects;
+- the enabled sections of the current project;
+- the disabled Overview and Brand entries with their existing coming-soon treatment;
+- Settings;
+- the FR/EN locale control;
+- sign out.
+
+The menu closes after navigation, on outside pointer interaction and on Escape with focus restoration.
 
 ### App shell data
 
@@ -68,54 +83,55 @@ The standard Quality workflow must also pass. Temporary diagnostic workflows are
 ## Validation status
 
 - implementation: complete;
-- automated Quality workflow: pending;
-- responsive FR/EN review: pending;
-- project-switching smoke test: pending;
-- user-menu and mobile locale smoke test: pending;
-- keyboard dismissal smoke test: pending.
+- initial desktop, tablet, project-switcher and account-menu QA: passed;
+- automated Quality workflow after the mobile-menu refinement: pending;
+- focused mobile burger-menu QA: pending;
+- final keyboard dismissal smoke test: pending.
 
 ## Manual QA checklist
 
-Review desktop, tablet and mobile in FR and EN.
+The broad DS-170-01 review has passed. The final focused review only needs to cover the refinements below in FR and EN.
 
 ### Topbar
 
-- workspace identity looks static and does not react to hover or keyboard focus;
-- Export is absent on Dashboard, Projects and Settings;
-- Export appears inside a project and opens that project's Exports page;
-- no horizontal topbar overflow occurs on narrow screens;
-- the desktop locale control remains visible from `sm` upward;
-- the mobile locale control is available in the user menu.
+- no Export action remains in the topbar;
+- Exports remains reachable from project navigation;
+- workspace identity remains static;
+- desktop locale and user controls remain visible from `sm` upward;
+- the burger menu replaces the avatar control below `sm`;
+- no horizontal overflow occurs on narrow screens.
 
-### Project switcher
+### Mobile application menu
 
-- current project is clearly identified;
-- all available projects appear in expected update order;
+- Dashboard and Projects are reachable;
+- current-project sections match the desktop sidebar;
+- the active application and project destinations remain identifiable;
+- disabled Overview and Brand entries remain non-interactive;
+- Settings opens the dedicated page;
+- FR/EN switching preserves the current route;
+- sign out remains functional;
+- navigation closes the menu;
+- outside click closes the menu;
+- Escape closes the menu and restores trigger focus;
+- long French labels remain readable without horizontal overflow.
+
+### Desktop regression
+
+- the project switcher behavior remains unchanged;
 - switching from Themes opens Themes in the target project;
 - switching from Documentation opens Documentation in the target project;
 - switching from a nested Components route opens the target Components root;
 - switching from Tokens preserves color, spacing, radius, typography or motion;
-- the Projects index action works;
-- outside click closes the dropdown;
-- Escape closes the dropdown and restores trigger focus;
-- long project names and slugs truncate without overflow.
-
-### User menu
-
-- Settings opens the dedicated Settings page;
-- Settings no longer appears in the sidebar;
-- locale switching still preserves the current route;
-- Logout remains unchanged;
-- outside click and Escape close the menu;
-- focus rings are visible.
+- Settings remains available from the desktop user menu;
+- locale switching and sign out remain unchanged.
 
 ## Definition of done
 
 DS-170-01 is complete when:
 
-- the standard Quality workflow passes;
-- responsive FR/EN QA passes;
-- Export behavior passes;
-- project switching passes across representative sections;
-- user-menu Settings and mobile locale behavior pass;
+- the standard Quality workflow passes after the refinement;
+- the focused mobile burger-menu review passes;
+- Exports remains reachable without the redundant topbar action;
+- project switching remains stable across representative sections;
+- Settings, locale and sign out work from their responsive navigation surfaces;
 - keyboard and dismissal behavior pass.
