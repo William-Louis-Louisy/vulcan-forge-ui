@@ -144,7 +144,7 @@ Focused tests cover:
 - segmented-control pointer and keyboard smoke test: passed;
 - mapping persistence: passed;
 - targeted preview-header and mapping-width visual recheck: passed;
-- standard Quality workflow on the final head: pending after this documentation update.
+- standard Quality workflow: passed.
 
 ## Targeted manual QA results
 
