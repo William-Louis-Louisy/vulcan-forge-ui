@@ -58,6 +58,12 @@ The menu closes after navigation, on outside pointer interaction and on Escape w
 
 The shell now loads the real workspace name and a lightweight project option list. It no longer displays the authenticated user's name as a substitute for the workspace identity.
 
+## Deferred visual refinement
+
+The compact-menu information architecture, responsive breakpoint and interactions are validated. Its visual composition is intentionally considered provisional.
+
+A dedicated styling pass may revisit its layout, hierarchy, motion and presentation after the target design direction has been clarified. This deferred exploration is not a functional defect and does not block DS-170-01.
+
 ## Product boundary
 
 - no Settings page redesign;
@@ -65,7 +71,8 @@ The shell now loads the real workspace name and a lightweight project option lis
 - no Overview or Brand implementation;
 - no multi-workspace switching;
 - no Prisma schema or migration change;
-- no project business-data mutation.
+- no project business-data mutation;
+- no final visual redesign of the compact burger menu.
 
 ## Automated coverage
 
@@ -82,15 +89,15 @@ The standard Quality workflow must also pass. Temporary diagnostic workflows are
 
 ## Validation status
 
-- implementation: complete;
-- initial desktop, tablet, project-switcher and account-menu QA: passed;
-- automated Quality workflow after the final compact-navigation breakpoint adjustment: passed;
-- focused mobile and tablet burger-menu QA: pending;
-- final keyboard dismissal smoke test: pending.
+- implementation: passed;
+- automated Quality workflow: passed;
+- responsive FR/EN QA: passed;
+- project-switching smoke test: passed;
+- desktop account-menu smoke test: passed;
+- compact mobile and tablet burger-menu QA: passed;
+- keyboard dismissal and focus-restoration smoke test: passed.
 
-## Manual QA checklist
-
-The broad DS-170-01 review has passed. The final focused review only needs to cover the refinements below in FR and EN.
+## Validated manual behavior
 
 ### Topbar
 
@@ -129,11 +136,12 @@ The broad DS-170-01 review has passed. The final focused review only needs to co
 
 ## Definition of done
 
-DS-170-01 is complete when:
+DS-170-01 is complete because:
 
-- the standard Quality workflow passes after the refinement;
-- the focused mobile and tablet burger-menu review passes;
+- the standard Quality workflow passes;
+- responsive FR/EN QA passes;
 - Exports remains reachable without the redundant topbar action;
 - project switching remains stable across representative sections;
 - Settings, locale and sign out work from their responsive navigation surfaces;
-- keyboard and dismissal behavior pass.
+- keyboard and dismissal behavior pass;
+- the remaining burger-menu concern is explicitly tracked as a future visual-design exploration rather than an unfinished functional requirement.
