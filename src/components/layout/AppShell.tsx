@@ -16,7 +16,6 @@ type AppShellLabels = {
   navigationLabel: string;
   navigationItems: Record<PrivateNavigationItemKey, string>;
   topbar: {
-    export: string;
     settings: string;
     userMenuLabel: string;
     account: string;
@@ -55,6 +54,8 @@ export function AppShell({
           userEmail={userEmail}
           workspaceName={workspaceName ?? ''}
           labels={labels.topbar}
+          navigationLabel={labels.navigationLabel}
+          navigationItems={labels.navigationItems}
         />
 
         <div className="flex min-h-0 flex-1 overflow-hidden">
