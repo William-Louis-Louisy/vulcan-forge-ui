@@ -12,7 +12,7 @@ This phase combines functional gaps, missing product pages and visual debt disco
 - shared interaction patterns must use shared primitives;
 - project navigation stays focused on project work;
 - desktop account preferences belong to the user menu and a dedicated Settings page;
-- mobile navigation is consolidated in one application menu rather than fragmented across unavailable sidebars and account-only controls;
+- compact navigation is consolidated in one application menu rather than fragmented across unavailable sidebars and account-only controls;
 - responsive behavior is designed explicitly rather than obtained by compressing desktop layouts;
 - FR and EN remain first-class throughout the phase;
 - the large refactor starts only after a complete critical-path review.
@@ -28,9 +28,9 @@ This phase combines functional gaps, missing product pages and visual debt disco
 - expose the full project list from the authenticated workspace;
 - remove Settings from the desktop sidebar;
 - add Settings to the desktop user menu;
-- replace the mobile user menu with a burger menu;
-- expose application and current-project navigation in the mobile menu;
-- expose Settings, locale switching and sign out in the mobile menu;
+- replace the user menu with a burger menu whenever the desktop sidebar is hidden;
+- expose application and current-project navigation in the compact menu;
+- expose Settings, locale switching and sign out in the compact menu;
 - close dropdowns on outside pointer interaction and Escape;
 - keep focus restoration on the trigger after Escape;
 - neutralize the workspace selector until multi-workspace switching is implemented.
@@ -49,7 +49,9 @@ The workspace identity remains visible in the topbar but is rendered as static c
 
 ### Responsive navigation decision
 
-Desktop and tablet keep the compact locale control and user menu in the topbar. Mobile uses a single burger menu that contains:
+Wide layouts from `lg` upward keep the locale control, desktop user menu and persistent sidebar. Layouts below `lg` use one burger menu because the sidebar is unavailable.
+
+The compact menu contains:
 
 - Dashboard and Projects;
 - the current project's enabled editor sections;
@@ -57,7 +59,7 @@ Desktop and tablet keep the compact locale control and user menu in the topbar. 
 - the FR/EN locale control;
 - sign out.
 
-This avoids exposing an account-only menu while the primary sidebar is unavailable.
+This keeps primary navigation available on both mobile and tablet instead of exposing an account-only menu while the sidebar is hidden.
 
 ## DS-170-02 — Interactive primitives and Themes fixes
 
@@ -86,10 +88,10 @@ The primitive must also support options without swatches so it remains reusable 
 - separate Profile and Preferences clearly;
 - preserve the existing locale and theme persistence behavior;
 - use compact accessible selection controls;
-- keep the mobile locale shortcut in the burger menu because the topbar locale control is hidden on small screens;
+- keep the locale shortcut in the compact burger menu because the topbar locale control is hidden below `lg`;
 - verify loading, error, success and unsaved states.
 
-The desktop user menu and mobile application menu are navigation and shortcut surfaces, not replacements for the Settings form.
+The desktop user menu and compact application menu are navigation and shortcut surfaces, not replacements for the Settings form.
 
 ## DS-170-04 — Project Overview
 
@@ -176,7 +178,7 @@ DS-170 is complete when:
 
 - all eight steps are merged;
 - Overview and Brand are operational;
-- topbar, project switcher and mobile navigation are functional and accessible;
+- topbar, project switcher and compact navigation are functional and accessible;
 - Themes mapping is responsive and uses the shared Select;
 - Settings and public surfaces match the product visual system;
 - no unapproved legacy palette, typography or native Select debt remains;
