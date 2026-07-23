@@ -11,7 +11,8 @@ This phase combines functional gaps, missing product pages and visual debt disco
 - visible controls must have a real behavior;
 - shared interaction patterns must use shared primitives;
 - project navigation stays focused on project work;
-- account preferences belong to the user menu and a dedicated Settings page;
+- desktop account preferences belong to the user menu and a dedicated Settings page;
+- mobile navigation is consolidated in one application menu rather than fragmented across unavailable sidebars and account-only controls;
 - responsive behavior is designed explicitly rather than obtained by compressing desktop layouts;
 - FR and EN remain first-class throughout the phase;
 - the large refactor starts only after a complete critical-path review.
@@ -20,15 +21,16 @@ This phase combines functional gaps, missing product pages and visual debt disco
 
 ### Scope
 
-- make the contextual Export action navigate to the current project's Exports workspace;
-- hide the Export action outside a project context;
+- remove the redundant topbar Export action because Exports already belongs to project navigation;
 - replace the project breadcrumb link with a project switcher;
 - preserve the current top-level editor section when switching projects;
 - preserve the selected token-set family when switching from Tokens;
 - expose the full project list from the authenticated workspace;
-- remove Settings from the sidebar;
-- add Settings to the user menu;
-- expose the locale control in the user menu on mobile;
+- remove Settings from the desktop sidebar;
+- add Settings to the desktop user menu;
+- replace the mobile user menu with a burger menu;
+- expose application and current-project navigation in the mobile menu;
+- expose Settings, locale switching and sign out in the mobile menu;
 - close dropdowns on outside pointer interaction and Escape;
 - keep focus restoration on the trigger after Escape;
 - neutralize the workspace selector until multi-workspace switching is implemented.
@@ -44,6 +46,18 @@ The workspace identity remains visible in the topbar but is rendered as static c
 - nested Components and Accessibility routes fall back to their section root;
 - Tokens preserves a supported `set` query and otherwise falls back to `color`;
 - the dropdown includes an explicit link to the Projects index.
+
+### Responsive navigation decision
+
+Desktop and tablet keep the compact locale control and user menu in the topbar. Mobile uses a single burger menu that contains:
+
+- Dashboard and Projects;
+- the current project's enabled editor sections;
+- Settings;
+- the FR/EN locale control;
+- sign out.
+
+This avoids exposing an account-only menu while the primary sidebar is unavailable.
 
 ## DS-170-02 — Interactive primitives and Themes fixes
 
@@ -72,10 +86,10 @@ The primitive must also support options without swatches so it remains reusable 
 - separate Profile and Preferences clearly;
 - preserve the existing locale and theme persistence behavior;
 - use compact accessible selection controls;
-- keep the mobile locale shortcut in the user menu because the topbar locale control is hidden on small screens;
+- keep the mobile locale shortcut in the burger menu because the topbar locale control is hidden on small screens;
 - verify loading, error, success and unsaved states.
 
-The user menu is a navigation and shortcut surface, not a replacement for the Settings form.
+The desktop user menu and mobile application menu are navigation and shortcut surfaces, not replacements for the Settings form.
 
 ## DS-170-04 — Project Overview
 
@@ -162,7 +176,7 @@ DS-170 is complete when:
 
 - all eight steps are merged;
 - Overview and Brand are operational;
-- topbar controls and dropdowns are functional and accessible;
+- topbar, project switcher and mobile navigation are functional and accessible;
 - Themes mapping is responsive and uses the shared Select;
 - Settings and public surfaces match the product visual system;
 - no unapproved legacy palette, typography or native Select debt remains;
