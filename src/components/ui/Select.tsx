@@ -322,6 +322,11 @@ export function Select<Value extends string>({
                   id={`${listboxId}-option-${index}`}
                   type="button"
                   role="option"
+                  aria-label={
+                    option.description
+                      ? `${option.label} ${option.description}`
+                      : option.label
+                  }
                   aria-selected={isSelected}
                   aria-disabled={option.disabled || undefined}
                   tabIndex={-1}
