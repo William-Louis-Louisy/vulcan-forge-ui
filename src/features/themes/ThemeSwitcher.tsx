@@ -30,6 +30,7 @@ export function ThemeSwitcher({
         label: labels.modes[mode],
       }))}
       onValueChange={onModeChange}
+      className="col-start-2 row-start-1 self-start justify-self-end"
     />
   );
 }
