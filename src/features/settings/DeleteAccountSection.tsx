@@ -6,7 +6,11 @@ import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
 import { deleteAccountAction } from './delete-account.action';
-import { initialDeleteAccountActionState } from './delete-account.state';
+import {
+  initialDeleteAccountActionState,
+  type DeleteAccountActionState,
+  type DeleteAccountField,
+} from './delete-account.state';
 
 type DeleteAccountSectionProps = {
   email: string;
@@ -14,8 +18,8 @@ type DeleteAccountSectionProps = {
 };
 
 function getFirstError(
-  errors: Record<string, string[] | undefined>,
-  field: 'confirmationEmail' | 'currentPassword',
+  errors: DeleteAccountActionState['fieldErrors'],
+  field: DeleteAccountField,
 ) {
   return errors[field]?.[0] ?? null;
 }
