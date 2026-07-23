@@ -2,7 +2,10 @@ import type { ReactNode } from 'react';
 
 import { AppTopbar } from '@/components/layout/AppTopbar';
 import { AppShellNavigation } from '@/components/layout/AppShellNavigation';
-import { ProjectTopbarBreadcrumbProvider } from './ProjectTopbarBreadcrumb';
+import {
+  ProjectTopbarBreadcrumbProvider,
+  type ProjectSwitcherProject,
+} from './ProjectTopbarBreadcrumb';
 import type { ProjectTopbarBreadcrumbLabels } from './ProjectTopbarBreadcrumb';
 import type { ThemePreference } from '@/features/settings/user-settings.schema';
 import { SaveContextRestorer } from '@/features/save-context/SaveContextRestorer';
@@ -14,7 +17,7 @@ type AppShellLabels = {
   navigationItems: Record<PrivateNavigationItemKey, string>;
   topbar: {
     export: string;
-    workspaceLabel: string;
+    settings: string;
     userMenuLabel: string;
     account: string;
     breadcrumb: ProjectTopbarBreadcrumbLabels;
@@ -29,6 +32,7 @@ type AppShellProps = {
   children: ReactNode;
   userEmail: string;
   labels: AppShellLabels;
+  projects: ProjectSwitcherProject[];
   themePreference: ThemePreference;
   workspaceName?: string;
 };
@@ -37,11 +41,12 @@ export function AppShell({
   children,
   userEmail,
   labels,
+  projects,
   themePreference,
   workspaceName,
 }: AppShellProps) {
   return (
-    <ProjectTopbarBreadcrumbProvider>
+    <ProjectTopbarBreadcrumbProvider projects={projects}>
       <div className="bg-background-app text-content-primary flex h-screen min-h-screen flex-col overflow-hidden">
         <ThemePreferenceApplier themePreference={themePreference} />
         <SaveContextRestorer />
