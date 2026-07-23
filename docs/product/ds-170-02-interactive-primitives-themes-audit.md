@@ -116,7 +116,7 @@ Focused tests cover:
 ## Validation status
 
 - implementation: complete;
-- standard Quality workflow: pending final head verification;
+- standard Quality workflow: passed;
 - responsive FR/EN Themes review: pending;
 - custom Select pointer and keyboard smoke test: pending;
 - segmented-control pointer and keyboard smoke test: pending.
