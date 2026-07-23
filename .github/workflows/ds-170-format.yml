@@ -1,0 +1,66 @@
+name: DS-170 Formatting
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Format DS-170 sources
+        run: >-
+          npx prettier
+          docs/product/ds-170-01-topbar-navigation-audit.md
+          docs/product/ds-170-product-completion-polish-plan.md
+          'src/app/[locale]/app/layout.tsx'
+          src/components/i18n/LocaleSwitcher.tsx
+          src/components/interaction/useDismissiblePopover.ts
+          src/components/layout/AppShell.tsx
+          src/components/layout/AppShellNavigation.tsx
+          src/components/layout/AppTopbar.tsx
+          src/components/layout/ProjectTopbarBreadcrumb.tsx
+          src/components/layout/UserMenu.tsx
+          src/components/layout/project-switcher.utils.test.ts
+          src/components/layout/project-switcher.utils.ts
+          src/features/app-navigation/app-shell.queries.ts
+          src/features/app-navigation/private-navigation.ts
+          --write
+
+      - name: Upload formatted sources
+        uses: actions/upload-artifact@v4
+        with:
+          name: ds-170-formatted-sources
+          path: |
+            docs/product/ds-170-01-topbar-navigation-audit.md
+            docs/product/ds-170-product-completion-polish-plan.md
+            src/app/[locale]/app/layout.tsx
+            src/components/i18n/LocaleSwitcher.tsx
+            src/components/interaction/useDismissiblePopover.ts
+            src/components/layout/AppShell.tsx
+            src/components/layout/AppShellNavigation.tsx
+            src/components/layout/AppTopbar.tsx
+            src/components/layout/ProjectTopbarBreadcrumb.tsx
+            src/components/layout/UserMenu.tsx
+            src/components/layout/project-switcher.utils.test.ts
+            src/components/layout/project-switcher.utils.ts
+            src/features/app-navigation/app-shell.queries.ts
+            src/features/app-navigation/private-navigation.ts
