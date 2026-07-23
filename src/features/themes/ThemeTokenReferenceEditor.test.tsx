@@ -81,14 +81,23 @@ describe('ThemeTokenReferenceEditor', () => {
   it('shows mapping data without a redundant theme-role swatch', () => {
     const { container } = renderEditor();
     const layout = container.querySelector('[data-theme-mapping-layout]');
+    const layoutClassNames = layout?.className.split(' ') ?? [];
     const themeRole = container.querySelector('[data-theme-role="background"]');
 
     expect(
       container.querySelector('[data-theme-mapping-row="background"]'),
     ).toBeInTheDocument();
     expect(layout).toHaveClass('sm:grid-cols-2');
-    expect(layout?.className).toContain('2xl:grid-cols-');
-    expect(layout?.className).not.toContain('xl:grid-cols-');
+    expect(
+      layoutClassNames.some((className) =>
+        className.startsWith('2xl:grid-cols-'),
+      ),
+    ).toBe(true);
+    expect(
+      layoutClassNames.some((className) =>
+        className.startsWith('xl:grid-cols-'),
+      ),
+    ).toBe(false);
     expect(themeRole).toHaveTextContent('background');
     expect(themeRole?.querySelector('[aria-hidden="true"]')).toBeNull();
     expect(
