@@ -2,7 +2,6 @@
 
 import { GearSixIcon } from '@phosphor-icons/react';
 
-import { LocaleSwitcher } from '@/components/i18n/LocaleSwitcher';
 import { useDismissiblePopover } from '@/components/interaction/useDismissiblePopover';
 import { LogoutButton } from '@/features/auth/logout/LogoutButton';
 import { Link } from '@/i18n/navigation';
@@ -79,10 +78,6 @@ export function UserMenu({
               <GearSixIcon aria-hidden="true" size={16} />
               <span>{settingsLabel}</span>
             </Link>
-          </div>
-
-          <div className="border-border-subtle mt-3 border-t pt-3 sm:hidden">
-            <LocaleSwitcher fullWidth showLabel />
           </div>
 
           <div className="border-border-subtle mt-3 border-t pt-3">
