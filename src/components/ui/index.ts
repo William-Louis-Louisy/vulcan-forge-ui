@@ -14,6 +14,14 @@ export { Panel } from './Panel';
 export type { PanelProps } from './Panel';
 export { ProjectWorkspaceHeader } from './ProjectWorkspaceHeader';
 export type { ProjectWorkspaceHeaderProps } from './ProjectWorkspaceHeader';
+export { SegmentedControl } from './SegmentedControl';
+export type {
+  SegmentedControlOption,
+  SegmentedControlProps,
+  SegmentedControlSemantics,
+} from './SegmentedControl';
+export { Select } from './Select';
+export type { SelectOption, SelectProps } from './Select';
 export { WorkspaceState } from './WorkspaceState';
 export type {
   WorkspaceStateAlignment,
