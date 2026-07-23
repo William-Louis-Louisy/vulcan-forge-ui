@@ -1132,11 +1132,36 @@
   },
   "SettingsPage": {
     "account": {
+      "currentPassword": "Mot de passe actuel",
+      "currentPasswordOptional": "Requis uniquement pour modifier votre adresse email.",
+      "currentPasswordRequired": "Saisissez votre mot de passe actuel pour confirmer le changement d’email. Vous serez ensuite déconnecté.",
+      "description": "Modifiez les informations personnelles associées à votre compte.",
       "email": "Email",
+      "emailDescription": "La modification de l’email de connexion nécessite votre mot de passe actuel et vous déconnecte.",
+      "errors": {
+        "accountNotFound": "Votre compte est introuvable.",
+        "currentPasswordIncorrect": "Le mot de passe actuel est incorrect.",
+        "currentPasswordRequired": "Saisissez votre mot de passe actuel pour modifier l’adresse email.",
+        "emailAlreadyUsed": "Un autre compte utilise déjà cette adresse email.",
+        "invalidPayload": "Les informations de profil envoyées sont invalides.",
+        "unauthorized": "Vous devez être connecté pour modifier votre profil.",
+        "unexpected": "Impossible de modifier votre profil. Veuillez réessayer."
+      },
       "name": "Nom",
-      "title": "Profil",
-      "unknownName": "Utilisateur inconnu",
-      "description": "Votre identité personnelle pour l’espace de travail authentifié."
+      "save": "Sauvegarder le profil",
+      "saved": "Les informations du profil sont à jour.",
+      "saving": "Sauvegarde...",
+      "success": "Informations du profil sauvegardées.",
+      "title": "Informations personnelles",
+      "unsaved": "Vous avez des modifications de profil non sauvegardées.",
+      "validation": {
+        "currentPasswordIncorrect": "Le mot de passe actuel est incorrect.",
+        "currentPasswordRequired": "Saisissez votre mot de passe actuel.",
+        "emailAlreadyUsed": "Un autre compte utilise déjà cette adresse email.",
+        "emailInvalid": "Saisissez une adresse email valide.",
+        "nameMinLength": "Saisissez au moins 2 caractères.",
+        "nameTooLong": "Le nom doit contenir au maximum 80 caractères."
+      }
     },
     "description": "Gérez vos préférences de compte et le comportement par défaut de l’application.",
     "eyebrow": "Paramètres utilisateur",
@@ -1195,6 +1220,34 @@
     "preferences": {
       "description": "Choisissez la langue et l’apparence utilisées par VulcanForgeUI.",
       "title": "Préférences"
+    },
+    "danger": {
+      "confirmation": {
+        "cancel": "Annuler",
+        "delete": "Supprimer définitivement le compte",
+        "deleting": "Suppression du compte...",
+        "description": "Cette action est irréversible. Confirmez votre email de connexion et votre mot de passe actuel avant de continuer.",
+        "emailDescription": "Saisissez exactement {email}.",
+        "emailLabel": "Email de confirmation",
+        "passwordLabel": "Mot de passe actuel",
+        "title": "Confirmer la suppression définitive du compte"
+      },
+      "description": "Supprimez définitivement votre compte ainsi que chaque workspace, projet et donnée générée dont il est propriétaire.",
+      "errors": {
+        "accountNotFound": "Votre compte est introuvable.",
+        "confirmationEmailMismatch": "L’email de confirmation ne correspond pas à votre compte.",
+        "currentPasswordIncorrect": "Le mot de passe actuel est incorrect.",
+        "invalidPayload": "Complétez les deux champs de confirmation.",
+        "unauthorized": "Vous devez être connecté pour supprimer votre compte.",
+        "unexpected": "Impossible de supprimer votre compte. Veuillez réessayer."
+      },
+      "request": "Demander la suppression du compte",
+      "summary": "La suppression est immédiate après confirmation. Les workspaces possédés et toutes les données de design system associées sont supprimés avec le compte.",
+      "title": "Supprimer le compte",
+      "validation": {
+        "confirmationEmailMismatch": "Saisissez l’adresse email associée à ce compte.",
+        "currentPasswordIncorrect": "Le mot de passe actuel est incorrect."
+      }
     }
   },
   "SignupPage": {

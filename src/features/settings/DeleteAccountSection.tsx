@@ -127,7 +127,9 @@ export function DeleteAccountSection({
                     disabled={isPending}
                     aria-invalid={Boolean(passwordError)}
                     aria-describedby={
-                      passwordError ? 'delete-account-password-error' : undefined
+                      passwordError
+                        ? 'delete-account-password-error'
+                        : undefined
                     }
                     className="border-border-default bg-surface-primary text-content-primary focus-visible:outline-border-focus mt-2 min-h-10 w-full rounded-md border px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
                   />

@@ -40,7 +40,10 @@ export function AccountProfileForm({
   const [email, setEmail] = useState(initialProfile.email);
 
   const lastSavedProfile = state.savedProfile ?? initialProfile;
-  const currentProfile = useMemo(() => ({ name: name.trim(), email: email.trim().toLowerCase() }), [email, name]);
+  const currentProfile = useMemo(
+    () => ({ name: name.trim(), email: email.trim().toLowerCase() }),
+    [email, name],
+  );
   const hasUnsavedChanges =
     currentProfile.name !== lastSavedProfile.name ||
     currentProfile.email !== lastSavedProfile.email;
@@ -94,7 +97,10 @@ export function AccountProfileForm({
               className="border-border-default bg-surface-primary text-content-primary focus-visible:outline-border-focus mt-2 min-h-10 w-full rounded-md border px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
             />
             {nameError ? (
-              <p id="settings-name-error" className="text-action-danger mt-2 text-xs">
+              <p
+                id="settings-name-error"
+                className="text-action-danger mt-2 text-xs"
+              >
                 {t(`account.validation.${nameError}`)}
               </p>
             ) : null}
@@ -127,7 +133,10 @@ export function AccountProfileForm({
               {t('account.emailDescription')}
             </p>
             {emailError ? (
-              <p id="settings-email-error" className="text-action-danger mt-2 text-xs">
+              <p
+                id="settings-email-error"
+                className="text-action-danger mt-2 text-xs"
+              >
                 {t(`account.validation.${emailError}`)}
               </p>
             ) : null}
@@ -193,9 +202,7 @@ export function AccountProfileForm({
 
         <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-content-secondary text-xs leading-5">
-            {hasUnsavedChanges
-              ? t('account.unsaved')
-              : t('account.saved')}
+            {hasUnsavedChanges ? t('account.unsaved') : t('account.saved')}
           </p>
           <Button
             type="submit"
