@@ -55,7 +55,9 @@ export function SegmentedControl<Value extends string>({
   semantics = 'selection',
   className,
 }: SegmentedControlProps<Value>) {
-  const buttonRefs = useRef<Partial<Record<Value, HTMLButtonElement | null>>>({});
+  const buttonRefs = useRef<Partial<Record<Value, HTMLButtonElement | null>>>(
+    {},
+  );
   const isTabs = semantics === 'tabs';
 
   function selectAndFocus(option: SegmentedControlOption<Value>) {

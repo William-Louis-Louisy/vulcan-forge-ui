@@ -129,7 +129,8 @@ export function Select<Value extends string>({
     }
 
     const currentEnabledIndex = enabledIndexes.indexOf(activeIndex);
-    const normalizedCurrentIndex = currentEnabledIndex >= 0 ? currentEnabledIndex : 0;
+    const normalizedCurrentIndex =
+      currentEnabledIndex >= 0 ? currentEnabledIndex : 0;
     const nextEnabledIndex =
       (normalizedCurrentIndex + direction + enabledIndexes.length) %
       enabledIndexes.length;
@@ -273,7 +274,7 @@ export function Select<Value extends string>({
         disabled={disabled}
         onClick={handleTriggerClick}
         onKeyDown={handleKeyDown}
-        className="border-border-default bg-surface-primary text-content-primary focus-visible:outline-border-focus flex min-h-10 w-full min-w-0 items-center gap-2 rounded-md border px-3 text-left transition hover:bg-background-subtle focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+        className="border-border-default bg-surface-primary text-content-primary focus-visible:outline-border-focus hover:bg-background-subtle flex min-h-10 w-full min-w-0 items-center gap-2 rounded-md border px-3 text-left transition focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {selectedOption?.swatch ? (
           <SelectSwatch value={selectedOption.swatch} />

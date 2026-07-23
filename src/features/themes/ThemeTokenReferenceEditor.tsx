@@ -173,7 +173,7 @@ export function ThemeTokenReferenceEditor({
           </div>
 
           {legacyDirectValue && !initialReferencePath ? (
-            <p className="text-action-warning mt-1 min-w-0 break-all text-[0.6875rem] font-semibold">
+            <p className="text-action-warning mt-1 min-w-0 text-[0.6875rem] font-semibold break-all">
               {labels.legacyDirectValue}: {legacyDirectValue}
             </p>
           ) : null}
