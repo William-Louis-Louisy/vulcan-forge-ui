@@ -38,23 +38,20 @@ export const projectOverviewMessages = {
         metrics: {
           tokens: {
             label: 'Tokens',
-            invalid:
-              '{count, plural, one {# invalid} other {# invalid}}',
+            invalid: '{count, plural, one {# invalid} other {# invalid}}',
             missingDescriptions:
               '{count, plural, one {# description gap} other {# description gaps}}',
             ready: 'Structured',
           },
           contrasts: {
             label: 'Contrasts',
-            issues:
-              '{count, plural, one {# issue} other {# issues}}',
+            issues: '{count, plural, one {# issue} other {# issues}}',
             ready: 'All pass',
           },
           components: {
             label: 'Components',
             draft: '{count, plural, one {# draft} other {# drafts}}',
-            invalid:
-              '{count, plural, one {# invalid} other {# invalid}}',
+            invalid: '{count, plural, one {# invalid} other {# invalid}}',
             ready: 'Registry ready',
           },
           exports: {
@@ -149,8 +146,7 @@ export const projectOverviewMessages = {
       },
       exports: {
         title: 'Exports',
-        description:
-          'Available formats and the latest successful generations.',
+        description: 'Available formats and the latest successful generations.',
         open: 'Open exports',
         available: 'Available',
         generated: 'Generated',
@@ -236,30 +232,25 @@ export const projectOverviewMessages = {
         metrics: {
           tokens: {
             label: 'Tokens',
-            invalid:
-              '{count, plural, one {# invalide} other {# invalides}}',
+            invalid: '{count, plural, one {# invalide} other {# invalides}}',
             missingDescriptions:
               '{count, plural, one {# description manquante} other {# descriptions manquantes}}',
             ready: 'Structurés',
           },
           contrasts: {
             label: 'Contrastes',
-            issues:
-              '{count, plural, one {# problème} other {# problèmes}}',
+            issues: '{count, plural, one {# problème} other {# problèmes}}',
             ready: 'Tous validés',
           },
           components: {
             label: 'Composants',
-            draft:
-              '{count, plural, one {# brouillon} other {# brouillons}}',
-            invalid:
-              '{count, plural, one {# invalide} other {# invalides}}',
+            draft: '{count, plural, one {# brouillon} other {# brouillons}}',
+            invalid: '{count, plural, one {# invalide} other {# invalides}}',
             ready: 'Registre prêt',
           },
           exports: {
             label: 'Exports',
-            stale:
-              '{count, plural, one {# obsolète} other {# obsolètes}}',
+            stale: '{count, plural, one {# obsolète} other {# obsolètes}}',
             generated: '{count}/{total} générés',
           },
         },
@@ -314,7 +305,8 @@ export const projectOverviewMessages = {
       },
       themes: {
         title: 'Thèmes',
-        description: 'Modes configurés et couverture automatisée des contrastes.',
+        description:
+          'Modes configurés et couverture automatisée des contrastes.',
         open: 'Ouvrir les thèmes',
         empty: 'Aucun thème clair ou sombre n’est encore configuré.',
         modes: {
@@ -325,8 +317,7 @@ export const projectOverviewMessages = {
         notConfigured: 'Non configuré',
         contrasts: 'Paires de contraste',
         contrastSummary: '{passed}/{total} validées',
-        issues:
-          '{count, plural, one {# problème} other {# problèmes}}',
+        issues: '{count, plural, one {# problème} other {# problèmes}}',
         allPass: 'Toutes validées',
       },
       components: {
@@ -350,8 +341,7 @@ export const projectOverviewMessages = {
       },
       exports: {
         title: 'Exports',
-        description:
-          'Formats disponibles et dernières générations réussies.',
+        description: 'Formats disponibles et dernières générations réussies.',
         open: 'Ouvrir les exports',
         available: 'Disponibles',
         generated: 'Générés',
