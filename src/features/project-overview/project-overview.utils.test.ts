@@ -210,8 +210,10 @@ describe('createProjectOverviewViewModel', () => {
     expect(overview.exports.staleFormats).toEqual(exportLogFormats);
     expect(overview.recentActivity[0]).toEqual({
       id: 'brand-profile',
-      type: 'brand',
+      type: 'component',
       occurredAt: brandProfileUpdatedAt.toISOString(),
+      subject: 'Brand',
+      entity: 'brand',
     });
   });
 
