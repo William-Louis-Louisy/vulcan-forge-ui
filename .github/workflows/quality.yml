@@ -37,37 +37,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Capture unformatted Brand files
-        run: |
-          mkdir -p /tmp/brand-format-comparison/before
-          cp --parents \
-            src/features/brand/BrandProfileEditor.tsx \
-            'src/app/[locale]/app/projects/[projectSlug]/brand/loading.tsx' \
-            src/messages/brand-profile-messages.ts \
-            docs/product/ds-170-05-brand-profile-audit.md \
-            /tmp/brand-format-comparison/before
-
-      - name: Format workspace
-        run: npm run format
-
-      - name: Capture formatted Brand files
-        run: |
-          mkdir -p /tmp/brand-format-comparison/after
-          cp --parents \
-            src/features/brand/BrandProfileEditor.tsx \
-            'src/app/[locale]/app/projects/[projectSlug]/brand/loading.tsx' \
-            src/messages/brand-profile-messages.ts \
-            docs/product/ds-170-05-brand-profile-audit.md \
-            /tmp/brand-format-comparison/after
-
-      - name: Upload Brand formatting comparison
-        uses: actions/upload-artifact@v4
-        with:
-          name: brand-format-comparison
-          path: /tmp/brand-format-comparison
-          if-no-files-found: error
-          retention-days: 1
-
       - name: Generate Prisma Client
         run: npm run db:generate
 
