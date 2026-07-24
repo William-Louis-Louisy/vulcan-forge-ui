@@ -161,8 +161,9 @@ function createTokenCoverage(
   pageData: ProjectOverviewPageData,
 ): ProjectOverviewViewModel['tokens'] {
   const missingDescriptionsByLocale: Partial<Record<AppLocale, number>> = {};
+  const sets: ProjectOverviewTokenSetCoverage[] = [];
 
-  const sets = pageData.tokenSets.map((tokenSet) => {
+  for (const tokenSet of pageData.tokenSets) {
     const rawTokens = Array.isArray(tokenSet.tokens) ? tokenSet.tokens : [];
     let ready = 0;
     let draft = 0;
@@ -170,20 +171,24 @@ function createTokenCoverage(
     let invalid = Array.isArray(tokenSet.tokens) ? 0 : 1;
     let missingDescriptions = 0;
 
-    rawTokens.forEach((rawToken) => {
+    for (const rawToken of rawTokens) {
       const parsedToken = designTokenSchema.safeParse(rawToken);
 
       if (!parsedToken.success) {
         invalid += 1;
-        return;
+        continue;
       }
 
-      if (parsedToken.data.status === 'ready') {
-        ready += 1;
-      } else if (parsedToken.data.status === 'deprecated') {
-        deprecated += 1;
-      } else {
-        draft += 1;
+      switch (parsedToken.data.status) {
+        case 'ready':
+          ready += 1;
+          break;
+        case 'deprecated':
+          deprecated += 1;
+          break;
+        case 'draft':
+          draft += 1;
+          break;
       }
 
       const missingLocales = pageData.project.supportedLocales.filter((locale) =>
@@ -194,13 +199,13 @@ function createTokenCoverage(
         missingDescriptions += 1;
       }
 
-      missingLocales.forEach((locale) => {
+      for (const locale of missingLocales) {
         missingDescriptionsByLocale[locale] =
           (missingDescriptionsByLocale[locale] ?? 0) + 1;
-      });
-    });
+      }
+    }
 
-    return {
+    sets.push({
       type: tokenSet.type,
       total: rawTokens.length,
       ready,
@@ -208,13 +213,14 @@ function createTokenCoverage(
       deprecated,
       invalid,
       missingDescriptions,
-    };
-  });
+    });
+  }
 
   return sets.reduce<ProjectOverviewViewModel['tokens']>(
     (coverage, tokenSet) => ({
       total: coverage.total + tokenSet.total,
-      valid: coverage.valid + tokenSet.total - tokenSet.invalid,
+      valid:
+        coverage.valid + Math.max(0, tokenSet.total - tokenSet.invalid),
       invalid: coverage.invalid + tokenSet.invalid,
       ready: coverage.ready + tokenSet.ready,
       draft: coverage.draft + tokenSet.draft,
@@ -247,22 +253,26 @@ function createComponentCoverage(
   let draft = 0;
   let deprecated = 0;
 
-  pageData.componentContracts.forEach((componentContract) => {
+  for (const componentContract of pageData.componentContracts) {
     const parsedContract = componentContractSchema.safeParse(
       componentContract.contract,
     );
 
     if (!parsedContract.success) {
       invalid += 1;
-      return;
+      continue;
     }
 
-    if (parsedContract.data.status === 'ready') {
-      ready += 1;
-    } else if (parsedContract.data.status === 'deprecated') {
-      deprecated += 1;
-    } else {
-      draft += 1;
+    switch (parsedContract.data.status) {
+      case 'ready':
+        ready += 1;
+        break;
+      case 'deprecated':
+        deprecated += 1;
+        break;
+      case 'draft':
+        draft += 1;
+        break;
     }
 
     items.push({
@@ -271,7 +281,7 @@ function createComponentCoverage(
       name: parsedContract.data.name,
       status: parsedContract.data.status,
     });
-  });
+  }
 
   return {
     total: pageData.componentContracts.length,
@@ -318,14 +328,14 @@ function createExportCoverage({
 }): ProjectOverviewViewModel['exports'] {
   const latestSuccessfulByFormat = new Map<ExportLogFormat, Date>();
 
-  pageData.exportLogs.forEach((exportLog) => {
+  for (const exportLog of pageData.exportLogs) {
     if (
       exportLog.status === 'success' &&
       !latestSuccessfulByFormat.has(exportLog.format)
     ) {
       latestSuccessfulByFormat.set(exportLog.format, exportLog.createdAt);
     }
-  });
+  }
 
   const missingFormats = exportLogFormats.filter(
     (format) => !latestSuccessfulByFormat.has(format),
@@ -345,12 +355,7 @@ function createExportCoverage({
       const createdAt = latestSuccessfulByFormat.get(format);
 
       return createdAt
-        ? [
-            {
-              format,
-              createdAt: createdAt.toISOString(),
-            },
-          ]
+        ? [{ format, createdAt: createdAt.toISOString() }]
         : [];
     }),
     recentLogs: pageData.exportLogs.slice(0, 5).map((exportLog) => ({
