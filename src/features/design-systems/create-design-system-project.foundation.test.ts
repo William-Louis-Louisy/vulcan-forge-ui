@@ -19,9 +19,14 @@ describe('buildDesignSystemProjectFoundation', () => {
     });
 
     expect(foundation.brandProfile.create).toMatchObject({
-      name: 'Core Product UI',
-      description: 'Core product design system.',
-      visualDirection: 'minimal',
+      visualStyle: 'minimal',
+      uiDensity: 'cozy',
+      inspirationKeywords: [],
+      localizedContent: {
+        shortDescription: {
+          en: 'Core product design system.',
+        },
+      },
     });
 
     expect(foundation.tokenSets.create).toHaveLength(5);
@@ -42,5 +47,22 @@ describe('buildDesignSystemProjectFoundation', () => {
 
     expect(foundation.documentationProfile.create).toBeDefined();
     expect(foundation.aiInstructionProfile.create).toBeDefined();
+  });
+
+  it('maps the legacy enterprise direction to technical', () => {
+    const foundation = buildDesignSystemProjectFoundation({
+      name: 'Enterprise UI',
+      description: null,
+      platforms: ['web'],
+      defaultLocale: 'fr',
+      supportedLocales: ['fr'],
+      visualDirection: 'enterprise',
+      accessibilityTarget: 'wcag_aa',
+    });
+
+    expect(foundation.brandProfile.create).toMatchObject({
+      visualStyle: 'technical',
+      localizedContent: {},
+    });
   });
 });

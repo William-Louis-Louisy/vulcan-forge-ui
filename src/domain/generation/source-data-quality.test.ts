@@ -13,6 +13,7 @@ describe('source data quality report', () => {
         defaultLocale: 'en',
         supportedLocales: ['en', 'fr'],
       },
+      brand: null,
       tokens: [],
       themes: [],
       components: [],

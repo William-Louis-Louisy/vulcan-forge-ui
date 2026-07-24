@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { generateAiInstructions } from './ai-instructions';
-import type { ComponentContract, DesignToken } from '@/domain/design-system';
+import type {
+  BrandProfile,
+  ComponentContract,
+  DesignToken,
+} from '@/domain/design-system';
 
 const tokens: DesignToken[] = [
   {
@@ -88,6 +92,45 @@ const components: ComponentContract[] = [
   },
 ];
 
+const brand: BrandProfile = {
+  visualStyle: 'technical',
+  uiDensity: 'cozy',
+  inspirationKeywords: ['precise', 'quiet'],
+  localizedContent: {
+    personality: {
+      en: 'Precise, calm and focused.',
+      fr: 'Précise, calme et concentrée.',
+    },
+    audience: {
+      en: 'Workshop operators.',
+    },
+    toneOfVoice: {
+      en: 'Speak directly. Never use exclamation marks.',
+      fr: 'Parler directement. Ne jamais utiliser de point d’exclamation.',
+    },
+    terminology: [
+      {
+        preferred: {
+          en: 'order',
+          fr: 'commande',
+        },
+        avoid: [
+          {
+            en: 'ticket',
+            fr: 'ticket',
+          },
+        ],
+      },
+    ],
+    editorialRules: [
+      {
+        en: 'Never use emoji.',
+        fr: 'Ne jamais utiliser d’émoji.',
+      },
+    ],
+  },
+};
+
 const baseInput = {
   project: {
     name: 'Aurora System',
@@ -95,12 +138,13 @@ const baseInput = {
     defaultLocale: 'en',
     supportedLocales: ['en', 'fr'],
   },
+  brand,
   tokens,
   components,
 } as const;
 
 describe('generateAiInstructions', () => {
-  it('generates English AI instructions', () => {
+  it('generates English AI instructions with structured brand rules', () => {
     const result = generateAiInstructions({
       ...baseInput,
       locale: 'en',
@@ -110,6 +154,10 @@ describe('generateAiInstructions', () => {
     expect(result.fileName).toBe('aurora-system-ai-instructions-en.md');
     expect(result.content).toContain('# Aurora System — AI instructions');
     expect(result.content).toContain('## Anti-hallucination rules');
+    expect(result.content).toContain('## Brand and voice rules');
+    expect(result.content).toContain('Precise, calm and focused.');
+    expect(result.content).toContain('Always prefer:** order');
+    expect(result.content).toContain('Never use emoji.');
     expect(result.content).toContain('## Token rules');
     expect(result.content).toContain('## Component rules');
     expect(result.content).toContain('## Accessibility rules');
@@ -131,6 +179,8 @@ describe('generateAiInstructions', () => {
     expect(result.fileName).toBe('aurora-system-ai-instructions-fr.md');
     expect(result.content).toContain('# Aurora System — Instructions IA');
     expect(result.content).toContain('## Règles anti-hallucination');
+    expect(result.content).toContain('## Règles de marque et de voix');
+    expect(result.content).toContain('Précise, calme et concentrée.');
     expect(result.content).toContain('## Règles de tokens');
     expect(result.content).toContain(
       'Déclenche une action importante de l’utilisateur.',
@@ -157,7 +207,7 @@ describe('generateAiInstructions', () => {
     expect(veryStrict.content).toContain('Use only explicit model data');
   });
 
-  it('can include only selected sections while always keeping anti-hallucination rules', () => {
+  it('can include only selected sections while always keeping brand and anti-hallucination rules', () => {
     const result = generateAiInstructions({
       ...baseInput,
       locale: 'en',
@@ -166,6 +216,7 @@ describe('generateAiInstructions', () => {
     });
 
     expect(result.content).toContain('## Anti-hallucination rules');
+    expect(result.content).toContain('## Brand and voice rules');
     expect(result.content).toContain('## Token rules');
     expect(result.content).not.toContain('## Component rules');
     expect(result.content).not.toContain('## Accessibility rules');
@@ -185,7 +236,11 @@ describe('generateAiInstructions', () => {
       requestedLocale: 'fr',
       fallbackLocale: 'en',
     });
-
+    expect(result.missingTranslations).toContainEqual({
+      path: 'brand.audience',
+      requestedLocale: 'fr',
+      fallbackLocale: 'en',
+    });
     expect(result.content).toContain('## Traductions manquantes');
   });
 });

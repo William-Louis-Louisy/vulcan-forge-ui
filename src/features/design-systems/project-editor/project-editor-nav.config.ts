@@ -7,7 +7,7 @@ export const projectEditorNavItems = [
   {
     key: 'brand',
     path: 'brand',
-    isEnabled: false,
+    isEnabled: true,
   },
   {
     key: 'tokens',

@@ -52,6 +52,7 @@ export type ProjectOverviewPageData = {
     status: 'success' | 'failed';
     createdAt: Date;
   }>;
+  brandProfileUpdatedAt: Date | null;
   documentationProfileUpdatedAt: Date | null;
   aiInstructionProfileUpdatedAt: Date | null;
 };
@@ -82,9 +83,14 @@ export async function getProjectOverviewPageData({
       platforms: true,
       defaultLocale: true,
       supportedLocales: true,
-      visualDirection: true,
       accessibilityTarget: true,
       updatedAt: true,
+      brandProfile: {
+        select: {
+          visualStyle: true,
+          updatedAt: true,
+        },
+      },
       tokenSets: {
         orderBy: {
           type: 'asc',
@@ -171,7 +177,7 @@ export async function getProjectOverviewPageData({
       platforms: project.platforms as Array<'web' | 'mobile'>,
       defaultLocale: project.defaultLocale as AppLocale,
       supportedLocales: project.supportedLocales as AppLocale[],
-      visualDirection: project.visualDirection,
+      visualDirection: project.brandProfile?.visualStyle ?? null,
       accessibilityTarget: project.accessibilityTarget as
         | 'wcag_aa'
         | 'wcag_aaa',
@@ -206,6 +212,7 @@ export async function getProjectOverviewPageData({
       status: exportLog.status,
       createdAt: exportLog.createdAt,
     })),
+    brandProfileUpdatedAt: project.brandProfile?.updatedAt ?? null,
     documentationProfileUpdatedAt:
       project.documentationProfile?.updatedAt ?? null,
     aiInstructionProfileUpdatedAt:

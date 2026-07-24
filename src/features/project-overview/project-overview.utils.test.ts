@@ -27,7 +27,7 @@ function createPageData(
       platforms: ['web', 'mobile'],
       defaultLocale: 'en',
       supportedLocales: ['en', 'fr'],
-      visualDirection: 'Warm and editorial',
+      visualDirection: 'editorial',
       accessibilityTarget: 'wcag_aa',
       updatedAt: projectUpdatedAt,
     },
@@ -63,6 +63,7 @@ function createPageData(
       status: 'success' as const,
       createdAt: at(`2026-07-21T1${index}:00:00.000Z`),
     })),
+    brandProfileUpdatedAt: null,
     documentationProfileUpdatedAt: projectUpdatedAt,
     aiInstructionProfileUpdatedAt: projectUpdatedAt,
     ...overrides,
@@ -191,6 +192,31 @@ describe('createProjectOverviewViewModel', () => {
     );
   });
 
+  it('marks exports stale and records activity after a brand update', () => {
+    const brandProfileUpdatedAt = at('2026-07-24T12:00:00.000Z');
+    const overview = createProjectOverviewViewModel(
+      createPageData({
+        brandProfileUpdatedAt,
+        exportLogs: exportLogFormats.map((format) => ({
+          id: `export-${format}`,
+          format,
+          locale: null,
+          status: 'success' as const,
+          createdAt: at('2026-07-23T12:00:00.000Z'),
+        })),
+      }),
+    );
+
+    expect(overview.exports.staleFormats).toEqual(exportLogFormats);
+    expect(overview.recentActivity[0]).toEqual({
+      id: 'brand-profile',
+      type: 'component',
+      occurredAt: brandProfileUpdatedAt.toISOString(),
+      subject: 'Brand',
+      entity: 'brand',
+    });
+  });
+
   it('prioritizes actionable gaps and limits the overview to four next actions', () => {
     const overview = createProjectOverviewViewModel(
       createPageData({
@@ -198,6 +224,7 @@ describe('createProjectOverviewViewModel', () => {
         themes: [],
         componentContracts: [],
         exportLogs: [],
+        brandProfileUpdatedAt: null,
         documentationProfileUpdatedAt: null,
         aiInstructionProfileUpdatedAt: null,
       }),

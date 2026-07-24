@@ -1,14 +1,10 @@
 import { z } from 'zod';
+import { brandVisualStyles } from '@/domain/design-system';
 import { appLocaleSchema } from '@/domain/i18n';
 
 export const designSystemPlatforms = ['web', 'mobile'] as const;
 
-export const visualDirections = [
-  'minimal',
-  'editorial',
-  'playful',
-  'enterprise',
-] as const;
+export const visualDirections = brandVisualStyles;
 
 export const createDesignSystemValidationMessageKeys = [
   'nameMinLength',

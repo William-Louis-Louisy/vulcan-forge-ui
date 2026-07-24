@@ -2,6 +2,7 @@ import { z } from 'zod';
 import {
   designTokenSchema,
   componentContractSchema,
+  type BrandProfile,
   type DesignToken,
   type ComponentContract,
 } from '@/domain/design-system';
@@ -22,6 +23,7 @@ import {
 import type { ThemeMode } from '@/features/themes/themes-editor.utils';
 import type { MarkdownDocumentationInput } from '@/domain/documentation';
 import { createAccessibilityCenterReport } from '@/features/accessibility/accessibility-center.utils';
+import { parseStoredBrandProfile } from '@/features/brand/brand-profile.utils';
 
 const designTokenArraySchema = z.array(designTokenSchema);
 
@@ -35,7 +37,10 @@ export type ExportCenterLog = {
 };
 
 export type ExportCenterInput = {
-  project: MarkdownDocumentationInput['project'];
+  project: MarkdownDocumentationInput['project'] & {
+    brand: BrandProfile | null;
+  };
+  brand: BrandProfile | null;
   tokens: DesignToken[];
   themes: CssVariablesExportTheme[];
   components: ComponentContract[];
@@ -128,6 +133,14 @@ export async function getExportCenterPageData({
       description: true,
       defaultLocale: true,
       supportedLocales: true,
+      brandProfile: {
+        select: {
+          visualStyle: true,
+          uiDensity: true,
+          inspirationKeywords: true,
+          localizedContent: true,
+        },
+      },
       exportLogs: {
         orderBy: {
           createdAt: 'desc',
@@ -194,21 +207,20 @@ export async function getExportCenterPageData({
   }
 
   const supportedLocales = project.supportedLocales as AppLocale[];
-
   const fallbackLocale =
     (project.localeSettings?.documentationLocale as AppLocale | undefined) ??
     (project.defaultLocale as AppLocale);
-
+  const brand = project.brandProfile
+    ? parseStoredBrandProfile(project.brandProfile)
+    : null;
   const tokens = project.tokenSets.flatMap((tokenSet) =>
     parseTokenSetTokens(tokenSet.tokens),
   );
-
   const themes: CssVariablesExportTheme[] = project.themes.map((theme) => ({
     mode: theme.mode as CssVariablesExportTheme['mode'],
     name: theme.name,
     tokens: asThemeTokens(theme.tokens),
   }));
-
   const accessibilityThemes = project.themes.map((theme) => ({
     id: theme.id,
     mode: theme.mode as ThemeMode,
@@ -216,24 +228,20 @@ export async function getExportCenterPageData({
     tokens: theme.tokens,
     updatedAt: theme.updatedAt,
   }));
-
   const components = project.componentContracts
     .map((componentContract) =>
       parseComponentContract(componentContract.contract),
     )
     .filter((contract): contract is ComponentContract => contract !== null);
-
   const colorTokenSet = project.tokenSets.find(
     (tokenSet) => tokenSet.type === 'color',
   );
-
   const accessibilityReport = colorTokenSet
     ? createAccessibilityCenterReport({
         colorTokenSetTokens: colorTokenSet.tokens,
         themes: accessibilityThemes,
       })
     : null;
-
   const documentationProfile = normalizeDocumentationProfile({
     supportedLocales,
     fallbackLocale,
@@ -244,7 +252,6 @@ export async function getExportCenterPageData({
           locale: fallbackLocale,
         },
   });
-
   const aiInstructionProfile = normalizeAiInstructionProfile({
     supportedLocales,
     fallbackLocale,
@@ -275,7 +282,9 @@ export async function getExportCenterPageData({
         description: project.description,
         defaultLocale: project.defaultLocale as AppLocale,
         supportedLocales,
+        brand,
       },
+      brand,
       tokens,
       themes,
       components,

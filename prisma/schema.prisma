@@ -81,6 +81,23 @@ enum ExportStatus {
   failed
 }
 
+enum BrandVisualStyle {
+  minimal
+  premium
+  editorial
+  technical
+  playful
+  bold
+  neutral
+  custom
+}
+
+enum BrandUiDensity {
+  compact
+  cozy
+  comfortable
+}
+
 model DesignSystemProject {
   id                  String                 @id @default(cuid())
   workspaceId         String
@@ -90,21 +107,20 @@ model DesignSystemProject {
   platforms           DesignSystemPlatform[] @default([web])
   defaultLocale       AppLocale              @default(en)
   supportedLocales    AppLocale[]            @default([en, fr])
-  visualDirection     String?
   accessibilityTarget AccessibilityTarget    @default(wcag_aa)
   createdAt           DateTime               @default(now())
   updatedAt           DateTime               @updatedAt
 
-  workspace             Workspace              @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  localeSettings        ProjectLocaleSettings?
-  brandProfile          BrandProfile?
-  tokenSets             TokenSet[]
-  themes                Theme[]
-  componentContracts    ComponentContract[]
-  accessibilityReports   AccessibilityReport[]
-  documentationProfile  DocumentationProfile?
-  aiInstructionProfile  AiInstructionProfile?
-  exportLogs             ExportLog[]
+  workspace            Workspace              @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  localeSettings       ProjectLocaleSettings?
+  brandProfile         BrandProfile?
+  tokenSets            TokenSet[]
+  themes               Theme[]
+  componentContracts   ComponentContract[]
+  accessibilityReports AccessibilityReport[]
+  documentationProfile DocumentationProfile?
+  aiInstructionProfile AiInstructionProfile?
+  exportLogs            ExportLog[]
 
   @@unique([workspaceId, slug])
   @@index([workspaceId])
@@ -139,16 +155,16 @@ model UserPreference {
 }
 
 model Workspace {
-  id        String              @id @default(cuid())
+  id        String   @id @default(cuid())
   name      String
-  slug      String              @unique
+  slug      String   @unique
   ownerId   String
-  createdAt DateTime            @default(now())
-  updatedAt DateTime            @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  owner     User                @relation("WorkspaceOwner", fields: [ownerId], references: [id], onDelete: Cascade)
-  settings  WorkspaceSettings?
-  members   WorkspaceMember[]
+  owner                User                  @relation("WorkspaceOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  settings             WorkspaceSettings?
+  members              WorkspaceMember[]
   designSystemProjects DesignSystemProject[]
 }
 
@@ -192,15 +208,16 @@ model ProjectLocaleSettings {
 }
 
 model BrandProfile {
-  id              String              @id @default(cuid())
-  projectId       String              @unique
-  name            String
-  description     String?
-  visualDirection String?
-  createdAt       DateTime            @default(now())
-  updatedAt       DateTime            @updatedAt
+  id                  String              @id @default(cuid())
+  projectId           String              @unique
+  visualStyle         BrandVisualStyle    @default(minimal)
+  uiDensity           BrandUiDensity      @default(cozy)
+  inspirationKeywords String[]            @default([])
+  localizedContent    Json
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
 
-  project         DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project             DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model TokenSet {

@@ -2,7 +2,11 @@ import {
   resolveLocalizedStringWithFallback,
   type AppLocale,
 } from '@/domain/i18n';
-import type { ComponentContract, DesignToken } from '@/domain/design-system';
+import type {
+  BrandProfile,
+  ComponentContract,
+  DesignToken,
+} from '@/domain/design-system';
 
 export type AiInstructionsStrictness = 'balanced' | 'strict' | 'veryStrict';
 
@@ -23,6 +27,7 @@ export type AiInstructionsProject = {
   description: string | null;
   defaultLocale: AppLocale;
   supportedLocales: readonly AppLocale[];
+  brand?: BrandProfile | null;
 };
 
 export type AiInstructionsInput = {
@@ -31,6 +36,7 @@ export type AiInstructionsInput = {
   strictness: AiInstructionsStrictness;
   sections?: readonly AiInstructionsSection[];
   project: AiInstructionsProject;
+  brand?: BrandProfile | null;
   tokens: readonly DesignToken[];
   components: readonly ComponentContract[];
 };
@@ -56,6 +62,17 @@ const labels = {
     project: 'Project',
     locale: 'Locale',
     strictness: 'Strictness',
+    brandRules: 'Brand and voice rules',
+    brandIntro:
+      'Use the documented product identity, audience, terminology and editorial rules for every user-facing response.',
+    personality: 'Personality',
+    audience: 'Audience',
+    toneOfVoice: 'Tone of voice',
+    visualStyle: 'Visual style',
+    uiDensity: 'UI density',
+    inspirationKeywords: 'Inspiration keywords',
+    preferredTerm: 'Always prefer',
+    avoidedTerms: 'Never use as equivalents',
     tokenRules: 'Token rules',
     componentRules: 'Component rules',
     accessibilityRules: 'Accessibility rules',
@@ -110,6 +127,17 @@ const labels = {
     project: 'Projet',
     locale: 'Locale',
     strictness: 'Niveau de strictness',
+    brandRules: 'Règles de marque et de voix',
+    brandIntro:
+      'Utilisez l’identité produit, l’audience, la terminologie et les règles éditoriales documentées pour toute réponse visible.',
+    personality: 'Personnalité',
+    audience: 'Audience',
+    toneOfVoice: 'Ton de voix',
+    visualStyle: 'Style visuel',
+    uiDensity: 'Densité UI',
+    inspirationKeywords: 'Mots-clés d’inspiration',
+    preferredTerm: 'Toujours privilégier',
+    avoidedTerms: 'Ne jamais utiliser comme équivalents',
     tokenRules: 'Règles de tokens',
     componentRules: 'Règles de composants',
     accessibilityRules: 'Règles d’accessibilité',
@@ -255,6 +283,103 @@ function renderAntiHallucinationRules(locale: AppLocale): string {
     `- ${t.antiHallucination.fallbackInstruction}`,
     `- ${t.antiHallucination.respectLocale}`,
   ].join('\n');
+}
+
+function renderBrandRules({
+  brand,
+  locale,
+  fallbackLocale,
+  missingTranslations,
+}: {
+  brand: BrandProfile | null;
+  locale: AppLocale;
+  fallbackLocale: AppLocale;
+  missingTranslations: AiInstructionsMissingTranslation[];
+}) {
+  const t = labels[locale];
+
+  if (!brand) {
+    return '';
+  }
+
+  const personality = brand.localizedContent.personality
+    ? resolveInstructionText({
+        path: 'brand.personality',
+        localizedString: brand.localizedContent.personality,
+        locale,
+        fallbackLocale,
+        missingTranslations,
+      })
+    : '';
+  const audience = brand.localizedContent.audience
+    ? resolveInstructionText({
+        path: 'brand.audience',
+        localizedString: brand.localizedContent.audience,
+        locale,
+        fallbackLocale,
+        missingTranslations,
+      })
+    : '';
+  const toneOfVoice = brand.localizedContent.toneOfVoice
+    ? resolveInstructionText({
+        path: 'brand.toneOfVoice',
+        localizedString: brand.localizedContent.toneOfVoice,
+        locale,
+        fallbackLocale,
+        missingTranslations,
+      })
+    : '';
+  const terminology = brand.localizedContent.terminology.map((entry, index) => {
+    const preferred = resolveInstructionText({
+      path: `brand.terminology.${index}.preferred`,
+      localizedString: entry.preferred,
+      locale,
+      fallbackLocale,
+      missingTranslations,
+    });
+    const avoid = entry.avoid
+      .map((term, termIndex) =>
+        resolveInstructionText({
+          path: `brand.terminology.${index}.avoid.${termIndex}`,
+          localizedString: term,
+          locale,
+          fallbackLocale,
+          missingTranslations,
+        }),
+      )
+      .filter(Boolean);
+
+    return `- **${t.preferredTerm}:** ${preferred}${avoid.length > 0 ? ` · **${t.avoidedTerms}:** ${avoid.join(', ')}` : ''}`;
+  });
+  const editorialRules = brand.localizedContent.editorialRules.map(
+    (rule, index) =>
+      `- ${resolveInstructionText({
+        path: `brand.editorialRules.${index}`,
+        localizedString: rule,
+        locale,
+        fallbackLocale,
+        missingTranslations,
+      })}`,
+  );
+
+  return [
+    `## ${t.brandRules}`,
+    '',
+    t.brandIntro,
+    '',
+    `- **${t.visualStyle}:** ${brand.visualStyle}`,
+    `- **${t.uiDensity}:** ${brand.uiDensity}`,
+    brand.inspirationKeywords.length > 0
+      ? `- **${t.inspirationKeywords}:** ${brand.inspirationKeywords.join(', ')}`
+      : '',
+    personality ? `- **${t.personality}:** ${personality}` : '',
+    audience ? `- **${t.audience}:** ${audience}` : '',
+    toneOfVoice ? `- **${t.toneOfVoice}:** ${toneOfVoice}` : '',
+    ...terminology,
+    ...editorialRules,
+  ]
+    .filter(Boolean)
+    .join('\n');
 }
 
 function renderTokenRules({
@@ -440,6 +565,12 @@ export function generateAiInstructions(
   const sections = [
     renderHeader(input),
     renderAntiHallucinationRules(input.locale),
+    renderBrandRules({
+      brand: input.brand ?? input.project.brand ?? null,
+      locale: input.locale,
+      fallbackLocale,
+      missingTranslations,
+    }),
   ];
 
   if (selectedSections.includes('tokenRules')) {

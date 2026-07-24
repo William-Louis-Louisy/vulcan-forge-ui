@@ -71,6 +71,7 @@ export type ProjectOverviewActivity =
       type: 'component';
       occurredAt: string;
       subject: string;
+      entity?: 'component' | 'brand';
     }
   | {
       id: string;
@@ -507,8 +508,20 @@ function createRecentActivity(
         type: 'component',
         occurredAt: component.updatedAt.toISOString(),
         subject: component.name,
+        entity: 'component',
       }),
     ),
+    ...(pageData.brandProfileUpdatedAt
+      ? [
+          {
+            id: 'brand-profile',
+            type: 'component' as const,
+            occurredAt: pageData.brandProfileUpdatedAt.toISOString(),
+            subject: 'Brand',
+            entity: 'brand' as const,
+          },
+        ]
+      : []),
     ...pageData.exportLogs.slice(0, 8).map(
       (exportLog): ProjectOverviewActivity => ({
         id: `export:${exportLog.id}`,
@@ -553,6 +566,7 @@ export function createProjectOverviewViewModel(
     ...pageData.tokenSets.map((tokenSet) => tokenSet.updatedAt),
     ...pageData.themes.map((theme) => theme.updatedAt),
     ...pageData.componentContracts.map((component) => component.updatedAt),
+    pageData.brandProfileUpdatedAt,
     pageData.documentationProfileUpdatedAt,
     pageData.aiInstructionProfileUpdatedAt,
   ]);

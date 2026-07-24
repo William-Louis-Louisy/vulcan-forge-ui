@@ -4,7 +4,10 @@ import type {
   DesignSystemPlatform,
 } from '@/generated/prisma/client';
 import type { Prisma } from '@/generated/prisma/client';
-import { getMvpSeedTemplates } from '@/domain/design-system';
+import {
+  getMvpSeedTemplates,
+  type BrandVisualStyle,
+} from '@/domain/design-system';
 
 function toInputJsonValue(value: unknown): Prisma.InputJsonValue {
   return value as Prisma.InputJsonValue;
@@ -24,6 +27,7 @@ export function buildDesignSystemProjectFoundation(
   input: CreateDesignSystemProjectFoundationInput,
 ) {
   const seedTemplates = getMvpSeedTemplates();
+
   return {
     localeSettings: {
       create: {
@@ -33,9 +37,10 @@ export function buildDesignSystemProjectFoundation(
     },
     brandProfile: {
       create: {
-        name: input.name,
-        description: input.description,
-        visualDirection: input.visualDirection,
+        visualStyle: normalizeBrandVisualStyle(input.visualDirection),
+        uiDensity: 'cozy' as const,
+        inspirationKeywords: [],
+        localizedContent: createBrandLocalizedContent(input),
       },
     },
     tokenSets: {
@@ -69,6 +74,41 @@ export function buildDesignSystemProjectFoundation(
       create: {
         content: createAiInstructionProfileContent(input),
       },
+    },
+  };
+}
+
+function normalizeBrandVisualStyle(value: string): BrandVisualStyle {
+  if (value === 'enterprise') {
+    return 'technical';
+  }
+
+  if (
+    value === 'minimal' ||
+    value === 'premium' ||
+    value === 'editorial' ||
+    value === 'technical' ||
+    value === 'playful' ||
+    value === 'bold' ||
+    value === 'neutral' ||
+    value === 'custom'
+  ) {
+    return value;
+  }
+
+  return 'minimal';
+}
+
+function createBrandLocalizedContent(
+  input: CreateDesignSystemProjectFoundationInput,
+): Prisma.InputJsonValue {
+  if (!input.description) {
+    return {};
+  }
+
+  return {
+    shortDescription: {
+      [input.defaultLocale]: input.description,
     },
   };
 }
