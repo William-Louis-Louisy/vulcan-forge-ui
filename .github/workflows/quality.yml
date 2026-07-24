@@ -43,8 +43,28 @@ jobs:
       - name: Run lint
         run: npm run lint
 
-      - name: Run typecheck
-        run: npm run typecheck
+      - name: Capture typecheck diagnostics
+        id: typecheck
+        shell: bash
+        run: |
+          set +e
+          npm run typecheck > typecheck.log 2>&1
+          status=$?
+          cat typecheck.log
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Upload typecheck diagnostics
+        if: steps.typecheck.outputs.status != '0'
+        uses: actions/upload-artifact@v4
+        with:
+          name: typecheck-diagnostics
+          path: typecheck.log
+          retention-days: 1
+
+      - name: Fail on typecheck errors
+        if: steps.typecheck.outputs.status != '0'
+        run: exit 1
 
       - name: Check formatting
         run: npm run format:check
