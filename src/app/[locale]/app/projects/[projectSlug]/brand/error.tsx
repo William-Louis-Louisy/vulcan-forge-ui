@@ -6,6 +6,7 @@ import { Button, WorkspaceState } from '@/components/ui';
 
 export default function BrandProfileError({ reset }: { reset: () => void }) {
   const t = useTranslations('BrandProfilePage');
+  const commonT = useTranslations('Common');
 
   return (
     <section className="flex min-h-80 items-center justify-center p-4 md:p-6 xl:absolute xl:inset-0 xl:min-h-0">
@@ -19,7 +20,7 @@ export default function BrandProfileError({ reset }: { reset: () => void }) {
         description={t('description')}
         action={
           <Button type="button" size="sm" onClick={reset}>
-            {t('actions.save')}
+            {commonT('actions.retry')}
           </Button>
         }
       />
