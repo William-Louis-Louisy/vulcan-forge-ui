@@ -90,11 +90,7 @@ export default async function ProjectOverviewPage({
               <TokensCoverage t={t} overview={overview} />
               <ThemesCoverage t={t} overview={overview} />
               <ComponentsCoverage t={t} overview={overview} />
-              <ExportsCoverage
-                t={t}
-                locale={locale}
-                overview={overview}
-              />
+              <ExportsCoverage t={t} locale={locale} overview={overview} />
             </div>
 
             <RecentActivity
@@ -369,7 +365,9 @@ function NextActions({
                   })}
                 </span>
                 <span className="text-content-tertiary shrink-0 text-xs font-semibold">
-                  {t(`nextActions.destinations.${getActionDestination(action)}`)}
+                  {t(
+                    `nextActions.destinations.${getActionDestination(action)}`,
+                  )}
                 </span>
                 <ArrowRightIcon
                   aria-hidden="true"
@@ -389,7 +387,9 @@ function NextActions({
             weight="fill"
           />
           <div>
-            <p className="text-sm font-semibold">{t('nextActions.emptyTitle')}</p>
+            <p className="text-sm font-semibold">
+              {t('nextActions.emptyTitle')}
+            </p>
             <p className="text-content-secondary mt-1 text-xs leading-5">
               {t('nextActions.emptyDescription')}
             </p>
@@ -557,7 +557,9 @@ function ComponentsCoverage({
               className="border-border-subtle flex min-w-0 items-center justify-between gap-3 border-b pb-2 last:border-0 last:pb-0"
             >
               <div className="min-w-0">
-                <p className="truncate text-sm font-semibold">{component.name}</p>
+                <p className="truncate text-sm font-semibold">
+                  {component.name}
+                </p>
                 <p className="text-content-tertiary mt-0.5 text-xs">
                   {t(`components.types.${component.type}`)}
                 </p>
@@ -615,7 +617,9 @@ function ExportsCoverage({
           <ExportMetric
             label={t('exports.stale')}
             value={overview.exports.staleFormats.length}
-            tone={overview.exports.staleFormats.length > 0 ? 'warning' : 'default'}
+            tone={
+              overview.exports.staleFormats.length > 0 ? 'warning' : 'default'
+            }
           />
         </div>
 
@@ -729,10 +733,7 @@ function ActivityIcon({ activity }: { activity: ProjectOverviewActivity }) {
     );
   }
 
-  if (
-    activity.type === 'accessibilityReport' &&
-    activity.status !== 'pass'
-  ) {
+  if (activity.type === 'accessibilityReport' && activity.status !== 'pass') {
     return (
       <WarningCircleIcon
         aria-hidden="true"
