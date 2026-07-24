@@ -19,16 +19,14 @@ jobs:
     timeout-minutes: 10
 
     permissions:
-      contents: write
+      contents: read
 
     env:
       DATABASE_URL: postgresql://vulcan:vulcan_dev_password@localhost:5432/vulcan_forge_ui?schema=public
 
     steps:
-      - name: Checkout repository branch
+      - name: Checkout repository
         uses: actions/checkout@v6
-        with:
-          ref: ${{ github.head_ref }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -41,9 +39,6 @@ jobs:
 
       - name: Generate Prisma Client
         run: npm run db:generate
-
-      - name: Format overview page
-        run: npx prettier --write 'src/app/[locale]/app/projects/[projectSlug]/page.tsx'
 
       - name: Run lint
         run: npm run lint
@@ -59,14 +54,3 @@ jobs:
 
       - name: Build application
         run: npm run build
-
-      - name: Commit formatted overview page
-        shell: bash
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add 'src/app/[locale]/app/projects/[projectSlug]/page.tsx'
-          if ! git diff --cached --quiet; then
-            git commit -m "style(ds-170-04): format overview workspace"
-            git push origin HEAD:${{ github.head_ref }}
-          fi
