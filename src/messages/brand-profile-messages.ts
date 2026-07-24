@@ -144,15 +144,6 @@ export const brandProfileMessages = {
         label: 'Rules',
         help: 'Enter one rule per line.',
       },
-      preview: {
-        title: 'Preview',
-        toneTitle: 'Tone preview',
-        primaryAction: 'Create order',
-        secondaryAction: 'View tracking',
-        aiEmpty: 'Use the documented brand voice and terminology.',
-        fallback:
-          '{locale} content is incomplete. Available values fall back to {fallback}.',
-      },
     },
   },
   fr: {
@@ -300,15 +291,6 @@ export const brandProfileMessages = {
           'Ajoutez des règles de rédaction déterministes, réutilisables telles quelles dans les Instructions IA.',
         label: 'Règles',
         help: 'Saisissez une règle par ligne.',
-      },
-      preview: {
-        title: 'Aperçu',
-        toneTitle: 'Aperçu du ton',
-        primaryAction: 'Créer une commande',
-        secondaryAction: 'Voir le suivi',
-        aiEmpty: 'Respecter la voix et la terminologie documentées.',
-        fallback:
-          'Le contenu {locale} est incomplet. Les valeurs disponibles utilisent {fallback} comme fallback.',
       },
     },
   },
