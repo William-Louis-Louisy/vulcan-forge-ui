@@ -19,7 +19,7 @@ jobs:
     timeout-minutes: 10
 
     permissions:
-      contents: write
+      contents: read
 
     env:
       DATABASE_URL: postgresql://vulcan:vulcan_dev_password@localhost:5432/vulcan_forge_ui?schema=public
@@ -27,8 +27,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-        with:
-          ref: ${{ github.event.pull_request.head.ref || github.ref }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -39,22 +37,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Apply formatting
-        run: npm run format
-
-      - name: Commit formatting
-        if: github.event_name == 'pull_request'
-        shell: bash
-        run: |
-          if git diff --quiet; then
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add --update
-          git commit -m "style(ds-170-05): apply project formatting"
-          git push origin HEAD:${{ github.event.pull_request.head.ref }}
-
       - name: Generate Prisma Client
         run: npm run db:generate
 
@@ -64,8 +46,31 @@ jobs:
       - name: Run typecheck
         run: npm run typecheck
 
-      - name: Run tests
-        run: npm run test
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Capture test diagnostics
+        id: tests
+        shell: bash
+        run: |
+          set +e
+          npm run test > test.log 2>&1
+          status=$?
+          cat test.log
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Upload test diagnostics
+        if: steps.tests.outputs.status != '0'
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-diagnostics
+          path: test.log
+          retention-days: 1
+
+      - name: Fail on test errors
+        if: steps.tests.outputs.status != '0'
+        run: exit 1
 
       - name: Build application
         run: npm run build
