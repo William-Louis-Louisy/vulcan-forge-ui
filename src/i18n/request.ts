@@ -9,6 +9,7 @@ import { themeEditorMessages } from '@/messages/theme-editor-messages';
 import { accessibilityCenterMessages } from '@/messages/accessibility-center-messages';
 import { projectOverviewMessages } from '@/messages/project-overview-messages';
 import { brandProfileMessages } from '@/messages/brand-profile-messages';
+import { brandOverviewMessages } from '@/messages/brand-overview-messages';
 
 const messagesByLocale = {
   en: () => import('../messages/en.json').then((module) => module.default),
@@ -34,6 +35,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
     accessibilityCenterMessages[locale],
     projectOverviewMessages[locale],
     brandProfileMessages[locale],
+    brandOverviewMessages[locale],
   ].reduce<MessageObject>(mergeMessages, {});
 
   return {
