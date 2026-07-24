@@ -278,8 +278,8 @@ Review the project root in FR and EN with representative populated, incomplete a
 - product-owner data-integrity and recommendation review: passed;
 - product-owner keyboard and light/dark appearance review: passed;
 - Dashboard/Overview navigation corrections: implemented;
-- lint, typecheck, formatting, tests and production build: passed on the previous implementation head;
-- standard Quality workflow on the final navigation-adjusted head: pending.
+- lint, typecheck, formatting, tests and production build: passed;
+- standard Quality workflow: passed on the navigation-adjusted implementation head (run #568).
 
 ## Definition of done
 
