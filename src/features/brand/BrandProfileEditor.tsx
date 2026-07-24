@@ -18,10 +18,7 @@ import {
   type BrandProfile,
   type BrandTerminologyEntry,
 } from '@/domain/design-system';
-import type {
-  AppLocale,
-  LocalizedString,
-} from '@/domain/i18n';
+import type { AppLocale, LocalizedString } from '@/domain/i18n';
 import { useRouter } from '@/i18n/navigation';
 import { saveBrandProfileAction } from './save-brand-profile.action';
 import { initialSaveBrandProfileActionState } from './save-brand-profile.state';
@@ -515,10 +512,7 @@ export function BrandProfileEditor({
                       />
                     </Field>
 
-                    <Field
-                      label={t('terminology.avoid')}
-                      locale={activeLocale}
-                    >
+                    <Field label={t('terminology.avoid')} locale={activeLocale}>
                       <input
                         key={`${terminologyRevision}-${activeLocale}-${index}`}
                         defaultValue={entry.avoid
