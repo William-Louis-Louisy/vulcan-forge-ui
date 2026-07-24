@@ -49,28 +49,8 @@ jobs:
       - name: Check formatting
         run: npm run format:check
 
-      - name: Capture test diagnostics
-        id: tests
-        shell: bash
-        run: |
-          set +e
-          npm run test > test.log 2>&1
-          status=$?
-          cat test.log
-          echo "status=$status" >> "$GITHUB_OUTPUT"
-          exit 0
-
-      - name: Upload test diagnostics
-        if: steps.tests.outputs.status != '0'
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-diagnostics
-          path: test.log
-          retention-days: 1
-
-      - name: Fail on test errors
-        if: steps.tests.outputs.status != '0'
-        run: exit 1
+      - name: Run tests
+        run: npm run test
 
       - name: Build application
         run: npm run build
