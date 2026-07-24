@@ -5,50 +5,83 @@ import {
 } from './brand-profile.schema';
 
 describe('brandProfileLocalizedContentSchema', () => {
-  it('accepts localized brand content', () => {
+  it('accepts localized brand content and structured editorial guidance', () => {
     expect(
       brandProfileLocalizedContentSchema.safeParse({
-        name: {
-          en: 'Core Product UI',
-          fr: 'Core Product UI',
+        tagline: {
+          en: 'Built for focused teams.',
+          fr: 'Pensé pour les équipes concentrées.',
         },
-        description: {
+        shortDescription: {
           en: 'A design system for the core product.',
           fr: 'Un design system pour le produit principal.',
         },
+        terminology: [
+          {
+            preferred: {
+              en: 'order',
+              fr: 'commande',
+            },
+            avoid: [
+              {
+                en: 'ticket',
+                fr: 'ticket',
+              },
+            ],
+          },
+        ],
+        editorialRules: [
+          {
+            en: 'Do not use emoji.',
+            fr: 'Ne pas utiliser d’émoji.',
+          },
+        ],
       }).success,
     ).toBe(true);
   });
 
-  it('rejects missing localized name', () => {
+  it('rejects localized values without any usable locale', () => {
     expect(
       brandProfileLocalizedContentSchema.safeParse({
-        description: {
-          en: 'Missing name.',
-        },
+        shortDescription: {},
       }).success,
     ).toBe(false);
   });
 });
 
 describe('brandProfileSchema', () => {
-  it('accepts a valid brand profile', () => {
+  it('accepts a valid complete brand profile', () => {
     expect(
       brandProfileSchema.safeParse({
-        visualDirection: 'minimal',
+        visualStyle: 'premium',
+        uiDensity: 'cozy',
+        inspirationKeywords: ['warm off-white', 'precise'],
         localizedContent: {
-          name: {
-            en: 'Core Product UI',
-            fr: 'Core Product UI',
+          personality: {
+            en: 'Precise and calm.',
+            fr: 'Précise et calme.',
           },
-          designPrinciples: [
-            {
-              en: 'Clarity first.',
-              fr: 'La clarté d’abord.',
-            },
-          ],
+          audience: {
+            en: 'Workshop operators.',
+          },
+          toneOfVoice: {
+            en: 'Direct. No exclamation marks.',
+          },
+          terminology: [],
+          editorialRules: [],
         },
       }).success,
     ).toBe(true);
+  });
+
+  it('rejects unknown visual styles and densities', () => {
+    expect(
+      brandProfileSchema.safeParse({
+        visualStyle: 'enterprise',
+        uiDensity: 'dense',
+        inspirationKeywords: [],
+        localizedContent: {},
+      }).success,
+    ).toBe(false);
   });
 });
