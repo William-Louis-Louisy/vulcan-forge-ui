@@ -3,10 +3,6 @@ export const privateNavigationItems = [
     key: 'dashboard',
     href: '/app',
   },
-  {
-    key: 'projects',
-    href: '/app/projects',
-  },
 ] as const;
 
 export type PrivateNavigationItem = (typeof privateNavigationItems)[number];
