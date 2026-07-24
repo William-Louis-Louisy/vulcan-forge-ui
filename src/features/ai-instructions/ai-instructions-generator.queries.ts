@@ -13,6 +13,7 @@ import {
 import { prisma } from '@/server/db/prisma';
 import type { AppLocale } from '@/domain/i18n';
 import type { AiInstructionsInput } from '@/domain/ai-instructions';
+import { parseStoredBrandProfile } from '@/features/brand/brand-profile.utils';
 
 const designTokenArraySchema = z.array(designTokenSchema);
 
@@ -64,6 +65,14 @@ export async function getAiInstructionsGeneratorPageData({
       description: true,
       defaultLocale: true,
       supportedLocales: true,
+      brandProfile: {
+        select: {
+          visualStyle: true,
+          uiDensity: true,
+          inspirationKeywords: true,
+          localizedContent: true,
+        },
+      },
       aiInstructionProfile: {
         select: {
           content: true,
@@ -71,7 +80,7 @@ export async function getAiInstructionsGeneratorPageData({
       },
       localeSettings: {
         select: {
-          documentationLocale: true,
+          aiInstructionLocale: true,
         },
       },
       tokenSets: {
@@ -110,14 +119,15 @@ export async function getAiInstructionsGeneratorPageData({
   return {
     projectSlug: project.slug,
     fallbackLocale:
-      (project.localeSettings?.documentationLocale as AppLocale | undefined) ??
-      (project.defaultLocale as AppLocale),
+      (project.localeSettings?.aiInstructionLocale as
+        | AppLocale
+        | undefined) ?? (project.defaultLocale as AppLocale),
     savedProfile: project.aiInstructionProfile
       ? parseAiInstructionProfileContent(project.aiInstructionProfile.content)
       : {
           ...defaultAiInstructionProfileContent,
           locale:
-            (project.localeSettings?.documentationLocale as
+            (project.localeSettings?.aiInstructionLocale as
               | AppLocale
               | undefined) ?? (project.defaultLocale as AppLocale),
         },
@@ -128,6 +138,9 @@ export async function getAiInstructionsGeneratorPageData({
         defaultLocale: project.defaultLocale as AppLocale,
         supportedLocales: project.supportedLocales as AppLocale[],
       },
+      brand: project.brandProfile
+        ? parseStoredBrandProfile(project.brandProfile)
+        : null,
       tokens,
       components,
     },
