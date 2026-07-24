@@ -89,7 +89,7 @@ export function ProjectCard({
           </p>
 
           <AppLink
-            href={`/app/projects/${project.slug}/tokens`}
+            href={`/app/projects/${project.slug}`}
             className="text-action-accent group-hover:text-action-accent-hover inline-flex items-center gap-1 text-sm font-semibold transition"
           >
             {labels.open}

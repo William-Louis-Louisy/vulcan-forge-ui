@@ -45,7 +45,7 @@ The workspace identity remains visible in the topbar but is rendered as static c
 - other projects navigate to the equivalent top-level section;
 - nested Components and Accessibility routes fall back to their section root;
 - Tokens preserves a supported `set` query and otherwise falls back to `color`;
-- the dropdown includes an explicit link to the Projects index.
+- the dropdown includes an explicit link back to the Dashboard project collection.
 
 ### Responsive navigation decision
 
@@ -53,7 +53,7 @@ Wide layouts from `lg` upward keep the locale control, desktop user menu and per
 
 The compact menu contains:
 
-- Dashboard and Projects;
+- Dashboard;
 - the current project's enabled editor sections;
 - Settings;
 - the FR/EN locale control;
@@ -104,7 +104,24 @@ The desktop user menu and compact application menu are navigation and shortcut s
 - surface token, theme, component, accessibility and export signals;
 - provide prioritized next actions;
 - reuse existing project data before introducing new persistence;
-- enable the Overview navigation item.
+- enable the Overview navigation item;
+- make generic Dashboard project entries open Overview;
+- make the Dashboard the canonical project collection;
+- remove the standalone `/app/projects` page and its primary-navigation entry;
+- route project-switcher and creation-flow return links back to `/app`.
+
+### Backlog — Dashboard project management
+
+The Dashboard remains the single project-management surface as the workspace grows. A dedicated follow-up should add:
+
+- a user-controlled Cards/Table view switch;
+- search across project identity and descriptive metadata;
+- filters for relevant project attributes;
+- explicit sort controls, including recent activity;
+- one shared filtered and sorted project collection for both views;
+- URL-backed view, search, filter and sort state where it improves reload, history and sharing behavior.
+
+A second Projects page must not be reintroduced for these capabilities.
 
 ## DS-170-05 — Brand profile
 

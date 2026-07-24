@@ -1,11 +1,7 @@
 'use client';
 
 import { Badge } from '../ui';
-import {
-  HouseIcon,
-  FolderIcon,
-  WarningCircleIcon,
-} from '@phosphor-icons/react';
+import { HouseIcon, WarningCircleIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/navigation';
 import {
@@ -27,7 +23,6 @@ type ProjectEditorNavItemKey = ProjectEditorNavItem['key'];
 
 const navigationIcons = {
   dashboard: HouseIcon,
-  projects: FolderIcon,
 } as const;
 
 function isActivePath(currentPathname: string, itemHref: string) {
@@ -112,99 +107,93 @@ export function AppShellNavigation({
     <nav aria-label={navigationLabel} className="space-y-1">
       {privateNavigationItems.map((item) => {
         const isActive = isActivePath(pathname, item.href);
-        const shouldRenderProjectNav =
-          item.key === 'projects' && projectSlug !== null;
         const Icon = navigationIcons[item.key];
 
         return (
-          <div key={item.key}>
-            <Link
-              href={item.href}
-              onClick={onNavigate}
-              aria-current={
-                isActive && !shouldRenderProjectNav ? 'page' : undefined
-              }
-              className={[
-                'flex min-h-9 items-center gap-2 rounded-md px-2.5 text-sm font-medium transition',
-                isActive
-                  ? 'bg-surface-primary text-content-primary shadow-soft'
-                  : 'text-content-secondary hover:bg-surface-primary hover:text-content-primary',
-              ].join(' ')}
-            >
-              <Icon size={15} weight={isActive ? 'fill' : 'regular'} />
-              <span>{labels[item.key]}</span>
-            </Link>
-
-            {shouldRenderProjectNav ? (
-              <ul className="border-border-subtle mt-2 ml-4 grid gap-1 border-l pl-3">
-                {projectEditorNavItems.map((projectItem) => {
-                  const href = createProjectEditorNavHref({
-                    projectSlug,
-                    path: projectItem.path,
-                  });
-
-                  const isProjectItemActive = isProjectEditorNavItemActive({
-                    pathname,
-                    projectSlug,
-                    path: projectItem.path,
-                  });
-
-                  if (!projectItem.isEnabled) {
-                    return (
-                      <li key={projectItem.key}>
-                        <span
-                          aria-disabled="true"
-                          className="text-content-tertiary flex cursor-not-allowed items-center justify-between gap-3 rounded-lg px-3 py-2 text-xs font-semibold opacity-70"
-                        >
-                          <span>{projectLabels[projectItem.key]}</span>
-
-                          <Badge size="sm" variant="default">
-                            {projectT('soon')}
-                          </Badge>
-                        </span>
-                      </li>
-                    );
-                  }
-
-                  return (
-                    <li key={projectItem.key}>
-                      <Link
-                        href={href}
-                        onClick={onNavigate}
-                        aria-current={isProjectItemActive ? 'page' : undefined}
-                        className={[
-                          'flex min-h-8 items-center justify-between gap-3 rounded-md px-2.5 text-xs font-medium transition',
-                          isProjectItemActive
-                            ? 'bg-action-accent/10 text-action-accent'
-                            : 'text-content-secondary hover:bg-surface-primary hover:text-content-primary',
-                        ].join(' ')}
-                      >
-                        <span className="flex items-center gap-2">
-                          {projectLabels[projectItem.key]}
-
-                          {'severity' in projectItem &&
-                          projectItem.severity === 'warning' ? (
-                            <WarningCircleIcon
-                              aria-label={projectT('warning')}
-                              size={14}
-                              weight={isProjectItemActive ? 'fill' : 'regular'}
-                              className={
-                                isProjectItemActive
-                                  ? 'text-action-accent'
-                                  : 'text-action-warning'
-                              }
-                            />
-                          ) : null}
-                        </span>
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            ) : null}
-          </div>
+          <Link
+            key={item.key}
+            href={item.href}
+            onClick={onNavigate}
+            aria-current={isActive ? 'page' : undefined}
+            className={[
+              'flex min-h-9 items-center gap-2 rounded-md px-2.5 text-sm font-medium transition',
+              isActive
+                ? 'bg-surface-primary text-content-primary shadow-soft'
+                : 'text-content-secondary hover:bg-surface-primary hover:text-content-primary',
+            ].join(' ')}
+          >
+            <Icon size={15} weight={isActive ? 'fill' : 'regular'} />
+            <span>{labels[item.key]}</span>
+          </Link>
         );
       })}
+
+      {projectSlug ? (
+        <ul className="border-border-subtle mt-3 ml-4 grid gap-1 border-l pl-3">
+          {projectEditorNavItems.map((projectItem) => {
+            const href = createProjectEditorNavHref({
+              projectSlug,
+              path: projectItem.path,
+            });
+            const isProjectItemActive = isProjectEditorNavItemActive({
+              pathname,
+              projectSlug,
+              path: projectItem.path,
+            });
+
+            if (!projectItem.isEnabled) {
+              return (
+                <li key={projectItem.key}>
+                  <span
+                    aria-disabled="true"
+                    className="text-content-tertiary flex cursor-not-allowed items-center justify-between gap-3 rounded-lg px-3 py-2 text-xs font-semibold opacity-70"
+                  >
+                    <span>{projectLabels[projectItem.key]}</span>
+
+                    <Badge size="sm" variant="default">
+                      {projectT('soon')}
+                    </Badge>
+                  </span>
+                </li>
+              );
+            }
+
+            return (
+              <li key={projectItem.key}>
+                <Link
+                  href={href}
+                  onClick={onNavigate}
+                  aria-current={isProjectItemActive ? 'page' : undefined}
+                  className={[
+                    'flex min-h-8 items-center justify-between gap-3 rounded-md px-2.5 text-xs font-medium transition',
+                    isProjectItemActive
+                      ? 'bg-action-accent/10 text-action-accent'
+                      : 'text-content-secondary hover:bg-surface-primary hover:text-content-primary',
+                  ].join(' ')}
+                >
+                  <span className="flex items-center gap-2">
+                    {projectLabels[projectItem.key]}
+
+                    {'severity' in projectItem &&
+                    projectItem.severity === 'warning' ? (
+                      <WarningCircleIcon
+                        aria-label={projectT('warning')}
+                        size={14}
+                        weight={isProjectItemActive ? 'fill' : 'regular'}
+                        className={
+                          isProjectItemActive
+                            ? 'text-action-accent'
+                            : 'text-action-warning'
+                        }
+                      />
+                    ) : null}
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      ) : null}
     </nav>
   );
 }

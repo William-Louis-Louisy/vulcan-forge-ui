@@ -2,7 +2,7 @@ export const projectEditorNavItems = [
   {
     key: 'overview',
     path: '',
-    isEnabled: false,
+    isEnabled: true,
   },
   {
     key: 'brand',
