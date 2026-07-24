@@ -1,9 +1,7 @@
 name: Format Brand workspace
 
 on:
-  push:
-    branches:
-      - feature/ds-170-05-brand-profile
+  pull_request:
 
 permissions:
   contents: read
