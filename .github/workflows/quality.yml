@@ -46,21 +46,18 @@ jobs:
       - name: Run typecheck
         run: npm run typecheck
 
-      - name: Format changed sources for diagnostics
-        run: >-
-          npx prettier --write
-          'src/app/[locale]/app/projects/[projectSlug]/page.tsx'
-          src/features/project-overview/project-overview.utils.ts
-          src/messages/project-overview-messages.ts
+      - name: Format overview page for diagnostics
+        shell: bash
+        run: |
+          npx prettier --write 'src/app/[locale]/app/projects/[projectSlug]/page.tsx'
+          mkdir -p formatted-sources
+          cp 'src/app/[locale]/app/projects/[projectSlug]/page.tsx' formatted-sources/project-overview-page.tsx
 
-      - name: Upload formatted sources
+      - name: Upload formatted overview page
         uses: actions/upload-artifact@v4
         with:
-          name: formatted-overview-sources
-          path: |
-            src/app/[locale]/app/projects/[projectSlug]/page.tsx
-            src/features/project-overview/project-overview.utils.ts
-            src/messages/project-overview-messages.ts
+          name: formatted-overview-page
+          path: formatted-sources/project-overview-page.tsx
           if-no-files-found: error
           retention-days: 1
 
