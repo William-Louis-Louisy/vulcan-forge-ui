@@ -2,7 +2,11 @@ import {
   resolveLocalizedStringWithFallback,
   type AppLocale,
 } from '@/domain/i18n';
-import type { ComponentContract, DesignToken } from '@/domain/design-system';
+import type {
+  BrandProfile,
+  ComponentContract,
+  DesignToken,
+} from '@/domain/design-system';
 
 export type MarkdownDocumentationSection =
   | 'overview'
@@ -42,6 +46,7 @@ export type MarkdownDocumentationInput = {
   fallbackLocale?: AppLocale;
   sections?: readonly MarkdownDocumentationSection[];
   project: MarkdownDocumentationProject;
+  brand: BrandProfile | null;
   tokens: readonly DesignToken[];
   themes: readonly MarkdownDocumentationTheme[];
   components: readonly ComponentContract[];
@@ -73,6 +78,18 @@ const labels = {
     description: 'Description',
     defaultLocale: 'Default locale',
     supportedLocales: 'Supported locales',
+    brand: 'Brand profile',
+    tagline: 'Tagline',
+    personality: 'Personality',
+    audience: 'Audience',
+    toneOfVoice: 'Tone of voice',
+    visualStyle: 'Visual style',
+    uiDensity: 'UI density',
+    inspirationKeywords: 'Inspiration keywords',
+    terminology: 'Terminology',
+    editorialRules: 'Editorial rules',
+    preferredTerm: 'Prefer',
+    avoidedTerms: 'Avoid',
     tokens: 'Tokens',
     tokenPath: 'Path',
     tokenType: 'Type',
@@ -110,6 +127,18 @@ const labels = {
     description: 'Description',
     defaultLocale: 'Locale par défaut',
     supportedLocales: 'Locales supportées',
+    brand: 'Profil de marque',
+    tagline: 'Tagline',
+    personality: 'Personnalité',
+    audience: 'Audience',
+    toneOfVoice: 'Ton de voix',
+    visualStyle: 'Style visuel',
+    uiDensity: 'Densité UI',
+    inspirationKeywords: 'Mots-clés d’inspiration',
+    terminology: 'Terminologie',
+    editorialRules: 'Règles éditoriales',
+    preferredTerm: 'Privilégier',
+    avoidedTerms: 'Éviter',
     tokens: 'Tokens',
     tokenPath: 'Chemin',
     tokenType: 'Type',
@@ -214,12 +243,24 @@ function resolveDocumentationString({
 
 function renderOverviewSection({
   project,
+  brand,
   locale,
+  fallbackLocale,
+  missingTranslations,
 }: {
   project: MarkdownDocumentationProject;
+  brand: BrandProfile | null;
   locale: AppLocale;
+  fallbackLocale: AppLocale;
+  missingTranslations: MarkdownDocumentationMissingTranslation[];
 }): string {
   const t = labels[locale];
+  const brandSection = renderBrandSection({
+    brand,
+    locale,
+    fallbackLocale,
+    missingTranslations,
+  });
 
   return [
     `## ${t.overview}`,
@@ -235,7 +276,107 @@ function renderOverviewSection({
         ],
       ],
     ),
-  ].join('\n');
+    brandSection,
+  ]
+    .filter(Boolean)
+    .join('\n\n');
+}
+
+function renderBrandSection({
+  brand,
+  locale,
+  fallbackLocale,
+  missingTranslations,
+}: {
+  brand: BrandProfile | null;
+  locale: AppLocale;
+  fallbackLocale: AppLocale;
+  missingTranslations: MarkdownDocumentationMissingTranslation[];
+}) {
+  const t = labels[locale];
+
+  if (!brand) {
+    return '';
+  }
+
+  const localizedFields = [
+    ['tagline', t.tagline],
+    ['shortDescription', t.description],
+    ['personality', t.personality],
+    ['audience', t.audience],
+    ['toneOfVoice', t.toneOfVoice],
+  ] as const;
+  const localizedRows = localizedFields
+    .map(([field, label]) => {
+      const localizedString = brand.localizedContent[field];
+
+      if (!localizedString) {
+        return null;
+      }
+
+      const value = resolveDocumentationString({
+        path: `brand.${field}`,
+        localizedString,
+        locale,
+        fallbackLocale,
+        missingTranslations,
+      });
+
+      return value ? `- **${label}:** ${value}` : null;
+    })
+    .filter((row): row is string => Boolean(row));
+  const terminologyRows = brand.localizedContent.terminology.map(
+    (entry, index) => {
+      const preferred = resolveDocumentationString({
+        path: `brand.terminology.${index}.preferred`,
+        localizedString: entry.preferred,
+        locale,
+        fallbackLocale,
+        missingTranslations,
+      });
+      const avoid = entry.avoid
+        .map((term, termIndex) =>
+          resolveDocumentationString({
+            path: `brand.terminology.${index}.avoid.${termIndex}`,
+            localizedString: term,
+            locale,
+            fallbackLocale,
+            missingTranslations,
+          }),
+        )
+        .filter(Boolean)
+        .join(', ');
+
+      return `- **${t.preferredTerm}:** ${preferred}${avoid ? ` · **${t.avoidedTerms}:** ${avoid}` : ''}`;
+    },
+  );
+  const editorialRows = brand.localizedContent.editorialRules.map(
+    (rule, index) =>
+      `- ${resolveDocumentationString({
+        path: `brand.editorialRules.${index}`,
+        localizedString: rule,
+        locale,
+        fallbackLocale,
+        missingTranslations,
+      })}`,
+  );
+
+  return [
+    `### ${t.brand}`,
+    '',
+    `- **${t.visualStyle}:** ${brand.visualStyle}`,
+    `- **${t.uiDensity}:** ${brand.uiDensity}`,
+    brand.inspirationKeywords.length > 0
+      ? `- **${t.inspirationKeywords}:** ${brand.inspirationKeywords.join(', ')}`
+      : '',
+    ...localizedRows,
+    terminologyRows.length > 0 ? `#### ${t.terminology}` : '',
+    terminologyRows.length > 0 ? terminologyRows.join('\n') : '',
+    editorialRows.length > 0 ? `#### ${t.editorialRules}` : '',
+    editorialRows.length > 0 ? editorialRows.join('\n') : '',
+  ]
+    .filter(Boolean)
+    .join('\n');
 }
 
 function renderTokensSection({
@@ -452,7 +593,10 @@ export function generateMarkdownDocumentation(
     sections.push(
       renderOverviewSection({
         project: input.project,
+        brand: input.brand,
         locale: input.locale,
+        fallbackLocale,
+        missingTranslations,
       }),
     );
   }
