@@ -71,11 +71,7 @@ export type ProjectOverviewActivity =
       type: 'component';
       occurredAt: string;
       subject: string;
-    }
-  | {
-      id: string;
-      type: 'brand';
-      occurredAt: string;
+      entity?: 'component' | 'brand';
     }
   | {
       id: string;
@@ -512,14 +508,17 @@ function createRecentActivity(
         type: 'component',
         occurredAt: component.updatedAt.toISOString(),
         subject: component.name,
+        entity: 'component',
       }),
     ),
     ...(pageData.brandProfileUpdatedAt
       ? [
           {
             id: 'brand-profile',
-            type: 'brand' as const,
+            type: 'component' as const,
             occurredAt: pageData.brandProfileUpdatedAt.toISOString(),
+            subject: 'Brand',
+            entity: 'brand' as const,
           },
         ]
       : []),
