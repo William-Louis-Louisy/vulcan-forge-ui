@@ -187,7 +187,8 @@ export function BrandProfileEditor({
       localizedContent: {
         ...currentProfile.localizedContent,
         terminology: currentProfile.localizedContent.terminology.map(
-          (entry, entryIndex) => (entryIndex === index ? updater(entry) : entry),
+          (entry, entryIndex) =>
+            entryIndex === index ? updater(entry) : entry,
         ),
       },
     }));
@@ -617,7 +618,7 @@ export function BrandProfileEditor({
               </div>
             </PreviewCard>
 
-            <div className="bg-content-primary text-background-app rounded-lg p-4 font-mono text-xs leading-6 shadow-soft">
+            <div className="bg-content-primary text-background-app shadow-soft rounded-lg p-4 font-mono text-xs leading-6">
               <p className="text-background-app/60"># §1 voice</p>
               {preview.aiRules.length > 0 ? (
                 preview.aiRules.map((rule, index) => (
@@ -701,9 +702,15 @@ function Field({
   );
 }
 
-function PreviewCard({ title, children }: { title: string; children: ReactNode }) {
+function PreviewCard({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) {
   return (
-    <section className="border-border-subtle bg-surface-primary rounded-lg border p-4 shadow-soft">
+    <section className="border-border-subtle bg-surface-primary shadow-soft rounded-lg border p-4">
       <p className="text-content-tertiary text-[0.625rem] font-semibold tracking-[0.14em] uppercase">
         {title}
       </p>
@@ -832,7 +839,10 @@ function createBrandPreview({
   return {
     heading: tagline.value || productName,
     description:
-      shortDescription.value || personality.value || audience.value || productName,
+      shortDescription.value ||
+      personality.value ||
+      audience.value ||
+      productName,
     aiRules: [
       toneOfVoice.value,
       ...editorialRules.map((rule) => rule.value),

@@ -12,11 +12,7 @@ export const brandVisualStyles = [
   'custom',
 ] as const;
 
-export const brandUiDensities = [
-  'compact',
-  'cozy',
-  'comfortable',
-] as const;
+export const brandUiDensities = ['compact', 'cozy', 'comfortable'] as const;
 
 export const brandVisualStyleSchema = z.enum(brandVisualStyles);
 export const brandUiDensitySchema = z.enum(brandUiDensities);
@@ -48,9 +44,7 @@ export const brandProfileSchema = z.object({
 
 export type BrandVisualStyle = z.infer<typeof brandVisualStyleSchema>;
 export type BrandUiDensity = z.infer<typeof brandUiDensitySchema>;
-export type BrandTerminologyEntry = z.infer<
-  typeof brandTerminologyEntrySchema
->;
+export type BrandTerminologyEntry = z.infer<typeof brandTerminologyEntrySchema>;
 export type BrandProfileLocalizedContent = z.infer<
   typeof brandProfileLocalizedContentSchema
 >;

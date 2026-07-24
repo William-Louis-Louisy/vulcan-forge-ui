@@ -119,9 +119,8 @@ export async function getAiInstructionsGeneratorPageData({
   return {
     projectSlug: project.slug,
     fallbackLocale:
-      (project.localeSettings?.aiInstructionLocale as
-        | AppLocale
-        | undefined) ?? (project.defaultLocale as AppLocale),
+      (project.localeSettings?.aiInstructionLocale as AppLocale | undefined) ??
+      (project.defaultLocale as AppLocale),
     savedProfile: project.aiInstructionProfile
       ? parseAiInstructionProfileContent(project.aiInstructionProfile.content)
       : {

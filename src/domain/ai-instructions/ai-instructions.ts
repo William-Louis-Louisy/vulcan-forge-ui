@@ -329,30 +329,28 @@ function renderBrandRules({
         missingTranslations,
       })
     : '';
-  const terminology = brand.localizedContent.terminology.map(
-    (entry, index) => {
-      const preferred = resolveInstructionText({
-        path: `brand.terminology.${index}.preferred`,
-        localizedString: entry.preferred,
-        locale,
-        fallbackLocale,
-        missingTranslations,
-      });
-      const avoid = entry.avoid
-        .map((term, termIndex) =>
-          resolveInstructionText({
-            path: `brand.terminology.${index}.avoid.${termIndex}`,
-            localizedString: term,
-            locale,
-            fallbackLocale,
-            missingTranslations,
-          }),
-        )
-        .filter(Boolean);
+  const terminology = brand.localizedContent.terminology.map((entry, index) => {
+    const preferred = resolveInstructionText({
+      path: `brand.terminology.${index}.preferred`,
+      localizedString: entry.preferred,
+      locale,
+      fallbackLocale,
+      missingTranslations,
+    });
+    const avoid = entry.avoid
+      .map((term, termIndex) =>
+        resolveInstructionText({
+          path: `brand.terminology.${index}.avoid.${termIndex}`,
+          localizedString: term,
+          locale,
+          fallbackLocale,
+          missingTranslations,
+        }),
+      )
+      .filter(Boolean);
 
-      return `- **${t.preferredTerm}:** ${preferred}${avoid.length > 0 ? ` · **${t.avoidedTerms}:** ${avoid.join(', ')}` : ''}`;
-    },
-  );
+    return `- **${t.preferredTerm}:** ${preferred}${avoid.length > 0 ? ` · **${t.avoidedTerms}:** ${avoid.join(', ')}` : ''}`;
+  });
   const editorialRules = brand.localizedContent.editorialRules.map(
     (rule, index) =>
       `- ${resolveInstructionText({

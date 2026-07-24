@@ -66,7 +66,8 @@ export function countMissingBrandTranslations({
   return collectBrandLocalizedStrings(profile.localizedContent).reduce(
     (count, localizedString) =>
       count +
-      getMissingLocalizedStringLocales(localizedString, supportedLocales).length,
+      getMissingLocalizedStringLocales(localizedString, supportedLocales)
+        .length,
     0,
   );
 }
