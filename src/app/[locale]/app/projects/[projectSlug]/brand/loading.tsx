@@ -1,8 +1,12 @@
-export default function BrandProfileLoading() {
+import { getTranslations } from 'next-intl/server';
+
+export default async function BrandProfileLoading() {
+  const t = await getTranslations('Common');
+
   return (
     <section
       role="status"
-      aria-label="Loading brand profile"
+      aria-label={t('states.loading')}
       className="flex min-h-0 flex-col xl:absolute xl:inset-0 xl:h-auto xl:overflow-hidden"
     >
       <div className="border-border-subtle border-b px-4 py-5 sm:px-6 xl:px-7">
