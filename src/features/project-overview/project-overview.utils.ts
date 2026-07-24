@@ -74,6 +74,11 @@ export type ProjectOverviewActivity =
     }
   | {
       id: string;
+      type: 'brand';
+      occurredAt: string;
+    }
+  | {
+      id: string;
       type: 'accessibilityReport';
       occurredAt: string;
       score: number;
@@ -509,6 +514,15 @@ function createRecentActivity(
         subject: component.name,
       }),
     ),
+    ...(pageData.brandProfileUpdatedAt
+      ? [
+          {
+            id: 'brand-profile',
+            type: 'brand' as const,
+            occurredAt: pageData.brandProfileUpdatedAt.toISOString(),
+          },
+        ]
+      : []),
     ...pageData.exportLogs.slice(0, 8).map(
       (exportLog): ProjectOverviewActivity => ({
         id: `export:${exportLog.id}`,
@@ -553,6 +567,7 @@ export function createProjectOverviewViewModel(
     ...pageData.tokenSets.map((tokenSet) => tokenSet.updatedAt),
     ...pageData.themes.map((theme) => theme.updatedAt),
     ...pageData.componentContracts.map((component) => component.updatedAt),
+    pageData.brandProfileUpdatedAt,
     pageData.documentationProfileUpdatedAt,
     pageData.aiInstructionProfileUpdatedAt,
   ]);
