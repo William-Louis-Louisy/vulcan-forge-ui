@@ -380,7 +380,7 @@ function ProjectSwitcher({
 
           <div className="border-border-subtle border-t p-2">
             <Link
-              href="/app/projects"
+              href="/app"
               onClick={close}
               className="text-content-secondary hover:bg-background-subtle hover:text-content-primary focus-visible:outline-border-focus flex min-h-9 items-center gap-2 rounded-md px-3 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-[-2px]"
             >
