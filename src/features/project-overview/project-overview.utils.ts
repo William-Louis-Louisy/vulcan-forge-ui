@@ -148,10 +148,7 @@ export type ProjectOverviewViewModel = {
   contentUpdatedAt: string;
 };
 
-function isDescriptionMissing(
-  token: DesignToken,
-  locale: AppLocale,
-): boolean {
+function isDescriptionMissing(token: DesignToken, locale: AppLocale): boolean {
   const value = token.description?.[locale];
 
   return typeof value !== 'string' || value.trim().length === 0;
@@ -191,8 +188,8 @@ function createTokenCoverage(
           break;
       }
 
-      const missingLocales = pageData.project.supportedLocales.filter((locale) =>
-        isDescriptionMissing(parsedToken.data, locale),
+      const missingLocales = pageData.project.supportedLocales.filter(
+        (locale) => isDescriptionMissing(parsedToken.data, locale),
       );
 
       if (missingLocales.length > 0) {
@@ -219,8 +216,7 @@ function createTokenCoverage(
   return sets.reduce<ProjectOverviewViewModel['tokens']>(
     (coverage, tokenSet) => ({
       total: coverage.total + tokenSet.total,
-      valid:
-        coverage.valid + Math.max(0, tokenSet.total - tokenSet.invalid),
+      valid: coverage.valid + Math.max(0, tokenSet.total - tokenSet.invalid),
       invalid: coverage.invalid + tokenSet.invalid,
       ready: coverage.ready + tokenSet.ready,
       draft: coverage.draft + tokenSet.draft,
@@ -314,9 +310,7 @@ function createCurrentAccessibilityReport(
 function getLatestDate(dates: Array<Date | null>): Date {
   const availableDates = dates.filter((date): date is Date => date !== null);
 
-  return new Date(
-    Math.max(...availableDates.map((date) => date.getTime())),
-  );
+  return new Date(Math.max(...availableDates.map((date) => date.getTime())));
 }
 
 function createExportCoverage({
@@ -354,9 +348,7 @@ function createExportCoverage({
     latestSuccessfulExports: exportLogFormats.flatMap((format) => {
       const createdAt = latestSuccessfulByFormat.get(format);
 
-      return createdAt
-        ? [{ format, createdAt: createdAt.toISOString() }]
-        : [];
+      return createdAt ? [{ format, createdAt: createdAt.toISOString() }] : [];
     }),
     recentLogs: pageData.exportLogs.slice(0, 5).map((exportLog) => ({
       id: exportLog.id,
