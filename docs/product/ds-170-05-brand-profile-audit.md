@@ -11,11 +11,12 @@ The Brand workspace:
 - persists structured product and editorial guidance;
 - supports English and French through the project locale contract;
 - exposes missing translations without blocking a valid fallback-based save;
-- provides a deterministic local preview;
 - does not call an AI service;
 - does not regenerate the project slug after a product-name change;
 - does not change public marketing surfaces;
 - does not introduce historical audit-log persistence.
+
+The editor does not include a local preview. Documentation and AI Instructions remain the canonical surfaces for reviewing generated Brand output.
 
 ## Canonical identity decisions
 
@@ -27,8 +28,6 @@ The Brand workspace:
 - new and migrated profiles use `cozy` as the default UI density.
 
 ## Domain model
-
-The validated Brand profile contains:
 
 ### Global guidance
 
@@ -66,7 +65,7 @@ The Prisma migration:
 - removes duplicated Brand name, description and visual-direction columns;
 - removes the duplicated project visual-direction column.
 
-The creation foundation now creates the structured Brand profile directly. The onboarding visual-direction step exposes the same eight validated styles as the Brand workspace; the legacy `enterprise` value is retained only in migration normalization and is rejected for new project payloads.
+The creation foundation creates the structured Brand profile directly. The onboarding visual-direction step exposes the same eight validated styles as the Brand workspace; the legacy `enterprise` value is retained only in migration normalization and is rejected for new project payloads.
 
 ## Brand workspace
 
@@ -86,10 +85,34 @@ The workspace includes:
 - inspiration keywords;
 - structured terminology and editorial guidance;
 - missing-translation status;
-- deterministic tone and AI-guidance previews;
 - saved, unsaved, saving, invalid and error states.
 
 Brand is enabled in persistent desktop navigation and in the compact application menu.
+
+## Validated UI correction
+
+The initial Brand implementation diverged from the approved DS-160 visual contract. Product-owner QA identified four structural issues:
+
+- form controls did not match the Tokens inspector reference;
+- the deterministic preview rail did not provide useful additional capability;
+- the workspace header created excessive empty space and placed the locale control too close to its lower separator;
+- repeated elevated cards made the page feel visually disconnected from the rest of the application.
+
+The validated correction is therefore:
+
+- remove the preview rail completely;
+- use one full-width, independently scrollable editor workspace;
+- keep the shared `ProjectWorkspaceHeader` compact, with translation status and Save grouped as header actions;
+- place the content-locale control in a dedicated toolbar below the header;
+- expose save feedback in that toolbar without changing the project topbar save context;
+- render editor groups as integrated horizontal sections separated by subtle borders;
+- remove page-level card shadows and repeated elevated surfaces;
+- use the Tokens inspector control contract: subtle border, primary surface, compact padding and primary-border focus;
+- reserve monospace typography for the slug and other technical values;
+- present terminology as dense divided rows rather than independent nested cards;
+- keep the content width constrained so long text fields remain readable after removing the rail.
+
+This correction changes presentation only. Persistence, validation, localization, generated outputs and Overview freshness behavior remain unchanged.
 
 ## Authorization and save behavior
 
@@ -107,7 +130,7 @@ Missing translations do not invalidate an otherwise valid profile. The UI report
 
 ## Documentation integration
 
-The Markdown generator now includes Brand guidance in the Overview section:
+The Markdown generator includes Brand guidance in the Overview section:
 
 - visual style and UI density;
 - inspiration keywords;
@@ -119,7 +142,7 @@ Brand fallback usage participates in the existing missing-translation diagnostic
 
 ## AI Instructions integration
 
-AI Instructions now always include a Brand and voice section when Brand data exists. It contains:
+AI Instructions include a Brand and voice section when Brand data exists. It contains:
 
 - personality and target audience;
 - tone-of-voice guidance;
@@ -148,20 +171,22 @@ No new activity table is introduced.
 
 All Brand workspace copy is scoped under `BrandProfilePage` and available in English and French.
 
-The interface locale controls application copy. The Brand content locale controls the edited and previewed product content. These concerns remain independent.
+The interface locale controls application copy. The Brand content locale controls the edited product content. These concerns remain independent.
 
 ## Responsive behavior
 
 ### Wide desktop
 
-- the form is the primary scrollable workspace;
-- the deterministic preview is presented in an independent right rail;
-- save status and locale controls remain available in the workspace header.
+- the header and locale toolbar remain fixed within the controlled project workspace;
+- the form is the only scrollable workspace surface;
+- sections use an explanatory column and a flexible control column;
+- localized text fields may use two columns when enough width is available;
+- no preview column reduces the available editing width.
 
 ### Tablet and mobile
 
-- the form remains first in document order;
-- the preview follows the editor rather than being compressed into a narrow rail;
+- section labels stack above their controls;
+- the header actions and locale toolbar wrap without overlap;
 - style and density choices reflow into smaller grids;
 - translation warnings and save feedback remain visible;
 - no horizontal overflow is expected.
@@ -190,7 +215,7 @@ The standard Quality workflow validates the final branch head through:
 - tests;
 - production build.
 
-Temporary diagnostic and auto-format workflow changes are absent from the final diff.
+Temporary diagnostic and auto-format workflow changes must remain absent from the final diff.
 
 ## Manual QA checklist
 
@@ -200,8 +225,8 @@ Temporary diagnostic and auto-format workflow changes are absent from the final 
 - verify the previous description is available in the project default locale;
 - verify `enterprise` becomes `technical`;
 - verify the previous project slug is unchanged;
-- create a new project with each representative visual style;
-- verify the onboarding options and resulting Brand style match;
+- create a new project with representative visual styles;
+- verify the onboarding option and resulting Brand style match;
 - verify a new project’s Brand profile opens without repair steps.
 
 ### Identity and persistence
@@ -227,16 +252,8 @@ Temporary diagnostic and auto-format workflow changes are absent from the final 
 - verify commas remain editable while composing the list;
 - enter multiple editorial rules on separate lines;
 - verify new lines remain editable while composing the list;
-- add and remove editorial rules;
 - verify malformed empty structured items prevent saving until completed or removed;
 - verify inspiration keywords respect the configured limit.
-
-### Preview
-
-- verify product name, tagline and description update from the current draft;
-- verify tone, editorial and terminology rules update the AI preview;
-- verify the fallback notice appears only when the selected locale uses fallback content;
-- verify the preview does not require a network or AI request.
 
 ### Generated outputs
 
@@ -254,12 +271,15 @@ Temporary diagnostic and auto-format workflow changes are absent from the final 
 - verify localized loading and recoverable error states;
 - verify the topbar save status reflects saved, unsaved, saving and error states.
 
-### Responsive and appearance
+### Corrected layout and appearance
 
-- review desktop with the independent preview rail;
-- review tablet and mobile stacking;
-- verify long bilingual content remains contained;
-- verify no horizontal overflow;
+- verify no preview rail or preview block remains at any breakpoint;
+- verify inputs and textareas match the Tokens inspector visual reference;
+- verify the locale toolbar has balanced vertical spacing and a visible lower separator;
+- verify translation status and Save remain grouped in the page header;
+- verify editor sections use subtle separators rather than elevated cards;
+- verify the form remains readable at desktop width without excessively long text lines;
+- verify mobile, tablet and desktop have no page-level horizontal overflow;
 - verify light and dark application appearances;
 - verify warning, success, error and selected states remain distinguishable.
 
@@ -271,16 +291,17 @@ Temporary diagnostic and auto-format workflow changes are absent from the final 
 - verify field labels and locale context are announced;
 - verify status and error feedback use live semantic regions;
 - verify read-only slug semantics;
-- verify source order remains editor then preview on compact layouts.
+- verify source order follows the visual editor order at every breakpoint.
 
 ## Validation status
 
-- implementation: complete;
-- focused automated tests: implemented and passing;
-- standard Quality workflow: passing on the final implementation and documentation branch state;
+- functional implementation: complete;
+- validated visual correction: implemented, pending product-owner recheck;
+- focused automated tests: previously passing;
+- final standard Quality workflow after the visual correction: pending;
 - temporary diagnostic workflow changes: removed;
 - migration review: pending product-owner local database verification;
-- responsive FR/EN manual QA: pending;
+- responsive FR/EN manual QA: pending corrected-layout review;
 - keyboard and light/dark review: pending.
 
 ## Definition of done
@@ -294,6 +315,7 @@ DS-170-05 is complete when:
 - the slug remains stable after product-name changes;
 - Documentation, Exports and AI Instructions consume Brand data;
 - Brand changes invalidate older exports and appear in Overview activity;
+- the corrected header, locale toolbar, controls and integrated section layout pass product-owner QA;
 - loading, error, invalid, unsaved, saving and saved states pass;
 - desktop, tablet and mobile layouts pass;
 - keyboard and light/dark smoke tests pass;
