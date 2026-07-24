@@ -66,7 +66,7 @@ The Prisma migration:
 - removes duplicated Brand name, description and visual-direction columns;
 - removes the duplicated project visual-direction column.
 
-The creation foundation now creates the structured Brand profile directly. Existing project creation behavior remains unchanged outside this representation change.
+The creation foundation now creates the structured Brand profile directly. The onboarding visual-direction step exposes the same eight validated styles as the Brand workspace; the legacy `enterprise` value is retained only in migration normalization and is rejected for new project payloads.
 
 ## Brand workspace
 
@@ -101,7 +101,7 @@ The save action:
 - updates project identity and Brand profile atomically;
 - keeps the existing slug unchanged;
 - synchronizes the project summary from the default-locale short description;
-- revalidates Dashboard, Overview, Brand, Documentation, AI Instructions and Exports routes.
+- revalidates localized Dashboard, Overview, Brand, Documentation, AI Instructions and Exports routes.
 
 Missing translations do not invalidate an otherwise valid profile. The UI reports the missing values and generated outputs record fallback usage.
 
@@ -172,6 +172,8 @@ Focused tests cover:
 
 - complete and malformed Brand-profile validation;
 - visual-style and density constraints;
+- acceptance of all eight validated styles during onboarding;
+- rejection of the legacy `enterprise` value in new project payloads;
 - project-creation seeding and `enterprise` migration semantics;
 - localized fallback resolution;
 - missing-translation counting across fields, terminology and editorial rules;
@@ -180,7 +182,7 @@ Focused tests cover:
 - Brand fallback diagnostics in both generators;
 - Brand update activity and stale-export detection in Overview.
 
-The standard Quality workflow must pass on the final branch head:
+The standard Quality workflow validates the final branch head through:
 
 - lint;
 - strict TypeScript typecheck;
@@ -188,7 +190,7 @@ The standard Quality workflow must pass on the final branch head:
 - tests;
 - production build.
 
-Temporary diagnostic workflow changes must not remain in the final diff.
+Temporary diagnostic and auto-format workflow changes are absent from the final diff.
 
 ## Manual QA checklist
 
@@ -198,7 +200,9 @@ Temporary diagnostic workflow changes must not remain in the final diff.
 - verify the previous description is available in the project default locale;
 - verify `enterprise` becomes `technical`;
 - verify the previous project slug is unchanged;
-- create a new project and verify its Brand profile opens without repair steps.
+- create a new project with each representative visual style;
+- verify the onboarding options and resulting Brand style match;
+- verify a new project’s Brand profile opens without repair steps.
 
 ### Identity and persistence
 
@@ -219,7 +223,10 @@ Temporary diagnostic workflow changes must not remain in the final diff.
 ### Structured guidance
 
 - add and remove terminology entries;
-- enter preferred and avoided terms in both locales;
+- enter multiple preferred and avoided terms by typing comma-separated values;
+- verify commas remain editable while composing the list;
+- enter multiple editorial rules on separate lines;
+- verify new lines remain editable while composing the list;
 - add and remove editorial rules;
 - verify malformed empty structured items prevent saving until completed or removed;
 - verify inspiration keywords respect the configured limit.
@@ -244,7 +251,7 @@ Temporary diagnostic workflow changes must not remain in the final diff.
 - verify Brand is enabled in desktop project navigation;
 - verify Brand is enabled in the compact menu;
 - verify project switching from Brand opens Brand in the target project;
-- verify loading and recoverable error states;
+- verify localized loading and recoverable error states;
 - verify the topbar save status reflects saved, unsaved, saving and error states.
 
 ### Responsive and appearance
@@ -268,10 +275,11 @@ Temporary diagnostic workflow changes must not remain in the final diff.
 
 ## Validation status
 
-- implementation: complete pending final automated validation;
+- implementation: complete;
+- focused automated tests: implemented and passing;
+- standard Quality workflow: passing on the final implementation and documentation branch state;
+- temporary diagnostic workflow changes: removed;
 - migration review: pending product-owner local database verification;
-- focused automated tests: implemented;
-- standard Quality workflow: pending on the final branch head;
 - responsive FR/EN manual QA: pending;
 - keyboard and light/dark review: pending.
 
