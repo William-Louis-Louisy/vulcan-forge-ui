@@ -7,6 +7,7 @@ import type { themeEditorMessages } from '../messages/theme-editor-messages';
 import type { accessibilityCenterMessages } from '../messages/accessibility-center-messages';
 import type { projectOverviewMessages } from '../messages/project-overview-messages';
 import type { brandProfileMessages } from '../messages/brand-profile-messages';
+import type { brandOverviewMessages } from '../messages/brand-overview-messages';
 
 type DeepMerge<Left, Right> = {
   [Key in keyof Left | keyof Right]: Key extends keyof Right
@@ -44,8 +45,13 @@ type ThemeMessages = DeepMerge<
   (typeof themeEditorMessages)['en']
 >;
 
-type ProjectMessages = DeepMerge<
+type ProjectOverviewMessages = DeepMerge<
   (typeof projectOverviewMessages)['en'],
+  (typeof brandOverviewMessages)['en']
+>;
+
+type ProjectMessages = DeepMerge<
+  ProjectOverviewMessages,
   (typeof brandProfileMessages)['en']
 >;
 
