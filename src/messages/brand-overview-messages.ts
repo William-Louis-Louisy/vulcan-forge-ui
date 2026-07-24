@@ -3,7 +3,7 @@ export const brandOverviewMessages = {
     ProjectOverviewPage: {
       activity: {
         items: {
-          brand: 'Brand profile updated',
+          component: '{name} updated',
         },
       },
     },
@@ -12,7 +12,7 @@ export const brandOverviewMessages = {
     ProjectOverviewPage: {
       activity: {
         items: {
-          brand: 'Profil de marque mis à jour',
+          component: '{name} mis à jour',
         },
       },
     },
