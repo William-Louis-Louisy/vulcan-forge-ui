@@ -127,16 +127,18 @@ export async function saveBrandProfileAction(
       }),
     ]);
 
-    for (const path of [
-      `/app`,
-      `/app/projects/${projectSlug}`,
-      `/app/projects/${projectSlug}/brand`,
-      `/app/projects/${projectSlug}/documentation`,
-      `/app/projects/${projectSlug}/ai-instructions`,
-      `/app/projects/${projectSlug}/exports`,
-    ]) {
-      revalidatePath(path);
-    }
+    revalidatePath('/[locale]/app', 'page');
+    revalidatePath('/[locale]/app/projects/[projectSlug]', 'page');
+    revalidatePath('/[locale]/app/projects/[projectSlug]/brand', 'page');
+    revalidatePath(
+      '/[locale]/app/projects/[projectSlug]/documentation',
+      'page',
+    );
+    revalidatePath(
+      '/[locale]/app/projects/[projectSlug]/ai-instructions',
+      'page',
+    );
+    revalidatePath('/[locale]/app/projects/[projectSlug]/exports', 'page');
 
     return {
       status: 'success',
