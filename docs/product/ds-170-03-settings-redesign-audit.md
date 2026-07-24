@@ -126,13 +126,14 @@ Focused tests cover:
 - focused and regression tests: passed;
 - production build: passed;
 - standard Quality workflow: passed on the cleaned implementation head;
-- responsive FR/EN visual review: pending;
-- profile and preference persistence smoke test: pending;
-- destructive deletion smoke test: pending with disposable test data.
+- responsive FR/EN visual review: passed;
+- profile and preference persistence smoke test: passed;
+- destructive deletion smoke test with disposable test data: passed;
+- final manual QA: passed and approved by the product owner.
 
-## Manual QA checklist
+## Manual QA validation
 
-Review `/app/settings` in FR and EN on representative mobile, tablet and desktop widths.
+The product owner completed and approved the following QA coverage on `/app/settings` in FR and EN across representative mobile, tablet and desktop widths.
 
 ### Layout
 
