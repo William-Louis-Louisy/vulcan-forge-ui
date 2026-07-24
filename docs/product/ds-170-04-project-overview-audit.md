@@ -263,12 +263,12 @@ Review the project root in FR and EN with representative populated, incomplete a
 
 - implementation: complete;
 - scoped aggregation tests: implemented;
-- lint: passed on the implementation workflow;
-- typecheck: passed on the implementation workflow;
-- formatting: passed on the implementation workflow;
-- tests: passed on the implementation workflow;
-- production build: passed on the implementation workflow;
-- final standard Quality workflow: pending after documentation closeout;
+- lint: passed;
+- typecheck: passed;
+- formatting: passed;
+- tests: passed;
+- production build: passed;
+- standard Quality workflow: passed on the cleaned implementation head;
 - responsive FR/EN visual review: pending;
 - navigation, recommendation and data-integrity smoke tests: pending;
 - keyboard and light/dark appearance review: pending.
