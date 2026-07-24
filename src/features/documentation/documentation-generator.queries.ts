@@ -18,6 +18,7 @@ import { prisma } from '@/server/db/prisma';
 import type { AppLocale } from '@/domain/i18n';
 import type { ThemeMode } from '@/features/themes/themes-editor.utils';
 import { createAccessibilityCenterReport } from '@/features/accessibility/accessibility-center.utils';
+import { parseStoredBrandProfile } from '@/features/brand/brand-profile.utils';
 
 const designTokenArraySchema = z.array(designTokenSchema);
 
@@ -78,6 +79,14 @@ export async function getDocumentationGeneratorPageData({
       documentationProfile: {
         select: {
           content: true,
+        },
+      },
+      brandProfile: {
+        select: {
+          visualStyle: true,
+          uiDensity: true,
+          inspirationKeywords: true,
+          localizedContent: true,
         },
       },
       supportedLocales: true,
@@ -178,6 +187,9 @@ export async function getDocumentationGeneratorPageData({
         defaultLocale: project.defaultLocale as AppLocale,
         supportedLocales: project.supportedLocales as AppLocale[],
       },
+      brand: project.brandProfile
+        ? parseStoredBrandProfile(project.brandProfile)
+        : null,
       tokens,
       themes,
       components,
