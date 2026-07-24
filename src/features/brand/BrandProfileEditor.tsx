@@ -74,6 +74,7 @@ export function BrandProfileEditor({
   );
   const [productName, setProductName] = useState(project.name);
   const [profile, setProfile] = useState(initialProfile);
+  const [terminologyRevision, setTerminologyRevision] = useState(0);
   const [activeLocale, setActiveLocale] = useState<AppLocale>(() =>
     project.supportedLocales.includes(interfaceLocale)
       ? interfaceLocale
@@ -176,6 +177,7 @@ export function BrandProfileEditor({
         ],
       },
     }));
+    setTerminologyRevision((currentRevision) => currentRevision + 1);
   }
 
   function updateTerminologyEntry(
@@ -204,6 +206,7 @@ export function BrandProfileEditor({
         ),
       },
     }));
+    setTerminologyRevision((currentRevision) => currentRevision + 1);
   }
 
   function updateEditorialRules(value: string) {
@@ -465,7 +468,7 @@ export function BrandProfileEditor({
                 description={t('direction.keywords.description')}
               >
                 <input
-                  value={profile.inspirationKeywords.join(', ')}
+                  defaultValue={profile.inspirationKeywords.join(', ')}
                   onChange={(event) =>
                     setProfile((currentProfile) => ({
                       ...currentProfile,
@@ -532,7 +535,8 @@ export function BrandProfileEditor({
                         locale={activeLocale}
                       >
                         <input
-                          value={entry.avoid
+                          key={`${terminologyRevision}-${activeLocale}-${index}`}
+                          defaultValue={entry.avoid
                             .map((term) => term[activeLocale] ?? '')
                             .filter(Boolean)
                             .join(', ')}
@@ -580,8 +584,9 @@ export function BrandProfileEditor({
                 description={t('editorialRules.help')}
               >
                 <textarea
+                  key={activeLocale}
                   rows={6}
-                  value={profile.localizedContent.editorialRules
+                  defaultValue={profile.localizedContent.editorialRules
                     .map((rule) => rule[activeLocale] ?? '')
                     .join('\n')}
                   onChange={(event) => updateEditorialRules(event.target.value)}
@@ -618,7 +623,7 @@ export function BrandProfileEditor({
               </div>
             </PreviewCard>
 
-            <div className="bg-content-primary text-background-app shadow-soft rounded-lg p-4 font-mono text-xs leading-6">
+            <div className="bg-content-primary text-background-app rounded-lg p-4 font-mono text-xs leading-6 shadow-soft">
               <p className="text-background-app/60"># §1 voice</p>
               {preview.aiRules.length > 0 ? (
                 preview.aiRules.map((rule, index) => (
@@ -702,15 +707,9 @@ function Field({
   );
 }
 
-function PreviewCard({
-  title,
-  children,
-}: {
-  title: string;
-  children: ReactNode;
-}) {
+function PreviewCard({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="border-border-subtle bg-surface-primary shadow-soft rounded-lg border p-4">
+    <section className="border-border-subtle bg-surface-primary rounded-lg border p-4 shadow-soft">
       <p className="text-content-tertiary text-[0.625rem] font-semibold tracking-[0.14em] uppercase">
         {title}
       </p>
