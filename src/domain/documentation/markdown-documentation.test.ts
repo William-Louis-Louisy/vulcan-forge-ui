@@ -184,7 +184,8 @@ describe('generateMarkdownDocumentation', () => {
     expect(result.markdown).toContain('## Overview');
     expect(result.markdown).toContain('### Brand profile');
     expect(result.markdown).toContain('Built for focused teams.');
-    expect(result.markdown).toContain('Always prefer');
+    expect(result.markdown).toContain('**Prefer:** order');
+    expect(result.markdown).toContain('**Avoid:** ticket');
     expect(result.markdown).toContain('Do not use emoji.');
     expect(result.markdown).toContain('## Tokens');
     expect(result.markdown).toContain('Primary accent color.');
