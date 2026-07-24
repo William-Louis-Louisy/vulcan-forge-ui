@@ -20,7 +20,7 @@ It:
 
 No Prisma schema or migration change is required.
 
-## Project-root behavior
+## Project-root and collection behavior
 
 `/[locale]/app/projects/[projectSlug]` now renders the Overview instead of redirecting to Tokens.
 
@@ -30,7 +30,13 @@ The Overview navigation item is enabled in the shared project navigation configu
 - the compact application menu;
 - project switching when the current top-level section is Overview.
 
-The Tokens destination remains unchanged and continues to use `set=color` as its default editor context.
+Generic Dashboard project links now open the project root and therefore land on Overview. The Tokens destination remains unchanged and continues to use `set=color` as its default editor context.
+
+The Dashboard at `/[locale]/app` is the canonical project collection. The former standalone `/[locale]/app/projects` index is removed without a redirect because no compatibility contract or historical-link requirement exists. Its primary-navigation entry is removed while the current project's editor navigation remains available on project routes.
+
+The project switcher's “all projects” destination and the create-project return link both target `/app`.
+
+A future Dashboard-management scope may add Cards/Table switching, search, filters and sorting over one shared collection. Those capabilities must extend the Dashboard rather than recreate a second Projects page.
 
 ## Data access
 
@@ -209,10 +215,15 @@ Review the project root in FR and EN with representative populated, incomplete a
 
 ### Navigation
 
-- opening a project lands on Overview rather than Tokens;
+- Dashboard project entries open Overview rather than Tokens;
+- opening a project root lands on Overview;
 - Overview is enabled and identifiable in desktop navigation;
 - Overview is enabled and identifiable in the compact application menu;
+- current-project navigation remains available without a primary Projects index entry;
 - project switching from Overview opens Overview in the target project;
+- the project switcher's “all projects” action returns to the Dashboard;
+- the create-project back link returns to the Dashboard;
+- `/app/projects` is intentionally absent and does not redirect;
 - Tokens still opens with the expected color set;
 - Brand remains disabled with its existing coming-soon treatment.
 
@@ -263,22 +274,23 @@ Review the project root in FR and EN with representative populated, incomplete a
 
 - implementation: complete;
 - scoped aggregation tests: implemented;
-- lint: passed;
-- typecheck: passed;
-- formatting: passed;
-- tests: passed;
-- production build: passed;
-- standard Quality workflow: passed on the cleaned implementation head;
-- responsive FR/EN visual review: pending;
-- navigation, recommendation and data-integrity smoke tests: pending;
-- keyboard and light/dark appearance review: pending.
+- product-owner responsive FR/EN visual review: passed;
+- product-owner data-integrity and recommendation review: passed;
+- product-owner keyboard and light/dark appearance review: passed;
+- Dashboard/Overview navigation corrections: implemented;
+- lint, typecheck, formatting, tests and production build: passed on the previous implementation head;
+- standard Quality workflow on the final navigation-adjusted head: pending.
 
 ## Definition of done
 
 DS-170-04 is complete when:
 
 - the project root renders Overview;
+- Dashboard project entries open Overview;
+- the Dashboard is the only project-collection surface;
+- the standalone `/app/projects` index and primary-navigation entry are absent;
 - Overview navigation is enabled on desktop and compact layouts;
+- current-project navigation remains available on project routes;
 - the standard Quality workflow passes on the final branch head;
 - populated, incomplete and empty project states pass in FR and EN;
 - responsive desktop, tablet and mobile review passes;
