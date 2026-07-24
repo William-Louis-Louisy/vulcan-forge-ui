@@ -44,36 +44,28 @@ jobs:
         run: npm run lint
 
       - name: Run typecheck
-        id: typecheck
-        shell: bash
-        run: |
-          set -o pipefail
-          npm run typecheck 2>&1 | tee typecheck.log
+        run: npm run typecheck
 
-      - name: Upload typecheck diagnostics
-        if: failure() && steps.typecheck.outcome == 'failure'
+      - name: Format changed sources for diagnostics
+        run: >-
+          npx prettier --write
+          'src/app/[locale]/app/projects/[projectSlug]/page.tsx'
+          src/features/project-overview/project-overview.utils.ts
+          src/messages/project-overview-messages.ts
+
+      - name: Upload formatted sources
         uses: actions/upload-artifact@v4
         with:
-          name: typecheck-diagnostics
-          path: typecheck.log
+          name: formatted-overview-sources
+          path: |
+            src/app/[locale]/app/projects/[projectSlug]/page.tsx
+            src/features/project-overview/project-overview.utils.ts
+            src/messages/project-overview-messages.ts
           if-no-files-found: error
           retention-days: 1
 
       - name: Check formatting
-        id: formatting
-        shell: bash
-        run: |
-          set -o pipefail
-          npm run format:check 2>&1 | tee formatting.log
-
-      - name: Upload formatting diagnostics
-        if: failure() && steps.formatting.outcome == 'failure'
-        uses: actions/upload-artifact@v4
-        with:
-          name: formatting-diagnostics
-          path: formatting.log
-          if-no-files-found: error
-          retention-days: 1
+        run: npm run format:check
 
       - name: Run tests
         run: npm run test
