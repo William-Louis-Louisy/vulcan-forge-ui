@@ -27,6 +27,7 @@ export type AiInstructionsProject = {
   description: string | null;
   defaultLocale: AppLocale;
   supportedLocales: readonly AppLocale[];
+  brand?: BrandProfile | null;
 };
 
 export type AiInstructionsInput = {
@@ -35,7 +36,7 @@ export type AiInstructionsInput = {
   strictness: AiInstructionsStrictness;
   sections?: readonly AiInstructionsSection[];
   project: AiInstructionsProject;
-  brand: BrandProfile | null;
+  brand?: BrandProfile | null;
   tokens: readonly DesignToken[];
   components: readonly ComponentContract[];
 };
@@ -567,7 +568,7 @@ export function generateAiInstructions(
     renderHeader(input),
     renderAntiHallucinationRules(input.locale),
     renderBrandRules({
-      brand: input.brand,
+      brand: input.brand ?? input.project.brand ?? null,
       locale: input.locale,
       fallbackLocale,
       missingTranslations,
