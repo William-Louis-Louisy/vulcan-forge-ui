@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { createDesignSystemSchema } from './create-design-system.schema';
+import {
+  createDesignSystemSchema,
+  visualDirections,
+} from './create-design-system.schema';
 
 describe('createDesignSystemSchema', () => {
   it('accepts a valid multi-step payload', () => {
@@ -22,6 +25,22 @@ describe('createDesignSystemSchema', () => {
       visualDirection: 'editorial',
       accessibilityTarget: 'wcag_aa',
     });
+  });
+
+  it('accepts every validated Brand visual style during onboarding', () => {
+    for (const visualDirection of visualDirections) {
+      expect(
+        createDesignSystemSchema.safeParse({
+          name: 'Core Product UI',
+          description: '',
+          platforms: ['web'],
+          defaultLocale: 'en',
+          supportedLocales: ['en'],
+          visualDirection,
+          accessibilityTarget: 'wcag_aa',
+        }).success,
+      ).toBe(true);
+    }
   });
 
   it('normalizes an empty description to null', () => {
@@ -74,18 +93,20 @@ describe('createDesignSystemSchema', () => {
     ).toBe(false);
   });
 
-  it('rejects unsupported visual directions', () => {
-    expect(
-      createDesignSystemSchema.safeParse({
-        name: 'Core Product UI',
-        description: '',
-        platforms: ['web'],
-        defaultLocale: 'en',
-        supportedLocales: ['en'],
-        visualDirection: 'cyberpunk',
-        accessibilityTarget: 'wcag_aa',
-      }).success,
-    ).toBe(false);
+  it('rejects unsupported visual directions, including the legacy enterprise value', () => {
+    for (const visualDirection of ['cyberpunk', 'enterprise']) {
+      expect(
+        createDesignSystemSchema.safeParse({
+          name: 'Core Product UI',
+          description: '',
+          platforms: ['web'],
+          defaultLocale: 'en',
+          supportedLocales: ['en'],
+          visualDirection,
+          accessibilityTarget: 'wcag_aa',
+        }).success,
+      ).toBe(false);
+    }
   });
 
   it('rejects unsupported accessibility targets', () => {
