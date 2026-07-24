@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  useActionState,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from 'react';
+import { useActionState, useEffect, useState, type ReactNode } from 'react';
 import { PlusIcon, TrashIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
 
@@ -24,16 +18,14 @@ import {
   type BrandProfile,
   type BrandTerminologyEntry,
 } from '@/domain/design-system';
-import {
-  resolveLocalizedStringWithFallback,
-  type AppLocale,
-  type LocalizedString,
+import type {
+  AppLocale,
+  LocalizedString,
 } from '@/domain/i18n';
 import { useRouter } from '@/i18n/navigation';
 import { saveBrandProfileAction } from './save-brand-profile.action';
 import { initialSaveBrandProfileActionState } from './save-brand-profile.state';
 import {
-  brandLocalizedFieldKeys,
   countMissingBrandTranslations,
   type BrandLocalizedFieldKey,
 } from './brand-profile.utils';
@@ -123,17 +115,6 @@ export function BrandProfileEditor({
     value: locale,
     label: locale.toUpperCase(),
   }));
-  const activeFallbackLocale = project.defaultLocale;
-  const preview = useMemo(
-    () =>
-      createBrandPreview({
-        productName,
-        profile,
-        locale: activeLocale,
-        fallbackLocale: activeFallbackLocale,
-      }),
-    [activeFallbackLocale, activeLocale, productName, profile],
-  );
 
   function updateLocalizedField(
     field: BrandLocalizedFieldKey,
@@ -233,6 +214,16 @@ export function BrandProfileEditor({
     });
   }
 
+  const feedback = state.formError
+    ? t(`errors.${state.formError}`)
+    : state.status === 'success'
+      ? t('feedback.saved')
+      : !isValid
+        ? t('feedback.invalid')
+        : hasUnsavedChanges
+          ? t('feedback.unsaved')
+          : t('feedback.savedState');
+
   return (
     <form
       action={formAction}
@@ -247,117 +238,110 @@ export function BrandProfileEditor({
         title={t('title')}
         description={t('description')}
         projectName={productName}
-        status={
-          missingTranslationCount > 0 ? (
-            <Badge size="sm" variant="warning">
-              {t('missingTranslations.badge', {
-                count: missingTranslationCount,
-              })}
-            </Badge>
-          ) : (
-            <Badge size="sm" variant="success">
-              {t('missingTranslations.complete')}
-            </Badge>
-          )
-        }
         actions={
-          <Button
-            type="submit"
-            size="sm"
-            disabled={!isValid || !hasUnsavedChanges || isPending}
-          >
-            {isPending ? t('actions.saving') : t('actions.save')}
-          </Button>
-        }
-        footer={
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <p className="text-content-tertiary text-xs font-semibold tracking-[0.12em] uppercase">
-                {t('locale.editing')}
-              </p>
-              <SegmentedControl
-                value={activeLocale}
-                options={localeOptions}
-                onValueChange={setActiveLocale}
-                ariaLabel={t('locale.ariaLabel')}
-                className="mt-2"
-              />
-            </div>
+          <div className="flex flex-wrap items-center justify-end gap-3">
+            {missingTranslationCount > 0 ? (
+              <Badge size="sm" variant="warning">
+                {t('missingTranslations.badge', {
+                  count: missingTranslationCount,
+                })}
+              </Badge>
+            ) : (
+              <Badge size="sm" variant="success">
+                {t('missingTranslations.complete')}
+              </Badge>
+            )}
 
-            <p
-              role={state.formError ? 'alert' : 'status'}
-              className={[
-                'text-xs font-semibold',
-                state.formError
-                  ? 'text-action-danger'
-                  : state.status === 'success'
-                    ? 'text-action-success'
-                    : 'text-content-tertiary',
-              ].join(' ')}
+            <Button
+              type="submit"
+              size="sm"
+              disabled={!isValid || !hasUnsavedChanges || isPending}
             >
-              {state.formError
-                ? t(`errors.${state.formError}`)
-                : state.status === 'success'
-                  ? t('feedback.saved')
-                  : !isValid
-                    ? t('feedback.invalid')
-                    : hasUnsavedChanges
-                      ? t('feedback.unsaved')
-                      : t('feedback.savedState')}
-            </p>
+              {isPending ? t('actions.saving') : t('actions.save')}
+            </Button>
           </div>
         }
       />
 
-      <div className="grid min-h-0 flex-1 xl:grid-cols-[minmax(0,1fr)_23rem]">
-        <main className="min-w-0 xl:overflow-y-auto">
-          <div className="grid gap-5 p-4 sm:p-6 xl:p-7">
-            <EditorSection
-              title={t('identity.title')}
-              description={t('identity.description')}
-            >
-              <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(12rem,0.45fr)]">
-                <Field label={t('identity.productName')}>
-                  <input
-                    value={productName}
-                    onChange={(event) => setProductName(event.target.value)}
-                    aria-invalid={!hasValidProductName}
-                    className={inputClassName}
-                  />
-                </Field>
+      <div className="border-border-subtle bg-background-app flex shrink-0 flex-wrap items-center justify-between gap-3 border-b px-4 py-3 md:px-6 xl:px-7">
+        <div className="flex flex-wrap items-center gap-3">
+          <p className="text-content-tertiary text-xs font-semibold tracking-[0.12em] uppercase">
+            {t('locale.editing')}
+          </p>
+          <SegmentedControl
+            value={activeLocale}
+            options={localeOptions}
+            onValueChange={setActiveLocale}
+            ariaLabel={t('locale.ariaLabel')}
+          />
+        </div>
 
-                <Field label={t('identity.slug')}>
-                  <input
-                    value={project.slug}
-                    readOnly
-                    className={`${inputClassName} text-content-tertiary font-mono`}
-                  />
-                </Field>
-              </div>
+        <p
+          role={state.formError ? 'alert' : 'status'}
+          className={[
+            'text-xs font-semibold',
+            state.formError
+              ? 'text-action-danger'
+              : state.status === 'success'
+                ? 'text-action-success'
+                : hasUnsavedChanges
+                  ? 'text-action-warning'
+                  : 'text-content-tertiary',
+          ].join(' ')}
+        >
+          {feedback}
+        </p>
+      </div>
 
-              <Field
-                label={t('fields.tagline.label')}
-                locale={activeLocale}
-                description={t('fields.tagline.description')}
-              >
+      <main className="min-h-0 min-w-0 flex-1 xl:overflow-y-auto">
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 xl:px-7">
+          <EditorSection
+            title={t('identity.title')}
+            description={t('identity.description')}
+          >
+            <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(12rem,0.45fr)]">
+              <Field label={t('identity.productName')}>
                 <input
-                  value={profile.localizedContent.tagline?.[activeLocale] ?? ''}
-                  onChange={(event) =>
-                    updateLocalizedField(
-                      'tagline',
-                      activeLocale,
-                      event.target.value,
-                    )
-                  }
+                  value={productName}
+                  onChange={(event) => setProductName(event.target.value)}
+                  aria-invalid={!hasValidProductName}
                   className={inputClassName}
                 />
               </Field>
-            </EditorSection>
 
-            <EditorSection
-              title={t('localized.title')}
-              description={t('localized.description')}
+              <Field label={t('identity.slug')}>
+                <input
+                  value={project.slug}
+                  readOnly
+                  className={`${inputClassName} bg-background-subtle text-content-tertiary font-mono`}
+                />
+              </Field>
+            </div>
+
+            <Field
+              label={t('fields.tagline.label')}
+              locale={activeLocale}
+              description={t('fields.tagline.description')}
             >
+              <input
+                value={profile.localizedContent.tagline?.[activeLocale] ?? ''}
+                onChange={(event) =>
+                  updateLocalizedField(
+                    'tagline',
+                    activeLocale,
+                    event.target.value,
+                  )
+                }
+                className={inputClassName}
+              />
+            </Field>
+          </EditorSection>
+
+          <EditorSection
+            title={t('localized.title')}
+            description={t('localized.description')}
+          >
+            <div className="grid gap-5 xl:grid-cols-2">
               {fieldRows.map((field) => (
                 <Field
                   key={field.key}
@@ -381,270 +365,222 @@ export function BrandProfileEditor({
                   />
                 </Field>
               ))}
-            </EditorSection>
+            </div>
+          </EditorSection>
 
-            <EditorSection
-              title={t('direction.title')}
-              description={t('direction.description')}
-            >
-              <fieldset>
-                <legend className="text-sm font-semibold">
-                  {t('direction.visualStyle')}
-                </legend>
-                <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                  {brandVisualStyles.map((visualStyle) => {
-                    const isSelected = profile.visualStyle === visualStyle;
+          <EditorSection
+            title={t('direction.title')}
+            description={t('direction.description')}
+          >
+            <fieldset>
+              <legend className="text-sm font-semibold">
+                {t('direction.visualStyle')}
+              </legend>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2 2xl:grid-cols-4">
+                {brandVisualStyles.map((visualStyle) => {
+                  const isSelected = profile.visualStyle === visualStyle;
 
-                    return (
-                      <button
-                        key={visualStyle}
-                        type="button"
-                        aria-pressed={isSelected}
-                        onClick={() =>
-                          setProfile((currentProfile) => ({
-                            ...currentProfile,
-                            visualStyle,
-                          }))
-                        }
-                        className={[
-                          'focus-visible:outline-border-focus min-h-20 rounded-lg border p-3 text-left transition focus-visible:outline-2 focus-visible:outline-offset-2',
-                          isSelected
-                            ? 'border-action-accent bg-action-accent/10 text-content-primary'
-                            : 'border-border-subtle bg-background-subtle text-content-secondary hover:border-border-default',
-                        ].join(' ')}
-                      >
-                        <span className="block text-sm font-semibold">
-                          {t(`direction.styles.${visualStyle}.label`)}
-                        </span>
-                        <span className="text-content-tertiary mt-1 block text-xs leading-5">
-                          {t(`direction.styles.${visualStyle}.description`)}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </fieldset>
-
-              <fieldset>
-                <legend className="text-sm font-semibold">
-                  {t('direction.uiDensity')}
-                </legend>
-                <div className="mt-3 grid gap-3 sm:grid-cols-3">
-                  {brandUiDensities.map((uiDensity) => {
-                    const isSelected = profile.uiDensity === uiDensity;
-
-                    return (
-                      <button
-                        key={uiDensity}
-                        type="button"
-                        aria-pressed={isSelected}
-                        onClick={() =>
-                          setProfile((currentProfile) => ({
-                            ...currentProfile,
-                            uiDensity,
-                          }))
-                        }
-                        className={[
-                          'focus-visible:outline-border-focus rounded-lg border p-3 text-left transition focus-visible:outline-2 focus-visible:outline-offset-2',
-                          isSelected
-                            ? 'border-action-accent bg-action-accent/10 text-content-primary'
-                            : 'border-border-subtle bg-background-subtle text-content-secondary hover:border-border-default',
-                        ].join(' ')}
-                      >
-                        <span className="block text-sm font-semibold">
-                          {t(`direction.densities.${uiDensity}.label`)}
-                        </span>
-                        <span className="text-content-tertiary mt-1 block text-xs">
-                          {t(`direction.densities.${uiDensity}.description`)}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </fieldset>
-
-              <Field
-                label={t('direction.keywords.label')}
-                description={t('direction.keywords.description')}
-              >
-                <input
-                  defaultValue={profile.inspirationKeywords.join(', ')}
-                  onChange={(event) =>
-                    setProfile((currentProfile) => ({
-                      ...currentProfile,
-                      inspirationKeywords: parseCommaSeparatedValues(
-                        event.target.value,
-                        12,
-                      ),
-                    }))
-                  }
-                  className={inputClassName}
-                />
-              </Field>
-            </EditorSection>
-
-            <EditorSection
-              title={t('terminology.title')}
-              description={t('terminology.description')}
-              action={
-                <Button
-                  type="button"
-                  variant="secondary"
-                  size="sm"
-                  onClick={addTerminologyEntry}
-                >
-                  <PlusIcon aria-hidden="true" size={14} className="mr-1.5" />
-                  {t('terminology.add')}
-                </Button>
-              }
-            >
-              {profile.localizedContent.terminology.length === 0 ? (
-                <p className="border-border-subtle bg-background-subtle text-content-tertiary rounded-lg border border-dashed p-4 text-sm">
-                  {t('terminology.empty')}
-                </p>
-              ) : (
-                <div className="grid gap-3">
-                  {profile.localizedContent.terminology.map((entry, index) => (
-                    <div
-                      key={index}
-                      className="border-border-subtle bg-background-subtle grid gap-3 rounded-lg border p-4 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)_auto]"
+                  return (
+                    <button
+                      key={visualStyle}
+                      type="button"
+                      aria-pressed={isSelected}
+                      onClick={() =>
+                        setProfile((currentProfile) => ({
+                          ...currentProfile,
+                          visualStyle,
+                        }))
+                      }
+                      className={[
+                        'focus-visible:outline-border-focus rounded-md border p-3 text-left transition focus-visible:outline-2 focus-visible:outline-offset-2',
+                        isSelected
+                          ? 'border-action-accent bg-action-accent/10 text-content-primary'
+                          : 'border-border-subtle bg-surface-primary text-content-secondary hover:border-border-default',
+                      ].join(' ')}
                     >
-                      <Field
-                        label={t('terminology.preferred')}
-                        locale={activeLocale}
-                      >
-                        <input
-                          value={entry.preferred[activeLocale] ?? ''}
-                          onChange={(event) =>
-                            updateTerminologyEntry(index, (currentEntry) => ({
-                              ...currentEntry,
-                              preferred:
-                                updateLocalizedString(
-                                  currentEntry.preferred,
-                                  activeLocale,
-                                  event.target.value,
-                                ) ?? {},
-                            }))
-                          }
-                          className={inputClassName}
-                        />
-                      </Field>
-
-                      <Field
-                        label={t('terminology.avoid')}
-                        locale={activeLocale}
-                      >
-                        <input
-                          key={`${terminologyRevision}-${activeLocale}-${index}`}
-                          defaultValue={entry.avoid
-                            .map((term) => term[activeLocale] ?? '')
-                            .filter(Boolean)
-                            .join(', ')}
-                          onChange={(event) =>
-                            updateTerminologyEntry(index, (currentEntry) => ({
-                              ...currentEntry,
-                              avoid: updateLocalizedList({
-                                currentValues: currentEntry.avoid,
-                                locale: activeLocale,
-                                values: parseCommaSeparatedValues(
-                                  event.target.value,
-                                  12,
-                                ),
-                              }),
-                            }))
-                          }
-                          className={inputClassName}
-                        />
-                      </Field>
-
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        aria-label={t('terminology.remove')}
-                        title={t('terminology.remove')}
-                        onClick={() => removeTerminologyEntry(index)}
-                        className="self-end px-2"
-                      >
-                        <TrashIcon aria-hidden="true" size={16} />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </EditorSection>
-
-            <EditorSection
-              title={t('editorialRules.title')}
-              description={t('editorialRules.description')}
-            >
-              <Field
-                label={t('editorialRules.label')}
-                locale={activeLocale}
-                description={t('editorialRules.help')}
-              >
-                <textarea
-                  key={activeLocale}
-                  rows={6}
-                  defaultValue={profile.localizedContent.editorialRules
-                    .map((rule) => rule[activeLocale] ?? '')
-                    .join('\n')}
-                  onChange={(event) => updateEditorialRules(event.target.value)}
-                  className={textareaClassName}
-                />
-              </Field>
-            </EditorSection>
-          </div>
-        </main>
-
-        <aside className="border-border-subtle bg-background-sunken min-w-0 border-t p-4 sm:p-6 xl:overflow-y-auto xl:border-t-0 xl:border-l xl:p-5">
-          <div className="sticky top-0 grid gap-4">
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase">
-                {t('preview.title')}
-              </p>
-              <Badge size="sm">{activeLocale.toUpperCase()}</Badge>
-            </div>
-
-            <PreviewCard title={t('preview.toneTitle')}>
-              <p className="text-xl font-semibold tracking-tight">
-                {preview.heading}
-              </p>
-              <p className="text-content-secondary mt-3 text-sm leading-6">
-                {preview.description}
-              </p>
-              <div className="mt-5 flex flex-wrap gap-2">
-                <span className="bg-content-primary text-background-app rounded-md px-3 py-2 text-xs font-semibold">
-                  {t('preview.primaryAction')}
-                </span>
-                <span className="border-border-default bg-surface-primary rounded-md border px-3 py-2 text-xs font-semibold">
-                  {t('preview.secondaryAction')}
-                </span>
-              </div>
-            </PreviewCard>
-
-            <div className="bg-content-primary text-background-app shadow-soft rounded-lg p-4 font-mono text-xs leading-6">
-              <p className="text-background-app/60"># §1 voice</p>
-              {preview.aiRules.length > 0 ? (
-                preview.aiRules.map((rule, index) => (
-                  <p key={`${rule}-${index}`}>- {rule}</p>
-                ))
-              ) : (
-                <p>- {t('preview.aiEmpty')}</p>
-              )}
-            </div>
-
-            {preview.usedFallback ? (
-              <p className="border-action-warning/30 bg-action-warning/10 text-action-warning rounded-lg border p-3 text-xs leading-5">
-                {t('preview.fallback', {
-                  locale: activeLocale.toUpperCase(),
-                  fallback: activeFallbackLocale.toUpperCase(),
+                      <span className="block text-sm font-semibold">
+                        {t(`direction.styles.${visualStyle}.label`)}
+                      </span>
+                      <span className="text-content-tertiary mt-1 block text-xs leading-5">
+                        {t(`direction.styles.${visualStyle}.description`)}
+                      </span>
+                    </button>
+                  );
                 })}
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend className="text-sm font-semibold">
+                {t('direction.uiDensity')}
+              </legend>
+              <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                {brandUiDensities.map((uiDensity) => {
+                  const isSelected = profile.uiDensity === uiDensity;
+
+                  return (
+                    <button
+                      key={uiDensity}
+                      type="button"
+                      aria-pressed={isSelected}
+                      onClick={() =>
+                        setProfile((currentProfile) => ({
+                          ...currentProfile,
+                          uiDensity,
+                        }))
+                      }
+                      className={[
+                        'focus-visible:outline-border-focus rounded-md border p-3 text-left transition focus-visible:outline-2 focus-visible:outline-offset-2',
+                        isSelected
+                          ? 'border-action-accent bg-action-accent/10 text-content-primary'
+                          : 'border-border-subtle bg-surface-primary text-content-secondary hover:border-border-default',
+                      ].join(' ')}
+                    >
+                      <span className="block text-sm font-semibold">
+                        {t(`direction.densities.${uiDensity}.label`)}
+                      </span>
+                      <span className="text-content-tertiary mt-1 block text-xs">
+                        {t(`direction.densities.${uiDensity}.description`)}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </fieldset>
+
+            <Field
+              label={t('direction.keywords.label')}
+              description={t('direction.keywords.description')}
+            >
+              <input
+                defaultValue={profile.inspirationKeywords.join(', ')}
+                onChange={(event) =>
+                  setProfile((currentProfile) => ({
+                    ...currentProfile,
+                    inspirationKeywords: parseCommaSeparatedValues(
+                      event.target.value,
+                      12,
+                    ),
+                  }))
+                }
+                className={inputClassName}
+              />
+            </Field>
+          </EditorSection>
+
+          <EditorSection
+            title={t('terminology.title')}
+            description={t('terminology.description')}
+            action={
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={addTerminologyEntry}
+              >
+                <PlusIcon aria-hidden="true" size={14} className="mr-1.5" />
+                {t('terminology.add')}
+              </Button>
+            }
+          >
+            {profile.localizedContent.terminology.length === 0 ? (
+              <p className="border-border-subtle bg-background-subtle text-content-tertiary rounded-md border border-dashed p-4 text-sm">
+                {t('terminology.empty')}
               </p>
-            ) : null}
-          </div>
-        </aside>
-      </div>
+            ) : (
+              <div className="border-border-subtle divide-border-subtle divide-y rounded-md border">
+                {profile.localizedContent.terminology.map((entry, index) => (
+                  <div
+                    key={index}
+                    className="grid gap-3 p-4 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)_auto]"
+                  >
+                    <Field
+                      label={t('terminology.preferred')}
+                      locale={activeLocale}
+                    >
+                      <input
+                        value={entry.preferred[activeLocale] ?? ''}
+                        onChange={(event) =>
+                          updateTerminologyEntry(index, (currentEntry) => ({
+                            ...currentEntry,
+                            preferred:
+                              updateLocalizedString(
+                                currentEntry.preferred,
+                                activeLocale,
+                                event.target.value,
+                              ) ?? {},
+                          }))
+                        }
+                        className={inputClassName}
+                      />
+                    </Field>
+
+                    <Field
+                      label={t('terminology.avoid')}
+                      locale={activeLocale}
+                    >
+                      <input
+                        key={`${terminologyRevision}-${activeLocale}-${index}`}
+                        defaultValue={entry.avoid
+                          .map((term) => term[activeLocale] ?? '')
+                          .filter(Boolean)
+                          .join(', ')}
+                        onChange={(event) =>
+                          updateTerminologyEntry(index, (currentEntry) => ({
+                            ...currentEntry,
+                            avoid: updateLocalizedList({
+                              currentValues: currentEntry.avoid,
+                              locale: activeLocale,
+                              values: parseCommaSeparatedValues(
+                                event.target.value,
+                                12,
+                              ),
+                            }),
+                          }))
+                        }
+                        className={inputClassName}
+                      />
+                    </Field>
+
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      aria-label={t('terminology.remove')}
+                      title={t('terminology.remove')}
+                      onClick={() => removeTerminologyEntry(index)}
+                      className="self-end px-2"
+                    >
+                      <TrashIcon aria-hidden="true" size={16} />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </EditorSection>
+
+          <EditorSection
+            title={t('editorialRules.title')}
+            description={t('editorialRules.description')}
+          >
+            <Field
+              label={t('editorialRules.label')}
+              locale={activeLocale}
+              description={t('editorialRules.help')}
+            >
+              <textarea
+                key={activeLocale}
+                rows={6}
+                defaultValue={profile.localizedContent.editorialRules
+                  .map((rule) => rule[activeLocale] ?? '')
+                  .join('\n')}
+                onChange={(event) => updateEditorialRules(event.target.value)}
+                className={textareaClassName}
+              />
+            </Field>
+          </EditorSection>
+        </div>
+      </main>
     </form>
   );
 }
@@ -661,17 +597,17 @@ function EditorSection({
   children: ReactNode;
 }) {
   return (
-    <section className="border-border-subtle bg-surface-primary shadow-soft rounded-lg border p-4 sm:p-5">
-      <div className="flex flex-wrap items-start justify-between gap-3">
+    <section className="border-border-subtle grid gap-5 border-b py-6 last:border-b-0 md:py-7 lg:grid-cols-[minmax(12rem,16rem)_minmax(0,1fr)] lg:gap-10">
+      <div className="flex min-w-0 flex-wrap items-start justify-between gap-3 lg:block">
         <div>
-          <h2 className="text-lg font-semibold tracking-tight">{title}</h2>
-          <p className="text-content-tertiary mt-1 max-w-3xl text-sm leading-6">
+          <h2 className="text-base font-semibold tracking-tight">{title}</h2>
+          <p className="text-content-tertiary mt-1 text-sm leading-6">
             {description}
           </p>
         </div>
-        {action}
+        {action ? <div className="lg:mt-4">{action}</div> : null}
       </div>
-      <div className="mt-5 grid gap-5">{children}</div>
+      <div className="grid min-w-0 gap-5">{children}</div>
     </section>
   );
 }
@@ -704,23 +640,6 @@ function Field({
       ) : null}
       <span className="mt-2 block">{children}</span>
     </label>
-  );
-}
-
-function PreviewCard({
-  title,
-  children,
-}: {
-  title: string;
-  children: ReactNode;
-}) {
-  return (
-    <section className="border-border-subtle bg-surface-primary shadow-soft rounded-lg border p-4">
-      <p className="text-content-tertiary text-[0.625rem] font-semibold tracking-[0.14em] uppercase">
-        {title}
-      </p>
-      <div className="mt-4">{children}</div>
-    </section>
   );
 }
 
@@ -765,102 +684,8 @@ function updateLocalizedList({
   ).filter((value): value is LocalizedString => Boolean(value));
 }
 
-function createBrandPreview({
-  productName,
-  profile,
-  locale,
-  fallbackLocale,
-}: {
-  productName: string;
-  profile: BrandProfile;
-  locale: AppLocale;
-  fallbackLocale: AppLocale;
-}) {
-  const tagline = resolveLocalizedStringWithFallback({
-    localizedString: profile.localizedContent.tagline ?? {},
-    locale,
-    fallbackLocale,
-  });
-  const shortDescription = resolveLocalizedStringWithFallback({
-    localizedString: profile.localizedContent.shortDescription ?? {},
-    locale,
-    fallbackLocale,
-  });
-  const personality = resolveLocalizedStringWithFallback({
-    localizedString: profile.localizedContent.personality ?? {},
-    locale,
-    fallbackLocale,
-  });
-  const audience = resolveLocalizedStringWithFallback({
-    localizedString: profile.localizedContent.audience ?? {},
-    locale,
-    fallbackLocale,
-  });
-  const toneOfVoice = resolveLocalizedStringWithFallback({
-    localizedString: profile.localizedContent.toneOfVoice ?? {},
-    locale,
-    fallbackLocale,
-  });
-  const editorialRules = profile.localizedContent.editorialRules.map((rule) =>
-    resolveLocalizedStringWithFallback({
-      localizedString: rule,
-      locale,
-      fallbackLocale,
-    }),
-  );
-  const terminologyRules = profile.localizedContent.terminology.map((entry) => {
-    const preferred = resolveLocalizedStringWithFallback({
-      localizedString: entry.preferred,
-      locale,
-      fallbackLocale,
-    });
-    const avoided = entry.avoid
-      .map(
-        (term) =>
-          resolveLocalizedStringWithFallback({
-            localizedString: term,
-            locale,
-            fallbackLocale,
-          }).value,
-      )
-      .filter(Boolean);
-
-    return {
-      value: avoided.length
-        ? `${preferred.value} — not ${avoided.join(', ')}`
-        : preferred.value,
-      usedFallback: preferred.usedFallback,
-    };
-  });
-  const resolutions = [
-    tagline,
-    shortDescription,
-    personality,
-    audience,
-    toneOfVoice,
-    ...editorialRules,
-  ];
-
-  return {
-    heading: tagline.value || productName,
-    description:
-      shortDescription.value ||
-      personality.value ||
-      audience.value ||
-      productName,
-    aiRules: [
-      toneOfVoice.value,
-      ...editorialRules.map((rule) => rule.value),
-      ...terminologyRules.map((rule) => rule.value),
-    ].filter(Boolean),
-    usedFallback:
-      resolutions.some((resolution) => resolution.usedFallback) ||
-      terminologyRules.some((rule) => rule.usedFallback),
-  };
-}
-
 const inputClassName =
-  'border-border-default bg-surface-primary text-content-primary focus-visible:outline-border-focus min-h-11 w-full rounded-md border px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2';
+  'border-border-subtle bg-surface-primary text-content-primary focus:border-action-primary w-full rounded-md border px-3 py-2 text-sm outline-none';
 
 const textareaClassName =
-  'border-border-default bg-surface-primary text-content-primary focus-visible:outline-border-focus w-full resize-y rounded-md border px-3 py-3 text-sm leading-6 focus-visible:outline-2 focus-visible:outline-offset-2';
+  'border-border-subtle bg-surface-primary text-content-primary focus:border-action-primary w-full resize-y rounded-md border px-3 py-2 text-sm leading-6 outline-none';
