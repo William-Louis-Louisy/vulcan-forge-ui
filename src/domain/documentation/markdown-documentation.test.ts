@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { generateMarkdownDocumentation } from './markdown-documentation';
 import type { MarkdownDocumentationInput } from './markdown-documentation';
-import type { ComponentContract, DesignToken } from '@/domain/design-system';
+import type {
+  BrandProfile,
+  ComponentContract,
+  DesignToken,
+} from '@/domain/design-system';
 
 const tokens: DesignToken[] = [
   {
@@ -75,6 +79,53 @@ const components: ComponentContract[] = [
   },
 ];
 
+const brand: BrandProfile = {
+  visualStyle: 'technical',
+  uiDensity: 'cozy',
+  inspirationKeywords: ['precise', 'calm'],
+  localizedContent: {
+    tagline: {
+      en: 'Built for focused teams.',
+      fr: 'Pensé pour les équipes concentrées.',
+    },
+    shortDescription: {
+      en: 'A focused product foundation.',
+      fr: 'Une fondation produit ciblée.',
+    },
+    personality: {
+      en: 'Precise and calm.',
+      fr: 'Précise et calme.',
+    },
+    audience: {
+      en: 'Operations teams.',
+    },
+    toneOfVoice: {
+      en: 'Direct. No exclamation marks.',
+      fr: 'Direct. Sans point d’exclamation.',
+    },
+    terminology: [
+      {
+        preferred: {
+          en: 'order',
+          fr: 'commande',
+        },
+        avoid: [
+          {
+            en: 'ticket',
+            fr: 'ticket',
+          },
+        ],
+      },
+    ],
+    editorialRules: [
+      {
+        en: 'Do not use emoji.',
+        fr: 'Ne pas utiliser d’émoji.',
+      },
+    ],
+  },
+};
+
 const baseInput = {
   project: {
     name: 'Vulcan DS',
@@ -82,6 +133,7 @@ const baseInput = {
     defaultLocale: 'en',
     supportedLocales: ['en', 'fr'],
   },
+  brand,
   tokens,
   themes: [
     {
@@ -122,7 +174,7 @@ const baseInput = {
 >;
 
 describe('generateMarkdownDocumentation', () => {
-  it('generates English Markdown documentation', () => {
+  it('generates English Markdown documentation with brand guidance', () => {
     const result = generateMarkdownDocumentation({
       ...baseInput,
       locale: 'en',
@@ -130,6 +182,10 @@ describe('generateMarkdownDocumentation', () => {
 
     expect(result.markdown).toContain('# Vulcan DS');
     expect(result.markdown).toContain('## Overview');
+    expect(result.markdown).toContain('### Brand profile');
+    expect(result.markdown).toContain('Built for focused teams.');
+    expect(result.markdown).toContain('Always prefer');
+    expect(result.markdown).toContain('Do not use emoji.');
     expect(result.markdown).toContain('## Tokens');
     expect(result.markdown).toContain('Primary accent color.');
     expect(result.markdown).toContain('## Themes');
@@ -146,6 +202,8 @@ describe('generateMarkdownDocumentation', () => {
     });
 
     expect(result.markdown).toContain('## Vue d’ensemble');
+    expect(result.markdown).toContain('### Profil de marque');
+    expect(result.markdown).toContain('Pensé pour les équipes concentrées.');
     expect(result.markdown).toContain('## Tokens');
     expect(result.markdown).toContain('Couleur d’accent principale.');
     expect(result.markdown).toContain('Déclenche une action.');
@@ -164,7 +222,11 @@ describe('generateMarkdownDocumentation', () => {
       requestedLocale: 'fr',
       fallbackLocale: 'en',
     });
-
+    expect(result.missingTranslations).toContainEqual({
+      path: 'brand.audience',
+      requestedLocale: 'fr',
+      fallbackLocale: 'en',
+    });
     expect(result.markdown).toContain('## Traductions manquantes');
   });
 
@@ -176,6 +238,7 @@ describe('generateMarkdownDocumentation', () => {
     });
 
     expect(result.markdown).toContain('## Tokens');
+    expect(result.markdown).not.toContain('## Overview');
     expect(result.markdown).not.toContain('## Themes');
     expect(result.markdown).not.toContain('## Components');
     expect(result.markdown).not.toContain('## Accessibility');
