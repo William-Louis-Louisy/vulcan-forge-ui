@@ -41,7 +41,6 @@ export async function createDesignSystemProject(
         platforms: input.platforms,
         defaultLocale: input.defaultLocale,
         supportedLocales: input.supportedLocales,
-        visualDirection: input.visualDirection,
         accessibilityTarget: input.accessibilityTarget,
         ...foundation,
       },
