@@ -2,6 +2,7 @@ import { z } from 'zod';
 import {
   designTokenSchema,
   componentContractSchema,
+  type BrandProfile,
   type DesignToken,
   type ComponentContract,
 } from '@/domain/design-system';
@@ -22,6 +23,7 @@ import {
 import type { ThemeMode } from '@/features/themes/themes-editor.utils';
 import type { MarkdownDocumentationInput } from '@/domain/documentation';
 import { createAccessibilityCenterReport } from '@/features/accessibility/accessibility-center.utils';
+import { parseStoredBrandProfile } from '@/features/brand/brand-profile.utils';
 
 const designTokenArraySchema = z.array(designTokenSchema);
 
@@ -36,6 +38,7 @@ export type ExportCenterLog = {
 
 export type ExportCenterInput = {
   project: MarkdownDocumentationInput['project'];
+  brand: BrandProfile | null;
   tokens: DesignToken[];
   themes: CssVariablesExportTheme[];
   components: ComponentContract[];
@@ -128,6 +131,14 @@ export async function getExportCenterPageData({
       description: true,
       defaultLocale: true,
       supportedLocales: true,
+      brandProfile: {
+        select: {
+          visualStyle: true,
+          uiDensity: true,
+          inspirationKeywords: true,
+          localizedContent: true,
+        },
+      },
       exportLogs: {
         orderBy: {
           createdAt: 'desc',
@@ -276,6 +287,9 @@ export async function getExportCenterPageData({
         defaultLocale: project.defaultLocale as AppLocale,
         supportedLocales,
       },
+      brand: project.brandProfile
+        ? parseStoredBrandProfile(project.brandProfile)
+        : null,
       tokens,
       themes,
       components,
