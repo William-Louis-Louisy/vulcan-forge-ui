@@ -2,8 +2,11 @@ import { auth } from '@/auth';
 import { hasLocale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
+
 import { routing, type Locale } from '@/i18n/routing';
 import { SettingsForm } from '@/features/settings/SettingsForm';
+import { AccountProfileForm } from '@/features/settings/AccountProfileForm';
+import { DeleteAccountSection } from '@/features/settings/DeleteAccountSection';
 import { getSettingsPageData } from '@/features/settings/settings.queries';
 
 type SettingsPageProps = {
@@ -27,56 +30,37 @@ export default async function SettingsPage({ params }: SettingsPageProps) {
   }
 
   const t = await getTranslations('SettingsPage');
-
-  const pageData = await getSettingsPageData({
-    userId: session.user.id,
-  });
+  const pageData = await getSettingsPageData({ userId: session.user.id });
 
   if (!pageData) {
     notFound();
   }
 
   return (
-    <section className="mx-auto max-w-4xl">
-      <p className="text-action-primary text-sm font-semibold tracking-[0.24em] uppercase">
-        {t('eyebrow')}
-      </p>
+    <section>
+      <header className="border-border-subtle border-b px-4 pt-6 pb-4 sm:px-6 lg:px-8 xl:px-10 xl:pt-8">
+        <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.16em] uppercase">
+          {t('eyebrow')}
+        </p>
+        <h1 className="mt-1 text-3xl font-semibold tracking-[-0.015em]">
+          {t('title')}
+        </h1>
+        <p className="text-content-secondary mt-1 max-w-3xl text-sm leading-6">
+          {t('description')}
+        </p>
+      </header>
 
-      <h1 className="mt-4 text-4xl font-semibold tracking-tight">
-        {t('title')}
-      </h1>
-
-      <p className="text-content-secondary mt-4 max-w-3xl">
-        {t('description')}
-      </p>
-
-      <div className="border-border-subtle bg-surface-primary shadow-soft mt-8 rounded-3xl border p-6">
-        <h2 className="text-xl font-semibold tracking-tight">
-          {t('account.title')}
-        </h2>
-
-        <dl className="mt-4 grid gap-4 sm:grid-cols-2">
-          <div>
-            <dt className="text-content-secondary text-xs font-semibold tracking-[0.18em] uppercase">
-              {t('account.name')}
-            </dt>
-            <dd className="mt-1 text-sm font-semibold">
-              {pageData.user.name ?? t('account.unknownName')}
-            </dd>
-          </div>
-
-          <div>
-            <dt className="text-content-secondary text-xs font-semibold tracking-[0.18em] uppercase">
-              {t('account.email')}
-            </dt>
-            <dd className="mt-1 text-sm font-semibold">
-              {pageData.user.email}
-            </dd>
-          </div>
-        </dl>
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 xl:px-10">
+        <AccountProfileForm
+          locale={locale}
+          initialProfile={{
+            name: pageData.user.name ?? '',
+            email: pageData.user.email,
+          }}
+        />
+        <SettingsForm initialSettings={pageData.settings} />
+        <DeleteAccountSection email={pageData.user.email} locale={locale} />
       </div>
-
-      <SettingsForm initialSettings={pageData.settings} />
     </section>
   );
 }

@@ -1132,10 +1132,36 @@
   },
   "SettingsPage": {
     "account": {
+      "currentPassword": "Current password",
+      "currentPasswordOptional": "Only required when changing your email address.",
+      "currentPasswordRequired": "Enter your current password to confirm the email change. You will be signed out afterwards.",
+      "description": "Update the personal information associated with your account.",
       "email": "Email",
+      "emailDescription": "Changing your login email requires your current password and signs you out.",
+      "errors": {
+        "accountNotFound": "Your account could not be found.",
+        "currentPasswordIncorrect": "The current password is incorrect.",
+        "currentPasswordRequired": "Enter your current password to change the email address.",
+        "emailAlreadyUsed": "Another account already uses this email address.",
+        "invalidPayload": "The submitted profile information is invalid.",
+        "unauthorized": "You must be signed in to update your profile.",
+        "unexpected": "Unable to update your profile. Please try again."
+      },
       "name": "Name",
-      "title": "Account",
-      "unknownName": "Unknown user"
+      "save": "Save profile",
+      "saved": "Profile information is up to date.",
+      "saving": "Saving...",
+      "success": "Profile information saved.",
+      "title": "Personal information",
+      "unsaved": "You have unsaved profile changes.",
+      "validation": {
+        "currentPasswordIncorrect": "The current password is incorrect.",
+        "currentPasswordRequired": "Enter your current password.",
+        "emailAlreadyUsed": "Another account already uses this email address.",
+        "emailInvalid": "Enter a valid email address.",
+        "nameMinLength": "Enter at least 2 characters.",
+        "nameTooLong": "Name must contain at most 80 characters."
+      }
     },
     "description": "Manage your account preferences and default application behavior.",
     "eyebrow": "User settings",
@@ -1190,7 +1216,39 @@
       },
       "title": "Appearance"
     },
-    "title": "Settings"
+    "title": "Settings",
+    "preferences": {
+      "description": "Choose the language and appearance used by VulcanForgeUI.",
+      "title": "Preferences"
+    },
+    "danger": {
+      "confirmation": {
+        "cancel": "Cancel",
+        "delete": "Delete account permanently",
+        "deleting": "Deleting account...",
+        "description": "This action cannot be undone. Confirm your login email and current password before continuing.",
+        "emailDescription": "Type {email} exactly.",
+        "emailLabel": "Confirmation email",
+        "passwordLabel": "Current password",
+        "title": "Confirm permanent account deletion"
+      },
+      "description": "Permanently remove your account and every workspace, project and generated record owned by it.",
+      "errors": {
+        "accountNotFound": "Your account could not be found.",
+        "confirmationEmailMismatch": "The confirmation email does not match your account.",
+        "currentPasswordIncorrect": "The current password is incorrect.",
+        "invalidPayload": "Complete both confirmation fields.",
+        "unauthorized": "You must be signed in to delete your account.",
+        "unexpected": "Unable to delete your account. Please try again."
+      },
+      "request": "Request account deletion",
+      "summary": "Account deletion is immediate after confirmation. Owned workspaces and all related design-system data are deleted with the account.",
+      "title": "Delete account",
+      "validation": {
+        "confirmationEmailMismatch": "Type the email address associated with this account.",
+        "currentPasswordIncorrect": "The current password is incorrect."
+      }
+    }
   },
   "SignupPage": {
     "benefits": {
