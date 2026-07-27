@@ -22,7 +22,7 @@ export default async function AuthLayout({
 
   return (
     <>
-      <PublicHeader variant="auth" />
+      <PublicHeader />
       {children}
     </>
   );
