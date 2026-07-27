@@ -1,6 +1,6 @@
 'use client';
 
-import { DotsThreeIcon, XIcon } from '@phosphor-icons/react';
+import { ListIcon, XIcon } from '@phosphor-icons/react';
 import { LocaleSwitcher } from '@/components/i18n/LocaleSwitcher';
 import { useDismissiblePopover } from '@/components/interaction/useDismissiblePopover';
 import { Link } from '@/i18n/navigation';
@@ -43,7 +43,7 @@ export function PublicMobileMenu({
         {isOpen ? (
           <XIcon aria-hidden="true" size={18} weight="bold" />
         ) : (
-          <DotsThreeIcon aria-hidden="true" size={20} weight="bold" />
+          <ListIcon aria-hidden="true" size={20} weight="bold" />
         )}
       </button>
 
