@@ -7,17 +7,13 @@ import { PublicMobileMenu } from './PublicMobileMenu';
 
 type PublicHeaderProps = {
   isAuthenticated?: boolean;
-  variant?: 'marketing' | 'auth';
 };
 
 export function PublicHeader({
   isAuthenticated = false,
-  variant = 'marketing',
 }: PublicHeaderProps) {
   const t = useTranslations('PublicHeader');
-  const isMarketing = variant === 'marketing';
   const accountHref = isAuthenticated ? '/app' : '/login';
-  const primaryHref = isAuthenticated ? '/app' : '/signup';
 
   return (
     <header className="border-border-subtle bg-background-app/95 sticky top-0 z-40 border-b backdrop-blur">
@@ -30,72 +26,59 @@ export function PublicHeader({
           <PublicBrandLockup compact />
         </Link>
 
-        {isMarketing ? (
-          <nav
-            aria-label={t('navigationLabel')}
-            className="ml-8 hidden items-center gap-6 md:flex"
+        <nav
+          aria-label={t('navigationLabel')}
+          className="ml-8 hidden items-center gap-6 md:flex"
+        >
+          <Link
+            href="/#product"
+            className="text-content-secondary hover:text-content-primary text-sm font-medium transition"
           >
-            <Link
-              href="/#product"
-              className="text-content-secondary hover:text-content-primary text-sm font-medium transition"
-            >
-              {t('product')}
-            </Link>
-            <Link
-              href="/pricing"
-              className="text-content-secondary hover:text-content-primary text-sm font-medium transition"
-            >
-              {t('pricing')}
-            </Link>
-            <Link
-              href="/#example"
-              className="text-content-secondary hover:text-content-primary text-sm font-medium transition"
-            >
-              {t('example')}
-            </Link>
-          </nav>
-        ) : null}
+            {t('product')}
+          </Link>
+          <Link
+            href="/pricing"
+            className="text-content-secondary hover:text-content-primary text-sm font-medium transition"
+          >
+            {t('pricing')}
+          </Link>
+          <Link
+            href="/#example"
+            className="text-content-secondary hover:text-content-primary text-sm font-medium transition"
+          >
+            {t('example')}
+          </Link>
+        </nav>
 
-        <div className="ml-auto flex items-center gap-2 sm:gap-3">
+        <div className="ml-auto hidden items-center gap-3 md:flex">
           <LocaleSwitcher />
 
-          {isMarketing ? (
-            <>
-              <PublicButtonLink
-                href={accountHref}
-                variant="ghost"
-                size="sm"
-                className="hidden sm:inline-flex"
-              >
-                {isAuthenticated ? t('dashboard') : t('signIn')}
-              </PublicButtonLink>
+          <PublicButtonLink href={accountHref} variant="ghost" size="sm">
+            {isAuthenticated ? t('dashboard') : t('signIn')}
+          </PublicButtonLink>
 
-              {!isAuthenticated ? (
-                <PublicButtonLink
-                  href={primaryHref}
-                  size="sm"
-                  className="hidden sm:inline-flex"
-                >
-                  {t('getStarted')}
-                </PublicButtonLink>
-              ) : null}
-
-              <PublicMobileMenu
-                isAuthenticated={isAuthenticated}
-                labels={{
-                  close: t('mobile.close'),
-                  dashboard: t('dashboard'),
-                  example: t('example'),
-                  getStarted: t('getStarted'),
-                  navigation: t('navigationLabel'),
-                  open: t('mobile.open'),
-                  pricing: t('pricing'),
-                  product: t('product'),
-                  signIn: t('signIn'),
-                }}
-              />
-            </>
+          {!isAuthenticated ? (
+            <PublicButtonLink href="/signup" size="sm">
+              {t('getStarted')}
+            </PublicButtonLink>
           ) : null}
+        </div>
+
+        <div className="ml-auto md:hidden">
+          <PublicMobileMenu
+            isAuthenticated={isAuthenticated}
+            labels={{
+              close: t('mobile.close'),
+              dashboard: t('dashboard'),
+              example: t('example'),
+              getStarted: t('getStarted'),
+              navigation: t('navigationLabel'),
+              open: t('mobile.open'),
+              pricing: t('pricing'),
+              product: t('product'),
+              signIn: t('signIn'),
+            }}
+          />
         </div>
       </div>
     </header>
