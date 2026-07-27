@@ -24,7 +24,12 @@ export type {
   SegmentedControlSemantics,
 } from './SegmentedControl';
 export { Select } from './Select';
-export type { SelectOption, SelectProps } from './Select';
+export type {
+  SelectOption,
+  SelectProps,
+  SelectSize,
+  SelectTextMode,
+} from './Select';
 export { Textarea } from './Textarea';
 export type { TextareaProps } from './Textarea';
 export { WorkspaceState } from './WorkspaceState';
