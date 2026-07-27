@@ -14,24 +14,6 @@
   14:26  error  Do not use an `<a>` element to navigate to `/app/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages  @next/next/no-html-link-for-pages
   14:26  error  Do not use an `<a>` element to navigate to `/app/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages  @next/next/no-html-link-for-pages
 
-/home/runner/work/vulcan-forge-ui/vulcan-forge-ui/src/features/components/ComponentRegistryCreateButton.tsx
-  70:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
-
-Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
-* Update external systems with the latest state from React.
-* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
-
-Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
-
-/home/runner/work/vulcan-forge-ui/vulcan-forge-ui/src/features/components/ComponentRegistryCreateButton.tsx:70:7
-  68 |   useEffect(() => {
-  69 |     if (!componentType && options[0]?.type) {
-> 70 |       setComponentType(options[0].type);
-     |       ^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
-  71 |     }
-  72 |   }, [componentType, options]);
-  73 |  react-hooks/set-state-in-effect
-
 /home/runner/work/vulcan-forge-ui/vulcan-forge-ui/src/features/tokens/CreateColorTokenForm.tsx
   82:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
 
@@ -50,7 +32,7 @@ Calling setState synchronously within an effect body causes cascading renders th
   84 |   }, [firstPrimitiveReferencePath, referencePath]);
   85 |  react-hooks/set-state-in-effect
 
-✖ 7 problems (4 errors, 3 warnings)
+✖ 6 problems (3 errors, 3 warnings)
 
 
 Exit status: 1
