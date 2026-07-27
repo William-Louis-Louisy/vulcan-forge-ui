@@ -3,18 +3,23 @@ import type { Metadata } from 'next';
 import { routing } from '@/i18n/routing';
 import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Fraunces, Inter_Tight, JetBrains_Mono } from 'next/font/google';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { ThemePreferenceInitScript } from '@/features/settings/ThemePreferenceInitScript';
 import { PublicThemePreferenceApplier } from '@/features/settings/PublicThemePreferenceApplier';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const fraunces = Fraunces({
+  variable: '--font-fraunces',
   subsets: ['latin'],
 });
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const interTight = Inter_Tight({
+  variable: '--font-inter-tight',
+  subsets: ['latin'],
+});
+
+const jetBrainsMono = JetBrains_Mono({
+  variable: '--font-jetbrains-mono',
   subsets: ['latin'],
 });
 
@@ -72,7 +77,7 @@ export default async function LocaleLayout({
       </head>
 
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${fraunces.variable} ${interTight.variable} ${jetBrainsMono.variable} antialiased`}
       >
         <NextIntlClientProvider>
           <PublicThemePreferenceApplier />

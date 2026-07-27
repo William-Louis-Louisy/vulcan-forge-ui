@@ -51,12 +51,13 @@ function LoginPageContent({
       description={t('description')}
       benefitsTitle={t('benefits.title')}
       benefits={benefitKeys.map((key) => t(`benefits.items.${key}`))}
+      variant="login"
     >
       <LoginForm locale={locale} registered={registered} />
 
       <p className="text-content-secondary mt-6 text-center text-sm">
         {t('form.noAccount')}{' '}
-        <AppLink href="/signup" className="text-action-primary font-semibold">
+        <AppLink href="/signup" className="text-action-accent font-semibold">
           {t('form.signupLink')}
         </AppLink>
       </p>

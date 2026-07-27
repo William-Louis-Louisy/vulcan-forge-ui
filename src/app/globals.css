@@ -6,25 +6,9 @@
   color-scheme: light;
 
   /*
-   * Primitive color tokens
-   * OKLCH gives better perceptual control than hex/rgb/hsl.
+   * Primitive color tokens — approved MVP mockup palette.
    */
-  --vf-color-ink-950: oklch(7% 0 0);
-  --vf-color-ink-900: oklch(13% 0.01 70);
-  --vf-color-ink-800: oklch(19% 0.01 70);
-  --vf-color-paper-50: oklch(97% 0.012 78);
-  --vf-color-paper-100: oklch(93% 0.018 78);
-  --vf-color-paper-200: oklch(86% 0.025 78);
-
-  --vf-color-gold-400: oklch(78% 0.13 72);
-  --vf-color-gold-500: oklch(67% 0.12 65);
-  --vf-color-gold-600: oklch(56% 0.11 58);
-
-  --vf-color-red-500: oklch(64% 0.22 25);
-  --vf-color-red-600: oklch(58% 0.23 25);
-
-  --vf-color-green-500: oklch(72% 0.18 145);
-  --vf-color-green-600: oklch(62% 0.17 145);
+  --vf-color-white: #ffffff;
 
   --vf-color-stone-50: #faf8f3;
   --vf-color-stone-100: #f4f1ea;
@@ -39,72 +23,59 @@
   --vf-color-stone-900: #141310;
 
   --vf-color-clay-50: #fbefe8;
-  --vf-color-clay-100: #f5ddc5;
+  --vf-color-clay-100: #f5d8c5;
   --vf-color-clay-300: #e29773;
   --vf-color-clay-500: #c96442;
   --vf-color-clay-600: #a94e2f;
   --vf-color-clay-700: #823920;
 
-  --vf-color-info-500: #2563b8;
+  --vf-color-ink-500: #2563b8;
   --vf-color-moss-500: #3f7a4f;
-  --vf-color-amber-500: #b1781f;
+  --vf-color-amber-500: #b17b1f;
   --vf-color-rust-500: #b43a2a;
 
   /*
-   * Semantic tokens — light theme
+   * Semantic tokens — light theme.
    */
   --vf-background-app: var(--vf-color-stone-50);
-  --vf-background-subtle: var(--vf-color-paper-100);
-  --vf-background-sunken: var(--vf-color-stone-100);
+  --vf-background-subtle: var(--vf-color-stone-100);
+  --vf-background-sunken: var(--vf-color-stone-150);
 
-  --vf-surface-primary: oklch(100% 0 0);
-  --vf-surface-secondary: var(--vf-color-paper-100);
-  --vf-surface-elevated: oklch(100% 0 0);
+  --vf-surface-primary: var(--vf-color-white);
+  --vf-surface-secondary: var(--vf-color-stone-100);
+  --vf-surface-elevated: var(--vf-color-white);
+  --vf-surface-inverse: var(--vf-color-stone-900);
 
-  --vf-content-primary: var(--vf-color-ink-900);
-  --vf-content-secondary: oklch(35% 0.018 72);
-  --vf-content-tertiary: oklch(51% 0.018 72);
-  --vf-content-inverse: oklch(100% 0 0);
+  --vf-content-primary: var(--vf-color-stone-900);
+  --vf-content-secondary: var(--vf-color-stone-600);
+  --vf-content-tertiary: var(--vf-color-stone-500);
+  --vf-content-inverse: var(--vf-color-white);
+  --vf-content-on-inverse: var(--vf-color-stone-50);
 
-  --vf-border-subtle: color-mix(
-    in oklch,
-    var(--vf-content-primary) 10%,
-    transparent
-  );
-  --vf-border-default: color-mix(
-    in oklch,
-    var(--vf-content-primary) 16%,
-    transparent
-  );
-  --vf-border-strong: color-mix(
-    in oklch,
-    var(--vf-content-primary) 28%,
-    transparent
-  );
-  --vf-border-focus: var(--vf-color-gold-500);
+  --vf-border-subtle: var(--vf-color-stone-200);
+  --vf-border-default: var(--vf-color-stone-300);
+  --vf-border-strong: var(--vf-color-stone-400);
+  --vf-border-focus: var(--vf-color-clay-500);
+  --vf-border-on-inverse: var(--vf-color-stone-700);
 
   --vf-action-accent: var(--vf-color-clay-500);
   --vf-action-accent-hover: var(--vf-color-clay-600);
   --vf-action-accent-pressed: var(--vf-color-clay-700);
-  --vf-action-accent-content: var(--vf-content-inverse);
+  --vf-action-accent-content: var(--vf-color-white);
 
   --vf-action-warning: var(--vf-color-amber-500);
-  --vf-action-info: var(--vf-color-info-500);
+  --vf-action-info: var(--vf-color-ink-500);
 
-  --vf-action-primary: var(--vf-color-gold-600);
-  --vf-action-primary-hover: oklch(
-    from var(--vf-action-primary) calc(l - 0.05) c h
-  );
-  --vf-action-primary-pressed: oklch(
-    from var(--vf-action-primary) calc(l - 0.1) c h
-  );
-  --vf-action-primary-content: var(--vf-content-inverse);
+  --vf-action-primary: var(--vf-color-stone-900);
+  --vf-action-primary-hover: var(--vf-color-stone-800);
+  --vf-action-primary-pressed: var(--vf-color-stone-700);
+  --vf-action-primary-content: var(--vf-color-white);
 
-  --vf-action-secondary: var(--vf-color-ink-800);
-  --vf-action-danger: var(--vf-color-red-600);
-  --vf-action-success: var(--vf-color-green-600);
+  --vf-action-secondary: var(--vf-color-stone-800);
+  --vf-action-danger: var(--vf-color-rust-500);
+  --vf-action-success: var(--vf-color-moss-500);
 
-  --vf-focus-ring: color-mix(in oklch, var(--vf-border-focus) 36%, transparent);
+  --vf-focus-ring: color-mix(in srgb, var(--vf-border-focus) 32%, transparent);
 
   --vf-radius-sm: 0.375rem;
   --vf-radius-md: 0.625rem;
@@ -112,8 +83,8 @@
   --vf-radius-xl: 1.25rem;
   --vf-radius-2xl: 1.75rem;
 
-  --vf-shadow-soft: 0 18px 60px oklch(7% 0 0 / 0.12);
-  --vf-shadow-elevated: 0 24px 80px oklch(7% 0 0 / 0.18);
+  --vf-shadow-soft: 0 18px 60px rgb(20 19 16 / 0.12);
+  --vf-shadow-elevated: 0 24px 80px rgb(20 19 16 / 0.18);
 
   --vf-duration-fast: 140ms;
   --vf-duration-normal: 220ms;
@@ -124,74 +95,39 @@
   color-scheme: dark;
 
   --vf-background-app: var(--vf-color-stone-900);
-  --vf-background-subtle: var(--vf-color-ink-900);
+  --vf-background-subtle: var(--vf-color-stone-800);
   --vf-background-sunken: var(--vf-color-stone-800);
 
-  --vf-surface-primary: var(--vf-color-ink-900);
-  --vf-surface-secondary: var(--vf-color-ink-800);
-  --vf-surface-elevated: oklch(23% 0.012 70);
+  --vf-surface-primary: var(--vf-color-stone-800);
+  --vf-surface-secondary: var(--vf-color-stone-700);
+  --vf-surface-elevated: var(--vf-color-stone-700);
 
-  --vf-content-primary: var(--vf-color-paper-50);
-  --vf-content-secondary: oklch(82% 0.025 78);
-  --vf-content-tertiary: oklch(68% 0.025 78);
-  --vf-content-inverse: var(--vf-color-ink-900);
+  --vf-content-primary: var(--vf-color-stone-50);
+  --vf-content-secondary: var(--vf-color-stone-300);
+  --vf-content-tertiary: var(--vf-color-stone-400);
+  --vf-content-inverse: var(--vf-color-stone-900);
 
-  --vf-border-subtle: color-mix(
-    in oklch,
-    var(--vf-content-primary) 8%,
-    transparent
-  );
-  --vf-border-default: color-mix(
-    in oklch,
-    var(--vf-content-primary) 14%,
-    transparent
-  );
-  --vf-border-strong: color-mix(
-    in oklch,
-    var(--vf-content-primary) 28%,
-    transparent
-  );
-  --vf-border-focus: var(--vf-color-gold-400);
+  --vf-border-subtle: var(--vf-color-stone-700);
+  --vf-border-default: var(--vf-color-stone-600);
+  --vf-border-strong: var(--vf-color-stone-500);
+  --vf-border-focus: var(--vf-color-clay-300);
 
   --vf-action-accent: var(--vf-color-clay-300);
   --vf-action-accent-hover: var(--vf-color-clay-500);
   --vf-action-accent-pressed: var(--vf-color-clay-600);
-  --vf-action-accent-content: var(--vf-color-ink-900);
+  --vf-action-accent-content: var(--vf-color-stone-900);
 
-  --vf-action-warning: var(--vf-color-amber-500);
-  --vf-action-info: var(--vf-color-info-500);
+  --vf-action-primary: var(--vf-color-stone-50);
+  --vf-action-primary-hover: var(--vf-color-stone-100);
+  --vf-action-primary-pressed: var(--vf-color-stone-200);
+  --vf-action-primary-content: var(--vf-color-stone-900);
 
-  --vf-action-primary: var(--vf-color-gold-500);
-  --vf-action-primary-hover: oklch(
-    from var(--vf-action-primary) calc(l + 0.08) c h
-  );
-  --vf-action-primary-pressed: oklch(
-    from var(--vf-action-primary) calc(l - 0.07) c h
-  );
-  --vf-action-primary-content: var(--vf-color-ink-900);
+  --vf-action-secondary: var(--vf-color-stone-700);
 
-  --vf-action-secondary: oklch(25% 0.012 70);
-  --vf-action-danger: var(--vf-color-red-500);
-  --vf-action-success: var(--vf-color-green-500);
+  --vf-focus-ring: color-mix(in srgb, var(--vf-border-focus) 40%, transparent);
 
-  --vf-focus-ring: color-mix(in oklch, var(--vf-border-focus) 42%, transparent);
-
-  --vf-shadow-soft: 0 18px 60px oklch(0% 0 0 / 0.24);
-  --vf-shadow-elevated: 0 24px 80px oklch(0% 0 0 / 0.36);
-}
-
-/*
- * Progressive enhancement.
- * Do not rely on contrast-color() as the source of truth.
- */
-@supports (color: contrast-color(red)) {
-  :root {
-    --vf-action-primary-content: contrast-color(var(--vf-action-primary));
-  }
-
-  .dark {
-    --vf-action-primary-content: contrast-color(var(--vf-action-primary));
-  }
+  --vf-shadow-soft: 0 18px 60px rgb(20 19 16 / 0.28);
+  --vf-shadow-elevated: 0 24px 80px rgb(20 19 16 / 0.42);
 }
 
 @theme inline {
@@ -202,16 +138,19 @@
   --color-surface-primary: var(--vf-surface-primary);
   --color-surface-secondary: var(--vf-surface-secondary);
   --color-surface-elevated: var(--vf-surface-elevated);
+  --color-surface-inverse: var(--vf-surface-inverse);
 
   --color-content-primary: var(--vf-content-primary);
   --color-content-secondary: var(--vf-content-secondary);
   --color-content-tertiary: var(--vf-content-tertiary);
   --color-content-inverse: var(--vf-content-inverse);
+  --color-content-on-inverse: var(--vf-content-on-inverse);
 
   --color-border-subtle: var(--vf-border-subtle);
   --color-border-default: var(--vf-border-default);
   --color-border-strong: var(--vf-border-strong);
   --color-border-focus: var(--vf-border-focus);
+  --color-border-on-inverse: var(--vf-border-on-inverse);
 
   --color-action-accent: var(--vf-action-accent);
   --color-action-accent-hover: var(--vf-action-accent-hover);
@@ -230,8 +169,8 @@
   --color-action-danger: var(--vf-action-danger);
   --color-action-success: var(--vf-action-success);
 
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter-tight);
+  --font-mono: var(--font-jetbrains-mono);
 
   --radius-sm: var(--vf-radius-sm);
   --radius-md: var(--vf-radius-md);
@@ -259,12 +198,17 @@
     min-height: 100vh;
     background: var(--vf-background-app);
     color: var(--vf-content-primary);
-    font-family: var(--font-geist-sans), system-ui, sans-serif;
+    font-family: var(--font-inter-tight), system-ui, sans-serif;
   }
 
   ::selection {
-    background: color-mix(in oklch, var(--vf-action-primary) 36%, transparent);
-    color: var(--vf-content-primary);
+    background: var(--vf-color-clay-100);
+    color: var(--vf-color-stone-900);
+  }
+
+  .dark ::selection {
+    background: var(--vf-color-clay-600);
+    color: var(--vf-color-stone-50);
   }
 
   :focus-visible {

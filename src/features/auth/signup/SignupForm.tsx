@@ -1,19 +1,22 @@
 'use client';
 
+import { useActionState, useState } from 'react';
+import { EyeIcon, EyeSlashIcon } from '@phosphor-icons/react';
+import { useTranslations } from 'next-intl';
+import { Button } from '@/components/ui';
+import type { Locale } from '@/i18n/routing';
+import { signupAction } from './signup.action';
 import {
   initialSignupActionState,
   type SignupActionState,
 } from './signup.state';
-import { Button } from '@/components/ui';
-import { useTranslations } from 'next-intl';
-import type { Locale } from '@/i18n/routing';
-import { signupAction } from './signup.action';
-import { useActionState, useState } from 'react';
-import { EyeIcon, EyeSlashIcon } from '@phosphor-icons/react';
 
 type SignupFormProps = {
   locale: Locale;
 };
+
+const inputClassName =
+  'border-border-subtle bg-surface-primary text-content-primary focus:border-action-primary mt-2 w-full rounded-md border px-3 py-2 outline-none transition';
 
 function getFirstError(
   errors: SignupActionState['fieldErrors'] | undefined,
@@ -28,13 +31,11 @@ export function SignupForm({ locale }: SignupFormProps) {
     signupAction,
     initialSignupActionState,
   );
-
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isPasswordConfirmationVisible, setIsPasswordConfirmationVisible] =
     useState(false);
 
   const safeState = state ?? initialSignupActionState;
-
   const nameError = getFirstError(safeState.fieldErrors, 'name');
   const emailError = getFirstError(safeState.fieldErrors, 'email');
   const passwordError = getFirstError(safeState.fieldErrors, 'password');
@@ -50,7 +51,7 @@ export function SignupForm({ locale }: SignupFormProps) {
       {safeState.formError ? (
         <p
           role="alert"
-          className="border-action-danger/30 bg-action-danger/10 text-action-danger rounded-lg border px-4 py-3 text-sm"
+          className="border-action-danger/30 bg-action-danger/10 text-action-danger rounded-md border px-4 py-3 text-sm"
         >
           {t(`validation.${safeState.formError}`)}
         </p>
@@ -68,7 +69,7 @@ export function SignupForm({ locale }: SignupFormProps) {
           defaultValue={safeState.values.name}
           aria-invalid={Boolean(nameError)}
           aria-describedby={nameError ? 'name-error' : undefined}
-          className="border-border-default bg-surface-primary text-content-primary mt-2 min-h-11 w-full rounded-lg border px-3"
+          className={inputClassName}
         />
         {nameError ? (
           <p id="name-error" className="text-action-danger mt-2 text-sm">
@@ -89,7 +90,7 @@ export function SignupForm({ locale }: SignupFormProps) {
           defaultValue={safeState.values.email}
           aria-invalid={Boolean(emailError)}
           aria-describedby={emailError ? 'email-error' : undefined}
-          className="border-border-default bg-surface-primary text-content-primary mt-2 min-h-11 w-full rounded-lg border px-3"
+          className={inputClassName}
         />
         {emailError ? (
           <p id="email-error" className="text-action-danger mt-2 text-sm">
@@ -102,8 +103,7 @@ export function SignupForm({ locale }: SignupFormProps) {
         <label htmlFor="password" className="text-sm font-medium">
           {t('form.passwordLabel')}
         </label>
-
-        <div className="relative mt-2 flex gap-2">
+        <div className="relative">
           <input
             id="password"
             name="password"
@@ -111,41 +111,21 @@ export function SignupForm({ locale }: SignupFormProps) {
             autoComplete="new-password"
             aria-invalid={Boolean(passwordError)}
             aria-describedby={
-              passwordError ? 'password-error' : 'password-help'
+              passwordError ? 'password-help password-error' : 'password-help'
             }
-            className="border-border-default bg-surface-primary text-content-primary min-h-11 w-full rounded-lg border pr-14 pl-3"
+            className={`${inputClassName} pr-12`}
           />
-
-          <button
-            type="button"
-            className="border-border-default text-content-primary absolute top-1/2 right-0 min-h-11 w-fit -translate-y-1/2 rounded-r-lg border px-3"
-            onClick={() => setIsPasswordVisible((isVisible) => !isVisible)}
-            aria-pressed={isPasswordVisible}
-            aria-controls="password"
-            aria-label={
-              isPasswordVisible
-                ? t('form.passwordVisibility.hide')
-                : t('form.passwordVisibility.show')
-            }
-          >
-            <span className="sr-only">
-              {isPasswordVisible
-                ? t('form.passwordVisibility.hide')
-                : t('form.passwordVisibility.show')}
-            </span>
-
-            {isPasswordVisible ? (
-              <EyeSlashIcon aria-hidden="true" size={18} weight="bold" />
-            ) : (
-              <EyeIcon aria-hidden="true" size={18} weight="bold" />
-            )}
-          </button>
+          <PasswordVisibilityButton
+            isVisible={isPasswordVisible}
+            onToggle={() => setIsPasswordVisible((current) => !current)}
+            controls="password"
+            showLabel={t('form.passwordVisibility.show')}
+            hideLabel={t('form.passwordVisibility.hide')}
+          />
         </div>
-
         <p id="password-help" className="text-content-tertiary mt-2 text-sm">
           {t('form.passwordHelp')}
         </p>
-
         {passwordError ? (
           <p id="password-error" className="text-action-danger mt-2 text-sm">
             {t(`validation.${passwordError}`)}
@@ -157,8 +137,7 @@ export function SignupForm({ locale }: SignupFormProps) {
         <label htmlFor="passwordConfirmation" className="text-sm font-medium">
           {t('form.passwordConfirmationLabel')}
         </label>
-
-        <div className="relative mt-2 flex gap-2">
+        <div className="relative">
           <input
             id="passwordConfirmation"
             name="passwordConfirmation"
@@ -170,37 +149,18 @@ export function SignupForm({ locale }: SignupFormProps) {
                 ? 'password-confirmation-error'
                 : undefined
             }
-            className="border-border-default bg-surface-primary text-content-primary min-h-11 w-full rounded-lg border pr-14 pl-3"
+            className={`${inputClassName} pr-12`}
           />
-
-          <button
-            type="button"
-            className="border-border-default text-content-primary absolute top-1/2 right-0 min-h-11 w-fit -translate-y-1/2 rounded-r-lg border px-3"
-            onClick={() =>
-              setIsPasswordConfirmationVisible((isVisible) => !isVisible)
+          <PasswordVisibilityButton
+            isVisible={isPasswordConfirmationVisible}
+            onToggle={() =>
+              setIsPasswordConfirmationVisible((current) => !current)
             }
-            aria-pressed={isPasswordConfirmationVisible}
-            aria-controls="passwordConfirmation"
-            aria-label={
-              isPasswordConfirmationVisible
-                ? t('form.passwordVisibility.hide')
-                : t('form.passwordVisibility.show')
-            }
-          >
-            <span className="sr-only">
-              {isPasswordConfirmationVisible
-                ? t('form.passwordVisibility.hide')
-                : t('form.passwordVisibility.show')}
-            </span>
-
-            {isPasswordConfirmationVisible ? (
-              <EyeSlashIcon aria-hidden="true" size={18} weight="bold" />
-            ) : (
-              <EyeIcon aria-hidden="true" size={18} weight="bold" />
-            )}
-          </button>
+            controls="passwordConfirmation"
+            showLabel={t('form.passwordVisibility.show')}
+            hideLabel={t('form.passwordVisibility.hide')}
+          />
         </div>
-
         {passwordConfirmationError ? (
           <p
             id="password-confirmation-error"
@@ -215,5 +175,38 @@ export function SignupForm({ locale }: SignupFormProps) {
         {isPending ? t('form.submitPending') : t('form.submit')}
       </Button>
     </form>
+  );
+}
+
+function PasswordVisibilityButton({
+  controls,
+  hideLabel,
+  isVisible,
+  onToggle,
+  showLabel,
+}: {
+  controls: string;
+  hideLabel: string;
+  isVisible: boolean;
+  onToggle: () => void;
+  showLabel: string;
+}) {
+  const label = isVisible ? hideLabel : showLabel;
+
+  return (
+    <button
+      type="button"
+      aria-controls={controls}
+      aria-label={label}
+      aria-pressed={isVisible}
+      onClick={onToggle}
+      className="border-border-subtle text-content-secondary hover:bg-surface-secondary hover:text-content-primary absolute right-0 bottom-0 flex h-[calc(100%-0.5rem)] w-11 items-center justify-center rounded-r-md border-l transition"
+    >
+      {isVisible ? (
+        <EyeSlashIcon aria-hidden="true" size={18} weight="bold" />
+      ) : (
+        <EyeIcon aria-hidden="true" size={18} weight="bold" />
+      )}
+    </button>
   );
 }

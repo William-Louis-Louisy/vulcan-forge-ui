@@ -11,7 +11,7 @@ type SignupPageProps = {
   }>;
 };
 
-const benefitKeys = ['tokens', 'accessibility', 'exports'] as const;
+const benefitKeys = ['tokens', 'accessibility', 'exports', 'ai'] as const;
 
 export default async function SignupPage({ params }: SignupPageProps) {
   const { locale: requestedLocale } = await params;
@@ -33,12 +33,13 @@ function SignupPageContent({ locale }: { locale: Locale }) {
       description={t('description')}
       benefitsTitle={t('benefits.title')}
       benefits={benefitKeys.map((key) => t(`benefits.items.${key}`))}
+      variant="signup"
     >
       <SignupForm locale={locale} />
 
       <p className="text-content-secondary mt-6 text-center text-sm">
         {t('form.alreadyHaveAccount')}{' '}
-        <AppLink href="/login" className="text-action-primary font-semibold">
+        <AppLink href="/login" className="text-action-accent font-semibold">
           {t('form.signInLink')}
         </AppLink>
       </p>
