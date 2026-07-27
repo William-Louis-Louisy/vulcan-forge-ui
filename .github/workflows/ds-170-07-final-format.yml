@@ -1,23 +1,23 @@
 name: DS-170-07 final formatter
 
 on:
-  push:
+  pull_request:
     branches:
-      - feature/ds-170-07-visual-debt-audit
+      - main
 
 permissions:
   contents: write
 
 jobs:
   format:
-    if: ${{ !contains(github.event.head_commit.message, 'format final QA corrections') }}
+    if: ${{ github.head_ref == 'feature/ds-170-07-visual-debt-audit' && !contains(github.event.pull_request.head.label, 'format final QA corrections') }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: feature/ds-170-07-visual-debt-audit
+          ref: ${{ github.event.pull_request.head.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
@@ -33,4 +33,4 @@ jobs:
             exit 0
           fi
           git commit -m "style(ds-170-07): format final QA corrections"
-          git push origin HEAD:feature/ds-170-07-visual-debt-audit
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
