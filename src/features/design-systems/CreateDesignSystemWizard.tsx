@@ -17,7 +17,7 @@ import {
   designSystemPlatforms,
   type CreateDesignSystemValidationMessageKey,
 } from './create-design-system.schema';
-import { Button } from '@/components/ui';
+import { Button, Input, Select, Textarea } from '@/components/ui';
 import { useTranslations } from 'next-intl';
 import type { Locale } from '@/i18n/routing';
 import type { AppLocale } from '@/domain/i18n';
@@ -264,17 +264,17 @@ export function CreateDesignSystemWizard({
         {createDesignSystemSteps.map((step, index) => {
           const isActive = step === currentStep;
           const isCompleted = index < displayedStepIndex;
+          const isUnavailable = index > displayedStepIndex;
 
           return (
             <li key={step}>
               <button
                 type="button"
+                disabled={isUnavailable}
                 onClick={() => {
-                  if (index <= displayedStepIndex) {
-                    setClientErrors({});
-                    setAcknowledgedServerErrorKey(serverErrorKey);
-                    setCurrentStepIndex(index);
-                  }
+                  setClientErrors({});
+                  setAcknowledgedServerErrorKey(serverErrorKey);
+                  setCurrentStepIndex(index);
                 }}
                 aria-current={isActive ? 'step' : undefined}
                 className={[
@@ -283,9 +283,8 @@ export function CreateDesignSystemWizard({
                     ? 'bg-surface-primary text-content-primary after:bg-action-accent after:absolute after:inset-x-3 after:bottom-0 after:h-0.5'
                     : 'bg-background-sunken text-content-secondary',
                   isCompleted ? 'text-content-primary' : '',
-                  index > currentStepIndex
-                    ? 'cursor-not-allowed opacity-70'
-                    : 'hover:bg-surface-secondary hover:text-content-primary',
+                  'enabled:hover:bg-surface-secondary enabled:hover:text-content-primary',
+                  'disabled:cursor-not-allowed disabled:opacity-55',
                 ].join(' ')}
               >
                 <span className="block text-[0.65rem] tracking-[0.18em] uppercase">
@@ -398,14 +397,14 @@ function BasicsStep({
         <label htmlFor="name" className="text-sm font-medium">
           {t('form.nameLabel')}
         </label>
-        <input
+        <Input
           id="name"
           type="text"
           value={values.name}
           onChange={(event) => onChange('name', event.target.value)}
-          aria-invalid={Boolean(nameError)}
+          invalid={Boolean(nameError)}
           aria-describedby={nameError ? 'name-error' : 'name-help'}
-          className="border-border-subtle bg-surface-primary text-content-primary focus:border-action-accent mt-2 min-h-10 w-full rounded-md border px-3 py-2 transition outline-none"
+          className="mt-2"
         />
         <p id="name-help" className="text-content-tertiary mt-2 text-sm">
           {t('form.nameHelp')}
@@ -421,16 +420,16 @@ function BasicsStep({
         <label htmlFor="description" className="text-sm font-medium">
           {t('form.descriptionLabel')}
         </label>
-        <textarea
+        <Textarea
           id="description"
           value={values.description}
           rows={4}
           onChange={(event) => onChange('description', event.target.value)}
-          aria-invalid={Boolean(descriptionError)}
+          invalid={Boolean(descriptionError)}
           aria-describedby={
             descriptionError ? 'description-error' : 'description-help'
           }
-          className="border-border-subtle bg-surface-primary text-content-primary focus:border-action-accent mt-2 w-full rounded-md border px-3 py-2 transition outline-none"
+          className="mt-2"
         />
         <p id="description-help" className="text-content-tertiary mt-2 text-sm">
           {t('form.descriptionHelp')}
@@ -462,6 +461,8 @@ function PlatformsLanguagesStep({
   const platformError = getFirstError(errors, 'platforms');
   const defaultLocaleError = getFirstError(errors, 'defaultLocale');
   const supportedLocalesError = getFirstError(errors, 'supportedLocales');
+  const defaultLocaleHelpId = 'default-locale-help';
+  const defaultLocaleErrorId = 'default-locale-error';
 
   return (
     <fieldset className="space-y-6">
@@ -516,40 +517,39 @@ function PlatformsLanguagesStep({
         <label htmlFor="defaultLocale" className="text-sm font-medium">
           {t('form.defaultLocaleLabel')}
         </label>
-        <select
+        <Select<AppLocale>
           id="defaultLocale"
-          value={values.defaultLocale}
-          onChange={(event) => {
-            const nextDefaultLocale = event.target.value;
-
-            if (!isAppLocaleValue(nextDefaultLocale)) {
-              onChange('defaultLocale', nextDefaultLocale);
-              return;
-            }
-
+          value={
+            isAppLocaleValue(values.defaultLocale) ? values.defaultLocale : ''
+          }
+          options={projectLanguageOptions.map((language) => ({
+            value: language.value,
+            label: t(`form.locales.${language.labelKey}`),
+          }))}
+          onValueChange={(nextDefaultLocale) => {
             const nextLanguageState = updateDefaultLocale({
               defaultLocale: nextDefaultLocale,
-              supportedLocales:
-                values.supportedLocales.filter(isAppLocaleValue),
+              supportedLocales: values.supportedLocales.filter(isAppLocaleValue),
             });
 
             onChange('defaultLocale', nextLanguageState.defaultLocale);
             onChange('supportedLocales', nextLanguageState.supportedLocales);
           }}
-          aria-invalid={Boolean(defaultLocaleError)}
-          className="border-border-subtle bg-surface-primary text-content-primary focus:border-action-accent mt-2 min-h-10 w-full rounded-md border px-3 py-2 transition outline-none"
+          placeholder={t('form.defaultLocaleLabel')}
+          invalid={Boolean(defaultLocaleError)}
+          ariaDescribedBy={
+            defaultLocaleError ? defaultLocaleErrorId : defaultLocaleHelpId
+          }
+          className="mt-2"
+        />
+        <p
+          id={defaultLocaleHelpId}
+          className="text-content-tertiary mt-2 text-sm"
         >
-          {projectLanguageOptions.map((language) => (
-            <option key={language.value} value={language.value}>
-              {t(`form.locales.${language.labelKey}`)}
-            </option>
-          ))}
-        </select>
-        <p className="text-content-tertiary mt-2 text-sm">
           {t('form.defaultLocaleHelp')}
         </p>
         {defaultLocaleError ? (
-          <p className="text-action-danger mt-2 text-sm">
+          <p id={defaultLocaleErrorId} className="text-action-danger mt-2 text-sm">
             {t(`validation.${defaultLocaleError}`)}
           </p>
         ) : null}
