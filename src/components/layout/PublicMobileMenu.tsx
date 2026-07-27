@@ -28,8 +28,6 @@ export function PublicMobileMenu({
   const { close, containerRef, isOpen, toggle, triggerRef } =
     useDismissiblePopover();
   const menuId = 'public-mobile-menu';
-  const accountHref = isAuthenticated ? '/app' : '/login';
-  const primaryHref = isAuthenticated ? '/app' : '/signup';
 
   return (
     <div ref={containerRef} className="relative md:hidden">
@@ -85,21 +83,29 @@ export function PublicMobileMenu({
           </div>
 
           <div className="border-border-subtle mt-3 grid gap-2 border-t pt-3">
-            <PublicButtonLink
-              href={accountHref}
-              variant="secondary"
-              onClick={close}
-              className="w-full"
-            >
-              {isAuthenticated ? labels.dashboard : labels.signIn}
-            </PublicButtonLink>
-            <PublicButtonLink
-              href={primaryHref}
-              onClick={close}
-              className="w-full"
-            >
-              {isAuthenticated ? labels.dashboard : labels.getStarted}
-            </PublicButtonLink>
+            {isAuthenticated ? (
+              <PublicButtonLink href="/app" onClick={close} className="w-full">
+                {labels.dashboard}
+              </PublicButtonLink>
+            ) : (
+              <>
+                <PublicButtonLink
+                  href="/login"
+                  variant="secondary"
+                  onClick={close}
+                  className="w-full"
+                >
+                  {labels.signIn}
+                </PublicButtonLink>
+                <PublicButtonLink
+                  href="/signup"
+                  onClick={close}
+                  className="w-full"
+                >
+                  {labels.getStarted}
+                </PublicButtonLink>
+              </>
+            )}
           </div>
         </div>
       ) : null}
