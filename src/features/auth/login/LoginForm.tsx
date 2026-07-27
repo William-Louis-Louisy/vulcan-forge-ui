@@ -12,6 +12,9 @@ type LoginFormProps = {
   registered?: boolean;
 };
 
+const inputClassName =
+  'border-border-subtle bg-surface-primary text-content-primary focus:border-action-primary mt-2 w-full rounded-md border px-3 py-2 outline-none transition';
+
 function getFirstError(
   errors: LoginActionState['fieldErrors'] | undefined,
   field: 'email' | 'password',
@@ -37,7 +40,7 @@ export function LoginForm({ locale, registered = false }: LoginFormProps) {
       {registered ? (
         <p
           role="status"
-          className="border-action-success/30 bg-action-success/10 text-action-success rounded-lg border px-4 py-3 text-sm"
+          className="border-action-success/30 bg-action-success/10 text-action-success rounded-md border px-4 py-3 text-sm"
         >
           {t('registeredSuccess')}
         </p>
@@ -46,7 +49,7 @@ export function LoginForm({ locale, registered = false }: LoginFormProps) {
       {safeState.formError ? (
         <p
           role="alert"
-          className="border-action-danger/30 bg-action-danger/10 text-action-danger rounded-lg border px-4 py-3 text-sm"
+          className="border-action-danger/30 bg-action-danger/10 text-action-danger rounded-md border px-4 py-3 text-sm"
         >
           {t(`validation.${safeState.formError}`)}
         </p>
@@ -64,7 +67,7 @@ export function LoginForm({ locale, registered = false }: LoginFormProps) {
           defaultValue={safeState.values.email}
           aria-invalid={Boolean(emailError)}
           aria-describedby={emailError ? 'email-error' : undefined}
-          className="border-border-default bg-surface-primary text-content-primary mt-2 min-h-11 w-full rounded-lg border px-3"
+          className={inputClassName}
         />
         {emailError ? (
           <p id="email-error" className="text-action-danger mt-2 text-sm">
@@ -84,7 +87,7 @@ export function LoginForm({ locale, registered = false }: LoginFormProps) {
           autoComplete="current-password"
           aria-invalid={Boolean(passwordError)}
           aria-describedby={passwordError ? 'password-error' : undefined}
-          className="border-border-default bg-surface-primary text-content-primary mt-2 min-h-11 w-full rounded-lg border px-3"
+          className={inputClassName}
         />
         {passwordError ? (
           <p id="password-error" className="text-action-danger mt-2 text-sm">
