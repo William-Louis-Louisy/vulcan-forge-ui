@@ -1,5 +1,6 @@
 import type { Locale } from '@/i18n/routing';
 import { useActionState, useEffect, useMemo, useState } from 'react';
+import { Button, Input, Select, Textarea } from '@/components/ui';
 import { createColorTokenAction } from './create-color-token.action';
 import type { PrimitiveColorTokenAliasOption } from './tokens-editor.utils';
 import { initialCreateColorTokenActionState } from './create-color-token.state';
@@ -64,14 +65,23 @@ export function CreateColorTokenForm({
     initialCreateColorTokenActionState,
   );
 
-  const preserveSaveContext = usePreserveSaveContext(
-    `create-color-token:${projectSlug}`,
-  );
-
   const firstPrimitiveReferencePath = useMemo(
     () => primitiveColorAliasOptions[0]?.path ?? '',
     [primitiveColorAliasOptions],
   );
+  const [referencePath, setReferencePath] = useState(
+    state.values.referencePath || firstPrimitiveReferencePath,
+  );
+
+  const preserveSaveContext = usePreserveSaveContext(
+    `create-color-token:${projectSlug}`,
+  );
+
+  useEffect(() => {
+    if (!referencePath && firstPrimitiveReferencePath) {
+      setReferencePath(firstPrimitiveReferencePath);
+    }
+  }, [firstPrimitiveReferencePath, referencePath]);
 
   useEffect(() => {
     if (state.status !== 'success') {
@@ -89,7 +99,7 @@ export function CreateColorTokenForm({
     <form
       action={formAction}
       onSubmitCapture={preserveSaveContext}
-      className="border-border-subtle bg-surface-primary shadow-soft mt-6 rounded-3xl border p-5"
+      className="border-border-subtle bg-surface-primary mt-6 rounded-lg border p-5"
     >
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="projectSlug" value={projectSlug} />
@@ -106,13 +116,9 @@ export function CreateColorTokenForm({
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={onCancel}
-          className="border-border-subtle text-content-secondary hover:text-content-primary rounded-xl border px-3 py-2 text-sm font-semibold"
-        >
+        <Button type="button" variant="secondary" size="sm" onClick={onCancel}>
           {labels.cancel}
-        </button>
+        </Button>
       </div>
 
       <fieldset className="mt-5">
@@ -121,26 +127,26 @@ export function CreateColorTokenForm({
         </legend>
 
         <div className="mt-2 grid gap-2 sm:grid-cols-2">
-          <label className="border-border-subtle bg-background-subtle has-checked:border-action-primary has-checked:bg-action-primary/10 rounded-2xl border p-3 text-sm font-semibold">
+          <label className="border-border-subtle bg-surface-primary has-checked:border-action-accent has-checked:bg-action-accent/10 flex cursor-pointer items-center gap-2 rounded-md border p-3 text-sm font-semibold transition">
             <input
               type="radio"
               name="kindChoice"
               value="primitive"
               checked={kind === 'primitive'}
               onChange={() => setKind('primitive')}
-              className="mr-2"
+              className="accent-[var(--vf-action-accent)]"
             />
             {labels.primitiveKind}
           </label>
 
-          <label className="border-border-subtle bg-background-subtle has-checked:border-action-primary has-checked:bg-action-primary/10 rounded-2xl border p-3 text-sm font-semibold">
+          <label className="border-border-subtle bg-surface-primary has-checked:border-action-accent has-checked:bg-action-accent/10 flex cursor-pointer items-center gap-2 rounded-md border p-3 text-sm font-semibold transition">
             <input
               type="radio"
               name="kindChoice"
               value="semantic"
               checked={kind === 'semantic'}
               onChange={() => setKind('semantic')}
-              className="mr-2"
+              className="accent-[var(--vf-action-accent)]"
             />
             {labels.semanticKind}
           </label>
@@ -156,12 +162,13 @@ export function CreateColorTokenForm({
             {labels.pathLabel}
           </label>
 
-          <input
+          <Input
             id="create-token-path"
             name="path"
             defaultValue={state.values.path}
-            aria-invalid={pathErrors.length > 0}
-            className="border-border-subtle bg-background-subtle focus:border-action-primary mt-2 w-full rounded-xl border px-3 py-2 font-mono text-sm outline-none"
+            invalid={pathErrors.length > 0}
+            textMode="technical"
+            className="mt-2"
             placeholder={
               kind === 'primitive'
                 ? 'color.primitive.azure.500'
@@ -187,12 +194,13 @@ export function CreateColorTokenForm({
               {labels.valueLabel}
             </label>
 
-            <input
+            <Input
               id="create-token-value"
               name="value"
               defaultValue={state.values.value || '#000000'}
-              aria-invalid={valueErrors.length > 0}
-              className="border-border-subtle bg-background-subtle focus:border-action-primary mt-2 w-full rounded-xl border px-3 py-2 font-mono text-sm outline-none"
+              invalid={valueErrors.length > 0}
+              textMode="technical"
+              className="mt-2"
               placeholder="#0ea5e9"
             />
 
@@ -216,21 +224,23 @@ export function CreateColorTokenForm({
                 {labels.referenceLabel}
               </label>
 
-              <select
+              <Select
                 id="create-token-reference"
                 name="referencePath"
-                defaultValue={
-                  state.values.referencePath || firstPrimitiveReferencePath
-                }
-                aria-invalid={referencePathErrors.length > 0}
-                className="border-border-subtle bg-background-subtle focus:border-action-primary mt-2 w-full rounded-xl border px-3 py-2 font-mono text-sm outline-none"
-              >
-                {primitiveColorAliasOptions.map((option) => (
-                  <option key={option.path} value={option.path}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
+                value={referencePath}
+                options={primitiveColorAliasOptions.map((option) => ({
+                  value: option.path,
+                  label: option.label,
+                  description: option.value,
+                  swatch: option.value,
+                }))}
+                onValueChange={setReferencePath}
+                placeholder={labels.referenceLabel}
+                disabled={primitiveColorAliasOptions.length === 0}
+                invalid={referencePathErrors.length > 0}
+                textMode="technical"
+                className="mt-2"
+              />
 
               {referencePathErrors.length > 0 ? (
                 <ul className="text-action-danger mt-2 grid gap-1 text-xs font-semibold">
@@ -252,12 +262,12 @@ export function CreateColorTokenForm({
               {labels.descriptionEnLabel}
             </label>
 
-            <textarea
+            <Textarea
               id="create-token-description-en"
               name="descriptionEn"
               defaultValue={state.values.descriptionEn}
               rows={3}
-              className="border-border-subtle bg-background-subtle focus:border-action-primary mt-2 w-full rounded-xl border px-3 py-2 text-sm outline-none"
+              className="mt-2"
             />
           </div>
 
@@ -269,12 +279,12 @@ export function CreateColorTokenForm({
               {labels.descriptionFrLabel}
             </label>
 
-            <textarea
+            <Textarea
               id="create-token-description-fr"
               name="descriptionFr"
               defaultValue={state.values.descriptionFr}
               rows={3}
-              className="border-border-subtle bg-background-subtle focus:border-action-primary mt-2 w-full rounded-xl border px-3 py-2 text-sm outline-none"
+              className="mt-2"
             />
           </div>
         </div>
@@ -292,13 +302,9 @@ export function CreateColorTokenForm({
         </p>
       ) : null}
 
-      <button
-        type="submit"
-        disabled={isPending}
-        className="bg-action-primary text-action-primary-content mt-5 rounded-xl px-4 py-2 text-sm font-semibold disabled:opacity-60"
-      >
+      <Button type="submit" disabled={isPending} className="mt-5">
         {isPending ? '…' : labels.submit}
-      </button>
+      </Button>
     </form>
   );
 }
