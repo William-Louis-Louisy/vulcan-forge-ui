@@ -9,6 +9,7 @@ import {
 import { useActionState, useMemo, useState } from 'react';
 import type { PrimitiveColorTokenAliasOption } from './tokens-editor.utils';
 import { useProjectSaveStatus } from '@/components/layout/ProjectTopbarBreadcrumb';
+import { Button, Select } from '@/components/ui';
 import { updateSemanticColorTokenAction } from './update-semantic-color-token.action';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 
@@ -58,6 +59,8 @@ export function SemanticColorTokenAliasEditor({
   const previewValue = selectedOption?.value ?? resolvedColorValue;
   const referencePathError = getFirstError(state.fieldErrors);
   const hasPrimitiveOptions = primitiveOptions.length > 0;
+  const helpId = `semantic-alias-${tokenPath}-help`;
+  const errorId = `semantic-alias-${tokenPath}-error`;
 
   const preserveSaveContext = usePreserveSaveContext(
     `semantic-color-token:${projectSlug}:${tokenPath}`,
@@ -91,37 +94,35 @@ export function SemanticColorTokenAliasEditor({
         {t('semanticAliasEditor.label')}
       </label>
 
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-        <select
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
+        <Select
           id={`semantic-alias-${tokenPath}`}
           name="referencePath"
           value={referencePath}
-          onChange={(event) => setReferencePath(event.target.value)}
+          options={primitiveOptions.map((option) => ({
+            value: option.path,
+            label: option.label,
+            description: option.value,
+            swatch: option.value,
+          }))}
+          onValueChange={setReferencePath}
+          placeholder={t('semanticAliasEditor.label')}
           disabled={!hasPrimitiveOptions || isPending}
-          aria-invalid={Boolean(referencePathError)}
-          aria-describedby={
-            referencePathError
-              ? `semantic-alias-${tokenPath}-error`
-              : `semantic-alias-${tokenPath}-help`
-          }
-          className="border-border-subtle bg-surface-primary focus:border-action-primary mt-2 w-full flex-1 rounded-md border py-2 pr-5 pl-3 font-mono text-sm outline-none"
-        >
-          {primitiveOptions.map((option) => (
-            <option key={option.path} value={option.path}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+          invalid={Boolean(referencePathError)}
+          ariaDescribedBy={referencePathError ? errorId : helpId}
+          textMode="technical"
+          className="flex-1"
+        />
 
-        <button
+        <Button
           type="submit"
           disabled={isPending || !hasPrimitiveOptions}
-          className="bg-action-primary text-action-primary-content mt-2 self-end rounded-md px-4 py-2 text-sm font-semibold disabled:opacity-60"
+          className="w-full sm:w-auto"
         >
           {isPending
             ? t('semanticAliasEditor.saving')
             : t('semanticAliasEditor.save')}
-        </button>
+        </Button>
       </div>
 
       <div className="mt-2 flex items-center gap-2">
@@ -136,10 +137,7 @@ export function SemanticColorTokenAliasEditor({
           />
         ) : null}
 
-        <p
-          id={`semantic-alias-${tokenPath}-help`}
-          className="text-content-tertiary text-xs"
-        >
+        <p id={helpId} className="text-content-tertiary text-xs">
           {hasPrimitiveOptions
             ? t('semanticAliasEditor.help')
             : t('semanticAliasEditor.noPrimitiveOptions')}
@@ -147,10 +145,7 @@ export function SemanticColorTokenAliasEditor({
       </div>
 
       {referencePathError ? (
-        <p
-          id={`semantic-alias-${tokenPath}-error`}
-          className="text-action-danger mt-2 text-xs font-semibold"
-        >
+        <p id={errorId} className="text-action-danger mt-2 text-xs font-semibold">
           {t(`semanticAliasEditor.validation.${referencePathError}`)}
         </p>
       ) : null}
