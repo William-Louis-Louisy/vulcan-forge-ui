@@ -28,17 +28,6 @@ export default async function HomePage() {
   const primaryLabel = isAuthenticated
     ? t('hero.dashboardCta')
     : t('hero.primaryCta');
-  const previewLabels = {
-    accessibility: t('preview.navigation.accessibility'),
-    brand: t('preview.navigation.brand'),
-    delivered: t('preview.delivered'),
-    export: t('preview.export'),
-    overview: t('preview.navigation.overview'),
-    preview: t('preview.label'),
-    project: t('preview.project'),
-    themes: t('preview.navigation.themes'),
-    tokens: t('preview.navigation.tokens'),
-  };
 
   return (
     <main className="bg-background-app text-content-primary overflow-hidden">
@@ -77,7 +66,7 @@ export default async function HomePage() {
           </div>
 
           <div id="example" className="scroll-mt-24">
-            <ProductEditorPreview labels={previewLabels} />
+            <ProductEditorPreview />
           </div>
         </div>
       </section>
@@ -151,7 +140,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="bg-action-secondary text-content-inverse px-6 py-20 lg:px-8 lg:py-24">
+      <section className="bg-surface-inverse text-content-on-inverse px-6 py-20 lg:px-8 lg:py-24">
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-3xl">
@@ -162,23 +151,23 @@ export default async function HomePage() {
                 {t('exports.title')}
               </h2>
             </div>
-            <p className="text-content-inverse/65 max-w-md text-sm leading-6">
+            <p className="text-content-on-inverse/65 max-w-md text-sm leading-6">
               {t('exports.description')}
             </p>
           </div>
 
-          <div className="border-content-inverse/15 mt-12 grid border-y sm:grid-cols-2 lg:grid-cols-3">
+          <div className="border-border-on-inverse mt-12 grid border-y sm:grid-cols-2 lg:grid-cols-3">
             {exportKeys.map((key) => (
               <article
                 key={key}
-                className="border-content-inverse/15 border-b p-5 sm:border-r"
+                className="border-border-on-inverse border-b p-5 sm:border-r"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <h3 className="font-semibold">
                       {t(`exports.items.${key}.title`)}
                     </h3>
-                    <p className="text-content-inverse/60 mt-2 font-mono text-xs">
+                    <p className="text-content-on-inverse/60 mt-2 font-mono text-xs">
                       {t(`exports.items.${key}.fileName`)}
                     </p>
                   </div>
