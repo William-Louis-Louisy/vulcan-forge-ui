@@ -67,9 +67,7 @@ export function CreateColorTokenForm({
 
   const [referencePath, setReferencePath] = useState(
     () =>
-      state.values.referencePath ||
-      primitiveColorAliasOptions[0]?.path ||
-      '',
+      state.values.referencePath || primitiveColorAliasOptions[0]?.path || '',
   );
 
   const preserveSaveContext = usePreserveSaveContext(
