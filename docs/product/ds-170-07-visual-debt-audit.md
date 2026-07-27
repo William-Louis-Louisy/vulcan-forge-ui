@@ -1,0 +1,209 @@
+# DS-170-07 — Visual debt and error-surface audit
+
+## Objective
+
+Close the remaining visual, interaction and error-state inconsistencies before the final product-journey QA pass.
+
+## Validated scope
+
+DS-170-07 includes:
+
+- enforcement of the approved VulcanForge UI color, typography, radius and density foundations;
+- shared field and dialog primitives;
+- migration of visible native selects;
+- normalization of legacy oversized surfaces;
+- removal of false affordances;
+- localized public and authenticated error surfaces;
+- a repeatable UI guard integrated into the standard quality workflow;
+- responsive and appearance-mode regression QA.
+
+It does not introduce a Prisma migration, a new domain model, billing, new export formats or an authenticated-workspace redesign.
+
+## Shared foundations
+
+### Fields
+
+`Input` and `Textarea` provide:
+
+- small and standard densities where relevant;
+- default and technical text modes;
+- semantic focus, invalid, disabled and read-only states;
+- class-name composition without replacing feature-owned labels, help text or error relationships.
+
+### Select
+
+The shared `Select` now supports:
+
+- small and standard densities;
+- default and technical text modes;
+- invalid, required and described-by semantics;
+- localized labels for functional choices;
+- technical typography only for token paths and values.
+
+Visible native selects were migrated in project creation, Tokens and Components workflows.
+
+### Dialog
+
+The shared `Dialog` uses the native modal dialog contract and provides:
+
+- an inert background while open;
+- Escape and backdrop dismissal;
+- focus placement inside the dialog;
+- focus restoration to the invoking control;
+- semantic overlay styling;
+- medium and large responsive widths.
+
+Token creation is presented through this modal foundation so the active token family cannot change while a creation task is in progress.
+
+## Token creation
+
+Color, spacing, radius, motion and typography creation forms retain their existing server actions and validation contracts.
+
+The modal workflow now guarantees that:
+
+- the creation type is captured from the active tab;
+- token navigation and the inspector are unavailable behind the modal;
+- Cancel, Escape and backdrop dismissal close the task;
+- successful creation closes the dialog, selects the new token, activates its family and clears the search query;
+- typography creation receives the wider dialog treatment required by its field density.
+
+## New design-system wizard
+
+The wizard retains the five-step workflow and its validation behavior.
+
+The page now provides stable top and bottom breathing room, including additional space beneath the action row on steps that nearly fill the viewport. Future steps remain genuinely disabled, while the current and completed steps remain navigable.
+
+## Visual normalization
+
+The pass includes:
+
+- semantic overlay and contrast roles derived from the approved Stone foundation;
+- replacement of generic black, white and neutral utility colors in application chrome;
+- normalized card, notice, panel and form radii;
+- removal of decorative shadows and oversized nesting where they were not part of an approved preview;
+- alignment of the compact authenticated menu with the public burger trigger without changing its popover behavior;
+- removal of stale Geist documentation and hardcoded preview copy.
+
+Dynamic colors that represent user-authored token data remain valid product data rather than application chrome.
+
+## Error-surface architecture
+
+### Authentication required
+
+Anonymous access to the authenticated application redirects to the localized Login route with `reason=authentication-required`.
+
+Login displays a dedicated authentication-required notice. No permanent standalone 401 page is introduced.
+
+### Public 404
+
+Unknown public paths are captured by the public route group and forwarded through `notFound()`. The localized branded 404 includes:
+
+- the public header and footer;
+- a return-home action;
+- Sign in for anonymous visitors or Dashboard for authenticated visitors.
+
+### Authenticated 404
+
+Unknown authenticated paths are captured below `/app` and forwarded through `notFound()`, preserving the application shell.
+
+Missing or inaccessible private project resources continue to use the masked 404 behavior so the interface does not reveal whether another user's resource exists.
+
+### Forbidden foundation
+
+`ErrorState` provides a forbidden tone for contexts where a real 403 may later be exposed safely. DS-170-07 does not add a public business route solely to demonstrate this state.
+
+### Recoverable 500
+
+Localized route error boundaries provide:
+
+- a real retry action connected to `reset()`;
+- a safe navigation fallback;
+- an optional diagnostic digest;
+- no stack trace or sensitive implementation detail.
+
+The global error boundary remains a minimal fallback for failures that prevent the localized layout from rendering.
+
+## Automated UI audit
+
+`npm run audit:ui` checks production source files and the README for:
+
+- legacy Geist references;
+- visible native selects;
+- generic black, white and neutral utility colors;
+- oversized radii outside documented exceptions;
+- legacy hardcoded preview copy;
+- presence of required field, dialog and error foundations;
+- presence of required semantic overlay tokens;
+- presence of unmatched-route catchalls for public and authenticated surfaces.
+
+Every allowlisted exception includes a concrete product rationale. The audit is part of `npm run quality` and the standard GitHub Actions Quality workflow.
+
+## Manual QA checklist
+
+### Wizard
+
+- verify top spacing above the return link at mobile and desktop widths;
+- verify bottom spacing beneath the action row on all five steps;
+- verify long steps remain scrollable without buttons touching the viewport edge;
+- verify light and dark appearances;
+- verify unavailable future steps are disabled.
+
+### Token creation dialogs
+
+- open New token from Color, Spacing, Radius, Motion and Typography;
+- verify the matching form opens and the background becomes inert;
+- verify the first usable field receives focus;
+- verify tab navigation remains trapped by the native modal contract;
+- verify Escape, backdrop and Cancel close the dialog;
+- verify focus returns to New token;
+- verify mobile scrolling and the wider Typography layout;
+- create one token and verify dialog closure, family activation, selection and search reset;
+- verify field and server errors remain visible and localized.
+
+### Error surfaces
+
+- anonymous `/fr/app` and `/en/app` redirect to localized Login with the authentication-required notice;
+- `/fr/page-inexistante` and `/en/missing-page` render the branded public 404;
+- authenticated `/fr/app/route-inexistante` renders the workspace 404 inside the App Shell;
+- a missing project resource renders the masked workspace 404;
+- public and authenticated 404 actions navigate correctly;
+- recoverable 500 boundaries expose Retry and safe navigation actions;
+- Retry calls `reset()` and can restore a one-time thrown component;
+- the global fallback contains no sensitive error details;
+- test FR/EN, light/dark, keyboard navigation, 390 px and desktop widths.
+
+### Visual regression
+
+- verify shared fields and selects across Settings, Tokens, Components and project creation;
+- verify semantic colors and visible focus states;
+- verify no unintended 2xl or 3xl card treatment remains;
+- verify compact authenticated navigation still closes on Escape and outside interaction;
+- verify Dashboard, Brand, Tokens, Themes, Components, Accessibility, Documentation, Exports and AI Instructions remain usable.
+
+## Automated validation status
+
+At implementation handoff:
+
+- lint: passing;
+- strict typecheck: passing;
+- formatting: passing;
+- UI audit: passing;
+- test suite: passing;
+- production build: passing;
+- final standard Quality workflow: pending the documentation head;
+- product-owner QA: pending.
+
+## Definition of done
+
+DS-170-07 is complete when:
+
+- shared fields, select and dialog foundations are in use where scoped;
+- visible native selects are removed;
+- token creation is modal and cannot drift from the selected family;
+- wizard vertical spacing passes responsive QA;
+- public and authenticated unmatched routes use the intended localized 404 surfaces;
+- recoverable and global 500 fallbacks are safe and actionable;
+- the UI audit passes without undocumented exceptions;
+- the standard Quality workflow passes on the final branch head;
+- no temporary diagnostic or formatter workflow remains;
+- product-owner QA is approved.
