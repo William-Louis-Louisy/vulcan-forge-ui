@@ -48,11 +48,11 @@ export function ProjectEditorNav({
   return (
     <nav
       aria-label={t('label')}
-      className="border-border-subtle bg-surface-primary shadow-soft rounded-3xl border p-3"
+      className="border-border-subtle bg-surface-primary shadow-soft rounded-xl border p-3"
     >
       <Link
-        href="/app/projects"
-        className="text-action-primary hover:text-action-primary/80 block px-3 py-2 text-sm font-semibold transition"
+        href="/app"
+        className="text-action-primary hover:text-action-primary/80 block px-2.5 py-2 text-sm font-semibold transition"
       >
         {t('backToProjects')}
       </Link>
@@ -81,7 +81,7 @@ export function ProjectEditorNav({
                 <li key={item.key}>
                   <span
                     aria-disabled="true"
-                    className="text-content-tertiary flex cursor-not-allowed items-center justify-between gap-3 rounded-2xl px-3 py-2 text-sm font-semibold opacity-70"
+                    className="text-content-tertiary flex cursor-not-allowed items-center justify-between gap-3 rounded-md px-2.5 py-2 text-sm font-semibold opacity-70"
                   >
                     <span>{labels[item.key]}</span>
 
@@ -99,9 +99,9 @@ export function ProjectEditorNav({
                   href={href}
                   aria-current={isActive ? 'page' : undefined}
                   className={[
-                    'flex items-center justify-between gap-3 rounded-2xl px-3 py-2 text-sm font-semibold transition',
+                    'flex items-center justify-between gap-3 rounded-md px-2.5 py-2 text-sm font-semibold transition',
                     isActive
-                      ? 'bg-action-primary text-action-primary-content'
+                      ? 'bg-action-accent/10 text-action-accent'
                       : 'text-content-secondary hover:bg-background-subtle hover:text-content-primary',
                   ].join(' ')}
                 >
@@ -114,7 +114,7 @@ export function ProjectEditorNav({
                         className={[
                           'inline-flex size-5 items-center justify-center rounded-full text-xs font-bold',
                           isActive
-                            ? 'bg-action-primary-content/20 text-action-primary-content'
+                            ? 'bg-action-accent/15 text-action-accent'
                             : 'bg-action-warning/10 text-action-warning',
                         ].join(' ')}
                       >
@@ -128,7 +128,7 @@ export function ProjectEditorNav({
                       className={[
                         'rounded-full px-2 py-0.5 text-[11px] font-semibold',
                         isActive
-                          ? 'bg-action-primary-content/20 text-action-primary-content'
+                          ? 'bg-action-accent/15 text-action-accent'
                           : 'bg-background-subtle text-content-tertiary',
                       ].join(' ')}
                     >
