@@ -16,7 +16,9 @@ describe('Panel', () => {
     expect(screen.getByText('Default panel')).toHaveClass(
       'bg-surface-primary',
       'shadow-soft',
-      'rounded-3xl',
+      'rounded-xl',
+      'border',
+      'border-border-subtle',
     );
   });
 
