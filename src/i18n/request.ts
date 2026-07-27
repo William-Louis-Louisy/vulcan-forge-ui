@@ -13,6 +13,7 @@ import { brandOverviewMessages } from '@/messages/brand-overview-messages';
 import { brandOnboardingMessages } from '@/messages/brand-onboarding-messages';
 import { publicSurfaceMessages } from '@/messages/public-surface-messages';
 import { productEditorPreviewMessages } from '@/messages/product-editor-preview-messages';
+import { errorSurfaceMessages } from '@/messages/error-surface-messages';
 
 const messagesByLocale = {
   en: () => import('../messages/en.json').then((module) => module.default),
@@ -42,6 +43,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
     brandOnboardingMessages[locale],
     publicSurfaceMessages[locale],
     productEditorPreviewMessages[locale],
+    errorSurfaceMessages[locale],
   ].reduce<MessageObject>(mergeMessages, {});
 
   return {
