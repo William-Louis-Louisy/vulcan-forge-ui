@@ -72,7 +72,7 @@ export function AuthShell({
                 <h2 className="mt-4 max-w-lg font-[family-name:var(--font-fraunces)] text-4xl leading-tight font-semibold tracking-[-0.035em]">
                   {benefitsTitle}
                 </h2>
-                <ul className="border-content-inverse/15 mt-10 divide-y divide-white/10 border-y">
+                <ul className="border-content-inverse/15 divide-content-inverse/10 mt-10 divide-y border-y">
                   {benefits.map((benefit, index) => (
                     <li
                       key={benefit}
