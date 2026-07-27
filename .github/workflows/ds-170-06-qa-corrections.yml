@@ -1,0 +1,193 @@
+name: DS-170-06 QA corrections
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  apply-corrections:
+    if: github.head_ref == 'feature/ds-170-06-public-surfaces'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout feature branch
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Apply validated QA corrections
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def apply(path: str, replacements: list[tuple[str, str]]) -> None:
+              file_path = Path(path)
+              content = file_path.read_text(encoding='utf-8')
+              for old, new in replacements:
+                  if old not in content:
+                      raise SystemExit(f'Missing expected text in {path}: {old!r}')
+                  content = content.replace(old, new)
+              file_path.write_text(content, encoding='utf-8')
+
+          apply(
+              'src/messages/public-surface-messages.ts',
+              [
+                  (
+                      'Hand off documented systems in English and French, with implementation rules already included.',
+                      'Hand off documented systems with implementation rules already included.',
+                  ),
+                  (
+                      'Free during beta. English and French from day one.',
+                      'Free during beta. No billing is enabled.',
+                  ),
+                  (
+                      'No credit card · English and French',
+                      'No credit card · Free during beta',
+                  ),
+                  (
+                      'Yes. Tokens are language-neutral; Markdown documentation and AI instructions are generated per locale with explicit fallbacks.',
+                      'CSS, Tailwind v4, TypeScript, React Native, Markdown documentation and AI instructions are available from the same project.',
+                  ),
+                  (
+                      'Do exports include English and French content?',
+                      'What can I export today?',
+                  ),
+                  (
+                      'English and French content',
+                      'Tokens, themes and components',
+                  ),
+                  (
+                      'Transmettez des systèmes documentés en français et en anglais, avec les règles d’implémentation déjà intégrées.',
+                      'Transmettez des systèmes documentés avec les règles d’implémentation déjà intégrées.',
+                  ),
+                  (
+                      'Gratuit pendant la bêta. Français et anglais dès le premier jour.',
+                      'Gratuit pendant la bêta. Aucune facturation n’est activée.',
+                  ),
+                  (
+                      'Aucune carte bancaire · Français et anglais',
+                      'Aucune carte bancaire · Gratuit pendant la bêta',
+                  ),
+                  (
+                      'Oui. Les tokens sont indépendants de la langue ; la documentation Markdown et les instructions IA sont générées par locale avec des fallbacks explicites.',
+                      'CSS, Tailwind v4, TypeScript, React Native, documentation Markdown et instructions IA sont disponibles depuis le même projet.',
+                  ),
+                  (
+                      'Les exports incluent-ils les contenus français et anglais ?',
+                      'Que puis-je exporter aujourd’hui ?',
+                  ),
+                  (
+                      'Contenus français et anglais',
+                      'Tokens, thèmes et composants',
+                  ),
+              ],
+          )
+
+          apply(
+              'src/app/[locale]/app/projects/new/page.tsx',
+              [
+                  ('<section className="mx-auto max-w-3xl">', '<section className="mx-auto max-w-5xl">'),
+                  (
+                      'className="text-action-primary text-sm font-semibold"',
+                      'className="text-content-secondary hover:text-content-primary text-sm font-semibold transition"',
+                  ),
+                  (
+                      'className="text-action-primary mt-8 text-sm font-semibold tracking-[0.24em] uppercase"',
+                      'className="text-action-accent mt-8 text-sm font-semibold tracking-[0.24em] uppercase"',
+                  ),
+                  (
+                      '<div className="border-border-subtle bg-surface-primary shadow-soft mt-8 rounded-3xl border p-6">',
+                      '<div className="mt-2">',
+                  ),
+              ],
+          )
+
+          apply(
+              'src/features/design-systems/CreateDesignSystemWizard.tsx',
+              [
+                  (
+                      '<ol className="grid gap-2 sm:grid-cols-5" aria-label={t(\'steps.label\')}>',
+                      '<ol className="border-border-subtle grid border-y sm:grid-cols-5" aria-label={t(\'steps.label\')}>',
+                  ),
+                  (
+                      "'w-full rounded-xl border px-3 py-3 text-left text-xs font-semibold transition',",
+                      "'border-border-subtle relative w-full border-b px-3 py-3 text-left text-xs font-semibold transition sm:border-b-0 sm:border-r sm:last:border-r-0',",
+                  ),
+                  (
+                      "? 'border-action-primary bg-action-primary/10 text-action-primary'",
+                      "? 'bg-surface-primary text-content-primary after:bg-action-accent after:absolute after:inset-x-3 after:bottom-0 after:h-0.5'",
+                  ),
+                  (
+                      ": 'border-border-subtle bg-background-subtle text-content-secondary',",
+                      ": 'bg-background-sunken text-content-secondary',",
+                  ),
+                  (
+                      "? 'cursor-not-allowed opacity-70'\n                    : 'hover:border-action-primary',",
+                      "? 'cursor-not-allowed opacity-70'\n                    : 'hover:bg-surface-secondary hover:text-content-primary',",
+                  ),
+                  (
+                      '<div className="border-border-subtle bg-surface-primary shadow-soft mt-8 rounded-3xl border p-6">',
+                      '<div className="border-border-subtle mt-6 border-y py-7 sm:py-8">',
+                  ),
+                  (
+                      'className="border-border-default bg-surface-primary text-content-primary mt-2 min-h-11 w-full rounded-lg border px-3"',
+                      'className="border-border-subtle bg-surface-primary text-content-primary focus:border-action-accent mt-2 min-h-10 w-full rounded-md border px-3 py-2 outline-none transition"',
+                  ),
+                  (
+                      'className="border-border-default bg-surface-primary text-content-primary mt-2 w-full rounded-lg border px-3 py-3"',
+                      'className="border-border-subtle bg-surface-primary text-content-primary focus:border-action-accent mt-2 w-full rounded-md border px-3 py-2 outline-none transition"',
+                  ),
+                  (
+                      'className="border-border-default bg-background-subtle flex cursor-pointer items-start gap-3 rounded-xl border p-4"',
+                      'className="border-border-subtle bg-surface-primary has-checked:border-action-accent has-checked:bg-action-accent/5 flex cursor-pointer items-start gap-3 rounded-md border p-4 transition"',
+                  ),
+                  (
+                      'className="border-border-default bg-background-subtle flex cursor-pointer items-center gap-3 rounded-xl border p-4"',
+                      'className="border-border-subtle bg-surface-primary has-checked:border-action-accent has-checked:bg-action-accent/5 flex cursor-pointer items-center gap-3 rounded-md border p-4 transition"',
+                  ),
+                  (
+                      'className="border-border-default bg-background-subtle flex cursor-pointer gap-3 rounded-xl border p-4"',
+                      'className="border-border-subtle bg-surface-primary has-checked:border-action-accent has-checked:bg-action-accent/5 flex cursor-pointer gap-3 rounded-md border p-4 transition"',
+                  ),
+                  (
+                      'className="mt-1"',
+                      'className="accent-[var(--vf-action-accent)] mt-1"',
+                  ),
+                  (
+                      '<input\n                  type="checkbox"\n                  checked={values.supportedLocales.includes(language.value)}',
+                      '<input\n                  type="checkbox"\n                  className="accent-[var(--vf-action-accent)]"\n                  checked={values.supportedLocales.includes(language.value)}',
+                  ),
+                  (
+                      '<div className="border-border-subtle bg-background-subtle rounded-xl border p-4">',
+                      '<div className="border-border-subtle bg-surface-primary rounded-md border p-4">',
+                  ),
+              ],
+          )
+          PY
+
+          npm run format
+
+      - name: Commit corrected surfaces
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "fix(ds-170-06): apply product-owner QA corrections"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
