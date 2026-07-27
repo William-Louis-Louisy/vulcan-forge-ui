@@ -135,6 +135,13 @@ const labels: ComponentContractEditorLabels = {
     tokenType: 'Token type',
     tokenPath: 'Token path',
     selectToken: 'Select a token',
+    tokenTypes: {
+      color: 'Color',
+      spacing: 'Spacing',
+      radius: 'Radius',
+      typography: 'Typography',
+      motion: 'Motion',
+    },
   },
 };
 
