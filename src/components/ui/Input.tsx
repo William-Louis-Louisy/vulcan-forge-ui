@@ -3,7 +3,7 @@ import type { InputHTMLAttributes } from 'react';
 export type InputSize = 'sm' | 'md';
 export type InputTextMode = 'default' | 'technical';
 
-export type InputProps = InputHTMLAttributes<HTMLInputElement> & {
+export type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> & {
   invalid?: boolean;
   size?: InputSize;
   textMode?: InputTextMode;
