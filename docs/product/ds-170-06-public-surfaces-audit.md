@@ -184,6 +184,8 @@ The preview now mirrors the current application more closely:
 
 The preview is static and uses no false interactive controls.
 
+The final wrapping correction keeps compact labels, actions, breadcrumbs, token names, values and navigation items on one line with controlled truncation. Only the inspector description is intentionally allowed to wrap.
+
 ## Pricing
 
 The Pricing page exposes three transparent product directions:
@@ -326,6 +328,7 @@ DS-170-06 does not introduce:
 - verify the primary CTA opens Signup anonymously and Dashboard when authenticated;
 - verify the Example CTA reaches the Tokens workspace preview;
 - verify the preview resembles the current Tokens page structure;
+- verify preview labels and actions do not wrap unexpectedly;
 - verify no preview element implies unsupported interaction;
 - verify all six export formats are visible;
 - verify no fictional customer-adoption claim remains;
@@ -379,6 +382,21 @@ DS-170-06 does not introduce:
 - verify color contrast in light and dark appearances;
 - verify no essential information depends on animation.
 
+## Product-owner QA result
+
+Product-owner QA is complete and approved for DS-170-06, including:
+
+- the page-2 MVP palette and removal of legacy Gold usage;
+- public Landing, Pricing, Login and Signup surfaces;
+- unified public navigation and compact burger behavior;
+- light and dark appearances;
+- FR/EN content and route behavior;
+- the current-product Tokens preview and its final wrapping correction;
+- the new design-system wizard alignment;
+- Signup confirmation and authentication flows;
+- responsive, keyboard and accessibility smoke checks;
+- authenticated typography non-regression review.
+
 ## Automated validation status
 
 - lint: passing;
@@ -387,9 +405,9 @@ DS-170-06 does not introduce:
 - focused tests: passing;
 - full test suite: passing;
 - production build: passing;
-- standard Quality workflow: passing on corrected head, run #638;
-- temporary formatter, font-migration and QA-correction workflows: absent from the final diff;
-- product-owner corrected-layout QA: pending.
+- standard Quality workflow: passing on final implementation head, run #643;
+- temporary formatter, font-migration, QA-correction and preview-formatter workflows: absent from the final diff;
+- product-owner corrected-layout QA: approved.
 
 ## Definition of done
 
@@ -412,3 +430,5 @@ DS-170-06 is complete when:
 - the standard Quality workflow passes on the final branch head;
 - no temporary workflow remains;
 - product-owner QA is complete.
+
+All DS-170-06 definition-of-done criteria are satisfied.
