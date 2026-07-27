@@ -254,9 +254,9 @@ describe('ComponentContractEditor', () => {
     );
     expect(screen.getAllByLabelText('Anatomy key')[0]).toHaveValue('root');
     expect(screen.getAllByLabelText('Anatomy label')[0]).toHaveValue('Root');
-    expect(screen.getAllByLabelText('Anatomy requirement')[0]).toHaveValue(
-      'required',
-    );
+    expect(
+      screen.getAllByLabelText('Anatomy requirement')[0],
+    ).toHaveTextContent('Required');
     expect(screen.getByText('Variants & states')).toBeInTheDocument();
     expect(screen.getByText('intent')).toBeInTheDocument();
     expect(screen.getByText('size')).toBeInTheDocument();
@@ -312,7 +312,7 @@ describe('ComponentContractEditor', () => {
     const anatomyRequirements = screen.getAllByLabelText('Anatomy requirement');
 
     expect(anatomyKeys).toHaveLength(3);
-    expect(anatomyRequirements[2]).toHaveValue('optional');
+    expect(anatomyRequirements[2]).toHaveTextContent('Optional');
   });
 
   it('adds an editable size tag', async () => {
@@ -366,7 +366,9 @@ describe('ComponentContractEditor', () => {
     expect(screen.getByDisplayValue('ghost')).toHaveFocus();
   });
 
-  it('shows an unsaved notice after editing an anatomy requirement', () => {
+  it('shows an unsaved notice after editing an anatomy requirement', async () => {
+    const user = userEvent.setup();
+
     render(
       <ComponentContractEditor
         locale="en"
@@ -387,11 +389,8 @@ describe('ComponentContractEditor', () => {
       return;
     }
 
-    fireEvent.change(firstAnatomyRequirement, {
-      target: {
-        value: 'derived',
-      },
-    });
+    await user.click(firstAnatomyRequirement);
+    await user.click(screen.getByRole('option', { name: 'Derived' }));
 
     expect(screen.getByRole('status')).toHaveTextContent(
       'Unsaved local changes.',
@@ -423,6 +422,8 @@ describe('ComponentContractEditor', () => {
   });
 
   it('adds a visual token binding', async () => {
+    const user = userEvent.setup();
+
     render(
       <ComponentContractEditor
         locale="en"
@@ -433,15 +434,18 @@ describe('ComponentContractEditor', () => {
       />,
     );
 
-    await userEvent.click(
+    await user.click(
       screen.getByRole('button', { name: /Add visual token/ }),
     );
 
     expect(screen.getByLabelText('Token type')).toBeInTheDocument();
-    expect(screen.getByLabelText('Token path')).toBeInTheDocument();
-    expect(
-      screen.getByRole('combobox', { name: 'Token path' }),
-    ).toBeInTheDocument();
+    const tokenPathSelect = screen.getByRole('combobox', {
+      name: 'Token path',
+    });
+    expect(tokenPathSelect).toBeInTheDocument();
+
+    await user.click(tokenPathSelect);
+
     expect(
       screen.getByRole('option', { name: 'color.background.default' }),
     ).toBeInTheDocument();
