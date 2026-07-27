@@ -92,7 +92,8 @@ const rules: readonly Rule[] = [
   },
   {
     id: 'unlocalized-preview-copy',
-    description: 'The legacy hardcoded typography-preview sentence is forbidden.',
+    description:
+      'The legacy hardcoded typography-preview sentence is forbidden.',
     pattern: /Aa Design system preview/g,
     appliesTo: () => true,
   },
@@ -131,7 +132,8 @@ function collectFiles(directory: string): string[] {
 
 function isAllowed(rule: RuleId, path: string) {
   return allowlist.some(
-    (entry) => entry.rule === rule && entry.path === path && entry.reason.trim(),
+    (entry) =>
+      entry.rule === rule && entry.path === path && entry.reason.trim(),
   );
 }
 
