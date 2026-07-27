@@ -49,8 +49,24 @@ jobs:
       - name: Check formatting
         run: npm run format:check
 
-      - name: Run UI audit
-        run: npm run audit:ui
+      - name: Capture UI audit
+        id: ui-audit
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          npm run audit:ui 2>&1 | tee ui-audit-output.txt
+
+      - name: Upload UI audit diagnostic
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ds-170-07-ui-audit-output
+          path: ui-audit-output.txt
+          retention-days: 1
+
+      - name: Enforce UI audit result
+        if: steps.ui-audit.outcome == 'failure'
+        run: exit 1
 
       - name: Run tests
         run: npm run test
