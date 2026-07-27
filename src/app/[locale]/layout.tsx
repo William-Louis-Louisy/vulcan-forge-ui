@@ -14,12 +14,12 @@ const fraunces = Fraunces({
 });
 
 const interTight = Inter_Tight({
-  variable: '--font-geist-sans',
+  variable: '--font-inter-tight',
   subsets: ['latin'],
 });
 
 const jetBrainsMono = JetBrains_Mono({
-  variable: '--font-geist-mono',
+  variable: '--font-jetbrains-mono',
   subsets: ['latin'],
 });
 
