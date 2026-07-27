@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/ui';
+import { Button, Input, Select } from '@/components/ui';
 import type {
   ComponentAnatomyPartDraft,
   ComponentContractEditorDraft,
@@ -78,6 +78,7 @@ export function ComponentAnatomyEditor({
             {draft.anatomy.map((part, index) => (
               <AnatomyPartRow
                 key={`${part.key}-${index}`}
+                rowId={`anatomy-part-${index}`}
                 labels={labels}
                 activeLocale={activeLocale}
                 part={part}
@@ -104,29 +105,34 @@ export function ComponentAnatomyEditor({
 }
 
 function AnatomyPartRow({
+  rowId,
   labels,
   activeLocale,
   part,
   onChange,
   onRemove,
 }: {
+  rowId: string;
   labels: ComponentAnatomyEditorLabels;
   activeLocale: 'en' | 'fr';
   part: ComponentAnatomyPartDraft;
   onChange: (part: ComponentAnatomyPartDraft) => void;
   onRemove: () => void;
 }) {
+  const requirementId = `${rowId}-requirement`;
+
   return (
     <div className="grid min-w-0 gap-2 px-3 py-2.5 md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_8rem_2rem] md:items-end">
       <label className="grid min-w-0 gap-1 md:block">
         <span className="text-content-tertiary text-[0.6875rem] font-medium md:sr-only">
           {labels.key}
         </span>
-        <input
+        <Input
           aria-label={labels.key}
           value={part.key}
           onChange={(event) => onChange({ ...part, key: event.target.value })}
-          className={`${fieldClassName} font-mono`}
+          size="sm"
+          textMode="technical"
         />
       </label>
 
@@ -134,7 +140,7 @@ function AnatomyPartRow({
         <span className="text-content-tertiary text-[0.6875rem] font-medium md:sr-only">
           {labels.label}
         </span>
-        <input
+        <Input
           aria-label={labels.label}
           value={part.label[activeLocale]}
           onChange={(event) =>
@@ -146,31 +152,30 @@ function AnatomyPartRow({
               },
             })
           }
-          className={fieldClassName}
+          size="sm"
         />
       </label>
 
-      <label className="grid min-w-0 gap-1 md:block">
-        <span className="text-content-tertiary text-[0.6875rem] font-medium md:sr-only">
-          {labels.requirement}
-        </span>
-        <select
-          aria-label={labels.requirement}
-          value={part.requirement}
-          onChange={(event) =>
-            onChange({
-              ...part,
-              requirement: event.target
-                .value as ComponentAnatomyPartDraft['requirement'],
-            })
-          }
-          className={fieldClassName}
+      <div className="grid min-w-0 gap-1 md:block">
+        <label
+          htmlFor={requirementId}
+          className="text-content-tertiary text-[0.6875rem] font-medium md:sr-only"
         >
-          <option value="required">{labels.requirements.required}</option>
-          <option value="optional">{labels.requirements.optional}</option>
-          <option value="derived">{labels.requirements.derived}</option>
-        </select>
-      </label>
+          {labels.requirement}
+        </label>
+        <Select<ComponentAnatomyPartDraft['requirement']>
+          id={requirementId}
+          value={part.requirement}
+          options={[
+            { value: 'required', label: labels.requirements.required },
+            { value: 'optional', label: labels.requirements.optional },
+            { value: 'derived', label: labels.requirements.derived },
+          ]}
+          onValueChange={(requirement) => onChange({ ...part, requirement })}
+          placeholder={labels.requirement}
+          size="sm"
+        />
+      </div>
 
       <button
         type="button"
@@ -183,6 +188,3 @@ function AnatomyPartRow({
     </div>
   );
 }
-
-const fieldClassName =
-  'border-border-subtle bg-surface-primary focus:border-action-primary min-h-9 w-full min-w-0 rounded-md border px-3 text-[0.8125rem] outline-none transition';
