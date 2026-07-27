@@ -10,11 +10,7 @@
   15:15  warning  'AppLocale' is defined but never used. Allowed unused vars must match /^_/u        @typescript-eslint/no-unused-vars
   16:15  warning  'ExportLogFormat' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
 
-/home/runner/work/vulcan-forge-ui/vulcan-forge-ui/src/components/ui/ErrorState.test.tsx
-  14:26  error  Do not use an `<a>` element to navigate to `/app/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages  @next/next/no-html-link-for-pages
-  14:26  error  Do not use an `<a>` element to navigate to `/app/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages  @next/next/no-html-link-for-pages
-
-✖ 5 problems (2 errors, 3 warnings)
+✖ 3 problems (0 errors, 3 warnings)
 
 
-Exit status: 1
+Exit status: 0
