@@ -286,8 +286,8 @@ function AppearancePreview({ preference }: { preference: ThemePreference }) {
         aria-hidden="true"
         className="border-border-default grid size-5 grid-cols-2 overflow-hidden rounded-sm border"
       >
-        <span className="bg-white" />
-        <span className="bg-neutral-900" />
+        <span className="bg-[var(--vf-color-white)]" />
+        <span className="bg-[var(--vf-color-stone-900)]" />
       </span>
     );
   }
@@ -297,7 +297,9 @@ function AppearancePreview({ preference }: { preference: ThemePreference }) {
       aria-hidden="true"
       className={[
         'border-border-default size-5 rounded-sm border',
-        preference === 'light' ? 'bg-white' : 'bg-neutral-900',
+        preference === 'light'
+          ? 'bg-[var(--vf-color-white)]'
+          : 'bg-[var(--vf-color-stone-900)]',
       ].join(' ')}
     />
   );

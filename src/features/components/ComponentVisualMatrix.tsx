@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, type CSSProperties } from 'react';
+import { Select } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
 import { resolveLocalizedStringWithFallback } from '@/domain/i18n';
 import type { ComponentRegistryItem } from './components-registry.utils';
@@ -142,24 +143,28 @@ export function ComponentVisualMatrix({
   return (
     <div className="min-w-0">
       {states.length > 0 ? (
-        <label className="mb-3 flex items-center justify-end gap-2">
-          <span className="text-content-tertiary text-xs font-semibold">
-            {labels.state}
-          </span>
-          <select
-            aria-label={labels.state}
-            value={stateKey}
-            onChange={(event) => setStateKey(event.target.value)}
-            className="border-border-subtle bg-surface-primary focus:border-action-primary min-h-8 rounded-md border px-2.5 font-mono text-xs outline-none"
+        <div className="mb-3 ml-auto grid max-w-xs gap-1.5">
+          <label
+            htmlFor="component-preview-state"
+            className="text-content-tertiary text-xs font-semibold"
           >
-            <option value="">{labels.baseState}</option>
-            {states.map((state) => (
-              <option key={state.key} value={state.key}>
-                {resolveMatrixLabel(locale, state.label, state.key)}
-              </option>
-            ))}
-          </select>
-        </label>
+            {labels.state}
+          </label>
+          <Select
+            id="component-preview-state"
+            value={stateKey}
+            options={[
+              { value: '', label: labels.baseState },
+              ...states.map((state) => ({
+                value: state.key,
+                label: resolveMatrixLabel(locale, state.label, state.key),
+              })),
+            ]}
+            onValueChange={setStateKey}
+            placeholder={labels.baseState}
+            size="sm"
+          />
+        </div>
       ) : null}
 
       <div className="border-border-subtle bg-surface-primary overflow-x-auto rounded-lg border p-3 shadow-sm">
