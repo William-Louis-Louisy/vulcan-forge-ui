@@ -10,6 +10,7 @@ import type { brandProfileMessages } from '../messages/brand-profile-messages';
 import type { brandOverviewMessages } from '../messages/brand-overview-messages';
 import type { brandOnboardingMessages } from '../messages/brand-onboarding-messages';
 import type { publicSurfaceMessages } from '../messages/public-surface-messages';
+import type { productEditorPreviewMessages } from '../messages/product-editor-preview-messages';
 
 type DeepMerge<Left, Right> = {
   [Key in keyof Left | keyof Right]: Key extends keyof Right
@@ -62,12 +63,17 @@ type ProductMessages = DeepMerge<
   ProjectMessages
 >;
 
+type PublicMessages = DeepMerge<
+  (typeof publicSurfaceMessages)['en'],
+  (typeof productEditorPreviewMessages)['en']
+>;
+
 type ScopedMessages = DeepMerge<
   DeepMerge<
     DeepMerge<ComponentMessages, ProductMessages>,
     (typeof brandOnboardingMessages)['en']
   >,
-  (typeof publicSurfaceMessages)['en']
+  PublicMessages
 >;
 
 type Messages = WidenMessageValues<
