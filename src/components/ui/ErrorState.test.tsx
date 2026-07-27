@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { ErrorState } from './ErrorState';
@@ -11,7 +12,7 @@ describe('ErrorState', () => {
         title="This surface could not be rendered."
         description="Retry the request or return to safety."
         primaryAction={<button type="button">Try again</button>}
-        secondaryAction={<a href="/app">Dashboard</a>}
+        secondaryAction={<Link href="/app">Dashboard</Link>}
         reference="Diagnostic reference: abc123"
       />,
     );
