@@ -24,7 +24,7 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
   const session = await auth();
 
   if (!session?.user) {
-    redirect(`/${requestedLocale}/login`);
+    redirect(`/${requestedLocale}/login?reason=authentication-required`);
   }
 
   const [t, appShellData] = await Promise.all([
