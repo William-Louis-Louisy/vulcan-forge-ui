@@ -65,12 +65,6 @@ export function ComponentRegistryCreateButton({
     router.refresh();
   }, [projectSlug, router, state.componentType, state.status]);
 
-  useEffect(() => {
-    if (!componentType && options[0]?.type) {
-      setComponentType(options[0].type);
-    }
-  }, [componentType, options]);
-
   return (
     <>
       {triggerLabel ? (
