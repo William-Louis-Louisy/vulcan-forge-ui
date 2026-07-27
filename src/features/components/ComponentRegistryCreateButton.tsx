@@ -1,8 +1,8 @@
 'use client';
 
-import { useActionState, useEffect, useRef } from 'react';
+import { useActionState, useEffect, useRef, useState } from 'react';
 import { PlusIcon } from '@phosphor-icons/react';
-import { Button } from '@/components/ui';
+import { Button, Select } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
 import { useRouter } from '@/i18n/navigation';
 import type { ComponentContractType } from '@/domain/design-system';
@@ -48,6 +48,9 @@ export function ComponentRegistryCreateButton({
     createComponentContractAction,
     initialCreateComponentContractActionState,
   );
+  const [componentType, setComponentType] = useState<ComponentContractType | ''>(
+    options[0]?.type ?? '',
+  );
   const hasAvailableType = options.length > 0;
 
   useEffect(() => {
@@ -61,6 +64,12 @@ export function ComponentRegistryCreateButton({
     );
     router.refresh();
   }, [projectSlug, router, state.componentType, state.status]);
+
+  useEffect(() => {
+    if (!componentType && options[0]?.type) {
+      setComponentType(options[0].type);
+    }
+  }, [componentType, options]);
 
   return (
     <>
@@ -88,7 +97,7 @@ export function ComponentRegistryCreateButton({
 
       <dialog
         ref={dialogRef}
-        className="border-border-default bg-background-app text-content-primary m-auto max-h-[calc(100dvh-2rem)] w-[min(28rem,calc(100%-2rem))] overflow-y-auto rounded-xl border p-0 shadow-2xl backdrop:bg-black/60"
+        className="border-border-default bg-background-app text-content-primary m-auto max-h-[calc(100dvh-2rem)] w-[min(28rem,calc(100%-2rem))] overflow-y-auto rounded-xl border p-0 shadow-2xl backdrop:bg-overlay-scrim"
       >
         <form action={formAction} className="p-4 sm:p-5">
           <input type="hidden" name="locale" value={locale} />
@@ -102,23 +111,26 @@ export function ComponentRegistryCreateButton({
           </p>
 
           {hasAvailableType ? (
-            <label className="mt-5 grid min-w-0 gap-1.5">
-              <span className="text-content-secondary text-xs font-semibold">
-                {labels.type}
-              </span>
-              <select
-                name="componentType"
-                required
-                defaultValue={options[0]?.type}
-                className="border-border-subtle bg-surface-primary focus:border-action-primary min-h-10 min-w-0 rounded-md border px-3 text-sm outline-none"
+            <div className="mt-5 grid min-w-0 gap-1.5">
+              <label
+                htmlFor="create-component-type"
+                className="text-content-secondary text-xs font-semibold"
               >
-                {options.map((option) => (
-                  <option key={option.type} value={option.type}>
-                    {option.name}
-                  </option>
-                ))}
-              </select>
-            </label>
+                {labels.type}
+              </label>
+              <Select<ComponentContractType>
+                id="create-component-type"
+                name="componentType"
+                value={componentType}
+                options={options.map((option) => ({
+                  value: option.type,
+                  label: option.name,
+                }))}
+                onValueChange={setComponentType}
+                placeholder={labels.type}
+                required
+              />
+            </div>
           ) : null}
 
           {state.error ? (
@@ -145,7 +157,7 @@ export function ComponentRegistryCreateButton({
               <Button
                 type="submit"
                 size="sm"
-                disabled={isPending}
+                disabled={isPending || !componentType}
                 className="w-full sm:w-auto"
               >
                 {isPending ? labels.submitting : labels.submit}
