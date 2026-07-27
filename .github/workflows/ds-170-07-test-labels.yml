@@ -1,0 +1,45 @@
+name: DS-170-07 component test label migration
+
+on:
+  push:
+    branches:
+      - feature/ds-170-07-visual-debt-audit
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    if: ${{ !contains(github.event.head_commit.message, 'align component editor test labels') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: feature/ds-170-07-visual-debt-audit
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+      - run: npm ci
+      - name: Update test labels
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          path = Path('src/features/components/ComponentContractEditor.test.tsx')
+          content = path.read_text()
+          old = """    tokenPath: 'Token path',\n    selectToken: 'Select a token',\n  },"""
+          new = """    tokenPath: 'Token path',\n    selectToken: 'Select a token',\n    tokenTypes: {\n      color: 'Color',\n      spacing: 'Spacing',\n      radius: 'Radius',\n      typography: 'Typography',\n      motion: 'Motion',\n    },\n  },"""
+          if old not in content:
+              raise SystemExit('Expected labels block not found')
+          path.write_text(content.replace(old, new, 1))
+          PY
+          npm run format
+      - name: Commit migration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/features/components/ComponentContractEditor.test.tsx
+          git commit -m "test(ds-170-07): align component editor test labels"
+          git push origin HEAD:feature/ds-170-07-visual-debt-audit
