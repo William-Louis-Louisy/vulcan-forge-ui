@@ -1,59 +1,101 @@
 import { Link } from '@/i18n/navigation';
-import { appConfig } from '@/config/app';
 import { useTranslations } from 'next-intl';
 import { LocaleSwitcher } from '@/components/i18n/LocaleSwitcher';
+import { PublicBrandLockup } from './PublicBrandLockup';
+import { PublicButtonLink } from './PublicButtonLink';
+import { PublicMobileMenu } from './PublicMobileMenu';
 
-export function PublicHeader() {
+type PublicHeaderProps = {
+  isAuthenticated?: boolean;
+  variant?: 'marketing' | 'auth';
+};
+
+export function PublicHeader({
+  isAuthenticated = false,
+  variant = 'marketing',
+}: PublicHeaderProps) {
   const t = useTranslations('PublicHeader');
+  const isMarketing = variant === 'marketing';
+  const accountHref = isAuthenticated ? '/app' : '/login';
+  const primaryHref = isAuthenticated ? '/app' : '/signup';
 
   return (
-    <header className="border-border-subtle bg-background-app/80 border-b backdrop-blur">
-      <div className="mx-auto flex min-h-16 max-w-6xl items-center justify-between px-6">
+    <header className="border-border-subtle bg-background-app/95 sticky top-0 z-40 border-b backdrop-blur">
+      <div className="mx-auto flex min-h-14 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
         <Link
           href="/"
-          className="text-content-primary inline-flex items-center gap-3 font-semibold"
+          aria-label={t('homeLabel')}
+          className="inline-flex shrink-0 items-center"
         >
-          <span className="bg-action-primary text-action-primary-content flex size-9 items-center justify-center rounded-lg text-sm font-black">
-            VF
-          </span>
-          <span>{appConfig.name}</span>
+          <PublicBrandLockup compact />
         </Link>
 
-        <nav
-          aria-label={t('navigationLabel')}
-          className="hidden items-center gap-6 md:flex"
-        >
-          <Link
-            href="/"
-            className="text-content-secondary hover:text-content-primary text-sm font-medium transition"
+        {isMarketing ? (
+          <nav
+            aria-label={t('navigationLabel')}
+            className="ml-8 hidden items-center gap-6 md:flex"
           >
-            {t('product')}
-          </Link>
+            <Link
+              href="/#product"
+              className="text-content-secondary hover:text-content-primary text-sm font-medium transition"
+            >
+              {t('product')}
+            </Link>
+            <Link
+              href="/pricing"
+              className="text-content-secondary hover:text-content-primary text-sm font-medium transition"
+            >
+              {t('pricing')}
+            </Link>
+            <Link
+              href="/#example"
+              className="text-content-secondary hover:text-content-primary text-sm font-medium transition"
+            >
+              {t('example')}
+            </Link>
+          </nav>
+        ) : null}
 
-          <Link
-            href="/pricing"
-            className="text-content-secondary hover:text-content-primary text-sm font-medium transition"
-          >
-            {t('pricing')}
-          </Link>
-        </nav>
-
-        <div className="flex items-center gap-3">
+        <div className="ml-auto flex items-center gap-2 sm:gap-3">
           <LocaleSwitcher />
 
-          <Link
-            href="/login"
-            className="border-border-default bg-surface-primary text-content-primary hover:bg-surface-secondary hidden rounded-lg border px-4 py-2 text-sm font-semibold transition sm:inline-flex"
-          >
-            {t('signIn')}
-          </Link>
+          {isMarketing ? (
+            <>
+              <PublicButtonLink
+                href={accountHref}
+                variant="ghost"
+                size="sm"
+                className="hidden sm:inline-flex"
+              >
+                {isAuthenticated ? t('dashboard') : t('signIn')}
+              </PublicButtonLink>
 
-          <Link
-            href="/signup"
-            className="bg-action-primary text-action-primary-content shadow-soft hover:bg-action-primary-hover rounded-lg px-4 py-2 text-sm font-semibold transition"
-          >
-            {t('getStarted')}
-          </Link>
+              {!isAuthenticated ? (
+                <PublicButtonLink
+                  href={primaryHref}
+                  size="sm"
+                  className="hidden sm:inline-flex"
+                >
+                  {t('getStarted')}
+                </PublicButtonLink>
+              ) : null}
+
+              <PublicMobileMenu
+                isAuthenticated={isAuthenticated}
+                labels={{
+                  close: t('mobile.close'),
+                  dashboard: t('dashboard'),
+                  example: t('example'),
+                  getStarted: t('getStarted'),
+                  navigation: t('navigationLabel'),
+                  open: t('mobile.open'),
+                  pricing: t('pricing'),
+                  product: t('product'),
+                  signIn: t('signIn'),
+                }}
+              />
+            </>
+          ) : null}
         </div>
       </div>
     </header>
