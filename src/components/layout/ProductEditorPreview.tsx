@@ -45,7 +45,9 @@ export function ProductEditorPreview({
             <span className="bg-action-accent text-action-accent-content flex size-3.5 shrink-0 items-center justify-center rounded-[3px] text-[8px] font-bold">
               A
             </span>
-            <span className="font-semibold whitespace-nowrap">Atelier Lyon</span>
+            <span className="font-semibold whitespace-nowrap">
+              Atelier Lyon
+            </span>
           </span>
 
           <span className="text-content-tertiary hidden min-w-0 truncate md:block">
@@ -62,10 +64,10 @@ export function ProductEditorPreview({
             <span className="text-content-tertiary hidden whitespace-nowrap lg:inline">
               92 / 100
             </span>
-            <span className="hidden whitespace-nowrap font-semibold sm:inline">
+            <span className="hidden font-semibold whitespace-nowrap sm:inline">
               {t('preview')}
             </span>
-            <span className="hidden whitespace-nowrap font-semibold sm:inline">
+            <span className="hidden font-semibold whitespace-nowrap sm:inline">
               {t('export')}
             </span>
             <span className="border-border-subtle bg-surface-primary shrink-0 rounded-sm border px-1.5 py-0.5 font-semibold">
@@ -171,7 +173,10 @@ export function ProductEditorPreview({
                     className={`border-border-default size-3.5 rounded-[3px] border ${swatchClassName}`}
                   />
                   <span className="min-w-0">
-                    <span title={name} className="block truncate whitespace-nowrap">
+                    <span
+                      title={name}
+                      className="block truncate whitespace-nowrap"
+                    >
                       {name}
                     </span>
                     <span className="text-content-tertiary mt-0.5 block truncate font-sans text-[8px] whitespace-nowrap">
@@ -214,7 +219,9 @@ export function ProductEditorPreview({
                     </p>
                   </div>
                   <div className="min-w-0">
-                    <p className="text-content-tertiary truncate">{t('value')}</p>
+                    <p className="text-content-tertiary truncate">
+                      {t('value')}
+                    </p>
                     <div className="border-border-subtle bg-surface-primary mt-1 truncate rounded-sm border px-2 py-1.5 font-mono whitespace-nowrap">
                       #FAF8F3
                     </div>
