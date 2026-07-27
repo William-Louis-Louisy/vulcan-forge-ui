@@ -14,7 +14,12 @@ const exportKeys = [
   'markdown',
   'aiInstructions',
 ] as const;
-const audienceKeys = ['freelancers', 'indieHackers', 'agencies', 'designers'] as const;
+const audienceKeys = [
+  'freelancers',
+  'indieHackers',
+  'agencies',
+  'designers',
+] as const;
 
 export default async function HomePage() {
   const [t, session] = await Promise.all([getTranslations('HomePage'), auth()]);
@@ -77,7 +82,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section id="product" className="scroll-mt-20 px-6 py-20 lg:px-8 lg:py-24">
+      <section
+        id="product"
+        className="scroll-mt-20 px-6 py-20 lg:px-8 lg:py-24"
+      >
         <div className="mx-auto max-w-7xl">
           <div className="max-w-3xl">
             <p className="text-action-accent text-xs font-semibold tracking-[0.18em] uppercase">
@@ -94,7 +102,9 @@ export default async function HomePage() {
                 key={key}
                 className="border-border-subtle py-8 md:border-r md:px-8 md:first:pl-0 md:last:border-r-0 md:last:pr-0"
               >
-                <p className="text-action-accent font-mono text-xs">0{index + 1}</p>
+                <p className="text-action-accent font-mono text-xs">
+                  0{index + 1}
+                </p>
                 <h3 className="mt-5 text-xl font-semibold">
                   {t(`problems.items.${key}.title`)}
                 </h3>
@@ -124,7 +134,10 @@ export default async function HomePage() {
 
             <div className="divide-border-subtle border-border-subtle grid border-y sm:grid-cols-2 sm:divide-x">
               {capabilityKeys.map((key) => (
-                <article key={key} className="border-border-subtle border-b p-6 last:border-b-0 sm:[&:nth-last-child(-n+2)]:border-b-0">
+                <article
+                  key={key}
+                  className="border-border-subtle border-b p-6 last:border-b-0 sm:[&:nth-last-child(-n+2)]:border-b-0"
+                >
                   <h3 className="text-base font-semibold">
                     {t(`capabilities.items.${key}.title`)}
                   </h3>
@@ -156,15 +169,25 @@ export default async function HomePage() {
 
           <div className="border-content-inverse/15 mt-12 grid border-y sm:grid-cols-2 lg:grid-cols-3">
             {exportKeys.map((key) => (
-              <article key={key} className="border-content-inverse/15 border-b p-5 sm:border-r">
+              <article
+                key={key}
+                className="border-content-inverse/15 border-b p-5 sm:border-r"
+              >
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h3 className="font-semibold">{t(`exports.items.${key}.title`)}</h3>
+                    <h3 className="font-semibold">
+                      {t(`exports.items.${key}.title`)}
+                    </h3>
                     <p className="text-content-inverse/60 mt-2 font-mono text-xs">
                       {t(`exports.items.${key}.fileName`)}
                     </p>
                   </div>
-                  <CheckIcon aria-hidden="true" className="text-action-accent shrink-0" size={16} weight="bold" />
+                  <CheckIcon
+                    aria-hidden="true"
+                    className="text-action-accent shrink-0"
+                    size={16}
+                    weight="bold"
+                  />
                 </div>
               </article>
             ))}
@@ -185,8 +208,13 @@ export default async function HomePage() {
 
           <div className="divide-border-subtle border-border-subtle divide-y border-y">
             {audienceKeys.map((key) => (
-              <article key={key} className="grid gap-2 py-5 sm:grid-cols-[12rem_1fr] sm:gap-8">
-                <h3 className="font-semibold">{t(`audiences.items.${key}.title`)}</h3>
+              <article
+                key={key}
+                className="grid gap-2 py-5 sm:grid-cols-[12rem_1fr] sm:gap-8"
+              >
+                <h3 className="font-semibold">
+                  {t(`audiences.items.${key}.title`)}
+                </h3>
                 <p className="text-content-secondary text-sm leading-6">
                   {t(`audiences.items.${key}.description`)}
                 </p>
@@ -206,7 +234,11 @@ export default async function HomePage() {
               {t('finalCta.description')}
             </p>
           </div>
-          <PublicButtonLink href={primaryHref} size="lg" className="shrink-0 gap-2">
+          <PublicButtonLink
+            href={primaryHref}
+            size="lg"
+            className="shrink-0 gap-2"
+          >
             {isAuthenticated ? t('hero.dashboardCta') : t('finalCta.cta')}
             <ArrowRightIcon aria-hidden="true" size={16} weight="bold" />
           </PublicButtonLink>

@@ -27,7 +27,11 @@ export function PublicBrandLockup({
       <Logo size={compact ? 25 : 29} tone={tone} />
       <span aria-label="VulcanForge UI">
         Vulcan<span className="text-action-accent">Forge</span>
-        <span className={inverse ? 'text-content-inverse/70' : 'text-content-tertiary'}>
+        <span
+          className={
+            inverse ? 'text-content-inverse/70' : 'text-content-tertiary'
+          }
+        >
           UI
         </span>
       </span>

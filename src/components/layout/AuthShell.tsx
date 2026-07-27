@@ -34,7 +34,9 @@ export function AuthShell({
             <h1 className="mt-4 font-[family-name:var(--font-fraunces)] text-4xl leading-[1.06] font-semibold tracking-[-0.04em] sm:text-5xl">
               {title}
             </h1>
-            <p className="text-content-secondary mt-5 leading-7">{description}</p>
+            <p className="text-content-secondary mt-5 leading-7">
+              {description}
+            </p>
             {children}
           </div>
         </section>
@@ -72,7 +74,10 @@ export function AuthShell({
                 </h2>
                 <ul className="border-content-inverse/15 mt-10 divide-y divide-white/10 border-y">
                   {benefits.map((benefit, index) => (
-                    <li key={benefit} className="grid grid-cols-[2.5rem_1fr] gap-4 py-5">
+                    <li
+                      key={benefit}
+                      className="grid grid-cols-[2.5rem_1fr] gap-4 py-5"
+                    >
                       <span className="text-action-accent font-mono text-xs">
                         0{index + 1}
                       </span>

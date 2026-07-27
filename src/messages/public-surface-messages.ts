@@ -297,7 +297,8 @@ export const publicSurfaceMessages = {
       signIn: 'Se connecter',
     },
     PublicFooter: {
-      copyright: '© {year} VulcanForge UI. Construit comme une bêta produit ciblée.',
+      copyright:
+        '© {year} VulcanForge UI. Construit comme une bêta produit ciblée.',
       dashboard: 'Tableau de bord',
       description:
         'Des design systems accessibles, exportables et prêts pour l’IA pour les équipes techniques.',
@@ -350,7 +351,8 @@ export const publicSurfaceMessages = {
             title: 'Indie hackers',
           },
         },
-        title: 'Pour les équipes qui traitent le design comme une infrastructure.',
+        title:
+          'Pour les équipes qui traitent le design comme une infrastructure.',
       },
       capabilities: {
         description:
@@ -414,7 +416,8 @@ export const publicSurfaceMessages = {
       },
       finalCta: {
         cta: 'Commencer gratuitement',
-        description: 'Gratuit pendant la bêta. Français et anglais dès le premier jour.',
+        description:
+          'Gratuit pendant la bêta. Français et anglais dès le premier jour.',
         title: 'Forgez votre premier système.',
       },
       hero: {
@@ -474,7 +477,8 @@ export const publicSurfaceMessages = {
           exports: {
             answer:
               'Oui. Les tokens sont indépendants de la langue ; la documentation Markdown et les instructions IA sont générées par locale avec des fallbacks explicites.',
-            question: 'Les exports incluent-ils les contenus français et anglais ?',
+            question:
+              'Les exports incluent-ils les contenus français et anglais ?',
           },
           futurePlans: {
             answer:

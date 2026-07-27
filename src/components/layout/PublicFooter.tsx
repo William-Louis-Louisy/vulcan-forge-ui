@@ -20,7 +20,10 @@ export function PublicFooter({
           </p>
         </div>
 
-        <nav aria-label={t('navigationLabel')} className="grid gap-3 text-sm sm:grid-cols-2 sm:gap-x-10">
+        <nav
+          aria-label={t('navigationLabel')}
+          className="grid gap-3 text-sm sm:grid-cols-2 sm:gap-x-10"
+        >
           <Link
             href="/#product"
             className="text-content-secondary hover:text-content-primary transition"

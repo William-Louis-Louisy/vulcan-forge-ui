@@ -10,7 +10,10 @@ type AuthLayoutProps = {
   }>;
 };
 
-export default async function AuthLayout({ children, params }: AuthLayoutProps) {
+export default async function AuthLayout({
+  children,
+  params,
+}: AuthLayoutProps) {
   const [session, { locale }] = await Promise.all([auth(), params]);
 
   if (session?.user?.id) {

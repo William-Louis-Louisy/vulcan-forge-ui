@@ -28,7 +28,7 @@ export function ProductEditorPreview({
     <figure
       aria-label={labels.preview}
       className={[
-        'border-border-strong bg-action-secondary text-content-inverse overflow-hidden border shadow-elevated',
+        'border-border-strong bg-action-secondary text-content-inverse shadow-elevated overflow-hidden border',
         compact ? 'rounded-xl p-2' : 'rounded-2xl p-3 sm:p-4',
       ].join(' ')}
     >
@@ -37,23 +37,33 @@ export function ProductEditorPreview({
           aurora-system · tokens · colors
         </div>
 
-        <div className={compact ? 'grid grid-cols-[7rem_1fr]' : 'grid md:grid-cols-[9rem_1fr_11rem]'}>
+        <div
+          className={
+            compact
+              ? 'grid grid-cols-[7rem_1fr]'
+              : 'grid md:grid-cols-[9rem_1fr_11rem]'
+          }
+        >
           <div className="border-border-subtle bg-background-sunken hidden border-r p-3 md:block">
-            {[labels.overview, labels.brand, labels.tokens, labels.themes, labels.accessibility].map(
-              (label) => (
-                <div
-                  key={label}
-                  className={[
-                    'rounded-md px-2 py-2 text-xs',
-                    label === labels.tokens
-                      ? 'bg-surface-primary text-content-primary font-semibold'
-                      : 'text-content-secondary',
-                  ].join(' ')}
-                >
-                  {label}
-                </div>
-              ),
-            )}
+            {[
+              labels.overview,
+              labels.brand,
+              labels.tokens,
+              labels.themes,
+              labels.accessibility,
+            ].map((label) => (
+              <div
+                key={label}
+                className={[
+                  'rounded-md px-2 py-2 text-xs',
+                  label === labels.tokens
+                    ? 'bg-surface-primary text-content-primary font-semibold'
+                    : 'text-content-secondary',
+                ].join(' ')}
+              >
+                {label}
+              </div>
+            ))}
           </div>
 
           <div className="divide-border-subtle divide-y p-3 sm:p-4">
@@ -85,7 +95,9 @@ export function ProductEditorPreview({
               </div>
               <div className="border-border-subtle bg-surface-primary mt-3 rounded-md border p-3">
                 <p className="text-xs font-semibold">Order #2847</p>
-                <p className="text-content-tertiary mt-1 text-[10px]">Lyon → Berlin</p>
+                <p className="text-content-tertiary mt-1 text-[10px]">
+                  Lyon → Berlin
+                </p>
                 <p className="text-action-success mt-3 text-[10px] font-semibold">
                   {labels.delivered}
                 </p>

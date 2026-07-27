@@ -4,11 +4,20 @@ import { auth } from '@/auth';
 import { PublicButtonLink } from '@/components/layout/PublicButtonLink';
 
 const tierKeys = ['freeBeta', 'proSoon', 'teamSoon'] as const;
-const tierFeatureKeys = ['feature1', 'feature2', 'feature3', 'feature4', 'feature5'] as const;
+const tierFeatureKeys = [
+  'feature1',
+  'feature2',
+  'feature3',
+  'feature4',
+  'feature5',
+] as const;
 const faqKeys = ['whyFree', 'exports', 'futurePlans'] as const;
 
 export default async function PricingPage() {
-  const [t, session] = await Promise.all([getTranslations('PricingPage'), auth()]);
+  const [t, session] = await Promise.all([
+    getTranslations('PricingPage'),
+    auth(),
+  ]);
   const isAuthenticated = Boolean(session?.user?.id);
   const primaryHref = isAuthenticated ? '/app' : '/signup';
 
@@ -20,7 +29,9 @@ export default async function PricingPage() {
         </p>
         <h1 className="mt-6 font-[family-name:var(--font-fraunces)] text-5xl leading-[1.02] font-semibold tracking-[-0.045em] text-balance sm:text-6xl">
           {t('titleBefore')}{' '}
-          <em className="text-content-tertiary font-medium">{t('titleAccent')}</em>
+          <em className="text-content-tertiary font-medium">
+            {t('titleAccent')}
+          </em>
         </h1>
         <p className="text-content-secondary mx-auto mt-6 max-w-2xl text-lg leading-8">
           {t('description')}
@@ -42,7 +53,9 @@ export default async function PricingPage() {
               ].join(' ')}
             >
               <div className="flex min-h-8 items-start justify-between gap-4">
-                <h2 className="text-xl font-semibold">{t(`tiers.${tierKey}.name`)}</h2>
+                <h2 className="text-xl font-semibold">
+                  {t(`tiers.${tierKey}.name`)}
+                </h2>
                 <span
                   className={[
                     'rounded-full px-2.5 py-1 text-[11px] font-semibold',
@@ -66,7 +79,9 @@ export default async function PricingPage() {
 
               {isAvailable ? (
                 <PublicButtonLink href={primaryHref} className="mt-7 w-full">
-                  {isAuthenticated ? t('dashboardCta') : t(`tiers.${tierKey}.cta`)}
+                  {isAuthenticated
+                    ? t('dashboardCta')
+                    : t(`tiers.${tierKey}.cta`)}
                 </PublicButtonLink>
               ) : (
                 <p className="border-border-subtle text-content-tertiary mt-7 flex min-h-10 items-center justify-center rounded-md border text-sm font-semibold">
@@ -81,7 +96,11 @@ export default async function PricingPage() {
                       aria-hidden="true"
                       size={15}
                       weight="bold"
-                      className={isAvailable ? 'text-action-accent mt-0.5' : 'text-content-tertiary mt-0.5'}
+                      className={
+                        isAvailable
+                          ? 'text-action-accent mt-0.5'
+                          : 'text-content-tertiary mt-0.5'
+                      }
                     />
                     <span className="text-content-secondary">
                       {t(`tiers.${tierKey}.features.${featureKey}`)}
@@ -104,7 +123,9 @@ export default async function PricingPage() {
               key={faqKey}
               className="border-border-subtle py-6 md:border-r md:px-6 md:first:pl-0 md:last:border-r-0 md:last:pr-0"
             >
-              <h3 className="font-semibold">{t(`faq.items.${faqKey}.question`)}</h3>
+              <h3 className="font-semibold">
+                {t(`faq.items.${faqKey}.question`)}
+              </h3>
               <p className="text-content-secondary mt-3 text-sm leading-6">
                 {t(`faq.items.${faqKey}.answer`)}
               </p>
