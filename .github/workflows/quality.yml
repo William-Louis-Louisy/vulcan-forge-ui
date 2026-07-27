@@ -43,8 +43,24 @@ jobs:
       - name: Run lint
         run: npm run lint
 
-      - name: Run typecheck
-        run: npm run typecheck
+      - name: Capture typecheck
+        id: typecheck
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          npm run typecheck 2>&1 | tee typecheck-output.txt
+
+      - name: Upload typecheck diagnostic
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ds-170-07-typecheck-output
+          path: typecheck-output.txt
+          retention-days: 1
+
+      - name: Enforce typecheck result
+        if: steps.typecheck.outcome == 'failure'
+        run: exit 1
 
       - name: Check formatting
         run: npm run format:check
