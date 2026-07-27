@@ -45,7 +45,7 @@ export function AuthShell({
           className={[
             'border-border-subtle hidden border-l px-10 py-14 lg:flex lg:items-center lg:justify-center xl:px-16',
             variant === 'signup'
-              ? 'bg-action-secondary text-content-inverse'
+              ? 'bg-action-secondary text-content-inverse dark:bg-background-sunken dark:text-content-primary'
               : 'bg-background-sunken',
           ].join(' ')}
         >
@@ -72,7 +72,7 @@ export function AuthShell({
                 <h2 className="mt-4 max-w-lg font-[family-name:var(--font-fraunces)] text-4xl leading-tight font-semibold tracking-[-0.035em]">
                   {benefitsTitle}
                 </h2>
-                <ul className="border-content-inverse/15 divide-content-inverse/10 mt-10 divide-y border-y">
+                <ul className="border-content-inverse/15 divide-content-inverse/10 dark:border-border-subtle dark:divide-border-subtle mt-10 divide-y border-y">
                   {benefits.map((benefit, index) => (
                     <li
                       key={benefit}
@@ -81,7 +81,7 @@ export function AuthShell({
                       <span className="text-action-accent font-mono text-xs">
                         0{index + 1}
                       </span>
-                      <span className="text-content-inverse/75 text-sm leading-6">
+                      <span className="text-content-inverse/75 dark:text-content-secondary text-sm leading-6">
                         {benefit}
                       </span>
                     </li>
