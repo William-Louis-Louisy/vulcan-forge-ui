@@ -10,6 +10,7 @@ type LoginPageProps = {
     locale: string;
   }>;
   searchParams: Promise<{
+    reason?: string;
     registered?: string;
   }>;
 };
@@ -21,7 +22,7 @@ export default async function LoginPage({
   searchParams,
 }: LoginPageProps) {
   const { locale: requestedLocale } = await params;
-  const { registered } = await searchParams;
+  const { reason, registered } = await searchParams;
 
   if (!hasLocale(routing.locales, requestedLocale)) {
     notFound();
@@ -31,6 +32,7 @@ export default async function LoginPage({
     <LoginPageContent
       locale={requestedLocale}
       registered={registered === '1'}
+      authenticationRequired={reason === 'authentication-required'}
     />
   );
 }
@@ -38,9 +40,11 @@ export default async function LoginPage({
 function LoginPageContent({
   locale,
   registered,
+  authenticationRequired,
 }: {
   locale: Locale;
   registered: boolean;
+  authenticationRequired: boolean;
 }) {
   const t = useTranslations('LoginPage');
 
@@ -53,7 +57,11 @@ function LoginPageContent({
       benefits={benefitKeys.map((key) => t(`benefits.items.${key}`))}
       variant="login"
     >
-      <LoginForm locale={locale} registered={registered} />
+      <LoginForm
+        locale={locale}
+        registered={registered}
+        authenticationRequired={authenticationRequired}
+      />
 
       <p className="text-content-secondary mt-6 text-center text-sm">
         {t('form.noAccount')}{' '}
