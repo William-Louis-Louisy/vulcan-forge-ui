@@ -6,12 +6,12 @@ type ErrorStateProps = {
   code: string;
   title: string;
   description: string;
-  eyebrow?: string;
+  eyebrow?: string | undefined;
   primaryAction: ReactNode;
-  secondaryAction?: ReactNode;
-  reference?: string;
-  tone?: ErrorStateTone;
-  compact?: boolean;
+  secondaryAction?: ReactNode | undefined;
+  reference?: string | undefined;
+  tone?: ErrorStateTone | undefined;
+  compact?: boolean | undefined;
 };
 
 const toneClassNames: Record<ErrorStateTone, string> = {
