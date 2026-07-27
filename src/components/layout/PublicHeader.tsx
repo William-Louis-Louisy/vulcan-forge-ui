@@ -9,9 +9,7 @@ type PublicHeaderProps = {
   isAuthenticated?: boolean;
 };
 
-export function PublicHeader({
-  isAuthenticated = false,
-}: PublicHeaderProps) {
+export function PublicHeader({ isAuthenticated = false }: PublicHeaderProps) {
   const t = useTranslations('PublicHeader');
   const accountHref = isAuthenticated ? '/app' : '/login';
 

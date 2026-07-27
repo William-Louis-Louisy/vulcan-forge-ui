@@ -49,7 +49,7 @@ export const publicSurfaceMessages = {
         items: {
           agencies: {
             description:
-              'Hand off documented systems in English and French, with implementation rules already included.',
+              'Hand off documented systems with implementation rules already included.',
             title: 'Small agencies',
           },
           designers: {
@@ -132,7 +132,7 @@ export const publicSurfaceMessages = {
       },
       finalCta: {
         cta: 'Start for free',
-        description: 'Free during beta. English and French from day one.',
+        description: 'Free during beta. No billing is enabled.',
         title: 'Forge your first system.',
       },
       hero: {
@@ -141,7 +141,7 @@ export const publicSurfaceMessages = {
           'Author your tokens, document your components, verify contrast and ship clean exports for web, mobile and your AI agent—all from one project.',
         eyebrow: 'Beta · Free during preview',
         primaryCta: 'Start a design system',
-        reassurance: 'No credit card · English and French',
+        reassurance: 'No credit card · Free during beta',
         secondaryCta: 'View an example',
         titleAccent: 'structured',
         titleAfter: 'not styled.',
@@ -191,8 +191,8 @@ export const publicSurfaceMessages = {
         items: {
           exports: {
             answer:
-              'Yes. Tokens are language-neutral; Markdown documentation and AI instructions are generated per locale with explicit fallbacks.',
-            question: 'Do exports include English and French content?',
+              'CSS, Tailwind v4, TypeScript, React Native, Markdown documentation and AI instructions are available from the same project.',
+            question: 'What can I export today?',
           },
           futurePlans: {
             answer:
@@ -212,7 +212,7 @@ export const publicSurfaceMessages = {
           cta: 'Start for free',
           features: {
             feature1: 'Unlimited beta projects',
-            feature2: 'English and French content',
+            feature2: 'Tokens, themes and components',
             feature3: 'Six export formats',
             feature4: 'AI instructions',
             feature5: 'Community support',
@@ -332,7 +332,7 @@ export const publicSurfaceMessages = {
         items: {
           agencies: {
             description:
-              'Transmettez des systèmes documentés en français et en anglais, avec les règles d’implémentation déjà intégrées.',
+              'Transmettez des systèmes documentés avec les règles d’implémentation déjà intégrées.',
             title: 'Petites agences',
           },
           designers: {
@@ -417,7 +417,7 @@ export const publicSurfaceMessages = {
       finalCta: {
         cta: 'Commencer gratuitement',
         description:
-          'Gratuit pendant la bêta. Français et anglais dès le premier jour.',
+          'Gratuit pendant la bêta. Aucune facturation n’est activée.',
         title: 'Forgez votre premier système.',
       },
       hero: {
@@ -426,7 +426,7 @@ export const publicSurfaceMessages = {
           'Créez vos tokens, documentez vos composants, vérifiez les contrastes et livrez des exports propres pour le web, le mobile et votre agent IA — depuis un seul projet.',
         eyebrow: 'Bêta · Gratuite pendant la phase de test',
         primaryCta: 'Créer un design system',
-        reassurance: 'Aucune carte bancaire · Français et anglais',
+        reassurance: 'Aucune carte bancaire · Gratuit pendant la bêta',
         secondaryCta: 'Voir un exemple',
         titleAccent: 'structurés',
         titleAfter: 'pas simplement stylisés.',
@@ -476,9 +476,8 @@ export const publicSurfaceMessages = {
         items: {
           exports: {
             answer:
-              'Oui. Les tokens sont indépendants de la langue ; la documentation Markdown et les instructions IA sont générées par locale avec des fallbacks explicites.',
-            question:
-              'Les exports incluent-ils les contenus français et anglais ?',
+              'CSS, Tailwind v4, TypeScript, React Native, documentation Markdown et instructions IA sont disponibles depuis le même projet.',
+            question: 'Que puis-je exporter aujourd’hui ?',
           },
           futurePlans: {
             answer:
@@ -498,7 +497,7 @@ export const publicSurfaceMessages = {
           cta: 'Commencer gratuitement',
           features: {
             feature1: 'Projets bêta illimités',
-            feature2: 'Contenus français et anglais',
+            feature2: 'Tokens, thèmes et composants',
             feature3: 'Six formats d’export',
             feature4: 'Instructions IA',
             feature5: 'Support communautaire',

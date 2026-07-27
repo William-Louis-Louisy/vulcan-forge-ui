@@ -27,15 +27,15 @@ async function CreateDesignSystemPageContent({ locale }: { locale: Locale }) {
   const t = await getTranslations('CreateDesignSystemPage');
 
   return (
-    <section className="mx-auto max-w-3xl">
+    <section className="mx-auto max-w-5xl">
       <AppLink
         href="/app"
-        className="text-action-primary text-sm font-semibold"
+        className="text-content-secondary hover:text-content-primary text-sm font-semibold transition"
       >
         {t('backLink')}
       </AppLink>
 
-      <p className="text-action-primary mt-8 text-sm font-semibold tracking-[0.24em] uppercase">
+      <p className="text-action-accent mt-8 text-sm font-semibold tracking-[0.24em] uppercase">
         {t('eyebrow')}
       </p>
 
@@ -47,7 +47,7 @@ async function CreateDesignSystemPageContent({ locale }: { locale: Locale }) {
         {t('description')}
       </p>
 
-      <div className="border-border-subtle bg-surface-primary shadow-soft mt-8 rounded-3xl border p-6">
+      <div className="mt-2">
         <CreateDesignSystemWizard locale={locale} />
       </div>
     </section>

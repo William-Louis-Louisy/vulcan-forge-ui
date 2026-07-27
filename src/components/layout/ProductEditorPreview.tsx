@@ -52,7 +52,9 @@ export function ProductEditorPreview({
           <span className="text-action-success ml-auto font-semibold">
             {t('saved')}
           </span>
-          <span className="text-content-tertiary hidden lg:inline">92 / 100</span>
+          <span className="text-content-tertiary hidden lg:inline">
+            92 / 100
+          </span>
           <span className="hidden font-semibold sm:inline">{t('preview')}</span>
           <span className="hidden font-semibold sm:inline">{t('export')}</span>
           <span className="border-border-subtle bg-surface-primary rounded-sm border px-1.5 py-0.5 font-semibold">

@@ -257,7 +257,10 @@ export function CreateDesignSystemWizard({
         />
       ))}
 
-      <ol className="grid gap-2 sm:grid-cols-5" aria-label={t('steps.label')}>
+      <ol
+        className="border-border-subtle grid border-y sm:grid-cols-5"
+        aria-label={t('steps.label')}
+      >
         {createDesignSystemSteps.map((step, index) => {
           const isActive = step === currentStep;
           const isCompleted = index < displayedStepIndex;
@@ -275,14 +278,14 @@ export function CreateDesignSystemWizard({
                 }}
                 aria-current={isActive ? 'step' : undefined}
                 className={[
-                  'w-full rounded-xl border px-3 py-3 text-left text-xs font-semibold transition',
+                  'border-border-subtle relative w-full border-b px-3 py-3 text-left text-xs font-semibold transition sm:border-r sm:border-b-0 sm:last:border-r-0',
                   isActive
-                    ? 'border-action-primary bg-action-primary/10 text-action-primary'
-                    : 'border-border-subtle bg-background-subtle text-content-secondary',
+                    ? 'bg-surface-primary text-content-primary after:bg-action-accent after:absolute after:inset-x-3 after:bottom-0 after:h-0.5'
+                    : 'bg-background-sunken text-content-secondary',
                   isCompleted ? 'text-content-primary' : '',
                   index > currentStepIndex
                     ? 'cursor-not-allowed opacity-70'
-                    : 'hover:border-action-primary',
+                    : 'hover:bg-surface-secondary hover:text-content-primary',
                 ].join(' ')}
               >
                 <span className="block text-[0.65rem] tracking-[0.18em] uppercase">
@@ -304,7 +307,7 @@ export function CreateDesignSystemWizard({
         </p>
       ) : null}
 
-      <div className="border-border-subtle bg-surface-primary shadow-soft mt-8 rounded-3xl border p-6">
+      <div className="border-border-subtle mt-6 border-y py-7 sm:py-8">
         {currentStep === 'basics' ? (
           <BasicsStep
             values={values}
@@ -402,7 +405,7 @@ function BasicsStep({
           onChange={(event) => onChange('name', event.target.value)}
           aria-invalid={Boolean(nameError)}
           aria-describedby={nameError ? 'name-error' : 'name-help'}
-          className="border-border-default bg-surface-primary text-content-primary mt-2 min-h-11 w-full rounded-lg border px-3"
+          className="border-border-subtle bg-surface-primary text-content-primary focus:border-action-accent mt-2 min-h-10 w-full rounded-md border px-3 py-2 transition outline-none"
         />
         <p id="name-help" className="text-content-tertiary mt-2 text-sm">
           {t('form.nameHelp')}
@@ -427,7 +430,7 @@ function BasicsStep({
           aria-describedby={
             descriptionError ? 'description-error' : 'description-help'
           }
-          className="border-border-default bg-surface-primary text-content-primary mt-2 w-full rounded-lg border px-3 py-3"
+          className="border-border-subtle bg-surface-primary text-content-primary focus:border-action-accent mt-2 w-full rounded-md border px-3 py-2 transition outline-none"
         />
         <p id="description-help" className="text-content-tertiary mt-2 text-sm">
           {t('form.descriptionHelp')}
@@ -477,7 +480,7 @@ function PlatformsLanguagesStep({
           {designSystemPlatforms.map((platform) => (
             <label
               key={platform}
-              className="border-border-default bg-background-subtle flex cursor-pointer items-start gap-3 rounded-xl border p-4"
+              className="border-border-subtle bg-surface-primary has-checked:border-action-accent has-checked:bg-action-accent/5 flex cursor-pointer items-start gap-3 rounded-md border p-4 transition"
             >
               <input
                 type="checkbox"
@@ -488,7 +491,7 @@ function PlatformsLanguagesStep({
                     toggleArrayValue(values.platforms, platform),
                   )
                 }
-                className="mt-1"
+                className="mt-1 accent-[var(--vf-action-accent)]"
               />
               <span>
                 <span className="block text-sm font-semibold">
@@ -534,7 +537,7 @@ function PlatformsLanguagesStep({
             onChange('supportedLocales', nextLanguageState.supportedLocales);
           }}
           aria-invalid={Boolean(defaultLocaleError)}
-          className="border-border-default bg-surface-primary text-content-primary mt-2 min-h-11 w-full rounded-lg border px-3"
+          className="border-border-subtle bg-surface-primary text-content-primary focus:border-action-accent mt-2 min-h-10 w-full rounded-md border px-3 py-2 transition outline-none"
         >
           {projectLanguageOptions.map((language) => (
             <option key={language.value} value={language.value}>
@@ -562,10 +565,11 @@ function PlatformsLanguagesStep({
             return (
               <label
                 key={language.value}
-                className="border-border-default bg-background-subtle flex cursor-pointer items-center gap-3 rounded-xl border p-4"
+                className="border-border-subtle bg-surface-primary has-checked:border-action-accent has-checked:bg-action-accent/5 flex cursor-pointer items-center gap-3 rounded-md border p-4 transition"
               >
                 <input
                   type="checkbox"
+                  className="accent-[var(--vf-action-accent)]"
                   checked={values.supportedLocales.includes(language.value)}
                   disabled={isDefaultLocale}
                   onChange={() =>
@@ -634,14 +638,14 @@ function VisualDirectionStep({
         {visualDirections.map((direction) => (
           <label
             key={direction}
-            className="border-border-default bg-background-subtle flex cursor-pointer gap-3 rounded-xl border p-4"
+            className="border-border-subtle bg-surface-primary has-checked:border-action-accent has-checked:bg-action-accent/5 flex cursor-pointer gap-3 rounded-md border p-4 transition"
           >
             <input
               type="radio"
               name="visualDirectionChoice"
               checked={values.visualDirection === direction}
               onChange={() => onChange('visualDirection', direction)}
-              className="mt-1"
+              className="mt-1 accent-[var(--vf-action-accent)]"
             />
             <span>
               <span className="block text-sm font-semibold">
@@ -693,14 +697,14 @@ function AccessibilityTargetStep({
         {accessibilityTargets.map((target) => (
           <label
             key={target}
-            className="border-border-default bg-background-subtle flex cursor-pointer gap-3 rounded-xl border p-4"
+            className="border-border-subtle bg-surface-primary has-checked:border-action-accent has-checked:bg-action-accent/5 flex cursor-pointer gap-3 rounded-md border p-4 transition"
           >
             <input
               type="radio"
               name="accessibilityTargetChoice"
               checked={values.accessibilityTarget === target}
               onChange={() => onChange('accessibilityTarget', target)}
-              className="mt-1"
+              className="mt-1 accent-[var(--vf-action-accent)]"
             />
             <span>
               <span className="block text-sm font-semibold">
@@ -790,7 +794,7 @@ function ReviewStep({ values }: { values: WizardValues }) {
 
 function ReviewItem({ label, value }: { label: string; value: string }) {
   return (
-    <div className="border-border-subtle bg-background-subtle rounded-xl border p-4">
+    <div className="border-border-subtle bg-surface-primary rounded-md border p-4">
       <dt className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
         {label}
       </dt>
