@@ -190,7 +190,8 @@ At implementation handoff:
 - UI audit: passing;
 - test suite: passing;
 - production build: passing;
-- final standard Quality workflow: pending the documentation head;
+- final standard Quality workflow: passing, run #704;
+- temporary diagnostic and formatter workflows: absent from the final diff;
 - product-owner QA: pending.
 
 ## Definition of done
