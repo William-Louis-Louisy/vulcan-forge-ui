@@ -194,6 +194,13 @@ function createComponentContractEditorLabels(
       tokenType: t('editor.visualTokens.tokenType'),
       tokenPath: t('editor.visualTokens.tokenPath'),
       selectToken: t('editor.visualTokens.selectToken'),
+      tokenTypes: {
+        color: t('editor.visualTokens.tokenTypes.color'),
+        spacing: t('editor.visualTokens.tokenTypes.spacing'),
+        radius: t('editor.visualTokens.tokenTypes.radius'),
+        typography: t('editor.visualTokens.tokenTypes.typography'),
+        motion: t('editor.visualTokens.tokenTypes.motion'),
+      },
     },
   };
 }

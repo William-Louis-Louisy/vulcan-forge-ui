@@ -529,7 +529,8 @@ function PlatformsLanguagesStep({
           onValueChange={(nextDefaultLocale) => {
             const nextLanguageState = updateDefaultLocale({
               defaultLocale: nextDefaultLocale,
-              supportedLocales: values.supportedLocales.filter(isAppLocaleValue),
+              supportedLocales:
+                values.supportedLocales.filter(isAppLocaleValue),
             });
 
             onChange('defaultLocale', nextLanguageState.defaultLocale);
@@ -549,7 +550,10 @@ function PlatformsLanguagesStep({
           {t('form.defaultLocaleHelp')}
         </p>
         {defaultLocaleError ? (
-          <p id={defaultLocaleErrorId} className="text-action-danger mt-2 text-sm">
+          <p
+            id={defaultLocaleErrorId}
+            className="text-action-danger mt-2 text-sm"
+          >
             {t(`validation.${defaultLocaleError}`)}
           </p>
         ) : null}

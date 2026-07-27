@@ -67,7 +67,7 @@ export function DeleteComponentContractButton({
 
       <dialog
         ref={dialogRef}
-        className="border-border-default bg-background-app text-content-primary m-auto max-h-[calc(100dvh-2rem)] w-[min(28rem,calc(100%-2rem))] overflow-y-auto rounded-xl border p-0 shadow-2xl backdrop:bg-overlay-scrim"
+        className="border-border-default bg-background-app text-content-primary backdrop:bg-overlay-scrim m-auto max-h-[calc(100dvh-2rem)] w-[min(28rem,calc(100%-2rem))] overflow-y-auto rounded-xl border p-0 shadow-2xl"
       >
         <form action={formAction} className="p-4 sm:p-5">
           <input type="hidden" name="locale" value={locale} />

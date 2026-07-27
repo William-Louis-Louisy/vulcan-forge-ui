@@ -321,7 +321,9 @@ export function Select<Value extends string>({
           <span
             className={[
               'block truncate text-xs font-semibold',
-              selectedOption ? labelTextClassNames[textMode] : 'text-content-tertiary',
+              selectedOption
+                ? labelTextClassNames[textMode]
+                : 'text-content-tertiary',
             ]
               .filter(Boolean)
               .join(' ')}

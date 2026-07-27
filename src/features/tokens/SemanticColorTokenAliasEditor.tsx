@@ -145,7 +145,10 @@ export function SemanticColorTokenAliasEditor({
       </div>
 
       {referencePathError ? (
-        <p id={errorId} className="text-action-danger mt-2 text-xs font-semibold">
+        <p
+          id={errorId}
+          className="text-action-danger mt-2 text-xs font-semibold"
+        >
           {t(`semanticAliasEditor.validation.${referencePathError}`)}
         </p>
       ) : null}

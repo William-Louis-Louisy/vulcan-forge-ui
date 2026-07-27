@@ -38,7 +38,11 @@ export default function GlobalError({
 
   useEffect(() => {
     console.error(error);
-    setLocale(document.documentElement.lang.toLowerCase().startsWith('fr') ? 'fr' : 'en');
+    setLocale(
+      document.documentElement.lang.toLowerCase().startsWith('fr')
+        ? 'fr'
+        : 'en',
+    );
   }, [error]);
 
   const labels = copy[locale];
