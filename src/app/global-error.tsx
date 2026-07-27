@@ -1,7 +1,7 @@
 'use client';
 
 import './globals.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useSyncExternalStore } from 'react';
 import { PublicBrandLockup } from '@/components/layout/PublicBrandLockup';
 
 const copy = {
@@ -27,6 +27,22 @@ const copy = {
   },
 } as const;
 
+type GlobalErrorLocale = keyof typeof copy;
+
+function subscribeToLocale() {
+  return () => undefined;
+}
+
+function getClientLocale(): GlobalErrorLocale {
+  return document.documentElement.lang.toLowerCase().startsWith('fr')
+    ? 'fr'
+    : 'en';
+}
+
+function getServerLocale(): GlobalErrorLocale {
+  return 'en';
+}
+
 export default function GlobalError({
   error,
   reset,
@@ -34,15 +50,14 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  const [locale, setLocale] = useState<keyof typeof copy>('en');
+  const locale = useSyncExternalStore(
+    subscribeToLocale,
+    getClientLocale,
+    getServerLocale,
+  );
 
   useEffect(() => {
     console.error(error);
-    setLocale(
-      document.documentElement.lang.toLowerCase().startsWith('fr')
-        ? 'fr'
-        : 'en',
-    );
   }, [error]);
 
   const labels = copy[locale];
