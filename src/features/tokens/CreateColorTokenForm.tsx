@@ -1,5 +1,5 @@
 import type { Locale } from '@/i18n/routing';
-import { useActionState, useEffect, useMemo, useState } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import { Button, Input, Select, Textarea } from '@/components/ui';
 import { createColorTokenAction } from './create-color-token.action';
 import type { PrimitiveColorTokenAliasOption } from './tokens-editor.utils';
@@ -65,23 +65,16 @@ export function CreateColorTokenForm({
     initialCreateColorTokenActionState,
   );
 
-  const firstPrimitiveReferencePath = useMemo(
-    () => primitiveColorAliasOptions[0]?.path ?? '',
-    [primitiveColorAliasOptions],
-  );
   const [referencePath, setReferencePath] = useState(
-    state.values.referencePath || firstPrimitiveReferencePath,
+    () =>
+      state.values.referencePath ||
+      primitiveColorAliasOptions[0]?.path ||
+      '',
   );
 
   const preserveSaveContext = usePreserveSaveContext(
     `create-color-token:${projectSlug}`,
   );
-
-  useEffect(() => {
-    if (!referencePath && firstPrimitiveReferencePath) {
-      setReferencePath(firstPrimitiveReferencePath);
-    }
-  }, [firstPrimitiveReferencePath, referencePath]);
 
   useEffect(() => {
     if (state.status !== 'success') {
