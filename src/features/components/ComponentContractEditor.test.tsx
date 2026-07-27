@@ -434,9 +434,7 @@ describe('ComponentContractEditor', () => {
       />,
     );
 
-    await user.click(
-      screen.getByRole('button', { name: /Add visual token/ }),
-    );
+    await user.click(screen.getByRole('button', { name: /Add visual token/ }));
 
     expect(screen.getByLabelText('Token type')).toBeInTheDocument();
     const tokenPathSelect = screen.getByRole('combobox', {
