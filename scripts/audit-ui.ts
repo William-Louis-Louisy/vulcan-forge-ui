@@ -57,6 +57,12 @@ const allowlist: readonly AllowlistEntry[] = [
     reason:
       'The public hero preview uses the validated large editorial-surface treatment.',
   },
+  {
+    rule: 'large-radius',
+    path: 'src/features/tokens/TokenTable.tsx',
+    reason:
+      'The mobile token row is an intentionally isolated card surface replacing the desktop table row.',
+  },
 ] as const;
 
 const rules: readonly Rule[] = [
@@ -162,9 +168,12 @@ function assertRequiredFoundations() {
   const requiredFiles = [
     'src/app/[locale]/not-found.tsx',
     'src/app/[locale]/error.tsx',
+    'src/app/[locale]/(public)/[...missing]/page.tsx',
     'src/app/[locale]/app/not-found.tsx',
     'src/app/[locale]/app/error.tsx',
+    'src/app/[locale]/app/[...missing]/page.tsx',
     'src/app/global-error.tsx',
+    'src/components/ui/Dialog.tsx',
     'src/components/ui/ErrorState.tsx',
     'src/components/ui/Input.tsx',
     'src/components/ui/Textarea.tsx',
