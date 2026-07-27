@@ -1,32 +1,8 @@
+import { useTranslations } from 'next-intl';
 import Logo from './Logo';
 
 type ProductEditorPreviewProps = {
   compact?: boolean;
-  labels: {
-    accessibility: string;
-    aiInstructions: string;
-    brand: string;
-    colors: string;
-    components: string;
-    description: string;
-    documentation: string;
-    export: string;
-    exports: string;
-    inspector: string;
-    newToken: string;
-    overview: string;
-    preview: string;
-    radius: string;
-    saved: string;
-    search: string;
-    semantic: string;
-    spacing: string;
-    themes: string;
-    tokenSummary: string;
-    tokens: string;
-    typography: string;
-    value: string;
-  };
 };
 
 const tokenRows = [
@@ -39,23 +15,23 @@ const tokenRows = [
 
 export function ProductEditorPreview({
   compact = false,
-  labels,
 }: ProductEditorPreviewProps) {
+  const t = useTranslations('ProductEditorPreview');
   const navigationItems = [
-    labels.overview,
-    labels.brand,
-    labels.tokens,
-    labels.themes,
-    labels.components,
-    labels.accessibility,
-    labels.documentation,
-    labels.exports,
-    labels.aiInstructions,
+    t('navigation.overview'),
+    t('navigation.brand'),
+    t('navigation.tokens'),
+    t('navigation.themes'),
+    t('navigation.components'),
+    t('navigation.accessibility'),
+    t('navigation.documentation'),
+    t('navigation.exports'),
+    t('navigation.aiInstructions'),
   ];
 
   return (
     <figure
-      aria-label={labels.preview}
+      aria-label={t('preview')}
       className={[
         'border-border-on-inverse bg-surface-inverse text-content-on-inverse shadow-elevated overflow-hidden border',
         compact ? 'rounded-lg p-2' : 'rounded-xl p-2 sm:p-3',
@@ -71,14 +47,14 @@ export function ProductEditorPreview({
             <span className="font-semibold">Atelier Lyon</span>
           </span>
           <span className="text-content-tertiary hidden md:inline">
-            / Aurora System / {labels.tokens}
+            / Aurora System / {t('navigation.tokens')}
           </span>
           <span className="text-action-success ml-auto font-semibold">
-            {labels.saved}
+            {t('saved')}
           </span>
           <span className="text-content-tertiary hidden lg:inline">92 / 100</span>
-          <span className="hidden font-semibold sm:inline">{labels.preview}</span>
-          <span className="hidden font-semibold sm:inline">{labels.export}</span>
+          <span className="hidden font-semibold sm:inline">{t('preview')}</span>
+          <span className="hidden font-semibold sm:inline">{t('export')}</span>
           <span className="border-border-subtle bg-surface-primary rounded-sm border px-1.5 py-0.5 font-semibold">
             FR
           </span>
@@ -104,7 +80,7 @@ export function ProductEditorPreview({
                     key={label}
                     className={[
                       'rounded-sm px-2 py-1.5 text-[9px]',
-                      label === labels.tokens
+                      label === t('navigation.tokens')
                         ? 'bg-surface-primary text-content-primary font-semibold'
                         : 'text-content-secondary',
                     ].join(' ')}
@@ -120,27 +96,29 @@ export function ProductEditorPreview({
             <div className="border-border-subtle border-b px-3 py-2.5 sm:px-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-xs font-semibold sm:text-sm">{labels.tokens}</p>
+                  <p className="text-xs font-semibold sm:text-sm">
+                    {t('navigation.tokens')}
+                  </p>
                   <p className="text-content-tertiary mt-0.5 text-[8px] sm:text-[9px]">
-                    {labels.tokenSummary}
+                    {t('tokenSummary')}
                   </p>
                 </div>
                 <div className="flex gap-1.5">
                   <span className="border-border-subtle bg-surface-primary text-content-tertiary rounded-sm border px-2 py-1 text-[8px]">
-                    {labels.search}
+                    {t('search')}
                   </span>
                   <span className="bg-action-primary text-action-primary-content rounded-sm px-2 py-1 text-[8px] font-semibold">
-                    {labels.newToken}
+                    {t('newToken')}
                   </span>
                 </div>
               </div>
 
               <div className="mt-2.5 flex gap-3 overflow-hidden text-[8px] font-semibold">
                 {[
-                  [labels.colors, '48'],
-                  [labels.spacing, '24'],
-                  [labels.radius, '12'],
-                  [labels.typography, '18'],
+                  [t('sets.colors'), '48'],
+                  [t('sets.spacing'), '24'],
+                  [t('sets.radius'), '12'],
+                  [t('sets.typography'), '18'],
                 ].map(([label, count], index) => (
                   <span
                     key={label}
@@ -162,7 +140,9 @@ export function ProductEditorPreview({
                   key={name}
                   className={[
                     'grid grid-cols-[1rem_minmax(0,1fr)_auto] items-center gap-2.5 py-2 font-mono text-[9px] sm:text-[10px]',
-                    index === 0 ? 'bg-action-accent/5 -mx-3 px-3 sm:-mx-4 sm:px-4' : '',
+                    index === 0
+                      ? 'bg-action-accent/5 -mx-3 px-3 sm:-mx-4 sm:px-4'
+                      : '',
                   ].join(' ')}
                 >
                   <span
@@ -172,7 +152,7 @@ export function ProductEditorPreview({
                   <span className="min-w-0">
                     <span className="block truncate">{name}</span>
                     <span className="text-content-tertiary mt-0.5 block font-sans text-[8px]">
-                      {kind === 'primitive' ? labels.primitive : labels.semantic}
+                      {kind === 'primitive' ? t('primitive') : t('semantic')}
                     </span>
                   </span>
                   <span className="text-content-tertiary">{value}</span>
@@ -185,33 +165,33 @@ export function ProductEditorPreview({
             <aside className="border-border-subtle bg-background-sunken hidden border-l lg:block">
               <div className="border-border-subtle border-b p-3">
                 <p className="text-content-tertiary text-[8px] font-semibold tracking-[0.14em] uppercase">
-                  {labels.preview}
+                  {t('preview')}
                 </p>
                 <div className="border-border-subtle bg-surface-primary mt-2 rounded-sm border p-2.5">
-                  <span className="bg-[#FAF8F3] border-border-default block h-10 rounded-sm border" />
+                  <span className="border-border-default block h-10 rounded-sm border bg-[#FAF8F3]" />
                   <p className="mt-2 font-mono text-[9px]">#FAF8F3</p>
                 </div>
               </div>
 
               <div className="p-3">
                 <p className="text-content-tertiary text-[8px] font-semibold tracking-[0.14em] uppercase">
-                  {labels.inspector}
+                  {t('inspector')}
                 </p>
                 <div className="mt-3 space-y-3 text-[8px]">
                   <div>
-                    <p className="text-content-tertiary">Token path</p>
+                    <p className="text-content-tertiary">{t('tokenPath')}</p>
                     <p className="mt-1 font-mono">color.bg.app</p>
                   </div>
                   <div>
-                    <p className="text-content-tertiary">{labels.value}</p>
+                    <p className="text-content-tertiary">{t('value')}</p>
                     <div className="border-border-subtle bg-surface-primary mt-1 rounded-sm border px-2 py-1.5 font-mono">
                       #FAF8F3
                     </div>
                   </div>
                   <div>
-                    <p className="text-content-tertiary">{labels.description}</p>
+                    <p className="text-content-tertiary">{t('description')}</p>
                     <div className="border-border-subtle bg-surface-primary text-content-secondary mt-1 rounded-sm border px-2 py-1.5 leading-4">
-                      Main application background.
+                      {t('sampleDescription')}
                     </div>
                   </div>
                 </div>
