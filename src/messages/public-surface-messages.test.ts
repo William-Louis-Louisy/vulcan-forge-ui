@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { signupSchema } from '@/features/auth/signup/signup.schema';
 import { publicSurfaceMessages } from './public-surface-messages';
 
 function flattenKeys(value: unknown, prefix = ''): string[] {
@@ -30,12 +31,14 @@ describe('publicSurfaceMessages', () => {
     }
   });
 
-  it('keeps the approved signup confirmation contract in the base form', () => {
-    expect(publicSurfaceMessages.en.SignupPage.title).toBe(
-      'Forge your first system.',
-    );
-    expect(publicSurfaceMessages.fr.SignupPage.title).toBe(
-      'Forgez votre premier système.',
-    );
+  it('keeps the approved signup password confirmation contract', () => {
+    const result = signupSchema.safeParse({
+      name: 'Élise Marchand',
+      email: 'elise@example.com',
+      password: 'valid-password-12',
+      passwordConfirmation: 'different-password-12',
+    });
+
+    expect(result.success).toBe(false);
   });
 });
