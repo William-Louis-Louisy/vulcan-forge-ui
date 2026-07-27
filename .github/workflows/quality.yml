@@ -19,14 +19,16 @@ jobs:
     timeout-minutes: 10
 
     permissions:
-      contents: read
+      contents: write
 
     env:
       DATABASE_URL: postgresql://vulcan:vulcan_dev_password@localhost:5432/vulcan_forge_ui?schema=public
 
     steps:
-      - name: Checkout repository
+      - name: Checkout feature branch
         uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -36,6 +38,20 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Format repository
+        run: npm run format
+
+      - name: Commit formatting
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "style(ds-170-07): format final QA corrections"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
 
       - name: Generate Prisma Client
         run: npm run db:generate
@@ -52,24 +68,8 @@ jobs:
       - name: Run UI audit
         run: npm run audit:ui
 
-      - name: Capture tests
-        id: tests
-        continue-on-error: true
-        run: |
-          set -o pipefail
-          npm run test 2>&1 | tee test-output.txt
-
-      - name: Upload test diagnostics
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: ds-170-07-test-output
-          path: test-output.txt
-          retention-days: 1
-
-      - name: Enforce test result
-        if: steps.tests.outcome == 'failure'
-        run: exit 1
+      - name: Run tests
+        run: npm run test
 
       - name: Build application
         run: npm run build
