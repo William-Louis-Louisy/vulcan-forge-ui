@@ -41,9 +41,7 @@ jobs:
 
       - name: Apply approved QA corrections
         if: ${{ github.event_name == 'pull_request' && github.head_ref == 'feature/ds-170-07-visual-debt-audit' }}
-        run: |
-          python scripts/apply-ds-170-07-final-qa.py
-          npm run format
+        run: python scripts/apply-ds-170-07-final-qa.py
 
       - name: Commit approved QA corrections
         if: ${{ github.event_name == 'pull_request' && github.head_ref == 'feature/ds-170-07-visual-debt-audit' }}
