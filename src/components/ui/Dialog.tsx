@@ -1,11 +1,6 @@
 'use client';
 
-import {
-  useEffect,
-  useRef,
-  type MouseEvent,
-  type ReactNode,
-} from 'react';
+import { useEffect, useRef, type MouseEvent, type ReactNode } from 'react';
 
 export type DialogSize = 'md' | 'lg';
 
