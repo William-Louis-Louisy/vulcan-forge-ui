@@ -21,7 +21,7 @@ export function TokenEditorLimitationsNotice({
   labels,
 }: TokenEditorLimitationsNoticeProps) {
   return (
-    <section className="border-action-warning/30 bg-action-warning/10 mt-8 rounded-3xl border p-5">
+    <section className="border-action-warning/30 bg-action-warning/10 mt-8 rounded-lg border p-5">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <p className="text-action-warning text-sm font-semibold tracking-[0.18em] uppercase">
@@ -65,7 +65,7 @@ function TokenEditorCapabilityCard({
   items: string[];
 }) {
   return (
-    <div className="border-border-subtle bg-surface-primary rounded-2xl border p-4">
+    <div className="border-border-subtle bg-surface-primary rounded-md border p-4">
       <h3 className="text-sm font-semibold">{title}</h3>
 
       <ul className="text-content-secondary mt-3 grid gap-2 text-sm leading-6">

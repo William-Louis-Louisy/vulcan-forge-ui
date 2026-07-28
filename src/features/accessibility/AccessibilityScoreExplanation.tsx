@@ -71,7 +71,7 @@ export function AccessibilityScoreExplanation({
       {isOpen ? (
         <div
           aria-hidden="true"
-          className="fixed inset-0 z-30 bg-black/60 backdrop-blur-sm sm:hidden"
+          className="bg-overlay-scrim fixed inset-0 z-30 backdrop-blur-sm sm:hidden"
         />
       ) : null}
 

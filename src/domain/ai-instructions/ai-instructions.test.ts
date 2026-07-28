@@ -37,7 +37,23 @@ const components: ComponentContract[] = [
       fr: 'Déclenche une action importante de l’utilisateur.',
     },
     status: 'ready',
-    anatomy: ['root', 'label', 'icon'],
+    anatomy: [
+      {
+        key: 'root',
+        label: { en: 'Root', fr: 'Racine' },
+        requirement: 'required',
+      },
+      {
+        key: 'label',
+        label: { en: 'Label', fr: 'Libellé' },
+        requirement: 'required',
+      },
+      {
+        key: 'icon',
+        label: { en: 'Icon', fr: 'Icône' },
+        requirement: 'optional',
+      },
+    ],
     variants: [
       {
         key: 'primary',
@@ -160,6 +176,8 @@ describe('generateAiInstructions', () => {
     expect(result.content).toContain('Never use emoji.');
     expect(result.content).toContain('## Token rules');
     expect(result.content).toContain('## Component rules');
+    expect(result.content).toContain('- **Anatomy:** root, label, icon');
+    expect(result.content).not.toContain('[object Object]');
     expect(result.content).toContain('## Accessibility rules');
     expect(result.content).toContain('## Forbidden patterns');
     expect(result.content).toContain('Do not invent tokens');

@@ -10,6 +10,7 @@ import {
 } from './typography-token-value.utils';
 import type { Locale } from '@/i18n/routing';
 import { useActionState, useEffect, useMemo, useState } from 'react';
+import { Button, DialogActions, Input, Textarea } from '@/components/ui';
 import { createDesignTokenAction } from './create-design-token.action';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 
@@ -113,31 +114,19 @@ export function CreateTypographyTokenForm({
     <form
       action={formAction}
       onSubmitCapture={preserveSaveContext}
-      className="border-border-subtle bg-surface-primary shadow-soft mt-6 rounded-3xl border p-5"
+      className="bg-surface-primary p-5 sm:p-6"
     >
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="projectSlug" value={projectSlug} />
       <input type="hidden" name="type" value="typography" />
       <input type="hidden" name="value" value={serializedTypographyValue} />
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h2 className="text-xl font-semibold tracking-tight">
-            {labels.title}
-          </h2>
+      <div>
+        <h2 className="text-xl font-semibold tracking-tight">{labels.title}</h2>
 
-          <p className="text-content-secondary mt-2 max-w-2xl text-sm leading-6">
-            {labels.description}
-          </p>
-        </div>
-
-        <button
-          type="button"
-          onClick={onCancel}
-          className="border-border-subtle text-content-secondary hover:text-content-primary rounded-xl border px-3 py-2 text-sm font-semibold"
-        >
-          {labels.cancel}
-        </button>
+        <p className="text-content-secondary mt-2 max-w-2xl text-sm leading-6">
+          {labels.description}
+        </p>
       </div>
 
       <div className="mt-5 grid gap-4">
@@ -149,12 +138,13 @@ export function CreateTypographyTokenForm({
             {labels.pathLabel}
           </label>
 
-          <input
+          <Input
             id="create-typography-token-path"
             name="path"
             defaultValue={state.values.path}
-            aria-invalid={pathErrors.length > 0}
-            className="border-border-subtle bg-background-subtle focus:border-action-primary mt-2 w-full rounded-xl border px-3 py-2 font-mono text-sm outline-none"
+            invalid={pathErrors.length > 0}
+            textMode="technical"
+            className="mt-2"
             placeholder={labels.pathPlaceholder}
           />
 
@@ -168,100 +158,45 @@ export function CreateTypographyTokenForm({
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label
-              htmlFor="create-typography-font-family"
-              className="text-content-tertiary text-xs font-semibold tracking-[0.16em] uppercase"
-            >
-              {labels.fontFamilyLabel}
-            </label>
-
-            <input
-              id="create-typography-font-family"
-              value={typographyValues.fontFamily}
-              onChange={(event) =>
-                updateTypographyField('fontFamily', event.target.value)
-              }
-              className="border-border-subtle bg-background-subtle focus:border-action-primary mt-2 w-full rounded-xl border px-3 py-2 text-sm outline-none"
-              placeholder={labels.fontFamilyPlaceholder}
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="create-typography-font-size"
-              className="text-content-tertiary text-xs font-semibold tracking-[0.16em] uppercase"
-            >
-              {labels.fontSizeLabel}
-            </label>
-
-            <input
-              id="create-typography-font-size"
-              value={typographyValues.fontSize}
-              onChange={(event) =>
-                updateTypographyField('fontSize', event.target.value)
-              }
-              className="border-border-subtle bg-background-subtle focus:border-action-primary mt-2 w-full rounded-xl border px-3 py-2 font-mono text-sm outline-none"
-              placeholder={labels.fontSizePlaceholder}
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="create-typography-font-weight"
-              className="text-content-tertiary text-xs font-semibold tracking-[0.16em] uppercase"
-            >
-              {labels.fontWeightLabel}
-            </label>
-
-            <input
-              id="create-typography-font-weight"
-              value={typographyValues.fontWeight}
-              onChange={(event) =>
-                updateTypographyField('fontWeight', event.target.value)
-              }
-              className="border-border-subtle bg-background-subtle focus:border-action-primary mt-2 w-full rounded-xl border px-3 py-2 font-mono text-sm outline-none"
-              placeholder={labels.fontWeightPlaceholder}
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="create-typography-line-height"
-              className="text-content-tertiary text-xs font-semibold tracking-[0.16em] uppercase"
-            >
-              {labels.lineHeightLabel}
-            </label>
-
-            <input
-              id="create-typography-line-height"
-              value={typographyValues.lineHeight}
-              onChange={(event) =>
-                updateTypographyField('lineHeight', event.target.value)
-              }
-              className="border-border-subtle bg-background-subtle focus:border-action-primary mt-2 w-full rounded-xl border px-3 py-2 font-mono text-sm outline-none"
-              placeholder={labels.lineHeightPlaceholder}
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="create-typography-letter-spacing"
-              className="text-content-tertiary text-xs font-semibold tracking-[0.16em] uppercase"
-            >
-              {labels.letterSpacingLabel}
-            </label>
-
-            <input
-              id="create-typography-letter-spacing"
-              value={typographyValues.letterSpacing}
-              onChange={(event) =>
-                updateTypographyField('letterSpacing', event.target.value)
-              }
-              className="border-border-subtle bg-background-subtle focus:border-action-primary mt-2 w-full rounded-xl border px-3 py-2 font-mono text-sm outline-none"
-              placeholder={labels.letterSpacingPlaceholder}
-            />
-          </div>
+          <TypographyInput
+            id="create-typography-font-family"
+            label={labels.fontFamilyLabel}
+            value={typographyValues.fontFamily}
+            placeholder={labels.fontFamilyPlaceholder}
+            onChange={(value) => updateTypographyField('fontFamily', value)}
+          />
+          <TypographyInput
+            id="create-typography-font-size"
+            label={labels.fontSizeLabel}
+            value={typographyValues.fontSize}
+            placeholder={labels.fontSizePlaceholder}
+            onChange={(value) => updateTypographyField('fontSize', value)}
+            technical
+          />
+          <TypographyInput
+            id="create-typography-font-weight"
+            label={labels.fontWeightLabel}
+            value={typographyValues.fontWeight}
+            placeholder={labels.fontWeightPlaceholder}
+            onChange={(value) => updateTypographyField('fontWeight', value)}
+            technical
+          />
+          <TypographyInput
+            id="create-typography-line-height"
+            label={labels.lineHeightLabel}
+            value={typographyValues.lineHeight}
+            placeholder={labels.lineHeightPlaceholder}
+            onChange={(value) => updateTypographyField('lineHeight', value)}
+            technical
+          />
+          <TypographyInput
+            id="create-typography-letter-spacing"
+            label={labels.letterSpacingLabel}
+            value={typographyValues.letterSpacing}
+            placeholder={labels.letterSpacingPlaceholder}
+            onChange={(value) => updateTypographyField('letterSpacing', value)}
+            technical
+          />
         </div>
 
         {valueErrors.length > 0 ? (
@@ -281,12 +216,12 @@ export function CreateTypographyTokenForm({
               {labels.descriptionEnLabel}
             </label>
 
-            <textarea
+            <Textarea
               id="create-typography-description-en"
               name="descriptionEn"
               defaultValue={state.values.descriptionEn}
               rows={3}
-              className="border-border-subtle bg-background-subtle focus:border-action-primary mt-2 w-full rounded-xl border px-3 py-2 text-sm outline-none"
+              className="mt-2"
             />
           </div>
 
@@ -298,12 +233,12 @@ export function CreateTypographyTokenForm({
               {labels.descriptionFrLabel}
             </label>
 
-            <textarea
+            <Textarea
               id="create-typography-description-fr"
               name="descriptionFr"
               defaultValue={state.values.descriptionFr}
               rows={3}
-              className="border-border-subtle bg-background-subtle focus:border-action-primary mt-2 w-full rounded-xl border px-3 py-2 text-sm outline-none"
+              className="mt-2"
             />
           </div>
         </div>
@@ -321,13 +256,54 @@ export function CreateTypographyTokenForm({
         </p>
       ) : null}
 
-      <button
-        type="submit"
-        disabled={isPending}
-        className="bg-action-primary text-action-primary-content mt-5 rounded-xl px-4 py-2 text-sm font-semibold disabled:opacity-60"
-      >
-        {isPending ? '…' : labels.submit}
-      </button>
+      <DialogActions>
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={onCancel}
+          className="w-full sm:w-auto"
+        >
+          {labels.cancel}
+        </Button>
+        <Button type="submit" disabled={isPending} className="w-full sm:w-auto">
+          {isPending ? '…' : labels.submit}
+        </Button>
+      </DialogActions>
     </form>
+  );
+}
+
+function TypographyInput({
+  id,
+  label,
+  value,
+  placeholder,
+  onChange,
+  technical = false,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  placeholder: string;
+  onChange: (value: string) => void;
+  technical?: boolean;
+}) {
+  return (
+    <div>
+      <label
+        htmlFor={id}
+        className="text-content-tertiary text-xs font-semibold tracking-[0.16em] uppercase"
+      >
+        {label}
+      </label>
+      <Input
+        id={id}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        textMode={technical ? 'technical' : 'default'}
+        className="mt-2"
+        placeholder={placeholder}
+      />
+    </div>
   );
 }

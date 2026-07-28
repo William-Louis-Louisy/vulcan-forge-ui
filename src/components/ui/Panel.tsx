@@ -32,7 +32,7 @@ export function Panel({
   return (
     <div
       className={[
-        'rounded-3xl border',
+        'rounded-xl border',
         variantClassNames[variant],
         paddingClassNames[padding],
         className,

@@ -31,7 +31,7 @@ export function Card({
   return (
     <div
       className={[
-        'rounded-md border',
+        'rounded-lg border',
         variantClassNames[variant],
         paddingClassNames[padding],
         className,

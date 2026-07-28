@@ -11,6 +11,7 @@ import type { brandOverviewMessages } from '../messages/brand-overview-messages'
 import type { brandOnboardingMessages } from '../messages/brand-onboarding-messages';
 import type { publicSurfaceMessages } from '../messages/public-surface-messages';
 import type { productEditorPreviewMessages } from '../messages/product-editor-preview-messages';
+import type { errorSurfaceMessages } from '../messages/error-surface-messages';
 
 type DeepMerge<Left, Right> = {
   [Key in keyof Left | keyof Right]: Key extends keyof Right
@@ -73,7 +74,7 @@ type ScopedMessages = DeepMerge<
     DeepMerge<ComponentMessages, ProductMessages>,
     (typeof brandOnboardingMessages)['en']
   >,
-  PublicMessages
+  DeepMerge<PublicMessages, (typeof errorSurfaceMessages)['en']>
 >;
 
 type Messages = WidenMessageValues<

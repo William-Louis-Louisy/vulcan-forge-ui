@@ -26,7 +26,7 @@ export function Notice({
   return (
     <div
       className={[
-        'rounded-2xl border p-4 text-sm leading-6',
+        'rounded-lg border p-4 text-sm leading-6',
         toneClassNames[tone],
         className,
       ]

@@ -39,7 +39,7 @@ export function MobileAppMenu({
         aria-expanded={isOpen}
         aria-controls={popoverId}
         onClick={toggle}
-        className="border-border-subtle bg-background-subtle text-content-secondary hover:bg-surface-secondary focus-visible:outline-border-focus flex size-8 items-center justify-center rounded-md border transition focus-visible:outline-2 focus-visible:outline-offset-2"
+        className="border-border-subtle bg-surface-primary text-content-primary hover:bg-surface-secondary focus-visible:outline-border-focus flex size-9 items-center justify-center rounded-md border transition focus-visible:outline-2 focus-visible:outline-offset-2"
       >
         {isOpen ? (
           <XIcon aria-hidden="true" size={18} weight="bold" />
@@ -53,6 +53,9 @@ export function MobileAppMenu({
           id={popoverId}
           className="border-border-subtle bg-surface-primary shadow-elevated absolute top-full right-0 z-50 mt-2 max-h-[calc(100vh-4rem)] w-[min(22rem,calc(100vw-1rem))] overflow-y-auto rounded-md border p-3"
         >
+          <div className="text-content-tertiary px-2.5 pb-2 text-[11px] font-semibold tracking-[0.16em] uppercase">
+            {navigationLabel}
+          </div>
           <AppShellNavigation
             navigationLabel={navigationLabel}
             labels={navigationItems}
@@ -60,10 +63,12 @@ export function MobileAppMenu({
           />
 
           <div className="border-border-subtle mt-4 border-t pt-3">
-            <p className="text-content-tertiary text-[11px] font-semibold tracking-[0.16em] uppercase">
+            <p className="text-content-tertiary px-2.5 text-[11px] font-semibold tracking-[0.16em] uppercase">
               {accountLabel}
             </p>
-            <p className="mt-2 truncate text-sm font-semibold">{userEmail}</p>
+            <p className="mt-2 truncate px-2.5 text-sm font-semibold">
+              {userEmail}
+            </p>
 
             <Link
               href="/app/settings"

@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# VulcanForge UI
 
-## Getting Started
+VulcanForge UI is a multilingual SaaS for authoring accessible, exportable and AI-ready design systems from one structured project.
 
-First, run the development server:
+## Requirements
+
+- Node.js version defined in `.nvmrc`;
+- npm;
+- PostgreSQL for persistence-backed development flows.
+
+## Local development
+
+Install dependencies and start the development server:
 
 ```bash
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application is then available at `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Database helpers:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run db:up
+npm run db:generate
+npm run db:migrate
+```
 
-## Learn More
+## Quality checks
 
-To learn more about Next.js, take a look at the following resources:
+Run the complete preflight before opening or updating a pull request:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run quality
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The quality command includes Prisma generation, linting, strict TypeScript checking, formatting verification, the UI-debt audit, tests and a production build.
 
-## Deploy on Vercel
+The focused visual-debt guard can also be run independently:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run audit:ui
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## UI foundations
+
+The product uses the validated MVP foundations globally:
+
+- **Fraunces** for rare editorial display levels;
+- **Inter Tight** for application and marketing interface typography;
+- **JetBrains Mono** for token paths, code-like values and technical metadata;
+- the approved Stone, Clay, Ink, Moss, Amber and Rust palette;
+- semantic light/dark roles instead of page-local colors.
+
+The visual source of truth and implementation rules are documented under `docs/product/`.
+
+## Stack
+
+- Next.js App Router;
+- React and TypeScript strict mode;
+- Tailwind CSS;
+- next-intl;
+- NextAuth;
+- Prisma and PostgreSQL;
+- Vitest and Testing Library.

@@ -97,6 +97,13 @@ export const componentGuidelineMessages = {
         visualTokens: {
           description:
             'Map design system tokens to the supported preview roles: background, foreground, border, radius, padding, paddingX, paddingY, duration or motion.',
+          tokenTypes: {
+            color: 'Color',
+            spacing: 'Spacing',
+            radius: 'Radius',
+            typography: 'Typography',
+            motion: 'Motion',
+          },
         },
       },
       foundationsPreview: {
@@ -272,6 +279,13 @@ export const componentGuidelineMessages = {
         visualTokens: {
           description:
             'Associez les tokens du design system aux rôles de preview pris en charge : background, foreground, border, radius, padding, paddingX, paddingY, duration ou motion.',
+          tokenTypes: {
+            color: 'Couleur',
+            spacing: 'Espacement',
+            radius: 'Rayon',
+            typography: 'Typographie',
+            motion: 'Mouvement',
+          },
         },
       },
       foundationsPreview: {

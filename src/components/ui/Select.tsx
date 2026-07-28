@@ -20,6 +20,9 @@ export type SelectOption<Value extends string = string> = {
   disabled?: boolean;
 };
 
+export type SelectSize = 'sm' | 'md';
+export type SelectTextMode = 'default' | 'technical';
+
 export type SelectProps<Value extends string = string> = {
   id: string;
   value: Value | '';
@@ -28,7 +31,27 @@ export type SelectProps<Value extends string = string> = {
   placeholder: string;
   name?: string;
   disabled?: boolean;
+  invalid?: boolean;
+  required?: boolean;
+  ariaDescribedBy?: string;
+  size?: SelectSize;
+  textMode?: SelectTextMode;
   className?: string;
+};
+
+const triggerSizeClassNames: Record<SelectSize, string> = {
+  sm: 'min-h-9 px-3 py-1.5',
+  md: 'min-h-10 px-3 py-2',
+};
+
+const optionSizeClassNames: Record<SelectSize, string> = {
+  sm: 'min-h-9 px-2.5 py-1.5',
+  md: 'min-h-11 px-2.5 py-2',
+};
+
+const labelTextClassNames: Record<SelectTextMode, string> = {
+  default: '',
+  technical: 'font-mono',
 };
 
 function getEnabledOptionIndexes<Value extends string>(
@@ -64,6 +87,11 @@ export function Select<Value extends string>({
   placeholder,
   name,
   disabled = false,
+  invalid = false,
+  required = false,
+  ariaDescribedBy,
+  size = 'md',
+  textMode = 'default',
   className,
 }: SelectProps<Value>) {
   const generatedId = useId().replaceAll(':', '');
@@ -271,10 +299,19 @@ export function Select<Value extends string>({
             ? `${listboxId}-option-${activeIndex}`
             : undefined
         }
+        aria-invalid={invalid || undefined}
+        aria-required={required || undefined}
+        aria-describedby={ariaDescribedBy}
         disabled={disabled}
         onClick={handleTriggerClick}
         onKeyDown={handleKeyDown}
-        className="border-border-default bg-surface-primary text-content-primary focus-visible:outline-border-focus hover:bg-background-subtle flex min-h-10 w-full min-w-0 items-center gap-2 rounded-md border px-3 text-left transition focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+        className={[
+          'border-border-default bg-surface-primary text-content-primary focus-visible:outline-border-focus hover:bg-background-subtle flex w-full min-w-0 items-center gap-2 rounded-md border text-left transition focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60',
+          invalid ? 'border-action-danger' : '',
+          triggerSizeClassNames[size],
+        ]
+          .filter(Boolean)
+          .join(' ')}
       >
         {selectedOption?.swatch ? (
           <SelectSwatch value={selectedOption.swatch} />
@@ -284,13 +321,24 @@ export function Select<Value extends string>({
           <span
             className={[
               'block truncate text-xs font-semibold',
-              selectedOption ? 'font-mono' : 'text-content-tertiary',
-            ].join(' ')}
+              selectedOption
+                ? labelTextClassNames[textMode]
+                : 'text-content-tertiary',
+            ]
+              .filter(Boolean)
+              .join(' ')}
           >
             {selectedOption?.label ?? placeholder}
           </span>
           {selectedOption?.description ? (
-            <span className="text-content-tertiary mt-0.5 block truncate font-mono text-[0.6875rem]">
+            <span
+              className={[
+                'text-content-tertiary mt-0.5 block truncate text-[0.6875rem]',
+                labelTextClassNames[textMode],
+              ]
+                .filter(Boolean)
+                .join(' ')}
+            >
               {selectedOption.description}
             </span>
           ) : null}
@@ -334,8 +382,9 @@ export function Select<Value extends string>({
                   onPointerMove={() => setActiveIndex(index)}
                   onClick={() => selectOption(option)}
                   className={[
-                    'flex min-h-11 w-full min-w-0 items-center gap-2 rounded-sm px-2.5 py-2 text-left transition',
+                    'flex w-full min-w-0 items-center gap-2 rounded-sm text-left transition',
                     'disabled:cursor-not-allowed disabled:opacity-50',
+                    optionSizeClassNames[size],
                     isActive
                       ? 'bg-background-subtle text-content-primary'
                       : 'text-content-secondary',
@@ -346,11 +395,25 @@ export function Select<Value extends string>({
                   ) : null}
 
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate font-mono text-xs font-semibold">
+                    <span
+                      className={[
+                        'block truncate text-xs font-semibold',
+                        labelTextClassNames[textMode],
+                      ]
+                        .filter(Boolean)
+                        .join(' ')}
+                    >
                       {option.label}
                     </span>
                     {option.description ? (
-                      <span className="text-content-tertiary mt-0.5 block truncate font-mono text-[0.6875rem]">
+                      <span
+                        className={[
+                          'text-content-tertiary mt-0.5 block truncate text-[0.6875rem]',
+                          labelTextClassNames[textMode],
+                        ]
+                          .filter(Boolean)
+                          .join(' ')}
+                      >
                         {option.description}
                       </span>
                     ) : null}

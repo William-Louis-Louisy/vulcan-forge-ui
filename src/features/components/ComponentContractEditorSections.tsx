@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/ui';
+import { Button, Input, Select, Textarea } from '@/components/ui';
 import {
   createEmptySizeDraft,
   createEmptyStateDraft,
@@ -127,6 +127,13 @@ export type ComponentContractEditorLabels = {
     tokenType: string;
     tokenPath: string;
     selectToken: string;
+    tokenTypes: {
+      color: string;
+      spacing: string;
+      radius: string;
+      typography: string;
+      motion: string;
+    };
   };
 };
 
@@ -217,26 +224,26 @@ function MetadataEditor({
         onChange={(name) => setDraft({ ...draft, name })}
       />
 
-      <label className="grid min-w-0 gap-1.5">
-        <span className="text-content-secondary text-xs font-semibold">
-          {labels.basics.status}
-        </span>
-        <select
-          value={draft.status}
-          onChange={(event) =>
-            setDraft({
-              ...draft,
-              status: event.target
-                .value as ComponentContractEditorDraft['status'],
-            })
-          }
-          className={fieldClassName}
+      <div className="grid min-w-0 gap-1.5">
+        <label
+          htmlFor="component-contract-status"
+          className="text-content-secondary text-xs font-semibold"
         >
-          <option value="draft">{labels.statuses.draft}</option>
-          <option value="ready">{labels.statuses.ready}</option>
-          <option value="deprecated">{labels.statuses.deprecated}</option>
-        </select>
-      </label>
+          {labels.basics.status}
+        </label>
+        <Select<ComponentContractEditorDraft['status']>
+          id="component-contract-status"
+          value={draft.status}
+          options={[
+            { value: 'draft', label: labels.statuses.draft },
+            { value: 'ready', label: labels.statuses.ready },
+            { value: 'deprecated', label: labels.statuses.deprecated },
+          ]}
+          onValueChange={(status) => setDraft({ ...draft, status })}
+          placeholder={labels.basics.status}
+          size="sm"
+        />
+      </div>
     </section>
   );
 }
@@ -647,26 +654,26 @@ function AccessibilityRuleCard({
           mono
           onChange={(key) => onChange({ ...rule, key })}
         />
-        <label className="grid min-w-0 gap-1.5">
-          <span className="text-content-secondary text-xs font-semibold">
-            {labels.accessibility.severity}
-          </span>
-          <select
-            value={rule.severity}
-            onChange={(event) =>
-              onChange({
-                ...rule,
-                severity: event.target
-                  .value as ComponentAccessibilityRuleDraft['severity'],
-              })
-            }
-            className={fieldClassName}
+        <div className="grid min-w-0 gap-1.5">
+          <label
+            htmlFor={`accessibility-severity-${rule.key}`}
+            className="text-content-secondary text-xs font-semibold"
           >
-            <option value="info">{labels.severities.info}</option>
-            <option value="warning">{labels.severities.warning}</option>
-            <option value="critical">{labels.severities.critical}</option>
-          </select>
-        </label>
+            {labels.accessibility.severity}
+          </label>
+          <Select<ComponentAccessibilityRuleDraft['severity']>
+            id={`accessibility-severity-${rule.key}`}
+            value={rule.severity}
+            options={[
+              { value: 'info', label: labels.severities.info },
+              { value: 'warning', label: labels.severities.warning },
+              { value: 'critical', label: labels.severities.critical },
+            ]}
+            onValueChange={(severity) => onChange({ ...rule, severity })}
+            placeholder={labels.accessibility.severity}
+            size="sm"
+          />
+        </div>
         <RemoveIconButton label={labels.fields.remove} onClick={onRemove} />
       </div>
 
@@ -788,7 +795,7 @@ function VisualTokensSection({
         </Button>
       }
     >
-      <div className="border-border-subtle min-w-0 overflow-hidden rounded-md border">
+      <div className="border-border-subtle min-w-0 rounded-md border">
         {draft.tokenBindings.map((binding, index) => (
           <TokenBindingRow
             key={binding.draftId}
@@ -857,50 +864,61 @@ function TokenBindingRow({
           mono
           onChange={(key) => onChange({ ...binding, key })}
         />
-        <label className="grid min-w-0 gap-1.5">
-          <span className="text-content-secondary text-xs font-semibold">
+        <div className="grid min-w-0 gap-1.5">
+          <label
+            htmlFor={`token-binding-type-${binding.draftId}`}
+            className="text-content-secondary text-xs font-semibold"
+          >
             {labels.visualTokens.tokenType}
-          </span>
-          <select
+          </label>
+          <Select<ComponentTokenBindingDraft['tokenType']>
+            id={`token-binding-type-${binding.draftId}`}
             value={binding.tokenType}
-            onChange={(event) =>
-              onChange({
-                ...binding,
-                tokenType: event.target
-                  .value as ComponentTokenBindingDraft['tokenType'],
-              })
+            options={[
+              { value: 'color', label: labels.visualTokens.tokenTypes.color },
+              {
+                value: 'spacing',
+                label: labels.visualTokens.tokenTypes.spacing,
+              },
+              { value: 'radius', label: labels.visualTokens.tokenTypes.radius },
+              {
+                value: 'typography',
+                label: labels.visualTokens.tokenTypes.typography,
+              },
+              { value: 'motion', label: labels.visualTokens.tokenTypes.motion },
+            ]}
+            onValueChange={(tokenType) =>
+              onChange({ ...binding, tokenType, tokenPath: '' })
             }
-            className={fieldClassName}
+            placeholder={labels.visualTokens.tokenType}
+            size="sm"
+          />
+        </div>
+        <div className="grid min-w-0 gap-1.5">
+          <label
+            htmlFor={`token-binding-path-${binding.draftId}`}
+            className="text-content-secondary text-xs font-semibold"
           >
-            <option value="color">color</option>
-            <option value="spacing">spacing</option>
-            <option value="radius">radius</option>
-            <option value="typography">typography</option>
-            <option value="motion">motion</option>
-          </select>
-        </label>
-        <label className="grid min-w-0 gap-1.5">
-          <span className="text-content-secondary text-xs font-semibold">
             {labels.visualTokens.tokenPath}
-          </span>
-          <select
+          </label>
+          <Select
+            id={`token-binding-path-${binding.draftId}`}
             value={binding.tokenPath}
-            onChange={(event) =>
-              onChange({ ...binding, tokenPath: event.target.value })
-            }
-            className={`${fieldClassName} font-mono`}
-          >
-            <option value="">{labels.visualTokens.selectToken}</option>
-            {!hasCurrentTokenPath && binding.tokenPath ? (
-              <option value={binding.tokenPath}>{binding.tokenPath}</option>
-            ) : null}
-            {tokenOptionsForType.map((tokenOption) => (
-              <option key={tokenOption.path} value={tokenOption.path}>
-                {tokenOption.label}
-              </option>
-            ))}
-          </select>
-        </label>
+            options={[
+              ...(!hasCurrentTokenPath && binding.tokenPath
+                ? [{ value: binding.tokenPath, label: binding.tokenPath }]
+                : []),
+              ...tokenOptionsForType.map((tokenOption) => ({
+                value: tokenOption.path,
+                label: tokenOption.label,
+              })),
+            ]}
+            onValueChange={(tokenPath) => onChange({ ...binding, tokenPath })}
+            placeholder={labels.visualTokens.selectToken}
+            size="sm"
+            textMode="technical"
+          />
+        </div>
         <RemoveIconButton label={labels.fields.remove} onClick={onRemove} />
       </div>
 
@@ -985,10 +1003,11 @@ function CompactInput({
       <span className="text-content-secondary text-xs font-semibold">
         {label}
       </span>
-      <input
+      <Input
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className={`${fieldClassName} ${mono ? 'font-mono' : ''}`}
+        size="sm"
+        textMode={mono ? 'technical' : 'default'}
       />
     </label>
   );
@@ -1016,11 +1035,12 @@ function CompactTextarea({
       >
         {label}
       </span>
-      <textarea
+      <Textarea
         value={value}
         rows={rows}
         onChange={(event) => onChange(event.target.value)}
-        className={`${fieldClassName} resize-y py-2 leading-5`}
+        size="sm"
+        className="leading-5"
       />
     </label>
   );
@@ -1055,6 +1075,3 @@ function updateLocalizedText(
     [locale]: text,
   };
 }
-
-const fieldClassName =
-  'border-border-subtle bg-surface-primary focus:border-action-primary min-h-9 w-full min-w-0 rounded-md border px-3 text-[0.8125rem] outline-none transition';

@@ -1,6 +1,7 @@
 import type { Locale } from '@/i18n/routing';
 import { useActionState, useEffect } from 'react';
 import type { DesignTokenType } from '@/domain/design-system';
+import { Button, DialogActions, Input, Textarea } from '@/components/ui';
 import { createDesignTokenAction } from './create-design-token.action';
 import type { CreateDesignTokenFieldError } from './create-design-token.state';
 import { initialCreateDesignTokenActionState } from './create-design-token.state';
@@ -62,30 +63,18 @@ export function CreateDesignTokenForm({
     <form
       action={formAction}
       onSubmitCapture={preserveSaveContext}
-      className="border-border-subtle bg-surface-primary shadow-soft mt-6 rounded-3xl border p-5"
+      className="bg-surface-primary p-5 sm:p-6"
     >
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="projectSlug" value={projectSlug} />
       <input type="hidden" name="type" value={type} />
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h2 className="text-xl font-semibold tracking-tight">
-            {labels.title}
-          </h2>
+      <div>
+        <h2 className="text-xl font-semibold tracking-tight">{labels.title}</h2>
 
-          <p className="text-content-secondary mt-2 max-w-2xl text-sm leading-6">
-            {labels.description}
-          </p>
-        </div>
-
-        <button
-          type="button"
-          onClick={onCancel}
-          className="border-border-subtle text-content-secondary hover:text-content-primary rounded-xl border px-3 py-2 text-sm font-semibold"
-        >
-          {labels.cancel}
-        </button>
+        <p className="text-content-secondary mt-2 max-w-2xl text-sm leading-6">
+          {labels.description}
+        </p>
       </div>
 
       <div className="mt-5 grid gap-4">
@@ -97,11 +86,13 @@ export function CreateDesignTokenForm({
             {labels.pathLabel}
           </label>
 
-          <input
+          <Input
             id={`create-${type}-token-path`}
             name="path"
             defaultValue={state.values.path}
-            className="border-border-subtle bg-background-subtle focus:border-action-primary mt-2 w-full rounded-xl border px-3 py-2 font-mono text-sm outline-none"
+            invalid={pathErrors.length > 0}
+            textMode="technical"
+            className="mt-2"
             placeholder={labels.pathPlaceholder}
           />
 
@@ -122,12 +113,13 @@ export function CreateDesignTokenForm({
             {labels.valueLabel}
           </label>
 
-          <input
+          <Input
             id={`create-${type}-token-value`}
             name="value"
             defaultValue={state.values.value}
-            aria-invalid={valueErrors.length > 0}
-            className="border-border-subtle bg-background-subtle focus:border-action-primary mt-2 w-full rounded-xl border px-3 py-2 font-mono text-sm outline-none"
+            invalid={valueErrors.length > 0}
+            textMode="technical"
+            className="mt-2"
             placeholder={labels.valuePlaceholder}
           />
 
@@ -149,12 +141,12 @@ export function CreateDesignTokenForm({
               {labels.descriptionEnLabel}
             </label>
 
-            <textarea
+            <Textarea
               id={`create-${type}-token-description-en`}
               name="descriptionEn"
               defaultValue={state.values.descriptionEn}
               rows={3}
-              className="border-border-subtle bg-background-subtle focus:border-action-primary mt-2 w-full rounded-xl border px-3 py-2 text-sm outline-none"
+              className="mt-2"
             />
           </div>
 
@@ -166,12 +158,12 @@ export function CreateDesignTokenForm({
               {labels.descriptionFrLabel}
             </label>
 
-            <textarea
+            <Textarea
               id={`create-${type}-token-description-fr`}
               name="descriptionFr"
               defaultValue={state.values.descriptionFr}
               rows={3}
-              className="border-border-subtle bg-background-subtle focus:border-action-primary mt-2 w-full rounded-xl border px-3 py-2 text-sm outline-none"
+              className="mt-2"
             />
           </div>
         </div>
@@ -189,13 +181,19 @@ export function CreateDesignTokenForm({
         </p>
       ) : null}
 
-      <button
-        type="submit"
-        disabled={isPending}
-        className="bg-action-primary text-action-primary-content mt-5 rounded-xl px-4 py-2 text-sm font-semibold disabled:opacity-60"
-      >
-        {isPending ? '…' : labels.submit}
-      </button>
+      <DialogActions>
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={onCancel}
+          className="w-full sm:w-auto"
+        >
+          {labels.cancel}
+        </Button>
+        <Button type="submit" disabled={isPending} className="w-full sm:w-auto">
+          {isPending ? '…' : labels.submit}
+        </Button>
+      </DialogActions>
     </form>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useActionState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Button } from '@/components/ui';
+import { Button, Input } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
 import { loginAction } from './login.action';
 import { initialLoginActionState, type LoginActionState } from './login.state';
@@ -10,10 +10,8 @@ import { initialLoginActionState, type LoginActionState } from './login.state';
 type LoginFormProps = {
   locale: Locale;
   registered?: boolean;
+  authenticationRequired?: boolean;
 };
-
-const inputClassName =
-  'border-border-subtle bg-surface-primary text-content-primary focus:border-action-primary mt-2 w-full rounded-md border px-3 py-2 outline-none transition';
 
 function getFirstError(
   errors: LoginActionState['fieldErrors'] | undefined,
@@ -22,8 +20,13 @@ function getFirstError(
   return errors?.[field]?.[0] ?? null;
 }
 
-export function LoginForm({ locale, registered = false }: LoginFormProps) {
+export function LoginForm({
+  locale,
+  registered = false,
+  authenticationRequired = false,
+}: LoginFormProps) {
   const t = useTranslations('LoginPage');
+  const errorT = useTranslations('ErrorSurfaces');
   const [state, formAction, isPending] = useActionState(
     loginAction,
     initialLoginActionState,
@@ -36,6 +39,20 @@ export function LoginForm({ locale, registered = false }: LoginFormProps) {
   return (
     <form action={formAction} className="mt-8 space-y-5">
       <input type="hidden" name="locale" value={locale} />
+
+      {authenticationRequired ? (
+        <div
+          role="status"
+          className="border-action-info/30 bg-action-info/10 rounded-md border px-4 py-3"
+        >
+          <p className="text-action-info text-sm font-semibold">
+            {errorT('authenticationRequired.title')}
+          </p>
+          <p className="text-content-secondary mt-1 text-sm leading-6">
+            {errorT('authenticationRequired.description')}
+          </p>
+        </div>
+      ) : null}
 
       {registered ? (
         <p
@@ -59,15 +76,15 @@ export function LoginForm({ locale, registered = false }: LoginFormProps) {
         <label htmlFor="email" className="text-sm font-medium">
           {t('form.emailLabel')}
         </label>
-        <input
+        <Input
           id="email"
           name="email"
           type="email"
           autoComplete="email"
           defaultValue={safeState.values.email}
-          aria-invalid={Boolean(emailError)}
+          invalid={Boolean(emailError)}
           aria-describedby={emailError ? 'email-error' : undefined}
-          className={inputClassName}
+          className="mt-2"
         />
         {emailError ? (
           <p id="email-error" className="text-action-danger mt-2 text-sm">
@@ -80,14 +97,14 @@ export function LoginForm({ locale, registered = false }: LoginFormProps) {
         <label htmlFor="password" className="text-sm font-medium">
           {t('form.passwordLabel')}
         </label>
-        <input
+        <Input
           id="password"
           name="password"
           type="password"
           autoComplete="current-password"
-          aria-invalid={Boolean(passwordError)}
+          invalid={Boolean(passwordError)}
           aria-describedby={passwordError ? 'password-error' : undefined}
-          className={inputClassName}
+          className="mt-2"
         />
         {passwordError ? (
           <p id="password-error" className="text-action-danger mt-2 text-sm">

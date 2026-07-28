@@ -70,8 +70,9 @@ describe('Button', () => {
     render(<Button size="sm">Small</Button>);
 
     expect(screen.getByRole('button', { name: 'Small' })).toHaveClass(
+      'min-h-9',
       'px-3',
-      'py-2',
+      'py-1.5',
       'text-xs',
     );
   });

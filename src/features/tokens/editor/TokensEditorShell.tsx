@@ -17,28 +17,20 @@ import {
   getPrimitiveColorTokenAliasOptions,
   type TokenSetType,
 } from '../tokens-editor.utils';
-import {
-  CreateColorTokenForm,
-  type CreateColorTokenFormLabels,
-} from '../CreateColorTokenForm';
-import {
-  CreateDesignTokenForm,
-  type CreateDesignTokenFormLabels,
-} from '../CreateDesignTokenForm';
+import type { CreateColorTokenFormLabels } from '../CreateColorTokenForm';
+import type { CreateDesignTokenFormLabels } from '../CreateDesignTokenForm';
 import {
   filterTokenRows,
   createTokenEditorUrl,
 } from './tokens-editor-shell.utils';
-import {
-  CreateTypographyTokenForm,
-  type CreateTypographyTokenFormLabels,
-} from '../CreateTypographyTokenForm';
+import type { CreateTypographyTokenFormLabels } from '../CreateTypographyTokenForm';
 import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import type { Locale } from '@/i18n/routing';
 import { ProjectWorkspaceHeader, WorkspaceState } from '@/components/ui';
 import { TokenSetTabs } from './TokenSetTabs';
 import { TokenEditorToolbar } from './TokenEditorToolbar';
+import { TokenCreationDialog } from './TokenCreationDialog';
 
 export type TokensEditorShellLabels = {
   header: {
@@ -299,85 +291,6 @@ export function TokensEditorShell({
         />
 
         <div className="flex min-h-0 flex-col py-4 md:px-6 xl:flex-1 xl:overflow-hidden xl:px-7">
-          {createTokenFormType === 'color' ? (
-            <CreateColorTokenForm
-              locale={locale}
-              projectSlug={projectSlug}
-              primitiveColorAliasOptions={primitiveColorAliasOptions}
-              labels={labels.createColorToken}
-              onCancel={handleCreateTokenCancel}
-              onCreated={(tokenPath) =>
-                handleTokenCreated({
-                  tokenSetType: 'color',
-                  tokenPath,
-                })
-              }
-            />
-          ) : null}
-
-          {createTokenFormType === 'spacing' ? (
-            <CreateDesignTokenForm
-              locale={locale}
-              projectSlug={projectSlug}
-              type="spacing"
-              labels={labels.createDesignToken.spacing}
-              onCancel={handleCreateTokenCancel}
-              onCreated={(tokenPath) =>
-                handleTokenCreated({
-                  tokenSetType: 'spacing',
-                  tokenPath,
-                })
-              }
-            />
-          ) : null}
-
-          {createTokenFormType === 'radius' ? (
-            <CreateDesignTokenForm
-              locale={locale}
-              projectSlug={projectSlug}
-              type="radius"
-              labels={labels.createDesignToken.radius}
-              onCancel={handleCreateTokenCancel}
-              onCreated={(tokenPath) =>
-                handleTokenCreated({
-                  tokenSetType: 'radius',
-                  tokenPath,
-                })
-              }
-            />
-          ) : null}
-
-          {createTokenFormType === 'motion' ? (
-            <CreateDesignTokenForm
-              locale={locale}
-              projectSlug={projectSlug}
-              type="motion"
-              labels={labels.createDesignToken.motion}
-              onCancel={handleCreateTokenCancel}
-              onCreated={(tokenPath) =>
-                handleTokenCreated({
-                  tokenSetType: 'motion',
-                  tokenPath,
-                })
-              }
-            />
-          ) : null}
-
-          {createTokenFormType === 'typography' ? (
-            <CreateTypographyTokenForm
-              locale={locale}
-              projectSlug={projectSlug}
-              labels={labels.createTypographyToken}
-              onCancel={handleCreateTokenCancel}
-              onCreated={(tokenPath) =>
-                handleTokenCreated({
-                  tokenSetType: 'typography',
-                  tokenPath,
-                })
-              }
-            />
-          ) : null}
-
           <div className="min-h-0 xl:flex-1 xl:overflow-hidden">
             {activeTokenSet ? (
               <TokenSetListPanel
@@ -415,6 +328,16 @@ export function TokensEditorShell({
           onTokenValueUpdated={handleTokenValueUpdated}
         />
       </aside>
+
+      <TokenCreationDialog
+        type={createTokenFormType}
+        locale={locale}
+        projectSlug={projectSlug}
+        primitiveColorAliasOptions={primitiveColorAliasOptions}
+        labels={labels}
+        onClose={handleCreateTokenCancel}
+        onCreated={handleTokenCreated}
+      />
     </div>
   );
 }

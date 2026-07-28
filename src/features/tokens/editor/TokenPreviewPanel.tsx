@@ -131,7 +131,7 @@ function TokenPreviewSample({
               {labels.unresolved}
             </p>
           ) : (
-            <span className="rounded-full bg-black/40 px-2 py-1 font-mono text-[11px] font-semibold text-white">
+            <span className="bg-preview-contrast-surface text-preview-contrast-content rounded-full px-2 py-1 font-mono text-[11px] font-semibold">
               {resolvedColorValue}
             </span>
           )}
@@ -183,7 +183,7 @@ function TokenPreviewSample({
           className="text-content-primary"
           style={getTypographyPreviewStyle(token.rawValue)}
         >
-          Aa Design system preview
+          Aa · {labels.sample}
         </p>
       </div>
     );
