@@ -102,69 +102,6 @@ jobs:
               '  --vf-color-rust-500: #b43a2a;',
               '  --vf-color-rust-500: #c02121;',
           )
-
-          Path('docs/product/ds-170-07b-critical-regression-fixes.md').write_text(
-              '''# DS-170-07B — Critical regression fixes
-
-## Objective
-
-Resolve the known functional and rendering regressions that would invalidate the final DS-170 user-journey QA.
-
-## Scope
-
-- serialize structured component anatomy correctly in generated Documentation;
-- isolate Light and Dark theme-editor state when switching tabs;
-- replace the Rust 500 primitive with the approved danger color `#c02121`;
-- add focused regression coverage for Documentation and Themes.
-
-Project deletion is excluded and remains the dedicated DS-170-07C task.
-
-## Documentation anatomy
-
-Documentation uses the shared `getComponentAnatomyPartKey` helper already consumed by AI Instructions. Structured anatomy objects are rendered through their stable keys rather than implicit object stringification.
-
-English and French regression tests assert `root, label, icon` and explicitly reject `[object Object]`.
-
-## Theme tab isolation
-
-The active theme panel is keyed by its theme identifier. Switching between Light and Dark remounts the theme-owned editor subtree instead of reusing selection state initialized for the previously active theme.
-
-The responsive-workspace test renders both modes through the same stateful component so it reproduces the stale Light-value leak without the key.
-
-## Danger primitive
-
-`--vf-color-rust-500` uses `#c02121`. Existing semantic danger roles continue to consume this primitive.
-
-## Automated validation
-
-The focused correction workflow validates formatting, the targeted regression tests, lint and strict typechecking before committing the implementation. The restored standard Quality workflow remains the final branch-head validation.
-
-## Manual QA checklist
-
-### Documentation
-
-- generate English and French Documentation with Components enabled;
-- verify anatomy contains component-part keys;
-- verify rendered, copied and downloaded Markdown contain no `[object Object]`.
-
-### Themes
-
-- configure visibly different Light and Dark references;
-- switch from Light to Dark and verify every row uses Dark references and values;
-- return to Light and verify its mappings remain correct;
-- save a Dark mapping, reload and repeat with pointer and keyboard navigation.
-
-### Visual token
-
-- verify danger text, borders and destructive states use the updated primitive in light and dark appearance;
-- verify no unrelated semantic color changed.
-
-## Definition of done
-
-DS-170-07B is complete when the final Quality workflow and manual QA pass, no temporary correction workflow remains in the final diff and the product owner approves the correction pass.
-''',
-              encoding='utf-8',
-          )
           PY
 
       - name: Format touched files
@@ -174,8 +111,7 @@ DS-170-07B is complete when the final Quality workflow and manual QA pass, no te
             src/domain/documentation/markdown-documentation.test.ts \
             src/features/themes/ThemesResponsiveWorkspace.tsx \
             src/features/themes/ThemesResponsiveWorkspace.test.tsx \
-            src/app/globals.css \
-            docs/product/ds-170-07b-critical-regression-fixes.md
+            src/app/globals.css
 
       - name: Generate Prisma Client
         run: npm run db:generate
@@ -194,9 +130,10 @@ DS-170-07B is complete when the final Quality workflow and manual QA pass, no te
       - name: Restore standard workflow and commit corrections
         run: |
           git show origin/main:.github/workflows/quality.yml > .github/workflows/quality.yml
-          rm .github/workflows/ds-170-07b-apply.yml
-          rm .github/workflows/ds-170-07b-apply-v2.yml
-          rm .github/workflows/ds-170-07b-apply-v3.yml
+          rm -f .github/workflows/ds-170-07b-apply.yml
+          rm -f .github/workflows/ds-170-07b-apply-v2.yml
+          rm -f .github/workflows/ds-170-07b-apply-v3.yml
+          rm -f .github/workflows/ds-170-07b-trigger.yml
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
