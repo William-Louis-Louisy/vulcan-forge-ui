@@ -41,7 +41,9 @@ jobs:
 
       - name: Apply approved QA corrections
         if: ${{ github.event_name == 'pull_request' && github.head_ref == 'feature/ds-170-07-visual-debt-audit' }}
-        run: python scripts/apply-ds-170-07-final-qa.py
+        run: |
+          python scripts/apply-ds-170-07-final-qa.py
+          npm run format
 
       - name: Commit approved QA corrections
         if: ${{ github.event_name == 'pull_request' && github.head_ref == 'feature/ds-170-07-visual-debt-audit' }}
@@ -52,7 +54,7 @@ jobs:
           if git diff --cached --quiet; then
             exit 0
           fi
-          git commit -m "fix(ds-170-07): enforce bottom-sheet modal conventions"
+          git commit -m "style(ds-170-07): format responsive modal corrections"
           git push origin HEAD:${{ github.event.pull_request.head.ref }}
 
       - name: Generate Prisma Client
