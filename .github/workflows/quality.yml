@@ -247,9 +247,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Remove standalone temporary workflow
+        run: rm .github/workflows/ds-170-07-qa-corrections.yml
+
       - name: Format corrected files
         run: >-
           npx prettier --write
+          .github/workflows/quality.yml
           src/components/ui/Button.tsx
           src/components/ui/ControlDensity.test.tsx
           src/features/tokens/editor/TokenEditorToolbar.tsx
@@ -257,13 +261,29 @@ jobs:
           src/domain/ai-instructions/ai-instructions.ts
           src/domain/ai-instructions/ai-instructions.test.ts
 
-      - name: Run complete quality gate
-        run: npm run quality
+      - name: Generate Prisma Client
+        run: npm run db:generate
 
-      - name: Restore standard workflow and remove temporary artifacts
-        run: |
-          git show origin/main:.github/workflows/quality.yml > .github/workflows/quality.yml
-          rm .github/workflows/ds-170-07-qa-corrections.yml
+      - name: Run lint
+        run: npm run lint
+
+      - name: Run typecheck
+        run: npm run typecheck
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Run UI audit
+        run: npm run audit:ui
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Build application
+        run: npm run build
+
+      - name: Restore standard Quality workflow
+        run: git show origin/main:.github/workflows/quality.yml > .github/workflows/quality.yml
 
       - name: Commit validated corrections
         run: |
