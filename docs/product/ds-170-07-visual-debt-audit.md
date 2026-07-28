@@ -52,7 +52,8 @@ The shared `Dialog` uses the native modal dialog contract and provides:
 - focus restoration to the invoking control;
 - semantic overlay styling;
 - a bottom-sheet presentation on mobile;
-- centered medium and large modal widths from the `sm` breakpoint;
+- explicit viewport centering from the `sm` breakpoint rather than relying on user-agent dialog margins;
+- medium and large responsive widths;
 - a shared sticky action footer.
 
 The action contract is explicit: Cancel is immediately to the left of the primary action and Create occupies the bottom-right position. Mobile actions use a two-column footer with safe-area padding; desktop actions remain right-aligned.
@@ -71,6 +72,7 @@ The modal workflow now guarantees that:
 - successful creation closes the dialog, selects the new token, activates its family and clears the search query;
 - typography creation receives the wider desktop treatment required by its field density;
 - mobile creation uses the validated bottom-sheet convention;
+- desktop creation is centered horizontally and vertically;
 - form actions remain visible at the bottom with Cancel left and Create right.
 
 ## New design-system wizard
@@ -79,7 +81,7 @@ The wizard retains the five-step workflow and its validation behavior.
 
 The page now provides stable horizontal gutters on mobile and stable top and bottom breathing room, including additional space beneath the action row on steps that nearly fill the viewport. Future steps remain genuinely disabled, while the current and completed steps remain navigable.
 
-The review step cannot submit as a side effect of the preceding Continue click. Continue and final Create use distinct keyed controls, and `reviewConfirmed=true` is submitted only by an explicit click on the final Create action. The user can therefore inspect and revise the complete summary before creating the design system.
+The review step cannot submit as a side effect of the preceding Continue click. Continue and final Create use distinct keyed controls, `reviewConfirmed=true` is submitted only by an explicit click on the final Create action, and the server action is now assigned to the form rather than to the named submitter. This avoids the React `name` plus function-valued `formAction` conflict and lets the user inspect and revise the complete summary before creating the design system.
 
 ## Visual normalization
 
@@ -162,6 +164,7 @@ Every allowlisted exception includes a concrete product rationale. The audit is 
 - verify long steps remain scrollable without buttons touching the viewport edge;
 - move from step four to review and verify that no navigation or creation occurs automatically;
 - verify the complete review remains visible until the final Create action is explicitly activated;
+- verify the browser console contains no `name` and `formAction` warning;
 - verify light and dark appearances;
 - verify unavailable future steps are disabled.
 
@@ -203,7 +206,7 @@ Every allowlisted exception includes a concrete product rationale. The audit is 
 
 ## Automated validation status
 
-At implementation handoff:
+At corrected implementation handoff:
 
 - lint: passing;
 - strict typecheck: passing;
@@ -211,7 +214,7 @@ At implementation handoff:
 - UI audit: passing;
 - test suite: passing;
 - production build: passing;
-- final standard Quality workflow: passing, run #723;
+- final standard Quality workflow: passing, run #735;
 - temporary diagnostic, correction and formatter workflows or scripts: absent from the final diff;
 - product-owner QA: pending.
 
@@ -222,9 +225,11 @@ DS-170-07 is complete when:
 - shared fields, select and dialog foundations are in use where scoped;
 - visible native selects are removed;
 - token creation uses the mobile bottom-sheet and desktop modal contracts and cannot drift from the selected family;
+- desktop dialogs are explicitly centered;
 - dialog actions follow the validated Cancel-left/Create-right hierarchy;
 - wizard horizontal and vertical spacing passes responsive QA;
 - the review step waits for explicit final confirmation;
+- the final submitter does not combine a custom name with a function-valued `formAction`;
 - public and authenticated unmatched routes use the intended localized 404 surfaces;
 - recoverable and global 500 fallbacks are safe and actionable;
 - appearance preference is applied before first paint;
