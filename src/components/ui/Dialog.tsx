@@ -85,7 +85,7 @@ export function Dialog({
       onClick={handleBackdropClick}
       className={[
         'backdrop:bg-overlay-scrim fixed inset-x-0 top-auto bottom-0 m-0 max-h-[calc(100dvh-0.5rem)] w-full max-w-none overflow-y-auto overscroll-contain border-0 bg-transparent p-0 shadow-2xl',
-        'sm:inset-auto sm:m-auto sm:max-h-[calc(100dvh-2rem)] sm:w-[calc(100%-2rem)]',
+        'sm:top-1/2 sm:right-auto sm:bottom-auto sm:left-1/2 sm:m-0 sm:max-h-[calc(100dvh-2rem)] sm:w-[calc(100%-2rem)] sm:-translate-x-1/2 sm:-translate-y-1/2',
         '[&>form]:mt-0 [&>form]:rounded-t-xl sm:[&>form]:rounded-xl',
         sizeClassNames[size],
       ].join(' ')}
