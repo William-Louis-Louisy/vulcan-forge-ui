@@ -19,7 +19,7 @@ jobs:
     timeout-minutes: 10
 
     permissions:
-      contents: write
+      contents: read
 
     env:
       DATABASE_URL: postgresql://vulcan:vulcan_dev_password@localhost:5432/vulcan_forge_ui?schema=public
@@ -27,8 +27,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-        with:
-          ref: ${{ github.event.pull_request.head.ref || github.ref }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -38,37 +36,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Apply wizard submission fix
-        if: ${{ github.event_name == 'pull_request' && github.head_ref == 'feature/ds-170-07-visual-debt-audit' }}
-        run: |
-          python <<'PY'
-          from pathlib import Path
-
-          path = Path('src/features/design-systems/CreateDesignSystemWizard.tsx')
-          content = path.read_text()
-          content = content.replace(
-              '<form className="mt-8" onSubmit={handleSubmit}>',
-              '<form action={formAction} className="mt-8" onSubmit={handleSubmit}>',
-              1,
-          )
-          content = content.replace('formAction={formAction}', '', 1)
-          path.write_text(content)
-          PY
-
-          npm run format
-
-      - name: Commit wizard submission fix
-        if: ${{ github.event_name == 'pull_request' && github.head_ref == 'feature/ds-170-07-visual-debt-audit' }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .
-          if git diff --cached --quiet; then
-            exit 0
-          fi
-          git commit -m "fix(ds-170-07): remove conflicting button form action"
-          git push origin HEAD:${{ github.event.pull_request.head.ref }}
 
       - name: Generate Prisma Client
         run: npm run db:generate
