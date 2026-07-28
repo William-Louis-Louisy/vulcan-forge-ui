@@ -51,7 +51,11 @@ The shared `Dialog` uses the native modal dialog contract and provides:
 - focus placement inside the dialog;
 - focus restoration to the invoking control;
 - semantic overlay styling;
-- medium and large responsive widths.
+- a bottom-sheet presentation on mobile;
+- centered medium and large modal widths from the `sm` breakpoint;
+- a shared sticky action footer.
+
+The action contract is explicit: Cancel is immediately to the left of the primary action and Create occupies the bottom-right position. Mobile actions use a two-column footer with safe-area padding; desktop actions remain right-aligned.
 
 Token creation is presented through this modal foundation so the active token family cannot change while a creation task is in progress.
 
@@ -65,13 +69,17 @@ The modal workflow now guarantees that:
 - token navigation and the inspector are unavailable behind the modal;
 - Cancel, Escape and backdrop dismissal close the task;
 - successful creation closes the dialog, selects the new token, activates its family and clears the search query;
-- typography creation receives the wider dialog treatment required by its field density.
+- typography creation receives the wider desktop treatment required by its field density;
+- mobile creation uses the validated bottom-sheet convention;
+- form actions remain visible at the bottom with Cancel left and Create right.
 
 ## New design-system wizard
 
 The wizard retains the five-step workflow and its validation behavior.
 
-The page now provides stable top and bottom breathing room, including additional space beneath the action row on steps that nearly fill the viewport. Future steps remain genuinely disabled, while the current and completed steps remain navigable.
+The page now provides stable horizontal gutters on mobile and stable top and bottom breathing room, including additional space beneath the action row on steps that nearly fill the viewport. Future steps remain genuinely disabled, while the current and completed steps remain navigable.
+
+The review step cannot submit as a side effect of the preceding Continue click. Continue and final Create use distinct keyed controls, and `reviewConfirmed=true` is submitted only by an explicit click on the final Create action. The user can therefore inspect and revise the complete summary before creating the design system.
 
 ## Visual normalization
 
@@ -85,6 +93,12 @@ The pass includes:
 - removal of stale Geist documentation and hardcoded preview copy.
 
 Dynamic colors that represent user-authored token data remain valid product data rather than application chrome.
+
+## Appearance initialization
+
+The saved appearance preference is applied through a synchronous inline script in the document head before first paint. It resolves light, dark or system preference, updates the root class and datasets, and sets `color-scheme` before route content is painted. This prevents the application from deliberately painting the light theme before hydrating into dark mode.
+
+Development-only route compilation may still introduce a transient blank frame in `next dev`; production-mode QA remains the reference for validating a persistent flash.
 
 ## Error-surface architecture
 
@@ -142,9 +156,12 @@ Every allowlisted exception includes a concrete product rationale. The audit is 
 
 ### Wizard
 
+- verify mobile horizontal gutters at 390 px;
 - verify top spacing above the return link at mobile and desktop widths;
 - verify bottom spacing beneath the action row on all five steps;
 - verify long steps remain scrollable without buttons touching the viewport edge;
+- move from step four to review and verify that no navigation or creation occurs automatically;
+- verify the complete review remains visible until the final Create action is explicitly activated;
 - verify light and dark appearances;
 - verify unavailable future steps are disabled.
 
@@ -156,7 +173,10 @@ Every allowlisted exception includes a concrete product rationale. The audit is 
 - verify tab navigation remains trapped by the native modal contract;
 - verify Escape, backdrop and Cancel close the dialog;
 - verify focus returns to New token;
-- verify mobile scrolling and the wider Typography layout;
+- verify a full-width bottom sheet with top-only rounded corners on mobile;
+- verify a centered modal from the `sm` breakpoint;
+- verify the sticky action footer displays Cancel left and Create right;
+- verify mobile scrolling, safe-area spacing and the wider desktop Typography layout;
 - create one token and verify dialog closure, family activation, selection and search reset;
 - verify field and server errors remain visible and localized.
 
@@ -170,7 +190,8 @@ Every allowlisted exception includes a concrete product rationale. The audit is 
 - recoverable 500 boundaries expose Retry and safe navigation actions;
 - Retry calls `reset()` and can restore a one-time thrown component;
 - the global fallback contains no sensitive error details;
-- test FR/EN, light/dark, keyboard navigation, 390 px and desktop widths.
+- test FR/EN, light/dark, keyboard navigation, 390 px and desktop widths;
+- verify appearance transitions in both development and production mode, treating production as the reference for flash-of-incorrect-theme regressions.
 
 ### Visual regression
 
@@ -190,8 +211,8 @@ At implementation handoff:
 - UI audit: passing;
 - test suite: passing;
 - production build: passing;
-- final standard Quality workflow: passing, run #704;
-- temporary diagnostic and formatter workflows: absent from the final diff;
+- final standard Quality workflow: passing, run #723;
+- temporary diagnostic, correction and formatter workflows or scripts: absent from the final diff;
 - product-owner QA: pending.
 
 ## Definition of done
@@ -200,11 +221,14 @@ DS-170-07 is complete when:
 
 - shared fields, select and dialog foundations are in use where scoped;
 - visible native selects are removed;
-- token creation is modal and cannot drift from the selected family;
-- wizard vertical spacing passes responsive QA;
+- token creation uses the mobile bottom-sheet and desktop modal contracts and cannot drift from the selected family;
+- dialog actions follow the validated Cancel-left/Create-right hierarchy;
+- wizard horizontal and vertical spacing passes responsive QA;
+- the review step waits for explicit final confirmation;
 - public and authenticated unmatched routes use the intended localized 404 surfaces;
 - recoverable and global 500 fallbacks are safe and actionable;
+- appearance preference is applied before first paint;
 - the UI audit passes without undocumented exceptions;
 - the standard Quality workflow passes on the final branch head;
-- no temporary diagnostic or formatter workflow remains;
+- no temporary diagnostic, correction or formatter workflow remains;
 - product-owner QA is approved.
