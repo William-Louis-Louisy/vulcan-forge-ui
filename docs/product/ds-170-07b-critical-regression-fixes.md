@@ -49,7 +49,7 @@ The focused correction run passed:
 - lint;
 - strict TypeScript typecheck.
 
-The standard pull-request Quality workflow passed on the final branch head in run #760, covering formatting, the UI audit, the complete test suite and the production build.
+The standard pull-request Quality workflow passed on the final branch head in run #761, covering formatting, the UI audit, the complete test suite and the production build.
 
 ## Manual QA checklist
 
