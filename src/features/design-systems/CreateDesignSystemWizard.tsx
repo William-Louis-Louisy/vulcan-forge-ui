@@ -224,7 +224,7 @@ export function CreateDesignSystemWizard({
   }
 
   return (
-    <form className="mt-8" onSubmit={handleSubmit}>
+    <form action={formAction} className="mt-8" onSubmit={handleSubmit}>
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="name" value={values.name} />
       <input type="hidden" name="description" value={values.description} />
