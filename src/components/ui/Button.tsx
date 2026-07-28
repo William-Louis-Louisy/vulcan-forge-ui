@@ -17,9 +17,9 @@ const variantClassNames: Record<ButtonVariant, string> = {
 };
 
 const sizeClassNames: Record<ButtonSize, string> = {
-  sm: 'rounded-md px-3 py-2 text-xs',
-  md: 'rounded-md px-4 py-2 text-sm',
-  lg: 'rounded-md px-5 py-2 text-sm',
+  sm: 'min-h-9 rounded-md px-3 py-1.5 text-xs',
+  md: 'min-h-10 rounded-md px-4 py-2 text-sm',
+  lg: 'min-h-11 rounded-md px-5 py-2.5 text-sm',
 };
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {

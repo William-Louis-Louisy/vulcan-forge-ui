@@ -795,7 +795,7 @@ function VisualTokensSection({
         </Button>
       }
     >
-      <div className="border-border-subtle min-w-0 overflow-hidden rounded-md border">
+      <div className="border-border-subtle min-w-0 rounded-md border">
         {draft.tokenBindings.map((binding, index) => (
           <TokenBindingRow
             key={binding.draftId}
