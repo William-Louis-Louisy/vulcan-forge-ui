@@ -354,7 +354,6 @@ export function CreateDesignSystemWizard({
             type="submit"
             name="reviewConfirmed"
             value="true"
-            formAction={formAction}
             disabled={isPending}
           >
             {isPending ? t('form.submitPending') : t('review.createProject')}
