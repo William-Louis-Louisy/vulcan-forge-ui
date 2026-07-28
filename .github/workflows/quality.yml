@@ -52,7 +52,7 @@ jobs:
               '<form action={formAction} className="mt-8" onSubmit={handleSubmit}>',
               1,
           )
-          content = content.replace('              formAction={formAction}\n', '', 1)
+          content = content.replace('formAction={formAction}', '', 1)
           path.write_text(content)
           PY
 
