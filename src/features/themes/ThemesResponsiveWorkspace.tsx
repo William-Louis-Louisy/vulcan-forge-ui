@@ -203,6 +203,7 @@ export function ThemesResponsiveWorkspace({
           <main className="min-h-0 min-w-0 flex-1 overflow-y-auto">
             {activeTheme ? (
               <div
+                key={activeTheme.id}
                 id={`theme-editor-panel-${activeTheme.id}`}
                 role="tabpanel"
                 aria-labelledby={`theme-editor-tab-${activeTheme.id}`}
