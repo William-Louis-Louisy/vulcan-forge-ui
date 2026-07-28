@@ -1,0 +1,148 @@
+name: DS-170-07B Apply Corrections
+
+on:
+  push:
+    branches:
+      - feature/ds-170-07b-critical-regression-fixes
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      DATABASE_URL: postgresql://vulcan:vulcan_dev_password@localhost:5432/vulcan_forge_ui?schema=public
+
+    steps:
+      - name: Checkout correction branch
+        uses: actions/checkout@v6
+        with:
+          ref: feature/ds-170-07b-critical-regression-fixes
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Apply regression corrections
+        shell: bash
+        run: |
+          python <<'PY'
+          from pathlib import Path
+
+          def replace_once(path: str, before: str, after: str) -> None:
+              file_path = Path(path)
+              content = file_path.read_text(encoding='utf-8')
+              count = content.count(before)
+              if count != 1:
+                  raise RuntimeError(f'{path}: expected one match, found {count}')
+              file_path.write_text(content.replace(before, after, 1), encoding='utf-8')
+
+          replace_once(
+              'src/domain/documentation/markdown-documentation.ts',
+              "import type {\n  BrandProfile,\n  ComponentContract,\n  DesignToken,\n} from '@/domain/design-system';",
+              "import {\n  getComponentAnatomyPartKey,\n  type BrandProfile,\n  type ComponentContract,\n  type DesignToken,\n} from '@/domain/design-system';",
+          )
+          replace_once(
+              'src/domain/documentation/markdown-documentation.ts',
+              "      const anatomy = component.anatomy.join(', ') || t.none;",
+              "      const anatomy =\n        component.anatomy.map(getComponentAnatomyPartKey).join(', ') || t.none;",
+          )
+
+          replace_once(
+              'src/domain/documentation/markdown-documentation.test.ts',
+              "    anatomy: ['root', 'label'],",
+              "    anatomy: [\n      {\n        key: 'root',\n        label: { en: 'Root', fr: 'Racine' },\n        requirement: 'required',\n      },\n      {\n        key: 'label',\n        label: { en: 'Label', fr: 'Libellé' },\n        requirement: 'required',\n      },\n      {\n        key: 'icon',\n        label: { en: 'Icon', fr: 'Icône' },\n        requirement: 'optional',\n      },\n    ],",
+          )
+          replace_once(
+              'src/domain/documentation/markdown-documentation.test.ts',
+              "    expect(result.markdown).toContain('Triggers an action.');\n    expect(result.markdown).toContain('## Accessibility');",
+              "    expect(result.markdown).toContain('Triggers an action.');\n    expect(result.markdown).toContain('- **Anatomy:** root, label, icon');\n    expect(result.markdown).not.toContain('[object Object]');\n    expect(result.markdown).toContain('## Accessibility');",
+          )
+          replace_once(
+              'src/domain/documentation/markdown-documentation.test.ts',
+              "    expect(result.markdown).toContain('Déclenche une action.');\n    expect(result.markdown).toContain('## Accessibilité');",
+              "    expect(result.markdown).toContain('Déclenche une action.');\n    expect(result.markdown).toContain('- **Anatomie:** root, label, icon');\n    expect(result.markdown).not.toContain('[object Object]');\n    expect(result.markdown).toContain('## Accessibilité');",
+          )
+
+          replace_once(
+              'src/features/themes/ThemesResponsiveWorkspace.tsx',
+              "              <div\n                id={`theme-editor-panel-${activeTheme.id}`}",
+              "              <div\n                key={activeTheme.id}\n                id={`theme-editor-panel-${activeTheme.id}`}",
+          )
+          replace_once(
+              'src/features/themes/ThemesResponsiveWorkspace.test.tsx',
+              "import { describe, expect, it } from 'vitest';\nimport { ThemesResponsiveWorkspace } from './ThemesResponsiveWorkspace';",
+              "import { describe, expect, it } from 'vitest';\nimport { useState } from 'react';\nimport { ThemesResponsiveWorkspace } from './ThemesResponsiveWorkspace';",
+          )
+          replace_once(
+              'src/features/themes/ThemesResponsiveWorkspace.test.tsx',
+              "const labels = {\n  editor: 'Theme editor',\n  preview: 'Preview',\n  workspaceNavigation: 'Theme workspace sections',\n  themeNavigation: 'Theme modes',\n};\n\nfunction renderWorkspace()",
+              "const labels = {\n  editor: 'Theme editor',\n  preview: 'Preview',\n  workspaceNavigation: 'Theme workspace sections',\n  themeNavigation: 'Theme modes',\n};\n\nfunction ThemeEditorContent({ content }: { content: string }) {\n  const [renderedContent] = useState(content);\n\n  return <p>{renderedContent}</p>;\n}\n\nfunction renderWorkspace()",
+          )
+          replace_once(
+              'src/features/themes/ThemesResponsiveWorkspace.test.tsx',
+              "          content: <p>Light editor content</p>,",
+              "          content: <ThemeEditorContent content=\"Light editor content\" />,",""
+          )
+          replace_once(
+              'src/features/themes/ThemesResponsiveWorkspace.test.tsx',
+              "          content: <p>Dark editor content</p>,",
+              "          content: <ThemeEditorContent content=\"Dark editor content\" />,",""
+          )
+
+          replace_once(
+              'src/app/globals.css',
+              '  --vf-color-rust-500: #b43a2a;',
+              '  --vf-color-rust-500: #c02121;',
+          )
+
+          Path('docs/product/ds-170-07b-critical-regression-fixes.md').write_text(
+              '''# DS-170-07B — Critical regression fixes\n\n## Objective\n\nResolve the known functional and rendering regressions that would invalidate the final DS-170 user-journey QA.\n\n## Scope\n\nThis correction pass includes:\n\n- structured component anatomy serialization in generated Documentation;\n- strict isolation of Light and Dark theme-editor state when switching tabs;\n- replacement of the Rust 500 primitive with the approved danger color `#c02121`;\n- focused automated regression coverage for Documentation and Themes.\n\nProject deletion is intentionally excluded and remains the dedicated DS-170-07C product task.\n\n## Documentation anatomy\n\nDocumentation now uses the same `getComponentAnatomyPartKey` domain helper as AI Instructions. Structured anatomy objects are serialized through their stable keys rather than implicit object stringification.\n\nRegression tests generate English and French documentation from structured anatomy entries and assert both the expected `root, label, icon` output and the absence of `[object Object]`.\n\n## Theme tab isolation\n\nThe active theme panel is keyed by the theme identifier. Switching between Light and Dark therefore remounts the theme-owned editor subtree instead of reusing local selection state initialized for the previously active theme.\n\nThe responsive workspace test now renders both modes through the same stateful editor component. It reproduces the stale-state failure without the panel key and verifies that Dark displays its own values after leaving Light.\n\n## Danger primitive\n\n`--vf-color-rust-500` now uses `#c02121`. Existing semantic danger roles continue to consume that primitive without introducing a second hardcoded danger color.\n\n## Automated validation\n\nThe correction workflow must complete successfully before committing the implementation:\n\n- formatting of all touched files;\n- focused Documentation and Themes tests;\n- Prisma client generation;\n- lint;\n- strict TypeScript typecheck;\n- formatting check;\n- UI audit;\n- complete test suite;\n- production build.\n\nThe standard pull-request Quality workflow remains the final branch-head validation.\n\n## Manual QA checklist\n\n### Documentation\n\n- generate Documentation in English and French;\n- include the Components section;\n- verify anatomy displays component-part keys;\n- verify no `[object Object]` value appears in rendered, copied or downloaded Markdown.\n\n### Themes\n\n- configure visibly different Light and Dark references;\n- switch from Light to Dark and verify every row displays the Dark references and resolved values;\n- return to Light and verify its values remain unchanged;\n- save a Dark mapping, reload and repeat the tab switch;\n- repeat with pointer and keyboard navigation.\n\n### Visual token\n\n- verify danger text, borders and destructive states consume the updated Rust primitive in light and dark appearance;\n- verify no unrelated semantic color changed.\n\n## Definition of done\n\nDS-170-07B is complete when automated validation passes on the final branch head, the three manual QA groups pass, no temporary correction workflow remains in the final diff and the product owner approves the correction pass.\n''',
+              encoding='utf-8',
+          )
+          PY
+
+      - name: Format touched files
+        run: |
+          npx prettier --write \
+            src/domain/documentation/markdown-documentation.ts \
+            src/domain/documentation/markdown-documentation.test.ts \
+            src/features/themes/ThemesResponsiveWorkspace.tsx \
+            src/features/themes/ThemesResponsiveWorkspace.test.tsx \
+            src/app/globals.css \
+            docs/product/ds-170-07b-critical-regression-fixes.md
+
+      - name: Run focused regression tests
+        run: |
+          npx vitest run \
+            src/domain/documentation/markdown-documentation.test.ts \
+            src/features/themes/ThemesResponsiveWorkspace.test.tsx
+
+      - name: Run complete quality gate
+        run: npm run quality
+
+      - name: Commit validated corrections
+        shell: bash
+        run: |
+          rm .github/workflows/ds-170-07b-apply.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add \
+            src/domain/documentation/markdown-documentation.ts \
+            src/domain/documentation/markdown-documentation.test.ts \
+            src/features/themes/ThemesResponsiveWorkspace.tsx \
+            src/features/themes/ThemesResponsiveWorkspace.test.tsx \
+            src/app/globals.css \
+            docs/product/ds-170-07b-critical-regression-fixes.md \
+            .github/workflows/ds-170-07b-apply.yml
+          git commit -m 'fix(ds-170-07b): resolve critical pre-journey regressions'
+          git push origin HEAD:feature/ds-170-07b-critical-regression-fixes
