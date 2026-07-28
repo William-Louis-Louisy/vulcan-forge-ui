@@ -22,8 +22,11 @@ describe('Dialog', () => {
     expect(dialog).toHaveClass(
       'bottom-0',
       'w-full',
-      'sm:m-auto',
+      'sm:top-1/2',
+      'sm:left-1/2',
       'sm:w-[calc(100%-2rem)]',
+      'sm:-translate-x-1/2',
+      'sm:-translate-y-1/2',
     );
     expect(actions).toHaveClass(
       'sticky',
