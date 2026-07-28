@@ -33,69 +33,80 @@ jobs:
           def replace_once(path: str, old: str, new: str) -> None:
               file_path = Path(path)
               content = file_path.read_text(encoding='utf-8')
-              if old not in content:
-                  raise RuntimeError(f'Expected source fragment not found in {path}')
+              occurrences = content.count(old)
+              if occurrences != 1:
+                  raise RuntimeError(
+                      f'Expected exactly one source fragment in {path}, found {occurrences}: {old!r}'
+                  )
               file_path.write_text(content.replace(old, new, 1), encoding='utf-8')
 
           replace_once(
               'src/components/ui/Button.tsx',
-              """const sizeClassNames: Record<ButtonSize, string> = {
-            sm: 'rounded-md px-3 py-2 text-xs',
-            md: 'rounded-md px-4 py-2 text-sm',
-            lg: 'rounded-md px-5 py-2 text-sm',
-          };""",
-              """const sizeClassNames: Record<ButtonSize, string> = {
-            sm: 'min-h-9 rounded-md px-3 py-1.5 text-xs',
-            md: 'min-h-10 rounded-md px-4 py-2 text-sm',
-            lg: 'min-h-11 rounded-md px-5 py-2.5 text-sm',
-          };""",
+              "sm: 'rounded-md px-3 py-2 text-xs',",
+              "sm: 'min-h-9 rounded-md px-3 py-1.5 text-xs',",
+          )
+          replace_once(
+              'src/components/ui/Button.tsx',
+              "md: 'rounded-md px-4 py-2 text-sm',",
+              "md: 'min-h-10 rounded-md px-4 py-2 text-sm',",
+          )
+          replace_once(
+              'src/components/ui/Button.tsx',
+              "lg: 'rounded-md px-5 py-2 text-sm',",
+              "lg: 'min-h-11 rounded-md px-5 py-2.5 text-sm',",
           )
 
-          replace_once(
-              'src/features/tokens/editor/TokenEditorToolbar.tsx',
-              """type TokenEditorToolbarProps = {""",
+          Path('src/features/tokens/editor/TokenEditorToolbar.tsx').write_text(
               """import { Button, Input } from '@/components/ui';
 
-          type TokenEditorToolbarProps = {""",
-          )
+          type TokenEditorToolbarProps = {
+            searchLabel: string;
+            searchPlaceholder: string;
+            newTokenLabel: string;
+            tokenSearchQuery: string;
+            onSearchChange: (query: string) => void;
+            isNewTokenDisabled: boolean;
+            onNewTokenClick: () => void;
+          };
 
-          replace_once(
-              'src/features/tokens/editor/TokenEditorToolbar.tsx',
-              """      <input
-                id=\"token-search\"
-                type=\"search\"
-                value={tokenSearchQuery}
-                onChange={(event) => onSearchChange(event.target.value)}
-                placeholder={searchPlaceholder}
-                className=\"border-border-subtle bg-surface-primary text-content-primary placeholder:text-content-tertiary focus:border-action-primary h-8 w-64 rounded-md border px-3 text-sm outline-none\"
-              />
+          export function TokenEditorToolbar({
+            searchLabel,
+            searchPlaceholder,
+            newTokenLabel,
+            tokenSearchQuery,
+            onSearchChange,
+            isNewTokenDisabled,
+            onNewTokenClick,
+          }: TokenEditorToolbarProps) {
+            return (
+              <div className=\"mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between\">
+                <label className=\"sr-only\" htmlFor=\"token-search\">
+                  {searchLabel}
+                </label>
 
-              <button
-                type=\"button\"
-                disabled={isNewTokenDisabled}
-                onClick={onNewTokenClick}
-                className=\"bg-action-primary text-action-primary-content hover:bg-action-primary-hover inline-flex h-8 items-center justify-center rounded-md px-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60\"
-              >
-                + {newTokenLabel}
-              </button>""",
-              """      <Input
-                id=\"token-search\"
-                type=\"search\"
-                value={tokenSearchQuery}
-                onChange={(event) => onSearchChange(event.target.value)}
-                placeholder={searchPlaceholder}
-                size=\"sm\"
-                className=\"sm:w-64\"
-              />
+                <Input
+                  id=\"token-search\"
+                  type=\"search\"
+                  value={tokenSearchQuery}
+                  onChange={(event) => onSearchChange(event.target.value)}
+                  placeholder={searchPlaceholder}
+                  size=\"sm\"
+                  className=\"sm:w-64\"
+                />
 
-              <Button
-                disabled={isNewTokenDisabled}
-                onClick={onNewTokenClick}
-                size=\"sm\"
-                className=\"shrink-0\"
-              >
-                + {newTokenLabel}
-              </Button>""",
+                <Button
+                  disabled={isNewTokenDisabled}
+                  onClick={onNewTokenClick}
+                  size=\"sm\"
+                  className=\"shrink-0\"
+                >
+                  + {newTokenLabel}
+                </Button>
+              </div>
+            );
+          }
+          """,
+              encoding='utf-8',
           )
 
           replace_once(
@@ -118,17 +129,16 @@ jobs:
             type DesignToken,
           } from '@/domain/design-system';""",
           )
-
           replace_once(
               'src/domain/ai-instructions/ai-instructions.ts',
-              """    const anatomy = component.anatomy.join(', ') || t.none;""",
+              "    const anatomy = component.anatomy.join(', ') || t.none;",
               """    const anatomy =
                 component.anatomy.map(getComponentAnatomyPartKey).join(', ') || t.none;""",
           )
 
           replace_once(
               'src/domain/ai-instructions/ai-instructions.test.ts',
-              """    anatomy: ['root', 'label', 'icon'],""",
+              "    anatomy: ['root', 'label', 'icon'],",
               """    anatomy: [
               {
                 key: 'root',
@@ -147,15 +157,12 @@ jobs:
               },
             ],""",
           )
-
           replace_once(
               'src/domain/ai-instructions/ai-instructions.test.ts',
-              """    expect(result.content).toContain('## Component rules');
-              expect(result.content).toContain('## Accessibility rules');""",
+              "    expect(result.content).toContain('## Component rules');",
               """    expect(result.content).toContain('## Component rules');
               expect(result.content).toContain('- **Anatomy:** root, label, icon');
-              expect(result.content).not.toContain('[object Object]');
-              expect(result.content).toContain('## Accessibility rules');""",
+              expect(result.content).not.toContain('[object Object]');""",
           )
 
           Path('src/components/ui/ControlDensity.test.tsx').write_text(
