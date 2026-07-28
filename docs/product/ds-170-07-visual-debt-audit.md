@@ -219,7 +219,7 @@ Every allowlisted exception includes a concrete product rationale. The audit is 
 
 ## Automated validation status
 
-At corrected implementation handoff:
+At QA-approved implementation closeout:
 
 - lint: passing;
 - strict typecheck: passing;
@@ -228,13 +228,13 @@ At corrected implementation handoff:
 - test suite: passing;
 - production build: passing;
 - focused product-owner correction workflow: passing, run #743;
-- final standard Quality workflow: passing on the final branch head;
+- final standard Quality workflow before QA approval: passing, run #746;
 - temporary diagnostic, correction and formatter workflows or scripts: absent from the final diff;
-- product-owner QA: pending.
+- product-owner QA: approved on 2026-07-28.
 
 ## Definition of done
 
-DS-170-07 is complete when:
+DS-170-07 is complete:
 
 - shared fields, select and dialog foundations are in use where scoped;
 - visible native selects are removed;
