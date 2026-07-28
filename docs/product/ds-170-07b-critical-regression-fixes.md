@@ -29,6 +29,12 @@ The responsive-workspace test renders both modes through the same stateful edito
 
 `--vf-color-rust-500` now uses `#c02121`. Existing semantic danger roles continue to consume this primitive, so no second hardcoded danger color is introduced.
 
+## Cross-platform character-count validation
+
+Local validation on a French Windows runtime exposed a locale-sensitive assertion in the Documentation character-count test. The implementation intentionally formats the number with the runtime locale, so the test now derives its expected grouping through `Intl.NumberFormat()` instead of hardcoding the English comma separator.
+
+This keeps validation stable across Windows and Linux locale configurations without changing the rendered product behavior.
+
 ## Product boundary
 
 This task does not introduce a Prisma migration, persistence change, export-format change or project-deletion workflow.
@@ -43,7 +49,7 @@ The focused correction run passed:
 - lint;
 - strict TypeScript typecheck.
 
-The restored standard pull-request Quality workflow remains the final branch-head validation and covers formatting, the UI audit, the complete test suite and production build.
+The standard pull-request Quality workflow passed on the final branch head in run #759, covering formatting, the UI audit, the complete test suite and the production build.
 
 ## Manual QA checklist
 
