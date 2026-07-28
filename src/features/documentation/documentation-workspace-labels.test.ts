@@ -14,9 +14,11 @@ describe('documentation workspace labels', () => {
     ).toContain('seule langue activée');
   });
 
-  it('formats the generated character count', () => {
+  it('formats the generated character count with the runtime number locale', () => {
+    const formattedCount = new Intl.NumberFormat().format(12847);
+
     expect(formatDocumentationCharacterCount('{count} characters', 12847)).toBe(
-      '12,847 characters',
+      `${formattedCount} characters`,
     );
   });
 });
