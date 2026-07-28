@@ -240,10 +240,6 @@ export function CreateDesignSystemWizard({
         value={values.accessibilityTarget}
       />
 
-      {isReviewStep ? (
-        <input type="hidden" name="reviewConfirmed" value="true" />
-      ) : null}
-
       {values.platforms.map((platform) => (
         <input key={platform} type="hidden" name="platforms" value={platform} />
       ))}
@@ -353,11 +349,23 @@ export function CreateDesignSystemWizard({
         </Button>
 
         {isReviewStep ? (
-          <Button type="submit" formAction={formAction} disabled={isPending}>
+          <Button
+            key="review-submit"
+            type="submit"
+            name="reviewConfirmed"
+            value="true"
+            formAction={formAction}
+            disabled={isPending}
+          >
             {isPending ? t('form.submitPending') : t('review.createProject')}
           </Button>
         ) : (
-          <Button type="button" disabled={isPending} onClick={goToNextStep}>
+          <Button
+            key="continue"
+            type="button"
+            disabled={isPending}
+            onClick={goToNextStep}
+          >
             {t('actions.continue')}
           </Button>
         )}

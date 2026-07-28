@@ -1,6 +1,12 @@
 import type { Locale } from '@/i18n/routing';
 import { useActionState, useEffect, useState } from 'react';
-import { Button, Input, Select, Textarea } from '@/components/ui';
+import {
+  Button,
+  DialogActions,
+  Input,
+  Select,
+  Textarea,
+} from '@/components/ui';
 import { createColorTokenAction } from './create-color-token.action';
 import type { PrimitiveColorTokenAliasOption } from './tokens-editor.utils';
 import { initialCreateColorTokenActionState } from './create-color-token.state';
@@ -90,26 +96,18 @@ export function CreateColorTokenForm({
     <form
       action={formAction}
       onSubmitCapture={preserveSaveContext}
-      className="border-border-subtle bg-surface-primary mt-6 rounded-lg border p-5"
+      className="bg-surface-primary p-5 sm:p-6"
     >
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="projectSlug" value={projectSlug} />
       <input type="hidden" name="kind" value={kind} />
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h2 className="text-xl font-semibold tracking-tight">
-            {labels.title}
-          </h2>
+      <div>
+        <h2 className="text-xl font-semibold tracking-tight">{labels.title}</h2>
 
-          <p className="text-content-secondary mt-2 max-w-2xl text-sm leading-6">
-            {labels.description}
-          </p>
-        </div>
-
-        <Button type="button" variant="secondary" size="sm" onClick={onCancel}>
-          {labels.cancel}
-        </Button>
+        <p className="text-content-secondary mt-2 max-w-2xl text-sm leading-6">
+          {labels.description}
+        </p>
       </div>
 
       <fieldset className="mt-5">
@@ -293,9 +291,19 @@ export function CreateColorTokenForm({
         </p>
       ) : null}
 
-      <Button type="submit" disabled={isPending} className="mt-5">
-        {isPending ? '…' : labels.submit}
-      </Button>
+      <DialogActions>
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={onCancel}
+          className="w-full sm:w-auto"
+        >
+          {labels.cancel}
+        </Button>
+        <Button type="submit" disabled={isPending} className="w-full sm:w-auto">
+          {isPending ? '…' : labels.submit}
+        </Button>
+      </DialogActions>
     </form>
   );
 }

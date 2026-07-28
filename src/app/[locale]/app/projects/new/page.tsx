@@ -27,7 +27,7 @@ async function CreateDesignSystemPageContent({ locale }: { locale: Locale }) {
   const t = await getTranslations('CreateDesignSystemPage');
 
   return (
-    <section className="mx-auto min-h-full max-w-5xl pt-8 pb-12 lg:pt-12 lg:pb-16">
+    <section className="mx-auto min-h-full max-w-5xl px-4 pt-8 pb-12 sm:px-6 lg:px-8 lg:pt-12 lg:pb-16">
       <AppLink
         href="/app"
         className="text-content-secondary hover:text-content-primary text-sm font-semibold transition"
