@@ -1,0 +1,164 @@
+name: DS-170-07 dialog and wizard fix
+
+on:
+  push:
+    branches:
+      - feature/ds-170-07-visual-debt-audit
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: ${{ !contains(github.event.head_commit.message, 'fix desktop dialog centering and wizard submission') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: feature/ds-170-07-visual-debt-audit
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Apply corrections
+        run: |
+          python <<'PY'
+          from pathlib import Path
+
+          def replace(path: str, old: str, new: str, count: int = 1) -> None:
+              file = Path(path)
+              content = file.read_text()
+              if old not in content:
+                  raise SystemExit(f'Expected block not found in {path}: {old[:160]!r}')
+              file.write_text(content.replace(old, new, count))
+
+          replace(
+              'src/components/ui/Dialog.tsx',
+              """        'sm:inset-auto sm:m-auto sm:max-h-[calc(100dvh-2rem)] sm:w-[calc(100%-2rem)]',""",
+              """        'sm:top-1/2 sm:right-auto sm:bottom-auto sm:left-1/2 sm:m-0 sm:max-h-[calc(100dvh-2rem)] sm:w-[calc(100%-2rem)] sm:-translate-x-1/2 sm:-translate-y-1/2',""",
+          )
+
+          replace(
+              'src/components/ui/Dialog.test.tsx',
+              """      'sm:m-auto',
+              'sm:w-[calc(100%-2rem)]',""",
+              """      'sm:top-1/2',
+              'sm:left-1/2',
+              'sm:w-[calc(100%-2rem)]',
+              'sm:-translate-x-1/2',
+              'sm:-translate-y-1/2',""",
+          )
+
+          replace(
+              'src/features/design-systems/CreateDesignSystemWizard.tsx',
+              '<form className="mt-8" onSubmit={handleSubmit}>',
+              '<form action={formAction} className="mt-8" onSubmit={handleSubmit}>',
+          )
+
+          replace(
+              'src/features/design-systems/CreateDesignSystemWizard.tsx',
+              """            value="true"
+              formAction={formAction}
+              disabled={isPending}""",
+              """            value="true"
+              disabled={isPending}""",
+          )
+
+          Path('src/features/design-systems/CreateDesignSystemWizard.test.tsx').write_text("""import enMessages from '@/messages/en.json';
+import { describe, expect, it, vi } from 'vitest';
+import { NextIntlClientProvider } from 'next-intl';
+import userEvent from '@testing-library/user-event';
+import { render, screen } from '@testing-library/react';
+import { CreateDesignSystemWizard } from './CreateDesignSystemWizard';
+
+vi.mock('./create-design-system.action', () => ({
+  createDesignSystemAction: vi.fn(),
+}));
+
+function renderWizard() {
+  return render(
+    <NextIntlClientProvider locale="en" messages={enMessages}>
+      <CreateDesignSystemWizard locale="en" />
+    </NextIntlClientProvider>,
+  );
+}
+
+async function reachReviewStep() {
+  const user = userEvent.setup();
+
+  renderWizard();
+
+  await user.type(screen.getByLabelText(/name/i), 'Aurora System');
+  await user.click(screen.getByRole('button', { name: /continue/i }));
+
+  const platformCheckbox = screen
+    .getAllByRole('checkbox')
+    .find(
+      (checkbox) =>
+        !(checkbox as HTMLInputElement).disabled &&
+        !(checkbox as HTMLInputElement).checked,
+    );
+
+  expect(platformCheckbox).toBeDefined();
+  await user.click(platformCheckbox!);
+  await user.click(screen.getByRole('button', { name: /continue/i }));
+
+  await user.click(screen.getAllByRole('radio')[0]!);
+  await user.click(screen.getByRole('button', { name: /continue/i }));
+
+  await user.click(screen.getAllByRole('radio')[0]!);
+  await user.click(screen.getByRole('button', { name: /continue/i }));
+
+  return user;
+}
+
+describe('CreateDesignSystemWizard', () => {
+  it('requires the review step before submitting the project creation', async () => {
+    const user = userEvent.setup();
+
+    renderWizard();
+
+    await user.type(screen.getByLabelText(/name/i), 'Aurora System');
+
+    await user.click(screen.getByRole('button', { name: /continue/i }));
+
+    expect(
+      screen.getByRole('group', { name: /platforms and languages/i }),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.queryByRole('button', { name: /create project/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('keeps review confirmation on the submitter without a button formAction', async () => {
+    await reachReviewStep();
+
+    const createButton = screen.getByRole('button', {
+      name: /create project/i,
+    });
+
+    expect(createButton).toHaveAttribute('name', 'reviewConfirmed');
+    expect(createButton).toHaveAttribute('value', 'true');
+    expect(createButton).not.toHaveAttribute('formaction');
+    expect(createButton.closest('form')).toBeInTheDocument();
+  });
+});
+""")
+          PY
+
+          npm run format
+
+      - name: Commit corrections
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/components/ui/Dialog.tsx src/components/ui/Dialog.test.tsx src/features/design-systems/CreateDesignSystemWizard.tsx src/features/design-systems/CreateDesignSystemWizard.test.tsx
+          git commit -m "fix(ds-170-07): fix desktop dialog centering and wizard submission"
+          git push origin HEAD:feature/ds-170-07-visual-debt-audit
