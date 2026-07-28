@@ -96,6 +96,16 @@ The pass includes:
 
 Dynamic colors that represent user-authored token data remain valid product data rather than application chrome.
 
+## Product-owner QA corrections
+
+The focused correction pass closes three defects found before QA approval:
+
+- the Visual Tokens binding container no longer clips the absolutely positioned Select listboxes, so every option remains visible and actionable outside the row frame;
+- shared Button densities now align with Input and Select at 36 px for compact controls and 40 px for standard controls, with a 44 px large action density; the Tokens toolbar now consumes the shared Input and Button primitives instead of local 32 px controls;
+- AI instructions serialize structured component anatomy through each anatomy-part key instead of relying on implicit object stringification, preventing `[object Object]` output.
+
+Focused regression coverage verifies the shared compact and standard control heights and generates AI instructions from structured anatomy data.
+
 ## Appearance initialization
 
 The saved appearance preference is applied through a synchronous inline script in the document head before first paint. It resolves light, dark or system preference, updates the root class and datasets, and sets `color-scheme` before route content is painted. This prevents the application from deliberately painting the light theme before hydrating into dark mode.
@@ -199,6 +209,9 @@ Every allowlisted exception includes a concrete product rationale. The audit is 
 ### Visual regression
 
 - verify shared fields and selects across Settings, Tokens, Components and project creation;
+- open both Visual Tokens selects on several component-binding rows and verify their listboxes can extend beyond the binding frame without clipping;
+- compare compact Input, Select and Button controls and verify the 36 px density is consistent, including the Tokens toolbar;
+- generate AI instructions in FR and EN and verify Anatomy contains component-part keys with no `[object Object]` value;
 - verify semantic colors and visible focus states;
 - verify no unintended 2xl or 3xl card treatment remains;
 - verify compact authenticated navigation still closes on Escape and outside interaction;
@@ -214,7 +227,8 @@ At corrected implementation handoff:
 - UI audit: passing;
 - test suite: passing;
 - production build: passing;
-- final standard Quality workflow: passing, run #737;
+- focused product-owner correction workflow: passing, run #743;
+- final standard Quality workflow: passing on the final branch head;
 - temporary diagnostic, correction and formatter workflows or scripts: absent from the final diff;
 - product-owner QA: pending.
 
