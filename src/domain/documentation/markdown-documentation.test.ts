@@ -39,7 +39,23 @@ const components: ComponentContract[] = [
       fr: 'Déclenche une action.',
     },
     status: 'ready',
-    anatomy: ['root', 'label'],
+    anatomy: [
+      {
+        key: 'root',
+        label: { en: 'Root', fr: 'Racine' },
+        requirement: 'required',
+      },
+      {
+        key: 'label',
+        label: { en: 'Label', fr: 'Libellé' },
+        requirement: 'required',
+      },
+      {
+        key: 'icon',
+        label: { en: 'Icon', fr: 'Icône' },
+        requirement: 'optional',
+      },
+    ],
     variants: [
       {
         key: 'primary',
@@ -192,6 +208,8 @@ describe('generateMarkdownDocumentation', () => {
     expect(result.markdown).toContain('## Themes');
     expect(result.markdown).toContain('## Components');
     expect(result.markdown).toContain('Triggers an action.');
+    expect(result.markdown).toContain('- **Anatomy:** root, label, icon');
+    expect(result.markdown).not.toContain('[object Object]');
     expect(result.markdown).toContain('## Accessibility');
   });
 
@@ -208,6 +226,8 @@ describe('generateMarkdownDocumentation', () => {
     expect(result.markdown).toContain('## Tokens');
     expect(result.markdown).toContain('Couleur d’accent principale.');
     expect(result.markdown).toContain('Déclenche une action.');
+    expect(result.markdown).toContain('- **Anatomie:** root, label, icon');
+    expect(result.markdown).not.toContain('[object Object]');
     expect(result.markdown).toContain('## Accessibilité');
   });
 

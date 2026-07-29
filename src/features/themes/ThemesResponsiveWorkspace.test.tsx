@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
+import { useState } from 'react';
 import { ThemesResponsiveWorkspace } from './ThemesResponsiveWorkspace';
 
 const labels = {
@@ -9,6 +10,12 @@ const labels = {
   workspaceNavigation: 'Theme workspace sections',
   themeNavigation: 'Theme modes',
 };
+
+function ThemeEditorContent({ content }: { content: string }) {
+  const [renderedContent] = useState(content);
+
+  return <p>{renderedContent}</p>;
+}
 
 function renderWorkspace() {
   return render(
@@ -22,12 +29,12 @@ function renderWorkspace() {
         {
           id: 'light-theme',
           label: 'Light',
-          content: <p>Light editor content</p>,
+          content: <ThemeEditorContent content="Light editor content" />,
         },
         {
           id: 'dark-theme',
           label: 'Dark',
-          content: <p>Dark editor content</p>,
+          content: <ThemeEditorContent content="Dark editor content" />,
         },
       ]}
       emptyState={<p>No themes available</p>}

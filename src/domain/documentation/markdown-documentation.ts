@@ -2,10 +2,11 @@ import {
   resolveLocalizedStringWithFallback,
   type AppLocale,
 } from '@/domain/i18n';
-import type {
-  BrandProfile,
-  ComponentContract,
-  DesignToken,
+import {
+  getComponentAnatomyPartKey,
+  type BrandProfile,
+  type ComponentContract,
+  type DesignToken,
 } from '@/domain/design-system';
 
 export type MarkdownDocumentationSection =
@@ -467,7 +468,8 @@ function renderComponentsSection({
         component.variants.map((variant) => variant.key).join(', ') || t.none;
       const states =
         component.states.map((state) => state.key).join(', ') || t.none;
-      const anatomy = component.anatomy.join(', ') || t.none;
+      const anatomy =
+        component.anatomy.map(getComponentAnatomyPartKey).join(', ') || t.none;
       const accessibility =
         component.accessibility
           .map((rule) => {
