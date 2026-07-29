@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { getActionBackedProjectSaveStatus } from './useActionBackedProjectSaveStatus';
+import { getActionBackedProjectSaveStatus } from './project-save-status.utils';
 
 describe('getActionBackedProjectSaveStatus', () => {
   it('prioritizes an active save over stale or invalid states', () => {
