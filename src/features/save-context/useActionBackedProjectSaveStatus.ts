@@ -2,40 +2,10 @@
 
 import { useCallback, useState } from 'react';
 
-import {
-  type ProjectSaveStatus,
-  useProjectSaveStatus,
-} from '@/components/layout/ProjectTopbarBreadcrumb';
+import { useProjectSaveStatus } from '@/components/layout/ProjectTopbarBreadcrumb';
+import { getActionBackedProjectSaveStatus } from './project-save-status.utils';
 
 type ActionStatus = 'idle' | 'success' | 'error';
-
-type GetActionBackedProjectSaveStatusInput = {
-  isPending: boolean;
-  hasUnsavedChanges: boolean;
-  hasValidationError: boolean;
-  hasCurrentActionError: boolean;
-};
-
-export function getActionBackedProjectSaveStatus({
-  isPending,
-  hasUnsavedChanges,
-  hasValidationError,
-  hasCurrentActionError,
-}: GetActionBackedProjectSaveStatusInput): ProjectSaveStatus {
-  if (isPending) {
-    return 'saving';
-  }
-
-  if (hasValidationError || hasCurrentActionError) {
-    return 'error';
-  }
-
-  if (hasUnsavedChanges) {
-    return 'unsaved';
-  }
-
-  return 'saved';
-}
 
 type UseActionBackedProjectSaveStatusInput = {
   sourceId: string;
