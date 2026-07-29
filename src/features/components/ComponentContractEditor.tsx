@@ -26,9 +26,8 @@ import {
 } from './ComponentContractEditorSections';
 import { updateComponentContractAction } from './update-component-contract.action';
 import { initialUpdateComponentContractActionState } from './update-component-contract.state';
-import { getComponentContractEditorSaveStatus } from './component-contract-editor-save-status';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
-import { useProjectSaveStatus } from '@/components/layout/ProjectTopbarBreadcrumb';
+import { useActionBackedProjectSaveStatus } from '@/features/save-context/useActionBackedProjectSaveStatus';
 import { useComponentContractPreview } from './ComponentContractPreviewContext';
 
 export type { ComponentContractEditorLabels } from './ComponentContractEditorSections';
@@ -122,13 +121,11 @@ export function ComponentContractEditor({
     pendingCollectionFocusRef.current = null;
 
     const targetInput = getCollectionKeyInputs()[pendingFocus.inputIndex];
-
     if (!targetInput) {
       return;
     }
 
     targetInput.focus();
-
     if (
       pendingFocus.selectionStart !== null &&
       pendingFocus.selectionEnd !== null
@@ -140,30 +137,37 @@ export function ComponentContractEditor({
     }
   }, [draft, getCollectionKeyInputs]);
 
-  const savedContract =
-    state.status === 'success' && state.savedContract
-      ? state.savedContract
-      : contract;
-  const savedDraft = useMemo(
-    () => createComponentContractDraft(savedContract),
-    [savedContract],
-  );
   const validation = useMemo(
     () => createComponentContractFromDraft(draft),
     [draft],
   );
   const contractPayload =
     validation.status === 'success' ? JSON.stringify(validation.contract) : '';
-  const hasUnsavedChanges =
-    createComponentContractDraftFingerprint(draft) !==
-    createComponentContractDraftFingerprint(savedDraft);
   const saveContextId = `component-contract:${projectSlug}:${contract.type}`;
-  const saveStatus = getComponentContractEditorSaveStatus({
-    isPending,
+  const currentFingerprint = createComponentContractDraftFingerprint(draft);
+  const initialSavedFingerprint =
+    createComponentContractDraftFingerprint(initialDraft);
+  const successfulFingerprint =
+    state.status === 'success' && state.savedContract
+      ? createComponentContractDraftFingerprint(
+          createComponentContractDraft(state.savedContract),
+        )
+      : null;
+  const {
+    hasCurrentActionError,
     hasUnsavedChanges,
+    markCurrentDraftSubmitted,
+    status: saveStatus,
+  } = useActionBackedProjectSaveStatus({
+    sourceId: saveContextId,
+    currentFingerprint,
+    initialSavedFingerprint,
+    actionStatus: state.status,
+    successfulFingerprint,
+    isPending,
     hasValidationError: validation.status === 'error',
-    hasFormError: Boolean(state.formError),
   });
+  const preserveSaveContext = usePreserveSaveContext(saveContextId);
 
   useEffect(() => {
     if (state.status !== 'success' || !state.savedContract) {
@@ -180,9 +184,27 @@ export function ComponentContractEditor({
     router.refresh();
   }, [router, state.savedContract, state.status]);
 
-  useProjectSaveStatus(saveContextId, saveStatus);
+  function handleSubmitCapture() {
+    markCurrentDraftSubmitted();
+    preserveSaveContext();
+  }
 
-  const preserveSaveContext = usePreserveSaveContext(saveContextId);
+  const saveStatusDotClassName = {
+    saved: 'bg-action-success',
+    unsaved: 'bg-action-warning',
+    saving: 'bg-action-info',
+    error: 'bg-action-danger',
+  }[saveStatus];
+  const saveStatusLabel =
+    saveStatus === 'saving'
+      ? labels.save.saving
+      : saveStatus === 'error'
+        ? validation.status === 'error'
+          ? labels.save.invalid
+          : labels.save.errors[state.formError ?? 'unexpected']
+        : saveStatus === 'unsaved'
+          ? labels.save.unsaved
+          : labels.save.saved;
 
   return (
     <section className="min-w-0">
@@ -220,7 +242,7 @@ export function ComponentContractEditor({
 
       <form
         action={formAction}
-        onSubmitCapture={preserveSaveContext}
+        onSubmitCapture={handleSubmitCapture}
         className="border-border-subtle bg-background-app/95 sticky bottom-0 z-10 mt-6 flex min-w-0 flex-col gap-2 border-t py-3 backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between"
       >
         <input type="hidden" name="locale" value={locale} />
@@ -234,18 +256,10 @@ export function ComponentContractEditor({
               aria-hidden="true"
               className={[
                 'size-1.5 shrink-0 rounded-full',
-                isPending
-                  ? 'bg-action-warning'
-                  : hasUnsavedChanges
-                    ? 'bg-content-tertiary'
-                    : 'bg-action-success',
+                saveStatusDotClassName,
               ].join(' ')}
             />
-            {isPending
-              ? labels.save.saving
-              : hasUnsavedChanges
-                ? labels.save.unsaved
-                : labels.save.saved}
+            {saveStatusLabel}
           </p>
 
           {validation.status === 'error' ? (
@@ -254,7 +268,7 @@ export function ComponentContractEditor({
             </p>
           ) : null}
 
-          {state.formError ? (
+          {hasCurrentActionError && state.formError ? (
             <p role="alert" className="text-action-danger mt-1 font-medium">
               {labels.save.errors[state.formError]}
             </p>
