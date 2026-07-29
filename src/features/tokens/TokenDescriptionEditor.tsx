@@ -28,7 +28,10 @@ function getFirstError(
   return errors[field]?.[0] ?? null;
 }
 
-function createDescriptionFingerprint(descriptionEn: string, descriptionFr: string) {
+function createDescriptionFingerprint(
+  descriptionEn: string,
+  descriptionFr: string,
+) {
   return JSON.stringify({ descriptionEn, descriptionFr });
 }
 
