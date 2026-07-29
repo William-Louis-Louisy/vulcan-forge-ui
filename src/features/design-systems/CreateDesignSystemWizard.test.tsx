@@ -1,4 +1,6 @@
 import enMessages from '@/messages/en.json';
+import { brandOnboardingMessages } from '@/messages/brand-onboarding-messages';
+import { mergeMessages } from '@/messages/merge-messages';
 import { describe, expect, it, vi } from 'vitest';
 import { NextIntlClientProvider } from 'next-intl';
 import userEvent from '@testing-library/user-event';
@@ -9,9 +11,14 @@ vi.mock('./create-design-system.action', () => ({
   createDesignSystemAction: vi.fn(),
 }));
 
+const messages = mergeMessages(
+  enMessages,
+  brandOnboardingMessages.en,
+) as typeof enMessages;
+
 function renderWizard() {
   return render(
-    <NextIntlClientProvider locale="en" messages={enMessages}>
+    <NextIntlClientProvider locale="en" messages={messages}>
       <CreateDesignSystemWizard locale="en" />
     </NextIntlClientProvider>,
   );
