@@ -72,13 +72,10 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <head>
-        <ThemePreferenceInitScript />
-      </head>
-
       <body
         className={`${fraunces.variable} ${interTight.variable} ${jetBrainsMono.variable} antialiased`}
       >
+        <ThemePreferenceInitScript />
         <NextIntlClientProvider>
           <PublicThemePreferenceApplier />
           {children}
