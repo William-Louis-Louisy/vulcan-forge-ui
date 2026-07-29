@@ -73,12 +73,9 @@ export function TokenRenameForm({
   const preserveSaveContext = usePreserveSaveContext(sourceId);
 
   useEffect(() => {
-    if (state.status !== 'success') {
-      return;
+    if (state.status === 'success') {
+      onRenamed?.(state.values.nextTokenPath);
     }
-
-    setDraftTokenPath(state.values.nextTokenPath);
-    onRenamed?.(state.values.nextTokenPath);
   }, [onRenamed, state.status, state.values.nextTokenPath]);
 
   const nextTokenPathErrors = hasCurrentActionError
