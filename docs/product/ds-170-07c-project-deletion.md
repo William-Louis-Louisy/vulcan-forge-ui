@@ -42,7 +42,7 @@ Focused tests cover:
 - preservation of the Settings destination in the project switcher;
 - the save-status priority between saving, current errors, unsaved drafts and saved data.
 
-The standard Quality workflow remains the final automated gate and includes Prisma generation, lint, strict TypeScript checking, formatting, UI audit, the complete test suite and production build. Quality run #808 passes on the audited save-status head with 114 test files and 497 tests.
+The standard Quality workflow remains the final automated gate and includes Prisma generation, lint, strict TypeScript checking, formatting, UI audit, the complete test suite and production build. Quality run #809 passes on the audited save-status head with 114 test files and 497 tests.
 
 ## Manual QA checklist
 
