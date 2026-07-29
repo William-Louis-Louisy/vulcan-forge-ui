@@ -208,9 +208,7 @@ export function CreateColorTokenForm({
               invalid={valueErrors.length > 0}
               disabled={isPending}
               ariaDescribedBy={
-                valueErrors.length > 0
-                  ? 'create-token-value-errors'
-                  : undefined
+                valueErrors.length > 0 ? 'create-token-value-errors' : undefined
               }
             />
 
