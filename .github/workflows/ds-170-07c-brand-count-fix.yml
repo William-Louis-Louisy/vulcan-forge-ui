@@ -1,0 +1,54 @@
+name: DS-170-07C Brand Count Fix
+
+on:
+  push:
+    branches:
+      - feature/ds-170-07c-project-deletion
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v6
+        with:
+          ref: feature/ds-170-07c-project-deletion
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Restore translation count
+        run: |
+          python <<'PY'
+          from pathlib import Path
+
+          path = Path('src/features/brand/BrandProfileEditor.tsx')
+          source = path.read_text(encoding='utf-8')
+          anchor = "  const preserveSaveContext = usePreserveSaveContext(sourceId);\n"
+          replacement = """  const preserveSaveContext = usePreserveSaveContext(sourceId);
+          const missingTranslationCount = countMissingBrandTranslations({
+            profile,
+            supportedLocales: project.supportedLocales,
+          });
+          """
+          if anchor not in source:
+              raise SystemExit('Brand save context anchor not found')
+          path.write_text(source.replace(anchor, replacement, 1), encoding='utf-8')
+          PY
+      - name: Format brand editor
+        run: npx prettier src/features/brand/BrandProfileEditor.tsx --write
+      - name: Remove temporary workflow
+        run: rm .github/workflows/ds-170-07c-brand-count-fix.yml
+      - name: Commit correction
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "fix(ds-170-07c): restore brand translation count"
+          git push origin HEAD:feature/ds-170-07c-project-deletion
