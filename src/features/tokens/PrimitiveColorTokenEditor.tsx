@@ -104,7 +104,9 @@ export function PrimitiveColorTokenEditor({
             role="img"
             className="border-border-subtle size-12 shrink-0 rounded-md border"
             style={{
-              backgroundColor: isPreviewValid ? currentFingerprint : initialValue,
+              backgroundColor: isPreviewValid
+                ? currentFingerprint
+                : initialValue,
             }}
           />
 
@@ -125,7 +127,9 @@ export function PrimitiveColorTokenEditor({
 
         <Button
           type="submit"
-          disabled={isPending || !hasUnsavedChanges || Boolean(localValueError)}
+          disabled={
+            isPending || !hasUnsavedChanges || Boolean(localValueError)
+          }
         >
           {isPending
             ? t('primitiveColorEditor.saving')
