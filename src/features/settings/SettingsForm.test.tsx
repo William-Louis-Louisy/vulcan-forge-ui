@@ -8,14 +8,12 @@ import { SettingsForm } from './SettingsForm';
 const mocks = vi.hoisted(() => ({
   applyThemePreference: vi.fn(),
   persistThemePreference: vi.fn(),
-  refresh: vi.fn(),
   replace: vi.fn(),
 }));
 
 vi.mock('@/i18n/navigation', () => ({
   usePathname: () => '/app/settings',
   useRouter: () => ({
-    refresh: mocks.refresh,
     replace: mocks.replace,
   }),
 }));
