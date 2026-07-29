@@ -7,6 +7,7 @@ import { SettingsForm } from './SettingsForm';
 
 const mocks = vi.hoisted(() => ({
   applyThemePreference: vi.fn(),
+  persistThemePreference: vi.fn(),
   refresh: vi.fn(),
   replace: vi.fn(),
 }));
@@ -21,6 +22,7 @@ vi.mock('@/i18n/navigation', () => ({
 
 vi.mock('./theme-preference.client', () => ({
   applyThemePreference: mocks.applyThemePreference,
+  persistThemePreference: mocks.persistThemePreference,
 }));
 
 vi.mock('./update-user-settings.action', () => ({
