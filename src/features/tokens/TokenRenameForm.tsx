@@ -1,10 +1,12 @@
+'use client';
+
 import type { Locale } from '@/i18n/routing';
-import { useActionState, useEffect } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import { renameTokenAction } from './rename-token.action';
 import type { TokenSetType } from './tokens-editor.utils';
 import { initialRenameTokenActionState } from './rename-token.state';
-import { useProjectSaveStatus } from '@/components/layout/ProjectTopbarBreadcrumb';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
+import { useActionBackedProjectSaveStatus } from '@/features/save-context/useActionBackedProjectSaveStatus';
 
 export type TokenRenameFormLabels = {
   title: string;
@@ -45,44 +47,53 @@ export function TokenRenameForm({
   labels,
   onRenamed,
 }: TokenRenameFormProps) {
+  const [draftTokenPath, setDraftTokenPath] = useState(currentTokenPath);
   const [state, formAction, isPending] = useActionState(renameTokenAction, {
     ...initialRenameTokenActionState,
     values: {
       nextTokenPath: currentTokenPath,
     },
   });
+  const sourceId = `rename-token:${projectSlug}:${currentTokenPath}`;
+  const currentFingerprint = draftTokenPath.trim();
+  const successfulFingerprint =
+    state.status === 'success' ? state.values.nextTokenPath : null;
+  const {
+    hasCurrentActionError,
+    hasUnsavedChanges,
+    markCurrentDraftSubmitted,
+  } = useActionBackedProjectSaveStatus({
+    sourceId,
+    currentFingerprint,
+    initialSavedFingerprint: currentTokenPath,
+    actionStatus: state.status,
+    successfulFingerprint,
+    isPending,
+  });
+  const preserveSaveContext = usePreserveSaveContext(sourceId);
 
   useEffect(() => {
     if (state.status !== 'success') {
       return;
     }
 
+    setDraftTokenPath(state.values.nextTokenPath);
     onRenamed?.(state.values.nextTokenPath);
   }, [onRenamed, state.status, state.values.nextTokenPath]);
 
-  const nextTokenPathErrors = state.fieldErrors.nextTokenPath ?? [];
+  const nextTokenPathErrors = hasCurrentActionError
+    ? (state.fieldErrors.nextTokenPath ?? [])
+    : [];
 
-  const preserveSaveContext = usePreserveSaveContext(
-    `rename-token:${projectSlug}:${currentTokenPath}`,
-  );
-
-  const hasUnsavedChanges = state.values.nextTokenPath !== currentTokenPath;
-
-  useProjectSaveStatus(
-    `rename-token:${projectSlug}:${currentTokenPath}`,
-    isPending
-      ? 'saving'
-      : state.formError
-        ? 'error'
-        : hasUnsavedChanges
-          ? 'unsaved'
-          : 'saved',
-  );
+  function handleSubmitCapture() {
+    markCurrentDraftSubmitted();
+    preserveSaveContext();
+  }
 
   return (
     <form
       action={formAction}
-      onSubmitCapture={preserveSaveContext}
+      onSubmitCapture={handleSubmitCapture}
       className="border-border-subtle space-y-3 border-b pb-2"
     >
       <input type="hidden" name="locale" value={locale} />
@@ -101,7 +112,8 @@ export function TokenRenameForm({
         <input
           id={`rename-token-${currentTokenPath}`}
           name="nextTokenPath"
-          defaultValue={state.values.nextTokenPath || currentTokenPath}
+          value={draftTokenPath}
+          onChange={(event) => setDraftTokenPath(event.target.value)}
           aria-invalid={nextTokenPathErrors.length > 0}
           className="border-border-subtle bg-surface-primary focus:border-action-primary mt-2 w-full rounded-md border px-3 py-2 font-mono text-sm outline-none"
         />
@@ -114,13 +126,13 @@ export function TokenRenameForm({
           </ul>
         ) : null}
 
-        {state.formError ? (
+        {hasCurrentActionError && state.formError ? (
           <p className="text-action-danger mt-3 text-xs font-semibold">
             {labels.formErrors[state.formError]}
           </p>
         ) : null}
 
-        {state.status === 'success' ? (
+        {state.status === 'success' && !hasUnsavedChanges ? (
           <p className="text-action-success mt-3 text-xs font-semibold">
             {labels.success}
           </p>
@@ -129,7 +141,7 @@ export function TokenRenameForm({
         <div className="inline-flex w-full items-center justify-end">
           <button
             type="submit"
-            disabled={isPending}
+            disabled={isPending || !hasUnsavedChanges}
             className="bg-action-primary text-action-primary-content mt-2 self-end rounded-md px-4 py-2 text-sm font-semibold disabled:opacity-60"
           >
             {isPending ? '…' : labels.submit}
