@@ -59,9 +59,8 @@ export function useActionBackedProjectSaveStatus({
   const [savedFingerprint, setSavedFingerprint] = useState(
     initialSavedFingerprint,
   );
-  const [submittedFingerprint, setSubmittedFingerprint] = useState<
-    string | null
-  >(null);
+  const [submittedFingerprint, setSubmittedFingerprint] =
+    useState<string | null>(null);
   const effectiveSavedFingerprint =
     actionStatus === 'success' && successfulFingerprint !== null
       ? successfulFingerprint
