@@ -4,8 +4,7 @@ import { useServerInsertedHTML } from 'next/navigation';
 
 import { themePreferenceStorageKey } from './theme-preference.client';
 
-export function ThemePreferenceInitScript() {
-  const script = `
+const themePreferenceInitScript = `
 (function () {
   try {
     var storageKey = ${JSON.stringify(themePreferenceStorageKey)};
@@ -36,10 +35,11 @@ export function ThemePreferenceInitScript() {
 })();
 `;
 
+export function ThemePreferenceInitScript() {
   useServerInsertedHTML(() => (
     <script
       id="theme-preference-init"
-      dangerouslySetInnerHTML={{ __html: script }}
+      dangerouslySetInnerHTML={{ __html: themePreferenceInitScript }}
     />
   ));
 
