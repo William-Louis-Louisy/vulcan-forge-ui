@@ -77,3 +77,7 @@ DS-170-07C is complete when:
 - the owner and non-owner manual QA paths pass;
 - the deleted project disappears after redirect and related data is removed through database cascades;
 - the product owner approves the destructive workflow.
+
+## Pre-QA follow-up
+
+Before product-owner QA, the project Overview now exposes a Settings action with a gear icon immediately before Open documentation. The Rust 500 primitive uses `#ff3131`, and the existing lint warnings from the UI-audit success output and unused overview imports have been removed.

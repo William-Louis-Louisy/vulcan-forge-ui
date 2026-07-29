@@ -2,6 +2,7 @@ import {
   ArrowRightIcon,
   CheckCircleIcon,
   ClockCounterClockwiseIcon,
+  GearIcon,
   WarningCircleIcon,
   XCircleIcon,
 } from '@phosphor-icons/react/dist/ssr';
@@ -12,8 +13,6 @@ import { notFound, redirect } from 'next/navigation';
 import { auth } from '@/auth';
 import { AppLink } from '@/components/navigation/AppLink';
 import { Badge } from '@/components/ui';
-import type { AppLocale } from '@/domain/i18n';
-import type { ExportLogFormat } from '@/features/exports/export-center.utils';
 import {
   createProjectOverviewViewModel,
   type ProjectOverviewActivity,
@@ -136,13 +135,22 @@ function ProjectHeader({
           </p>
         </div>
 
-        <AppLink
-          href={`/app/projects/${overview.project.slug}/documentation`}
-          className="border-border-default bg-surface-primary text-content-primary hover:bg-background-subtle inline-flex min-h-9 shrink-0 items-center justify-center rounded-md border px-3 text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2"
-        >
-          {t('project.openDocumentation')}
-          <ArrowRightIcon aria-hidden="true" className="ml-1.5" size={13} />
-        </AppLink>
+        <div className="flex flex-wrap items-center gap-2">
+          <AppLink
+            href={`/app/projects/${overview.project.slug}/settings`}
+            className="border-border-default bg-surface-primary text-content-primary hover:bg-background-subtle inline-flex min-h-9 items-center justify-center rounded-md border px-3 text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2"
+          >
+            <GearIcon aria-hidden="true" className="mr-1.5" size={13} />
+            {t('project.settings')}
+          </AppLink>
+          <AppLink
+            href={`/app/projects/${overview.project.slug}/documentation`}
+            className="border-border-default bg-surface-primary text-content-primary hover:bg-background-subtle inline-flex min-h-9 items-center justify-center rounded-md border px-3 text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2"
+          >
+            {t('project.openDocumentation')}
+            <ArrowRightIcon aria-hidden="true" className="ml-1.5" size={13} />
+          </AppLink>
+        </div>
       </div>
 
       <div className="mt-3 flex flex-wrap gap-2">
