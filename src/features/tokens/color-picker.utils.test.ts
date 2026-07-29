@@ -32,12 +32,12 @@ describe('color picker utilities', () => {
   });
 
   it('formats normalized uppercase hex values', () => {
-    expect(
-      formatHexColor({ red: 51, green: 102, blue: 153, alpha: 255 }),
-    ).toBe('#336699');
-    expect(
-      formatHexColor({ red: 51, green: 102, blue: 153, alpha: 128 }),
-    ).toBe('#33669980');
+    expect(formatHexColor({ red: 51, green: 102, blue: 153, alpha: 255 })).toBe(
+      '#336699',
+    );
+    expect(formatHexColor({ red: 51, green: 102, blue: 153, alpha: 128 })).toBe(
+      '#33669980',
+    );
   });
 
   it('exposes RGB and opacity values for the native controls', () => {
