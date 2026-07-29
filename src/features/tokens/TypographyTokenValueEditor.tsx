@@ -108,13 +108,10 @@ export function TypographyTokenValueEditor({
     : submittedValueErrors;
 
   useEffect(() => {
-    if (state.status !== 'success') {
-      return;
+    if (state.status === 'success') {
+      onUpdated(tokenPath);
     }
-
-    setTypographyValues(parseTypographyTokenValue(state.values.value));
-    onUpdated(tokenPath);
-  }, [onUpdated, state.status, state.values.value, tokenPath]);
+  }, [onUpdated, state.status, tokenPath]);
 
   function updateTypographyField(
     field: keyof TypographyTokenFormValues,
