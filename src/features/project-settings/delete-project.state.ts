@@ -1,5 +1,7 @@
 export type DeleteProjectField = 'confirmationName';
 
+export type DeleteProjectValidationError = 'confirmationNameMismatch';
+
 export type DeleteProjectFormError =
   | 'invalidPayload'
   | 'unauthorized'
@@ -9,7 +11,9 @@ export type DeleteProjectFormError =
 
 export type DeleteProjectActionState = {
   status: 'idle' | 'error';
-  fieldErrors: Partial<Record<DeleteProjectField, string[]>>;
+  fieldErrors: Partial<
+    Record<DeleteProjectField, DeleteProjectValidationError[]>
+  >;
   formError: DeleteProjectFormError | null;
 };
 
