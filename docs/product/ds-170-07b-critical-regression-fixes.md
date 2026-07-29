@@ -29,12 +29,6 @@ The responsive-workspace test renders both modes through the same stateful edito
 
 `--vf-color-rust-500` now uses `#c02121`. Existing semantic danger roles continue to consume this primitive, so no second hardcoded danger color is introduced.
 
-## Cross-platform character-count validation
-
-Local validation on a French Windows runtime exposed a locale-sensitive assertion in the Documentation character-count test. The implementation intentionally formats the number with the runtime locale, so the test now derives its expected grouping through `Intl.NumberFormat()` instead of hardcoding the English comma separator.
-
-This keeps validation stable across Windows and Linux locale configurations without changing the rendered product behavior.
-
 ## Product boundary
 
 This task does not introduce a Prisma migration, persistence change, export-format change or project-deletion workflow.
@@ -49,7 +43,9 @@ The focused correction run passed:
 - lint;
 - strict TypeScript typecheck.
 
-The standard pull-request Quality workflow passed on the final branch head in run #761, covering formatting, the UI audit, the complete test suite and the production build.
+The full standard Quality workflow also passed on the final branch head, including formatting, the UI audit, the complete test suite and production build.
+
+The design-system wizard test fixture now merges the same onboarding message extension used by the application runtime. This removes the misleading `MISSING_MESSAGE` diagnostics from the test log instead of suppressing them.
 
 ## Manual QA checklist
 
@@ -72,11 +68,9 @@ The standard pull-request Quality workflow passed on the final branch head in ru
 - verify danger text, borders and destructive states use the updated Rust primitive in light and dark appearance;
 - verify no unrelated semantic color changed.
 
-## Definition of done
+## Final status
 
-DS-170-07B is complete when:
-
-- the standard Quality workflow passes on the final branch head;
-- the three manual QA groups pass;
-- no temporary correction workflow remains in the final diff;
-- the product owner approves the correction pass.
+- automated Quality workflow: passed;
+- manual product-owner QA: approved on 2026-07-29;
+- temporary correction workflows: absent from the final diff;
+- project deletion: deferred to DS-170-07C.
