@@ -42,7 +42,7 @@ Focused tests cover:
 - preservation of the Settings destination in the project switcher;
 - the save-status priority between saving, current errors, unsaved drafts and saved data.
 
-The standard Quality workflow includes Prisma generation, lint, strict TypeScript checking, formatting, UI audit, the complete test suite and production build. The audited save-status implementation passes with 114 test files and 497 tests.
+The standard Quality workflow includes Prisma generation, lint, strict TypeScript checking, formatting, UI audit, the complete test suite and production build. The audited implementation passes with 114 test files and 497 tests.
 
 ## Manual QA checklist
 
@@ -81,6 +81,13 @@ The standard Quality workflow includes Prisma generation, lint, strict TypeScrip
 - verify the Brand translation-completeness badge still updates while editing localized content;
 - switch between token inspector entries and projects and verify removed editors no longer influence the aggregate status.
 
+### Theme preference regression
+
+- change the application theme from Settings;
+- save the preference and verify the theme remains applied after `router.refresh()`;
+- verify no React console error is emitted about a script tag rendered inside a component;
+- reload the page and verify the preference is applied before hydration without a visible flash.
+
 ## Definition of done
 
 DS-170-07C is complete when:
@@ -96,4 +103,6 @@ Before product-owner QA, the project Overview now exposes a Settings action with
 
 The project save-status lifecycle was also audited across Brand, Tokens and Component contracts. A shared action-backed tracker now distinguishes the last persisted fingerprint from the current draft, reports validation failures, ignores stale server errors after further edits, and prevents unchanged submissions from falsely changing the aggregate status.
 
-Product-owner QA remains the last gate.
+The theme bootstrap now uses the framework-managed `next/script` component with the `beforeInteractive` strategy. This keeps the local-storage preference available before hydration without asking React to execute a newly reconciled native script after the Settings form refreshes the route.
+
+Product-owner QA is approved. The targeted theme-preference regression check remains before the pull request is marked ready.
