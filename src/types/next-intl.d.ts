@@ -9,6 +9,7 @@ import type { projectOverviewMessages } from '../messages/project-overview-messa
 import type { brandProfileMessages } from '../messages/brand-profile-messages';
 import type { brandOverviewMessages } from '../messages/brand-overview-messages';
 import type { brandOnboardingMessages } from '../messages/brand-onboarding-messages';
+import type { projectSettingsMessages } from '../messages/project-settings-messages';
 import type { publicSurfaceMessages } from '../messages/public-surface-messages';
 import type { productEditorPreviewMessages } from '../messages/product-editor-preview-messages';
 import type { errorSurfaceMessages } from '../messages/error-surface-messages';
@@ -55,8 +56,11 @@ type ProjectOverviewMessages = DeepMerge<
 >;
 
 type ProjectMessages = DeepMerge<
-  ProjectOverviewMessages,
-  (typeof brandProfileMessages)['en']
+  DeepMerge<
+    ProjectOverviewMessages,
+    (typeof brandProfileMessages)['en']
+  >,
+  (typeof projectSettingsMessages)['en']
 >;
 
 type ProductMessages = DeepMerge<
