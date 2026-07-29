@@ -7,7 +7,7 @@ import {
 } from './update-token-description.state';
 import { useTranslations } from 'next-intl';
 import type { Locale } from '@/i18n/routing';
-import { useActionState, useEffect, useState } from 'react';
+import { useActionState, useState } from 'react';
 import { updateTokenDescriptionAction } from './update-token-description.action';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 import { useActionBackedProjectSaveStatus } from '@/features/save-context/useActionBackedProjectSaveStatus';
@@ -91,15 +91,6 @@ export function TokenDescriptionEditor({
     : null;
   const isEnglishMissing = descriptionEn.trim().length === 0;
   const isFrenchMissing = descriptionFr.trim().length === 0;
-
-  useEffect(() => {
-    if (state.status !== 'success') {
-      return;
-    }
-
-    setDescriptionEn(state.values.descriptionEn);
-    setDescriptionFr(state.values.descriptionFr);
-  }, [state.status, state.values.descriptionEn, state.values.descriptionFr]);
 
   function handleSubmitCapture() {
     markCurrentDraftSubmitted();
