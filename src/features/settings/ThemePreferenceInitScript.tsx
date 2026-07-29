@@ -1,4 +1,7 @@
-import Script from 'next/script';
+'use client';
+
+import { useServerInsertedHTML } from 'next/navigation';
+
 import { themePreferenceStorageKey } from './theme-preference.client';
 
 export function ThemePreferenceInitScript() {
@@ -33,9 +36,12 @@ export function ThemePreferenceInitScript() {
 })();
 `;
 
-  return (
-    <Script id="theme-preference-init" strategy="beforeInteractive">
-      {script}
-    </Script>
-  );
+  useServerInsertedHTML(() => (
+    <script
+      id="theme-preference-init"
+      dangerouslySetInnerHTML={{ __html: script }}
+    />
+  ));
+
+  return null;
 }
