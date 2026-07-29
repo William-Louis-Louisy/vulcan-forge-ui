@@ -46,8 +46,21 @@ jobs:
       - name: Run typecheck
         run: npm run typecheck
 
-      - name: Check formatting
-        run: npm run format:check
+      - name: Capture formatting diff
+        run: |
+          npx prettier --write \
+            src/features/tokens/color-picker.utils.test.ts \
+            src/features/tokens/color-picker.utils.ts \
+            src/features/tokens/ColorPickerField.tsx \
+            src/features/tokens/CreateColorTokenForm.tsx \
+            src/features/tokens/PrimitiveColorTokenEditor.tsx
+          git diff --no-ext-diff --unified=200 -- \
+            src/features/tokens/color-picker.utils.test.ts \
+            src/features/tokens/color-picker.utils.ts \
+            src/features/tokens/ColorPickerField.tsx \
+            src/features/tokens/CreateColorTokenForm.tsx \
+            src/features/tokens/PrimitiveColorTokenEditor.tsx
+          exit 1
 
       - name: Run UI audit
         run: npm run audit:ui
