@@ -69,6 +69,16 @@ The standard Quality workflow remains the final automated gate and includes Pris
 - complete the flow using keyboard navigation only;
 - verify focus visibility, labels, error association, pending state and destructive contrast in light and dark appearance.
 
+### Project save status
+
+- modify Brand, a generic token value, a primitive color, a semantic alias, a token description, a token name, a typography token and a component contract;
+- verify the topbar reports unsaved changes immediately for every controlled draft;
+- submit a valid change and verify the transition from saving to saved;
+- trigger a validation error and verify the error state;
+- edit the failed draft and verify the stale server error clears while the draft returns to unsaved;
+- verify unchanged forms cannot be submitted and do not keep the project in an unsaved state;
+- switch between token inspector entries and projects and verify removed editors no longer influence the aggregate status.
+
 ## Definition of done
 
 DS-170-07C is complete when:
@@ -81,5 +91,7 @@ DS-170-07C is complete when:
 ## Pre-QA follow-up
 
 Before product-owner QA, the project Overview now exposes a Settings action with a gear icon immediately before Open documentation. The Rust 500 primitive uses `#ff3131`, and the existing lint warnings from the UI-audit success output and unused overview imports have been removed.
+
+The project save-status lifecycle was also audited across Brand, Tokens and Component contracts. A shared action-backed tracker now distinguishes the last persisted fingerprint from the current draft, reports validation failures, ignores stale server errors after further edits, and prevents unchanged submissions from falsely changing the aggregate status.
 
 The final Quality workflow must pass on this follow-up head before manual QA approval.
