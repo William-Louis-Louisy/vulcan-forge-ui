@@ -42,7 +42,7 @@ Focused tests cover:
 - preservation of the Settings destination in the project switcher;
 - the save-status priority between saving, current errors, unsaved drafts and saved data.
 
-The standard Quality workflow remains the final automated gate and includes Prisma generation, lint, strict TypeScript checking, formatting, UI audit, the complete test suite and production build. The final audited save-status head passes with 114 test files and 497 tests.
+The standard Quality workflow remains the automated gate and includes Prisma generation, lint, strict TypeScript checking, formatting, UI audit, the complete test suite and production build. The audited save-status implementation passes with 114 test files and 497 tests.
 
 ## Manual QA checklist
 
@@ -85,7 +85,7 @@ The standard Quality workflow remains the final automated gate and includes Pris
 
 DS-170-07C is complete when:
 
-- the standard Quality workflow passes on the final branch head;
+- the standard Quality workflow passes on the branch head submitted for review;
 - the owner and non-owner manual QA paths pass;
 - the deleted project disappears after redirect and related data is removed through database cascades;
 - the product owner approves the destructive workflow.
@@ -96,4 +96,4 @@ Before product-owner QA, the project Overview now exposes a Settings action with
 
 The project save-status lifecycle was also audited across Brand, Tokens and Component contracts. A shared action-backed tracker now distinguishes the last persisted fingerprint from the current draft, reports validation failures, ignores stale server errors after further edits, and prevents unchanged submissions from falsely changing the aggregate status.
 
-The final Quality workflow passes on this follow-up head. Product-owner QA remains the last gate.
+Product-owner QA remains the last gate.
