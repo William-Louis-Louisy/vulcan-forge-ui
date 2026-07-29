@@ -51,7 +51,7 @@ export function ColorPickerField({
       </label>
 
       <div className="flex min-w-0 items-stretch gap-2">
-        <label className="border-border-subtle bg-background-sunken focus-within:border-border-focus focus-within:ring-[var(--vf-focus-ring)] relative flex size-10 shrink-0 cursor-pointer overflow-hidden rounded-md border transition focus-within:ring-2">
+        <label className="border-border-subtle bg-background-sunken focus-within:border-border-focus relative flex size-10 shrink-0 cursor-pointer overflow-hidden rounded-md border transition focus-within:ring-2 focus-within:ring-[var(--vf-focus-ring)]">
           <span
             aria-hidden="true"
             className="absolute inset-1 rounded-sm"
