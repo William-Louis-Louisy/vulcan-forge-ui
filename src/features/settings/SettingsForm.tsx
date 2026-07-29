@@ -4,7 +4,10 @@ import { Button } from '@/components/ui';
 import type { AppLocale } from '@/domain/i18n';
 import { useTranslations, useLocale } from 'next-intl';
 import { usePathname, useRouter } from '@/i18n/navigation';
-import { applyThemePreference } from './theme-preference.client';
+import {
+  applyThemePreference,
+  persistThemePreference,
+} from './theme-preference.client';
 import {
   useActionState,
   useEffect,
@@ -62,12 +65,11 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
       return;
     }
 
+    persistThemePreference(state.savedSettings.themePreference);
+
     if (state.savedSettings.locale !== pageLocale) {
       router.replace(pathname, { locale: state.savedSettings.locale });
-      return;
     }
-
-    router.refresh();
   }, [pageLocale, pathname, router, state.savedSettings, state.status]);
 
   return (
