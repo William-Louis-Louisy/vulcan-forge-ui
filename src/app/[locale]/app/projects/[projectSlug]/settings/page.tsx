@@ -90,7 +90,7 @@ export default async function ProjectSettingsPage({
 
           <dl className="border-border-subtle bg-surface-primary grid min-w-0 gap-4 rounded-md border p-4 sm:grid-cols-2">
             <div>
-              <dt className="text-content-tertiary text-xs font-semibold uppercase tracking-[0.08em]">
+              <dt className="text-content-tertiary text-xs font-semibold tracking-[0.08em] uppercase">
                 {t('identity.name')}
               </dt>
               <dd className="mt-1 truncate text-sm font-semibold">
@@ -98,7 +98,7 @@ export default async function ProjectSettingsPage({
               </dd>
             </div>
             <div>
-              <dt className="text-content-tertiary text-xs font-semibold uppercase tracking-[0.08em]">
+              <dt className="text-content-tertiary text-xs font-semibold tracking-[0.08em] uppercase">
                 {t('identity.slug')}
               </dt>
               <dd className="text-content-secondary mt-1 truncate font-mono text-sm">

@@ -56,10 +56,7 @@ type ProjectOverviewMessages = DeepMerge<
 >;
 
 type ProjectMessages = DeepMerge<
-  DeepMerge<
-    ProjectOverviewMessages,
-    (typeof brandProfileMessages)['en']
-  >,
+  DeepMerge<ProjectOverviewMessages, (typeof brandProfileMessages)['en']>,
   (typeof projectSettingsMessages)['en']
 >;
 

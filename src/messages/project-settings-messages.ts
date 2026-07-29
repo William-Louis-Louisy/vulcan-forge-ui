@@ -39,8 +39,7 @@ export const projectSettingsMessages = {
           nameLabel: 'Project name confirmation',
           title: 'Confirm permanent deletion',
         },
-        description:
-          'Deleting a project is permanent and cannot be undone.',
+        description: 'Deleting a project is permanent and cannot be undone.',
         errors: {
           confirmationNameMismatch:
             'The confirmation name does not match the current project name.',
@@ -48,8 +47,7 @@ export const projectSettingsMessages = {
             'You cannot delete this project, or it no longer exists.',
           invalidPayload: 'The project deletion request is invalid.',
           unauthorized: 'You must be signed in to delete a project.',
-          unexpected:
-            'The project could not be deleted. Please try again.',
+          unexpected: 'The project could not be deleted. Please try again.',
         },
         request: 'Delete project',
         summary:
@@ -110,10 +108,8 @@ export const projectSettingsMessages = {
           forbiddenOrNotFound:
             'Vous ne pouvez pas supprimer ce projet, ou celui-ci n’existe plus.',
           invalidPayload: 'La demande de suppression du projet est invalide.',
-          unauthorized:
-            'Vous devez être connecté pour supprimer un projet.',
-          unexpected:
-            'Le projet n’a pas pu être supprimé. Veuillez réessayer.',
+          unauthorized: 'Vous devez être connecté pour supprimer un projet.',
+          unexpected: 'Le projet n’a pas pu être supprimé. Veuillez réessayer.',
         },
         request: 'Supprimer le projet',
         summary:
