@@ -112,6 +112,10 @@ export function BrandProfileEditor({
     hasValidationError: !isValid,
   });
   const preserveSaveContext = usePreserveSaveContext(sourceId);
+  const missingTranslationCount = countMissingBrandTranslations({
+    profile,
+    supportedLocales: project.supportedLocales,
+  });
 
   useEffect(() => {
     if (state.status === 'success') {
