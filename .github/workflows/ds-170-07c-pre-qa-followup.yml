@@ -1,0 +1,138 @@
+name: DS-170-07C Pre-QA Follow-up
+
+on:
+  push:
+    branches:
+      - feature/ds-170-07c-project-deletion
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v6
+        with:
+          ref: feature/ds-170-07c-project-deletion
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Apply requested pre-QA corrections
+        run: |
+          python <<'PY'
+          from pathlib import Path
+
+          page_path = Path('src/app/[locale]/app/projects/[projectSlug]/page.tsx')
+          page = page_path.read_text(encoding='utf-8')
+          page = page.replace(
+              "  CheckCircleIcon,\n  ClockCounterClockwiseIcon,",
+              "  CheckCircleIcon,\n  ClockCounterClockwiseIcon,\n  GearIcon,",
+              1,
+          )
+          page = page.replace("import type { AppLocale } from '@/domain/i18n';\n", '', 1)
+          page = page.replace(
+              "import type { ExportLogFormat } from '@/features/exports/export-center.utils';\n",
+              '',
+              1,
+          )
+          old_action = '''        <AppLink
+          href={`/app/projects/${overview.project.slug}/documentation`}
+          className="border-border-default bg-surface-primary text-content-primary hover:bg-background-subtle inline-flex min-h-9 shrink-0 items-center justify-center rounded-md border px-3 text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2"
+        >
+          {t('project.openDocumentation')}
+          <ArrowRightIcon aria-hidden="true" className="ml-1.5" size={13} />
+        </AppLink>'''
+          new_action = '''        <div className="flex flex-wrap items-center gap-2">
+          <AppLink
+            href={`/app/projects/${overview.project.slug}/settings`}
+            className="border-border-default bg-surface-primary text-content-primary hover:bg-background-subtle inline-flex min-h-9 items-center justify-center rounded-md border px-3 text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2"
+          >
+            <GearIcon aria-hidden="true" className="mr-1.5" size={13} />
+            {t('project.settings')}
+          </AppLink>
+          <AppLink
+            href={`/app/projects/${overview.project.slug}/documentation`}
+            className="border-border-default bg-surface-primary text-content-primary hover:bg-background-subtle inline-flex min-h-9 items-center justify-center rounded-md border px-3 text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2"
+          >
+            {t('project.openDocumentation')}
+            <ArrowRightIcon aria-hidden="true" className="ml-1.5" size={13} />
+          </AppLink>
+        </div>'''
+          if old_action not in page:
+              raise SystemExit('Overview action block not found')
+          page_path.write_text(page.replace(old_action, new_action, 1), encoding='utf-8')
+
+          messages_path = Path('src/messages/project-overview-messages.ts')
+          messages = messages_path.read_text(encoding='utf-8')
+          messages = messages.replace(
+              "        openDocumentation: 'Open documentation',",
+              "        settings: 'Settings',\n        openDocumentation: 'Open documentation',",
+              1,
+          )
+          messages = messages.replace(
+              "        openDocumentation: 'Ouvrir la documentation',",
+              "        settings: 'Paramètres',\n        openDocumentation: 'Ouvrir la documentation',",
+              1,
+          )
+          messages_path.write_text(messages, encoding='utf-8')
+
+          globals_path = Path('src/app/globals.css')
+          globals_css = globals_path.read_text(encoding='utf-8')
+          if '--vf-color-rust-500: #c02121;' not in globals_css:
+              raise SystemExit('Rust token value not found')
+          globals_path.write_text(
+              globals_css.replace(
+                  '--vf-color-rust-500: #c02121;',
+                  '--vf-color-rust-500: #FF3131;',
+                  1,
+              ),
+              encoding='utf-8',
+          )
+
+          audit_path = Path('scripts/audit-ui.ts')
+          audit = audit_path.read_text(encoding='utf-8')
+          old_output = '''    console.log(
+      `UI audit passed: ${files.length} production files checked, ${allowlist.length} documented exceptions.`,
+    );'''
+          new_output = '''    process.stdout.write(
+      `UI audit passed: ${files.length} production files checked, ${allowlist.length} documented exceptions.\\n`,
+    );'''
+          if old_output not in audit:
+              raise SystemExit('UI audit success output not found')
+          audit_path.write_text(audit.replace(old_output, new_output, 1), encoding='utf-8')
+
+          doc_path = Path('docs/product/ds-170-07c-project-deletion.md')
+          doc = doc_path.read_text(encoding='utf-8')
+          follow_up = '''
+
+## Pre-QA follow-up
+
+Before product-owner QA, the project Overview now exposes a Settings action with a gear icon immediately before Open documentation. The Rust 500 primitive uses `#ff3131`, and the existing lint warnings from the UI-audit success output and unused overview imports have been removed.
+'''
+          if '## Pre-QA follow-up' not in doc:
+              doc_path.write_text(doc.rstrip() + follow_up, encoding='utf-8')
+          PY
+      - name: Format touched files
+        run: >-
+          npx prettier
+          "src/app/[locale]/app/projects/[projectSlug]/page.tsx"
+          src/messages/project-overview-messages.ts
+          src/app/globals.css
+          scripts/audit-ui.ts
+          docs/product/ds-170-07c-project-deletion.md
+          --write
+      - name: Remove temporary workflow
+        run: rm .github/workflows/ds-170-07c-pre-qa-followup.yml
+      - name: Commit corrections
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "fix(ds-170-07c): apply pre-QA overview and quality corrections"
+          git push origin HEAD:feature/ds-170-07c-project-deletion
