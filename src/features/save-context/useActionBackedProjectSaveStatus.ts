@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import {
   type ProjectSaveStatus,
@@ -59,19 +59,9 @@ export function useActionBackedProjectSaveStatus({
   const [savedFingerprint, setSavedFingerprint] = useState(
     initialSavedFingerprint,
   );
-  const submittedFingerprintRef = useRef<string | null>(null);
-
-  useEffect(() => {
-    setSavedFingerprint(initialSavedFingerprint);
-    submittedFingerprintRef.current = null;
-  }, [initialSavedFingerprint, sourceId]);
-
-  useEffect(() => {
-    if (actionStatus === 'success' && successfulFingerprint !== null) {
-      setSavedFingerprint(successfulFingerprint);
-    }
-  }, [actionStatus, successfulFingerprint]);
-
+  const [submittedFingerprint, setSubmittedFingerprint] = useState<
+    string | null
+  >(null);
   const effectiveSavedFingerprint =
     actionStatus === 'success' && successfulFingerprint !== null
       ? successfulFingerprint
@@ -79,8 +69,7 @@ export function useActionBackedProjectSaveStatus({
   const hasUnsavedChanges =
     currentFingerprint !== effectiveSavedFingerprint;
   const hasCurrentActionError =
-    actionStatus === 'error' &&
-    submittedFingerprintRef.current === currentFingerprint;
+    actionStatus === 'error' && submittedFingerprint === currentFingerprint;
   const status = getActionBackedProjectSaveStatus({
     isPending,
     hasUnsavedChanges,
@@ -91,8 +80,9 @@ export function useActionBackedProjectSaveStatus({
   useProjectSaveStatus(sourceId, status);
 
   const markCurrentDraftSubmitted = useCallback(() => {
-    submittedFingerprintRef.current = currentFingerprint;
-  }, [currentFingerprint]);
+    setSavedFingerprint(effectiveSavedFingerprint);
+    setSubmittedFingerprint(currentFingerprint);
+  }, [currentFingerprint, effectiveSavedFingerprint]);
 
   return {
     hasCurrentActionError,
