@@ -94,11 +94,23 @@ export function CreateColorTokenForm({
   }, [onCreated, state.status, state.values.path]);
 
   const pathErrors = state.fieldErrors.path ?? [];
-  const valueErrors = state.fieldErrors.value ?? [];
+  const submittedValueErrors = state.fieldErrors.value ?? [];
   const referencePathErrors = state.fieldErrors.referencePath ?? [];
-  const hasInvalidPrimitiveValue =
-    kind === 'primitive' &&
-    !primitiveColorHexPattern.test(primitiveValue.trim());
+  const trimmedPrimitiveValue = primitiveValue.trim();
+  const localPrimitiveValueError =
+    kind !== 'primitive'
+      ? null
+      : trimmedPrimitiveValue.length === 0
+        ? 'tokenValueRequired'
+        : primitiveColorHexPattern.test(trimmedPrimitiveValue)
+          ? null
+          : 'tokenColorValueInvalid';
+  const valueErrors = localPrimitiveValueError
+    ? [localPrimitiveValueError]
+    : primitiveValue === state.values.value
+      ? submittedValueErrors
+      : [];
+  const hasInvalidPrimitiveValue = Boolean(localPrimitiveValueError);
 
   return (
     <form
