@@ -39,9 +39,10 @@ Focused tests cover:
 - exact project-name confirmation;
 - deletion, dashboard revalidation and localized redirect;
 - English/French message-shape parity;
-- preservation of the Settings destination in the project switcher.
+- preservation of the Settings destination in the project switcher;
+- the save-status priority between saving, current errors, unsaved drafts and saved data.
 
-The standard Quality workflow remains the final automated gate and includes Prisma generation, lint, strict TypeScript checking, formatting, UI audit, the complete test suite and production build.
+The standard Quality workflow remains the final automated gate and includes Prisma generation, lint, strict TypeScript checking, formatting, UI audit, the complete test suite and production build. Quality run #808 passes on the audited save-status head with 114 test files and 497 tests.
 
 ## Manual QA checklist
 
@@ -95,4 +96,4 @@ Before product-owner QA, the project Overview now exposes a Settings action with
 
 The project save-status lifecycle was also audited across Brand, Tokens and Component contracts. A shared action-backed tracker now distinguishes the last persisted fingerprint from the current draft, reports validation failures, ignores stale server errors after further edits, and prevents unchanged submissions from falsely changing the aggregate status.
 
-The final Quality workflow must pass on this follow-up head before manual QA approval.
+The final Quality workflow passes on this follow-up head. Product-owner QA remains the last gate.
