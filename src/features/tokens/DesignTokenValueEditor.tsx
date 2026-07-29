@@ -80,13 +80,10 @@ export function DesignTokenValueEditor({
   const preserveSaveContext = usePreserveSaveContext(sourceId);
 
   useEffect(() => {
-    if (state.status !== 'success') {
-      return;
+    if (state.status === 'success') {
+      onUpdated(tokenPath, tokenSetType);
     }
-
-    setDraftValue(state.values.value);
-    onUpdated(tokenPath, tokenSetType);
-  }, [onUpdated, state.status, state.values.value, tokenPath, tokenSetType]);
+  }, [onUpdated, state.status, tokenPath, tokenSetType]);
 
   const submittedValueErrors = hasCurrentActionError
     ? (state.fieldErrors.value ?? [])
