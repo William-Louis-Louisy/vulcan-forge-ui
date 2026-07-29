@@ -4,7 +4,8 @@ import { useActionState, useEffect, useState, type ReactNode } from 'react';
 import { PlusIcon, TrashIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
 
-import { useProjectSaveStatus } from '@/components/layout/ProjectTopbarBreadcrumb';
+import { useActionBackedProjectSaveStatus } from '@/features/save-context/useActionBackedProjectSaveStatus';
+import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 import {
   Badge,
   Button,
@@ -38,8 +39,6 @@ type BrandProfileEditorProps = {
   initialProfile: BrandProfile;
 };
 
-type ProfileSaveStatus = 'saved' | 'unsaved' | 'saving' | 'error';
-
 const fieldRows: Array<{
   key: Exclude<BrandLocalizedFieldKey, 'tagline'>;
   rows: number;
@@ -70,37 +69,49 @@ export function BrandProfileEditor({
       : project.defaultLocale,
   );
 
-  const savedProductName = state.savedProductName ?? project.name;
-  const savedProfile = state.savedProfile ?? initialProfile;
+  const normalizedProductName = productName.trim();
   const parsedProfile = brandProfileSchema.safeParse(profile);
   const hasValidProductName =
-    productName.trim().length >= 2 && productName.trim().length <= 80;
+    normalizedProductName.length >= 2 && normalizedProductName.length <= 80;
   const isValid = parsedProfile.success && hasValidProductName;
   const payload = isValid
     ? JSON.stringify({
-        productName: productName.trim(),
+        productName: normalizedProductName,
         profile: parsedProfile.data,
       })
     : '';
-  const hasUnsavedChanges =
-    JSON.stringify({ productName, profile }) !==
-    JSON.stringify({
-      productName: savedProductName,
-      profile: savedProfile,
-    });
-  const missingTranslationCount = countMissingBrandTranslations({
+  const sourceId = `brand-profile:${project.slug}`;
+  const currentFingerprint = JSON.stringify({
+    productName: normalizedProductName,
     profile,
-    supportedLocales: project.supportedLocales,
   });
-  const saveStatus: ProfileSaveStatus = isPending
-    ? 'saving'
-    : state.formError
-      ? 'error'
-      : hasUnsavedChanges
-        ? 'unsaved'
-        : 'saved';
-
-  useProjectSaveStatus(`brand-profile:${project.slug}`, saveStatus);
+  const successfulFingerprint =
+    state.status === 'success' &&
+    state.savedProductName !== null &&
+    state.savedProfile !== null
+      ? JSON.stringify({
+          productName: state.savedProductName,
+          profile: state.savedProfile,
+        })
+      : null;
+  const {
+    hasCurrentActionError,
+    hasUnsavedChanges,
+    markCurrentDraftSubmitted,
+    status: saveStatus,
+  } = useActionBackedProjectSaveStatus({
+    sourceId,
+    currentFingerprint,
+    initialSavedFingerprint: JSON.stringify({
+      productName: project.name.trim(),
+      profile: initialProfile,
+    }),
+    actionStatus: state.status,
+    successfulFingerprint,
+    isPending,
+    hasValidationError: !isValid,
+  });
+  const preserveSaveContext = usePreserveSaveContext(sourceId);
 
   useEffect(() => {
     if (state.status === 'success') {
@@ -211,19 +222,28 @@ export function BrandProfileEditor({
     });
   }
 
-  const feedback = state.formError
-    ? t(`errors.${state.formError}`)
-    : state.status === 'success'
-      ? t('feedback.saved')
+  function handleSubmitCapture() {
+    markCurrentDraftSubmitted();
+    preserveSaveContext();
+  }
+
+  const feedback =
+    hasCurrentActionError && state.formError
+      ? t(`errors.${state.formError}`)
       : !isValid
         ? t('feedback.invalid')
-        : hasUnsavedChanges
-          ? t('feedback.unsaved')
-          : t('feedback.savedState');
+        : saveStatus === 'saving'
+          ? t('actions.saving')
+          : state.status === 'success' && !hasUnsavedChanges
+            ? t('feedback.saved')
+            : hasUnsavedChanges
+              ? t('feedback.unsaved')
+              : t('feedback.savedState');
 
   return (
     <form
       action={formAction}
+      onSubmitCapture={handleSubmitCapture}
       className="flex min-h-0 flex-col xl:absolute xl:inset-0 xl:h-auto xl:overflow-hidden"
     >
       <input type="hidden" name="projectSlug" value={project.slug} />
@@ -274,16 +294,18 @@ export function BrandProfileEditor({
         </div>
 
         <p
-          role={state.formError ? 'alert' : 'status'}
+          role={hasCurrentActionError ? 'alert' : 'status'}
           className={[
             'text-xs font-semibold',
-            state.formError
+            hasCurrentActionError || !isValid
               ? 'text-action-danger'
-              : state.status === 'success'
-                ? 'text-action-success'
-                : hasUnsavedChanges
-                  ? 'text-action-warning'
-                  : 'text-content-tertiary',
+              : saveStatus === 'saving'
+                ? 'text-content-secondary'
+                : state.status === 'success' && !hasUnsavedChanges
+                  ? 'text-action-success'
+                  : hasUnsavedChanges
+                    ? 'text-action-warning'
+                    : 'text-content-tertiary',
           ].join(' ')}
         >
           {feedback}

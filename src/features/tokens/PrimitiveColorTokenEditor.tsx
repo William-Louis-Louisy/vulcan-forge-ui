@@ -127,9 +127,7 @@ export function PrimitiveColorTokenEditor({
 
         <Button
           type="submit"
-          disabled={
-            isPending || !hasUnsavedChanges || Boolean(localValueError)
-          }
+          disabled={isPending || !hasUnsavedChanges || Boolean(localValueError)}
         >
           {isPending
             ? t('primitiveColorEditor.saving')
