@@ -16,6 +16,16 @@ describe('project switcher routes', () => {
     ).toBe('themes');
   });
 
+  it('preserves the project settings section', () => {
+    expect(
+      getProjectSwitchDestination({
+        pathname: '/app/projects/aurora/settings',
+        currentProjectSlug: 'aurora',
+        tokenSet: null,
+      }),
+    ).toBe('settings');
+  });
+
   it('collapses nested editor routes to their top-level section', () => {
     expect(
       getProjectSwitchDestination({
