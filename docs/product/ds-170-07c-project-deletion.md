@@ -77,6 +77,7 @@ The standard Quality workflow remains the final automated gate and includes Pris
 - trigger a validation error and verify the error state;
 - edit the failed draft and verify the stale server error clears while the draft returns to unsaved;
 - verify unchanged forms cannot be submitted and do not keep the project in an unsaved state;
+- verify the Brand translation-completeness badge still updates while editing localized content;
 - switch between token inspector entries and projects and verify removed editors no longer influence the aggregate status.
 
 ## Definition of done
