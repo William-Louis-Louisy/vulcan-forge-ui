@@ -6,12 +6,12 @@ import {
   initialUpdateSemanticColorTokenActionState,
   type UpdateSemanticColorTokenActionState,
 } from './update-semantic-color-token.state';
-import { useActionState, useMemo, useState } from 'react';
+import { useActionState, useEffect, useMemo, useState } from 'react';
 import type { PrimitiveColorTokenAliasOption } from './tokens-editor.utils';
-import { useProjectSaveStatus } from '@/components/layout/ProjectTopbarBreadcrumb';
 import { Button, Select } from '@/components/ui';
 import { updateSemanticColorTokenAction } from './update-semantic-color-token.action';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
+import { useActionBackedProjectSaveStatus } from '@/features/save-context/useActionBackedProjectSaveStatus';
 
 type SemanticColorTokenAliasEditorProps = {
   locale: Locale;
@@ -48,39 +48,51 @@ export function SemanticColorTokenAliasEditor({
       },
     },
   );
-
-  const hasUnsavedChanges = referencePath !== state.values.referencePath;
+  const sourceId = `semantic-color-token:${projectSlug}:${tokenPath}`;
 
   const selectedOption = useMemo(
     () => primitiveOptions.find((option) => option.path === referencePath),
     [primitiveOptions, referencePath],
   );
-
-  const previewValue = selectedOption?.value ?? resolvedColorValue;
-  const referencePathError = getFirstError(state.fieldErrors);
   const hasPrimitiveOptions = primitiveOptions.length > 0;
+  const successfulFingerprint =
+    state.status === 'success' ? state.values.referencePath : null;
+  const {
+    hasCurrentActionError,
+    hasUnsavedChanges,
+    markCurrentDraftSubmitted,
+  } = useActionBackedProjectSaveStatus({
+    sourceId,
+    currentFingerprint: referencePath,
+    initialSavedFingerprint: initialReferencePath,
+    actionStatus: state.status,
+    successfulFingerprint,
+    isPending,
+    hasValidationError: hasPrimitiveOptions && !selectedOption,
+  });
+  const preserveSaveContext = usePreserveSaveContext(sourceId);
+  const previewValue = selectedOption?.value ?? resolvedColorValue;
+  const referencePathError = hasCurrentActionError
+    ? getFirstError(state.fieldErrors)
+    : null;
   const helpId = `semantic-alias-${tokenPath}-help`;
   const errorId = `semantic-alias-${tokenPath}-error`;
 
-  const preserveSaveContext = usePreserveSaveContext(
-    `semantic-color-token:${projectSlug}:${tokenPath}`,
-  );
+  useEffect(() => {
+    if (state.status === 'success') {
+      setReferencePath(state.values.referencePath);
+    }
+  }, [state.status, state.values.referencePath]);
 
-  useProjectSaveStatus(
-    `semantic-color:${projectSlug}:${tokenPath}`,
-    isPending
-      ? 'saving'
-      : state.formError
-        ? 'error'
-        : hasUnsavedChanges
-          ? 'unsaved'
-          : 'saved',
-  );
+  function handleSubmitCapture() {
+    markCurrentDraftSubmitted();
+    preserveSaveContext();
+  }
 
   return (
     <form
       action={formAction}
-      onSubmitCapture={preserveSaveContext}
+      onSubmitCapture={handleSubmitCapture}
       className="border-border-subtle space-y-3 border-b pb-2"
     >
       <input type="hidden" name="locale" value={locale} />
@@ -116,7 +128,7 @@ export function SemanticColorTokenAliasEditor({
 
         <Button
           type="submit"
-          disabled={isPending || !hasPrimitiveOptions}
+          disabled={isPending || !hasPrimitiveOptions || !hasUnsavedChanges}
           className="w-full sm:w-auto"
         >
           {isPending
@@ -153,7 +165,7 @@ export function SemanticColorTokenAliasEditor({
         </p>
       ) : null}
 
-      {state.formError ? (
+      {hasCurrentActionError && state.formError ? (
         <p
           role="alert"
           className="text-action-danger mt-2 text-xs font-semibold"
