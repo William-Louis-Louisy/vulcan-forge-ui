@@ -8,6 +8,7 @@ import {
   type UpdatePrimitiveColorTokenActionState,
 } from './update-primitive-color-token.state';
 import { useActionState, useState } from 'react';
+import { ColorPickerField } from './ColorPickerField';
 import { primitiveColorHexPattern } from './primitive-color-token.schema';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 import { useActionBackedProjectSaveStatus } from '@/features/save-context/useActionBackedProjectSaveStatus';
@@ -72,6 +73,8 @@ export function PrimitiveColorTokenEditor({
     ? getFirstError(state.fieldErrors)
     : null;
   const valueError = localValueError ?? submittedValueError;
+  const helpId = `primitive-color-${tokenPath}-help`;
+  const errorId = `primitive-color-${tokenPath}-error`;
 
   function handleSubmitCapture() {
     markCurrentDraftSubmitted();
@@ -88,43 +91,20 @@ export function PrimitiveColorTokenEditor({
       <input type="hidden" name="projectSlug" value={projectSlug} />
       <input type="hidden" name="tokenPath" value={tokenPath} />
 
-      <label
-        htmlFor={`primitive-color-${tokenPath}`}
-        className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase"
-      >
-        {t('primitiveColorEditor.label')}
-      </label>
+      <ColorPickerField
+        id={`primitive-color-${tokenPath}`}
+        name="value"
+        label={t('primitiveColorEditor.label')}
+        locale={locale}
+        value={draftValue}
+        onValueChange={setDraftValue}
+        fallbackValue={initialValue}
+        invalid={Boolean(valueError)}
+        disabled={isPending}
+        ariaDescribedBy={valueError ? `${helpId} ${errorId}` : helpId}
+      />
 
-      <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center">
-        <div className="flex min-w-0 flex-1 items-center gap-2">
-          <span
-            aria-label={t('primitiveColorEditor.previewLabel', {
-              value: isPreviewValid ? currentFingerprint : initialValue,
-            })}
-            role="img"
-            className="border-border-subtle size-12 shrink-0 rounded-md border"
-            style={{
-              backgroundColor: isPreviewValid
-                ? currentFingerprint
-                : initialValue,
-            }}
-          />
-
-          <input
-            id={`primitive-color-${tokenPath}`}
-            name="value"
-            value={draftValue}
-            onChange={(event) => setDraftValue(event.target.value)}
-            aria-invalid={Boolean(valueError)}
-            aria-describedby={
-              valueError
-                ? `primitive-color-${tokenPath}-error`
-                : `primitive-color-${tokenPath}-help`
-            }
-            className="border-border-subtle bg-surface-primary focus:border-action-primary w-full rounded-md border px-3 py-2 font-mono text-sm outline-none"
-          />
-        </div>
-
+      <div className="flex justify-end">
         <Button
           type="submit"
           disabled={isPending || !hasUnsavedChanges || Boolean(localValueError)}
@@ -135,18 +115,12 @@ export function PrimitiveColorTokenEditor({
         </Button>
       </div>
 
-      <p
-        id={`primitive-color-${tokenPath}-help`}
-        className="text-content-tertiary mt-2 text-xs"
-      >
+      <p id={helpId} className="text-content-tertiary mt-2 text-xs">
         {t('primitiveColorEditor.help')}
       </p>
 
       {valueError ? (
-        <p
-          id={`primitive-color-${tokenPath}-error`}
-          className="text-action-danger mt-2 text-xs font-semibold"
-        >
+        <p id={errorId} className="text-action-danger mt-2 text-xs font-semibold">
           {t(`primitiveColorEditor.validation.${valueError}`)}
         </p>
       ) : null}
