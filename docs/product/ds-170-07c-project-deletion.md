@@ -42,7 +42,7 @@ Focused tests cover:
 - preservation of the Settings destination in the project switcher;
 - the save-status priority between saving, current errors, unsaved drafts and saved data.
 
-The standard Quality workflow remains the automated gate and includes Prisma generation, lint, strict TypeScript checking, formatting, UI audit, the complete test suite and production build. The audited save-status implementation passes with 114 test files and 497 tests.
+The standard Quality workflow includes Prisma generation, lint, strict TypeScript checking, formatting, UI audit, the complete test suite and production build. The audited save-status implementation passes with 114 test files and 497 tests.
 
 ## Manual QA checklist
 
@@ -85,7 +85,7 @@ The standard Quality workflow remains the automated gate and includes Prisma gen
 
 DS-170-07C is complete when:
 
-- the standard Quality workflow passes on the branch head submitted for review;
+- the automated Quality gate passes;
 - the owner and non-owner manual QA paths pass;
 - the deleted project disappears after redirect and related data is removed through database cascades;
 - the product owner approves the destructive workflow.
