@@ -6,7 +6,7 @@ import {
   initialUpdateSemanticColorTokenActionState,
   type UpdateSemanticColorTokenActionState,
 } from './update-semantic-color-token.state';
-import { useActionState, useEffect, useMemo, useState } from 'react';
+import { useActionState, useMemo, useState } from 'react';
 import type { PrimitiveColorTokenAliasOption } from './tokens-editor.utils';
 import { Button, Select } from '@/components/ui';
 import { updateSemanticColorTokenAction } from './update-semantic-color-token.action';
@@ -77,12 +77,6 @@ export function SemanticColorTokenAliasEditor({
     : null;
   const helpId = `semantic-alias-${tokenPath}-help`;
   const errorId = `semantic-alias-${tokenPath}-error`;
-
-  useEffect(() => {
-    if (state.status === 'success') {
-      setReferencePath(state.values.referencePath);
-    }
-  }, [state.status, state.values.referencePath]);
 
   function handleSubmitCapture() {
     markCurrentDraftSubmitted();
