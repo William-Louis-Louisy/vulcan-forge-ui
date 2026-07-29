@@ -10,7 +10,10 @@ import {
 import { ColorPickerField } from './ColorPickerField';
 import { createColorTokenAction } from './create-color-token.action';
 import type { PrimitiveColorTokenAliasOption } from './tokens-editor.utils';
-import { primitiveColorHexPattern } from './primitive-color-token.schema';
+import {
+  primitiveColorHexPattern,
+  type CreateColorTokenValidationMessageKey,
+} from './create-color-token.schema';
 import { initialCreateColorTokenActionState } from './create-color-token.state';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 
@@ -97,7 +100,7 @@ export function CreateColorTokenForm({
   const submittedValueErrors = state.fieldErrors.value ?? [];
   const referencePathErrors = state.fieldErrors.referencePath ?? [];
   const trimmedPrimitiveValue = primitiveValue.trim();
-  const localPrimitiveValueError =
+  const localPrimitiveValueError: CreateColorTokenValidationMessageKey | null =
     kind !== 'primitive'
       ? null
       : trimmedPrimitiveValue.length === 0
@@ -105,11 +108,12 @@ export function CreateColorTokenForm({
         : primitiveColorHexPattern.test(trimmedPrimitiveValue)
           ? null
           : 'tokenColorValueInvalid';
-  const valueErrors = localPrimitiveValueError
-    ? [localPrimitiveValueError]
-    : primitiveValue === state.values.value
-      ? submittedValueErrors
-      : [];
+  const valueErrors: CreateColorTokenValidationMessageKey[] =
+    localPrimitiveValueError
+      ? [localPrimitiveValueError]
+      : primitiveValue === state.values.value
+        ? submittedValueErrors
+        : [];
   const hasInvalidPrimitiveValue = Boolean(localPrimitiveValueError);
 
   return (
