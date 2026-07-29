@@ -120,7 +120,10 @@ export function PrimitiveColorTokenEditor({
       </p>
 
       {valueError ? (
-        <p id={errorId} className="text-action-danger mt-2 text-xs font-semibold">
+        <p
+          id={errorId}
+          className="text-action-danger mt-2 text-xs font-semibold"
+        >
           {t(`primitiveColorEditor.validation.${valueError}`)}
         </p>
       ) : null}
