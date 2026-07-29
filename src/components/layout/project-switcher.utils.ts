@@ -6,6 +6,7 @@ const projectSectionPaths = new Set([
   'documentation',
   'exports',
   'ai-instructions',
+  'settings',
 ]);
 
 const tokenSetTypes = new Set([

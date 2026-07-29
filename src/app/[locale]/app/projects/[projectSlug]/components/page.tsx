@@ -1,29 +1,29 @@
 import { auth } from '@/auth';
-import { hasLocale } from 'next-intl';
-import { getTranslations } from 'next-intl/server';
-import { notFound, redirect } from 'next/navigation';
-import { routing, type Locale } from '@/i18n/routing';
 import {
   mvpComponentContractSeeds,
   type ComponentContractType,
 } from '@/domain/design-system';
+import { hasLocale } from 'next-intl';
+import { Badge, Notice } from '@/components/ui';
+import { getTranslations } from 'next-intl/server';
+import { notFound, redirect } from 'next/navigation';
+import { routing, type Locale } from '@/i18n/routing';
 import {
   createComponentRegistryItems,
   groupComponentRegistryItemsByCategory,
   type ComponentRegistryItem,
 } from '@/features/components/components-registry.utils';
-import { Badge, Notice } from '@/components/ui';
 import { ComponentDetails } from '@/features/components/ComponentDetailsPanel';
 import { ComponentList } from '@/features/components/ComponentRegistryNavigation';
-import { ComponentAiContractShell } from '@/features/components/ComponentAiContractPreview';
 import { ComponentRegistryState } from '@/features/components/ComponentRegistryState';
-import { ComponentRegistryCreateButton } from '@/features/components/ComponentRegistryCreateButton';
+import { ComponentAiContractShell } from '@/features/components/ComponentAiContractPreview';
 import { ComponentResponsiveWorkspace } from '@/features/components/ComponentResponsiveWorkspace';
-import { ComponentContractPreviewProvider } from '@/features/components/ComponentContractPreviewContext';
 import { getComponentsRegistryPageData } from '@/features/components/components-registry.queries';
 import { createComponentTokenOptions } from '@/features/components/component-token-bindings.utils';
+import { ComponentRegistryCreateButton } from '@/features/components/ComponentRegistryCreateButton';
 import { filterComponentRegistryItems } from '@/features/components/components-registry-page.utils';
 import { ComponentFoundationsPreviewShell } from '@/features/components/ComponentFoundationsPreview';
+import { ComponentContractPreviewProvider } from '@/features/components/ComponentContractPreviewContext';
 
 type ComponentsRegistryPageProps = {
   params: Promise<{

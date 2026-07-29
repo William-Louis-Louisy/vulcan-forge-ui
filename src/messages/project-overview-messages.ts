@@ -5,6 +5,7 @@ export const projectOverviewMessages = {
       project: {
         noDescription:
           'No project description has been added yet. Add one during the Brand step to improve generated documentation.',
+        settings: 'Settings',
         openDocumentation: 'Open documentation',
         platforms: {
           web: 'Web',
@@ -199,6 +200,7 @@ export const projectOverviewMessages = {
       project: {
         noDescription:
           'Aucune description de projet n’a encore été ajoutée. Complétez-la lors de l’étape Marque afin d’améliorer la documentation générée.',
+        settings: 'Paramètres',
         openDocumentation: 'Ouvrir la documentation',
         platforms: {
           web: 'Web',

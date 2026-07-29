@@ -1,3 +1,5 @@
+'use client';
+
 import {
   parseTypographyTokenValue,
   serializeTypographyTokenFormValues,
@@ -7,9 +9,10 @@ import { Button } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
 import { useActionState, useEffect, useMemo, useState } from 'react';
 import { updateDesignTokenValueAction } from './update-design-token-value.action';
-import { useProjectSaveStatus } from '@/components/layout/ProjectTopbarBreadcrumb';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
+import { useActionBackedProjectSaveStatus } from '@/features/save-context/useActionBackedProjectSaveStatus';
 import { initialUpdateDesignTokenValueActionState } from './update-design-token-value.state';
+import { validateTokenValueForType } from './token-value-validation.utils';
 
 export type TypographyTokenValueEditorLabels = {
   title: string;
@@ -68,18 +71,8 @@ export function TypographyTokenValueEditor({
     useState<TypographyTokenFormValues>(() =>
       parseTypographyTokenValue(initialValue),
     );
-
-  const preserveSaveContext = usePreserveSaveContext(
-    `typography-token-value:${projectSlug}:${tokenPath}`,
-  );
-
-  useEffect(() => {
-    if (state.status !== 'success') {
-      return;
-    }
-
-    onUpdated(tokenPath);
-  }, [onUpdated, state.status, tokenPath]);
+  const sourceId = `typography-token-value:${projectSlug}:${tokenPath}`;
+  const preserveSaveContext = usePreserveSaveContext(sourceId);
 
   const serializedTypographyValue = useMemo(() => {
     if (!hasTypographyFieldValue(typographyValues)) {
@@ -88,8 +81,37 @@ export function TypographyTokenValueEditor({
 
     return serializeTypographyTokenFormValues(typographyValues);
   }, [typographyValues]);
+  const localValueError = validateTokenValueForType({
+    type: 'typography',
+    value: serializedTypographyValue,
+  });
+  const successfulFingerprint =
+    state.status === 'success' ? state.values.value : null;
+  const {
+    hasCurrentActionError,
+    hasUnsavedChanges,
+    markCurrentDraftSubmitted,
+  } = useActionBackedProjectSaveStatus({
+    sourceId,
+    currentFingerprint: serializedTypographyValue,
+    initialSavedFingerprint: initialValue,
+    actionStatus: state.status,
+    successfulFingerprint,
+    isPending,
+    hasValidationError: Boolean(localValueError),
+  });
+  const submittedValueErrors = hasCurrentActionError
+    ? (state.fieldErrors.value ?? [])
+    : [];
+  const valueErrors = localValueError
+    ? [localValueError]
+    : submittedValueErrors;
 
-  const valueErrors = state.fieldErrors.value ?? [];
+  useEffect(() => {
+    if (state.status === 'success') {
+      onUpdated(tokenPath);
+    }
+  }, [onUpdated, state.status, tokenPath]);
 
   function updateTypographyField(
     field: keyof TypographyTokenFormValues,
@@ -101,23 +123,15 @@ export function TypographyTokenValueEditor({
     }));
   }
 
-  const hasUnsavedChanges = serializedTypographyValue !== state.values.value;
-
-  useProjectSaveStatus(
-    `typography-token:${projectSlug}:${tokenPath}`,
-    isPending
-      ? 'saving'
-      : state.formError
-        ? 'error'
-        : hasUnsavedChanges
-          ? 'unsaved'
-          : 'saved',
-  );
+  function handleSubmitCapture() {
+    markCurrentDraftSubmitted();
+    preserveSaveContext();
+  }
 
   return (
     <form
       action={formAction}
-      onSubmitCapture={preserveSaveContext}
+      onSubmitCapture={handleSubmitCapture}
       className="border-border-subtle border-b pb-2"
     >
       <input type="hidden" name="locale" value={locale} />
@@ -212,20 +226,23 @@ export function TypographyTokenValueEditor({
         </ul>
       ) : null}
 
-      {state.formError ? (
+      {hasCurrentActionError && state.formError ? (
         <p className="text-action-danger mt-3 text-xs font-semibold">
           {labels.formErrors[state.formError]}
         </p>
       ) : null}
 
-      {state.status === 'success' ? (
+      {state.status === 'success' && !hasUnsavedChanges ? (
         <p className="text-action-success mt-3 text-xs font-semibold">
           {labels.success}
         </p>
       ) : null}
 
       <div className="mt-2 inline-flex w-full items-center justify-end">
-        <Button type="submit" disabled={isPending}>
+        <Button
+          type="submit"
+          disabled={isPending || !hasUnsavedChanges || Boolean(localValueError)}
+        >
           {isPending ? '…' : labels.submit}
         </Button>
       </div>

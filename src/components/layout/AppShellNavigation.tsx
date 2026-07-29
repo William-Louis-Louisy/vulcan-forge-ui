@@ -101,6 +101,7 @@ export function AppShellNavigation({
     documentation: projectT('documentation'),
     exports: projectT('exports'),
     aiInstructions: projectT('aiInstructions'),
+    settings: projectT('settings'),
   };
 
   return (

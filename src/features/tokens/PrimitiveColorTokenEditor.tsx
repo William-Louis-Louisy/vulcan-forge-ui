@@ -9,8 +9,8 @@ import {
 } from './update-primitive-color-token.state';
 import { useActionState, useState } from 'react';
 import { primitiveColorHexPattern } from './primitive-color-token.schema';
-import { useProjectSaveStatus } from '@/components/layout/ProjectTopbarBreadcrumb';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
+import { useActionBackedProjectSaveStatus } from '@/features/save-context/useActionBackedProjectSaveStatus';
 import { updatePrimitiveColorTokenAction } from './update-primitive-color-token.action';
 
 type PrimitiveColorTokenEditorProps = {
@@ -44,31 +44,44 @@ export function PrimitiveColorTokenEditor({
       },
     },
   );
+  const sourceId = `primitive-color-token:${projectSlug}:${tokenPath}`;
+  const currentFingerprint = draftValue.trim();
+  const isPreviewValid = primitiveColorHexPattern.test(currentFingerprint);
+  const localValueError = isPreviewValid
+    ? null
+    : currentFingerprint.length === 0
+      ? 'primitiveColorRequired'
+      : 'primitiveColorHexInvalid';
+  const successfulFingerprint =
+    state.status === 'success' ? state.values.value : null;
+  const {
+    hasCurrentActionError,
+    hasUnsavedChanges,
+    markCurrentDraftSubmitted,
+  } = useActionBackedProjectSaveStatus({
+    sourceId,
+    currentFingerprint,
+    initialSavedFingerprint: initialValue.trim(),
+    actionStatus: state.status,
+    successfulFingerprint,
+    isPending,
+    hasValidationError: Boolean(localValueError),
+  });
+  const preserveSaveContext = usePreserveSaveContext(sourceId);
+  const submittedValueError = hasCurrentActionError
+    ? getFirstError(state.fieldErrors)
+    : null;
+  const valueError = localValueError ?? submittedValueError;
 
-  const hasUnsavedChanges = draftValue !== state.values.value;
-
-  const valueError = getFirstError(state.fieldErrors);
-  const isPreviewValid = primitiveColorHexPattern.test(draftValue);
-
-  const preserveSaveContext = usePreserveSaveContext(
-    `primitive-color-token:${projectSlug}:${tokenPath}`,
-  );
-
-  useProjectSaveStatus(
-    `primitive-color:${projectSlug}:${tokenPath}`,
-    isPending
-      ? 'saving'
-      : state.formError
-        ? 'error'
-        : hasUnsavedChanges
-          ? 'unsaved'
-          : 'saved',
-  );
+  function handleSubmitCapture() {
+    markCurrentDraftSubmitted();
+    preserveSaveContext();
+  }
 
   return (
     <form
       action={formAction}
-      onSubmitCapture={preserveSaveContext}
+      onSubmitCapture={handleSubmitCapture}
       className="border-border-subtle space-y-3 border-b pb-2"
     >
       <input type="hidden" name="locale" value={locale} />
@@ -86,12 +99,14 @@ export function PrimitiveColorTokenEditor({
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <span
             aria-label={t('primitiveColorEditor.previewLabel', {
-              value: isPreviewValid ? draftValue : initialValue,
+              value: isPreviewValid ? currentFingerprint : initialValue,
             })}
             role="img"
             className="border-border-subtle size-12 shrink-0 rounded-md border"
             style={{
-              backgroundColor: isPreviewValid ? draftValue : initialValue,
+              backgroundColor: isPreviewValid
+                ? currentFingerprint
+                : initialValue,
             }}
           />
 
@@ -110,7 +125,10 @@ export function PrimitiveColorTokenEditor({
           />
         </div>
 
-        <Button type="submit" disabled={isPending}>
+        <Button
+          type="submit"
+          disabled={isPending || !hasUnsavedChanges || Boolean(localValueError)}
+        >
           {isPending
             ? t('primitiveColorEditor.saving')
             : t('primitiveColorEditor.save')}
@@ -133,7 +151,7 @@ export function PrimitiveColorTokenEditor({
         </p>
       ) : null}
 
-      {state.formError ? (
+      {hasCurrentActionError && state.formError ? (
         <p
           role="alert"
           className="text-action-danger mt-2 text-xs font-semibold"
@@ -142,7 +160,7 @@ export function PrimitiveColorTokenEditor({
         </p>
       ) : null}
 
-      {hasUnsavedChanges ? (
+      {hasUnsavedChanges && !localValueError ? (
         <p
           role="status"
           className="text-action-warning mt-2 text-xs font-semibold"

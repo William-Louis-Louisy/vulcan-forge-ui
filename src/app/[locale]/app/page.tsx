@@ -2,14 +2,22 @@ import { auth } from '@/auth';
 import { getTranslations } from 'next-intl/server';
 import { PlusIcon } from '@phosphor-icons/react/dist/ssr';
 import { AppLink } from '@/components/navigation/AppLink';
+import { Notice } from '@/components/ui';
 import { ProjectCard } from '@/features/design-systems/ProjectCard';
 import { formatRelativeUpdatedDate } from '@/features/design-systems/design-systems.utils';
 import { getDesignSystemsPageData } from '@/features/design-systems/design-systems.queries';
 
-export default async function AppPage() {
+type AppPageProps = {
+  searchParams: Promise<{
+    projectDeleted?: string | string[];
+  }>;
+};
+
+export default async function AppPage({ searchParams }: AppPageProps) {
   const session = await auth();
   const t = await getTranslations('DashboardPage');
   const projectT = await getTranslations('DesignSystemsPage');
+  const { projectDeleted } = await searchParams;
 
   const pageData = session?.user?.id
     ? await getDesignSystemsPageData(session.user.id)
@@ -48,6 +56,16 @@ export default async function AppPage() {
       </header>
 
       <div className="px-10 py-6">
+        {projectDeleted === '1' ? (
+          <Notice
+            tone="success"
+            title={t('projectDeleted.title')}
+            className="mb-6"
+          >
+            {t('projectDeleted.description')}
+          </Notice>
+        ) : null}
+
         <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
           {pageData.designSystems.map((designSystem) => (
             <ProjectCard

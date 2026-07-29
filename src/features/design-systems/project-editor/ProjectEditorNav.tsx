@@ -39,6 +39,7 @@ export function ProjectEditorNav({
     documentation: t('documentation'),
     exports: t('exports'),
     aiInstructions: t('aiInstructions'),
+    settings: t('settings'),
   };
 
   const visibleItems = showDisabledItems

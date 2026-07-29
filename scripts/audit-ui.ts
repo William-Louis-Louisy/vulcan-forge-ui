@@ -220,8 +220,8 @@ function main() {
   const violations = files.flatMap(auditFile);
 
   if (violations.length === 0) {
-    console.log(
-      `UI audit passed: ${files.length} production files checked, ${allowlist.length} documented exceptions.`,
+    process.stdout.write(
+      `UI audit passed: ${files.length} production files checked, ${allowlist.length} documented exceptions.\n`,
     );
     return;
   }

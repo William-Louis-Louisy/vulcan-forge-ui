@@ -1,11 +1,14 @@
+'use client';
+
 import { Button } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
-import { useActionState, useEffect } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import type { TokenSetType } from './tokens-editor.utils';
 import { updateDesignTokenValueAction } from './update-design-token-value.action';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 import { initialUpdateDesignTokenValueActionState } from './update-design-token-value.state';
-import { useProjectSaveStatus } from '@/components/layout/ProjectTopbarBreadcrumb';
+import { useActionBackedProjectSaveStatus } from '@/features/save-context/useActionBackedProjectSaveStatus';
+import { validateTokenValueForType } from './token-value-validation.utils';
 
 export type DesignTokenValueEditorLabels = {
   label: string;
@@ -43,6 +46,7 @@ export function DesignTokenValueEditor({
   labels,
   onUpdated,
 }: DesignTokenValueEditorProps) {
+  const [draftValue, setDraftValue] = useState(initialValue);
   const [state, formAction, isPending] = useActionState(
     updateDesignTokenValueAction,
     {
@@ -52,38 +56,51 @@ export function DesignTokenValueEditor({
       },
     },
   );
-
-  const hasUnsavedChanges = state.values.value !== initialValue;
-
-  const preserveSaveContext = usePreserveSaveContext(
-    `design-token-value:${projectSlug}:${tokenSetType}:${tokenPath}`,
-  );
-
-  useProjectSaveStatus(
-    `design-token-value:${projectSlug}:${tokenPath}`,
-    isPending
-      ? 'saving'
-      : state.formError
-        ? 'error'
-        : hasUnsavedChanges
-          ? 'unsaved'
-          : 'saved',
-  );
+  const sourceId = `design-token-value:${projectSlug}:${tokenSetType}:${tokenPath}`;
+  const currentFingerprint = draftValue.trim();
+  const localValueError = validateTokenValueForType({
+    type: tokenSetType,
+    value: draftValue,
+  });
+  const successfulFingerprint =
+    state.status === 'success' ? state.values.value : null;
+  const {
+    hasCurrentActionError,
+    hasUnsavedChanges,
+    markCurrentDraftSubmitted,
+  } = useActionBackedProjectSaveStatus({
+    sourceId,
+    currentFingerprint,
+    initialSavedFingerprint: initialValue.trim(),
+    actionStatus: state.status,
+    successfulFingerprint,
+    isPending,
+    hasValidationError: Boolean(localValueError),
+  });
+  const preserveSaveContext = usePreserveSaveContext(sourceId);
 
   useEffect(() => {
-    if (state.status !== 'success') {
-      return;
+    if (state.status === 'success') {
+      onUpdated(tokenPath, tokenSetType);
     }
-
-    onUpdated(tokenPath, tokenSetType);
   }, [onUpdated, state.status, tokenPath, tokenSetType]);
 
-  const valueErrors = state.fieldErrors.value ?? [];
+  const submittedValueErrors = hasCurrentActionError
+    ? (state.fieldErrors.value ?? [])
+    : [];
+  const valueErrors = localValueError
+    ? [localValueError]
+    : submittedValueErrors;
+
+  function handleSubmitCapture() {
+    markCurrentDraftSubmitted();
+    preserveSaveContext();
+  }
 
   return (
     <form
       action={formAction}
-      onSubmitCapture={preserveSaveContext}
+      onSubmitCapture={handleSubmitCapture}
       className="border-border-subtle border-b pb-2"
     >
       <input type="hidden" name="locale" value={locale} />
@@ -102,14 +119,15 @@ export function DesignTokenValueEditor({
         <input
           id={`token-value-${tokenPath}`}
           name="value"
-          defaultValue={state.values.value || initialValue}
+          value={draftValue}
+          onChange={(event) => setDraftValue(event.target.value)}
           aria-invalid={valueErrors.length > 0}
           className="border-border-subtle bg-surface-primary focus:border-action-primary w-full rounded-md border px-3 py-2 font-mono text-sm outline-none"
         />
 
         <Button
           type="submit"
-          disabled={isPending}
+          disabled={isPending || !hasUnsavedChanges || Boolean(localValueError)}
           className="bg-action-primary text-action-primary-content rounded-lg px-3 py-2 text-sm font-semibold disabled:opacity-60"
         >
           {isPending ? '…' : labels.submit}
@@ -124,13 +142,13 @@ export function DesignTokenValueEditor({
         </ul>
       ) : null}
 
-      {state.formError ? (
+      {hasCurrentActionError && state.formError ? (
         <p className="text-action-danger mt-2 text-xs font-semibold">
           {labels.formErrors[state.formError]}
         </p>
       ) : null}
 
-      {state.status === 'success' ? (
+      {state.status === 'success' && !hasUnsavedChanges ? (
         <p className="text-action-success mt-2 text-xs font-semibold">
           {labels.success}
         </p>
