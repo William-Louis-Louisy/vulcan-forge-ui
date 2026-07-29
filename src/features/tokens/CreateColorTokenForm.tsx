@@ -9,12 +9,10 @@ import {
 } from '@/components/ui';
 import { ColorPickerField } from './ColorPickerField';
 import { createColorTokenAction } from './create-color-token.action';
-import type { PrimitiveColorTokenAliasOption } from './tokens-editor.utils';
-import {
-  primitiveColorHexPattern,
-  type CreateColorTokenValidationMessageKey,
-} from './create-color-token.schema';
+import type { CreateColorTokenValidationMessageKey } from './create-color-token.schema';
 import { initialCreateColorTokenActionState } from './create-color-token.state';
+import { primitiveColorHexPattern } from './primitive-color-token.schema';
+import type { PrimitiveColorTokenAliasOption } from './tokens-editor.utils';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 
 export type CreateColorTokenFormLabels = {
