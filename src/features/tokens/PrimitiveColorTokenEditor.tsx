@@ -7,7 +7,7 @@ import {
   initialUpdatePrimitiveColorTokenActionState,
   type UpdatePrimitiveColorTokenActionState,
 } from './update-primitive-color-token.state';
-import { useActionState, useEffect, useState } from 'react';
+import { useActionState, useState } from 'react';
 import { primitiveColorHexPattern } from './primitive-color-token.schema';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 import { useActionBackedProjectSaveStatus } from '@/features/save-context/useActionBackedProjectSaveStatus';
@@ -72,12 +72,6 @@ export function PrimitiveColorTokenEditor({
     ? getFirstError(state.fieldErrors)
     : null;
   const valueError = localValueError ?? submittedValueError;
-
-  useEffect(() => {
-    if (state.status === 'success') {
-      setDraftValue(state.values.value);
-    }
-  }, [state.status, state.values.value]);
 
   function handleSubmitCapture() {
     markCurrentDraftSubmitted();
