@@ -83,10 +83,12 @@ The standard Quality workflow includes Prisma generation, lint, strict TypeScrip
 
 ### Theme preference regression
 
-- change the application theme from Settings;
-- save the preference and verify the theme remains applied after `router.refresh()`;
-- verify no React console error is emitted about a script tag rendered inside a component;
-- reload the page and verify the preference is applied before hydration without a visible flash.
+- change the application appearance in Settings and save without changing locale;
+- verify the selected appearance remains applied and is persisted for a reload;
+- verify the console no longer reports a script element during the React refresh lifecycle;
+- repeat with light, dark and system preferences;
+- change locale together with the theme and verify the localized navigation keeps the saved appearance;
+- trigger another project feature that refreshes Server Components and verify the root theme bootstrap is not emitted into the client React payload.
 
 ## Definition of done
 
@@ -95,14 +97,15 @@ DS-170-07C is complete when:
 - the automated Quality gate passes;
 - the owner and non-owner manual QA paths pass;
 - the deleted project disappears after redirect and related data is removed through database cascades;
-- the product owner approves the destructive workflow.
+- the product owner approves the destructive workflow;
+- the targeted theme-preference regression check passes without console errors.
 
 ## Pre-QA follow-up
 
-Before product-owner QA, the project Overview now exposes a Settings action with a gear icon immediately before Open documentation. The Rust 500 primitive uses `#ff3131`, and the existing lint warnings from the UI-audit success output and unused overview imports have been removed.
+Before product-owner QA, the project Overview exposes a Settings action with a gear icon immediately before Open documentation. The Rust 500 primitive uses `#ff3131`, the product-owner visual adjustment to `DeleteComponentContractButton` is included, and the existing lint warnings have been removed.
 
-The project save-status lifecycle was also audited across Brand, Tokens and Component contracts. A shared action-backed tracker now distinguishes the last persisted fingerprint from the current draft, reports validation failures, ignores stale server errors after further edits, and prevents unchanged submissions from falsely changing the aggregate status.
+The project save-status lifecycle was audited across Brand, Tokens and Component contracts. A shared action-backed tracker distinguishes the last persisted fingerprint from the current draft, reports validation failures, ignores stale server errors after further edits, and prevents unchanged submissions from falsely changing the aggregate status.
 
-The theme bootstrap now uses the framework-managed `next/script` component with the `beforeInteractive` strategy. This keeps the local-storage preference available before hydration without asking React to execute a newly reconciled native script after the Settings form refreshes the route.
+The theme bootstrap no longer returns a script element from the client React tree. It is inserted only during server HTML generation through `useServerInsertedHTML`, while a successful same-locale Settings save persists the preference directly instead of forcing a root `router.refresh()`.
 
-Product-owner QA is approved. The targeted theme-preference regression check remains before the pull request is marked ready.
+Product-owner QA is approved. The targeted theme regression check remains the last gate before marking the pull request ready.
