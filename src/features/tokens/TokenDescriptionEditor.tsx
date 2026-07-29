@@ -7,10 +7,10 @@ import {
 } from './update-token-description.state';
 import { useTranslations } from 'next-intl';
 import type { Locale } from '@/i18n/routing';
-import { useActionState, useState } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import { updateTokenDescriptionAction } from './update-token-description.action';
-import { useProjectSaveStatus } from '@/components/layout/ProjectTopbarBreadcrumb';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
+import { useActionBackedProjectSaveStatus } from '@/features/save-context/useActionBackedProjectSaveStatus';
 
 type TokenDescriptionEditorProps = {
   locale: Locale;
@@ -26,6 +26,10 @@ function getFirstError(
   field: 'descriptionEn' | 'descriptionFr',
 ) {
   return errors[field]?.[0] ?? null;
+}
+
+function createDescriptionFingerprint(descriptionEn: string, descriptionFr: string) {
+  return JSON.stringify({ descriptionEn, descriptionFr });
 }
 
 export function TokenDescriptionEditor({
@@ -51,36 +55,61 @@ export function TokenDescriptionEditor({
       },
     },
   );
-
-  const hasUnsavedChanges =
-    descriptionEn !== state.values.descriptionEn ||
-    descriptionFr !== state.values.descriptionFr;
-
-  const descriptionEnError = getFirstError(state.fieldErrors, 'descriptionEn');
-  const descriptionFrError = getFirstError(state.fieldErrors, 'descriptionFr');
-
+  const sourceId = `token-description:${projectSlug}:${tokenPath}`;
+  const currentFingerprint = createDescriptionFingerprint(
+    descriptionEn,
+    descriptionFr,
+  );
+  const successfulFingerprint =
+    state.status === 'success'
+      ? createDescriptionFingerprint(
+          state.values.descriptionEn,
+          state.values.descriptionFr,
+        )
+      : null;
+  const {
+    hasCurrentActionError,
+    hasUnsavedChanges,
+    markCurrentDraftSubmitted,
+  } = useActionBackedProjectSaveStatus({
+    sourceId,
+    currentFingerprint,
+    initialSavedFingerprint: createDescriptionFingerprint(
+      initialDescriptionEn,
+      initialDescriptionFr,
+    ),
+    actionStatus: state.status,
+    successfulFingerprint,
+    isPending,
+  });
+  const preserveSaveContext = usePreserveSaveContext(sourceId);
+  const descriptionEnError = hasCurrentActionError
+    ? getFirstError(state.fieldErrors, 'descriptionEn')
+    : null;
+  const descriptionFrError = hasCurrentActionError
+    ? getFirstError(state.fieldErrors, 'descriptionFr')
+    : null;
   const isEnglishMissing = descriptionEn.trim().length === 0;
   const isFrenchMissing = descriptionFr.trim().length === 0;
 
-  const preserveSaveContext = usePreserveSaveContext(
-    `token-description:${projectSlug}:${tokenPath}`,
-  );
+  useEffect(() => {
+    if (state.status !== 'success') {
+      return;
+    }
 
-  useProjectSaveStatus(
-    `token-description:${projectSlug}:${tokenPath}`,
-    isPending
-      ? 'saving'
-      : state.formError
-        ? 'error'
-        : hasUnsavedChanges
-          ? 'unsaved'
-          : 'saved',
-  );
+    setDescriptionEn(state.values.descriptionEn);
+    setDescriptionFr(state.values.descriptionFr);
+  }, [state.status, state.values.descriptionEn, state.values.descriptionFr]);
+
+  function handleSubmitCapture() {
+    markCurrentDraftSubmitted();
+    preserveSaveContext();
+  }
 
   return (
     <form
       action={formAction}
-      onSubmitCapture={preserveSaveContext}
+      onSubmitCapture={handleSubmitCapture}
       className="border-border-subtle border-b pb-2"
     >
       <input type="hidden" name="locale" value={locale} />
@@ -183,7 +212,7 @@ export function TokenDescriptionEditor({
           {t('descriptionEditor.fallbackNotice')}
         </p>
         <div className="inline-flex items-center justify-end">
-          <Button type="submit" disabled={isPending}>
+          <Button type="submit" disabled={isPending || !hasUnsavedChanges}>
             {isPending
               ? t('descriptionEditor.saving')
               : t('descriptionEditor.save')}
@@ -191,7 +220,7 @@ export function TokenDescriptionEditor({
         </div>
       </div>
 
-      {state.formError ? (
+      {hasCurrentActionError && state.formError ? (
         <p
           role="alert"
           className="text-action-danger mt-2 text-xs font-semibold"
