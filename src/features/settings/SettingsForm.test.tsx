@@ -13,9 +13,7 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock('@/i18n/navigation', () => ({
   usePathname: () => '/app/settings',
-  useRouter: () => ({
-    replace: mocks.replace,
-  }),
+  useRouter: () => ({ replace: mocks.replace }),
 }));
 
 vi.mock('./theme-preference.client', () => ({
