@@ -48,9 +48,7 @@ export function parseHexColor(value: string): ParsedHexColor | null {
   const normalizedValue = value.trim();
 
   if (
-    !/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(
-      normalizedValue,
-    )
+    !/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(normalizedValue)
   ) {
     return null;
   }
