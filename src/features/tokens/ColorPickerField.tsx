@@ -315,7 +315,7 @@ export function ColorPickerField({
       >
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute size-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] border-white shadow-[0_1px_4px_rgb(0_0_0/0.65)]"
+          className="border-overlay-content pointer-events-none absolute size-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] shadow-[0_1px_4px_rgb(0_0_0/0.65)]"
           style={{
             left: `${hsb.saturation}%`,
             top: `${100 - hsb.brightness}%`,
@@ -338,7 +338,7 @@ export function ColorPickerField({
               hue: Number(event.currentTarget.value),
             })
           }
-          className="h-4 w-full cursor-pointer appearance-none rounded-full border border-white/80 shadow-inner outline-none focus-visible:ring-2 focus-visible:ring-[var(--vf-focus-ring)] disabled:cursor-not-allowed disabled:opacity-60 [&::-moz-range-thumb]:size-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-[3px] [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:bg-transparent [&::-moz-range-thumb]:shadow-sm [&::-webkit-slider-thumb]:size-5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-[3px] [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:bg-transparent [&::-webkit-slider-thumb]:shadow-sm"
+          className="border-overlay-content/80 h-4 w-full cursor-pointer appearance-none rounded-full border shadow-inner outline-none focus-visible:ring-2 focus-visible:ring-[var(--vf-focus-ring)] disabled:cursor-not-allowed disabled:opacity-60 [&::-moz-range-thumb]:size-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-[3px] [&::-moz-range-thumb]:border-overlay-content [&::-moz-range-thumb]:bg-transparent [&::-moz-range-thumb]:shadow-sm [&::-webkit-slider-thumb]:size-5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-[3px] [&::-webkit-slider-thumb]:border-overlay-content [&::-webkit-slider-thumb]:bg-transparent [&::-webkit-slider-thumb]:shadow-sm"
           style={{
             background:
               'linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)',
@@ -508,7 +508,7 @@ export function ColorPickerField({
             id={popoverId}
             role="dialog"
             aria-label={labels.pickerDialog}
-            className="border-border-subtle bg-surface-primary shadow-elevated absolute top-full right-0 z-50 mt-2 w-72 max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border"
+            className="border-border-subtle bg-surface-primary shadow-elevated absolute top-full right-0 z-50 mt-2 w-72 max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border"
           >
             {isModeMenuOpen ? (
               <div
