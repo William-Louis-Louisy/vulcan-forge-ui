@@ -232,10 +232,7 @@
 
 @layer components {
   /* Keep preview-role metadata in the option list without making the trigger taller. */
-  .component-preview-role-field button[role='combobox']
-    > span
-    > span
-    + span {
+  .component-preview-role-field button[role='combobox'] > span > span + span {
     display: none;
   }
 
@@ -246,7 +243,8 @@
 
   /* Align localized Brand textareas when helper copy wraps differently. */
   @media (min-width: 80rem) {
-    form.flex.min-h-0.flex-col .grid.gap-5.xl\:grid-cols-2
+    form.flex.min-h-0.flex-col
+      .grid.gap-5.xl\:grid-cols-2
       > label
       > span:nth-child(2) {
       min-height: 2.5rem;
