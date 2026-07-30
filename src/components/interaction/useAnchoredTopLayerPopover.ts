@@ -97,15 +97,14 @@ export function calculateAnchoredPopoverPosition({
     maximumLeft,
   );
 
-  if (availableBelow >= popoverHeight + gap || availableBelow >= availableAbove) {
+  if (
+    availableBelow >= popoverHeight + gap ||
+    availableBelow >= availableAbove
+  ) {
     return {
       left: horizontallyAlignedLeft,
       placement: 'bottom',
-      top: clamp(
-        triggerRect.bottom + gap,
-        viewportPadding,
-        maximumTop,
-      ),
+      top: clamp(triggerRect.bottom + gap, viewportPadding, maximumTop),
     };
   }
 
