@@ -184,6 +184,7 @@ export function useAnchoredTopLayerPopover({
       popover.removeAttribute('popover');
     }
 
+    updatePosition();
     const animationFrame = window.requestAnimationFrame(updatePosition);
     const resizeObserver =
       typeof ResizeObserver === 'function'
