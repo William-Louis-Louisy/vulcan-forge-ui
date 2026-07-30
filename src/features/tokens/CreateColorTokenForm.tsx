@@ -7,9 +7,12 @@ import {
   Select,
   Textarea,
 } from '@/components/ui';
+import { ColorPickerField } from './ColorPickerField';
 import { createColorTokenAction } from './create-color-token.action';
-import type { PrimitiveColorTokenAliasOption } from './tokens-editor.utils';
+import type { CreateColorTokenValidationMessageKey } from './create-color-token.schema';
 import { initialCreateColorTokenActionState } from './create-color-token.state';
+import { primitiveColorHexPattern } from './primitive-color-token.schema';
+import type { PrimitiveColorTokenAliasOption } from './tokens-editor.utils';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 
 export type CreateColorTokenFormLabels = {
@@ -71,6 +74,9 @@ export function CreateColorTokenForm({
     initialCreateColorTokenActionState,
   );
 
+  const [primitiveValue, setPrimitiveValue] = useState(
+    () => state.values.value || '#000000',
+  );
   const [referencePath, setReferencePath] = useState(
     () =>
       state.values.referencePath || primitiveColorAliasOptions[0]?.path || '',
@@ -89,8 +95,24 @@ export function CreateColorTokenForm({
   }, [onCreated, state.status, state.values.path]);
 
   const pathErrors = state.fieldErrors.path ?? [];
-  const valueErrors = state.fieldErrors.value ?? [];
+  const submittedValueErrors = state.fieldErrors.value ?? [];
   const referencePathErrors = state.fieldErrors.referencePath ?? [];
+  const trimmedPrimitiveValue = primitiveValue.trim();
+  const localPrimitiveValueError: CreateColorTokenValidationMessageKey | null =
+    kind !== 'primitive'
+      ? null
+      : trimmedPrimitiveValue.length === 0
+        ? 'tokenValueRequired'
+        : primitiveColorHexPattern.test(trimmedPrimitiveValue)
+          ? null
+          : 'tokenColorValueInvalid';
+  const valueErrors: CreateColorTokenValidationMessageKey[] =
+    localPrimitiveValueError
+      ? [localPrimitiveValueError]
+      : primitiveValue === state.values.value
+        ? submittedValueErrors
+        : [];
+  const hasInvalidPrimitiveValue = Boolean(localPrimitiveValueError);
 
   return (
     <form
@@ -176,25 +198,25 @@ export function CreateColorTokenForm({
 
         {kind === 'primitive' ? (
           <div>
-            <label
-              htmlFor="create-token-value"
-              className="text-content-tertiary text-xs font-semibold tracking-[0.16em] uppercase"
-            >
-              {labels.valueLabel}
-            </label>
-
-            <Input
+            <ColorPickerField
               id="create-token-value"
               name="value"
-              defaultValue={state.values.value || '#000000'}
+              label={labels.valueLabel}
+              locale={locale}
+              value={primitiveValue}
+              onValueChange={setPrimitiveValue}
               invalid={valueErrors.length > 0}
-              textMode="technical"
-              className="mt-2"
-              placeholder="#0ea5e9"
+              disabled={isPending}
+              ariaDescribedBy={
+                valueErrors.length > 0 ? 'create-token-value-errors' : undefined
+              }
             />
 
             {valueErrors.length > 0 ? (
-              <ul className="text-action-danger mt-2 grid gap-1 text-xs font-semibold">
+              <ul
+                id="create-token-value-errors"
+                className="text-action-danger mt-2 grid gap-1 text-xs font-semibold"
+              >
                 {valueErrors.map((error) => (
                   <li key={error}>{labels.fieldErrors[error]}</li>
                 ))}
@@ -300,7 +322,11 @@ export function CreateColorTokenForm({
         >
           {labels.cancel}
         </Button>
-        <Button type="submit" disabled={isPending} className="w-full sm:w-auto">
+        <Button
+          type="submit"
+          disabled={isPending || hasInvalidPrimitiveValue}
+          className="w-full sm:w-auto"
+        >
           {isPending ? '…' : labels.submit}
         </Button>
       </DialogActions>
