@@ -64,6 +64,35 @@ describe('ColorPickerField', () => {
     expect(screen.getByLabelText('Token value')).toHaveValue('#FF6699');
   });
 
+  it('preserves HSB position while brightness is zero', () => {
+    render(<ColorPickerHarness initialValue="#000000" />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Open color picker' }));
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Select color input mode' }),
+    );
+    fireEvent.click(screen.getByRole('menuitemradio', { name: 'HSB' }));
+
+    const hueInput = screen.getByRole('spinbutton', { name: 'Hue' });
+    const saturationInput = screen.getByRole('spinbutton', {
+      name: 'Saturation',
+    });
+    const brightnessInput = screen.getByRole('spinbutton', {
+      name: 'Brightness',
+    });
+
+    fireEvent.change(hueInput, { target: { value: '240' } });
+    fireEvent.change(saturationInput, { target: { value: '100' } });
+
+    expect(screen.getByLabelText('Token value')).toHaveValue('#000000');
+    expect(hueInput).toHaveValue(240);
+    expect(saturationInput).toHaveValue(100);
+    expect(brightnessInput).toHaveValue(0);
+    expect(
+      screen.getByRole('slider', { name: 'Saturation and brightness' }),
+    ).toHaveAttribute('aria-valuetext', '100% Saturation, 0% Brightness');
+  });
+
   it('adds an alpha channel from the opacity control', () => {
     render(<ColorPickerHarness initialValue="#336699" />);
 
