@@ -46,11 +46,8 @@ jobs:
       - name: Run typecheck
         run: npm run typecheck
 
-      - name: Capture picker formatting diff
-        run: |
-          npx prettier --write src/features/tokens/ColorPickerField.tsx
-          git diff -- src/features/tokens/ColorPickerField.tsx
-          exit 1
+      - name: Check formatting
+        run: npm run format:check
 
       - name: Run UI audit
         run: npm run audit:ui
