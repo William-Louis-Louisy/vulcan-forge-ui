@@ -176,8 +176,12 @@ export function useAnchoredTopLayerPopover({
       return;
     }
 
-    if (typeof popover.showPopover === 'function' && !isPopoverOpen(popover)) {
+    const supportsTopLayer = typeof popover.showPopover === 'function';
+
+    if (supportsTopLayer && !isPopoverOpen(popover)) {
       popover.showPopover();
+    } else if (!supportsTopLayer) {
+      popover.removeAttribute('popover');
     }
 
     const animationFrame = window.requestAnimationFrame(updatePosition);
@@ -204,7 +208,7 @@ export function useAnchoredTopLayerPopover({
       window.visualViewport?.removeEventListener('resize', updatePosition);
       window.visualViewport?.removeEventListener('scroll', updatePosition);
 
-      if (typeof popover.hidePopover === 'function' && isPopoverOpen(popover)) {
+      if (supportsTopLayer && isPopoverOpen(popover)) {
         popover.hidePopover();
       }
     };
