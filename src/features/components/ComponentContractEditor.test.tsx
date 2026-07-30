@@ -469,9 +469,9 @@ describe('ComponentContractEditor', () => {
 
     await user.click(screen.getByRole('button', { name: /Add visual token/ }));
 
-    expect(screen.getByRole('combobox', { name: 'Preview role' })).toHaveTextContent(
-      'Background',
-    );
+    expect(
+      screen.getByRole('combobox', { name: 'Preview role' }),
+    ).toHaveTextContent('Background');
     expect(screen.getByLabelText('Token type')).toHaveTextContent('Color');
     expect(screen.getByLabelText('Token type')).toBeDisabled();
 

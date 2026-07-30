@@ -41,7 +41,10 @@ export function ComponentPreviewRoleField({
   onChange,
 }: ComponentPreviewRoleFieldProps) {
   const selection = getComponentPreviewTokenRoleSelection(binding.key);
-  const usedRoles = getUsedComponentPreviewTokenRoles(bindings, binding.draftId);
+  const usedRoles = getUsedComponentPreviewTokenRoles(
+    bindings,
+    binding.draftId,
+  );
   const options: SelectOption<ComponentPreviewTokenRoleSelection>[] = [
     ...componentPreviewTokenRoles.map((role) => {
       const tokenType = getComponentPreviewTokenRoleType(role);
@@ -70,8 +73,7 @@ export function ComponentPreviewRoleField({
     if (nextSelection === customComponentPreviewTokenRole) {
       onChange({
         ...binding,
-        key:
-          selection === customComponentPreviewTokenRole ? binding.key : '',
+        key: selection === customComponentPreviewTokenRole ? binding.key : '',
       });
       return;
     }

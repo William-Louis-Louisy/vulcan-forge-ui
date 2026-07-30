@@ -18,16 +18,16 @@ Replace free-form preview-role authoring with a guided binding workflow while pr
 ## Supported roles and token types
 
 | Preview role | Required token type |
-| --- | --- |
-| `background` | `color` |
-| `foreground` | `color` |
-| `border` | `color` |
-| `radius` | `radius` |
-| `padding` | `spacing` |
-| `paddingX` | `spacing` |
-| `paddingY` | `spacing` |
-| `duration` | `motion` |
-| `motion` | `motion` |
+| ------------ | ------------------- |
+| `background` | `color`             |
+| `foreground` | `color`             |
+| `border`     | `color`             |
+| `radius`     | `radius`            |
+| `padding`    | `spacing`           |
+| `paddingX`   | `spacing`           |
+| `paddingY`   | `spacing`           |
+| `duration`   | `motion`            |
+| `motion`     | `motion`            |
 
 Typography tokens remain available through custom roles because the current preview has no official typography role.
 

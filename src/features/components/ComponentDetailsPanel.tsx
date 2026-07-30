@@ -194,9 +194,7 @@ function createComponentContractEditorLabels(
       role: t('editor.visualTokens.role'),
       selectRole: t('editor.visualTokens.selectRole'),
       customRole: t('editor.visualTokens.customRole'),
-      customRoleDescription: t(
-        'editor.visualTokens.customRoleDescription',
-      ),
+      customRoleDescription: t('editor.visualTokens.customRoleDescription'),
       customRoleKey: t('editor.visualTokens.customRoleKey'),
       customRolePlaceholder: t('editor.visualTokens.customRolePlaceholder'),
       roleAlreadyUsed: t('editor.visualTokens.roleAlreadyUsed'),

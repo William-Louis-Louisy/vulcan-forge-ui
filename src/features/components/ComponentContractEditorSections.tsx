@@ -894,17 +894,26 @@ function TokenBindingRow({
         },
       ]
     : [
-        { value: 'color' as const, label: labels.visualTokens.tokenTypes.color },
+        {
+          value: 'color' as const,
+          label: labels.visualTokens.tokenTypes.color,
+        },
         {
           value: 'spacing' as const,
           label: labels.visualTokens.tokenTypes.spacing,
         },
-        { value: 'radius' as const, label: labels.visualTokens.tokenTypes.radius },
+        {
+          value: 'radius' as const,
+          label: labels.visualTokens.tokenTypes.radius,
+        },
         {
           value: 'typography' as const,
           label: labels.visualTokens.tokenTypes.typography,
         },
-        { value: 'motion' as const, label: labels.visualTokens.tokenTypes.motion },
+        {
+          value: 'motion' as const,
+          label: labels.visualTokens.tokenTypes.motion,
+        },
       ];
   const tokenOptionsForType = tokenOptions.filter(
     (tokenOption) => tokenOption.type === binding.tokenType,
