@@ -7,9 +7,9 @@ import {
   EyedropperIcon,
 } from '@phosphor-icons/react';
 import {
-  useEffect,
   useRef,
   useState,
+  useSyncExternalStore,
   type KeyboardEvent as ReactKeyboardEvent,
   type PointerEvent as ReactPointerEvent,
 } from 'react';
@@ -58,6 +58,21 @@ const pickerModes: ColorPickerMode[] = ['picker', 'hsb', 'hsl', 'rgb'];
 
 function clamp(value: number, minimum: number, maximum: number): number {
   return Math.min(maximum, Math.max(minimum, value));
+}
+
+function subscribeToEyeDropperSupport() {
+  return () => undefined;
+}
+
+function getEyeDropperSupportSnapshot() {
+  return (
+    typeof window !== 'undefined' &&
+    Boolean((window as EyeDropperWindow).EyeDropper)
+  );
+}
+
+function getEyeDropperSupportServerSnapshot() {
+  return false;
 }
 
 function ChannelInput({
@@ -127,8 +142,12 @@ export function ColorPickerField({
   const saturationBrightnessRef = useRef<HTMLDivElement>(null);
   const [mode, setMode] = useState<ColorPickerMode>('picker');
   const [isModeMenuOpen, setIsModeMenuOpen] = useState(false);
-  const [isEyeDropperSupported, setIsEyeDropperSupported] = useState(false);
   const [isEyeDropperActive, setIsEyeDropperActive] = useState(false);
+  const isEyeDropperSupported = useSyncExternalStore(
+    subscribeToEyeDropperSupport,
+    getEyeDropperSupportSnapshot,
+    getEyeDropperSupportServerSnapshot,
+  );
   const resolvedColor = resolveHexColor(value, fallbackValue);
   const hsb = rgbToHsb(resolvedColor);
   const hsl = rgbToHsl(resolvedColor);
@@ -144,19 +163,6 @@ export function ColorPickerField({
     hsl: labels.hsl,
     rgb: labels.rgb,
   };
-
-  useEffect(() => {
-    setIsEyeDropperSupported(
-      typeof window !== 'undefined' &&
-        Boolean((window as EyeDropperWindow).EyeDropper),
-    );
-  }, []);
-
-  useEffect(() => {
-    if (!isOpen) {
-      setIsModeMenuOpen(false);
-    }
-  }, [isOpen]);
 
   function updateRgb(red: number, green: number, blue: number) {
     onValueChange(
@@ -254,6 +260,11 @@ export function ColorPickerField({
     });
   }
 
+  function handlePickerToggle() {
+    setIsModeMenuOpen(false);
+    toggle();
+  }
+
   async function handleEyeDropper() {
     const EyeDropper = (window as EyeDropperWindow).EyeDropper;
 
@@ -272,6 +283,7 @@ export function ColorPickerField({
           rgbValue: result.sRGBHex,
         }),
       );
+      setIsModeMenuOpen(false);
       close();
     } catch {
       // Closing the browser eyedropper is an expected cancellation path.
@@ -461,7 +473,7 @@ export function ColorPickerField({
             aria-expanded={isOpen}
             aria-controls={popoverId}
             disabled={disabled}
-            onClick={toggle}
+            onClick={handlePickerToggle}
             className={[
               'bg-background-sunken focus-visible:outline-border-focus relative flex size-10 shrink-0 cursor-pointer overflow-hidden rounded-md border transition focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60',
               invalid
