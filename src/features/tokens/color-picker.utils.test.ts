@@ -3,8 +3,13 @@ import {
   formatHexColor,
   getColorPickerAlphaPercent,
   getColorPickerRgbValue,
+  hsbToRgb,
+  hslToRgb,
   parseHexColor,
+  rgbToHsb,
+  rgbToHsl,
   updateHexColorAlpha,
+  updateHexColorChannels,
   updateHexColorRgb,
 } from './color-picker.utils';
 
@@ -40,17 +45,57 @@ describe('color picker utilities', () => {
     );
   });
 
-  it('exposes RGB and opacity values for the native controls', () => {
+  it('exposes RGB and opacity values for picker controls', () => {
     expect(getColorPickerRgbValue('#369')).toBe('#336699');
     expect(getColorPickerRgbValue('invalid', '#ABCDEF')).toBe('#ABCDEF');
     expect(getColorPickerAlphaPercent('#33669980')).toBe(50);
   });
 
-  it('preserves opacity when the visual color changes', () => {
+  it('converts RGB colors to and from HSB', () => {
+    const hsb = rgbToHsb({ red: 205, green: 25, blue: 25 });
+
+    expect(hsb).toEqual({
+      hue: 0,
+      saturation: 88,
+      brightness: 80,
+    });
+    expect(hsbToRgb(hsb)).toEqual({
+      red: 204,
+      green: 24,
+      blue: 24,
+      alpha: 255,
+    });
+  });
+
+  it('converts RGB colors to and from HSL', () => {
+    const hsl = rgbToHsl({ red: 51, green: 102, blue: 153 });
+
+    expect(hsl).toEqual({
+      hue: 210,
+      saturation: 50,
+      lightness: 40,
+    });
+    expect(hslToRgb(hsl)).toEqual({
+      red: 51,
+      green: 102,
+      blue: 153,
+      alpha: 255,
+    });
+  });
+
+  it('preserves opacity when visual color channels change', () => {
     expect(
       updateHexColorRgb({
         currentValue: '#33669980',
         rgbValue: '#FF8731',
+      }),
+    ).toBe('#FF873180');
+    expect(
+      updateHexColorChannels({
+        currentValue: '#33669980',
+        red: 255,
+        green: 135,
+        blue: 49,
       }),
     ).toBe('#FF873180');
   });
