@@ -40,6 +40,20 @@ jobs:
       - name: Generate Prisma Client
         run: npm run db:generate
 
+      - name: Format DS-170-07E sources
+        run: npm run format
+
+      - name: Upload formatted DS-170-07E sources
+        uses: actions/upload-artifact@v4
+        with:
+          name: ds-170-07e-formatted
+          path: |
+            docs/product/ds-170-07e-component-preview-role-bindings.md
+            src/features/components/ComponentContractEditor.test.tsx
+            src/features/components/ComponentContractEditorSections.tsx
+            src/features/components/ComponentDetailsPanel.tsx
+            src/features/components/ComponentPreviewRoleField.tsx
+
       - name: Run lint
         run: npm run lint
 
