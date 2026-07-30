@@ -19,14 +19,16 @@ jobs:
     timeout-minutes: 10
 
     permissions:
-      contents: read
+      contents: write
 
     env:
       DATABASE_URL: postgresql://vulcan:vulcan_dev_password@localhost:5432/vulcan_forge_ui?schema=public
 
     steps:
-      - name: Checkout repository
+      - name: Checkout pull request head
         uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -43,16 +45,22 @@ jobs:
       - name: Format DS-170-07E sources
         run: npm run format
 
-      - name: Upload formatted DS-170-07E sources
-        uses: actions/upload-artifact@v4
-        with:
-          name: ds-170-07e-formatted
-          path: |
-            docs/product/ds-170-07e-component-preview-role-bindings.md
-            src/features/components/ComponentContractEditor.test.tsx
-            src/features/components/ComponentContractEditorSections.tsx
-            src/features/components/ComponentDetailsPanel.tsx
+      - name: Commit formatted DS-170-07E sources
+        env:
+          HEAD_BRANCH: ${{ github.head_ref }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            docs/product/ds-170-07e-component-preview-role-bindings.md \
+            src/features/components/ComponentContractEditor.test.tsx \
+            src/features/components/ComponentContractEditorSections.tsx \
+            src/features/components/ComponentDetailsPanel.tsx \
             src/features/components/ComponentPreviewRoleField.tsx
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: format DS-170-07E sources"
+            git push origin "HEAD:${HEAD_BRANCH}"
+          fi
 
       - name: Run lint
         run: npm run lint
