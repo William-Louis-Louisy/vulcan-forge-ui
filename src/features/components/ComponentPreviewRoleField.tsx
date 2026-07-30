@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 import { Input, Select, type SelectOption } from '@/components/ui';
 import type { DesignToken } from '@/domain/design-system';
 import {
@@ -40,7 +42,13 @@ export function ComponentPreviewRoleField({
   labels,
   onChange,
 }: ComponentPreviewRoleFieldProps) {
-  const selection = getComponentPreviewTokenRoleSelection(binding.key);
+  const detectedSelection = getComponentPreviewTokenRoleSelection(binding.key);
+  const [isCustomRoleSelected, setIsCustomRoleSelected] = useState(
+    detectedSelection === customComponentPreviewTokenRole,
+  );
+  const selection = isCustomRoleSelected
+    ? customComponentPreviewTokenRole
+    : detectedSelection;
   const usedRoles = getUsedComponentPreviewTokenRoles(
     bindings,
     binding.draftId,
@@ -71,9 +79,13 @@ export function ComponentPreviewRoleField({
     nextSelection: ComponentPreviewTokenRoleSelection,
   ) {
     if (nextSelection === customComponentPreviewTokenRole) {
+      setIsCustomRoleSelected(true);
       onChange({
         ...binding,
-        key: selection === customComponentPreviewTokenRole ? binding.key : '',
+        key:
+          detectedSelection === customComponentPreviewTokenRole
+            ? binding.key
+            : '',
       });
       return;
     }
@@ -82,6 +94,7 @@ export function ComponentPreviewRoleField({
       return;
     }
 
+    setIsCustomRoleSelected(false);
     const tokenType = getComponentPreviewTokenRoleType(nextSelection);
 
     onChange({
