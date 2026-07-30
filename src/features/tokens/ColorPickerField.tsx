@@ -1,39 +1,39 @@
 'use client';
 
 import {
-  CaretDownIcon,
-  CaretUpIcon,
-  CheckIcon,
-  EyedropperIcon,
-} from '@phosphor-icons/react';
-import {
   useRef,
   useState,
   useSyncExternalStore,
-  type KeyboardEvent as ReactKeyboardEvent,
   type PointerEvent as ReactPointerEvent,
+  type KeyboardEvent as ReactKeyboardEvent,
 } from 'react';
-
-import { useAnchoredTopLayerPopover } from '@/components/interaction/useAnchoredTopLayerPopover';
-import { useDismissiblePopover } from '@/components/interaction/useDismissiblePopover';
-import { Input } from '@/components/ui';
-import type { Locale } from '@/i18n/routing';
-import { getColorPickerLabels } from './color-picker.labels';
 import {
-  formatHexColor,
-  getColorPickerAlphaPercent,
+  CheckIcon,
+  CaretUpIcon,
+  CaretDownIcon,
+  EyedropperIcon,
+} from '@phosphor-icons/react';
+
+import {
   hsbToRgb,
   hslToRgb,
-  parseHexColor,
-  resolveHexColor,
   rgbToHsb,
   rgbToHsl,
+  parseHexColor,
+  formatHexColor,
+  resolveHexColor,
+  updateHexColorRgb,
   updateHexColorAlpha,
   updateHexColorChannels,
-  updateHexColorRgb,
+  getColorPickerAlphaPercent,
   type HsbColor,
   type HslColor,
 } from './color-picker.utils';
+import { Input } from '@/components/ui';
+import type { Locale } from '@/i18n/routing';
+import { getColorPickerLabels } from './color-picker.labels';
+import { useDismissiblePopover } from '@/components/interaction/useDismissiblePopover';
+import { useAnchoredTopLayerPopover } from '@/components/interaction/useAnchoredTopLayerPopover';
 
 type ColorPickerMode = 'picker' | 'hsb' | 'hsl' | 'rgb';
 
@@ -314,7 +314,7 @@ export function ColorPickerField({
         onKeyDown={handleSaturationBrightnessKeyDown}
         onPointerDown={handleSaturationBrightnessPointerDown}
         onPointerMove={handleSaturationBrightnessPointerMove}
-        className="focus-visible:outline-border-focus relative aspect-[8/5] w-full cursor-crosshair touch-none overflow-hidden rounded-xl shadow-inner focus-visible:outline-2 focus-visible:outline-offset-2"
+        className="focus-visible:outline-border-focus relative aspect-8/5 w-full cursor-crosshair touch-none overflow-hidden rounded-md shadow-inner focus-visible:outline-2 focus-visible:outline-offset-2"
         style={{
           backgroundColor: `hsl(${hsb.hue} 100% 50%)`,
           backgroundImage:
@@ -346,7 +346,7 @@ export function ColorPickerField({
               hue: Number(event.currentTarget.value),
             })
           }
-          className="border-overlay-content/80 [&::-moz-range-thumb]:border-overlay-content [&::-webkit-slider-thumb]:border-overlay-content h-4 w-full cursor-pointer appearance-none rounded-full border shadow-inner outline-none focus-visible:ring-2 focus-visible:ring-[var(--vf-focus-ring)] disabled:cursor-not-allowed disabled:opacity-60 [&::-moz-range-thumb]:size-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-[3px] [&::-moz-range-thumb]:bg-transparent [&::-moz-range-thumb]:shadow-sm [&::-webkit-slider-thumb]:size-5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-[3px] [&::-webkit-slider-thumb]:bg-transparent [&::-webkit-slider-thumb]:shadow-sm"
+          className="border-overlay-content/80 [&::-moz-range-thumb]:border-overlay-content [&::-webkit-slider-thumb]:border-overlay-content h-4 w-full cursor-pointer appearance-none rounded-full border shadow-inner outline-none focus-visible:ring-2 focus-visible:ring-(--vf-focus-ring) disabled:cursor-not-allowed disabled:opacity-60 [&::-moz-range-thumb]:size-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-[3px] [&::-moz-range-thumb]:bg-transparent [&::-moz-range-thumb]:shadow-sm [&::-webkit-slider-thumb]:size-5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-[3px] [&::-webkit-slider-thumb]:bg-transparent [&::-webkit-slider-thumb]:shadow-sm"
           style={{
             background:
               'linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)',
@@ -520,14 +520,14 @@ export function ColorPickerField({
             aria-label={labels.pickerDialog}
             data-placement={placement}
             style={popoverStyle}
-            className="border-border-subtle bg-surface-primary shadow-elevated fixed z-[70] m-0 w-72 max-w-[calc(100vw-2rem)] overflow-x-hidden overflow-y-auto rounded-xl border p-0"
+            className="border-border-subtle bg-surface-primary shadow-elevated fixed z-70 m-0 w-72 max-w-[calc(100vw-2rem)] overflow-x-hidden overflow-y-auto rounded-xl border p-0"
           >
             {isModeMenuOpen ? (
               <div
                 id={modeMenuId}
                 role="menu"
                 aria-label={labels.selectMode}
-                className="grid min-h-[16.5rem] content-start gap-1 p-3"
+                className="grid min-h-66 content-start gap-1 p-3"
               >
                 {pickerModes.map((pickerMode) => {
                   const isSelected = pickerMode === mode;
@@ -625,7 +625,7 @@ export function ColorPickerField({
               }),
             )
           }
-          className="accent-[var(--vf-action-accent)] disabled:cursor-not-allowed disabled:opacity-60"
+          className="accent-action-accent disabled:cursor-not-allowed disabled:opacity-60"
         />
         <output
           htmlFor={`${id}-alpha`}
