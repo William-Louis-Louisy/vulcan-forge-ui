@@ -18,7 +18,15 @@ import {
 } from './component-contract-editor.utils';
 import type { CSSProperties, ReactNode } from 'react';
 import { ComponentAnatomyEditor } from './ComponentAnatomyEditor';
-import type { ComponentTokenOption } from './component-token-bindings.utils';
+import {
+  normalizeComponentPreviewTokenRole,
+  type ComponentTokenOption,
+} from './component-token-bindings.utils';
+import { ComponentPreviewRoleField } from './ComponentPreviewRoleField';
+import {
+  getComponentPreviewTokenRoleType,
+  getFirstAvailableComponentPreviewTokenRole,
+} from './component-preview-role-bindings';
 
 export type ComponentContractEditorLabels = {
   title: string;
@@ -124,6 +132,24 @@ export type ComponentContractEditorLabels = {
     title: string;
     description: string;
     add: string;
+    role: string;
+    selectRole: string;
+    customRole: string;
+    customRoleDescription: string;
+    customRoleKey: string;
+    customRolePlaceholder: string;
+    roleAlreadyUsed: string;
+    roles: {
+      background: string;
+      foreground: string;
+      border: string;
+      radius: string;
+      padding: string;
+      paddingX: string;
+      paddingY: string;
+      duration: string;
+      motion: string;
+    };
     tokenType: string;
     tokenPath: string;
     selectToken: string;
@@ -773,24 +799,31 @@ function VisualTokensSection({
   setDraft,
   tokenOptions,
 }: Omit<EditorProps, 'setActiveLocale'>) {
+  function addTokenBinding() {
+    const emptyBinding = createEmptyTokenBindingDraft();
+    const role = getFirstAvailableComponentPreviewTokenRole(
+      draft.tokenBindings,
+    );
+    const nextBinding = role
+      ? {
+          ...emptyBinding,
+          key: role,
+          tokenType: getComponentPreviewTokenRoleType(role),
+        }
+      : emptyBinding;
+
+    setDraft({
+      ...draft,
+      tokenBindings: [...draft.tokenBindings, nextBinding],
+    });
+  }
+
   return (
     <EditorSection
       title={labels.visualTokens.title}
       description={labels.visualTokens.description}
       action={
-        <Button
-          variant="secondary"
-          size="sm"
-          onClick={() =>
-            setDraft({
-              ...draft,
-              tokenBindings: [
-                ...draft.tokenBindings,
-                createEmptyTokenBindingDraft(),
-              ],
-            })
-          }
-        >
+        <Button variant="secondary" size="sm" onClick={addTokenBinding}>
           + {labels.visualTokens.add}
         </Button>
       }
@@ -802,6 +835,7 @@ function VisualTokensSection({
             labels={labels}
             activeLocale={activeLocale}
             binding={binding}
+            bindings={draft.tokenBindings}
             tokenOptions={tokenOptions}
             onChange={(nextBinding) => {
               const nextBindings = [...draft.tokenBindings];
@@ -833,6 +867,7 @@ function TokenBindingRow({
   labels,
   activeLocale,
   binding,
+  bindings,
   tokenOptions,
   onChange,
   onRemove,
@@ -840,10 +875,37 @@ function TokenBindingRow({
   labels: ComponentContractEditorLabels;
   activeLocale: 'en' | 'fr';
   binding: ComponentTokenBindingDraft;
+  bindings: ComponentTokenBindingDraft[];
   tokenOptions: ComponentTokenOption[];
   onChange: (binding: ComponentTokenBindingDraft) => void;
   onRemove: () => void;
 }) {
+  const previewRole = normalizeComponentPreviewTokenRole(binding.key);
+  const constrainedTokenType = previewRole
+    ? getComponentPreviewTokenRoleType(previewRole)
+    : null;
+  const hasCompatibleConstrainedType =
+    constrainedTokenType === null || binding.tokenType === constrainedTokenType;
+  const tokenTypeOptions = constrainedTokenType
+    ? [
+        {
+          value: constrainedTokenType,
+          label: labels.visualTokens.tokenTypes[constrainedTokenType],
+        },
+      ]
+    : [
+        { value: 'color' as const, label: labels.visualTokens.tokenTypes.color },
+        {
+          value: 'spacing' as const,
+          label: labels.visualTokens.tokenTypes.spacing,
+        },
+        { value: 'radius' as const, label: labels.visualTokens.tokenTypes.radius },
+        {
+          value: 'typography' as const,
+          label: labels.visualTokens.tokenTypes.typography,
+        },
+        { value: 'motion' as const, label: labels.visualTokens.tokenTypes.motion },
+      ];
   const tokenOptionsForType = tokenOptions.filter(
     (tokenOption) => tokenOption.type === binding.tokenType,
   );
@@ -857,12 +919,12 @@ function TokenBindingRow({
 
   return (
     <div className="border-border-subtle min-w-0 border-b px-3 py-3 last:border-b-0">
-      <div className="grid min-w-0 gap-2 md:grid-cols-[minmax(7rem,0.8fr)_8rem_minmax(10rem,1.4fr)_2rem] md:items-end">
-        <CompactInput
-          label={labels.fields.key}
-          value={binding.key}
-          mono
-          onChange={(key) => onChange({ ...binding, key })}
+      <div className="grid min-w-0 gap-2 md:grid-cols-[minmax(9rem,1fr)_8rem_minmax(10rem,1.4fr)_2rem] md:items-end">
+        <ComponentPreviewRoleField
+          labels={labels.visualTokens}
+          binding={binding}
+          bindings={bindings}
+          onChange={onChange}
         />
         <div className="grid min-w-0 gap-1.5">
           <label
@@ -874,23 +936,15 @@ function TokenBindingRow({
           <Select<ComponentTokenBindingDraft['tokenType']>
             id={`token-binding-type-${binding.draftId}`}
             value={binding.tokenType}
-            options={[
-              { value: 'color', label: labels.visualTokens.tokenTypes.color },
-              {
-                value: 'spacing',
-                label: labels.visualTokens.tokenTypes.spacing,
-              },
-              { value: 'radius', label: labels.visualTokens.tokenTypes.radius },
-              {
-                value: 'typography',
-                label: labels.visualTokens.tokenTypes.typography,
-              },
-              { value: 'motion', label: labels.visualTokens.tokenTypes.motion },
-            ]}
+            options={tokenTypeOptions}
             onValueChange={(tokenType) =>
               onChange({ ...binding, tokenType, tokenPath: '' })
             }
             placeholder={labels.visualTokens.tokenType}
+            disabled={
+              constrainedTokenType !== null && hasCompatibleConstrainedType
+            }
+            invalid={!hasCompatibleConstrainedType}
             size="sm"
           />
         </div>
