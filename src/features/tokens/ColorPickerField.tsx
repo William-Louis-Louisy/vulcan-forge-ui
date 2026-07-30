@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  useEffect,
   useRef,
   useState,
   useSyncExternalStore,
@@ -28,6 +29,7 @@ import {
   getColorPickerAlphaPercent,
   type HsbColor,
   type HslColor,
+  type ParsedHexColor,
 } from './color-picker.utils';
 import { Input } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
@@ -59,6 +61,12 @@ const pickerModes: ColorPickerMode[] = ['picker', 'hsb', 'hsl', 'rgb'];
 
 function clamp(value: number, minimum: number, maximum: number): number {
   return Math.min(maximum, Math.max(minimum, value));
+}
+
+function getRgbKey(
+  color: Pick<ParsedHexColor, 'red' | 'green' | 'blue'>,
+): string {
+  return `${color.red}:${color.green}:${color.blue}`;
 }
 
 function subscribeToEyeDropperSupport() {
@@ -140,8 +148,11 @@ export function ColorPickerField({
   const labels = getColorPickerLabels(locale);
   const { close, containerRef, isOpen, toggle, triggerRef } =
     useDismissiblePopover();
-  const saturationBrightnessRef = useRef<HTMLDivElement>(null);
+  const saturationBrightnessRef = useRef<HTMLSpanElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
+  const resolvedColor = resolveHexColor(value, fallbackValue);
+  const lastSyncedRgbRef = useRef(getRgbKey(resolvedColor));
+  const [hsb, setHsb] = useState<HsbColor>(() => rgbToHsb(resolvedColor));
   const [mode, setMode] = useState<ColorPickerMode>('picker');
   const [isModeMenuOpen, setIsModeMenuOpen] = useState(false);
   const [isEyeDropperActive, setIsEyeDropperActive] = useState(false);
@@ -150,8 +161,6 @@ export function ColorPickerField({
     getEyeDropperSupportSnapshot,
     getEyeDropperSupportServerSnapshot,
   );
-  const resolvedColor = resolveHexColor(value, fallbackValue);
-  const hsb = rgbToHsb(resolvedColor);
   const hsl = rgbToHsl(resolvedColor);
   const alphaPercent = getColorPickerAlphaPercent(value, fallbackValue);
   const previewValue = parseHexColor(value)
@@ -172,7 +181,25 @@ export function ColorPickerField({
     triggerRef,
   });
 
-  function updateRgb(red: number, green: number, blue: number) {
+  useEffect(() => {
+    const parsedColor = parseHexColor(value);
+
+    if (!parsedColor) {
+      return;
+    }
+
+    const nextRgbKey = getRgbKey(parsedColor);
+
+    if (nextRgbKey === lastSyncedRgbRef.current) {
+      return;
+    }
+
+    lastSyncedRgbRef.current = nextRgbKey;
+    setHsb(rgbToHsb(parsedColor));
+  }, [value]);
+
+  function emitRgb(red: number, green: number, blue: number) {
+    lastSyncedRgbRef.current = getRgbKey({ red, green, blue });
     onValueChange(
       updateHexColorChannels({
         currentValue: value,
@@ -184,14 +211,23 @@ export function ColorPickerField({
     );
   }
 
+  function updateRgb(red: number, green: number, blue: number) {
+    setHsb(rgbToHsb({ red, green, blue }));
+    emitRgb(red, green, blue);
+  }
+
   function updateHsb(nextHsb: HsbColor) {
     const nextRgb = hsbToRgb(nextHsb);
-    updateRgb(nextRgb.red, nextRgb.green, nextRgb.blue);
+
+    setHsb(nextHsb);
+    emitRgb(nextRgb.red, nextRgb.green, nextRgb.blue);
   }
 
   function updateHsl(nextHsl: HslColor) {
     const nextRgb = hslToRgb(nextHsl);
-    updateRgb(nextRgb.red, nextRgb.green, nextRgb.blue);
+
+    setHsb(rgbToHsb(nextRgb));
+    emitRgb(nextRgb.red, nextRgb.green, nextRgb.blue);
   }
 
   function updateSaturationBrightness(clientX: number, clientY: number) {
@@ -201,15 +237,11 @@ export function ColorPickerField({
       return;
     }
 
-    const saturation = clamp(
-      ((clientX - bounds.left) / bounds.width) * 100,
-      0,
-      100,
+    const saturation = Math.round(
+      clamp(((clientX - bounds.left) / bounds.width) * 100, 0, 100),
     );
-    const brightness = clamp(
-      100 - ((clientY - bounds.top) / bounds.height) * 100,
-      0,
-      100,
+    const brightness = Math.round(
+      clamp(100 - ((clientY - bounds.top) / bounds.height) * 100, 0, 100),
     );
 
     updateHsb({
@@ -303,7 +335,6 @@ export function ColorPickerField({
   const visualPicker = (
     <>
       <div
-        ref={saturationBrightnessRef}
         role="slider"
         tabIndex={0}
         aria-label={labels.saturationBrightness}
@@ -322,13 +353,18 @@ export function ColorPickerField({
         }}
       >
         <span
+          ref={saturationBrightnessRef}
           aria-hidden="true"
-          className="border-overlay-content pointer-events-none absolute size-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] shadow-[0_1px_4px_rgb(0_0_0/0.65)]"
-          style={{
-            left: `${hsb.saturation}%`,
-            top: `${100 - hsb.brightness}%`,
-          }}
-        />
+          className="pointer-events-none absolute inset-2.5"
+        >
+          <span
+            className="border-overlay-content pointer-events-none absolute size-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-3 shadow-[0_1px_4px_rgb(0_0_0/0.65)]"
+            style={{
+              left: `${hsb.saturation}%`,
+              top: `${100 - hsb.brightness}%`,
+            }}
+          />
+        </span>
       </div>
 
       <label className="grid gap-1.5">
@@ -346,7 +382,7 @@ export function ColorPickerField({
               hue: Number(event.currentTarget.value),
             })
           }
-          className="border-overlay-content/80 [&::-moz-range-thumb]:border-overlay-content [&::-webkit-slider-thumb]:border-overlay-content h-4 w-full cursor-pointer appearance-none rounded-full border shadow-inner outline-none focus-visible:ring-2 focus-visible:ring-(--vf-focus-ring) disabled:cursor-not-allowed disabled:opacity-60 [&::-moz-range-thumb]:size-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-[3px] [&::-moz-range-thumb]:bg-transparent [&::-moz-range-thumb]:shadow-sm [&::-webkit-slider-thumb]:size-5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-[3px] [&::-webkit-slider-thumb]:bg-transparent [&::-webkit-slider-thumb]:shadow-sm"
+          className="border-overlay-content/80 [&::-moz-range-thumb]:border-overlay-content [&::-webkit-slider-thumb]:border-overlay-content h-4 w-full cursor-pointer appearance-none rounded-full border shadow-inner outline-none focus-visible:ring-2 focus-visible:ring-(--vf-focus-ring) disabled:cursor-not-allowed disabled:opacity-60 [&::-moz-range-thumb]:size-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-3 [&::-moz-range-thumb]:bg-transparent [&::-moz-range-thumb]:shadow-sm [&::-webkit-slider-thumb]:size-5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-3 [&::-webkit-slider-thumb]:bg-transparent [&::-webkit-slider-thumb]:shadow-sm"
           style={{
             background:
               'linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)',
