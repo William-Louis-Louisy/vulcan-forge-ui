@@ -28,14 +28,40 @@ describe('ColorPickerField', () => {
     expect(input).toHaveValue('#FF8731');
   });
 
-  it('synchronizes the native visual picker with the hexadecimal value', () => {
-    render(<ColorPickerHarness initialValue="#336699" />);
+  it('opens a custom picker and synchronizes hue changes', () => {
+    render(<ColorPickerHarness initialValue="#FF0000" />);
 
-    fireEvent.change(screen.getByLabelText('Choose color'), {
-      target: { value: '#ff8731' },
+    fireEvent.click(screen.getByRole('button', { name: 'Open color picker' }));
+
+    expect(
+      screen.getByRole('dialog', { name: 'Color picker' }),
+    ).toBeInTheDocument();
+
+    fireEvent.change(screen.getByRole('slider', { name: 'Hue' }), {
+      target: { value: '120' },
     });
 
-    expect(screen.getByLabelText('Token value')).toHaveValue('#FF8731');
+    expect(screen.getByLabelText('Token value')).toHaveValue('#00FF00');
+  });
+
+  it('switches between Picker, HSB, HSL and RGB input modes', () => {
+    render(<ColorPickerHarness initialValue="#336699" />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Open color picker' }));
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Select color input mode' }),
+    );
+
+    expect(
+      screen.getByRole('menuitemradio', { name: 'Picker', checked: true }),
+    ).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('menuitemradio', { name: 'RGB' }));
+    fireEvent.change(screen.getByLabelText('Red'), {
+      target: { value: '255' },
+    });
+
+    expect(screen.getByLabelText('Token value')).toHaveValue('#FF6699');
   });
 
   it('adds an alpha channel from the opacity control', () => {
@@ -66,7 +92,16 @@ describe('ColorPickerField', () => {
 
     render(<ControlledPicker />);
 
-    expect(screen.getByLabelText('Choisir la couleur')).toBeInTheDocument();
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: 'Ouvrir le sélecteur de couleur',
+      }),
+    );
+
+    expect(
+      screen.getByRole('dialog', { name: 'Sélecteur de couleur' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('slider', { name: 'Teinte' })).toBeInTheDocument();
     expect(screen.getByRole('slider', { name: 'Opacité' })).toBeInTheDocument();
   });
 });
