@@ -236,11 +236,6 @@
     display: none;
   }
 
-  /* Official preview roles already define their token type. */
-  .component-preview-role-field[data-mode='official'] + div {
-    display: none;
-  }
-
   /* Align localized Brand textareas when helper copy wraps differently. */
   @media (min-width: 80rem) {
     form.flex.min-h-0.flex-col
