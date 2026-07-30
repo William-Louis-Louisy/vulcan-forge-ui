@@ -338,7 +338,7 @@ export function ColorPickerField({
               hue: Number(event.currentTarget.value),
             })
           }
-          className="border-overlay-content/80 h-4 w-full cursor-pointer appearance-none rounded-full border shadow-inner outline-none focus-visible:ring-2 focus-visible:ring-[var(--vf-focus-ring)] disabled:cursor-not-allowed disabled:opacity-60 [&::-moz-range-thumb]:size-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-[3px] [&::-moz-range-thumb]:border-overlay-content [&::-moz-range-thumb]:bg-transparent [&::-moz-range-thumb]:shadow-sm [&::-webkit-slider-thumb]:size-5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-[3px] [&::-webkit-slider-thumb]:border-overlay-content [&::-webkit-slider-thumb]:bg-transparent [&::-webkit-slider-thumb]:shadow-sm"
+          className="border-overlay-content/80 [&::-moz-range-thumb]:border-overlay-content [&::-webkit-slider-thumb]:border-overlay-content h-4 w-full cursor-pointer appearance-none rounded-full border shadow-inner outline-none focus-visible:ring-2 focus-visible:ring-[var(--vf-focus-ring)] disabled:cursor-not-allowed disabled:opacity-60 [&::-moz-range-thumb]:size-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-[3px] [&::-moz-range-thumb]:bg-transparent [&::-moz-range-thumb]:shadow-sm [&::-webkit-slider-thumb]:size-5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-[3px] [&::-webkit-slider-thumb]:bg-transparent [&::-webkit-slider-thumb]:shadow-sm"
           style={{
             background:
               'linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)',
