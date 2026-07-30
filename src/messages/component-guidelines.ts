@@ -95,8 +95,27 @@ export const componentGuidelineMessages = {
           axis: 'intent',
         },
         visualTokens: {
+          customRole: 'Custom role (advanced)',
+          customRoleDescription:
+            'Keep an arbitrary binding key for an unsupported or external preview consumer.',
+          customRoleKey: 'Custom role key',
+          customRolePlaceholder: 'e.g. fontWeight',
           description:
-            'Map design system tokens to the supported preview roles: background, foreground, border, radius, padding, paddingX, paddingY, duration or motion.',
+            'Choose a supported preview role to enforce a compatible token type, or use an advanced custom role when the contract needs an arbitrary binding key.',
+          role: 'Preview role',
+          roleAlreadyUsed: 'Already used in this contract',
+          roles: {
+            background: 'Background',
+            border: 'Border',
+            duration: 'Duration',
+            foreground: 'Foreground',
+            motion: 'Motion',
+            padding: 'Padding',
+            paddingX: 'Horizontal padding',
+            paddingY: 'Vertical padding',
+            radius: 'Radius',
+          },
+          selectRole: 'Select a preview role',
           tokenTypes: {
             color: 'Color',
             spacing: 'Spacing',
@@ -277,8 +296,27 @@ export const componentGuidelineMessages = {
           axis: 'intention',
         },
         visualTokens: {
+          customRole: 'Rôle personnalisé (avancé)',
+          customRoleDescription:
+            'Conservez une clé de binding arbitraire pour un consommateur de preview non pris en charge ou externe.',
+          customRoleKey: 'Clé du rôle personnalisé',
+          customRolePlaceholder: 'ex. fontWeight',
           description:
-            'Associez les tokens du design system aux rôles de preview pris en charge : background, foreground, border, radius, padding, paddingX, paddingY, duration ou motion.',
+            'Choisissez un rôle de preview pris en charge pour imposer un type de token compatible, ou utilisez un rôle personnalisé avancé lorsque le contrat nécessite une clé de binding arbitraire.',
+          role: 'Rôle de preview',
+          roleAlreadyUsed: 'Déjà utilisé dans ce contrat',
+          roles: {
+            background: 'Arrière-plan',
+            border: 'Bordure',
+            duration: 'Durée',
+            foreground: 'Premier plan',
+            motion: 'Mouvement',
+            padding: 'Espacement interne',
+            paddingX: 'Espacement horizontal',
+            paddingY: 'Espacement vertical',
+            radius: 'Rayon',
+          },
+          selectRole: 'Sélectionner un rôle de preview',
           tokenTypes: {
             color: 'Couleur',
             spacing: 'Espacement',
@@ -294,7 +332,7 @@ export const componentGuidelineMessages = {
           'Prévisualisez les variantes documentées pour chaque taille disponible.',
         eyebrow: 'Matrice visuelle',
         incompleteMatrixNotice:
-          'Cette matrice utilise un axe de secours car ce composant ne documente pas encore ses variantes ou ses tailles.',
+          'Cette matrice utilise un axe de secours car ce composant ne documente pas encore les variantes ou tailles.',
         matrixPlaceholderDescription:
           'La matrice est générée à partir des variantes, tailles, états et bindings de tokens visuels documentés.',
         matrixPlaceholderTitle: 'Matrice visuelle',
