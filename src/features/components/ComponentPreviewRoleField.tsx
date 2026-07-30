@@ -49,6 +49,12 @@ export function ComponentPreviewRoleField({
   const selection = isCustomRoleSelected
     ? customComponentPreviewTokenRole
     : detectedSelection;
+  const roleMode =
+    selection === customComponentPreviewTokenRole
+      ? 'custom'
+      : selection
+        ? 'official'
+        : 'unselected';
   const usedRoles = getUsedComponentPreviewTokenRoles(
     bindings,
     binding.draftId,
@@ -106,7 +112,15 @@ export function ComponentPreviewRoleField({
   }
 
   return (
-    <div className="grid min-w-0 gap-2">
+    <div
+      data-mode={roleMode}
+      className={[
+        'component-preview-role-field grid min-w-0 gap-2',
+        roleMode === 'official' ? 'md:col-span-2' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
       <div className="grid min-w-0 gap-1.5">
         <label
           htmlFor={`token-binding-role-${binding.draftId}`}
