@@ -14,6 +14,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from 'react';
 
+import { useAnchoredTopLayerPopover } from '@/components/interaction/useAnchoredTopLayerPopover';
 import { useDismissiblePopover } from '@/components/interaction/useDismissiblePopover';
 import { Input } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
@@ -140,6 +141,7 @@ export function ColorPickerField({
   const { close, containerRef, isOpen, toggle, triggerRef } =
     useDismissiblePopover();
   const saturationBrightnessRef = useRef<HTMLDivElement>(null);
+  const popoverRef = useRef<HTMLDivElement>(null);
   const [mode, setMode] = useState<ColorPickerMode>('picker');
   const [isModeMenuOpen, setIsModeMenuOpen] = useState(false);
   const [isEyeDropperActive, setIsEyeDropperActive] = useState(false);
@@ -163,6 +165,12 @@ export function ColorPickerField({
     hsl: labels.hsl,
     rgb: labels.rgb,
   };
+  const { placement, popoverStyle } = useAnchoredTopLayerPopover({
+    contentKey: `${mode}:${isModeMenuOpen}`,
+    isOpen,
+    popoverRef,
+    triggerRef,
+  });
 
   function updateRgb(red: number, green: number, blue: number) {
     onValueChange(
@@ -505,10 +513,14 @@ export function ColorPickerField({
 
         {isOpen ? (
           <div
+            ref={popoverRef}
             id={popoverId}
             role="dialog"
+            popover="manual"
             aria-label={labels.pickerDialog}
-            className="border-border-subtle bg-surface-primary shadow-elevated absolute top-full right-0 z-50 mt-2 w-72 max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border"
+            data-placement={placement}
+            style={popoverStyle}
+            className="border-border-subtle bg-surface-primary shadow-elevated fixed z-[70] m-0 w-72 max-w-[calc(100vw-2rem)] overflow-x-hidden overflow-y-auto rounded-xl border p-0"
           >
             {isModeMenuOpen ? (
               <div
