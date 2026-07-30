@@ -10,7 +10,10 @@ The interaction must remain suitable for technical users: visual selection suppl
 
 - add one reusable controlled color-picker field for primitive color values;
 - keep direct `#RGB`, `#RRGGBB` and `#RRGGBBAA` entry;
-- expose the browser-native visual color selector from a clear swatch control;
+- expose a custom visual color picker from a clear swatch control;
+- provide an interactive saturation-and-brightness plane and hue slider;
+- provide Picker, HSB, HSL and RGB authoring modes;
+- expose the browser EyeDropper API when supported;
 - add an explicit opacity control synchronized with the optional hexadecimal alpha channel;
 - preserve opacity when the RGB value changes visually;
 - normalize values produced by visual controls to uppercase hexadecimal;
@@ -24,7 +27,9 @@ The interaction must remain suitable for technical users: visual selection suppl
 
 ## Product boundary
 
-- no color-space expansion beyond hexadecimal RGB/RGBA;
+- persisted token values remain hexadecimal RGB/RGBA;
+- HSB and HSL are editing representations and do not change the stored model;
+- the eyedropper depends on browser support and has a disabled fallback;
 - no persistence or Prisma changes;
 - no change to semantic-token alias behavior;
 - no automatic palette generation;
@@ -39,7 +44,16 @@ The hexadecimal input remains the source submitted to existing server actions. U
 
 ### Visual authoring
 
-The swatch exposes a native visual color selector. Selecting a color updates the RGB portion while preserving the current alpha channel.
+The swatch opens an application-controlled popover containing a saturation-and-brightness plane, hue slider, synchronized value editor and mode selector. Pointer and keyboard changes update the RGB portion while preserving the current alpha channel.
+
+The mode selector exposes:
+
+- Picker for direct hexadecimal authoring;
+- HSB for hue, saturation and brightness channels;
+- HSL for hue, saturation and lightness channels;
+- RGB for red, green and blue channels.
+
+The eyedropper samples a screen color through the browser API when available. Cancelling the browser eyedropper leaves the draft unchanged.
 
 ### Opacity
 
@@ -55,8 +69,10 @@ The focused tests cover:
 
 - parsing shorthand, six-digit and eight-digit hexadecimal values;
 - normalized uppercase output;
-- native-picker RGB synchronization;
-- alpha preservation when RGB changes;
+- RGB, HSB and HSL conversions;
+- visual hue synchronization;
+- mode selection and RGB channel editing;
+- alpha preservation when color channels change;
 - adding and removing the alpha channel from opacity changes;
 - manual entry preservation;
 - English and French accessible control labels.
@@ -67,12 +83,14 @@ The focused tests cover:
 
 1. Open Tokens and create a primitive color token.
 2. Verify the hexadecimal field defaults to `#000000`.
-3. Open the visual picker from the swatch and select another color.
-4. Verify the hexadecimal value updates immediately.
-5. Move opacity below `100%` and verify an eight-digit value is produced.
-6. Return opacity to `100%` and verify the alpha suffix is removed.
-7. Type a valid shorthand value such as `#F83` and create the token.
-8. Type an invalid value and verify creation is disabled until the value is valid.
+3. Open the visual picker from the swatch and select another color in the saturation-and-brightness plane.
+4. Move the hue slider and verify the hexadecimal value updates immediately.
+5. Open the mode menu and verify Picker, HSB, HSL and RGB are available with a visible selected state.
+6. Edit at least one channel in each numeric mode and verify the picker and hexadecimal value stay synchronized.
+7. Move opacity below `100%` and verify an eight-digit value is produced.
+8. Return opacity to `100%` and verify the alpha suffix is removed.
+9. Type a valid shorthand value such as `#F83` and create the token.
+10. Type an invalid value and verify creation is disabled until the value is valid.
 
 ### Primitive editing
 
@@ -82,10 +100,15 @@ The focused tests cover:
 4. Save and verify the status moves through saving to saved.
 5. Type an invalid draft and verify the error state appears without losing the draft.
 6. Correct the draft using the picker and verify the stale error clears.
+7. Use the eyedropper in a supported browser and verify the sampled color preserves the current opacity.
+8. In an unsupported browser, verify the eyedropper action is visibly disabled.
 
 ### Accessibility and responsive behavior
 
-1. Reach the hexadecimal input, swatch picker and opacity slider by keyboard.
-2. Verify the controls expose meaningful English and French labels.
-3. Verify focus indication is visible on the swatch control.
-4. Verify the field remains usable in the creation dialog and token inspector at mobile, tablet and desktop widths.
+1. Reach the hexadecimal input, swatch trigger, saturation-and-brightness plane, hue slider, mode selector, channel inputs, eyedropper and opacity slider by keyboard.
+2. Verify arrow keys operate the saturation-and-brightness plane and standard range controls.
+3. Verify the controls expose meaningful English and French labels.
+4. Verify focus indications remain visible throughout the picker.
+5. Verify Escape and outside interaction close the popover predictably.
+6. Verify the popover remains usable without clipping in the creation dialog and token inspector at mobile, tablet and desktop widths.
+7. Verify the picker remains legible in light and dark appearances.
