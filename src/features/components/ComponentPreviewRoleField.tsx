@@ -114,12 +114,7 @@ export function ComponentPreviewRoleField({
   return (
     <div
       data-mode={roleMode}
-      className={[
-        'component-preview-role-field grid min-w-0 gap-2',
-        roleMode === 'official' ? 'md:col-span-2' : '',
-      ]
-        .filter(Boolean)
-        .join(' ')}
+      className="component-preview-role-field grid min-w-0 gap-2"
     >
       <div className="grid min-w-0 gap-1.5">
         <label
