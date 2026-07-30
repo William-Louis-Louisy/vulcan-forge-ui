@@ -306,7 +306,7 @@ export function ColorPickerField({
         onKeyDown={handleSaturationBrightnessKeyDown}
         onPointerDown={handleSaturationBrightnessPointerDown}
         onPointerMove={handleSaturationBrightnessPointerMove}
-        className="focus-visible:outline-border-focus relative aspect-[8/5] w-full touch-none cursor-crosshair overflow-hidden rounded-xl shadow-inner focus-visible:outline-2 focus-visible:outline-offset-2"
+        className="focus-visible:outline-border-focus relative aspect-[8/5] w-full cursor-crosshair touch-none overflow-hidden rounded-xl shadow-inner focus-visible:outline-2 focus-visible:outline-offset-2"
         style={{
           backgroundColor: `hsl(${hsb.hue} 100% 50%)`,
           backgroundImage:
