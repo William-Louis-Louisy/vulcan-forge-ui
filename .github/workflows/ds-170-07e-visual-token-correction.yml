@@ -53,3 +53,5 @@ jobs:
           git add -A
           git commit -m "fix(ds-170-07e): restore Visual Tokens behavior"
           git push origin HEAD:feature/ds-170-07e-component-preview-role-bindings
+
+# This update intentionally triggers the correction now that the workflow exists.
