@@ -13,14 +13,14 @@
 
 Avant de distribuer ce guide, l’équipe de test doit renseigner les informations suivantes :
 
-| Information | Valeur |
-| --- | --- |
-| URL de l’environnement | `[à compléter]` |
-| Navigateurs officiellement couverts | `[à compléter]` |
-| Compte de test fourni, le cas échéant | `[à compléter]` |
-| Contact en cas de blocage | `[à compléter]` |
+| Information                                    | Valeur          |
+| ---------------------------------------------- | --------------- |
+| URL de l’environnement                         | `[à compléter]` |
+| Navigateurs officiellement couverts            | `[à compléter]` |
+| Compte de test fourni, le cas échéant          | `[à compléter]` |
+| Contact en cas de blocage                      | `[à compléter]` |
 | Outil ou emplacement de remontée des anomalies | `[à compléter]` |
-| Jeu de données partagé à ne pas modifier | `[à compléter]` |
+| Jeu de données partagé à ne pas modifier       | `[à compléter]` |
 
 Pour toute opération destructive, utilisez exclusivement un compte et un projet jetables explicitement créés pour le test.
 
@@ -554,13 +554,13 @@ Brand ne contient pas de panneau de prévisualisation local. Les sorties génér
 
 L’espace Tokens organise les décisions de design en cinq familles :
 
-| Famille | Usage | Exemples |
-| --- | --- | --- |
-| Color | Couleurs primitives et sémantiques | fond, contenu, accent |
-| Spacing | Espacements | marges, paddings, gaps |
-| Radius | Arrondis | contrôles, cartes, dialogues |
-| Typography | Styles typographiques | famille, taille, graisse, interligne |
-| Motion | Durées et mouvements | transition rapide, durée standard |
+| Famille    | Usage                              | Exemples                             |
+| ---------- | ---------------------------------- | ------------------------------------ |
+| Color      | Couleurs primitives et sémantiques | fond, contenu, accent                |
+| Spacing    | Espacements                        | marges, paddings, gaps               |
+| Radius     | Arrondis                           | contrôles, cartes, dialogues         |
+| Typography | Styles typographiques              | famille, taille, graisse, interligne |
+| Motion     | Durées et mouvements               | transition rapide, durée standard    |
 
 ## 10.1 Organisation de l’écran
 
@@ -839,16 +839,16 @@ Les bindings visuels associent le composant à des tokens existants.
 ### Rôles officiels
 
 | Rôle de preview | Type de token imposé |
-| --- | --- |
-| background | color |
-| foreground | color |
-| border | color |
-| radius | radius |
-| padding | spacing |
-| paddingX | spacing |
-| paddingY | spacing |
-| duration | motion |
-| motion | motion |
+| --------------- | -------------------- |
+| background      | color                |
+| foreground      | color                |
+| border          | color                |
+| radius          | radius               |
+| padding         | spacing              |
+| paddingX        | spacing              |
+| paddingY        | spacing              |
+| duration        | motion               |
+| motion          | motion               |
 
 Pour un rôle officiel :
 
@@ -1433,13 +1433,13 @@ Ne capturez jamais un mot de passe ou une donnée confidentielle.
 
 ## 21.7 Sévérité suggérée
 
-| Niveau | Définition |
-| --- | --- |
-| Bloquant | Impossible de poursuivre le parcours principal, aucune solution de contournement |
-| Critique | Perte de données, faille de sécurité, suppression inattendue ou résultat gravement incorrect |
-| Majeur | Fonction importante incorrecte avec contournement difficile |
-| Mineur | Défaut limité avec contournement simple |
-| Cosmétique | Problème visuel ou de texte sans impact fonctionnel significatif |
+| Niveau     | Définition                                                                                   |
+| ---------- | -------------------------------------------------------------------------------------------- |
+| Bloquant   | Impossible de poursuivre le parcours principal, aucune solution de contournement             |
+| Critique   | Perte de données, faille de sécurité, suppression inattendue ou résultat gravement incorrect |
+| Majeur     | Fonction importante incorrecte avec contournement difficile                                  |
+| Mineur     | Défaut limité avec contournement simple                                                      |
+| Cosmétique | Problème visuel ou de texte sans impact fonctionnel significatif                             |
 
 ---
 
