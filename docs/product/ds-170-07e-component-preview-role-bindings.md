@@ -42,15 +42,16 @@ Typography tokens remain available through custom roles because the current prev
 
 ## Cursor affordance correction
 
-The first correction covered shared `Button`, `Select` and `SegmentedControl` primitives only. That left native buttons authored directly inside layout and feature components unchanged, including the user menu, locale switcher, project switcher and mobile menu triggers.
+The first correction covered shared `Button`, `Select` and `SegmentedControl` primitives only. The next attempt placed a generic native-control selector inside Tailwind's base cascade layer and tested only that the selector text existed. That did not prove the rendered cursor behavior and left several real surfaces unchanged during QA.
 
-The final contract is defined at the application foundation level:
+The corrected contract now uses a dedicated unlayered `interactive-cursor.css` stylesheet imported after Tailwind. It has deliberate cascade priority over layered component and utility rules and defines:
 
-- enabled native buttons, selects, checkbox controls, radio controls, color controls and summaries use the pointer cursor;
-- disabled native controls use the not-allowed cursor;
-- labels owning checkbox and radio controls inherit the matching enabled or disabled affordance;
-- component-level cursor utilities remain available for explicit exceptions such as a selected locale using the default cursor;
-- automated coverage verifies that the global contract remains present.
+- pointer cursors for enabled native buttons, selects, checkbox controls, radio controls, color controls, summaries and ARIA buttons;
+- not-allowed cursors for disabled native and ARIA controls;
+- pointer or not-allowed affordances for labels owning checkbox and radio inputs;
+- an explicit default-cursor exception for the currently selected disabled locale.
+
+Frequently used controls also expose their intent directly through `cursor-pointer`, including the user-menu trigger, logout action, locale-switcher options, Token editor tabs and the component delete trigger. The unlayered native contract covers directly authored controls such as the project switcher and the Components localized-content locale buttons.
 
 This makes the behavior apply to current and future controls whether or not they consume the shared `Button` primitive.
 
@@ -72,7 +73,10 @@ This makes the behavior apply to current and future controls whether or not they
 - compatible token filtering;
 - duplicate official-role disabling;
 - advanced custom-role authoring;
-- global enabled and disabled cursor contracts for native controls and their checkbox/radio labels.
+- computed pointer behavior for enabled native and ARIA controls;
+- computed not-allowed behavior for disabled controls;
+- computed default-cursor behavior for the active locale exception;
+- checkbox and radio label selector coverage.
 
 ## Manual QA
 
@@ -97,12 +101,14 @@ This makes the behavior apply to current and future controls whether or not they
 ### Cursor affordance
 
 1. Verify the pointer cursor on shared buttons and selects.
-2. Verify the pointer cursor on the user-menu trigger.
-3. Verify the pointer cursor on inactive locale-switcher options and the default cursor on the active locale.
+2. Verify the pointer cursor on the user-menu trigger, Settings link and logout action.
+3. Verify the pointer cursor on inactive topbar locale options and the default cursor on the active locale.
 4. Verify the pointer cursor on the project-switcher trigger.
-5. Verify the pointer cursor on authenticated and public mobile-menu triggers.
-6. Verify pointer affordance on checkbox, radio, color and disclosure controls.
-7. Verify disabled controls expose a not-allowed cursor unless an explicit product-specific override applies.
+5. Verify the pointer cursor on the Components localized-content locale buttons and component delete trigger.
+6. Verify the pointer cursor on every Tokens family tab.
+7. Verify the pointer cursor on authenticated and public mobile-menu triggers.
+8. Verify pointer affordance on checkbox, radio, color and disclosure controls.
+9. Verify disabled controls expose a not-allowed cursor unless an explicit product-specific override applies.
 
 ### Regression checks
 
