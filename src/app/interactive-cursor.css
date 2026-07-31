@@ -1,0 +1,39 @@
+/*
+ * Native interactive cursor contract.
+ *
+ * This stylesheet is intentionally unlayered so the affordance remains stable
+ * when controls are authored directly or styled through Tailwind layers.
+ */
+button:not(:disabled),
+select:not(:disabled),
+input[type='checkbox']:not(:disabled),
+input[type='radio']:not(:disabled),
+input[type='color']:not(:disabled),
+summary,
+[role='button']:not([aria-disabled='true']) {
+  cursor: pointer !important;
+}
+
+button:disabled,
+select:disabled,
+input[type='checkbox']:disabled,
+input[type='radio']:disabled,
+input[type='color']:disabled,
+[role='button'][aria-disabled='true'] {
+  cursor: not-allowed !important;
+}
+
+label:has(input[type='checkbox']:not(:disabled)),
+label:has(input[type='radio']:not(:disabled)) {
+  cursor: pointer !important;
+}
+
+label:has(input[type='checkbox']:disabled),
+label:has(input[type='radio']:disabled) {
+  cursor: not-allowed !important;
+}
+
+/* The currently selected locale is informational rather than actionable. */
+button[aria-current='true']:disabled {
+  cursor: default !important;
+}
