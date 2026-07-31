@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import './interactive-cursor.css';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -227,33 +228,6 @@
   :focus-visible {
     outline: 2px solid var(--vf-border-focus);
     outline-offset: 3px;
-  }
-
-  button:not(:disabled),
-  select:not(:disabled),
-  input[type='checkbox']:not(:disabled),
-  input[type='radio']:not(:disabled),
-  input[type='color']:not(:disabled),
-  summary {
-    cursor: pointer;
-  }
-
-  button:disabled,
-  select:disabled,
-  input[type='checkbox']:disabled,
-  input[type='radio']:disabled,
-  input[type='color']:disabled {
-    cursor: not-allowed;
-  }
-
-  label:has(input[type='checkbox']:not(:disabled)),
-  label:has(input[type='radio']:not(:disabled)) {
-    cursor: pointer;
-  }
-
-  label:has(input[type='checkbox']:disabled),
-  label:has(input[type='radio']:disabled) {
-    cursor: not-allowed;
   }
 }
 
