@@ -40,13 +40,27 @@ Typography tokens remain available through custom roles because the current prev
 5. Switching to another official role updates the type and clears the path when required.
 6. Switching to **Custom role (advanced)** reveals an exact key field and unlocks token-type selection.
 
+## Cursor affordance correction
+
+The first correction covered shared `Button`, `Select` and `SegmentedControl` primitives only. That left native buttons authored directly inside layout and feature components unchanged, including the user menu, locale switcher, project switcher and mobile menu triggers.
+
+The final contract is defined at the application foundation level:
+
+- enabled native buttons, selects, checkbox controls, radio controls, color controls and summaries use the pointer cursor;
+- disabled native controls use the not-allowed cursor;
+- labels owning checkbox and radio controls inherit the matching enabled or disabled affordance;
+- component-level cursor utilities remain available for explicit exceptions such as a selected locale using the default cursor;
+- automated coverage verifies that the global contract remains present.
+
+This makes the behavior apply to current and future controls whether or not they consume the shared `Button` primitive.
+
 ## Accessibility
 
 - The role selector uses the shared combobox/listbox interaction.
 - Disabled duplicate roles expose their unavailable state and reason.
 - Role labels, custom-role guidance and type metadata are localized in English and French.
 - Keyboard navigation, typeahead, focus restoration and Escape behavior are inherited from the shared `Select` primitive.
-- Enabled shared buttons, select triggers, select options and segmented controls expose a pointer cursor; their disabled states expose a not-allowed cursor.
+- Cursor affordance supplements semantic HTML and keyboard behavior; it does not replace either.
 
 ## Automated coverage
 
@@ -57,7 +71,8 @@ Typography tokens remain available through custom roles because the current prev
 - guided binding creation;
 - compatible token filtering;
 - duplicate official-role disabling;
-- advanced custom-role authoring.
+- advanced custom-role authoring;
+- global enabled and disabled cursor contracts for native controls and their checkbox/radio labels.
 
 ## Manual QA
 
@@ -79,6 +94,16 @@ Typography tokens remain available through custom roles because the current prev
 4. Select `typography`, choose a typography token and save.
 5. Reload the component and verify that the arbitrary binding remains editable as a custom role.
 
+### Cursor affordance
+
+1. Verify the pointer cursor on shared buttons and selects.
+2. Verify the pointer cursor on the user-menu trigger.
+3. Verify the pointer cursor on inactive locale-switcher options and the default cursor on the active locale.
+4. Verify the pointer cursor on the project-switcher trigger.
+5. Verify the pointer cursor on authenticated and public mobile-menu triggers.
+6. Verify pointer affordance on checkbox, radio, color and disclosure controls.
+7. Verify disabled controls expose a not-allowed cursor unless an explicit product-specific override applies.
+
 ### Regression checks
 
 - Existing canonical bindings remain selected correctly.
@@ -86,4 +111,3 @@ Typography tokens remain available through custom roles because the current prev
 - Save-status reporting moves through unsaved, saving and saved states.
 - English and French labels fit on desktop, tablet and mobile.
 - Keyboard-only operation works for role, type and token-path selectors.
-- Enabled buttons, select controls and segmented controls display a pointer cursor; disabled controls display a not-allowed cursor without losing native disabled behavior.
