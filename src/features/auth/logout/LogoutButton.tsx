@@ -13,7 +13,7 @@ export function LogoutButton({ className }: LogoutButtonProps = {}) {
       <button
         type="submit"
         className={[
-          'text-content-secondary hover:text-content-primary text-sm font-semibold transition',
+          'text-content-secondary hover:text-content-primary cursor-pointer text-sm font-semibold transition',
           className,
         ]
           .filter(Boolean)

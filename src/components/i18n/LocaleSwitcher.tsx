@@ -62,7 +62,7 @@ export function LocaleSwitcher({
                 disabled={option.isActive}
                 onClick={() => handleLocaleChange(option.locale)}
                 className={[
-                  'h-full rounded-sm px-3 py-2 text-xs font-semibold transition',
+                  'h-full cursor-pointer rounded-sm px-3 py-2 text-xs font-semibold transition',
                   'focus-visible:outline-border-focus focus-visible:outline-2 focus-visible:outline-offset-2',
                   fullWidth ? 'w-full' : '',
                   option.isActive

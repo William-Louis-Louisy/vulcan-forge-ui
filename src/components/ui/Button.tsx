@@ -40,9 +40,9 @@ export function Button({
     <button
       type={type}
       className={[
-        'inline-flex items-center justify-center font-semibold transition',
+        'inline-flex cursor-pointer items-center justify-center font-semibold transition',
         'focus-visible:outline-border-focus focus-visible:outline-2 focus-visible:outline-offset-2',
-        'disabled:pointer-events-none disabled:opacity-50',
+        'disabled:cursor-not-allowed disabled:opacity-50',
         variantClassNames[variant],
         sizeClassNames[size],
         className,

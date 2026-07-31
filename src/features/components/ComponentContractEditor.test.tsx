@@ -132,6 +132,24 @@ const labels: ComponentContractEditorLabels = {
     title: 'Visual tokens',
     description: 'Map design system tokens to preview properties.',
     add: 'Add visual token',
+    role: 'Preview role',
+    selectRole: 'Select a preview role',
+    customRole: 'Custom role (advanced)',
+    customRoleDescription: 'Use an arbitrary role key.',
+    customRoleKey: 'Custom role key',
+    customRolePlaceholder: 'e.g. fontWeight',
+    roleAlreadyUsed: 'Already used in this contract',
+    roles: {
+      background: 'Background',
+      foreground: 'Foreground',
+      border: 'Border',
+      radius: 'Radius',
+      padding: 'Padding',
+      paddingX: 'Horizontal padding',
+      paddingY: 'Vertical padding',
+      duration: 'Duration',
+      motion: 'Motion',
+    },
     tokenType: 'Token type',
     tokenPath: 'Token path',
     selectToken: 'Select a token',
@@ -224,9 +242,24 @@ const tokenOptions = [
     label: 'color.background.default',
   },
   {
+    type: 'spacing' as const,
+    path: 'spacing.4',
+    label: 'spacing.4',
+  },
+  {
     type: 'radius' as const,
     path: 'radius.md',
     label: 'radius.md',
+  },
+  {
+    type: 'typography' as const,
+    path: 'typography.fontWeight.semibold',
+    label: 'typography.fontWeight.semibold',
+  },
+  {
+    type: 'motion' as const,
+    path: 'motion.duration.fast',
+    label: 'motion.duration.fast',
   },
 ];
 
@@ -421,7 +454,7 @@ describe('ComponentContractEditor', () => {
     expect(saveButton).toBeEnabled();
   });
 
-  it('adds a visual token binding', async () => {
+  it('adds a guided visual token binding', async () => {
     const user = userEvent.setup();
 
     render(
@@ -436,20 +469,26 @@ describe('ComponentContractEditor', () => {
 
     await user.click(screen.getByRole('button', { name: /Add visual token/ }));
 
-    expect(screen.getByLabelText('Token type')).toBeInTheDocument();
+    expect(
+      screen.getByRole('combobox', { name: 'Preview role' }),
+    ).toHaveTextContent('Background');
+    expect(screen.getByLabelText('Token type')).toHaveTextContent('Color');
+    expect(screen.getByLabelText('Token type')).toBeDisabled();
+
     const tokenPathSelect = screen.getByRole('combobox', {
       name: 'Token path',
     });
-    expect(tokenPathSelect).toBeInTheDocument();
-
     await user.click(tokenPathSelect);
 
     expect(
       screen.getByRole('option', { name: 'color.background.default' }),
     ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('option', { name: 'radius.md' }),
+    ).not.toBeInTheDocument();
   });
 
-  it('keeps a visual token key focused during continuous typing', async () => {
+  it('disables official preview roles that are already used', async () => {
     const user = userEvent.setup();
 
     render(
@@ -463,20 +502,57 @@ describe('ComponentContractEditor', () => {
     );
 
     await user.click(screen.getByRole('button', { name: /Add visual token/ }));
+    await user.click(screen.getByRole('button', { name: /Add visual token/ }));
 
-    const tokenKeyInput = screen
-      .getAllByLabelText('Key')
-      .find((input) => (input as HTMLInputElement).value === '');
+    const roleSelects = screen.getAllByRole('combobox', {
+      name: 'Preview role',
+    });
+    expect(roleSelects[0]).toHaveTextContent('Background');
+    expect(roleSelects[1]).toHaveTextContent('Foreground');
 
-    expect(tokenKeyInput).toBeDefined();
-
-    if (!tokenKeyInput) {
+    if (!roleSelects[1]) {
       return;
     }
 
-    await user.click(tokenKeyInput);
-    await user.keyboard('background');
+    await user.click(roleSelects[1]);
 
-    expect(screen.getByDisplayValue('background')).toHaveFocus();
+    expect(
+      screen.getByRole('option', {
+        name: /Background background · Color · Already used in this contract/,
+      }),
+    ).toBeDisabled();
+  });
+
+  it('keeps arbitrary bindings available through the custom role fallback', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <ComponentContractEditor
+        locale="en"
+        projectSlug="demo"
+        contract={contract}
+        labels={labels}
+        tokenOptions={tokenOptions}
+      />,
+    );
+
+    await user.click(screen.getByRole('button', { name: /Add visual token/ }));
+    await user.click(screen.getByRole('combobox', { name: 'Preview role' }));
+    await user.click(
+      screen.getByRole('option', {
+        name: /Custom role \(advanced\) Use an arbitrary role key/,
+      }),
+    );
+
+    const customRoleInput = screen.getByLabelText('Custom role key');
+    await user.type(customRoleInput, 'fontWeight');
+
+    expect(customRoleInput).toHaveValue('fontWeight');
+    expect(screen.getByLabelText('Token type')).toBeEnabled();
+
+    await user.click(screen.getByLabelText('Token type'));
+    await user.click(screen.getByRole('option', { name: 'Typography' }));
+
+    expect(screen.getByLabelText('Token type')).toHaveTextContent('Typography');
   });
 });

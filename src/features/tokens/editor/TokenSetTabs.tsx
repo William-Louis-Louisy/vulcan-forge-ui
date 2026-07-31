@@ -28,7 +28,7 @@ export function TokenSetTabs({
               aria-current={isActive ? 'page' : undefined}
               onClick={() => onTokenSetChange(tokenSetType)}
               className={[
-                'inline-flex min-h-8 items-center gap-1.5 px-3 pb-1.5 text-center text-sm font-semibold transition',
+                'inline-flex min-h-8 cursor-pointer items-center gap-1.5 px-3 pb-1.5 text-center text-sm font-semibold transition',
                 isActive
                   ? 'border-content-primary border-b-2'
                   : 'text-content-secondary hover:bg-background-sunken hover:text-content-primary',

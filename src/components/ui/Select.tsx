@@ -306,7 +306,7 @@ export function Select<Value extends string>({
         onClick={handleTriggerClick}
         onKeyDown={handleKeyDown}
         className={[
-          'border-border-default bg-surface-primary text-content-primary focus-visible:outline-border-focus hover:bg-background-subtle flex w-full min-w-0 items-center gap-2 rounded-md border text-left transition focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60',
+          'border-border-default bg-surface-primary text-content-primary focus-visible:outline-border-focus hover:bg-background-subtle flex w-full min-w-0 cursor-pointer items-center gap-2 rounded-md border text-left transition focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60',
           invalid ? 'border-action-danger' : '',
           triggerSizeClassNames[size],
         ]
@@ -382,7 +382,7 @@ export function Select<Value extends string>({
                   onPointerMove={() => setActiveIndex(index)}
                   onClick={() => selectOption(option)}
                   className={[
-                    'flex w-full min-w-0 items-center gap-2 rounded-sm text-left transition',
+                    'flex w-full min-w-0 cursor-pointer items-center gap-2 rounded-sm text-left transition',
                     'disabled:cursor-not-allowed disabled:opacity-50',
                     optionSizeClassNames[size],
                     isActive
