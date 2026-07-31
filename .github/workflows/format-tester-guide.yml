@@ -1,0 +1,46 @@
+name: Format tester guide
+
+on:
+  push:
+    branches:
+      - docs/tester-user-guide
+    paths:
+      - docs/testing/vulcanforge-ui-guide-testeurs.fr.md
+      - .github/workflows/format-tester-guide.yml
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v6
+        with:
+          ref: docs/tester-user-guide
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Format tester guide
+        run: npx prettier docs/testing/vulcanforge-ui-guide-testeurs.fr.md --write
+
+      - name: Commit formatting
+        run: |
+          if git diff --quiet; then
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/testing/vulcanforge-ui-guide-testeurs.fr.md
+          git commit -m "docs: format tester guide"
+          git push origin HEAD:docs/tester-user-guide
