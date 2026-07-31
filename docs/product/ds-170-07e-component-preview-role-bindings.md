@@ -46,6 +46,7 @@ Typography tokens remain available through custom roles because the current prev
 - Disabled duplicate roles expose their unavailable state and reason.
 - Role labels, custom-role guidance and type metadata are localized in English and French.
 - Keyboard navigation, typeahead, focus restoration and Escape behavior are inherited from the shared `Select` primitive.
+- Enabled shared buttons, select triggers, select options and segmented controls expose a pointer cursor; their disabled states expose a not-allowed cursor.
 
 ## Automated coverage
 
@@ -85,3 +86,4 @@ Typography tokens remain available through custom roles because the current prev
 - Save-status reporting moves through unsaved, saving and saved states.
 - English and French labels fit on desktop, tablet and mobile.
 - Keyboard-only operation works for role, type and token-path selectors.
+- Enabled buttons, select controls and segmented controls display a pointer cursor; disabled controls display a not-allowed cursor without losing native disabled behavior.
