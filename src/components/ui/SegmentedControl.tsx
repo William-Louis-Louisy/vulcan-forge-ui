@@ -138,7 +138,7 @@ export function SegmentedControl<Value extends string>({
             onClick={() => onValueChange(option.value)}
             onKeyDown={(event) => handleKeyDown(event, index)}
             className={[
-              'focus-visible:outline-border-focus min-h-8 rounded-sm px-3 py-1.5 text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+              'focus-visible:outline-border-focus min-h-8 cursor-pointer rounded-sm px-3 py-1.5 text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
               isSelected
                 ? 'bg-content-primary text-background-app shadow-soft'
                 : 'text-content-secondary hover:bg-background-app hover:text-content-primary',
