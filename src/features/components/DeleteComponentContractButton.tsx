@@ -57,7 +57,7 @@ export function DeleteComponentContractButton({
         aria-label={labels.ariaLabel}
         title={labels.ariaLabel}
         onClick={() => dialogRef.current?.showModal()}
-        className="bg-action-danger text-overlay-content hover:bg-action-danger/80 flex shrink-0 items-center justify-center gap-1 rounded-md border px-2.5 py-2 transition sm:gap-2 sm:px-3"
+        className="bg-action-danger text-overlay-content hover:bg-action-danger/80 flex shrink-0 cursor-pointer items-center justify-center gap-1 rounded-md border px-2.5 py-2 transition sm:gap-2 sm:px-3"
       >
         <TrashIcon aria-hidden="true" size={14} />
         <span className="hidden text-xs font-medium sm:inline">
