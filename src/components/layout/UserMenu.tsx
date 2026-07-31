@@ -53,7 +53,7 @@ export function UserMenu({
         aria-expanded={isOpen}
         aria-controls={popoverId}
         onClick={toggle}
-        className="border-border-subtle bg-background-subtle text-content-secondary hover:bg-surface-secondary focus-visible:outline-border-focus flex size-8 items-center justify-center rounded-full border text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2"
+        className="border-border-subtle bg-background-subtle text-content-secondary hover:bg-surface-secondary focus-visible:outline-border-focus flex size-8 cursor-pointer items-center justify-center rounded-full border text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2"
       >
         {initials}
       </button>
