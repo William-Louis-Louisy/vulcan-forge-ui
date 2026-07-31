@@ -35,12 +35,15 @@ describe('interactive cursor contract', () => {
   });
 
   it('renders a pointer cursor for enabled native and ARIA controls', () => {
-    expect(getRenderedCursor(document.createElement('button'))).toBe('pointer');
-    expect(getRenderedCursor(document.createElement('select'))).toBe('pointer');
-    expect(getRenderedCursor(document.createElement('summary'))).toBe('pointer');
-
+    const button = document.createElement('button');
+    const select = document.createElement('select');
+    const summary = document.createElement('summary');
     const ariaButton = document.createElement('div');
     ariaButton.setAttribute('role', 'button');
+
+    expect(getRenderedCursor(button)).toBe('pointer');
+    expect(getRenderedCursor(select)).toBe('pointer');
+    expect(getRenderedCursor(summary)).toBe('pointer');
     expect(getRenderedCursor(ariaButton)).toBe('pointer');
   });
 
