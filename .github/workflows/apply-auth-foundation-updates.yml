@@ -1,0 +1,92 @@
+name: Apply authentication foundation updates
+
+on:
+  push:
+    branches:
+      - feature/ds-170-auth-01-foundations
+    paths:
+      - .github/workflows/apply-auth-foundation-updates.yml
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout implementation branch
+        uses: actions/checkout@v6
+        with:
+          ref: feature/ds-170-auth-01-foundations
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Update localized authentication messages
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs')
+
+          const updates = {
+            en: {
+              login: {
+                rateLimited:
+                  'Too many sign-in attempts. Please wait before trying again.',
+              },
+              signup: {
+                accountCreatedSignInFailed:
+                  "Your account was created, but we couldn't sign you in automatically. Use the sign-in link below with the same credentials.",
+                rateLimited:
+                  'Too many signup attempts. Please wait before trying again.',
+                signupUnavailable:
+                  "We couldn't complete this signup. Try signing in if you already have an account, or try again later.",
+              },
+            },
+            fr: {
+              login: {
+                rateLimited:
+                  'Trop de tentatives de connexion ont été effectuées. Patientez avant de réessayer.',
+              },
+              signup: {
+                accountCreatedSignInFailed:
+                  "Votre compte a été créé, mais la connexion automatique a échoué. Utilisez le lien de connexion ci-dessous avec les mêmes identifiants.",
+                rateLimited:
+                  "Trop de tentatives d'inscription ont été effectuées. Patientez avant de réessayer.",
+                signupUnavailable:
+                  "Nous n'avons pas pu finaliser cette inscription. Essayez de vous connecter si vous possédez déjà un compte, ou réessayez plus tard.",
+              },
+            },
+          }
+
+          for (const locale of ['en', 'fr']) {
+            const path = `src/messages/${locale}.json`
+            const messages = JSON.parse(fs.readFileSync(path, 'utf8'))
+
+            Object.assign(messages.LoginPage.validation, updates[locale].login)
+            Object.assign(messages.SignupPage.validation, updates[locale].signup)
+            delete messages.SignupPage.validation.emailAlreadyUsed
+
+            fs.writeFileSync(path, `${JSON.stringify(messages, null, 2)}\n`)
+          }
+          NODE
+
+      - name: Pin reviewed Auth.js beta
+        run: npm install next-auth@5.0.0-beta.32 --save-exact
+
+      - name: Format updated metadata
+        run: npx prettier package.json package-lock.json src/messages/en.json src/messages/fr.json --write
+
+      - name: Commit generated updates
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json src/messages/en.json src/messages/fr.json
+          git commit -m "chore(auth): pin Auth.js and update localized states"
+          git push origin HEAD:feature/ds-170-auth-01-foundations
