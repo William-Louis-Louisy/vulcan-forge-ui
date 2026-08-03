@@ -27,4 +27,4 @@ The generated file is written to:
 dist/testing-guide/VulcanForge-UI-Guide-Testeurs-v1.1.pdf
 ```
 
-The `Build tester guide PDF` GitHub Actions workflow also produces the PDF as a downloadable workflow artifact whenever the guide, stylesheet or generator changes.
+The `Build tester guide PDF` GitHub Actions workflow also produces the PDF as a downloadable workflow artifact whenever the guide, stylesheet or generator changes. Workflow artifacts are temporary distribution files; the Markdown source, stylesheet and generator remain the durable version-controlled sources.
