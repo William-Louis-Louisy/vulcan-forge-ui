@@ -1,7 +1,7 @@
 'use server';
 
 import bcrypt from 'bcryptjs';
-import { AuthError } from 'next-auth';
+import { AuthError } from '@auth/core/errors';
 import { headers } from 'next/headers';
 import { signIn } from '@/auth';
 import { prisma } from '@/server/db/prisma';
