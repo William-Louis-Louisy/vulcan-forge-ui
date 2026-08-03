@@ -1045,7 +1045,8 @@
       "emailInvalid": "Saisissez une adresse email valide.",
       "invalidCredentials": "Email ou mot de passe invalide.",
       "passwordRequired": "Saisissez votre mot de passe.",
-      "unexpected": "Impossible de vous connecter. Veuillez réessayer."
+      "unexpected": "Impossible de vous connecter. Veuillez réessayer.",
+      "rateLimited": "Trop de tentatives de connexion ont été effectuées. Patientez avant de réessayer."
     }
   },
   "LogoutButton": {
@@ -1278,14 +1279,16 @@
     },
     "title": "Commencez votre design system.",
     "validation": {
-      "emailAlreadyUsed": "Un compte existe déjà avec cette adresse email.",
       "emailInvalid": "Saisissez une adresse email valide.",
       "nameMinLength": "Saisissez au moins 2 caractères.",
       "nameTooLong": "Le nom doit contenir au maximum 80 caractères.",
       "passwordConfirmationMismatch": "Les mots de passe ne correspondent pas.",
       "passwordMinLength": "Le mot de passe doit contenir au moins 12 caractères.",
       "passwordTooLong": "Le mot de passe doit contenir au maximum 72 caractères.",
-      "unexpected": "Impossible de créer votre compte. Veuillez réessayer."
+      "unexpected": "Impossible de créer votre compte. Veuillez réessayer.",
+      "accountCreatedSignInFailed": "Votre compte a été créé, mais la connexion automatique a échoué. Utilisez le lien de connexion ci-dessous avec les mêmes identifiants.",
+      "rateLimited": "Trop de tentatives d'inscription ont été effectuées. Patientez avant de réessayer.",
+      "signupUnavailable": "Nous n'avons pas pu finaliser cette inscription. Essayez de vous connecter si vous possédez déjà un compte, ou réessayez plus tard."
     }
   },
   "ThemesEditorPage": {

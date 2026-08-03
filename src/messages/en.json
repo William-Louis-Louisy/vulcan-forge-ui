@@ -1045,7 +1045,8 @@
       "emailInvalid": "Enter a valid email address.",
       "invalidCredentials": "Invalid email or password.",
       "passwordRequired": "Enter your password.",
-      "unexpected": "Unable to sign in. Please try again."
+      "unexpected": "Unable to sign in. Please try again.",
+      "rateLimited": "Too many sign-in attempts. Please wait before trying again."
     }
   },
   "LogoutButton": {
@@ -1278,14 +1279,16 @@
     },
     "title": "Start building your design system.",
     "validation": {
-      "emailAlreadyUsed": "An account already exists with this email address.",
       "emailInvalid": "Enter a valid email address.",
       "nameMinLength": "Enter at least 2 characters.",
       "nameTooLong": "Name must contain at most 80 characters.",
       "passwordConfirmationMismatch": "Passwords do not match.",
       "passwordMinLength": "Password must contain at least 12 characters.",
       "passwordTooLong": "Password must contain at most 72 characters.",
-      "unexpected": "Unable to create your account. Please try again."
+      "unexpected": "Unable to create your account. Please try again.",
+      "accountCreatedSignInFailed": "Your account was created, but we couldn't sign you in automatically. Use the sign-in link below with the same credentials.",
+      "rateLimited": "Too many signup attempts. Please wait before trying again.",
+      "signupUnavailable": "We couldn't complete this signup. Try signing in if you already have an account, or try again later."
     }
   },
   "ThemesEditorPage": {
