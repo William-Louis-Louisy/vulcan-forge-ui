@@ -2,15 +2,15 @@
 
 ## Metadata
 
-| Field | Value |
-| --- | --- |
-| Product | VulcanForge UI |
-| Audit date | 3 August 2026 |
-| Branch | `audit/ds-170-auth-signup-signin` |
-| Scope | Signup, sign-in, credential verification, sessions, recovery readiness, form UX and accessibility |
-| Reference baseline | `main` after the tester guide merge |
-| Audit status | Complete — recommendations pending product-owner review |
-| Implementation status | No corrective implementation included in this audit |
+| Field                 | Value                                                                                             |
+| --------------------- | ------------------------------------------------------------------------------------------------- |
+| Product               | VulcanForge UI                                                                                    |
+| Audit date            | 3 August 2026                                                                                     |
+| Branch                | `audit/ds-170-auth-signup-signin`                                                                 |
+| Scope                 | Signup, sign-in, credential verification, sessions, recovery readiness, form UX and accessibility |
+| Reference baseline    | `main` after the tester guide merge                                                               |
+| Audit status          | Complete — recommendations pending product-owner review                                           |
+| Implementation status | No corrective implementation included in this audit                                               |
 
 ---
 
@@ -42,12 +42,12 @@ The implementation should nevertheless not be considered ready for unrestricted 
 
 ### Recommended release gates
 
-| Gate | Decision |
-| --- | --- |
-| Controlled internal DS-170-08 QA | Can proceed after product review of this audit |
+| Gate                                         | Decision                                                                                  |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Controlled internal DS-170-08 QA             | Can proceed after product review of this audit                                            |
 | Hosted test open to invited external testers | Address AUTH-01 and AUTH-02 first, or protect the environment at the infrastructure level |
-| Public beta with self-service signup | Complete all P1 recommendations |
-| Wider production release | Complete P1 and P2 recommendations and define the P3 roadmap |
+| Public beta with self-service signup         | Complete all P1 recommendations                                                           |
+| Wider production release                     | Complete P1 and P2 recommendations and define the P3 roadmap                              |
 
 Infrastructure protections such as a CDN, WAF or reverse-proxy limiter are outside this repository and could reduce some risks. No such protection can be confirmed from the audited source code, so the report treats it as unknown rather than absent.
 
@@ -222,29 +222,29 @@ The repository exports Auth.js GET and POST handlers rather than implementing a 
 
 ## 5. Findings overview
 
-| ID | Priority | Type | Finding |
-| --- | --- | --- | --- |
-| AUTH-01 | P1 | Conditional risk | No application-level login or signup throttling was found |
-| AUTH-02 | P1 | Confirmed defect | The 72-character validation does not protect bcrypt's 72-byte boundary |
-| AUTH-03 | P1 | Conditional risk | Account existence can be inferred from signup responses and login timing |
-| AUTH-04 | P1 | Confirmed gap | Email ownership is not verified before account activation |
-| AUTH-05 | P1 | Confirmed defect | Concurrent signup and post-transaction sign-in failures are not handled explicitly |
-| AUTH-06 | P1 | Confirmed gap | No password-recovery flow exists |
-| AUTH-07 | P1 | Improvement | Password policy does not meet the current target for password-only authentication |
-| AUTH-08 | P1 | Conditional risk | Auth.js is consumed through a beta range without a documented release-channel policy |
-| AUTH-09 | P2 | Confirmed defect | All Auth.js errors are presented as invalid credentials |
-| AUTH-10 | P2 | Improvement | The originally requested protected destination is discarded |
-| AUTH-11 | P2 | Improvement | Error recovery does not move focus or provide an error summary |
-| AUTH-12 | P2 | Improvement | Account email is not identified as `username` for password managers |
-| AUTH-13 | P2 | Improvement | Login has no password reveal control |
-| AUTH-14 | P2 | Improvement | Signup fields do not reuse the shared Input primitive or native constraints |
-| AUTH-15 | P2 | Improvement | Session duration, revocation and reauthentication rules are implicit |
-| AUTH-16 | P2 | Confirmed gap | Authentication behavior has limited action and integration test coverage |
-| AUTH-17 | P2 | Documentation gap | Authentication environment and secret requirements are not documented |
-| AUTH-18 | P2 | Improvement | The personal workspace name is generated only in English |
-| AUTH-19 | P2 | Conditional gap | Legal and trust destinations are absent near account creation |
-| AUTH-20 | P3 | Roadmap | MFA, passkeys and external identity providers are not planned in the current flow |
-| AUTH-21 | P3 | Improvement | Authentication security events and product metrics are not defined |
+| ID      | Priority | Type              | Finding                                                                              |
+| ------- | -------- | ----------------- | ------------------------------------------------------------------------------------ |
+| AUTH-01 | P1       | Conditional risk  | No application-level login or signup throttling was found                            |
+| AUTH-02 | P1       | Confirmed defect  | The 72-character validation does not protect bcrypt's 72-byte boundary               |
+| AUTH-03 | P1       | Conditional risk  | Account existence can be inferred from signup responses and login timing             |
+| AUTH-04 | P1       | Confirmed gap     | Email ownership is not verified before account activation                            |
+| AUTH-05 | P1       | Confirmed defect  | Concurrent signup and post-transaction sign-in failures are not handled explicitly   |
+| AUTH-06 | P1       | Confirmed gap     | No password-recovery flow exists                                                     |
+| AUTH-07 | P1       | Improvement       | Password policy does not meet the current target for password-only authentication    |
+| AUTH-08 | P1       | Conditional risk  | Auth.js is consumed through a beta range without a documented release-channel policy |
+| AUTH-09 | P2       | Confirmed defect  | All Auth.js errors are presented as invalid credentials                              |
+| AUTH-10 | P2       | Improvement       | The originally requested protected destination is discarded                          |
+| AUTH-11 | P2       | Improvement       | Error recovery does not move focus or provide an error summary                       |
+| AUTH-12 | P2       | Improvement       | Account email is not identified as `username` for password managers                  |
+| AUTH-13 | P2       | Improvement       | Login has no password reveal control                                                 |
+| AUTH-14 | P2       | Improvement       | Signup fields do not reuse the shared Input primitive or native constraints          |
+| AUTH-15 | P2       | Improvement       | Session duration, revocation and reauthentication rules are implicit                 |
+| AUTH-16 | P2       | Confirmed gap     | Authentication behavior has limited action and integration test coverage             |
+| AUTH-17 | P2       | Documentation gap | Authentication environment and secret requirements are not documented                |
+| AUTH-18 | P2       | Improvement       | The personal workspace name is generated only in English                             |
+| AUTH-19 | P2       | Conditional gap   | Legal and trust destinations are absent near account creation                        |
+| AUTH-20 | P3       | Roadmap           | MFA, passkeys and external identity providers are not planned in the current flow    |
+| AUTH-21 | P3       | Improvement       | Authentication security events and product metrics are not defined                   |
 
 No P0 issue was identified for a controlled internal DS-170-08 run.
 
