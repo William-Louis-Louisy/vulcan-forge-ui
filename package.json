@@ -16,6 +16,7 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
+    "test:auth-integration": "vitest run src/server/auth/auth-rate-limit.integration.test.ts",
     "audit:ui": "tsx scripts/audit-ui.ts",
     "quality": "npm run db:generate && npm run lint && npm run typecheck && npm run format:check && npm run audit:ui && npm run test && npm run build",
     "db:up": "docker compose up -d postgres",
@@ -24,6 +25,7 @@
     "db:logs": "docker compose logs -f postgres",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
+    "db:migrate:deploy": "prisma migrate deploy",
     "db:studio": "prisma studio",
     "db:push": "prisma db push",
     "db:check": "tsx scripts/check-db.ts"
