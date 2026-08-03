@@ -1,0 +1,523 @@
+name: Build tester guide PDF
+
+on:
+  push:
+    branches:
+      - docs/tester-user-guide
+    paths:
+      - docs/testing/vulcanforge-ui-guide-testeurs.fr.md
+      - .github/workflows/build-tester-guide-pdf.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-pdf:
+    name: Build tester guide PDF
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout documentation branch
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install PDF dependencies
+        run: python -m pip install --disable-pip-version-check markdown==3.8.2 weasyprint==66.0
+
+      - name: Generate styled PDF
+        shell: python
+        run: |
+          from __future__ import annotations
+
+          import html
+          import re
+          from pathlib import Path
+
+          import markdown
+          from weasyprint import CSS, HTML
+
+          source_path = Path('docs/testing/vulcanforge-ui-guide-testeurs.fr.md')
+          output_dir = Path('dist/testing-guide')
+          output_dir.mkdir(parents=True, exist_ok=True)
+          output_path = output_dir / 'VulcanForge-UI-Guide-Testeurs-v1.1.pdf'
+
+          source = source_path.read_text(encoding='utf-8')
+          lines = source.splitlines()
+
+          title = lines[0].removeprefix('# ').strip()
+          metadata = {}
+          intro_lines = []
+          body_start = 0
+
+          for index, line in enumerate(lines[1:], start=1):
+              if line.strip() == '---':
+                  body_start = index + 1
+                  break
+              match = re.match(r'^\*\*(.+?)\s*:\*\*\s*(.+?)\s{0,2}$', line)
+              if match:
+                  metadata[match.group(1).strip()] = match.group(2).strip()
+              elif line.startswith('> '):
+                  intro_lines.append(line[2:])
+              elif line.strip() and not line.startswith('**'):
+                  intro_lines.append(line)
+
+          body_markdown = '\n'.join(lines[body_start:]).strip()
+          markdown_source = '[TOC]\n\n' + body_markdown
+          body_html = markdown.markdown(
+              markdown_source,
+              extensions=['extra', 'toc', 'sane_lists', 'smarty'],
+              extension_configs={
+                  'toc': {
+                      'title': 'Sommaire',
+                      'toc_depth': '2-3',
+                      'permalink': False,
+                  }
+              },
+              output_format='html5',
+          )
+
+          intro_html = ''.join(f'<p>{html.escape(paragraph)}</p>' for paragraph in intro_lines)
+
+          css = r'''
+          @page {
+            size: A4;
+            margin: 19mm 17mm 19mm 18mm;
+            @top-left {
+              content: "VULCANFORGE UI";
+              color: #6e695d;
+              font-family: "DejaVu Sans", sans-serif;
+              font-size: 8pt;
+              font-weight: 700;
+              letter-spacing: 0.12em;
+            }
+            @top-right {
+              content: string(section-title);
+              color: #6e695d;
+              font-family: "DejaVu Sans", sans-serif;
+              font-size: 8pt;
+            }
+            @bottom-left {
+              content: "Guide d'utilisation pour les testeurs · Version 1.1";
+              color: #9c9686;
+              font-family: "DejaVu Sans", sans-serif;
+              font-size: 7.5pt;
+            }
+            @bottom-right {
+              content: counter(page) " / " counter(pages);
+              color: #6e695d;
+              font-family: "DejaVu Sans Mono", monospace;
+              font-size: 7.5pt;
+            }
+          }
+
+          @page cover {
+            margin: 0;
+            background: #141310;
+            @top-left { content: none; }
+            @top-right { content: none; }
+            @bottom-left { content: none; }
+            @bottom-right { content: none; }
+          }
+
+          @page toc {
+            margin: 18mm 17mm 18mm 18mm;
+            @top-right { content: "Sommaire"; }
+          }
+
+          * { box-sizing: border-box; }
+
+          html {
+            color: #141310;
+            background: #ffffff;
+            font-family: "DejaVu Sans", sans-serif;
+            font-size: 9.4pt;
+            line-height: 1.55;
+            hyphens: auto;
+          }
+
+          body { margin: 0; }
+
+          .cover {
+            page: cover;
+            position: relative;
+            width: 210mm;
+            height: 297mm;
+            overflow: hidden;
+            color: #faf8f3;
+            background:
+              radial-gradient(circle at 87% 14%, rgba(201,100,66,.24) 0 10%, transparent 31%),
+              linear-gradient(145deg, #141310 0%, #1f1d19 66%, #2f2c26 100%);
+          }
+
+          .cover::before {
+            content: "";
+            position: absolute;
+            inset: 0 auto 0 0;
+            width: 10mm;
+            background: #c96442;
+          }
+
+          .cover::after {
+            content: "";
+            position: absolute;
+            width: 118mm;
+            height: 118mm;
+            right: -62mm;
+            bottom: -48mm;
+            border: 1.6mm solid rgba(226,151,115,.34);
+            border-radius: 28mm;
+            transform: rotate(45deg);
+          }
+
+          .cover-inner {
+            position: absolute;
+            inset: 25mm 22mm 22mm 27mm;
+            display: flex;
+            flex-direction: column;
+          }
+
+          .brand-lockup {
+            display: flex;
+            align-items: center;
+            gap: 5mm;
+            color: #e29773;
+            font-size: 9pt;
+            font-weight: 700;
+            letter-spacing: .16em;
+          }
+
+          .forge-mark {
+            width: 13mm;
+            height: 13mm;
+            border: 1.1mm solid #c96442;
+            border-radius: 3.5mm;
+            transform: rotate(45deg);
+            position: relative;
+          }
+
+          .forge-mark::before,
+          .forge-mark::after {
+            content: "";
+            position: absolute;
+            background: #e29773;
+          }
+
+          .forge-mark::before {
+            width: 6.2mm;
+            height: 1.1mm;
+            left: 2.3mm;
+            top: 5.4mm;
+          }
+
+          .forge-mark::after {
+            width: 1.1mm;
+            height: 6.2mm;
+            left: 4.9mm;
+            top: 2.8mm;
+          }
+
+          .cover-main {
+            margin-top: 38mm;
+            max-width: 145mm;
+          }
+
+          .cover-kicker {
+            margin: 0 0 7mm;
+            color: #c9c0ac;
+            font-size: 9.5pt;
+            font-weight: 700;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+          }
+
+          .cover h1 {
+            margin: 0;
+            color: #faf8f3;
+            font-size: 31pt;
+            line-height: 1.06;
+            letter-spacing: -.035em;
+          }
+
+          .cover-subtitle {
+            margin: 8mm 0 0;
+            max-width: 128mm;
+            color: #e3ddd0;
+            font-size: 14pt;
+            line-height: 1.4;
+          }
+
+          .cover-rule {
+            width: 38mm;
+            height: 1.2mm;
+            margin: 11mm 0 9mm;
+            background: #c96442;
+          }
+
+          .cover-intro {
+            max-width: 132mm;
+            color: #c9c0ac;
+            font-size: 9.5pt;
+            line-height: 1.55;
+          }
+
+          .cover-intro p { margin: 0 0 3mm; }
+
+          .cover-meta {
+            margin-top: auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6mm 12mm;
+            padding-top: 8mm;
+            border-top: .35mm solid #4a463d;
+          }
+
+          .meta-item { min-width: 0; }
+          .meta-label {
+            display: block;
+            margin-bottom: 1.5mm;
+            color: #9c9686;
+            font-size: 7pt;
+            font-weight: 700;
+            letter-spacing: .11em;
+            text-transform: uppercase;
+          }
+          .meta-value {
+            display: block;
+            color: #f4f1ea;
+            font-size: 9pt;
+            line-height: 1.35;
+          }
+
+          #toc {
+            page: toc;
+            break-after: page;
+            padding-top: 5mm;
+          }
+
+          #toc > h2 {
+            margin-top: 0;
+            padding-bottom: 5mm;
+            border-bottom: .8mm solid #c96442;
+            color: #141310;
+            font-size: 24pt;
+            letter-spacing: -.025em;
+          }
+
+          #toc ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+          }
+
+          #toc > ul {
+            column-count: 2;
+            column-gap: 12mm;
+          }
+
+          #toc li {
+            break-inside: avoid;
+            margin: 0 0 2.2mm;
+            padding-bottom: 1.8mm;
+            border-bottom: .2mm solid #ece8de;
+            font-size: 8.7pt;
+            line-height: 1.35;
+          }
+
+          #toc li li {
+            margin: 1.5mm 0 0 4mm;
+            padding: 0;
+            border: 0;
+            color: #6e695d;
+            font-size: 7.8pt;
+          }
+
+          #toc a {
+            color: #2f2c26;
+            text-decoration: none;
+          }
+
+          main { display: block; }
+
+          h2 {
+            string-set: section-title content();
+            break-before: page;
+            margin: 0 0 7mm;
+            padding: 0 0 4mm;
+            border-bottom: .7mm solid #c96442;
+            color: #141310;
+            font-size: 21pt;
+            line-height: 1.15;
+            letter-spacing: -.025em;
+          }
+
+          h3 {
+            break-after: avoid;
+            margin: 7mm 0 2.5mm;
+            color: #2f2c26;
+            font-size: 13.2pt;
+            line-height: 1.25;
+          }
+
+          h4 {
+            break-after: avoid;
+            margin: 5mm 0 2mm;
+            color: #4a463d;
+            font-size: 10.5pt;
+            line-height: 1.3;
+          }
+
+          p { margin: 0 0 3.2mm; }
+          strong { color: #2f2c26; }
+          em { color: #4a463d; }
+
+          a {
+            color: #a94e2f;
+            text-decoration: underline;
+            text-decoration-thickness: .2mm;
+            text-underline-offset: 1mm;
+          }
+
+          ul, ol {
+            margin: 0 0 4mm 5.5mm;
+            padding-left: 4.5mm;
+          }
+
+          li { margin: 0 0 1.4mm; }
+          li::marker { color: #c96442; font-weight: 700; }
+
+          blockquote {
+            break-inside: avoid;
+            margin: 5mm 0;
+            padding: 4mm 5mm;
+            border-left: 1.3mm solid #c96442;
+            border-radius: 0 2mm 2mm 0;
+            background: #fbefe8;
+            color: #4a463d;
+          }
+          blockquote p:last-child { margin-bottom: 0; }
+
+          hr {
+            margin: 8mm 0;
+            border: 0;
+            border-top: .3mm solid #e3ddd0;
+          }
+
+          table {
+            width: 100%;
+            margin: 4mm 0 6mm;
+            border-collapse: collapse;
+            font-size: 8.2pt;
+          }
+          thead { display: table-header-group; }
+          tr { break-inside: avoid; }
+          th {
+            padding: 2.6mm 2.8mm;
+            border: .25mm solid #c9c0ac;
+            background: #2f2c26;
+            color: #faf8f3;
+            font-weight: 700;
+            text-align: left;
+            vertical-align: top;
+          }
+          td {
+            padding: 2.4mm 2.8mm;
+            border: .25mm solid #e3ddd0;
+            vertical-align: top;
+          }
+          tbody tr:nth-child(even) td { background: #faf8f3; }
+
+          code {
+            padding: .3mm 1mm;
+            border-radius: 1mm;
+            background: #f4f1ea;
+            color: #823920;
+            font-family: "DejaVu Sans Mono", monospace;
+            font-size: .9em;
+            overflow-wrap: anywhere;
+          }
+
+          pre {
+            break-inside: avoid;
+            margin: 4mm 0 5mm;
+            padding: 4mm 4.5mm;
+            border-left: 1.1mm solid #c96442;
+            border-radius: 2mm;
+            background: #1f1d19;
+            color: #f4f1ea;
+            font-family: "DejaVu Sans Mono", monospace;
+            font-size: 7.8pt;
+            line-height: 1.45;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+          }
+          pre code { padding: 0; background: transparent; color: inherit; }
+
+          h3 + p > strong:first-child,
+          h4 + p > strong:first-child {
+            color: #a94e2f;
+          }
+
+          .field-principle {
+            break-inside: avoid;
+            margin: 5mm 0 7mm;
+            padding: 4.5mm 5mm;
+            border: .3mm solid #e3ddd0;
+            border-top: 1.2mm solid #c96442;
+            border-radius: 2mm;
+            background: #faf8f3;
+          }
+          '''
+
+          document_html = f'''<!doctype html>
+          <html lang="fr">
+            <head>
+              <meta charset="utf-8">
+              <title>{html.escape(title)}</title>
+            </head>
+            <body>
+              <section class="cover">
+                <div class="cover-inner">
+                  <div class="brand-lockup">
+                    <span class="forge-mark" aria-hidden="true"></span>
+                    <span>VULCANFORGE UI</span>
+                  </div>
+                  <div class="cover-main">
+                    <p class="cover-kicker">Documentation de test</p>
+                    <h1>{html.escape(title.replace('VulcanForge UI — ', ''))}</h1>
+                    <p class="cover-subtitle">Comprendre l'application, renseigner chaque champ avec intention et vérifier les effets produits.</p>
+                    <div class="cover-rule"></div>
+                    <div class="cover-intro">{intro_html}</div>
+                  </div>
+                  <div class="cover-meta">
+                    <div class="meta-item"><span class="meta-label">Version</span><span class="meta-value">{html.escape(metadata.get('Version du guide', '1.1'))}</span></div>
+                    <div class="meta-item"><span class="meta-label">Date</span><span class="meta-value">{html.escape(metadata.get('Date', '3 août 2026'))}</span></div>
+                    <div class="meta-item"><span class="meta-label">Périmètre</span><span class="meta-value">{html.escape(metadata.get('Périmètre', 'VulcanForge UI'))}</span></div>
+                    <div class="meta-item"><span class="meta-label">Public</span><span class="meta-value">{html.escape(metadata.get('Public', 'Testeurs et parties prenantes'))}</span></div>
+                  </div>
+                </div>
+              </section>
+              <main>{body_html}</main>
+            </body>
+          </html>'''
+
+          HTML(string=document_html, base_url=str(Path.cwd())).write_pdf(
+              output_path,
+              stylesheets=[CSS(string=css)],
+              presentational_hints=True,
+          )
+
+          print(f'Generated {output_path} ({output_path.stat().st_size} bytes)')
+
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vulcanforge-ui-guide-testeurs-pdf
+          path: dist/testing-guide/VulcanForge-UI-Guide-Testeurs-v1.1.pdf
+          if-no-files-found: error
+          retention-days: 14
