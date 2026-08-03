@@ -5,7 +5,7 @@ export type LoginField = 'email' | 'password';
 export type LoginActionState = {
   status: 'idle' | 'error';
   fieldErrors: Partial<Record<LoginField, LoginValidationMessageKey[]>>;
-  formError: 'invalidCredentials' | 'unexpected' | null;
+  formError: 'invalidCredentials' | 'rateLimited' | 'unexpected' | null;
   values: {
     email: string;
   };
