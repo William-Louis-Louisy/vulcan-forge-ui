@@ -39,5 +39,7 @@ export function recordAuthSecurityEvent(
     return;
   }
 
+  // Security success events remain informational rather than warning-level logs.
+  // eslint-disable-next-line no-console
   console.info('[auth-security]', entry);
 }
