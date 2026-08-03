@@ -101,3 +101,5 @@ jobs:
             src/server/auth/credentials-authorizer.ts
           git commit -m "chore(auth): format authentication foundations"
           git push origin HEAD:feature/ds-170-auth-01-foundations
+
+# Triggered after all scoped implementation files were added.
