@@ -1,17 +1,19 @@
 // @vitest-environment node
 
+import type { PrismaClient } from '@/generated/prisma/client';
+import type {
+  consumeAuthRateLimit as ConsumeAuthRateLimit,
+  resetAuthAccountRateLimit as ResetAuthAccountRateLimit,
+} from './auth-rate-limit';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
 const runDatabaseTests =
   process.env.RUN_AUTH_DATABASE_TESTS === 'true' &&
   Boolean(process.env.DATABASE_URL);
 
-type PrismaModule = typeof import('@/server/db/prisma');
-type RateLimitModule = typeof import('./auth-rate-limit');
-
-let prisma: PrismaModule['prisma'];
-let consumeAuthRateLimit: RateLimitModule['consumeAuthRateLimit'];
-let resetAuthAccountRateLimit: RateLimitModule['resetAuthAccountRateLimit'];
+let prisma: PrismaClient;
+let consumeAuthRateLimit: typeof ConsumeAuthRateLimit;
+let resetAuthAccountRateLimit: typeof ResetAuthAccountRateLimit;
 
 describe.skipIf(!runDatabaseTests)(
   'authentication rate limit PostgreSQL integration',
@@ -21,10 +23,12 @@ describe.skipIf(!runDatabaseTests)(
       process.env.AUTH_TRUST_PROXY_HEADERS = 'false';
       process.env.AUTH_RATE_LIMIT_FAIL_OPEN = 'false';
 
-      ({ prisma } = await import('@/server/db/prisma'));
-      ({ consumeAuthRateLimit, resetAuthAccountRateLimit } = await import(
-        './auth-rate-limit'
-      ));
+      const prismaModule = await import('@/server/db/prisma');
+      const rateLimitModule = await import('./auth-rate-limit');
+
+      prisma = prismaModule.prisma;
+      consumeAuthRateLimit = rateLimitModule.consumeAuthRateLimit;
+      resetAuthAccountRateLimit = rateLimitModule.resetAuthAccountRateLimit;
     });
 
     beforeEach(async () => {
