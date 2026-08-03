@@ -1,6 +1,6 @@
 'use server';
 
-import { AuthError } from 'next-auth';
+import { AuthError } from '@auth/core/errors';
 import { redirect } from 'next/navigation';
 import { signIn } from '@/auth';
 import { defaultAppLocale, isAppLocale } from '@/domain/i18n';
