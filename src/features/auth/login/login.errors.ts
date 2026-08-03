@@ -1,4 +1,4 @@
-import type { AuthError } from 'next-auth';
+import type { AuthError } from '@auth/core/errors';
 import type { LoginActionState } from './login.state';
 
 export type LoginFormError = NonNullable<LoginActionState['formError']>;
