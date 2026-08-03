@@ -140,13 +140,20 @@ async function cleanupExpiredBuckets(now: Date) {
 
   lastCleanupAt = now.getTime();
 
-  await prisma.authRateLimitBucket.deleteMany({
-    where: {
-      resetAt: {
-        lt: new Date(now.getTime() - expiredBucketRetentionMs),
+  try {
+    await prisma.authRateLimitBucket.deleteMany({
+      where: {
+        resetAt: {
+          lt: new Date(now.getTime() - expiredBucketRetentionMs),
+        },
       },
-    },
-  });
+    });
+  } catch {
+    recordAuthSecurityEvent('auth.rate_limit.error', {
+      failOpen: true,
+      operation: 'cleanup',
+    });
+  }
 }
 
 function shouldFailOpen() {
@@ -221,7 +228,7 @@ export async function consumeAuthRateLimit({
       context,
       retryAfterSeconds,
     };
-  } catch (error) {
+  } catch {
     recordAuthSecurityEvent('auth.rate_limit.error', {
       accountFingerprint,
       failOpen: shouldFailOpen(),
