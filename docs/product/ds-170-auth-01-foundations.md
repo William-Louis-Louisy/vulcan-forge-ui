@@ -6,7 +6,7 @@
 | -------------------- | ------------------------------------------------- |
 | Parent audit         | `docs/product/ds-170-auth-signup-signin-audit.md` |
 | Branch               | `feature/ds-170-auth-01-foundations`              |
-| Status               | Implementation in progress                        |
+| Status               | Automated validation complete — manual QA pending |
 | Primary findings     | AUTH-01, AUTH-03, AUTH-05, AUTH-08, AUTH-09       |
 | Transversal findings | AUTH-16, AUTH-17, AUTH-21                         |
 
@@ -121,16 +121,16 @@ This logger is an initial contract. A later observability slice will route it to
 
 ## Auth.js version policy
 
-The dependency is pinned to the exact reviewed prerelease version `5.0.0-beta.32` rather than a floating beta range.
+The dependencies are pinned to the exact reviewed prerelease versions `next-auth@5.0.0-beta.32` and `@auth/core@0.41.3` rather than floating ranges.
 
 Before every Auth.js update:
 
 1. review the official release notes and security policy;
-2. update the exact version intentionally;
+2. update both exact versions intentionally;
 3. run the complete authentication test matrix;
 4. run `npm run quality`;
 5. perform manual login, signup, logout and protected-route QA;
-6. avoid automated dependency merges for this package.
+6. avoid automated dependency merges for these packages.
 
 The project should migrate to the stable Auth.js v5 channel when an appropriate stable release is available and the migration has been reviewed.
 
@@ -182,7 +182,7 @@ Production deployment must apply the migration before serving application code t
 
 ## Automated validation
 
-The slice adds focused coverage for:
+The slice adds focused unit and action coverage for:
 
 - trusted and untrusted forwarding headers;
 - stable and scope-separated HMAC fingerprints;
@@ -194,7 +194,14 @@ The slice adds focused coverage for:
 - Prisma `P2002` signup races;
 - account-created but automatic-sign-in-failed recovery.
 
-The standard project `quality` command remains the release gate.
+The Quality workflow now starts PostgreSQL 17, applies every Prisma migration with `prisma migrate deploy`, then runs dedicated database integration tests proving that:
+
+- concurrent login attempts update one bucket atomically and enforce exactly eight allowed attempts in the configured window;
+- an expired fixed window restarts at one attempt;
+- a successful authentication removes the account bucket;
+- persisted bucket keys do not contain the raw account identifier.
+
+The same workflow then validates lint, strict TypeScript, formatting, the UI audit, the complete Vitest suite and the production build. Automated validation is complete; the remaining release gate for this slice is manual product QA.
 
 ---
 
