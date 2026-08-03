@@ -1,4 +1,4 @@
-import { AuthError, CredentialsSignin } from 'next-auth';
+import { AuthError, CredentialsSignin } from '@auth/core/errors';
 import { describe, expect, it } from 'vitest';
 import { getLoginFormError } from './login.errors';
 
