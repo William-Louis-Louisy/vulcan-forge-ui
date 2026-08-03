@@ -3,9 +3,9 @@
   margin: 18mm 17mm 18mm 18mm;
 
   @top-left {
-    content: "VULCANFORGE UI";
+    content: 'VULCANFORGE UI';
     color: #6e695d;
-    font-family: "DejaVu Sans", sans-serif;
+    font-family: 'DejaVu Sans', sans-serif;
     font-size: 8pt;
     font-weight: 700;
     letter-spacing: 0.12em;
@@ -14,21 +14,21 @@
   @top-right {
     content: string(section-title);
     color: #6e695d;
-    font-family: "DejaVu Sans", sans-serif;
+    font-family: 'DejaVu Sans', sans-serif;
     font-size: 8pt;
   }
 
   @bottom-left {
     content: "Guide d'utilisation pour les testeurs · Version 1.1";
     color: #9c9686;
-    font-family: "DejaVu Sans", sans-serif;
+    font-family: 'DejaVu Sans', sans-serif;
     font-size: 7.5pt;
   }
 
   @bottom-right {
-    content: counter(page) " / " counter(pages);
+    content: counter(page) ' / ' counter(pages);
     color: #6e695d;
-    font-family: "DejaVu Sans Mono", monospace;
+    font-family: 'DejaVu Sans Mono', monospace;
     font-size: 7.5pt;
   }
 }
@@ -58,7 +58,7 @@
   margin: 18mm 17mm 18mm 18mm;
 
   @top-right {
-    content: "Sommaire";
+    content: 'Sommaire';
   }
 }
 
@@ -69,7 +69,7 @@
 html {
   color: #141310;
   background: #ffffff;
-  font-family: "DejaVu Sans", sans-serif;
+  font-family: 'DejaVu Sans', sans-serif;
   font-size: 9.4pt;
   line-height: 1.54;
   hyphens: auto;
@@ -91,7 +91,7 @@ body {
 }
 
 .cover::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   bottom: 0;
@@ -101,7 +101,7 @@ body {
 }
 
 .cover::after {
-  content: "";
+  content: '';
   position: absolute;
   right: -62mm;
   bottom: -48mm;
@@ -142,7 +142,7 @@ body {
 
 .forge-mark::before,
 .forge-mark::after {
-  content: "";
+  content: '';
   position: absolute;
   background: #e29773;
 }
@@ -429,7 +429,7 @@ code {
   border-radius: 1mm;
   background: #f4f1ea;
   color: #823920;
-  font-family: "DejaVu Sans Mono", monospace;
+  font-family: 'DejaVu Sans Mono', monospace;
   font-size: 0.9em;
   overflow-wrap: anywhere;
 }
@@ -442,7 +442,7 @@ pre {
   border-radius: 2mm;
   background: #1f1d19;
   color: #f4f1ea;
-  font-family: "DejaVu Sans Mono", monospace;
+  font-family: 'DejaVu Sans Mono', monospace;
   font-size: 7.8pt;
   line-height: 1.45;
   white-space: pre-wrap;
