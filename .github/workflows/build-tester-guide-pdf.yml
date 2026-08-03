@@ -1,6 +1,12 @@
 name: Build tester guide PDF
 
 on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - docs/testing/vulcanforge-ui-guide-testeurs.fr.md
+      - .github/workflows/build-tester-guide-pdf.yml
   push:
     branches:
       - docs/tester-user-guide
@@ -457,21 +463,6 @@ jobs:
             overflow-wrap: anywhere;
           }
           pre code { padding: 0; background: transparent; color: inherit; }
-
-          h3 + p > strong:first-child,
-          h4 + p > strong:first-child {
-            color: #a94e2f;
-          }
-
-          .field-principle {
-            break-inside: avoid;
-            margin: 5mm 0 7mm;
-            padding: 4.5mm 5mm;
-            border: .3mm solid #e3ddd0;
-            border-top: 1.2mm solid #c96442;
-            border-radius: 2mm;
-            background: #faf8f3;
-          }
           '''
 
           document_html = f'''<!doctype html>
