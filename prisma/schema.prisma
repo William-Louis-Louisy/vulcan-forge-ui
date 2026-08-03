@@ -318,3 +318,13 @@ model ExportLog {
   @@index([status])
   @@index([createdAt])
 }
+
+model AuthRateLimitBucket {
+  key       String   @id
+  attempts  Int      @default(0)
+  resetAt   DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([resetAt])
+}
