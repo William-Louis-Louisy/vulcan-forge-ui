@@ -171,7 +171,8 @@ export async function consumeAuthRateLimit({
 }) {
   const now = new Date();
   const context = createAuthRequestContext(headers);
-  const normalizedAccountIdentifier = normalizeAccountIdentifier(accountIdentifier);
+  const normalizedAccountIdentifier =
+    normalizeAccountIdentifier(accountIdentifier);
   const accountFingerprint = createAuthFingerprint(
     'account',
     normalizedAccountIdentifier,

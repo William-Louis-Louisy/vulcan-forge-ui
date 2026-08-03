@@ -2,13 +2,13 @@
 
 ## Metadata
 
-| Field | Value |
-| --- | --- |
-| Parent audit | `docs/product/ds-170-auth-signup-signin-audit.md` |
-| Branch | `feature/ds-170-auth-01-foundations` |
-| Status | Implementation in progress |
-| Primary findings | AUTH-01, AUTH-03, AUTH-05, AUTH-08, AUTH-09 |
-| Transversal findings | AUTH-16, AUTH-17, AUTH-21 |
+| Field                | Value                                             |
+| -------------------- | ------------------------------------------------- |
+| Parent audit         | `docs/product/ds-170-auth-signup-signin-audit.md` |
+| Branch               | `feature/ds-170-auth-01-foundations`              |
+| Status               | Implementation in progress                        |
+| Primary findings     | AUTH-01, AUTH-03, AUTH-05, AUTH-08, AUTH-09       |
+| Transversal findings | AUTH-16, AUTH-17, AUTH-21                         |
 
 ---
 
@@ -26,10 +26,10 @@ This slice deliberately avoids mixing in the later password-hash migration, veri
 
 Login and signup attempts are consumed from PostgreSQL-backed fixed-window buckets.
 
-| Operation | Account bucket | Client-address bucket |
-| --- | --- | --- |
-| Login | 8 attempts / 15 minutes | 40 attempts / 15 minutes |
-| Signup | 10 attempts / 60 minutes | 30 attempts / 60 minutes |
+| Operation | Account bucket           | Client-address bucket    |
+| --------- | ------------------------ | ------------------------ |
+| Login     | 8 attempts / 15 minutes  | 40 attempts / 15 minutes |
+| Signup    | 10 attempts / 60 minutes | 30 attempts / 60 minutes |
 
 Important behavior:
 

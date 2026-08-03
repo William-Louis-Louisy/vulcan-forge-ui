@@ -44,8 +44,7 @@ export function getTrustedClientAddress(headers: HeadersLike) {
 
   const address = isVercelRequest
     ? normalizeForwardedAddress(
-        headers.get('x-vercel-forwarded-for') ??
-          headers.get('x-forwarded-for'),
+        headers.get('x-vercel-forwarded-for') ?? headers.get('x-forwarded-for'),
       )
     : normalizeForwardedAddress(
         headers.get('x-forwarded-for') ?? headers.get('x-real-ip'),
