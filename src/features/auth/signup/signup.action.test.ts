@@ -1,4 +1,4 @@
-import { CredentialsSignin } from 'next-auth';
+import { CredentialsSignin } from '@auth/core/errors';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
