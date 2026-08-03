@@ -1,4 +1,4 @@
-import { CredentialsSignin } from 'next-auth';
+import { CredentialsSignin } from '@auth/core/errors';
 
 export class RateLimitedCredentialsError extends CredentialsSignin {
   code = 'rate_limited';
