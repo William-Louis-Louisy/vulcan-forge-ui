@@ -13,19 +13,20 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  update-auth-core:
-    name: Declare Auth.js core dependency
+  quality:
+    name: Quality checks
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
     permissions:
-      contents: write
+      contents: read
+
+    env:
+      DATABASE_URL: postgresql://vulcan:vulcan_dev_password@localhost:5432/vulcan_forge_ui?schema=public
 
     steps:
-      - name: Checkout implementation branch
+      - name: Checkout repository
         uses: actions/checkout@v6
-        with:
-          ref: feature/ds-170-auth-01-foundations
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -36,16 +37,23 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Declare reviewed Auth.js core version
-        run: npm install @auth/core@0.41.3 --save-exact
+      - name: Generate Prisma Client
+        run: npm run db:generate
 
-      - name: Format package metadata
-        run: npx prettier package.json package-lock.json --write
+      - name: Run lint
+        run: npm run lint
 
-      - name: Commit package metadata
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add package.json package-lock.json
-          git commit -m "chore(auth): declare Auth.js core dependency"
-          git push origin HEAD:feature/ds-170-auth-01-foundations
+      - name: Run typecheck
+        run: npm run typecheck
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Run UI audit
+        run: npm run audit:ui
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Build application
+        run: npm run build
