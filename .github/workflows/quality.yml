@@ -4,25 +4,29 @@ on:
   pull_request:
     branches:
       - main
+  push:
+    branches:
+      - main
 
 concurrency:
   group: quality-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  enrich-tester-guide:
-    name: Enrich tester guide
+  quality:
+    name: Quality checks
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
     permissions:
-      contents: write
+      contents: read
+
+    env:
+      DATABASE_URL: postgresql://vulcan:vulcan_dev_password@localhost:5432/vulcan_forge_ui?schema=public
 
     steps:
-      - name: Checkout documentation branch
+      - name: Checkout repository
         uses: actions/checkout@v6
-        with:
-          ref: docs/tester-user-guide
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -33,26 +37,23 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Extract and run field guidance migration
-        run: |
-          sed -n "/python - <<'PY'/,/^          PY$/p" .github/workflows/enrich-tester-guide-fields.yml \
-            | sed '1d;$d;s/^          //' \
-            > /tmp/enrich-tester-guide-fields.py
-          python /tmp/enrich-tester-guide-fields.py
+      - name: Generate Prisma Client
+        run: npm run db:generate
 
-      - name: Format tester guide
-        run: npx prettier docs/testing/vulcanforge-ui-guide-testeurs.fr.md --write
+      - name: Run lint
+        run: npm run lint
 
-      - name: Restore standard workflow and remove temporary migration
-        run: |
-          git fetch origin main
-          git checkout origin/main -- .github/workflows/quality.yml
-          rm .github/workflows/enrich-tester-guide-fields.yml
+      - name: Run typecheck
+        run: npm run typecheck
 
-      - name: Commit enriched guide
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "docs(testing): explain the purpose of editable fields"
-          git push origin HEAD:docs/tester-user-guide
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Run UI audit
+        run: npm run audit:ui
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Build application
+        run: npm run build

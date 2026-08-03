@@ -1,11 +1,13 @@
 # VulcanForge UI — Guide d’utilisation pour les testeurs
 
-**Version du guide :** 1.0  
-**Date :** 31 juillet 2026  
+**Version du guide :** 1.1  
+**Date :** 3 août 2026  
 **Périmètre :** application VulcanForge UI avant le parcours final DS-170-08  
 **Public :** testeurs fonctionnels, testeurs UX, parties prenantes et utilisateurs découvrant les design systems
 
 > Ce document explique comment prendre en main l’application et utiliser chaque espace fonctionnel. Il ne remplace pas le protocole de recette : les anomalies doivent être consignées séparément avec leurs étapes de reproduction.
+
+Les sections éditables comportent désormais des explications de champ fondées sur quatre questions : **à quoi sert le champ**, **que faut-il saisir**, **où la donnée est-elle réutilisée** et **comment vérifier son effet**. L’objectif n’est pas seulement de réussir la saisie, mais de comprendre la décision de design ou de produit représentée par chaque valeur.
 
 ---
 
@@ -184,12 +186,35 @@ Le focus doit rester visible.
 
 Depuis la page publique, ouvrez **Sign up / Créer un compte**.
 
-Renseignez :
+### Comprendre les champs du compte
 
-- **Nom** : entre 2 et 80 caractères ;
-- **E-mail** : adresse valide et non utilisée par un autre compte ;
-- **Mot de passe** : entre 12 et 72 caractères ;
-- **Confirmation du mot de passe** : doit être identique au mot de passe.
+**Nom**
+
+- **Utilité :** identifie l’utilisateur dans l’application et sert à nommer son espace de travail personnel initial.
+- **À saisir :** un nom d’affichage compréhensible, entre 2 et 80 caractères. Pour un test, utilisez un pseudonyme ou un nom de test plutôt qu’une donnée personnelle réelle.
+- **Réutilisation :** menu utilisateur, paramètres du compte et nom initial de l’espace personnel.
+- **Vérification :** terminer l’inscription, puis ouvrir le menu utilisateur et les paramètres du compte.
+
+**E-mail**
+
+- **Utilité :** constitue l’identifiant de connexion unique du compte.
+- **À saisir :** une adresse valide qui n’est pas déjà utilisée dans l’environnement de test.
+- **Réutilisation :** connexion, modification ultérieure de l’adresse et confirmation de suppression du compte.
+- **Vérification :** se déconnecter, puis se reconnecter avec cette adresse.
+
+**Mot de passe**
+
+- **Utilité :** protège l’accès au compte et confirme certaines opérations sensibles.
+- **À saisir :** une valeur de test comprise entre 12 et 72 caractères, différente d’un mot de passe personnel réel.
+- **Réutilisation :** connexion, changement d’adresse e-mail et suppression du compte.
+- **Vérification :** utiliser l’icône d’affichage, terminer l’inscription, puis vérifier qu’une connexion est possible.
+
+**Confirmation du mot de passe**
+
+- **Utilité :** évite la création d’un compte avec un mot de passe saisi par erreur.
+- **À saisir :** exactement la même valeur que dans le champ Mot de passe.
+- **Réutilisation :** uniquement pendant la validation de l’inscription ; la confirmation n’est pas enregistrée comme donnée distincte.
+- **Vérification :** saisir volontairement une valeur différente pour vérifier le message d’erreur, puis corriger.
 
 Les icônes situées dans les champs de mot de passe permettent d’afficher ou de masquer la valeur saisie.
 
@@ -313,12 +338,21 @@ Depuis le Dashboard, lancez la création d’un nouveau projet. L’assistant co
 
 ## 7.1 Étape 1 — Informations de base
 
-Renseignez :
+### Nom du projet
 
-- **Nom du projet** : entre 2 et 80 caractères ;
-- **Description** : facultative, 240 caractères maximum.
+- **Utilité :** donne au design system son identité canonique dans le Dashboard, la navigation, Overview et les contenus générés.
+- **À saisir :** un nom précis permettant de distinguer le produit ou le design system, entre 2 et 80 caractères. Évitez les noms génériques tels que « Test » lorsque plusieurs testeurs travaillent dans le même environnement.
+- **Réutilisation :** Brand, sélecteur de projet, documentation, instructions IA, exports et confirmations destructives.
+- **Vérification :** terminer la création puis contrôler le nom dans le sélecteur de projet et Overview.
 
-Le nom est l’identité initiale du projet. Un slug technique est généré lors de la création.
+### Description
+
+- **Utilité :** résume le périmètre du projet avant que le profil Brand détaillé soit complété.
+- **À saisir :** une phrase courte décrivant le produit, ses utilisateurs et, si utile, ses plateformes. Le champ est facultatif et limité à 240 caractères.
+- **Réutilisation :** surfaces de synthèse du projet lorsque cette information est disponible.
+- **Vérification :** ouvrir le projet depuis le Dashboard et examiner ses informations de synthèse.
+
+Un slug technique est généré lors de la création. Il sert aux URL et reste distinct du nom affiché.
 
 ## 7.2 Étape 2 — Plateformes et langues
 
@@ -329,18 +363,35 @@ Sélectionnez au moins une plateforme :
 - Web ;
 - Mobile.
 
-Les deux peuvent être sélectionnées.
+**Utilité :** indique le périmètre technique visé par le design system. Ce choix décrit les environnements auxquels les décisions de design sont destinées ; il ne transforme pas automatiquement une règle Web en règle mobile.
+
+**À sélectionner :** Web, Mobile ou les deux lorsque le même design system doit alimenter plusieurs produits.
+
+**Réutilisation :** métadonnées du projet et sorties générées qui présentent le périmètre du design system.
+
+**Vérification :** terminer la création et rechercher les plateformes dans les informations du projet ou les contenus générés qui les exposent.
 
 ### Langues prises en charge
 
-Le projet peut prendre en charge :
+Le projet peut prendre en charge le français, l’anglais ou les deux.
 
-- français ;
-- anglais.
+**Utilité :** détermine les langues métier qui doivent être documentées dans Brand, Tokens, Components, Documentation et AI Instructions.
 
-Sélectionnez au moins une langue. La langue par défaut doit obligatoirement faire partie des langues prises en charge.
+**À sélectionner :** uniquement les langues que l’équipe prévoit réellement de maintenir. Sélectionnez au moins une langue.
 
-La langue par défaut est utilisée comme fallback pour les contenus localisés incomplets.
+**Réutilisation :** sélecteurs de langue de contenu, diagnostics de traduction, documentation et instructions IA.
+
+**Vérification :** après création, ouvrir Brand ou Components et contrôler les langues proposées pour la saisie.
+
+### Langue par défaut
+
+**Utilité :** sert de langue de référence et de fallback lorsqu’une traduction est absente.
+
+**À sélectionner :** la langue dans laquelle les contenus seront maintenus en priorité. Elle doit obligatoirement appartenir aux langues prises en charge.
+
+**Réutilisation :** résolution des contenus localisés incomplets et signalement des fallbacks dans les générateurs.
+
+**Vérification :** laisser volontairement une traduction secondaire vide, puis examiner les diagnostics de Documentation ou AI Instructions.
 
 ## 7.3 Étape 3 — Direction visuelle
 
@@ -355,7 +406,15 @@ Choisissez une direction parmi :
 - neutral ;
 - custom.
 
-Ce choix initialise la direction du profil Brand. Il peut ensuite être modifié dans Brand.
+**Utilité :** exprime l’intention esthétique générale du produit avant la définition détaillée des tokens et composants.
+
+**À sélectionner :** la direction qui décrit le mieux l’effet recherché : minimal, premium, editorial, technical, playful, bold, neutral ou custom. Choisissez Custom lorsque les catégories proposées ne décrivent pas correctement le projet.
+
+**Réutilisation :** initialise la direction visuelle du profil Brand et peut être intégrée aux contenus générés.
+
+**Vérification :** ouvrir Brand après la création et contrôler la direction sélectionnée.
+
+Ce choix constitue une directive structurée. Il ne modifie pas automatiquement l’apparence de VulcanForge UI et peut ensuite être modifié dans Brand.
 
 ## 7.4 Étape 4 — Cible d’accessibilité
 
@@ -364,7 +423,15 @@ Choisissez :
 - **WCAG AA** ;
 - **WCAG AAA**.
 
-Cette sélection exprime l’objectif du projet. Elle ne constitue pas une certification automatique.
+**Utilité :** documente le niveau d’ambition retenu pour les décisions d’accessibilité et les contrastes du projet.
+
+**À sélectionner :** WCAG AA pour la cible courante de nombreux produits, ou WCAG AAA lorsque le projet vise des exigences de contraste plus élevées. Le choix doit correspondre à une décision réelle de l’équipe, pas à la valeur qui semble la plus avantageuse.
+
+**Réutilisation :** métadonnées du projet et analyses d’accessibilité qui prennent en compte la cible configurée.
+
+**Vérification :** ouvrir Accessibility et Themes, puis examiner les niveaux de contraste affichés.
+
+Cette sélection exprime un objectif. Elle ne constitue ni une certification automatique ni un remplacement de l’audit manuel.
 
 ## 7.5 Étape 5 — Vérification
 
@@ -465,57 +532,104 @@ Exemple :
 - interface en français ;
 - contenu Brand actuellement édité en anglais.
 
-## 9.3 Champs localisés
+## 9.3 Comprendre les champs localisés
 
-Pour chaque langue, vous pouvez renseigner :
+Chaque champ doit être renseigné dans la langue de contenu actuellement sélectionnée. Une traduction doit transmettre la même intention, sans nécessairement reproduire mot pour mot la version source.
 
-- **Tagline / Signature** ;
-- **Short description / Description courte** ;
-- **Personality / Personnalité** ;
-- **Audience / Public cible** ;
-- **Tone of voice / Ton de voix**.
+### Tagline / Signature
 
-La description courte de la langue par défaut est utilisée pour résumer le projet dans d’autres surfaces, avec fallback si nécessaire.
+- **Utilité :** formule la promesse ou le positionnement du produit en une expression mémorable.
+- **À saisir :** une phrase très courte orientée vers la valeur apportée à l’utilisateur. Évitez une simple répétition du nom du produit.
+- **Réutilisation :** documentation et sorties de marque lorsque la signature est disponible.
+- **Vérification :** enregistrer Brand, puis générer Documentation dans la langue concernée et rechercher la signature.
+
+### Short description / Description courte
+
+- **Utilité :** fournit un résumé immédiatement compréhensible du produit, plus informatif que la tagline mais plus court qu’une présentation complète.
+- **À saisir :** une ou deux phrases indiquant ce que fait le produit, pour qui et avec quel bénéfice principal.
+- **Réutilisation :** synthèses du projet, Documentation, AI Instructions et autres sorties utilisant l’identité Brand, avec fallback si nécessaire.
+- **Vérification :** enregistrer, puis consulter Overview et générer Documentation dans les deux langues.
+
+### Personality / Personnalité
+
+- **Utilité :** décrit les traits humains que le produit doit évoquer. Elle répond à la question « Quelle impression le produit donne-t-il ? ».
+- **À saisir :** quelques adjectifs ou une phrase courte, par exemple « fiable, directe et rassurante ». Ne décrivez pas ici des règles de rédaction détaillées.
+- **Réutilisation :** contexte de marque transmis à Documentation et AI Instructions.
+- **Vérification :** générer AI Instructions et contrôler que l’identité du produit reflète les traits saisis.
+
+### Audience / Public cible
+
+- **Utilité :** précise les personnes pour lesquelles le produit est conçu et aide à évaluer si le vocabulaire, la densité et les composants sont adaptés.
+- **À saisir :** les utilisateurs finaux principaux et, lorsque c’est pertinent, les professionnels qui utilisent le produit. Évitez « tout le monde ».
+- **Réutilisation :** documentation du projet et contexte fourni aux instructions IA.
+- **Vérification :** générer Documentation ou AI Instructions et rechercher la description du public.
+
+### Tone of voice / Ton de voix
+
+- **Utilité :** décrit la manière dont le produit s’adresse aux utilisateurs. Il répond à la question « Comment le produit parle-t-il ? », contrairement à la personnalité qui décrit l’impression générale.
+- **À saisir :** des consignes de style telles que « concis, utile, calme et jamais culpabilisant ».
+- **Réutilisation :** règles de contenu générées pour la documentation et les assistants de développement.
+- **Vérification :** générer AI Instructions et vérifier la section liée à la voix ou au contenu.
 
 ## 9.4 Direction visuelle et densité
 
-La direction visuelle peut être : minimal, premium, editorial, technical, playful, bold, neutral ou custom.
+### Direction visuelle
 
-La densité peut être :
+- **Utilité :** résume l’intention esthétique qui doit guider les choix de couleurs, typographie, espacements et composants.
+- **À sélectionner :** minimal, premium, editorial, technical, playful, bold, neutral ou custom selon le caractère recherché.
+- **Réutilisation :** métadonnées Brand, documentation et instructions IA.
+- **Vérification :** enregistrer puis rechercher la direction dans les sorties générées qui présentent le profil de marque.
 
-- **Compact** : interface plus dense ;
-- **Cozy** : équilibre standard ;
-- **Comfortable** : davantage d’espace.
+### Densité de l’interface
 
-Ces informations sont des directives structurées. Elles n’appliquent pas automatiquement une nouvelle feuille de style à l’application VulcanForge UI.
+- **Utilité :** indique la quantité d’information et d’espace souhaitée dans les interfaces du produit.
+- **À sélectionner :** **Compact** pour maximiser l’information visible, **Cozy** pour un équilibre standard ou **Comfortable** pour privilégier l’aération et des zones plus généreuses.
+- **Réutilisation :** directive de conception transmise aux consommateurs du design system.
+- **Vérification :** générer AI Instructions et contrôler que la densité choisie est documentée.
+
+Ces informations sont des directives structurées. Elles n’appliquent pas automatiquement une nouvelle feuille de style à VulcanForge UI.
 
 ## 9.5 Mots-clés d’inspiration
 
-Ajoutez des mots-clés représentant l’univers souhaité : par exemple « industriel », « chaleureux », « éditorial », « précis ».
+- **Utilité :** complète la direction visuelle avec des références plus concrètes ou nuancées.
+- **À saisir :** des mots ou expressions courtes décrivant une ambiance, un matériau, une qualité ou une référence, par exemple « industriel », « chaleureux », « éditorial » ou « précis ».
+- **À éviter :** les longues phrases, les synonymes répétés et les termes contradictoires sans explication.
+- **Réutilisation :** contexte Brand destiné à la documentation, aux instructions IA et aux équipes qui interprètent le design system.
+- **Vérification :** enregistrer puis rechercher les mots-clés dans les sorties générées liées à la marque.
 
-Respectez la limite indiquée par l’interface.
+Le profil accepte au maximum 12 mots-clés, chacun limité à 40 caractères.
 
 ## 9.6 Terminologie
 
-Une entrée de terminologie contient :
+Une entrée de terminologie définit le vocabulaire officiel à employer pour un même concept.
 
-- un terme préféré localisé ;
-- zéro ou plusieurs termes à éviter.
+### Terme préféré
 
-Lorsque le contrôle attend plusieurs valeurs, saisissez-les sous la forme indiquée par l’interface, notamment avec des valeurs séparées par des virgules.
+- **Utilité :** établit le mot de référence que les interfaces, la documentation et les équipes doivent utiliser de manière cohérente.
+- **À saisir :** un terme précis dans la langue active, par exemple « panier ».
+- **Réutilisation :** documentation Brand et instructions de contenu destinées aux assistants IA.
+- **Vérification :** enregistrer puis générer AI Instructions dans la langue concernée.
 
-Exemple :
+### Termes à éviter
+
+- **Utilité :** signale les synonymes ambigus, anciens ou contraires au positionnement du produit.
+- **À saisir :** zéro ou plusieurs alternatives séparées selon le contrôle, par exemple « caddie, corbeille ».
+- **Réutilisation :** consignes de terminologie dans les sorties générées.
+- **Vérification :** rechercher le terme préféré et les termes interdits dans AI Instructions.
 
 ```text
 Terme préféré : panier
 Termes à éviter : caddie, corbeille
 ```
 
-Les valeurs incomplètes ou les entrées structurées vides peuvent empêcher l’enregistrement. Complétez-les ou supprimez-les.
+Le profil accepte au maximum 20 entrées de terminologie et 12 termes à éviter par entrée. Une entrée structurée vide ou incomplète peut empêcher l’enregistrement : complétez-la ou supprimez-la.
 
 ## 9.7 Règles éditoriales
 
-Saisissez les règles de rédaction, une par ligne lorsque le champ le permet.
+- **Utilité :** transforme le ton de voix en consignes concrètes que les rédacteurs, designers, développeurs et assistants IA peuvent appliquer.
+- **À saisir :** une règle autonome et vérifiable par ligne. Préférez « Utiliser un verbe d’action dans chaque bouton principal » à une formulation vague telle que « Être clair ».
+- **Réutilisation :** Documentation et AI Instructions, notamment dans les recommandations de contenu.
+- **Vérification :** enregistrer puis contrôler que les règles apparaissent dans les sorties générées de la langue sélectionnée.
 
 Exemples :
 
@@ -524,6 +638,8 @@ Utiliser des verbes d’action dans les boutons.
 Éviter les formulations culpabilisantes.
 Employer le vouvoiement dans les parcours transactionnels.
 ```
+
+Le profil accepte au maximum 20 règles éditoriales.
 
 ## 9.8 Traductions manquantes et fallback
 
@@ -581,6 +697,50 @@ Utilisez la recherche pour filtrer la famille active. La recherche peut s’appu
 
 Effacer la recherche restaure la liste complète.
 
+### Comprendre les champs communs des tokens
+
+**Famille de token**
+
+- **Utilité :** classe la décision selon sa nature : couleur, espacement, rayon, typographie ou mouvement.
+- **À choisir :** la famille correspondant à la valeur réelle. Un rayon ne doit pas être enregistré dans Spacing uniquement parce que sa valeur utilise la même unité.
+- **Réutilisation :** filtrage de l’éditeur, validation, Themes, Components et exports.
+- **Vérification :** contrôler l’onglet, le type affiché dans l’inspecteur et les formats exportés.
+
+**Kind Primitive / Semantic pour les couleurs**
+
+- **Utilité :** distingue une valeur brute réutilisable d’une décision nommée selon son rôle.
+- **À choisir :** Primitive pour une nuance source telle que `indigo.600`; Semantic pour un usage tel que `action.background` qui référence une primitive.
+- **Réutilisation :** résolution des couleurs dans Themes, Components et exports.
+- **Vérification :** modifier une primitive puis contrôler que le token sémantique associé résout la nouvelle valeur.
+
+**Path / Chemin**
+
+- **Utilité :** constitue l’identifiant technique stable du token.
+- **À saisir :** un chemin descriptif et unique composé de lettres, chiffres, points, tirets ou underscores, par exemple `spacing.control.paddingX.md`.
+- **Réutilisation :** références de thème, bindings de composants, documentation, instructions IA et code exporté.
+- **Vérification :** créer le token, le sélectionner dans Themes ou Components, puis rechercher son chemin dans un export.
+
+**Value / Valeur**
+
+- **Utilité :** contient la décision de design réellement résolue par les consommateurs.
+- **À saisir :** une valeur adaptée à la famille, par exemple `#4F46E5`, `1rem`, `0.5rem` ou `150ms`.
+- **Réutilisation :** aperçus, calculs de contraste, composants et exports.
+- **Vérification :** modifier la valeur et contrôler l’aperçu, la valeur résolue et le fichier exporté.
+
+**Reference / Référence**
+
+- **Utilité :** relie un token sémantique couleur à une primitive afin de centraliser la valeur brute.
+- **À choisir :** le token primitif qui représente la valeur actuelle du rôle sémantique.
+- **Réutilisation :** résolution des thèmes, contrastes, composants et exports.
+- **Vérification :** changer la référence ou la valeur primitive et contrôler le swatch résolu.
+
+**Descriptions française et anglaise**
+
+- **Utilité :** expliquent l’intention du token et les contextes dans lesquels il doit être utilisé.
+- **À saisir :** une justification métier ou une règle d’usage, pas une répétition de la valeur. Exemple : « Espacement horizontal standard des contrôles moyens ».
+- **Réutilisation :** Documentation, AI Instructions et diagnostics Accessibility.
+- **Vérification :** générer Documentation dans chaque langue et examiner les problèmes de description manquante dans Accessibility.
+
 ## 10.3 Créer un token couleur primitif
 
 1. ouvrez l’onglet Color ;
@@ -620,13 +780,37 @@ L’interface et le serveur valident le chemin, la présence de la valeur et l�
 
 ## 10.6 Créer un token Typography
 
-Le formulaire Typography structure les propriétés suivantes :
+Le formulaire Typography structure plusieurs décisions qui forment ensemble un style de texte.
 
-- famille de police ;
-- taille ;
-- graisse ;
-- hauteur de ligne ;
-- espacement des lettres.
+**Font family / Famille de police**
+
+- **Utilité :** désigne la famille typographique à utiliser.
+- **À saisir :** le nom tel qu’il sera compris par les consommateurs, par exemple `Inter Tight`.
+- **Vérification :** examiner l’aperçu et le contenu exporté.
+
+**Font size / Taille**
+
+- **Utilité :** définit la taille visuelle du texte.
+- **À saisir :** une valeur avec unité adaptée, par exemple `1rem`.
+- **Vérification :** comparer l’aperçu du token et l’export.
+
+**Font weight / Graisse**
+
+- **Utilité :** détermine le niveau d’emphase typographique.
+- **À saisir :** une valeur prise en charge par la police, par exemple `400`, `600` ou `700`.
+- **Vérification :** contrôler la graisse dans l’aperçu et la valeur sérialisée.
+
+**Line height / Hauteur de ligne**
+
+- **Utilité :** règle l’espace vertical entre les lignes et influence directement la lisibilité.
+- **À saisir :** une valeur cohérente avec la taille, par exemple `1.5`.
+- **Vérification :** observer un texte sur plusieurs lignes dans l’aperçu lorsqu’il est disponible.
+
+**Letter spacing / Espacement des lettres**
+
+- **Utilité :** ajuste l’espace horizontal entre les caractères.
+- **À saisir :** une valeur mesurée et intentionnelle, par exemple `0em` ou une légère valeur négative pour un titre.
+- **Vérification :** examiner l’aperçu et l’export ; évitez les valeurs extrêmes qui réduisent la lisibilité.
 
 Exemple :
 
@@ -674,11 +858,41 @@ Si aucun token utilisable n’est disponible, les mappings ne peuvent pas être 
 
 ## 11.2 Choisir le mode
 
-Utilisez le contrôle **Light / Dark** pour afficher le mode clair ou sombre.
+**Light / Dark** détermine le thème que vous êtes en train de consulter et de modifier.
+
+- **Utilité :** permet de définir des références différentes pour un même rôle selon le contexte clair ou sombre.
+- **À choisir :** le mode dont vous souhaitez éditer les mappings. Une modification du mode clair ne doit pas être supposée identique dans le mode sombre.
+- **Réutilisation :** aperçu du thème, matrice de contraste et exports de thème.
+- **Vérification :** enregistrer une référence différente dans chaque mode puis basculer entre Light et Dark.
 
 Le contrôle fonctionne comme une sélection exclusive et prend en charge les flèches du clavier.
 
-## 11.3 Modifier un mapping
+## 11.3 Comprendre et modifier un mapping
+
+**Rôle de thème**
+
+- **Utilité :** indique la fonction de la couleur dans l’interface, par exemple une surface, un contenu, une bordure ou un accent.
+- **À comprendre :** le rôle est défini par le modèle du thème ; vous choisissez le token qui doit le remplir, pas un nouveau nom de rôle.
+- **Réutilisation :** aperçu, contrastes, documentation et exports.
+- **Vérification :** sélectionner un rôle et observer les éléments d’aperçu concernés.
+
+**Token reference / Référence de token**
+
+- **Utilité :** relie le rôle à une couleur existante plutôt que de dupliquer une valeur HEX.
+- **À choisir :** de préférence un token sémantique qui exprime la même intention que le rôle. Une primitive reste techniquement sélectionnable lorsque l’interface la propose, mais elle porte moins de sens métier.
+- **Réutilisation :** valeur résolue, matrice de contraste et exports.
+- **Vérification :** contrôler le chemin, le swatch et la valeur HEX affichés dans le sélecteur et l’aperçu.
+
+**Resolved value / Valeur résolue**
+
+- **Utilité :** montre la couleur réellement obtenue après résolution de la référence.
+- **À saisir :** rien ; cette information est calculée.
+- **Vérification :** modifier la primitive source puis revenir dans Themes pour contrôler la nouvelle valeur.
+
+**Save / Enregistrer**
+
+- **Utilité :** persiste le mapping de la ligne concernée.
+- **Vérification :** attendre l’état enregistré puis recharger la page.
 
 Pour chaque rôle :
 
@@ -755,32 +969,71 @@ Le nouveau contrat est généralement un brouillon à compléter.
 
 ## 12.3 Métadonnées
 
-Modifiez :
+### Nom du composant
 
-- le nom du composant ;
-- son statut : Draft, Ready ou Deprecated.
+- **Utilité :** fournit le nom canonique affiché dans le registre, la documentation et les sorties générées.
+- **À saisir :** un nom court correspondant au concept du composant, par exemple `Button` ou `Text field`, sans inclure une variante particulière.
+- **Réutilisation :** registre, Overview, Accessibility, Documentation et AI Instructions.
+- **Vérification :** enregistrer puis contrôler le registre et la documentation générée.
 
-Utilisez Ready uniquement lorsque les informations nécessaires ont été revues.
+### Statut
+
+- **Draft :** contrat encore en cours de rédaction ou de validation.
+- **Ready :** contrat suffisamment complet et relu pour être proposé aux consommateurs.
+- **Deprecated :** contrat conservé pour compatibilité mais à ne plus adopter dans de nouvelles interfaces.
+
+Le statut influence la manière dont le composant est présenté dans les synthèses et certaines sorties. Utilisez Ready uniquement après avoir revu le contenu localisé, l’anatomie, les variantes, les états, l’accessibilité et les bindings.
 
 ## 12.4 Contenu localisé
 
-Choisissez la langue de contenu française ou anglaise, puis renseignez :
+Le sélecteur FR/EN de cette section choisit la langue métier que vous éditez. Il ne change pas la langue générale de l’application.
 
-- la finalité du composant ;
-- les recommandations d’usage ;
-- les recommandations de contenu.
+### Purpose / Finalité
 
-Le sélecteur de langue de cette section ne change pas la langue générale de l’application.
+- **Utilité :** explique pourquoi le composant existe et quel problème d’interface il résout.
+- **À saisir :** une description centrée sur l’intention, par exemple « Déclenche une action explicite à la suite d’une décision de l’utilisateur ».
+- **Réutilisation :** documentation du composant et instructions IA.
+- **Vérification :** générer Documentation dans la langue concernée.
+
+### Usage guidelines / Recommandations d’usage
+
+- **Utilité :** précise quand utiliser le composant, comment choisir ses variantes et dans quelles situations préférer une autre solution.
+- **À saisir :** des règles décisionnelles concrètes, pas une description de son apparence.
+- **Réutilisation :** Documentation et AI Instructions.
+- **Vérification :** contrôler les recommandations générées pour le composant.
+
+### Content guidelines / Recommandations de contenu
+
+- **Utilité :** encadre les textes placés dans le composant : libellés, messages, titres ou actions.
+- **À saisir :** des règles rédactionnelles spécifiques au composant, par exemple « Commencer le libellé par un verbe d’action ».
+- **Réutilisation :** Documentation et consignes fournies aux assistants IA.
+- **Vérification :** générer AI Instructions et rechercher le composant.
 
 ## 12.5 Anatomie
 
 L’anatomie décrit les parties internes du composant.
 
-Chaque partie comprend :
+Chaque partie comprend les champs suivants.
 
-- une clé technique ;
-- un libellé localisé ;
-- un niveau d’exigence : required, optional ou derived.
+**Key / Clé technique**
+
+- **Utilité :** identifie la partie de façon stable dans le contrat et les sorties destinées aux développeurs.
+- **À saisir :** une clé courte et technique, par exemple `root`, `label` ou `leadingIcon`.
+- **Vérification :** examiner l’aperçu du contrat IA ou la documentation générée.
+
+**Label / Libellé localisé**
+
+- **Utilité :** donne un nom compréhensible aux lecteurs de la langue active.
+- **À saisir :** le nom métier de la partie, sans recopier nécessairement la casse technique de la clé.
+- **Vérification :** basculer entre FR et EN puis générer Documentation dans chaque langue.
+
+**Requirement / Niveau d’exigence**
+
+- **Required :** la partie doit être présente dans toute implémentation conforme.
+- **Optional :** la partie peut être ajoutée selon le contexte.
+- **Derived :** la partie apparaît ou se déduit d’un état ou d’une configuration, par exemple un spinner pendant le chargement.
+
+Ce choix aide les consommateurs à distinguer la structure minimale des éléments conditionnels.
 
 Exemple pour un bouton :
 
@@ -793,7 +1046,24 @@ spinner — dérivé
 
 ## 12.6 Variantes, tailles et états
 
-Chaque collection contient des clés techniques et, lorsque les détails sont développés, des libellés et descriptions localisés.
+Chaque collection contient une clé technique et, lorsque **Edit details / Modifier les détails** est développé, un libellé et une description localisés.
+
+**Key / Clé**
+
+- **Utilité :** valeur stable utilisée dans le contrat et les sorties techniques.
+- **À saisir :** un identifiant concis tel que `primary`, `sm` ou `focusVisible`.
+
+**Label / Libellé**
+
+- **Utilité :** nom lisible présenté dans la documentation de la langue active.
+- **À saisir :** une traduction destinée aux humains, par exemple « Principal » ou « Petit ».
+
+**Description**
+
+- **Utilité :** explique la différence avec les autres options et la situation dans laquelle elle doit être choisie.
+- **À saisir :** une règle de décision. Exemple pour `danger` : « Réservé aux actions destructives ou irréversibles ».
+
+Les **variantes** représentent des intentions ou apparences alternatives, les **tailles** des niveaux de dimension cohérents et les **états** les conditions d’interaction ou du système.
 
 Exemples :
 
@@ -805,11 +1075,27 @@ Pour un composant interactif, documentez explicitement l’état `focusVisible`.
 
 ## 12.7 Règles d’accessibilité
 
-Ajoutez des règles avec :
+Ajoutez des règles avec les champs suivants.
 
-- une clé ;
-- une sévérité : info, warning ou critical ;
-- une description localisée.
+**Key / Clé**
+
+- **Utilité :** identifie la règle de manière stable dans le contrat et les diagnostics.
+- **À saisir :** un nom technique décrivant l’exigence, par exemple `keyboardActivation`, `focusVisible` ou `accessibleName`.
+
+**Severity / Sévérité**
+
+- **Info :** recommandation ou information utile sans non-conformité immédiate.
+- **Warning :** problème susceptible de dégrader l’expérience et devant être corrigé avant que le contrat soit considéré comme abouti.
+- **Critical :** exigence indispensable dont l’absence peut rendre le composant inutilisable ou inaccessible.
+
+La sévérité doit refléter l’impact utilisateur, pas l’effort de correction.
+
+**Description localisée**
+
+- **Utilité :** énonce le comportement attendu de manière testable.
+- **À saisir :** une consigne précise, par exemple « Le bouton doit être activable avec Entrée et Espace lorsqu’il possède le focus ».
+- **Réutilisation :** Documentation, AI Instructions et contrôles Accessibility.
+- **Vérification :** générer les sorties puis examiner le centre Accessibility.
 
 Exemples :
 
@@ -825,6 +1111,11 @@ Un composant interactif sans règle d’accessibilité peut être signalé.
 
 Les forbidden patterns décrivent ce qu’il ne faut pas faire avec le composant.
 
+- **Utilité :** transforme les erreurs de conception récurrentes en règles explicites et réutilisables.
+- **À saisir :** une situation interdite et sa limite, dans la langue active. La phrase doit permettre à un lecteur de décider clairement si un usage est acceptable.
+- **Réutilisation :** Documentation et AI Instructions.
+- **Vérification :** générer AI Instructions avec la section des patterns interdits activée.
+
 Exemple :
 
 ```text
@@ -835,6 +1126,39 @@ Ne pas employer un bouton danger pour une action réversible et anodine.
 ## 12.9 Visual Tokens
 
 Les bindings visuels associent le composant à des tokens existants.
+
+### Comprendre les champs d’un binding
+
+**Role / Rôle de preview**
+
+- **Utilité :** indique quelle propriété visuelle du composant reçoit le token et permet à la matrice intégrée de rendre les rôles officiellement pris en charge.
+- **À choisir :** un rôle officiel disponible, ou Custom role lorsque le contrat doit exposer une propriété non couverte.
+- **Vérification :** observer la matrice et les fondations visuelles après sélection du token.
+
+**Custom role key / Clé personnalisée**
+
+- **Utilité :** nomme une propriété spécifique destinée aux consommateurs externes du contrat.
+- **À saisir :** une clé stable, explicite et non déjà utilisée. Un rôle personnalisé n’est pas garanti d’avoir un effet dans la matrice intégrée.
+- **Vérification :** enregistrer, recharger puis contrôler l’aperçu du contrat destiné aux consommateurs IA.
+
+**Token type / Type de token**
+
+- **Utilité :** garantit que la liaison utilise une famille compatible.
+- **À choisir :** pour un rôle officiel, le type est imposé et reste visible mais verrouillé ; pour un rôle personnalisé, choisissez la famille réellement attendue.
+- **Vérification :** contrôler que la liste Token path ne propose que les tokens compatibles.
+
+**Token path / Chemin du token**
+
+- **Utilité :** relie le composant à une décision de design existante sans recopier sa valeur.
+- **À choisir :** un token dont l’intention correspond au rôle, idéalement sémantique lorsqu’un tel token existe.
+- **Réutilisation :** matrice visuelle, fondations, Accessibility, Documentation, AI Instructions et exports du contrat.
+- **Vérification :** enregistrer, recharger et contrôler la valeur résolue dans les aperçus.
+
+**Description localisée**
+
+- **Utilité :** précise l’intention de la liaison lorsqu’elle n’est pas évidente à partir du rôle et du chemin.
+- **À saisir :** une courte règle d’usage dans la langue active, particulièrement utile pour les rôles personnalisés.
+- **Vérification :** examiner la documentation ou l’aperçu de contrat généré.
 
 ### Rôles officiels
 
@@ -977,7 +1301,10 @@ Documentation transforme les données structurées du projet en document Markdow
 
 ## 14.1 Choisir la langue de sortie
 
-Sélectionnez une langue prise en charge par le projet.
+- **Utilité :** détermine la langue principale du fichier Markdown généré.
+- **À choisir :** une langue prise en charge par le projet. Ce choix ne traduit pas automatiquement une donnée absente ; le fallback est utilisé et signalé lorsque nécessaire.
+- **Réutilisation :** nom de fichier, contenus localisés et profil de génération enregistré.
+- **Vérification :** générer successivement les deux langues et comparer les contenus et diagnostics.
 
 Si le projet ne prend en charge qu’une langue, le contrôle devient informatif.
 
@@ -993,7 +1320,14 @@ Les sections disponibles sont :
 - Components ;
 - Accessibility.
 
-Activez ou désactivez chaque section. Au moins une section doit être sélectionnée pour générer une prévisualisation utile.
+Chaque interrupteur détermine si les données de l’espace correspondant apparaissent dans le fichier : Overview pour la synthèse, Tokens pour les valeurs, Themes pour les mappings, Components pour les contrats et Accessibility pour les signaux disponibles.
+
+- **Utilité :** adapter le document à son destinataire plutôt que de produire systématiquement un fichier exhaustif.
+- **À choisir :** uniquement les sections nécessaires au cas d’usage. Par exemple, un développeur intégrant les fondations peut avoir besoin de Tokens et Themes, tandis qu’une revue produit peut nécessiter Overview et Components.
+- **Réutilisation :** aperçu courant et préférences enregistrées du projet.
+- **Vérification :** désactiver une section, générer l’aperçu et vérifier sa disparition dans les modes Rendu et Source.
+
+Au moins une section doit être sélectionnée pour générer une prévisualisation utile.
 
 ## 14.3 Format
 
@@ -1044,7 +1378,12 @@ La génération est déterministe : elle utilise le modèle structuré du projet
 
 ## 15.1 Choisir la langue
 
-Sélectionnez une langue prise en charge par le projet. Les traductions manquantes et fallbacks sont signalés.
+- **Utilité :** choisit la langue des consignes remises à l’assistant de développement.
+- **À choisir :** la langue utilisée par l’équipe ou par le contexte dans lequel le fichier sera consommé.
+- **Réutilisation :** contenu, nom de fichier et préférences enregistrées.
+- **Vérification :** générer les deux langues et examiner les fallbacks signalés.
+
+Les traductions manquantes et fallbacks sont signalés.
 
 ## 15.2 Choisir la sévérité des consignes
 
@@ -1054,7 +1393,13 @@ Trois niveaux sont disponibles :
 - **Strict** ;
 - **Very strict**.
 
-Un niveau plus strict formule des contraintes plus impératives pour le consommateur du fichier.
+- **Balanced :** formule des règles fermes tout en laissant une marge de décision au consommateur.
+- **Strict :** réduit les interprétations possibles et insiste davantage sur les obligations du design system.
+- **Very strict :** présente les règles comme des contraintes impératives, adapté à un contexte où les écarts doivent être minimisés.
+
+**Utilité :** adapte le ton normatif du fichier au niveau de contrôle souhaité. Ce réglage ne change pas les données du design system ; il change la manière dont elles sont formulées.
+
+**Vérification :** générer le même profil avec deux niveaux et comparer les formulations dans l’aperçu.
 
 ## 15.3 Choisir les sections
 
@@ -1064,6 +1409,15 @@ Les sections sont :
 - règles de composants ;
 - règles d’accessibilité ;
 - patterns interdits.
+
+- **Règles de tokens :** conventions de valeurs, chemins et références.
+- **Règles de composants :** contrats, variantes, états et bindings.
+- **Règles d’accessibilité :** exigences documentées et signaux du projet.
+- **Patterns interdits :** usages explicitement proscrits dans les contrats.
+
+**Utilité :** limiter le fichier aux catégories de règles utiles au consommateur ciblé.
+
+**Vérification :** désactiver une catégorie et confirmer sa disparition dans l’aperçu et le fichier téléchargé.
 
 Les informations Brand et la voix du produit sont intégrées lorsque les données existent.
 
@@ -1109,11 +1463,21 @@ Exports centralise six formats :
 
 ## 16.1 Sélectionner un format
 
-Choisissez une carte de format. L’aperçu affiche le contenu correspondant, son nom de fichier et ses informations principales.
+- **Utilité :** choisit la représentation technique ou documentaire produite à partir du même modèle de design system.
+- **À choisir :** CSS Variables pour des propriétés CSS consommables directement, Tailwind CSS v4 pour une intégration Tailwind, TypeScript Theme pour un objet typé, React Native Theme pour le mobile, Documentation Markdown pour les lecteurs humains ou AI Instructions pour un assistant de développement.
+- **Réutilisation :** aperçu, nom de fichier, téléchargement et historique d’export.
+- **Vérification :** sélectionner plusieurs cartes et confirmer que le nom, la syntaxe et les diagnostics changent selon le format.
+
+L’aperçu affiche le contenu correspondant, son nom de fichier et ses informations principales.
 
 ## 16.2 Inclure les éléments dépréciés
 
 Le contrôle **Include deprecated / Inclure les éléments dépréciés** détermine si les données marquées Deprecated doivent apparaître dans les formats compatibles.
+
+- **Utilité :** permet de produire soit une sortie limitée aux décisions encore recommandées, soit une sortie de compatibilité contenant également les éléments Deprecated.
+- **À choisir :** désactivé pour une nouvelle intégration ; activé uniquement lorsqu’un consommateur doit encore prendre en charge des éléments historiques.
+- **Réutilisation :** contenu du format sélectionné et journal d’export correspondant.
+- **Vérification :** marquer un élément comme Deprecated lorsqu’un scénario le permet, puis comparer les deux exports.
 
 Cette option ne modifie pas les données du projet : elle modifie uniquement le contenu généré.
 
@@ -1168,7 +1532,11 @@ La suppression retire notamment :
 - préférences AI Instructions ;
 - historique Exports.
 
-Pour confirmer, saisissez exactement le nom du projet affiché.
+Le champ de confirmation attend exactement le nom du projet affiché.
+
+- **Utilité :** oblige l’utilisateur à identifier explicitement la ressource qu’il va supprimer et réduit les suppressions accidentelles.
+- **À saisir :** le nom complet avec la même casse, les mêmes espaces et les mêmes caractères.
+- **Vérification :** saisir d’abord une valeur différente pour confirmer que l’action reste verrouillée, puis utiliser le nom exact uniquement sur un projet jetable.
 
 Après suppression, l’application revient au Dashboard avec une confirmation.
 
@@ -1182,42 +1550,60 @@ Les paramètres du compte sont accessibles depuis le menu utilisateur sur deskto
 
 ## 18.1 Informations personnelles
 
-Vous pouvez modifier :
+### Nom affiché
 
-- le nom affiché ;
-- l’adresse e-mail de connexion.
+- **Utilité :** identifie l’utilisateur dans l’interface sans modifier son identifiant de connexion.
+- **À saisir :** un nom compris entre 2 et 80 caractères.
+- **Réutilisation :** menu utilisateur, paramètres et contexte de l’espace personnel.
+- **Vérification :** enregistrer puis rouvrir le menu utilisateur. Une modification du nom ne nécessite pas de mot de passe.
 
-Une modification du nom ne nécessite pas de mot de passe.
+### Adresse e-mail
 
-Une modification de l’e-mail :
+- **Utilité :** constitue l’identifiant utilisé pour les connexions futures.
+- **À saisir :** une adresse valide et non utilisée par un autre compte.
+- **Réutilisation :** authentification et confirmation de suppression du compte.
+- **Vérification :** enregistrer, constater la déconnexion, puis se reconnecter avec la nouvelle adresse.
 
-- nécessite le mot de passe actuel ;
-- refuse une adresse déjà utilisée ;
-- déconnecte le compte après succès ;
-- impose de se reconnecter avec la nouvelle adresse.
+### Mot de passe actuel
+
+- **Utilité :** confirme l’identité de l’utilisateur lorsqu’il modifie son adresse e-mail.
+- **À saisir :** le mot de passe actuel du compte. Il n’est pas nécessaire lorsque seul le nom change.
+- **Vérification :** tenter un changement d’e-mail avec une valeur incorrecte, puis avec la valeur correcte.
+
+Une modification réussie de l’e-mail déconnecte le compte et impose de se reconnecter avec la nouvelle adresse.
 
 ## 18.2 Langue
 
-Choisissez français ou anglais, puis enregistrez.
-
-Après sauvegarde, la route équivalente s’ouvre dans la langue choisie.
+- **Utilité :** définit la langue préférée de l’interface pour le compte.
+- **À choisir :** français ou anglais selon la langue de navigation souhaitée. Ce réglage ne traduit pas les contenus métier du projet.
+- **Réutilisation :** menus, libellés, messages et route localisée après enregistrement.
+- **Vérification :** enregistrer et contrôler que la page équivalente s’ouvre dans la langue choisie.
 
 ## 18.3 Apparence
 
-Choisissez :
+- **System :** suit la préférence claire ou sombre du système ou du navigateur.
+- **Light :** force l’apparence claire.
+- **Dark :** force l’apparence sombre.
 
-- System ;
-- Light ;
-- Dark.
+**Utilité :** définit l’apparence de VulcanForge UI pour le compte ; ce réglage est indépendant des thèmes Light et Dark du design system édité.
 
-L’apparence est prévisualisée immédiatement, puis persistée avec Save.
+**Vérification :** sélectionner chaque option, observer la prévisualisation immédiate, enregistrer puis recharger la page.
 
 ## 18.4 Supprimer le compte
 
-La suppression permanente exige :
+La suppression permanente exige deux champs de confirmation.
 
-- l’adresse e-mail exacte du compte ;
-- le mot de passe actuel.
+**Adresse e-mail de confirmation**
+
+- **Utilité :** confirme explicitement le compte visé.
+- **À saisir :** l’adresse e-mail exacte du compte actuel.
+
+**Mot de passe actuel**
+
+- **Utilité :** vérifie que l’utilisateur autorise l’opération sensible.
+- **À saisir :** le mot de passe actuel du compte.
+
+Testez d’abord les erreurs de confirmation, puis n’exécutez la suppression complète que sur un compte jetable.
 
 La suppression retire le compte et les données possédées selon les relations de l’espace de travail, puis déconnecte la session.
 
