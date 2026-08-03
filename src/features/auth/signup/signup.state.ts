@@ -9,7 +9,12 @@ export type SignupField =
 export type SignupActionState = {
   status: 'idle' | 'error';
   fieldErrors: Partial<Record<SignupField, SignupValidationMessageKey[]>>;
-  formError: 'emailAlreadyUsed' | 'unexpected' | null;
+  formError:
+    | 'accountCreatedSignInFailed'
+    | 'rateLimited'
+    | 'signupUnavailable'
+    | 'unexpected'
+    | null;
   values: {
     name: string;
     email: string;
