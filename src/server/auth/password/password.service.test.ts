@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { isArgon2idAvailable } from './password-argon2';
+import { DUMMY_ARGON2ID_PASSWORD_HASH } from './password.constants';
 import {
   PasswordCompromisedError,
   PasswordCompromiseCheckUnavailableError,
@@ -13,6 +14,26 @@ import {
 describe('password service', () => {
   it('uses the Node.js Argon2id implementation available in the supported runtime', () => {
     expect(isArgon2idAvailable()).toBe(true);
+  });
+
+  it('validates the deterministic dummy hash used for missing accounts', async () => {
+    await expect(
+      verifyPassword(
+        'VulcanForgeUI dummy password value',
+        DUMMY_ARGON2ID_PASSWORD_HASH,
+      ),
+    ).resolves.toEqual({
+      needsRehash: false,
+      scheme: 'argon2id',
+      valid: true,
+    });
+    await expect(
+      verifyPassword('another candidate password', DUMMY_ARGON2ID_PASSWORD_HASH),
+    ).resolves.toEqual({
+      needsRehash: false,
+      scheme: 'argon2id',
+      valid: false,
+    });
   });
 
   it('creates salted Argon2id hashes and verifies the complete password', async () => {
