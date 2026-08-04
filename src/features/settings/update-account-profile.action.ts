@@ -1,10 +1,10 @@
 'use server';
 
-import bcrypt from 'bcryptjs';
 import { revalidatePath } from 'next/cache';
 
 import { auth, signOut } from '@/auth';
 import { prisma } from '@/server/db/prisma';
+import { verifyPassword } from '@/server/auth/password/password.service';
 import { accountProfileSchema } from './account-profile.schema';
 import type { UpdateAccountProfileActionState } from './update-account-profile.state';
 
@@ -82,12 +82,12 @@ export async function updateAccountProfileAction(
     }
 
     if (emailChanged) {
-      const passwordMatches = await bcrypt.compare(
+      const verification = await verifyPassword(
         parsedProfile.data.currentPassword,
         currentUser.passwordHash,
       );
 
-      if (!passwordMatches) {
+      if (!verification.valid) {
         return {
           status: 'error',
           fieldErrors: {
