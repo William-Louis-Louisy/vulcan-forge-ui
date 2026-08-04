@@ -28,7 +28,10 @@ describe('password service', () => {
       valid: true,
     });
     await expect(
-      verifyPassword('another candidate password', DUMMY_ARGON2ID_PASSWORD_HASH),
+      verifyPassword(
+        'another candidate password',
+        DUMMY_ARGON2ID_PASSWORD_HASH,
+      ),
     ).resolves.toEqual({
       needsRehash: false,
       scheme: 'argon2id',
