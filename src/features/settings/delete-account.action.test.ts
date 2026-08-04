@@ -5,10 +5,10 @@ import { initialDeleteAccountActionState } from './delete-account.state';
 
 const mocks = vi.hoisted(() => ({
   auth: vi.fn(),
-  compare: vi.fn(),
   deleteUser: vi.fn(),
   findUnique: vi.fn(),
   signOut: vi.fn(),
+  verifyPassword: vi.fn(),
 }));
 
 vi.mock('@/auth', () => ({
@@ -25,10 +25,8 @@ vi.mock('@/server/db/prisma', () => ({
   },
 }));
 
-vi.mock('bcryptjs', () => ({
-  default: {
-    compare: mocks.compare,
-  },
+vi.mock('@/server/auth/password/password.service', () => ({
+  verifyPassword: mocks.verifyPassword,
 }));
 
 function createFormData(values: {
@@ -53,6 +51,11 @@ describe('deleteAccountAction', () => {
     });
     mocks.deleteUser.mockResolvedValue({});
     mocks.signOut.mockResolvedValue(undefined);
+    mocks.verifyPassword.mockResolvedValue({
+      needsRehash: false,
+      scheme: 'argon2id',
+      valid: true,
+    });
   });
 
   it('rejects a confirmation email that does not match the account', async () => {
@@ -65,12 +68,16 @@ describe('deleteAccountAction', () => {
     );
 
     expect(result.formError).toBe('confirmationEmailMismatch');
-    expect(mocks.compare).not.toHaveBeenCalled();
+    expect(mocks.verifyPassword).not.toHaveBeenCalled();
     expect(mocks.deleteUser).not.toHaveBeenCalled();
   });
 
   it('rejects an incorrect current password', async () => {
-    mocks.compare.mockResolvedValue(false);
+    mocks.verifyPassword.mockResolvedValue({
+      needsRehash: false,
+      scheme: 'argon2id',
+      valid: false,
+    });
 
     const result = await deleteAccountAction(
       initialDeleteAccountActionState,
@@ -84,9 +91,7 @@ describe('deleteAccountAction', () => {
     expect(mocks.deleteUser).not.toHaveBeenCalled();
   });
 
-  it('deletes the authenticated user and signs out after confirmation', async () => {
-    mocks.compare.mockResolvedValue(true);
-
+  it('deletes the authenticated user after modern password verification', async () => {
     await deleteAccountAction(
       initialDeleteAccountActionState,
       createFormData({
@@ -96,6 +101,10 @@ describe('deleteAccountAction', () => {
       }),
     );
 
+    expect(mocks.verifyPassword).toHaveBeenCalledWith(
+      'correct-password',
+      'hash',
+    );
     expect(mocks.deleteUser).toHaveBeenCalledWith({
       where: { id: 'user-1' },
     });
