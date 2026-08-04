@@ -93,8 +93,14 @@ export function parseArgon2idHash(value: string): ParsedArgon2idHash | null {
 
   if (
     version !== ARGON2ID_FORMAT_VERSION ||
-    !isIntegerInRange(parameters.memory, ARGON2ID_ACCEPTED_BOUNDS.memory) ||
-    !isIntegerInRange(parameters.passes, ARGON2ID_ACCEPTED_BOUNDS.passes) ||
+    !isIntegerInRange(
+      parameters.memory,
+      ARGON2ID_ACCEPTED_BOUNDS.memory,
+    ) ||
+    !isIntegerInRange(
+      parameters.passes,
+      ARGON2ID_ACCEPTED_BOUNDS.passes,
+    ) ||
     !isIntegerInRange(
       parameters.parallelism,
       ARGON2ID_ACCEPTED_BOUNDS.parallelism,
