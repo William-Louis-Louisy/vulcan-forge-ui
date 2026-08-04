@@ -6,6 +6,7 @@ import {
   resetAuthAccountRateLimit,
 } from './auth-rate-limit';
 import { recordAuthSecurityEvent } from './auth-security-events';
+import { DUMMY_ARGON2ID_PASSWORD_HASH } from './password/password.constants';
 import {
   PasswordHashingUnavailableError,
   PasswordPolicyError,
@@ -15,9 +16,6 @@ import {
   verifyPassword,
   type PasswordHashScheme,
 } from './password/password.service';
-
-const dummyPasswordHash =
-  '$vulcan$argon2id$v=1$m=19456,t=2,p=1,l=32$AAECAwQFBgcICQoLDA0ODw$DC0uxfOnxsyo6hd1XhvappBgPe5mVsW9ymOa3b4sh7w';
 
 type AuthenticatedUser = {
   email: string;
@@ -182,11 +180,11 @@ export async function authorizeCredentials(
 
   const verification = await verifyPassword(
     parsed.data.password,
-    user?.passwordHash ?? dummyPasswordHash,
+    user?.passwordHash ?? DUMMY_ARGON2ID_PASSWORD_HASH,
   );
 
   if (user && verification.scheme === 'unknown') {
-    await verifyPassword(parsed.data.password, dummyPasswordHash);
+    await verifyPassword(parsed.data.password, DUMMY_ARGON2ID_PASSWORD_HASH);
   }
 
   if (!user || !verification.valid) {
