@@ -40,8 +40,14 @@ describe('versioned Argon2id hash format', () => {
     });
 
     expect(parseArgon2idHash(valid.replace('$v=1$', '$v=2$'))).toBeNull();
-    expect(parseArgon2idHash(valid.replace('m=19456', 'm=1048576'))).toBeNull();
-    expect(parseArgon2idHash(valid.replace(/\$[A-Za-z0-9_-]+$/, '$not+base64'))).toBeNull();
+    expect(
+      parseArgon2idHash(valid.replace('m=19456', 'm=1048576')),
+    ).toBeNull();
+    expect(
+      parseArgon2idHash(
+        valid.replace(/\$[A-Za-z0-9_-]+$/, '$not+base64'),
+      ),
+    ).toBeNull();
     expect(parseArgon2idHash(`${valid}truncated`)).toBeNull();
   });
 
@@ -57,7 +63,12 @@ describe('versioned Argon2id hash format', () => {
     const parsed = parseArgon2idHash(encoded);
 
     expect(parsed).not.toBeNull();
-    expect(argon2idHashNeedsRehash(parsed!)).toBe(true);
+
+    if (!parsed) {
+      throw new Error('Expected a valid Argon2id hash.');
+    }
+
+    expect(argon2idHashNeedsRehash(parsed)).toBe(true);
   });
 
   it('recognizes supported legacy bcrypt prefixes', () => {
