@@ -1,6 +1,5 @@
 'use server';
 
-import bcrypt from 'bcryptjs';
 import { AuthError } from '@auth/core/errors';
 import { headers } from 'next/headers';
 import { signIn } from '@/auth';
@@ -10,6 +9,16 @@ import {
   resetAuthAccountRateLimit,
 } from '@/server/auth/auth-rate-limit';
 import { recordAuthSecurityEvent } from '@/server/auth/auth-security-events';
+import {
+  PasswordCompromisedError,
+  PasswordCompromiseCheckUnavailableError,
+  PasswordHashingUnavailableError,
+  PasswordPolicyError,
+} from '@/server/auth/password/password.errors';
+import {
+  assertPasswordIsAcceptable,
+  hashPassword,
+} from '@/server/auth/password/password.service';
 import type { SignupActionState } from './signup.state';
 import { getSignupPersistenceError } from './signup.errors';
 import { createPersonalWorkspaceSlug } from '@/domain/workspaces/slug';
@@ -69,6 +78,38 @@ function createErrorState({
   };
 }
 
+function createPasswordFieldErrorState({
+  message,
+  values,
+}: {
+  message: SignupValidationMessageKey;
+  values: SignupActionState['values'];
+}): SignupActionState {
+  return {
+    status: 'error',
+    fieldErrors: {
+      password: [message],
+    },
+    formError: null,
+    values,
+  };
+}
+
+function getPasswordPolicyMessage(
+  error: PasswordPolicyError,
+): SignupValidationMessageKey {
+  const messageByViolation = {
+    invalid_unicode: 'passwordInvalidUnicode',
+    too_long: 'passwordTooLong',
+    too_short: 'passwordMinLength',
+  } as const satisfies Record<
+    PasswordPolicyError['violation'],
+    SignupValidationMessageKey
+  >;
+
+  return messageByViolation[error.violation];
+}
+
 export async function signupAction(
   _previousState: SignupActionState,
   formData: FormData,
@@ -123,7 +164,89 @@ export async function signupAction(
     };
   }
 
-  const passwordHash = await bcrypt.hash(parsed.data.password, 12);
+  let acceptablePassword: string;
+
+  try {
+    acceptablePassword = await assertPasswordIsAcceptable(parsed.data.password);
+  } catch (error) {
+    if (error instanceof PasswordCompromisedError) {
+      recordAuthSecurityEvent('auth.signup.password_compromised', {
+        accountFingerprint: rateLimit.accountFingerprint,
+        ipFingerprint: rateLimit.context.ipFingerprint,
+        occurrenceCount: error.occurrenceCount,
+        requestId: rateLimit.context.requestId,
+      });
+
+      return createPasswordFieldErrorState({
+        message: 'passwordCompromised',
+        values,
+      });
+    }
+
+    if (error instanceof PasswordCompromiseCheckUnavailableError) {
+      recordAuthSecurityEvent('auth.signup.password_check_unavailable', {
+        accountFingerprint: rateLimit.accountFingerprint,
+        ipFingerprint: rateLimit.context.ipFingerprint,
+        requestId: rateLimit.context.requestId,
+      });
+
+      return createErrorState({
+        formError: 'passwordCheckUnavailable',
+        values,
+      });
+    }
+
+    if (error instanceof PasswordPolicyError) {
+      return createPasswordFieldErrorState({
+        message: getPasswordPolicyMessage(error),
+        values,
+      });
+    }
+
+    recordAuthSecurityEvent('auth.signup.unexpected_error', {
+      accountFingerprint: rateLimit.accountFingerprint,
+      ipFingerprint: rateLimit.context.ipFingerprint,
+      reason: 'password_acceptability',
+      requestId: rateLimit.context.requestId,
+    });
+
+    return createErrorState({
+      formError: 'unexpected',
+      values,
+    });
+  }
+
+  let passwordHash: string;
+
+  try {
+    passwordHash = await hashPassword(acceptablePassword);
+  } catch (error) {
+    if (error instanceof PasswordHashingUnavailableError) {
+      recordAuthSecurityEvent('auth.signup.password_hashing_unavailable', {
+        accountFingerprint: rateLimit.accountFingerprint,
+        ipFingerprint: rateLimit.context.ipFingerprint,
+        requestId: rateLimit.context.requestId,
+      });
+
+      return createErrorState({
+        formError: 'passwordHashingUnavailable',
+        values,
+      });
+    }
+
+    recordAuthSecurityEvent('auth.signup.unexpected_error', {
+      accountFingerprint: rateLimit.accountFingerprint,
+      ipFingerprint: rateLimit.context.ipFingerprint,
+      reason: 'password_hashing',
+      requestId: rateLimit.context.requestId,
+    });
+
+    return createErrorState({
+      formError: 'unexpected',
+      values,
+    });
+  }
+
   let userId: string;
 
   try {
@@ -203,7 +326,7 @@ export async function signupAction(
   try {
     await signIn('credentials', {
       email: parsed.data.email,
-      password: parsed.data.password,
+      password: acceptablePassword,
       redirectTo: `/${locale}/app`,
     });
   } catch (error) {
