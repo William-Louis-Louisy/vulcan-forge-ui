@@ -34,6 +34,9 @@ export const ARGON2ID_ACCEPTED_BOUNDS = {
   },
 } as const;
 
+export const DUMMY_ARGON2ID_PASSWORD_HASH =
+  '$vulcan$argon2id$v=1$m=19456,t=2,p=1,l=32$AAECAwQFBgcICQoLDA0ODw$DC0uxfOnxsyo6hd1XhvappBgPe5mVsW9ymOa3b4sh7w';
+
 export const PWNED_PASSWORDS_RANGE_URL = 'https://api.pwnedpasswords.com/range';
 export const PWNED_PASSWORDS_TIMEOUT_MS = 4_000;
 export const PWNED_PASSWORDS_MAX_RESPONSE_BYTES = 256_000;
