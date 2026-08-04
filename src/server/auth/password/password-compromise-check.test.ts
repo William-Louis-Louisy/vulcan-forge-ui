@@ -34,9 +34,7 @@ describe('checkPasswordCompromise', () => {
     const call = fetchImpl.mock.calls[0];
 
     expect(call).toBeDefined();
-    expect(String(call?.[0])).toBe(
-      `${PWNED_PASSWORDS_RANGE_URL}/${prefix}`,
-    );
+    expect(String(call?.[0])).toBe(`${PWNED_PASSWORDS_RANGE_URL}/${prefix}`);
     expect(String(call?.[0])).not.toContain(password);
     expect(call?.[1]).toEqual(
       expect.objectContaining({
@@ -53,9 +51,7 @@ describe('checkPasswordCompromise', () => {
   it('returns a negative result when the target suffix is absent', async () => {
     const fetchImpl = vi.fn(
       async (_input: RequestInfo | URL, _init?: RequestInit) =>
-        new Response(
-          `${'A'.repeat(35)}:3\r\n${'B'.repeat(35)}:0\r\n`,
-        ),
+        new Response(`${'A'.repeat(35)}:3\r\n${'B'.repeat(35)}:0\r\n`),
     );
 
     await expect(

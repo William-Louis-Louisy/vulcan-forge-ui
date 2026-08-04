@@ -25,9 +25,9 @@ describe('password normalization and policy', () => {
   });
 
   it('accepts spaces and the configured boundary lengths', () => {
-    expect(
-      assertPasswordMeetsPolicy('correct horse battery staple'),
-    ).toBe('correct horse battery staple');
+    expect(assertPasswordMeetsPolicy('correct horse battery staple')).toBe(
+      'correct horse battery staple',
+    );
     expect(
       assertPasswordMeetsPolicy('a'.repeat(PASSWORD_MIN_CODE_POINTS)),
     ).toHaveLength(PASSWORD_MIN_CODE_POINTS);

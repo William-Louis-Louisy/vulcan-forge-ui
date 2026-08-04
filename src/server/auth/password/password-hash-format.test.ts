@@ -40,13 +40,9 @@ describe('versioned Argon2id hash format', () => {
     });
 
     expect(parseArgon2idHash(valid.replace('$v=1$', '$v=2$'))).toBeNull();
+    expect(parseArgon2idHash(valid.replace('m=19456', 'm=1048576'))).toBeNull();
     expect(
-      parseArgon2idHash(valid.replace('m=19456', 'm=1048576')),
-    ).toBeNull();
-    expect(
-      parseArgon2idHash(
-        valid.replace(/\$[A-Za-z0-9_-]+$/, '$not+base64'),
-      ),
+      parseArgon2idHash(valid.replace(/\$[A-Za-z0-9_-]+$/, '$not+base64')),
     ).toBeNull();
     expect(parseArgon2idHash(`${valid}truncated`)).toBeNull();
   });

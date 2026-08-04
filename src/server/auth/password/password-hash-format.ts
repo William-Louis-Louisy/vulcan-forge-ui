@@ -26,7 +26,9 @@ function isIntegerInRange(
   value: number,
   range: Readonly<{ max: number; min: number }>,
 ) {
-  return Number.isSafeInteger(value) && value >= range.min && value <= range.max;
+  return (
+    Number.isSafeInteger(value) && value >= range.min && value <= range.max
+  );
 }
 
 function decodeCanonicalBase64Url(value: string) {
@@ -93,14 +95,8 @@ export function parseArgon2idHash(value: string): ParsedArgon2idHash | null {
 
   if (
     version !== ARGON2ID_FORMAT_VERSION ||
-    !isIntegerInRange(
-      parameters.memory,
-      ARGON2ID_ACCEPTED_BOUNDS.memory,
-    ) ||
-    !isIntegerInRange(
-      parameters.passes,
-      ARGON2ID_ACCEPTED_BOUNDS.passes,
-    ) ||
+    !isIntegerInRange(parameters.memory, ARGON2ID_ACCEPTED_BOUNDS.memory) ||
+    !isIntegerInRange(parameters.passes, ARGON2ID_ACCEPTED_BOUNDS.passes) ||
     !isIntegerInRange(
       parameters.parallelism,
       ARGON2ID_ACCEPTED_BOUNDS.parallelism,
