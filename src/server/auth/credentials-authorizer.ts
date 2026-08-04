@@ -1,4 +1,3 @@
-import bcrypt from 'bcryptjs';
 import { prisma } from '@/server/db/prisma';
 import { loginSchema } from '@/features/auth/login/login.schema';
 import { RateLimitedCredentialsError } from './auth-errors';
@@ -7,9 +6,30 @@ import {
   resetAuthAccountRateLimit,
 } from './auth-rate-limit';
 import { recordAuthSecurityEvent } from './auth-security-events';
+import {
+  PasswordHashingUnavailableError,
+  PasswordPolicyError,
+} from './password/password.errors';
+import {
+  hashPassword,
+  verifyPassword,
+  type PasswordHashScheme,
+} from './password/password.service';
 
 const dummyPasswordHash =
-  '$2b$12$R9h/cIPz0gi.URNNX3kh2OPST9/PgBkqquzi.Ss7KIUgO2t0jWMUW';
+  '$vulcan$argon2id$v=1$m=19456,t=2,p=1,l=32$AAECAwQFBgcICQoLDA0ODw$DC0uxfOnxsyo6hd1XhvappBgPe5mVsW9ymOa3b4sh7w';
+
+type AuthenticatedUser = {
+  email: string;
+  id: string;
+  name: string | null;
+  passwordHash: string;
+  preferences: {
+    locale: string;
+  } | null;
+};
+
+type RateLimitContext = Awaited<ReturnType<typeof consumeAuthRateLimit>>;
 
 function getCredentialString(
   credentials: Partial<Record<'email' | 'password', unknown>>,
@@ -18,6 +38,91 @@ function getCredentialString(
   const value = credentials[key];
 
   return typeof value === 'string' ? value : '';
+}
+
+function getPasswordEventMetadata({
+  rateLimit,
+  scheme,
+  userId,
+}: {
+  rateLimit: RateLimitContext;
+  scheme: PasswordHashScheme;
+  userId: string;
+}) {
+  return {
+    accountFingerprint: rateLimit.accountFingerprint,
+    ipFingerprint: rateLimit.context.ipFingerprint,
+    requestId: rateLimit.context.requestId,
+    sourceScheme: scheme,
+    userId,
+  };
+}
+
+async function upgradePasswordHash({
+  password,
+  rateLimit,
+  scheme,
+  user,
+}: {
+  password: string;
+  rateLimit: RateLimitContext;
+  scheme: PasswordHashScheme;
+  user: AuthenticatedUser;
+}) {
+  const metadata = getPasswordEventMetadata({
+    rateLimit,
+    scheme,
+    userId: user.id,
+  });
+  let passwordHash: string;
+
+  try {
+    passwordHash = await hashPassword(password);
+  } catch (error) {
+    if (error instanceof PasswordPolicyError) {
+      recordAuthSecurityEvent('auth.password.rehash_skipped', {
+        ...metadata,
+        reason: 'policy_ineligible',
+      });
+      return;
+    }
+
+    recordAuthSecurityEvent('auth.password.rehash_failed', {
+      ...metadata,
+      reason:
+        error instanceof PasswordHashingUnavailableError
+          ? 'hashing_unavailable'
+          : 'hashing_failed',
+    });
+    return;
+  }
+
+  try {
+    const result = await prisma.user.updateMany({
+      where: {
+        id: user.id,
+        passwordHash: user.passwordHash,
+      },
+      data: {
+        passwordHash,
+      },
+    });
+
+    if (result.count !== 1) {
+      recordAuthSecurityEvent('auth.password.rehash_skipped', {
+        ...metadata,
+        reason: 'concurrent_hash_change',
+      });
+      return;
+    }
+
+    recordAuthSecurityEvent('auth.password.rehash_succeeded', metadata);
+  } catch {
+    recordAuthSecurityEvent('auth.password.rehash_failed', {
+      ...metadata,
+      reason: 'persistence_failed',
+    });
+  }
 }
 
 export async function authorizeCredentials(
@@ -75,12 +180,16 @@ export async function authorizeCredentials(
     },
   });
 
-  const passwordMatches = await bcrypt.compare(
+  const verification = await verifyPassword(
     parsed.data.password,
     user?.passwordHash ?? dummyPasswordHash,
   );
 
-  if (!user || !passwordMatches) {
+  if (user && verification.scheme === 'unknown') {
+    await verifyPassword(parsed.data.password, dummyPasswordHash);
+  }
+
+  if (!user || !verification.valid) {
     recordAuthSecurityEvent('auth.login.rejected', {
       accountFingerprint: rateLimit.accountFingerprint,
       ipFingerprint: rateLimit.context.ipFingerprint,
@@ -91,6 +200,15 @@ export async function authorizeCredentials(
     return null;
   }
 
+  if (verification.needsRehash) {
+    await upgradePasswordHash({
+      password: parsed.data.password,
+      rateLimit,
+      scheme: verification.scheme,
+      user,
+    });
+  }
+
   await resetAuthAccountRateLimit({
     accountIdentifier: parsed.data.email,
     operation: 'login',
@@ -99,6 +217,7 @@ export async function authorizeCredentials(
   recordAuthSecurityEvent('auth.login.succeeded', {
     accountFingerprint: rateLimit.accountFingerprint,
     ipFingerprint: rateLimit.context.ipFingerprint,
+    passwordScheme: verification.scheme,
     requestId: rateLimit.context.requestId,
     userId: user.id,
   });
