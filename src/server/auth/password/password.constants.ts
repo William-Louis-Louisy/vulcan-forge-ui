@@ -34,8 +34,7 @@ export const ARGON2ID_ACCEPTED_BOUNDS = {
   },
 } as const;
 
-export const PWNED_PASSWORDS_RANGE_URL =
-  'https://api.pwnedpasswords.com/range';
+export const PWNED_PASSWORDS_RANGE_URL = 'https://api.pwnedpasswords.com/range';
 export const PWNED_PASSWORDS_TIMEOUT_MS = 4_000;
 export const PWNED_PASSWORDS_MAX_RESPONSE_BYTES = 256_000;
 export const PWNED_PASSWORDS_USER_AGENT = 'VulcanForgeUI-PasswordSecurity';
