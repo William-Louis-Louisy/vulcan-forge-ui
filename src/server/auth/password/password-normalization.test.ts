@@ -2,7 +2,7 @@ import {
   PASSWORD_MAX_CODE_POINTS,
   PASSWORD_MIN_CODE_POINTS,
 } from './password.constants';
-import { PasswordPolicyError } from './password.errors';
+import type { PasswordPolicyError } from './password.errors';
 import {
   assertPasswordMeetsPolicy,
   countPasswordCodePoints,
@@ -54,11 +54,12 @@ describe('password normalization and policy', () => {
   });
 
   it('rejects malformed Unicode containing lone surrogates', () => {
-    expect(() => normalizePassword(`valid prefix ${String.fromCharCode(0xd800)}`))
-      .toThrowError(
-        expect.objectContaining<Partial<PasswordPolicyError>>({
-          violation: 'invalid_unicode',
-        }),
-      );
+    expect(() =>
+      normalizePassword(`valid prefix ${String.fromCharCode(0xd800)}`),
+    ).toThrowError(
+      expect.objectContaining<Partial<PasswordPolicyError>>({
+        violation: 'invalid_unicode',
+      }),
+    );
   });
 });
