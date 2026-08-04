@@ -11,6 +11,8 @@ export type SignupActionState = {
   fieldErrors: Partial<Record<SignupField, SignupValidationMessageKey[]>>;
   formError:
     | 'accountCreatedSignInFailed'
+    | 'passwordCheckUnavailable'
+    | 'passwordHashingUnavailable'
     | 'rateLimited'
     | 'signupUnavailable'
     | 'unexpected'
