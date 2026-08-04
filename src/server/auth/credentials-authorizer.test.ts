@@ -1,23 +1,21 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { PasswordPolicyError } from './password/password.errors';
 
 const mocks = vi.hoisted(() => ({
-  compare: vi.fn(),
   consumeRateLimit: vi.fn(),
   findUser: vi.fn(),
+  hashPassword: vi.fn(),
   recordEvent: vi.fn(),
   resetRateLimit: vi.fn(),
-}));
-
-vi.mock('bcryptjs', () => ({
-  default: {
-    compare: mocks.compare,
-  },
+  updateMany: vi.fn(),
+  verifyPassword: vi.fn(),
 }));
 
 vi.mock('@/server/db/prisma', () => ({
   prisma: {
     user: {
       findUnique: mocks.findUser,
+      updateMany: mocks.updateMany,
     },
   },
 }));
@@ -29,6 +27,11 @@ vi.mock('./auth-rate-limit', () => ({
 
 vi.mock('./auth-security-events', () => ({
   recordAuthSecurityEvent: mocks.recordEvent,
+}));
+
+vi.mock('./password/password.service', () => ({
+  hashPassword: mocks.hashPassword,
+  verifyPassword: mocks.verifyPassword,
 }));
 
 import { RateLimitedCredentialsError } from './auth-errors';
@@ -44,16 +47,37 @@ const allowedRateLimit = {
   retryAfterSeconds: 0,
 };
 
+const user = {
+  id: 'user-1',
+  name: 'William',
+  email: 'user@example.com',
+  passwordHash: 'stored-hash',
+  preferences: {
+    locale: 'fr',
+  },
+};
+
 beforeEach(() => {
   vi.clearAllMocks();
   mocks.consumeRateLimit.mockResolvedValue(allowedRateLimit);
   mocks.resetRateLimit.mockResolvedValue(undefined);
+  mocks.updateMany.mockResolvedValue({ count: 1 });
+  mocks.hashPassword.mockResolvedValue('argon2id-hash');
+  mocks.verifyPassword.mockResolvedValue({
+    needsRehash: false,
+    scheme: 'argon2id',
+    valid: true,
+  });
 });
 
 describe('authorizeCredentials', () => {
-  it('performs a dummy password comparison when the account does not exist', async () => {
+  it('performs an Argon2id dummy verification when the account does not exist', async () => {
     mocks.findUser.mockResolvedValue(null);
-    mocks.compare.mockResolvedValue(false);
+    mocks.verifyPassword.mockResolvedValue({
+      needsRehash: false,
+      scheme: 'argon2id',
+      valid: false,
+    });
 
     const result = await authorizeCredentials(
       {
@@ -64,9 +88,9 @@ describe('authorizeCredentials', () => {
     );
 
     expect(result).toBeNull();
-    expect(mocks.compare).toHaveBeenCalledWith(
+    expect(mocks.verifyPassword).toHaveBeenCalledWith(
       'candidate-password',
-      expect.stringMatching(/^\$2b\$12\$/),
+      expect.stringMatching(/^\$vulcan\$argon2id\$v=1\$/),
     );
   });
 
@@ -88,20 +112,11 @@ describe('authorizeCredentials', () => {
     ).rejects.toBeInstanceOf(RateLimitedCredentialsError);
 
     expect(mocks.findUser).not.toHaveBeenCalled();
-    expect(mocks.compare).not.toHaveBeenCalled();
+    expect(mocks.verifyPassword).not.toHaveBeenCalled();
   });
 
   it('returns the authenticated user and resets the account bucket', async () => {
-    mocks.findUser.mockResolvedValue({
-      id: 'user-1',
-      name: 'William',
-      email: 'user@example.com',
-      passwordHash: 'stored-hash',
-      preferences: {
-        locale: 'fr',
-      },
-    });
-    mocks.compare.mockResolvedValue(true);
+    mocks.findUser.mockResolvedValue(user);
 
     const result = await authorizeCredentials(
       {
@@ -117,9 +132,103 @@ describe('authorizeCredentials', () => {
       email: 'user@example.com',
       locale: 'fr',
     });
+    expect(mocks.verifyPassword).toHaveBeenCalledWith(
+      'candidate-password',
+      'stored-hash',
+    );
     expect(mocks.resetRateLimit).toHaveBeenCalledWith({
       accountIdentifier: 'user@example.com',
       operation: 'login',
     });
+  });
+
+  it('migrates a valid legacy bcrypt hash with a conditional update', async () => {
+    mocks.findUser.mockResolvedValue(user);
+    mocks.verifyPassword.mockResolvedValue({
+      needsRehash: true,
+      scheme: 'bcrypt',
+      valid: true,
+    });
+
+    const result = await authorizeCredentials(
+      {
+        email: 'user@example.com',
+        password: 'candidate-password',
+      },
+      new Request('https://example.com/api/auth/callback/credentials'),
+    );
+
+    expect(result?.id).toBe('user-1');
+    expect(mocks.hashPassword).toHaveBeenCalledWith('candidate-password');
+    expect(mocks.updateMany).toHaveBeenCalledWith({
+      where: {
+        id: 'user-1',
+        passwordHash: 'stored-hash',
+      },
+      data: {
+        passwordHash: 'argon2id-hash',
+      },
+    });
+    expect(mocks.recordEvent).toHaveBeenCalledWith(
+      'auth.password.rehash_succeeded',
+      expect.objectContaining({
+        sourceScheme: 'bcrypt',
+        userId: 'user-1',
+      }),
+    );
+  });
+
+  it('does not block login when a legacy password is ineligible for rehashing', async () => {
+    mocks.findUser.mockResolvedValue(user);
+    mocks.verifyPassword.mockResolvedValue({
+      needsRehash: true,
+      scheme: 'bcrypt',
+      valid: true,
+    });
+    mocks.hashPassword.mockRejectedValue(new PasswordPolicyError('too_short'));
+
+    const result = await authorizeCredentials(
+      {
+        email: 'user@example.com',
+        password: 'short-legacy',
+      },
+      new Request('https://example.com/api/auth/callback/credentials'),
+    );
+
+    expect(result?.id).toBe('user-1');
+    expect(mocks.updateMany).not.toHaveBeenCalled();
+    expect(mocks.recordEvent).toHaveBeenCalledWith(
+      'auth.password.rehash_skipped',
+      expect.objectContaining({ reason: 'policy_ineligible' }),
+    );
+  });
+
+  it('adds dummy work for an unknown stored hash before rejecting credentials', async () => {
+    mocks.findUser.mockResolvedValue(user);
+    mocks.verifyPassword
+      .mockResolvedValueOnce({
+        needsRehash: false,
+        scheme: 'unknown',
+        valid: false,
+      })
+      .mockResolvedValueOnce({
+        needsRehash: false,
+        scheme: 'argon2id',
+        valid: false,
+      });
+
+    const result = await authorizeCredentials(
+      {
+        email: 'user@example.com',
+        password: 'candidate-password',
+      },
+      new Request('https://example.com/api/auth/callback/credentials'),
+    );
+
+    expect(result).toBeNull();
+    expect(mocks.verifyPassword).toHaveBeenCalledTimes(2);
+    expect(mocks.verifyPassword.mock.calls[1]?.[1]).toMatch(
+      /^\$vulcan\$argon2id\$v=1\$/,
+    );
   });
 });
