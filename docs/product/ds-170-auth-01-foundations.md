@@ -6,7 +6,7 @@
 | -------------------- | ------------------------------------------------- |
 | Parent audit         | `docs/product/ds-170-auth-signup-signin-audit.md` |
 | Branch               | `feature/ds-170-auth-01-foundations`              |
-| Status               | Automated validation complete — manual QA pending |
+| Status               | Ready for review — automated and local QA complete |
 | Primary findings     | AUTH-01, AUTH-03, AUTH-05, AUTH-08, AUTH-09       |
 | Transversal findings | AUTH-16, AUTH-17, AUTH-21                         |
 
@@ -201,11 +201,15 @@ The Quality workflow now starts PostgreSQL 17, applies every Prisma migration wi
 - a successful authentication removes the account bucket;
 - persisted bucket keys do not contain the raw account identifier.
 
-The same workflow then validates lint, strict TypeScript, formatting, the UI audit, the complete Vitest suite and the production build. Automated validation is complete; the remaining release gate for this slice is manual product QA.
+The same workflow then validates lint, strict TypeScript, formatting, the UI audit, the complete Vitest suite and the production build. Automated validation is complete.
+
+A local rerun of the dedicated PostgreSQL integration suite also passed with three tests on 4 August 2026.
 
 ---
 
 ## Manual QA checklist
+
+Local product QA was approved on 4 August 2026.
 
 ### Prerequisites
 
@@ -218,24 +222,26 @@ npm run dev
 
 ### Login
 
-- [ ] Valid credentials still redirect to the application.
-- [ ] Invalid email/password combinations show the same generic credentials message.
-- [ ] A nonexistent account shows the same visible message as a wrong password.
-- [ ] Repeated failed attempts eventually show the cooldown message.
-- [ ] A successful login clears the account cooldown state.
-- [ ] An unexpected Auth.js failure shows a retryable unexpected-error message.
-- [ ] Security logs contain no raw email, IP address or password.
+- [x] Valid credentials still redirect to the application.
+- [x] Invalid email/password combinations show the same generic credentials message.
+- [x] A nonexistent account shows the same visible message as a wrong password.
+- [x] Repeated failed attempts eventually show the cooldown message.
+- [x] A successful login clears the account cooldown state.
+- [ ] An unexpected Auth.js failure shows a retryable unexpected-error message. Covered automatically; not forced manually.
+- [x] Security logs contain no raw email, IP address or password.
 
 ### Signup
 
-- [ ] A valid signup creates one user, one personal workspace and one owner membership.
-- [ ] Repeated attempts eventually show the signup cooldown message.
-- [ ] Submitting the same email concurrently creates only one account graph.
-- [ ] Duplicate signup uses the neutral unavailable message.
-- [ ] A simulated automatic-sign-in failure leaves the account usable through login.
-- [ ] Password values are never restored after an error.
+- [x] A valid signup creates one user, one personal workspace and one owner membership in French and English.
+- [x] Repeated attempts eventually show the signup cooldown message.
+- [ ] Submitting the same email concurrently creates only one account graph. Covered by automated persistence tests.
+- [x] Duplicate signup uses the neutral unavailable message.
+- [ ] A simulated automatic-sign-in failure leaves the account usable through login. Covered by the signup action test.
+- [x] Password values are never restored after an error.
 
 ### Deployment
+
+These checks remain part of deployment acceptance rather than the local product QA gate:
 
 - [ ] Vercel deployment reads the overwritten client-address header.
 - [ ] A self-hosted deployment without trusted-proxy configuration ignores spoofed forwarding headers.
