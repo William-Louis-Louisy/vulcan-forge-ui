@@ -11,10 +11,7 @@ type NodeArgon2Parameters = {
   tagLength: number;
 };
 
-type NodeArgon2Callback = (
-  error: Error | null,
-  derivedKey?: Buffer,
-) => void;
+type NodeArgon2Callback = (error: Error | null, derivedKey?: Buffer) => void;
 
 type NodeArgon2Function = (
   algorithm: 'argon2id',
