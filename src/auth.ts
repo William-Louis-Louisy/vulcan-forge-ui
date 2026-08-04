@@ -1,8 +1,6 @@
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
-import bcrypt from 'bcryptjs';
-import { prisma } from '@/server/db/prisma';
-import { loginSchema } from '@/features/auth/login/login.schema';
+import { authorizeCredentials } from '@/server/auth/credentials-authorizer';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: {
@@ -20,50 +18,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           type: 'password',
         },
       },
-      async authorize(credentials) {
-        const parsed = loginSchema.safeParse(credentials);
-
-        if (!parsed.success) {
-          return null;
-        }
-
-        const user = await prisma.user.findUnique({
-          where: {
-            email: parsed.data.email,
-          },
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            passwordHash: true,
-            preferences: {
-              select: {
-                locale: true,
-              },
-            },
-          },
-        });
-
-        if (!user) {
-          return null;
-        }
-
-        const passwordMatches = await bcrypt.compare(
-          parsed.data.password,
-          user.passwordHash,
-        );
-
-        if (!passwordMatches) {
-          return null;
-        }
-
-        return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          locale: user.preferences?.locale ?? 'en',
-        };
-      },
+      authorize: authorizeCredentials,
     }),
   ],
   callbacks: {

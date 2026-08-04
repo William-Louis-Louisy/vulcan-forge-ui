@@ -16,10 +16,25 @@ jobs:
   quality:
     name: Quality checks
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
 
     permissions:
       contents: read
+
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: vulcan
+          POSTGRES_PASSWORD: vulcan_dev_password
+          POSTGRES_DB: vulcan_forge_ui
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U vulcan -d vulcan_forge_ui"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     env:
       DATABASE_URL: postgresql://vulcan:vulcan_dev_password@localhost:5432/vulcan_forge_ui?schema=public
@@ -39,6 +54,17 @@ jobs:
 
       - name: Generate Prisma Client
         run: npm run db:generate
+
+      - name: Apply database migrations
+        run: npm run db:migrate:deploy
+
+      - name: Run authentication database integration tests
+        run: npm run test:auth-integration
+        env:
+          RUN_AUTH_DATABASE_TESTS: 'true'
+          AUTH_RATE_LIMIT_SECRET: integration-rate-limit-secret
+          AUTH_TRUST_PROXY_HEADERS: 'false'
+          AUTH_RATE_LIMIT_FAIL_OPEN: 'false'
 
       - name: Run lint
         run: npm run lint
