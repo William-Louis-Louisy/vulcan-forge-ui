@@ -2,7 +2,7 @@
 
 ## Status
 
-Implementation complete. Automated validation and manual product QA remain required before the pull request leaves Draft.
+Implementation and automated validation are complete. Manual product QA remains required before the pull request leaves Draft.
 
 ## Objective
 
