@@ -2,13 +2,13 @@
 
 ## Metadata
 
-| Field                | Value                                             |
-| -------------------- | ------------------------------------------------- |
-| Parent audit         | `docs/product/ds-170-auth-signup-signin-audit.md` |
-| Branch               | `feature/ds-170-auth-01-foundations`              |
+| Field                | Value                                              |
+| -------------------- | -------------------------------------------------- |
+| Parent audit         | `docs/product/ds-170-auth-signup-signin-audit.md`  |
+| Branch               | `feature/ds-170-auth-01-foundations`               |
 | Status               | Ready for review — automated and local QA complete |
-| Primary findings     | AUTH-01, AUTH-03, AUTH-05, AUTH-08, AUTH-09       |
-| Transversal findings | AUTH-16, AUTH-17, AUTH-21                         |
+| Primary findings     | AUTH-01, AUTH-03, AUTH-05, AUTH-08, AUTH-09        |
+| Transversal findings | AUTH-16, AUTH-17, AUTH-21                          |
 
 ---
 
