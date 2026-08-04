@@ -2,7 +2,7 @@
 
 ## Status
 
-Implementation and automated validation are complete. Manual product QA remains required before the pull request leaves Draft.
+Implementation and automated validation are complete. Quality run #1023 passed on commit `7f49ba4`. Manual product QA remains required before the pull request leaves Draft.
 
 ## Objective
 
