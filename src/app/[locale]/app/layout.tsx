@@ -1,11 +1,12 @@
-import { authForEmailVerification } from '@/auth';
+import { auth } from '@/auth';
 import { hasLocale } from 'next-intl';
 import type { ReactNode } from 'react';
-import { routing } from '@/i18n/routing';
 import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
 import { AppShell } from '@/components/layout/AppShell';
+import { EmailVerificationBanner } from '@/features/auth/email-verification/EmailVerificationBanner';
 import { getAppShellData } from '@/features/app-navigation/app-shell.queries';
+import { routing, type Locale } from '@/i18n/routing';
 import { prisma } from '@/server/db/prisma';
 
 type AppLayoutProps = {
@@ -22,36 +23,32 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
     notFound();
   }
 
-  const session = await authForEmailVerification();
+  const locale = requestedLocale as Locale;
+  const session = await auth();
 
   if (!session?.user) {
-    redirect(`/${requestedLocale}/login?reason=authentication-required`);
+    redirect(`/${locale}/login?reason=authentication-required`);
   }
 
-  const user = await prisma.user.findUnique({
-    where: {
-      id: session.user.id,
-    },
-    select: {
-      emailVerifiedAt: true,
-    },
-  });
-
-  if (!user) {
-    redirect(`/${requestedLocale}/login?reason=authentication-required`);
-  }
-
-  if (!user.emailVerifiedAt) {
-    redirect(`/${requestedLocale}/verify-email`);
-  }
-
-  const [t, appShellData] = await Promise.all([
+  const [user, t, appShellData] = await Promise.all([
+    prisma.user.findUnique({
+      where: {
+        id: session.user.id,
+      },
+      select: {
+        emailVerifiedAt: true,
+      },
+    }),
     getTranslations({
-      locale: requestedLocale,
+      locale,
       namespace: 'AppShell',
     }),
     getAppShellData(session.user.id),
   ]);
+
+  if (!user) {
+    redirect(`/${locale}/login?reason=authentication-required`);
+  }
 
   return (
     <AppShell
@@ -85,6 +82,9 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
         },
       }}
     >
+      {!user.emailVerifiedAt ? (
+        <EmailVerificationBanner locale={locale} />
+      ) : null}
       {children}
     </AppShell>
   );
