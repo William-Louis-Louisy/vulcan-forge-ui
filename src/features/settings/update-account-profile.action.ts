@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
 
 import { auth, signOut } from '@/auth';
+import { recordAuthSecurityEvent } from '@/server/auth/auth-security-events';
 import { prisma } from '@/server/db/prisma';
 import { sendEmailVerificationChallenge } from '@/server/auth/email-verification/send-email-verification.service';
 import { verifyPassword } from '@/server/auth/password/password.service';
@@ -170,6 +171,10 @@ export async function updateAccountProfileAction(
         userId: session.user.id,
       });
     } catch {
+      recordAuthSecurityEvent('auth.email_verification.unexpected_error', {
+        reason: 'email_change_delivery',
+        userId: session.user.id,
+      });
       // The next authenticated request is gated by the verification page, where
       // the user can retry delivery without losing the completed email change.
     }
