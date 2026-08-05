@@ -1,0 +1,228 @@
+name: Apply email verification metadata
+
+on:
+  push:
+    branches:
+      - feature/ds-170-auth-03-email-verification
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-email-verification-metadata-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          ref: feature/ds-170-auth-03-email-verification
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Add localized email verification messages
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+
+          const messages = {
+            en: {
+              eyebrow: 'Email verification',
+              accountEmail: 'Verification is required for {email}.',
+              actions: {
+                continue: 'Continue to your workspace',
+                resend: 'Send another verification email',
+                resending: 'Sending verification email...',
+                signIn: 'Sign in to continue',
+              },
+              delivery: {
+                deliveryUnavailable:
+                  "Your account was created, but we couldn't send the verification email. Try again below.",
+                rateLimited:
+                  'Your account was created. Please wait before requesting another verification email.',
+                sent: 'A verification email has been sent. Check your inbox and spam folder.',
+              },
+              feedback: {
+                alreadyVerified: 'Your email address is already verified.',
+                deliveryUnavailable:
+                  "We couldn't send the verification email. Please try again later.",
+                rateLimited:
+                  'Too many verification emails were requested. Please wait before trying again.',
+                sent: 'A new verification email has been sent.',
+                unauthorized: 'Sign in before requesting another verification email.',
+                unexpected:
+                  "We couldn't process this request. Please try again later.",
+              },
+              states: {
+                alreadyVerified: {
+                  title: 'Your email is already verified.',
+                  description:
+                    'No further action is required. You can continue to your workspace.',
+                },
+                expired: {
+                  title: 'This verification link has expired.',
+                  description:
+                    'Verification links last 30 minutes. Request a new email to continue.',
+                },
+                invalid: {
+                  title: 'This verification link is invalid.',
+                  description:
+                    'The link may have already been used or replaced. Request a new email to continue.',
+                },
+                pending: {
+                  title: 'Check your inbox.',
+                  description:
+                    'Verify your email address before accessing your VulcanForgeUI workspace. The link expires after 30 minutes.',
+                },
+                verified: {
+                  title: 'Your email address is verified.',
+                  description:
+                    'Your account is active and your workspace is ready.',
+                },
+              },
+            },
+            fr: {
+              eyebrow: 'Vérification de l’adresse e-mail',
+              accountEmail: 'La vérification est requise pour {email}.',
+              actions: {
+                continue: 'Accéder à votre espace',
+                resend: 'Renvoyer un e-mail de vérification',
+                resending: 'Envoi de l’e-mail de vérification...',
+                signIn: 'Se connecter pour continuer',
+              },
+              delivery: {
+                deliveryUnavailable:
+                  'Votre compte a été créé, mais l’e-mail de vérification n’a pas pu être envoyé. Réessayez ci-dessous.',
+                rateLimited:
+                  'Votre compte a été créé. Patientez avant de demander un nouvel e-mail de vérification.',
+                sent: 'Un e-mail de vérification a été envoyé. Consultez votre boîte de réception et vos courriers indésirables.',
+              },
+              feedback: {
+                alreadyVerified: 'Votre adresse e-mail est déjà vérifiée.',
+                deliveryUnavailable:
+                  'L’e-mail de vérification n’a pas pu être envoyé. Veuillez réessayer plus tard.',
+                rateLimited:
+                  'Trop d’e-mails de vérification ont été demandés. Patientez avant de réessayer.',
+                sent: 'Un nouvel e-mail de vérification a été envoyé.',
+                unauthorized:
+                  'Connectez-vous avant de demander un nouvel e-mail de vérification.',
+                unexpected:
+                  'Cette demande n’a pas pu être traitée. Veuillez réessayer plus tard.',
+              },
+              states: {
+                alreadyVerified: {
+                  title: 'Votre adresse e-mail est déjà vérifiée.',
+                  description:
+                    'Aucune autre action n’est nécessaire. Vous pouvez accéder à votre espace.',
+                },
+                expired: {
+                  title: 'Ce lien de vérification a expiré.',
+                  description:
+                    'Les liens de vérification sont valables 30 minutes. Demandez un nouvel e-mail pour continuer.',
+                },
+                invalid: {
+                  title: 'Ce lien de vérification est invalide.',
+                  description:
+                    'Le lien a peut-être déjà été utilisé ou remplacé. Demandez un nouvel e-mail pour continuer.',
+                },
+                pending: {
+                  title: 'Consultez votre boîte de réception.',
+                  description:
+                    'Vérifiez votre adresse e-mail avant d’accéder à votre espace VulcanForgeUI. Le lien expire après 30 minutes.',
+                },
+                verified: {
+                  title: 'Votre adresse e-mail est vérifiée.',
+                  description:
+                    'Votre compte est actif et votre espace est prêt.',
+                },
+              },
+            },
+          };
+
+          for (const [locale, emailVerificationMessages] of Object.entries(messages)) {
+            const path = `src/messages/${locale}.json`;
+            const content = JSON.parse(fs.readFileSync(path, 'utf8'));
+            content.EmailVerificationPage = emailVerificationMessages;
+            fs.writeFileSync(path, `${JSON.stringify(content, null, 2)}\n`);
+          }
+          NODE
+
+      - name: Document email verification setup
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = 'README.md';
+          let readme = fs.readFileSync(path, 'utf8');
+          const heading = '## Email verification';
+
+          if (!readme.includes(heading)) {
+            readme += `
+
+${heading}
+
+New accounts and changed email addresses must be verified before application access. Verification links are single-use, expire after 30 minutes, and only a SHA-256 token hash is stored in PostgreSQL.
+
+Delivery uses the Resend HTTP API. Configure \\`RESEND_API_KEY\\`, \\`AUTH_EMAIL_FROM\\`, and \\`AUTH_EMAIL_BASE_URL\\` from \\`.env.example\\`. The sending address must use a verified Resend domain, and the production base URL must use HTTPS.
+`;
+            fs.writeFileSync(path, readme);
+          }
+          NODE
+
+      - name: Format generated metadata and sources
+        run: |
+          npx prisma format
+          npx prettier \
+            .env.example \
+            README.md \
+            package.json \
+            prisma/migrations/20260805133000_add_email_verification_tokens/migration.sql \
+            src/app/api/auth/verify-email/route.ts \
+            'src/app/[locale]/(public)/verify-email/page.tsx' \
+            'src/app/[locale]/app/layout.tsx' \
+            src/features/auth/email-verification/ResendEmailVerificationForm.tsx \
+            src/features/auth/email-verification/resend-email-verification.action.ts \
+            src/features/auth/email-verification/resend-email-verification.action.test.ts \
+            src/features/auth/email-verification/resend-email-verification.state.ts \
+            src/features/auth/signup/signup.action.ts \
+            src/features/auth/signup/signup.action.test.ts \
+            src/features/settings/update-account-profile.action.ts \
+            src/features/settings/update-account-profile.action.test.ts \
+            src/messages/en.json \
+            src/messages/fr.json \
+            src/server/auth/auth-rate-limit.ts \
+            src/server/auth/auth-security-events.ts \
+            src/server/auth/email-verification/email-verification.constants.ts \
+            src/server/auth/email-verification/email-verification-email.ts \
+            src/server/auth/email-verification/email-verification-email.test.ts \
+            src/server/auth/email-verification/email-verification.errors.ts \
+            src/server/auth/email-verification/email-verification.integration.test.ts \
+            src/server/auth/email-verification/email-verification-token.ts \
+            src/server/auth/email-verification/email-verification-token.test.ts \
+            src/server/auth/email-verification/email-verification.service.ts \
+            src/server/auth/email-verification/send-email-verification.service.ts \
+            --write
+
+      - name: Commit metadata updates
+        run: |
+          git rm .github/workflows/apply-email-verification-metadata.yml
+          if git diff --cached --quiet && git diff --quiet; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "chore(auth): format and localize email verification"
+          git push origin HEAD:feature/ds-170-auth-03-email-verification
