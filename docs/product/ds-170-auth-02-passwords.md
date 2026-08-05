@@ -2,7 +2,7 @@
 
 ## Status
 
-Implementation and automated validation are complete. Quality run #1023 passed on commit `7f49ba4`. Manual product QA remains required before the pull request leaves Draft.
+Implementation, automated validation and manual product QA are complete. Quality run #1024 passed on commit `2e3fb1a`; the full manual checklist was validated on 2026-08-05. The pull request may now leave Draft when the maintainer chooses.
 
 ## Objective
 
@@ -117,31 +117,31 @@ Focused tests cover:
 
 ### New signup
 
-- [ ] A 14-character password is rejected with the localized minimum-length message.
-- [ ] A 15-character password is accepted when it is not present in the compromised-password corpus.
-- [ ] A password longer than 128 Unicode code points is rejected.
-- [ ] A passphrase containing spaces is accepted.
-- [ ] Canonically equivalent composed and decomposed Unicode values match in password confirmation.
-- [ ] A known compromised password is rejected before account creation.
-- [ ] Blocking access to `api.pwnedpasswords.com` produces the localized unavailable state and creates no account.
-- [ ] A successful account stores a hash beginning with `$vulcan$argon2id$` rather than `$2`.
-- [ ] Automatic sign-in still redirects the new account to the localized application route.
+- [x] A 14-character password is rejected with the localized minimum-length message.
+- [x] A 15-character password is accepted when it is not present in the compromised-password corpus.
+- [x] A password longer than 128 Unicode code points is rejected.
+- [x] A passphrase containing spaces is accepted.
+- [x] Canonically equivalent composed and decomposed Unicode values match in password confirmation.
+- [x] A known compromised password is rejected before account creation.
+- [x] Blocking access to `api.pwnedpasswords.com` produces the localized unavailable state and creates no account.
+- [x] A successful account stores a hash beginning with `$vulcan$argon2id$` rather than `$2`.
+- [x] Automatic sign-in still redirects the new account to the localized application route.
 
 ### Existing accounts
 
-- [ ] An existing bcrypt account can still sign in.
-- [ ] An eligible bcrypt hash changes to `$vulcan$argon2id$` after successful login.
-- [ ] A wrong password does not migrate the stored hash.
-- [ ] A legacy password below 15 characters can still sign in and emits `auth.password.rehash_skipped` with `policy_ineligible`.
-- [ ] An existing Argon2id account can sign in without rewriting a current hash.
-- [ ] An Argon2id account can confirm an email change with its current password.
-- [ ] An Argon2id account can confirm permanent account deletion with its current password.
+- [x] An existing bcrypt account can still sign in.
+- [x] An eligible bcrypt hash changes to `$vulcan$argon2id$` after successful login.
+- [x] A wrong password does not migrate the stored hash.
+- [x] A legacy password below 15 characters can still sign in and emits `auth.password.rehash_skipped` with `policy_ineligible`.
+- [x] An existing Argon2id account can sign in without rewriting a current hash.
+- [x] An Argon2id account can confirm an email change with its current password.
+- [x] An Argon2id account can confirm permanent account deletion with its current password.
 
 ### Logging and privacy
 
-- [ ] Successful migration emits `auth.password.rehash_succeeded`.
-- [ ] Migration failure or a lost conditional update does not block login.
-- [ ] Logs contain no raw password, raw email, raw IP address, password hash, salt, derived key or session token.
+- [x] Successful migration emits `auth.password.rehash_succeeded`.
+- [x] Migration failure or a lost conditional update does not block login.
+- [x] Logs contain no raw password, raw email, raw IP address, password hash, salt, derived key or session token.
 
 ## Known boundaries
 
