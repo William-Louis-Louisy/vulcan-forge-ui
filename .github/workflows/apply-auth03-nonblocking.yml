@@ -1,0 +1,68 @@
+name: Apply AUTH-03 non-blocking policy
+
+on:
+  push:
+    branches:
+      - feature/ds-170-auth-03-email-verification
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v6
+        with:
+          ref: feature/ds-170-auth-03-email-verification
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Apply approved policy
+        run: node scripts/apply-auth03-nonblocking.mjs
+
+      - name: Format changed files
+        run: |
+          npx prettier --write \
+            ".env.example" \
+            "README.md" \
+            "compose.yml" \
+            "docs/product/ds-170-auth-03-email-verification.md" \
+            "package.json" \
+            "src/app/[locale]/app/layout.tsx" \
+            "src/app/[locale]/(public)/verify-email/page.tsx" \
+            "src/app/api/auth/verify-email/route.test.ts" \
+            "src/auth.ts" \
+            "src/auth.test.ts" \
+            "src/features/auth/email-verification/EmailVerificationBanner.tsx" \
+            "src/features/auth/email-verification/EmailVerificationBanner.test.tsx" \
+            "src/features/auth/signup/signup.action.ts" \
+            "src/features/auth/signup/signup.action.test.ts" \
+            "src/messages/en.json" \
+            "src/messages/fr.json" \
+            "src/server/auth/email-verification/email-verification-email.ts" \
+            "src/server/auth/email-verification/email-verification-email.test.ts" \
+            "src/server/auth/email-verification/email-verification.constants.ts"
+
+      - name: Remove temporary files
+        run: |
+          rm scripts/apply-auth03-nonblocking.mjs
+          rm .github/workflows/apply-auth03-nonblocking.yml
+
+      - name: Commit applied policy
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "fix(auth): keep email verification non-blocking"
+          git push origin HEAD:feature/ds-170-auth-03-email-verification
