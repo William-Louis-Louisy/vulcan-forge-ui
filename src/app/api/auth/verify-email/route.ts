@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import { defaultAppLocale, isAppLocale } from '@/domain/i18n';
 import { recordAuthSecurityEvent } from '@/server/auth/auth-security-events';
 import {
@@ -25,7 +26,10 @@ function createStatusRedirect({
   request: NextRequest;
   status: string;
 }) {
-  const redirectUrl = new URL(`/${locale}/verify-email`, request.nextUrl.origin);
+  const redirectUrl = new URL(
+    `/${locale}/verify-email`,
+    request.nextUrl.origin,
+  );
   redirectUrl.searchParams.set('status', status);
 
   const response = NextResponse.redirect(redirectUrl, 303);

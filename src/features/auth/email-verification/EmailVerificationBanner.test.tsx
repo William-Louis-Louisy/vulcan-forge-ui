@@ -26,9 +26,7 @@ describe('EmailVerificationBanner', () => {
     expect(
       screen.getByText(/you can keep using your workspace/i),
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: /resend email/i }),
-    ).toBeEnabled();
+    expect(screen.getByRole('button', { name: /resend email/i })).toBeEnabled();
     expect(
       screen.getByText('Workspace content remains available.'),
     ).toBeInTheDocument();
