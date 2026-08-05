@@ -6,6 +6,7 @@ import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
 import { AppShell } from '@/components/layout/AppShell';
 import { getAppShellData } from '@/features/app-navigation/app-shell.queries';
+import { prisma } from '@/server/db/prisma';
 
 type AppLayoutProps = {
   children: ReactNode;
@@ -25,6 +26,23 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
 
   if (!session?.user) {
     redirect(`/${requestedLocale}/login?reason=authentication-required`);
+  }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: session.user.id,
+    },
+    select: {
+      emailVerifiedAt: true,
+    },
+  });
+
+  if (!user) {
+    redirect(`/${requestedLocale}/login?reason=authentication-required`);
+  }
+
+  if (!user.emailVerifiedAt) {
+    redirect(`/${requestedLocale}/verify-email`);
   }
 
   const [t, appShellData] = await Promise.all([
