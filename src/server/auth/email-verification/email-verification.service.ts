@@ -39,8 +39,12 @@ export async function createEmailVerificationChallenge({
   const id = randomUUID();
 
   const replacement = await prisma.$transaction(async (tx) => {
-    await tx.$queryRaw(Prisma.sql`
-      SELECT pg_advisory_xact_lock(hashtextextended(${userId}, 0))
+    await tx.$queryRaw<{ locked: boolean }[]>(Prisma.sql`
+      WITH advisory_lock AS MATERIALIZED (
+        SELECT pg_advisory_xact_lock(hashtextextended(${userId}, 0))
+      )
+      SELECT TRUE AS "locked"
+      FROM advisory_lock
     `);
 
     const previousChallenge = await tx.emailVerificationToken.findUnique({
