@@ -138,10 +138,10 @@ model User {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  preferences             UserPreference?
-  memberships             WorkspaceMember[]
-  ownedWorkspaces         Workspace[]              @relation("WorkspaceOwner")
-  emailVerificationTokens EmailVerificationToken[]
+  preferences           UserPreference?
+  memberships           WorkspaceMember[]
+  ownedWorkspaces       Workspace[]             @relation("WorkspaceOwner")
+  emailVerificationToken EmailVerificationToken?
 }
 
 model UserPreference {
