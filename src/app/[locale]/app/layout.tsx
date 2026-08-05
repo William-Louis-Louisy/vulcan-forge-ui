@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { authForEmailVerification } from '@/auth';
 import { hasLocale } from 'next-intl';
 import type { ReactNode } from 'react';
 import { routing } from '@/i18n/routing';
@@ -22,7 +22,7 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
     notFound();
   }
 
-  const session = await auth();
+  const session = await authForEmailVerification();
 
   if (!session?.user) {
     redirect(`/${requestedLocale}/login?reason=authentication-required`);
