@@ -30,17 +30,21 @@ describe('email verification route', () => {
   it('consumes the token and redirects without retaining it', async () => {
     const response = await GET(
       new Request(
-        'https://app.example.com/api/auth/verify-email?locale=fr&token=raw-token',
+        'https://app.example.com/api/auth/verify-email?locale=fr&token=opaque-value',
       ),
     );
 
-    expect(mocks.consumeToken).toHaveBeenCalledWith({ token: 'raw-token' });
+    expect(mocks.consumeToken).toHaveBeenCalledWith({
+      token: 'opaque-value',
+    });
     expect(response.status).toBe(303);
     expect(response.headers.get('Location')).toBe(
       'https://app.example.com/fr/verify-email?status=verified',
     );
-    expect(response.headers.get('Location')).not.toContain('raw-token');
-    expect(response.headers.get('Cache-Control')).toBe('no-store, max-age=0');
+    expect(response.headers.get('Location')).not.toContain('opaque-value');
+    expect(response.headers.get('Cache-Control')).toBe(
+      'no-store, max-age=0',
+    );
     expect(response.headers.get('Pragma')).toBe('no-cache');
     expect(response.headers.get('Referrer-Policy')).toBe('no-referrer');
     expect(mocks.recordEvent).toHaveBeenCalledWith(
@@ -54,7 +58,7 @@ describe('email verification route', () => {
 
     const response = await GET(
       new Request(
-        'https://app.example.com/api/auth/verify-email?locale=unknown&token=raw-token',
+        'https://app.example.com/api/auth/verify-email?locale=unknown&token=opaque-value',
       ),
     );
 
