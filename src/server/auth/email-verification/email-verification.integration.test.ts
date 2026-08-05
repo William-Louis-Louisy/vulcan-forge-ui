@@ -4,7 +4,7 @@ import type { PrismaClient } from '@/generated/prisma/client';
 import type {
   consumeEmailVerificationToken as ConsumeEmailVerificationToken,
   createEmailVerificationChallenge as CreateEmailVerificationChallenge,
-  rollbackEmailVerificationChallenge as RollbackEmailVerificationChallenge,
+  revokeEmailVerificationChallenge as RevokeEmailVerificationChallenge,
 } from './email-verification.service';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
@@ -15,7 +15,7 @@ const runDatabaseTests =
 let prisma: PrismaClient;
 let consumeEmailVerificationToken: typeof ConsumeEmailVerificationToken;
 let createEmailVerificationChallenge: typeof CreateEmailVerificationChallenge;
-let rollbackEmailVerificationChallenge: typeof RollbackEmailVerificationChallenge;
+let revokeEmailVerificationChallenge: typeof RevokeEmailVerificationChallenge;
 
 const testEmailSuffix = '@email-verification.integration.test';
 
@@ -44,8 +44,8 @@ describe.skipIf(!runDatabaseTests)(
         serviceModule.consumeEmailVerificationToken;
       createEmailVerificationChallenge =
         serviceModule.createEmailVerificationChallenge;
-      rollbackEmailVerificationChallenge =
-        serviceModule.rollbackEmailVerificationChallenge;
+      revokeEmailVerificationChallenge =
+        serviceModule.revokeEmailVerificationChallenge;
     });
 
     beforeEach(async () => {
@@ -138,22 +138,25 @@ describe.skipIf(!runDatabaseTests)(
       ).resolves.toBe(0);
     });
 
-    it('restores the previous challenge when replacement delivery fails', async () => {
-      const user = await createTestUser('delivery-rollback');
-      const deliveredChallenge = await createEmailVerificationChallenge({
+    it('revokes an undelivered replacement and invalidates both links', async () => {
+      const user = await createTestUser('delivery-revocation');
+      const previousChallenge = await createEmailVerificationChallenge({
         userId: user.id,
       });
       const failedReplacement = await createEmailVerificationChallenge({
         userId: user.id,
       });
 
-      await rollbackEmailVerificationChallenge(failedReplacement);
+      await revokeEmailVerificationChallenge({
+        id: failedReplacement.id,
+        userId: failedReplacement.userId,
+      });
 
       await expect(
-        consumeEmailVerificationToken({ token: deliveredChallenge.token }),
+        consumeEmailVerificationToken({ token: previousChallenge.token }),
       ).resolves.toEqual({
-        status: 'verified',
-        userId: user.id,
+        status: 'invalid',
+        userId: null,
       });
       await expect(
         consumeEmailVerificationToken({ token: failedReplacement.token }),
@@ -161,6 +164,13 @@ describe.skipIf(!runDatabaseTests)(
         status: 'invalid',
         userId: null,
       });
+      await expect(
+        prisma.emailVerificationToken.count({
+          where: {
+            userId: user.id,
+          },
+        }),
+      ).resolves.toBe(0);
     });
 
     it('atomically keeps only the latest concurrent challenge', async () => {
