@@ -178,7 +178,9 @@ describe.skipIf(!runDatabaseTests)(
         },
       });
 
-      expect(challenges.map((challenge) => challenge.id)).toContain(persisted.id);
+      expect(challenges.map((challenge) => challenge.id)).toContain(
+        persisted.id,
+      );
       await expect(
         prisma.emailVerificationToken.count({
           where: {
