@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const mocks = vi.hoisted(() => ({
   authForEmailVerification: vi.fn(),
   findUser: vi.fn(),
+  recordEvent: vi.fn(),
   sendVerification: vi.fn(),
 }));
 
@@ -12,6 +13,10 @@ vi.mock('next/headers', () => ({
 
 vi.mock('@/auth', () => ({
   authForEmailVerification: mocks.authForEmailVerification,
+}));
+
+vi.mock('@/server/auth/auth-security-events', () => ({
+  recordAuthSecurityEvent: mocks.recordEvent,
 }));
 
 vi.mock('@/server/db/prisma', () => ({
@@ -111,5 +116,12 @@ describe('resendEmailVerificationAction', () => {
         createFormData(),
       ),
     ).resolves.toEqual({ status: 'unexpected' });
+    expect(mocks.recordEvent).toHaveBeenCalledWith(
+      'auth.email_verification.unexpected_error',
+      {
+        reason: 'resend_action',
+        userId: 'user-1',
+      },
+    );
   });
 });
