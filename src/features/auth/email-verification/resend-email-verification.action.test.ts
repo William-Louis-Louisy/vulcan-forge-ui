@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
-  auth: vi.fn(),
+  authForEmailVerification: vi.fn(),
   findUser: vi.fn(),
   sendVerification: vi.fn(),
 }));
@@ -11,7 +11,7 @@ vi.mock('next/headers', () => ({
 }));
 
 vi.mock('@/auth', () => ({
-  auth: mocks.auth,
+  authForEmailVerification: mocks.authForEmailVerification,
 }));
 
 vi.mock('@/server/db/prisma', () => ({
@@ -41,7 +41,9 @@ function createFormData(locale = 'fr') {
 describe('resendEmailVerificationAction', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.auth.mockResolvedValue({ user: { id: 'user-1' } });
+    mocks.authForEmailVerification.mockResolvedValue({
+      user: { id: 'user-1' },
+    });
     mocks.findUser.mockResolvedValue({
       email: 'william@example.com',
       emailVerifiedAt: null,
@@ -56,7 +58,7 @@ describe('resendEmailVerificationAction', () => {
   });
 
   it('requires an authenticated account', async () => {
-    mocks.auth.mockResolvedValue(null);
+    mocks.authForEmailVerification.mockResolvedValue(null);
 
     await expect(
       resendEmailVerificationAction(
