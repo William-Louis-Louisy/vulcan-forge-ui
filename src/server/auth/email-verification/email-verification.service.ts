@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { prisma } from '@/server/db/prisma';
 import { EMAIL_VERIFICATION_TOKEN_TTL_MS } from './email-verification.constants';
 import {
@@ -19,24 +20,28 @@ export async function createEmailVerificationChallenge({
 }) {
   const { token, tokenHash } = createEmailVerificationToken();
   const expiresAt = new Date(now.getTime() + EMAIL_VERIFICATION_TOKEN_TTL_MS);
+  const id = randomUUID();
 
-  const challenge = await prisma.$transaction(async (tx) => {
-    await tx.emailVerificationToken.deleteMany({
-      where: {
-        userId,
-      },
-    });
-
-    return tx.emailVerificationToken.create({
-      data: {
-        expiresAt,
-        tokenHash,
-        userId,
-      },
-      select: {
-        id: true,
-      },
-    });
+  const challenge = await prisma.emailVerificationToken.upsert({
+    where: {
+      userId,
+    },
+    create: {
+      createdAt: now,
+      expiresAt,
+      id,
+      tokenHash,
+      userId,
+    },
+    update: {
+      createdAt: now,
+      expiresAt,
+      id,
+      tokenHash,
+    },
+    select: {
+      id: true,
+    },
   });
 
   return {
