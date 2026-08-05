@@ -37,7 +37,7 @@ export const ARGON2ID_ACCEPTED_BOUNDS = {
 export const DUMMY_ARGON2ID_PASSWORD_HASH =
   '$vulcan$argon2id$v=1$m=19456,t=2,p=1,l=32$AAECAwQFBgcICQoLDA0ODw$DC0uxfOnxsyo6hd1XhvappBgPe5mVsW9ymOa3b4sh7w';
 
-export const PWNED_PASSWORDS_RANGE_URL = 'https://api.pwnedpasswords.com/range';
-export const PWNED_PASSWORDS_TIMEOUT_MS = 4_000;
-export const PWNED_PASSWORDS_MAX_RESPONSE_BYTES = 256_000;
-export const PWNED_PASSWORDS_USER_AGENT = 'VulcanForgeUI-PasswordSecurity';
+export const HIBP_RANGE_ENDPOINT = 'https://api.pwnedpasswords.com/range';
+export const HIBP_REQUEST_TIMEOUT_MS = 4_000;
+export const HIBP_MAX_RESPONSE_BYTES = 256_000;
+export const HIBP_HTTP_USER_AGENT = 'VulcanForgeUI-PasswordSecurity';
