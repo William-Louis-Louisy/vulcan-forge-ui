@@ -1,5 +1,4 @@
 import { randomUUID } from 'node:crypto';
-import { Prisma } from '@/generated/prisma/client';
 import { prisma } from '@/server/db/prisma';
 import { EMAIL_VERIFICATION_TOKEN_TTL_MS } from './email-verification.constants';
 import {
@@ -7,24 +6,21 @@ import {
   hashEmailVerificationToken,
 } from './email-verification-token';
 
+export type EmailVerificationTokenStatus =
+  | 'alreadyVerified'
+  | 'confirm'
+  | 'expired'
+  | 'invalid';
+
 export type ConsumeEmailVerificationResult = {
-  status: 'alreadyVerified' | 'expired' | 'invalid' | 'verified';
+  status: Exclude<EmailVerificationTokenStatus, 'confirm'> | 'verified';
   userId: string | null;
 };
 
-type EmailVerificationChallengeSnapshot = {
-  createdAt: Date;
-  expiresAt: Date;
-  id: string;
-  tokenHash: string;
-};
-
-export type CreatedEmailVerificationChallenge = {
-  expiresAt: Date;
-  id: string;
-  previousChallenge: EmailVerificationChallengeSnapshot | null;
-  token: string;
-  userId: string;
+export type InspectEmailVerificationResult = {
+  expiresAt: Date | null;
+  status: EmailVerificationTokenStatus;
+  userId: string | null;
 };
 
 export async function createEmailVerificationChallenge({
@@ -33,100 +29,117 @@ export async function createEmailVerificationChallenge({
 }: {
   now?: Date;
   userId: string;
-}): Promise<CreatedEmailVerificationChallenge> {
+}) {
   const { token, tokenHash } = createEmailVerificationToken();
   const expiresAt = new Date(now.getTime() + EMAIL_VERIFICATION_TOKEN_TTL_MS);
   const id = randomUUID();
 
-  const replacement = await prisma.$transaction(async (tx) => {
-    await tx.$queryRaw<{ locked: boolean }[]>(Prisma.sql`
-      WITH advisory_lock AS MATERIALIZED (
-        SELECT pg_advisory_xact_lock(hashtextextended(${userId}, 0))
-      )
-      SELECT TRUE AS "locked"
-      FROM advisory_lock
-    `);
-
-    const previousChallenge = await tx.emailVerificationToken.findUnique({
-      where: {
-        userId,
-      },
-      select: {
-        createdAt: true,
-        expiresAt: true,
-        id: true,
-        tokenHash: true,
-      },
-    });
-
-    const challenge = previousChallenge
-      ? await tx.emailVerificationToken.update({
-          where: {
-            userId,
-          },
-          data: {
-            createdAt: now,
-            expiresAt,
-            id,
-            tokenHash,
-          },
-          select: {
-            id: true,
-          },
-        })
-      : await tx.emailVerificationToken.create({
-          data: {
-            createdAt: now,
-            expiresAt,
-            id,
-            tokenHash,
-            userId,
-          },
-          select: {
-            id: true,
-          },
-        });
-
-    return {
-      id: challenge.id,
-      previousChallenge,
-    };
+  const challenge = await prisma.emailVerificationToken.upsert({
+    where: {
+      userId,
+    },
+    create: {
+      createdAt: now,
+      expiresAt,
+      id,
+      tokenHash,
+      userId,
+    },
+    update: {
+      createdAt: now,
+      expiresAt,
+      id,
+      tokenHash,
+    },
+    select: {
+      id: true,
+    },
   });
 
   return {
     expiresAt,
-    id: replacement.id,
-    previousChallenge: replacement.previousChallenge,
+    id: challenge.id,
     token,
     userId,
   };
 }
 
-export async function rollbackEmailVerificationChallenge(
-  challenge: CreatedEmailVerificationChallenge,
-) {
-  if (!challenge.previousChallenge) {
-    await prisma.emailVerificationToken.deleteMany({
-      where: {
-        id: challenge.id,
-        userId: challenge.userId,
-      },
-    });
-    return;
-  }
-
-  await prisma.emailVerificationToken.updateMany({
+export async function revokeEmailVerificationChallenge({
+  id,
+  userId,
+}: {
+  id: string;
+  userId: string;
+}) {
+  await prisma.emailVerificationToken.deleteMany({
     where: {
-      id: challenge.id,
-      userId: challenge.userId,
-    },
-    data: {
-      createdAt: challenge.previousChallenge.createdAt,
-      expiresAt: challenge.previousChallenge.expiresAt,
-      id: challenge.previousChallenge.id,
-      tokenHash: challenge.previousChallenge.tokenHash,
+      id,
+      userId,
     },
   });
+}
+
+export async function inspectEmailVerificationToken({
+  now = new Date(),
+  token,
+}: {
+  now?: Date;
+  token: string;
+}): Promise<InspectEmailVerificationResult> {
+  const tokenHash = hashEmailVerificationToken(token);
+
+  if (!tokenHash) {
+    return {
+      expiresAt: null,
+      status: 'invalid',
+      userId: null,
+    };
+  }
+
+  const challenge = await prisma.emailVerificationToken.findUnique({
+    where: {
+      tokenHash,
+    },
+    select: {
+      expiresAt: true,
+      userId: true,
+      user: {
+        select: {
+          emailVerifiedAt: true,
+        },
+      },
+    },
+  });
+
+  if (!challenge) {
+    return {
+      expiresAt: null,
+      status: 'invalid',
+      userId: null,
+    };
+  }
+
+  if (challenge.user.emailVerifiedAt) {
+    return {
+      expiresAt: challenge.expiresAt,
+      status: 'alreadyVerified',
+      userId: challenge.userId,
+    };
+  }
+
+  if (challenge.expiresAt <= now) {
+    return {
+      expiresAt: challenge.expiresAt,
+      status: 'expired',
+      userId: challenge.userId,
+    };
+  }
+
+  return {
+    expiresAt: challenge.expiresAt,
+    status: 'confirm',
+    userId: challenge.userId,
+  };
 }
 
 export async function consumeEmailVerificationToken({
