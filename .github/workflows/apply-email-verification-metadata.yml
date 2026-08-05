@@ -193,7 +193,6 @@ jobs:
             .env.example \
             README.md \
             package.json \
-            prisma/migrations/20260805133000_add_email_verification_tokens/migration.sql \
             src/app/api/auth/verify-email/route.ts \
             'src/app/[locale]/(public)/verify-email/page.tsx' \
             'src/app/[locale]/app/layout.tsx' \
