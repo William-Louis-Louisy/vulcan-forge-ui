@@ -11,7 +11,7 @@ import {
 import { sendEmailVerificationEmail } from './email-verification-email';
 import {
   createEmailVerificationChallenge,
-  revokeEmailVerificationChallenge,
+  rollbackEmailVerificationChallenge,
 } from './email-verification.service';
 
 const emailVerificationOperation =
@@ -73,13 +73,20 @@ export async function sendEmailVerificationChallenge({
       token: challenge.token,
     });
   } catch (error) {
-    await revokeEmailVerificationChallenge(challenge.id);
+    let rollbackFailed = false;
+
+    try {
+      await rollbackEmailVerificationChallenge(challenge);
+    } catch {
+      rollbackFailed = true;
+    }
 
     recordAuthSecurityEvent('auth.email_verification.delivery_failed', {
       accountFingerprint: rateLimit.accountFingerprint,
       configurationError: error instanceof EmailVerificationConfigurationError,
       ipFingerprint: rateLimit.context.ipFingerprint,
       requestId: rateLimit.context.requestId,
+      rollbackFailed,
       userId,
     });
 
