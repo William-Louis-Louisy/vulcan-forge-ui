@@ -5,11 +5,11 @@ import { updateAccountProfileAction } from './update-account-profile.action';
 
 const mocks = vi.hoisted(() => ({
   auth: vi.fn(),
-  compare: vi.fn(),
   findUnique: vi.fn(),
   revalidatePath: vi.fn(),
   signOut: vi.fn(),
   update: vi.fn(),
+  verifyPassword: vi.fn(),
 }));
 
 vi.mock('@/auth', () => ({
@@ -26,10 +26,8 @@ vi.mock('@/server/db/prisma', () => ({
   },
 }));
 
-vi.mock('bcryptjs', () => ({
-  default: {
-    compare: mocks.compare,
-  },
+vi.mock('@/server/auth/password/password.service', () => ({
+  verifyPassword: mocks.verifyPassword,
 }));
 
 vi.mock('next/cache', () => ({
@@ -55,6 +53,11 @@ describe('updateAccountProfileAction', () => {
     vi.clearAllMocks();
     mocks.auth.mockResolvedValue({ user: { id: 'user-1' } });
     mocks.update.mockResolvedValue({});
+    mocks.verifyPassword.mockResolvedValue({
+      needsRehash: false,
+      scheme: 'argon2id',
+      valid: true,
+    });
   });
 
   it('updates a display name without requiring a password', async () => {
@@ -72,7 +75,7 @@ describe('updateAccountProfileAction', () => {
     );
 
     expect(result.status).toBe('success');
-    expect(mocks.compare).not.toHaveBeenCalled();
+    expect(mocks.verifyPassword).not.toHaveBeenCalled();
     expect(mocks.update).toHaveBeenCalledWith({
       where: { id: 'user-1' },
       data: {
@@ -101,14 +104,13 @@ describe('updateAccountProfileAction', () => {
     expect(mocks.update).not.toHaveBeenCalled();
   });
 
-  it('updates the email and signs out after password verification', async () => {
+  it('updates the email and signs out after Argon2id verification', async () => {
     mocks.findUnique
       .mockResolvedValueOnce({
         email: 'william@example.com',
         passwordHash: 'hash',
       })
       .mockResolvedValueOnce(null);
-    mocks.compare.mockResolvedValue(true);
     mocks.signOut.mockResolvedValue(undefined);
 
     const result = await updateAccountProfileAction(
@@ -121,11 +123,38 @@ describe('updateAccountProfileAction', () => {
       }),
     );
 
-    expect(mocks.compare).toHaveBeenCalledWith('correct-password', 'hash');
+    expect(mocks.verifyPassword).toHaveBeenCalledWith(
+      'correct-password',
+      'hash',
+    );
     expect(mocks.signOut).toHaveBeenCalledWith({
       redirectTo: '/fr/login?emailUpdated=1',
     });
     expect(result.status).toBe('success');
+  });
+
+  it('rejects an incorrect password from either supported hash scheme', async () => {
+    mocks.findUnique.mockResolvedValueOnce({
+      email: 'william@example.com',
+      passwordHash: 'hash',
+    });
+    mocks.verifyPassword.mockResolvedValue({
+      needsRehash: false,
+      scheme: 'argon2id',
+      valid: false,
+    });
+
+    const result = await updateAccountProfileAction(
+      initialUpdateAccountProfileActionState,
+      createFormData({
+        name: 'William',
+        email: 'new@example.com',
+        currentPassword: 'wrong-password',
+      }),
+    );
+
+    expect(result.formError).toBe('currentPasswordIncorrect');
+    expect(mocks.update).not.toHaveBeenCalled();
   });
 
   it('rejects an email already used by another account', async () => {
@@ -135,7 +164,6 @@ describe('updateAccountProfileAction', () => {
         passwordHash: 'hash',
       })
       .mockResolvedValueOnce({ id: 'user-2' });
-    mocks.compare.mockResolvedValue(true);
 
     const result = await updateAccountProfileAction(
       initialUpdateAccountProfileActionState,

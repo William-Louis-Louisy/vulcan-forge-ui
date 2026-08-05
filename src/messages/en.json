@@ -1267,7 +1267,7 @@
       "emailLabel": "Email",
       "nameLabel": "Name",
       "passwordConfirmationLabel": "Confirm password",
-      "passwordHelp": "Use at least 12 characters.",
+      "passwordHelp": "Use 15 to 128 characters. Spaces and passphrases are allowed.",
       "passwordLabel": "Password",
       "passwordVisibility": {
         "hide": "Hide",
@@ -1283,12 +1283,16 @@
       "nameMinLength": "Enter at least 2 characters.",
       "nameTooLong": "Name must contain at most 80 characters.",
       "passwordConfirmationMismatch": "Passwords do not match.",
-      "passwordMinLength": "Password must contain at least 12 characters.",
-      "passwordTooLong": "Password must contain at most 72 characters.",
+      "passwordMinLength": "Password must contain at least 15 characters.",
+      "passwordTooLong": "Password must contain at most 128 characters.",
       "unexpected": "Unable to create your account. Please try again.",
       "accountCreatedSignInFailed": "Your account was created, but we couldn't sign you in automatically. Use the sign-in link below with the same credentials.",
       "rateLimited": "Too many signup attempts. Please wait before trying again.",
-      "signupUnavailable": "We couldn't complete this signup. Try signing in if you already have an account, or try again later."
+      "signupUnavailable": "We couldn't complete this signup. Try signing in if you already have an account, or try again later.",
+      "passwordInvalidUnicode": "The password contains invalid text characters.",
+      "passwordCompromised": "Choose a different password. This one appears in known data breaches.",
+      "passwordCheckUnavailable": "We can't verify password safety right now. Please try again later.",
+      "passwordHashingUnavailable": "Secure password storage is temporarily unavailable. Please try again later."
     }
   },
   "ThemesEditorPage": {

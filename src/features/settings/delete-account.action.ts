@@ -1,9 +1,8 @@
 'use server';
 
-import bcrypt from 'bcryptjs';
-
 import { auth, signOut } from '@/auth';
 import { prisma } from '@/server/db/prisma';
+import { verifyPassword } from '@/server/auth/password/password.service';
 import { deleteAccountSchema } from './delete-account.schema';
 import type { DeleteAccountActionState } from './delete-account.state';
 
@@ -70,12 +69,12 @@ export async function deleteAccountAction(
       };
     }
 
-    const passwordMatches = await bcrypt.compare(
+    const verification = await verifyPassword(
       parsedPayload.data.currentPassword,
       user.passwordHash,
     );
 
-    if (!passwordMatches) {
+    if (!verification.valid) {
       return {
         status: 'error',
         fieldErrors: {

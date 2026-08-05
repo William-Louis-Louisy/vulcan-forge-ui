@@ -2,9 +2,15 @@ export type AuthSecurityEventName =
   | 'auth.login.rejected'
   | 'auth.login.rate_limited'
   | 'auth.login.succeeded'
+  | 'auth.password.rehash_failed'
+  | 'auth.password.rehash_skipped'
+  | 'auth.password.rehash_succeeded'
   | 'auth.rate_limit.error'
   | 'auth.signup.created'
   | 'auth.signup.duplicate'
+  | 'auth.signup.password_check_unavailable'
+  | 'auth.signup.password_compromised'
+  | 'auth.signup.password_hashing_unavailable'
   | 'auth.signup.rate_limited'
   | 'auth.signup.sign_in_failed'
   | 'auth.signup.unexpected_error';
@@ -17,8 +23,13 @@ type AuthSecurityEventMetadata = Record<
 const warningEvents = new Set<AuthSecurityEventName>([
   'auth.login.rejected',
   'auth.login.rate_limited',
+  'auth.password.rehash_failed',
+  'auth.password.rehash_skipped',
   'auth.rate_limit.error',
   'auth.signup.duplicate',
+  'auth.signup.password_check_unavailable',
+  'auth.signup.password_compromised',
+  'auth.signup.password_hashing_unavailable',
   'auth.signup.rate_limited',
   'auth.signup.sign_in_failed',
   'auth.signup.unexpected_error',
