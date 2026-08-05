@@ -7,10 +7,7 @@ import {
 } from './auth-request-context';
 import { recordAuthSecurityEvent } from './auth-security-events';
 
-export type AuthRateLimitOperation =
-  | 'emailVerification'
-  | 'login'
-  | 'signup';
+export type AuthRateLimitOperation = 'emailVerification' | 'login' | 'signup';
 
 type AuthRateLimitPolicy = {
   limit: number;

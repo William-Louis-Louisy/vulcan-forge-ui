@@ -19,7 +19,9 @@ export function hashEmailVerificationToken(token: string) {
 }
 
 export function createEmailVerificationToken() {
-  const token = randomBytes(EMAIL_VERIFICATION_TOKEN_BYTES).toString('base64url');
+  const token = randomBytes(EMAIL_VERIFICATION_TOKEN_BYTES).toString(
+    'base64url',
+  );
   const tokenHash = hashEmailVerificationToken(token);
 
   if (!tokenHash) {

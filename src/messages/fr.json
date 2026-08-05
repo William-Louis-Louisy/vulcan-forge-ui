@@ -1764,5 +1764,50 @@
       "success": "Valeur enregistrée.",
       "title": "Modifier la typographie"
     }
+  },
+  "EmailVerificationPage": {
+    "eyebrow": "Vérification de l’adresse e-mail",
+    "accountEmail": "La vérification est requise pour {email}.",
+    "actions": {
+      "continue": "Accéder à votre espace",
+      "resend": "Renvoyer un e-mail de vérification",
+      "resending": "Envoi de l’e-mail de vérification...",
+      "signIn": "Se connecter pour continuer"
+    },
+    "delivery": {
+      "deliveryUnavailable": "Votre compte a été créé, mais l’e-mail de vérification n’a pas pu être envoyé. Réessayez ci-dessous.",
+      "rateLimited": "Votre compte a été créé. Patientez avant de demander un nouvel e-mail de vérification.",
+      "sent": "Un e-mail de vérification a été envoyé. Consultez votre boîte de réception et vos courriers indésirables."
+    },
+    "feedback": {
+      "alreadyVerified": "Votre adresse e-mail est déjà vérifiée.",
+      "deliveryUnavailable": "L’e-mail de vérification n’a pas pu être envoyé. Veuillez réessayer plus tard.",
+      "rateLimited": "Trop d’e-mails de vérification ont été demandés. Patientez avant de réessayer.",
+      "sent": "Un nouvel e-mail de vérification a été envoyé.",
+      "unauthorized": "Connectez-vous avant de demander un nouvel e-mail de vérification.",
+      "unexpected": "Cette demande n’a pas pu être traitée. Veuillez réessayer plus tard."
+    },
+    "states": {
+      "alreadyVerified": {
+        "title": "Votre adresse e-mail est déjà vérifiée.",
+        "description": "Aucune autre action n’est nécessaire. Vous pouvez accéder à votre espace."
+      },
+      "expired": {
+        "title": "Ce lien de vérification a expiré.",
+        "description": "Les liens de vérification sont valables 30 minutes. Demandez un nouvel e-mail pour continuer."
+      },
+      "invalid": {
+        "title": "Ce lien de vérification est invalide.",
+        "description": "Le lien a peut-être déjà été utilisé ou remplacé. Demandez un nouvel e-mail pour continuer."
+      },
+      "pending": {
+        "title": "Consultez votre boîte de réception.",
+        "description": "Vérifiez votre adresse e-mail avant d’accéder à votre espace VulcanForgeUI. Le lien expire après 30 minutes."
+      },
+      "verified": {
+        "title": "Votre adresse e-mail est vérifiée.",
+        "description": "Votre compte est actif et votre espace est prêt."
+      }
+    }
   }
 }

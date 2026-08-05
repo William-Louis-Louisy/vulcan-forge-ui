@@ -325,10 +325,8 @@ export async function signupAction(
     userId,
   });
 
-  let deliveryStatus:
-    | 'deliveryUnavailable'
-    | 'rateLimited'
-    | 'sent' = 'deliveryUnavailable';
+  let deliveryStatus: 'deliveryUnavailable' | 'rateLimited' | 'sent' =
+    'deliveryUnavailable';
 
   try {
     const delivery = await sendEmailVerificationChallenge({

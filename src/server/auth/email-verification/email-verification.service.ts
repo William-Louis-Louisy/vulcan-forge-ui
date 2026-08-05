@@ -149,7 +149,10 @@ export async function consumeEmailVerificationToken({
     });
 
     return {
-      status: verified.count === 1 ? ('verified' as const) : ('alreadyVerified' as const),
+      status:
+        verified.count === 1
+          ? ('verified' as const)
+          : ('alreadyVerified' as const),
       userId: challenge.userId,
     };
   });

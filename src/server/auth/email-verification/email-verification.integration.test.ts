@@ -144,9 +144,9 @@ describe.skipIf(!runDatabaseTests)(
         consumeEmailVerificationToken({ token: challenge.token }),
       ]);
 
-      expect(results.filter((result) => result.status === 'verified')).toHaveLength(
-        1,
-      );
+      expect(
+        results.filter((result) => result.status === 'verified'),
+      ).toHaveLength(1);
       expect(
         results.filter((result) => result.status === 'invalid'),
       ).toHaveLength(1);

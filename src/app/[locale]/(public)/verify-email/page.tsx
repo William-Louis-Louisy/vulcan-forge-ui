@@ -69,12 +69,8 @@ export default async function EmailVerificationPage({
   }
 
   const locale = requestedLocale as Locale;
-  const status = getVerificationStatus(
-    getStringSearchParam(query.status),
-  );
-  const delivery = getDeliveryStatus(
-    getStringSearchParam(query.delivery),
-  );
+  const status = getVerificationStatus(getStringSearchParam(query.status));
+  const delivery = getDeliveryStatus(getStringSearchParam(query.delivery));
   const user = session?.user?.id
     ? await prisma.user.findUnique({
         where: {
@@ -139,16 +135,11 @@ export default async function EmailVerificationPage({
             </p>
           ) : null}
 
-          {canResend ? (
-            <ResendEmailVerificationForm locale={locale} />
-          ) : null}
+          {canResend ? <ResendEmailVerificationForm locale={locale} /> : null}
 
           <div className="mt-6 text-center">
             {isVerified && session?.user?.id ? (
-              <AppLink
-                href="/app"
-                className="text-action-accent font-semibold"
-              >
+              <AppLink href="/app" className="text-action-accent font-semibold">
                 {t('actions.continue')}
               </AppLink>
             ) : null}

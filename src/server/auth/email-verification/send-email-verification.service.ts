@@ -77,8 +77,7 @@ export async function sendEmailVerificationChallenge({
 
     recordAuthSecurityEvent('auth.email_verification.delivery_failed', {
       accountFingerprint: rateLimit.accountFingerprint,
-      configurationError:
-        error instanceof EmailVerificationConfigurationError,
+      configurationError: error instanceof EmailVerificationConfigurationError,
       ipFingerprint: rateLimit.context.ipFingerprint,
       requestId: rateLimit.context.requestId,
       userId,

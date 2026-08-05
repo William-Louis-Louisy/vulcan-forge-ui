@@ -1764,5 +1764,50 @@
       "success": "Value saved.",
       "title": "Edit typography"
     }
+  },
+  "EmailVerificationPage": {
+    "eyebrow": "Email verification",
+    "accountEmail": "Verification is required for {email}.",
+    "actions": {
+      "continue": "Continue to your workspace",
+      "resend": "Send another verification email",
+      "resending": "Sending verification email...",
+      "signIn": "Sign in to continue"
+    },
+    "delivery": {
+      "deliveryUnavailable": "Your account was created, but we couldn't send the verification email. Try again below.",
+      "rateLimited": "Your account was created. Please wait before requesting another verification email.",
+      "sent": "A verification email has been sent. Check your inbox and spam folder."
+    },
+    "feedback": {
+      "alreadyVerified": "Your email address is already verified.",
+      "deliveryUnavailable": "We couldn't send the verification email. Please try again later.",
+      "rateLimited": "Too many verification emails were requested. Please wait before trying again.",
+      "sent": "A new verification email has been sent.",
+      "unauthorized": "Sign in before requesting another verification email.",
+      "unexpected": "We couldn't process this request. Please try again later."
+    },
+    "states": {
+      "alreadyVerified": {
+        "title": "Your email is already verified.",
+        "description": "No further action is required. You can continue to your workspace."
+      },
+      "expired": {
+        "title": "This verification link has expired.",
+        "description": "Verification links last 30 minutes. Request a new email to continue."
+      },
+      "invalid": {
+        "title": "This verification link is invalid.",
+        "description": "The link may have already been used or replaced. Request a new email to continue."
+      },
+      "pending": {
+        "title": "Check your inbox.",
+        "description": "Verify your email address before accessing your VulcanForgeUI workspace. The link expires after 30 minutes."
+      },
+      "verified": {
+        "title": "Your email address is verified.",
+        "description": "Your account is active and your workspace is ready."
+      }
+    }
   }
 }

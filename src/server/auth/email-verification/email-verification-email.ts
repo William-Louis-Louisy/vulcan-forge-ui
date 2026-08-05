@@ -25,7 +25,8 @@ const verificationEmailCopy: Record<AppLocale, VerificationEmailCopy> = {
       'Confirm that you own this email address before accessing your VulcanForgeUI workspace.',
     action: 'Verify email address',
     expiry: 'This link expires in 30 minutes and can be used only once.',
-    fallback: 'If the button does not work, copy and paste this link into your browser:',
+    fallback:
+      'If the button does not work, copy and paste this link into your browser:',
   },
   fr: {
     subject: 'Vérifiez votre adresse e-mail VulcanForgeUI',
@@ -33,7 +34,8 @@ const verificationEmailCopy: Record<AppLocale, VerificationEmailCopy> = {
     introduction:
       'Confirmez que vous contrôlez cette adresse e-mail avant d’accéder à votre espace VulcanForgeUI.',
     action: 'Vérifier mon adresse e-mail',
-    expiry: 'Ce lien expire dans 30 minutes et ne peut être utilisé qu’une seule fois.',
+    expiry:
+      'Ce lien expire dans 30 minutes et ne peut être utilisé qu’une seule fois.',
     fallback:
       'Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :',
   },
@@ -156,9 +158,7 @@ export async function sendEmailVerificationEmail(
   const apiKey = getConfiguredValue(
     options.apiKey ?? process.env.RESEND_API_KEY,
   );
-  const from = getConfiguredValue(
-    options.from ?? process.env.AUTH_EMAIL_FROM,
-  );
+  const from = getConfiguredValue(options.from ?? process.env.AUTH_EMAIL_FROM);
   const fetchImpl = options.fetchImpl ?? globalThis.fetch;
 
   if (!apiKey || !from || typeof fetchImpl !== 'function') {

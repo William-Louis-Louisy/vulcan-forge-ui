@@ -92,3 +92,9 @@ The visual source of truth and implementation rules are documented under `docs/p
 - Auth.js;
 - Prisma and PostgreSQL;
 - Vitest and Testing Library.
+
+## Email verification
+
+New accounts and changed email addresses must be verified before application access. Verification links are single-use, expire after 30 minutes, and only a SHA-256 token hash is stored in PostgreSQL.
+
+Delivery uses the Resend HTTP API. Configure `RESEND_API_KEY`, `AUTH_EMAIL_FROM`, and `AUTH_EMAIL_BASE_URL` from `.env.example`. The sending address must use a verified Resend domain, and the production base URL must use HTTPS.

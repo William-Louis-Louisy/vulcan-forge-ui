@@ -9,6 +9,7 @@ export type ResendEmailVerificationActionState = {
     | 'unexpected';
 };
 
-export const initialResendEmailVerificationActionState: ResendEmailVerificationActionState = {
-  status: 'idle',
-};
+export const initialResendEmailVerificationActionState: ResendEmailVerificationActionState =
+  {
+    status: 'idle',
+  };
