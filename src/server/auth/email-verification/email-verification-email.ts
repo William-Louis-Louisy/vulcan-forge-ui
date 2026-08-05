@@ -1,6 +1,8 @@
 import type { AppLocale } from '@/domain/i18n';
 import {
   EMAIL_VERIFICATION_DELIVERY_TIMEOUT_MS,
+  MAILPIT_DEFAULT_BASE_URL,
+  MAILPIT_SEND_PATH,
   RESEND_EMAIL_ENDPOINT,
 } from './email-verification.constants';
 import {
@@ -22,7 +24,7 @@ const verificationEmailCopy: Record<AppLocale, VerificationEmailCopy> = {
     subject: 'Verify your VulcanForgeUI email address',
     heading: 'Verify your email address',
     introduction:
-      'Confirm that you own this email address before accessing your VulcanForgeUI workspace.',
+      'Confirm that you own this email address to strengthen your VulcanForgeUI account.',
     action: 'Verify email address',
     expiry: 'This link expires in 30 minutes and can be used only once.',
     fallback:
@@ -32,7 +34,7 @@ const verificationEmailCopy: Record<AppLocale, VerificationEmailCopy> = {
     subject: 'Vérifiez votre adresse e-mail VulcanForgeUI',
     heading: 'Vérifiez votre adresse e-mail',
     introduction:
-      'Confirmez que vous contrôlez cette adresse e-mail avant d’accéder à votre espace VulcanForgeUI.',
+      'Confirmez que vous contrôlez cette adresse e-mail afin de renforcer la sécurité de votre compte VulcanForgeUI.',
     action: 'Vérifier mon adresse e-mail',
     expiry:
       'Ce lien expire dans 30 minutes et ne peut être utilisé qu’une seule fois.',
@@ -40,6 +42,8 @@ const verificationEmailCopy: Record<AppLocale, VerificationEmailCopy> = {
       'Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :',
   },
 };
+
+export type EmailVerificationTransport = 'mailpit' | 'resend';
 
 export type SendEmailVerificationEmailInput = {
   email: string;
@@ -53,13 +57,44 @@ type SendEmailVerificationEmailOptions = {
   baseUrl?: string;
   fetchImpl?: typeof fetch;
   from?: string;
+  mailpitBaseUrl?: string;
   timeoutMs?: number;
+  transport?: EmailVerificationTransport;
+};
+
+type EmailAddress = {
+  Email: string;
+  Name?: string;
 };
 
 function getConfiguredValue(value: string | undefined) {
   const normalized = value?.trim();
 
   return normalized ? normalized : null;
+}
+
+function getTransport(override?: EmailVerificationTransport) {
+  const configuredTransport = getConfiguredValue(
+    override ?? process.env.AUTH_EMAIL_TRANSPORT,
+  );
+
+  if (
+    configuredTransport &&
+    configuredTransport !== 'mailpit' &&
+    configuredTransport !== 'resend'
+  ) {
+    throw new EmailVerificationConfigurationError();
+  }
+
+  const transport =
+    configuredTransport ??
+    (process.env.NODE_ENV === 'production' ? 'resend' : 'mailpit');
+
+  if (process.env.NODE_ENV === 'production' && transport !== 'resend') {
+    throw new EmailVerificationConfigurationError();
+  }
+
+  return transport;
 }
 
 function getBaseUrl(override?: string) {
@@ -86,6 +121,26 @@ function getBaseUrl(override?: string) {
     !['http:', 'https:'].includes(url.protocol) ||
     (process.env.NODE_ENV === 'production' && url.protocol !== 'https:')
   ) {
+    throw new EmailVerificationConfigurationError();
+  }
+
+  return url.origin;
+}
+
+function getMailpitBaseUrl(override?: string) {
+  const rawBaseUrl =
+    getConfiguredValue(override ?? process.env.AUTH_MAILPIT_BASE_URL) ??
+    MAILPIT_DEFAULT_BASE_URL;
+
+  let url: URL;
+
+  try {
+    url = new URL(rawBaseUrl);
+  } catch {
+    throw new EmailVerificationConfigurationError();
+  }
+
+  if (!['http:', 'https:'].includes(url.protocol)) {
     throw new EmailVerificationConfigurationError();
   }
 
@@ -151,39 +206,76 @@ function createEmailContent({
   };
 }
 
-export async function sendEmailVerificationEmail(
-  input: SendEmailVerificationEmailInput,
-  options: SendEmailVerificationEmailOptions = {},
-) {
-  const apiKey = getConfiguredValue(
-    options.apiKey ?? process.env.RESEND_API_KEY,
-  );
-  const from = getConfiguredValue(options.from ?? process.env.AUTH_EMAIL_FROM);
-  const fetchImpl = options.fetchImpl ?? globalThis.fetch;
+function parseEmailAddress(value: string | null): EmailAddress | null {
+  if (!value) {
+    return null;
+  }
 
-  if (!apiKey || !from || typeof fetchImpl !== 'function') {
+  const namedAddress = value.match(/^\s*(.*?)\s*<\s*([^<>\s]+)\s*>\s*$/);
+  const name = namedAddress?.[1]?.trim();
+  const email = (namedAddress?.[2] ?? value).trim();
+
+  if (!email.includes('@') || email.includes(' ')) {
+    return null;
+  }
+
+  return name ? { Email: email, Name: name } : { Email: email };
+}
+
+async function deliverWithTimeout({
+  fetchImpl,
+  init,
+  timeoutMs,
+  url,
+}: {
+  fetchImpl: typeof fetch;
+  init: RequestInit;
+  timeoutMs: number;
+  url: string;
+}) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    return await fetchImpl(url, {
+      ...init,
+      signal: controller.signal,
+    });
+  } catch {
+    throw new EmailVerificationDeliveryError();
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function sendThroughResend({
+  apiKey,
+  copy,
+  fetchImpl,
+  from,
+  html,
+  input,
+  text,
+  timeoutMs,
+}: {
+  apiKey: string | null;
+  copy: VerificationEmailCopy;
+  fetchImpl: typeof fetch;
+  from: string | null;
+  html: string;
+  input: SendEmailVerificationEmailInput;
+  text: string;
+  timeoutMs: number;
+}) {
+  if (!apiKey || !from) {
     throw new EmailVerificationConfigurationError();
   }
 
-  const verificationUrl = createVerificationUrl({
-    baseUrl: getBaseUrl(options.baseUrl),
-    locale: input.locale,
-    token: input.token,
-  });
-  const { copy, html, text } = createEmailContent({
-    locale: input.locale,
-    verificationUrl,
-  });
-  const controller = new AbortController();
-  const timeout = setTimeout(
-    () => controller.abort(),
-    options.timeoutMs ?? EMAIL_VERIFICATION_DELIVERY_TIMEOUT_MS,
-  );
-
-  let response: Response;
-
-  try {
-    response = await fetchImpl(RESEND_EMAIL_ENDPOINT, {
+  const response = await deliverWithTimeout({
+    fetchImpl,
+    timeoutMs,
+    url: RESEND_EMAIL_ENDPOINT,
+    init: {
       body: JSON.stringify({
         from,
         to: [input.email],
@@ -197,15 +289,115 @@ export async function sendEmailVerificationEmail(
         'Idempotency-Key': input.idempotencyKey,
       },
       method: 'POST',
-      signal: controller.signal,
-    });
-  } catch {
-    throw new EmailVerificationDeliveryError();
-  } finally {
-    clearTimeout(timeout);
-  }
+    },
+  });
 
   if (!response.ok) {
     throw new EmailVerificationDeliveryError();
   }
+}
+
+async function sendThroughMailpit({
+  copy,
+  fetchImpl,
+  from,
+  html,
+  input,
+  mailpitBaseUrl,
+  text,
+  timeoutMs,
+}: {
+  copy: VerificationEmailCopy;
+  fetchImpl: typeof fetch;
+  from: string | null;
+  html: string;
+  input: SendEmailVerificationEmailInput;
+  mailpitBaseUrl: string;
+  text: string;
+  timeoutMs: number;
+}) {
+  const sender = parseEmailAddress(
+    from ?? 'VulcanForgeUI <auth@vulcanforge.local>',
+  );
+
+  if (!sender) {
+    throw new EmailVerificationConfigurationError();
+  }
+
+  const response = await deliverWithTimeout({
+    fetchImpl,
+    timeoutMs,
+    url: new URL(MAILPIT_SEND_PATH, mailpitBaseUrl).toString(),
+    init: {
+      body: JSON.stringify({
+        From: sender,
+        To: [{ Email: input.email }],
+        Subject: copy.subject,
+        HTML: html,
+        Text: text,
+        Headers: {
+          'X-VulcanForge-Idempotency-Key': input.idempotencyKey,
+        },
+        Tags: ['email-verification'],
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+    },
+  });
+
+  if (!response.ok) {
+    throw new EmailVerificationDeliveryError();
+  }
+}
+
+export async function sendEmailVerificationEmail(
+  input: SendEmailVerificationEmailInput,
+  options: SendEmailVerificationEmailOptions = {},
+) {
+  const transport = getTransport(options.transport);
+  const fetchImpl = options.fetchImpl ?? globalThis.fetch;
+
+  if (typeof fetchImpl !== 'function') {
+    throw new EmailVerificationConfigurationError();
+  }
+
+  const verificationUrl = createVerificationUrl({
+    baseUrl: getBaseUrl(options.baseUrl),
+    locale: input.locale,
+    token: input.token,
+  });
+  const { copy, html, text } = createEmailContent({
+    locale: input.locale,
+    verificationUrl,
+  });
+  const timeoutMs =
+    options.timeoutMs ?? EMAIL_VERIFICATION_DELIVERY_TIMEOUT_MS;
+  const from = getConfiguredValue(options.from ?? process.env.AUTH_EMAIL_FROM);
+
+  if (transport === 'mailpit') {
+    await sendThroughMailpit({
+      copy,
+      fetchImpl,
+      from,
+      html,
+      input,
+      mailpitBaseUrl: getMailpitBaseUrl(options.mailpitBaseUrl),
+      text,
+      timeoutMs,
+    });
+    return;
+  }
+
+  await sendThroughResend({
+    apiKey: getConfiguredValue(options.apiKey ?? process.env.RESEND_API_KEY),
+    copy,
+    fetchImpl,
+    from,
+    html,
+    input,
+    text,
+    timeoutMs,
+  });
 }
