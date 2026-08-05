@@ -36,5 +36,10 @@ export async function GET(request: Request) {
   const redirectUrl = new URL(`/${locale}/verify-email`, requestUrl.origin);
   redirectUrl.searchParams.set('status', result.status);
 
-  return NextResponse.redirect(redirectUrl, 303);
+  const response = NextResponse.redirect(redirectUrl, 303);
+  response.headers.set('Cache-Control', 'no-store, max-age=0');
+  response.headers.set('Pragma', 'no-cache');
+  response.headers.set('Referrer-Policy', 'no-referrer');
+
+  return response;
 }
