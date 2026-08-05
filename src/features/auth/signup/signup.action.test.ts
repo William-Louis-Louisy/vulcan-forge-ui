@@ -14,6 +14,7 @@ const mocks = vi.hoisted(() => ({
   hashPassword: vi.fn(),
   recordEvent: vi.fn(),
   resetRateLimit: vi.fn(),
+  sendVerification: vi.fn(),
   signIn: vi.fn(),
   transaction: vi.fn(),
 }));
@@ -40,6 +41,13 @@ vi.mock('@/server/auth/auth-rate-limit', () => ({
 vi.mock('@/server/auth/auth-security-events', () => ({
   recordAuthSecurityEvent: mocks.recordEvent,
 }));
+
+vi.mock(
+  '@/server/auth/email-verification/send-email-verification.service',
+  () => ({
+    sendEmailVerificationChallenge: mocks.sendVerification,
+  }),
+);
 
 vi.mock('@/server/auth/password/password.service', () => ({
   assertPasswordIsAcceptable: mocks.assertPasswordIsAcceptable,
@@ -75,6 +83,10 @@ beforeEach(() => {
   mocks.assertPasswordIsAcceptable.mockResolvedValue('strong-password-123');
   mocks.hashPassword.mockResolvedValue('password-hash');
   mocks.resetRateLimit.mockResolvedValue(undefined);
+  mocks.sendVerification.mockResolvedValue({
+    retryAfterSeconds: 0,
+    status: 'sent',
+  });
   mocks.createUser.mockResolvedValue({ id: 'user-1', name: 'William' });
   mocks.createWorkspace.mockResolvedValue({ id: 'workspace-1' });
   mocks.transaction.mockImplementation(
@@ -173,6 +185,38 @@ describe('signupAction', () => {
     );
   });
 
+  it('sends a verification challenge and redirects to the pending state', async () => {
+    await signupAction(initialSignupActionState, createSignupFormData());
+
+    expect(mocks.sendVerification).toHaveBeenCalledWith({
+      email: 'william@example.com',
+      headers: expect.any(Headers),
+      locale: 'en',
+      userId: 'user-1',
+    });
+    expect(mocks.signIn).toHaveBeenCalledWith('credentials', {
+      email: 'william@example.com',
+      password: 'strong-password-123',
+      redirectTo: '/en/verify-email?delivery=sent',
+    });
+  });
+
+  it('keeps the account usable when initial verification delivery is unavailable', async () => {
+    mocks.sendVerification.mockResolvedValue({
+      retryAfterSeconds: 0,
+      status: 'deliveryUnavailable',
+    });
+
+    await signupAction(initialSignupActionState, createSignupFormData());
+
+    expect(mocks.signIn).toHaveBeenCalledWith(
+      'credentials',
+      expect.objectContaining({
+        redirectTo: '/en/verify-email?delivery=deliveryUnavailable',
+      }),
+    );
+  });
+
   it('maps a concurrent unique-email race to a neutral signup state', async () => {
     mocks.transaction.mockRejectedValue({ code: 'P2002' });
 
@@ -182,6 +226,7 @@ describe('signupAction', () => {
     );
 
     expect(result.formError).toBe('signupUnavailable');
+    expect(mocks.sendVerification).not.toHaveBeenCalled();
     expect(mocks.signIn).not.toHaveBeenCalled();
   });
 
