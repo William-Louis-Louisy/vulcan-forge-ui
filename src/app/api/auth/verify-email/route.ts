@@ -12,10 +12,12 @@ export async function GET(request: Request) {
   const token = requestUrl.searchParams.get('token') ?? '';
 
   let result: Awaited<ReturnType<typeof consumeEmailVerificationToken>>;
+  let unexpectedError = false;
 
   try {
     result = await consumeEmailVerificationToken({ token });
   } catch {
+    unexpectedError = true;
     result = {
       status: 'invalid',
       userId: null,
@@ -29,9 +31,15 @@ export async function GET(request: Request) {
     verified: 'auth.email_verification.verified',
   } as const;
 
-  recordAuthSecurityEvent(eventByStatus[result.status], {
-    userId: result.userId,
-  });
+  recordAuthSecurityEvent(
+    unexpectedError
+      ? 'auth.email_verification.unexpected_error'
+      : eventByStatus[result.status],
+    {
+      reason: unexpectedError ? 'token_consumption' : undefined,
+      userId: result.userId,
+    },
+  );
 
   const redirectUrl = new URL(`/${locale}/verify-email`, requestUrl.origin);
   redirectUrl.searchParams.set('status', result.status);
