@@ -7,6 +7,7 @@ const mocks = vi.hoisted(() => ({
   auth: vi.fn(),
   deleteVerificationTokens: vi.fn(),
   findUnique: vi.fn(),
+  recordEvent: vi.fn(),
   revalidatePath: vi.fn(),
   sendVerification: vi.fn(),
   signOut: vi.fn(),
@@ -22,6 +23,10 @@ vi.mock('next/headers', () => ({
 vi.mock('@/auth', () => ({
   auth: mocks.auth,
   signOut: mocks.signOut,
+}));
+
+vi.mock('@/server/auth/auth-security-events', () => ({
+  recordAuthSecurityEvent: mocks.recordEvent,
 }));
 
 vi.mock('@/server/db/prisma', () => ({
@@ -196,6 +201,13 @@ describe('updateAccountProfileAction', () => {
 
     expect(result.status).toBe('success');
     expect(mocks.signOut).toHaveBeenCalled();
+    expect(mocks.recordEvent).toHaveBeenCalledWith(
+      'auth.email_verification.unexpected_error',
+      {
+        reason: 'email_change_delivery',
+        userId: 'user-1',
+      },
+    );
   });
 
   it('rejects an incorrect password from either supported hash scheme', async () => {
