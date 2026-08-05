@@ -1,8 +1,9 @@
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { authorizeCredentials } from '@/server/auth/credentials-authorizer';
+import { prisma } from '@/server/db/prisma';
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+const nextAuth = NextAuth({
   session: {
     strategy: 'jwt',
   },
@@ -38,3 +39,42 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
   },
 });
+
+export const { handlers, signIn, signOut } = nextAuth;
+
+/**
+ * Returns the current session regardless of email-verification state.
+ *
+ * This is intentionally restricted to the verification journey and its
+ * application-route gate. Product features and server actions must use
+ * `auth`, which fails closed for accounts that have not proved ownership of
+ * their current email address.
+ */
+export const authForEmailVerification = nextAuth.auth;
+
+/**
+ * Returns an authenticated session only while the account exists and its
+ * current email address is verified.
+ *
+ * Server Actions are independently invokable entry points, so this database
+ * check complements the application layout redirect instead of relying on UI
+ * navigation as an authorization boundary.
+ */
+export async function auth() {
+  const session = await authForEmailVerification();
+
+  if (!session?.user?.id) {
+    return null;
+  }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: session.user.id,
+    },
+    select: {
+      emailVerifiedAt: true,
+    },
+  });
+
+  return user?.emailVerifiedAt ? session : null;
+}
