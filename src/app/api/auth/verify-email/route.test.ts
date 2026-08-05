@@ -66,8 +66,8 @@ describe('email verification route', () => {
       'https://app.example.com/en/verify-email?status=invalid',
     );
     expect(mocks.recordEvent).toHaveBeenCalledWith(
-      'auth.email_verification.invalid',
-      { userId: null },
+      'auth.email_verification.unexpected_error',
+      { reason: 'token_consumption' },
     );
   });
 });
