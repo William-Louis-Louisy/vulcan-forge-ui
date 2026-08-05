@@ -42,9 +42,7 @@ describe('email verification route', () => {
       'https://app.example.com/fr/verify-email?status=verified',
     );
     expect(response.headers.get('Location')).not.toContain('opaque-value');
-    expect(response.headers.get('Cache-Control')).toBe(
-      'no-store, max-age=0',
-    );
+    expect(response.headers.get('Cache-Control')).toBe('no-store, max-age=0');
     expect(response.headers.get('Pragma')).toBe('no-cache');
     expect(response.headers.get('Referrer-Policy')).toBe('no-referrer');
     expect(mocks.recordEvent).toHaveBeenCalledWith(
