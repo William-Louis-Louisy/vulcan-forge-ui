@@ -17,6 +17,8 @@ jobs:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/vulcan_forge_ui?schema=public
 
     steps:
       - name: Checkout repository
