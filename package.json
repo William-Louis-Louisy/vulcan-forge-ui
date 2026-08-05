@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
+    "dev:up": "docker compose up -d postgres mailpit",
+    "dev:down": "docker compose down",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -23,6 +25,8 @@
     "db:down": "docker compose down",
     "db:reset": "docker compose down -v && docker compose up -d postgres",
     "db:logs": "docker compose logs -f postgres",
+    "mail:up": "docker compose up -d mailpit",
+    "mail:logs": "docker compose logs -f mailpit",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:migrate:deploy": "prisma migrate deploy",
