@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { PWNED_PASSWORDS_RANGE_URL } from './password.constants';
+import { HIBP_RANGE_ENDPOINT } from './password.constants';
 import { checkPasswordCompromise } from './password-compromise-check';
 import { PasswordCompromiseCheckUnavailableError } from './password.errors';
 
@@ -34,7 +34,7 @@ describe('checkPasswordCompromise', () => {
     const call = fetchImpl.mock.calls[0];
 
     expect(call).toBeDefined();
-    expect(String(call?.[0])).toBe(`${PWNED_PASSWORDS_RANGE_URL}/${prefix}`);
+    expect(String(call?.[0])).toBe(`${HIBP_RANGE_ENDPOINT}/${prefix}`);
     expect(String(call?.[0])).not.toContain(password);
     expect(call?.[1]).toEqual(
       expect.objectContaining({
