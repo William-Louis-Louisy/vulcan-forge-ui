@@ -3,6 +3,7 @@
 import { headers } from 'next/headers';
 import { authForEmailVerification } from '@/auth';
 import { defaultAppLocale, isAppLocale } from '@/domain/i18n';
+import { recordAuthSecurityEvent } from '@/server/auth/auth-security-events';
 import { prisma } from '@/server/db/prisma';
 import { sendEmailVerificationChallenge } from '@/server/auth/email-verification/send-email-verification.service';
 import type { ResendEmailVerificationActionState } from './resend-email-verification.state';
@@ -69,6 +70,11 @@ export async function resendEmailVerificationAction(
       status: result.status,
     };
   } catch {
+    recordAuthSecurityEvent('auth.email_verification.unexpected_error', {
+      reason: 'resend_action',
+      userId: session.user.id,
+    });
+
     return {
       status: 'unexpected',
     };
