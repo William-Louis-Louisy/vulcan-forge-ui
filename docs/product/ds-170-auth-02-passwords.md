@@ -2,7 +2,7 @@
 
 ## Status
 
-Implementation, automated validation and manual product QA are complete. Quality run #1024 passed on commit `2e3fb1a`; the full manual checklist was validated on 2026-08-05. The pull request remains Draft until the maintainer explicitly changes its review state.
+Implementation, automated validation and manual product QA are complete. Quality run #1027 passed on commit `5ebf00d`; the full manual checklist was validated on 2026-08-05. The pull request remains Draft until the maintainer explicitly changes its review state.
 
 ## Objective
 
