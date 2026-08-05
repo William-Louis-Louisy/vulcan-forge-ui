@@ -3,6 +3,7 @@ export type AuthSecurityEventName =
   | 'auth.email_verification.delivery_failed'
   | 'auth.email_verification.expired'
   | 'auth.email_verification.invalid'
+  | 'auth.email_verification.link_opened'
   | 'auth.email_verification.rate_limited'
   | 'auth.email_verification.sent'
   | 'auth.email_verification.unexpected_error'
