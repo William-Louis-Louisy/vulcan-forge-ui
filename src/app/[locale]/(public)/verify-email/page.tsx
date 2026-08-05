@@ -4,12 +4,14 @@ import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { AppLink } from '@/components/navigation/AppLink';
+import { Button } from '@/components/ui';
 import { ResendEmailVerificationForm } from '@/features/auth/email-verification/ResendEmailVerificationForm';
 import { routing, type Locale } from '@/i18n/routing';
 import { prisma } from '@/server/db/prisma';
 
 type VerificationStatus =
   | 'alreadyVerified'
+  | 'confirm'
   | 'expired'
   | 'invalid'
   | 'verified';
@@ -28,6 +30,7 @@ type EmailVerificationPageProps = {
 
 const verificationStatuses = new Set<VerificationStatus>([
   'alreadyVerified',
+  'confirm',
   'expired',
   'invalid',
   'verified',
@@ -98,7 +101,9 @@ export default async function EmailVerificationPage({
   const contentStatus = status ?? 'pending';
   const isVerified =
     contentStatus === 'verified' || contentStatus === 'alreadyVerified';
-  const canResend = Boolean(user && !user.emailVerifiedAt);
+  const canResend = Boolean(
+    user && !user.emailVerifiedAt && contentStatus !== 'confirm',
+  );
 
   return (
     <>
@@ -135,6 +140,18 @@ export default async function EmailVerificationPage({
             </p>
           ) : null}
 
+          {contentStatus === 'confirm' ? (
+            <form
+              action={`/api/auth/verify-email?locale=${locale}`}
+              method="post"
+              className="mt-6"
+            >
+              <Button type="submit" className="w-full">
+                {t('actions.confirm')}
+              </Button>
+            </form>
+          ) : null}
+
           {canResend ? <ResendEmailVerificationForm locale={locale} /> : null}
 
           <div className="mt-6 text-center">
@@ -144,7 +161,7 @@ export default async function EmailVerificationPage({
               </AppLink>
             ) : null}
 
-            {!session?.user?.id ? (
+            {!session?.user?.id && contentStatus !== 'confirm' ? (
               <AppLink
                 href="/login"
                 className="text-action-accent font-semibold"
