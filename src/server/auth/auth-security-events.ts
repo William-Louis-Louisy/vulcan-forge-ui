@@ -5,6 +5,7 @@ export type AuthSecurityEventName =
   | 'auth.email_verification.invalid'
   | 'auth.email_verification.rate_limited'
   | 'auth.email_verification.sent'
+  | 'auth.email_verification.unexpected_error'
   | 'auth.email_verification.verified'
   | 'auth.login.rejected'
   | 'auth.login.rate_limited'
@@ -32,6 +33,7 @@ const warningEvents = new Set<AuthSecurityEventName>([
   'auth.email_verification.expired',
   'auth.email_verification.invalid',
   'auth.email_verification.rate_limited',
+  'auth.email_verification.unexpected_error',
   'auth.login.rejected',
   'auth.login.rate_limited',
   'auth.password.rehash_failed',
