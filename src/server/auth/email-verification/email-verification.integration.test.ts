@@ -4,6 +4,7 @@ import type { PrismaClient } from '@/generated/prisma/client';
 import type {
   consumeEmailVerificationToken as ConsumeEmailVerificationToken,
   createEmailVerificationChallenge as CreateEmailVerificationChallenge,
+  rollbackEmailVerificationChallenge as RollbackEmailVerificationChallenge,
 } from './email-verification.service';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
@@ -14,6 +15,7 @@ const runDatabaseTests =
 let prisma: PrismaClient;
 let consumeEmailVerificationToken: typeof ConsumeEmailVerificationToken;
 let createEmailVerificationChallenge: typeof CreateEmailVerificationChallenge;
+let rollbackEmailVerificationChallenge: typeof RollbackEmailVerificationChallenge;
 
 const testEmailSuffix = '@email-verification.integration.test';
 
@@ -42,6 +44,8 @@ describe.skipIf(!runDatabaseTests)(
         serviceModule.consumeEmailVerificationToken;
       createEmailVerificationChallenge =
         serviceModule.createEmailVerificationChallenge;
+      rollbackEmailVerificationChallenge =
+        serviceModule.rollbackEmailVerificationChallenge;
     });
 
     beforeEach(async () => {
@@ -132,6 +136,31 @@ describe.skipIf(!runDatabaseTests)(
           },
         }),
       ).resolves.toBe(0);
+    });
+
+    it('restores the previous challenge when replacement delivery fails', async () => {
+      const user = await createTestUser('delivery-rollback');
+      const deliveredChallenge = await createEmailVerificationChallenge({
+        userId: user.id,
+      });
+      const failedReplacement = await createEmailVerificationChallenge({
+        userId: user.id,
+      });
+
+      await rollbackEmailVerificationChallenge(failedReplacement);
+
+      await expect(
+        consumeEmailVerificationToken({ token: deliveredChallenge.token }),
+      ).resolves.toEqual({
+        status: 'verified',
+        userId: user.id,
+      });
+      await expect(
+        consumeEmailVerificationToken({ token: failedReplacement.token }),
+      ).resolves.toEqual({
+        status: 'invalid',
+        userId: null,
+      });
     });
 
     it('atomically keeps only the latest concurrent challenge', async () => {
