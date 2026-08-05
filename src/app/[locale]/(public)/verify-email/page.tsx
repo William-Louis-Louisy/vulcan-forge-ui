@@ -1,4 +1,4 @@
-import { auth } from '@/auth';
+import { authForEmailVerification } from '@/auth';
 import { hasLocale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
@@ -61,7 +61,7 @@ export default async function EmailVerificationPage({
   const [{ locale: requestedLocale }, query, session] = await Promise.all([
     params,
     searchParams,
-    auth(),
+    authForEmailVerification(),
   ]);
 
   if (!hasLocale(routing.locales, requestedLocale)) {
