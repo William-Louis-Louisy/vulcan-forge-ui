@@ -134,8 +134,46 @@ describe.skipIf(!runDatabaseTests)(
       ).resolves.toBe(0);
     });
 
+    it('atomically keeps only the latest concurrent challenge', async () => {
+      const user = await createTestUser('concurrent-challenges');
+      const challenges = await Promise.all([
+        createEmailVerificationChallenge({ userId: user.id }),
+        createEmailVerificationChallenge({ userId: user.id }),
+      ]);
+      const persisted = await prisma.emailVerificationToken.findUniqueOrThrow({
+        where: {
+          userId: user.id,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      expect(challenges.map((challenge) => challenge.id)).toContain(persisted.id);
+      await expect(
+        prisma.emailVerificationToken.count({
+          where: {
+            userId: user.id,
+          },
+        }),
+      ).resolves.toBe(1);
+
+      const results = await Promise.all(
+        challenges.map((challenge) =>
+          consumeEmailVerificationToken({ token: challenge.token }),
+        ),
+      );
+
+      expect(
+        results.filter((result) => result.status === 'verified'),
+      ).toHaveLength(1);
+      expect(
+        results.filter((result) => result.status === 'invalid'),
+      ).toHaveLength(1);
+    });
+
     it('allows only one concurrent token consumer to verify the account', async () => {
-      const user = await createTestUser('concurrent');
+      const user = await createTestUser('concurrent-consumers');
       const challenge = await createEmailVerificationChallenge({
         userId: user.id,
       });
