@@ -13,7 +13,7 @@ CREATE TABLE "EmailVerificationToken" (
 CREATE UNIQUE INDEX "EmailVerificationToken_tokenHash_key" ON "EmailVerificationToken"("tokenHash");
 
 -- CreateIndex
-CREATE INDEX "EmailVerificationToken_userId_idx" ON "EmailVerificationToken"("userId");
+CREATE UNIQUE INDEX "EmailVerificationToken_userId_key" ON "EmailVerificationToken"("userId");
 
 -- CreateIndex
 CREATE INDEX "EmailVerificationToken_expiresAt_idx" ON "EmailVerificationToken"("expiresAt");
