@@ -1,7 +1,7 @@
 'use server';
 
 import { headers } from 'next/headers';
-import { auth } from '@/auth';
+import { authForEmailVerification } from '@/auth';
 import { defaultAppLocale, isAppLocale } from '@/domain/i18n';
 import { prisma } from '@/server/db/prisma';
 import { sendEmailVerificationChallenge } from '@/server/auth/email-verification/send-email-verification.service';
@@ -17,7 +17,7 @@ export async function resendEmailVerificationAction(
   _previousState: ResendEmailVerificationActionState,
   formData: FormData,
 ): Promise<ResendEmailVerificationActionState> {
-  const session = await auth();
+  const session = await authForEmailVerification();
 
   if (!session?.user?.id) {
     return {
