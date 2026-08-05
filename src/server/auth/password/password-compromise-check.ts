@@ -1,9 +1,9 @@
 import { createHash } from 'node:crypto';
 import {
-  PWNED_PASSWORDS_MAX_RESPONSE_BYTES,
-  PWNED_PASSWORDS_RANGE_URL,
-  PWNED_PASSWORDS_TIMEOUT_MS,
-  PWNED_PASSWORDS_USER_AGENT,
+  HIBP_HTTP_USER_AGENT,
+  HIBP_MAX_RESPONSE_BYTES,
+  HIBP_RANGE_ENDPOINT,
+  HIBP_REQUEST_TIMEOUT_MS,
 } from './password.constants';
 import { PasswordCompromiseCheckUnavailableError } from './password.errors';
 import { normalizePassword } from './password-normalization';
@@ -44,17 +44,17 @@ export async function checkPasswordCompromise(
   const controller = new AbortController();
   const timeout = setTimeout(
     () => controller.abort(),
-    options.timeoutMs ?? PWNED_PASSWORDS_TIMEOUT_MS,
+    options.timeoutMs ?? HIBP_REQUEST_TIMEOUT_MS,
   );
 
   let response: Response;
 
   try {
-    response = await fetchImpl(`${PWNED_PASSWORDS_RANGE_URL}/${prefix}`, {
+    response = await fetchImpl(`${HIBP_RANGE_ENDPOINT}/${prefix}`, {
       cache: 'no-store',
       headers: {
         'Add-Padding': 'true',
-        'User-Agent': PWNED_PASSWORDS_USER_AGENT,
+        'User-Agent': HIBP_HTTP_USER_AGENT,
       },
       method: 'GET',
       signal: controller.signal,
@@ -77,10 +77,7 @@ export async function checkPasswordCompromise(
     throw createUnavailableError();
   }
 
-  if (
-    !body.length ||
-    Buffer.byteLength(body, 'utf8') > PWNED_PASSWORDS_MAX_RESPONSE_BYTES
-  ) {
+  if (!body.length || Buffer.byteLength(body, 'utf8') > HIBP_MAX_RESPONSE_BYTES) {
     throw createUnavailableError();
   }
 
