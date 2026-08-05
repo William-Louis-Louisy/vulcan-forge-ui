@@ -2,11 +2,13 @@
 
 ## Status
 
-Implementation is in progress. Automated validation and manual product QA are required before the pull request leaves Draft.
+Implementation is in progress. The product policy has been corrected so email verification remains visible and recoverable without blocking the authenticated workspace. Automated validation and manual product QA are required before the pull request leaves Draft.
 
 ## Objective
 
-Require proof of email ownership before an authenticated account can access VulcanForgeUI application routes, while preserving a recoverable pending-verification state when delivery is delayed or temporarily unavailable.
+Confirm email ownership with single-use verification challenges while allowing an authenticated account to use VulcanForgeUI before verification is complete.
+
+Email verification is a trust and account-recovery signal. It is not a global authorization boundary for the current design-system workspace. Selected future capabilities may require a verified address when they create a meaningful security or collaboration dependency.
 
 ## Account lifecycle
 
@@ -14,12 +16,13 @@ A successful signup now:
 
 1. validates the account and password under the existing abuse controls;
 2. creates the user, preferences, workspace, settings and owner membership atomically;
-3. creates a single-use email verification challenge;
-4. sends a locale-aware verification message;
-5. signs the user in;
-6. redirects the authenticated account to `/{locale}/verify-email`.
+3. creates and sends an email verification challenge;
+4. signs the user in;
+5. redirects the account to `/{locale}/app`.
 
-An authenticated account whose `emailVerifiedAt` value is null cannot access `/{locale}/app/**`. The server-side application layout redirects it to the verification page. The account may sign in and resend the verification message, but application functionality remains unavailable until ownership is confirmed.
+An authenticated account whose `emailVerifiedAt` value is null can use the application. The application shell displays a persistent, non-blocking reminder with a resend action until ownership is confirmed.
+
+The dedicated `/{locale}/verify-email` page remains available for verification results, resends and explicit confirmation. An authenticated pending account can always return to the workspace.
 
 ## Token security
 
@@ -35,21 +38,51 @@ Verification challenges use:
 
 The raw token exists only while constructing and delivering the verification link. It is never persisted or logged.
 
+Opening a verification link with `GET` does not validate the account. The route inspects the challenge, stores the token briefly in a scoped `HttpOnly` cookie and redirects to a confirmation surface without retaining the token in the browser URL. Final verification requires a same-origin `POST`. This prevents automated email link scanners from validating accounts without an explicit user action.
+
 Malformed, unknown, expired, already-consumed and replaced links use bounded result states. Concurrent consumption permits only one successful verification.
 
 ## Email delivery
 
-Delivery uses the Resend HTTP API through the platform `fetch` implementation, without an additional SDK dependency.
+### Local development
 
-Required production variables:
+Local development uses Mailpit through its HTTP send API. No external provider account or API key is required.
 
-- `RESEND_API_KEY` — sending-only Resend key;
-- `AUTH_EMAIL_FROM` — sender on a domain verified by Resend;
-- `AUTH_EMAIL_BASE_URL` — public HTTPS application origin.
+Start PostgreSQL and Mailpit together:
 
-Messages include HTML and plain-text bodies in English and French. The provider request uses an idempotency key derived from the persisted challenge identifier. Provider credentials, raw tokens and destination addresses are not added to security events.
+```bash
+npm run dev:up
+```
 
-When initial delivery fails, account creation remains committed and the pending page exposes a resend action. A challenge whose delivery failed is revoked so an undelivered token cannot remain active.
+Or start Mailpit independently:
+
+```bash
+npm run mail:up
+```
+
+Captured messages are available at `http://localhost:8025`.
+
+Development defaults:
+
+- transport: `mailpit`;
+- Mailpit origin: `http://localhost:8025`;
+- application origin: `http://localhost:3000`;
+- sender: `VulcanForgeUI <auth@vulcanforge.local>`.
+
+These values can be overridden through `.env` without introducing an external dependency.
+
+### Deployed environments
+
+Production accepts only the Resend transport and requires:
+
+- `AUTH_EMAIL_TRANSPORT=resend`;
+- `RESEND_API_KEY` — a sending-only key;
+- `AUTH_EMAIL_FROM` — a sender on a domain verified by Resend;
+- `AUTH_EMAIL_BASE_URL` — the public HTTPS application origin.
+
+Messages include HTML and plain-text bodies in English and French. Resend requests use an idempotency key derived from the persisted challenge identifier. Provider credentials, raw tokens and destination addresses are not added to security events.
+
+Delivery failure never prevents workspace access. The pending banner and dedicated verification page expose a resend action.
 
 ## Abuse controls
 
@@ -62,16 +95,30 @@ The stored bucket key contains only HMAC fingerprints, not raw email or IP value
 
 ## Email address changes
 
-A confirmed account that changes its email address must prove ownership again:
+A confirmed account that changes its email address must prove ownership of the new address again:
 
 1. the current password is verified;
 2. the new unique email is saved;
 3. `emailVerifiedAt` is cleared in the same transaction;
 4. existing verification challenges are removed;
 5. a new challenge is sent;
-6. the account is signed out.
+6. the account is signed out so the next session uses the new login address.
 
-Delivery failure does not roll back the completed email change. After signing in with the new address, the user is routed to the pending verification page and can retry delivery.
+After signing in with the new address, the user can use the workspace and sees the non-blocking verification reminder. Delivery failure does not roll back the completed email change.
+
+## Current product boundary
+
+Verification is not required for the existing single-user design-system authoring journey.
+
+A verified email may later become a prerequisite for capabilities where ownership proof materially reduces risk, for example:
+
+- password recovery;
+- inviting collaborators;
+- transferring workspace ownership;
+- public sharing or publication;
+- security-sensitive account operations.
+
+Each future restriction must be attached to a specific capability rather than applied to the entire application.
 
 ## Security events
 
@@ -80,12 +127,14 @@ The lifecycle emits sanitized events:
 - `auth.email_verification.sent`;
 - `auth.email_verification.rate_limited`;
 - `auth.email_verification.delivery_failed`;
+- `auth.email_verification.link_opened`;
 - `auth.email_verification.verified`;
 - `auth.email_verification.already_verified`;
 - `auth.email_verification.expired`;
-- `auth.email_verification.invalid`.
+- `auth.email_verification.invalid`;
+- `auth.email_verification.unexpected_error`.
 
-Events may contain a user ID, account or client-address fingerprint, request ID, expiry timestamp, retry delay and bounded configuration flag. They never contain the raw email address, raw IP address, delivered token, token hash, provider API key or session token.
+Events may contain a user ID, account or client-address fingerprint, request ID, expiry timestamp, retry delay and bounded reason or configuration flags. They never contain the raw email address, raw IP address, delivered token, token hash, provider API key or session token.
 
 ## Automated coverage
 
@@ -93,11 +142,17 @@ The implementation includes tests for:
 
 - random URL-safe token generation and deterministic token hashing;
 - malformed token rejection;
-- locale-aware provider requests and idempotency headers;
+- locale-aware Resend requests and idempotency headers;
+- local Mailpit payloads and transport selection;
+- production rejection of the Mailpit transport;
 - missing delivery configuration and provider failures;
-- signup delivery and pending-state redirects;
+- signup delivery followed by a normal workspace redirect;
 - authenticated resend behavior;
+- non-blocking authenticated sessions;
+- persistent verification reminder rendering;
 - email-change reverification and old-token invalidation;
+- link inspection on `GET` without token consumption;
+- same-origin confirmation on `POST`;
 - PostgreSQL persistence of token hashes only;
 - successful single-use consumption;
 - expiration cleanup;
@@ -105,23 +160,28 @@ The implementation includes tests for:
 
 ## Manual QA checklist
 
-### Signup and pending access
+### Local development and workspace access
 
-- [ ] A new English account receives an English verification email.
-- [ ] A new French account receives a French verification email.
-- [ ] The delivered link uses the configured public application origin.
-- [ ] The authenticated new account lands on the localized pending page.
-- [ ] Direct navigation to `/{locale}/app` redirects an unverified account to `/{locale}/verify-email`.
-- [ ] The pending page identifies the signed-in account without exposing credentials or tokens.
-- [ ] Delivery failure leaves the account recoverable and exposes the localized resend action.
+- [ ] `npm run dev:up` starts PostgreSQL and Mailpit.
+- [ ] Mailpit is available at `http://localhost:8025`.
+- [ ] A new English account receives an English message in Mailpit.
+- [ ] A new French account receives a French message in Mailpit.
+- [ ] A new account is redirected to the localized application route.
+- [ ] An unverified account can navigate throughout the existing workspace.
+- [ ] The application shell displays the localized verification reminder.
+- [ ] The reminder does not cover or disable workspace content.
+- [ ] Delivery failure leaves the workspace usable and exposes the resend action.
 
 ### Token lifecycle
 
-- [ ] A valid link sets `emailVerifiedAt` and unlocks application access.
+- [ ] The delivered link uses the configured application origin.
+- [ ] Opening the link displays a confirmation state without immediately setting `emailVerifiedAt`.
+- [ ] Confirming the link sets `emailVerifiedAt` and removes the active challenge.
 - [ ] The same link cannot be used twice.
 - [ ] A replaced link is invalid after a resend.
 - [ ] A link older than 30 minutes shows the localized expired state.
 - [ ] A malformed or unknown token shows the localized invalid state.
+- [ ] A cross-origin confirmation request is rejected.
 - [ ] Verification from another browser succeeds without requiring the original session.
 
 ### Resend controls
@@ -131,6 +191,7 @@ The implementation includes tests for:
 - [ ] The sixth account-scoped request within an hour is rate-limited.
 - [ ] A verified account cannot generate another challenge.
 - [ ] An unauthenticated resend request does not send an email.
+- [ ] A successful resend displays accessible status feedback in the application banner.
 
 ### Email changes
 
@@ -138,18 +199,24 @@ The implementation includes tests for:
 - [ ] Changing the email requires the current password.
 - [ ] A successful email change clears verification and removes older challenges.
 - [ ] The account is signed out after the email change.
-- [ ] Signing in with the new address leads to the verification page.
-- [ ] Verification of the new address restores application access.
+- [ ] Signing in with the new address permits workspace access and displays the reminder.
+- [ ] Verification of the new address removes the reminder on the next application request.
+
+### Production configuration
+
+- [ ] Production rejects `AUTH_EMAIL_TRANSPORT=mailpit`.
+- [ ] Missing Resend configuration produces a bounded delivery failure without blocking access.
+- [ ] A configured Resend sender receives a successful provider response.
 
 ### Logging and privacy
 
-- [ ] Successful delivery and verification emit their expected events.
+- [ ] Successful delivery, link opening and verification emit their expected events.
 - [ ] Expired, invalid, rate-limited and failed-delivery paths emit bounded events.
 - [ ] Logs contain no raw email, raw IP, raw token, token hash, API key or session token.
 
 ## Known boundaries
 
 - Resend domain verification and DNS configuration are external operational prerequisites and cannot be validated from repository code.
-- Verification email delivery is provider-dependent. The pending account state and resend action preserve recoverability during provider outages.
-- This lot gates all application routes rather than implementing feature-by-feature partial access. A later product decision may introduce a narrower limited onboarding surface.
+- Mailpit is a development-only capture service and must not be exposed as a production transport.
+- Verification does not currently restrict product functionality. Future restrictions require an explicit capability-level product decision.
 - Password recovery and session revocation remain separate authentication roadmap items.
