@@ -265,7 +265,13 @@
       "userMenuLabel": "Ouvrir le menu utilisateur",
       "workspaceLabel": "Changer d’espace de travail"
     },
-    "unknownUser": "utilisateur inconnu"
+    "unknownUser": "utilisateur inconnu",
+    "emailVerification": {
+      "title": "Vérifiez votre adresse e-mail",
+      "description": "La vérification renforce la récupération du compte et les futures fonctions collaboratives. Vous pouvez continuer à utiliser votre espace.",
+      "resend": "Renvoyer l’e-mail",
+      "resending": "Envoi..."
+    }
   },
   "Common": {
     "actions": {
@@ -1772,7 +1778,9 @@
       "continue": "Accéder à votre espace",
       "resend": "Renvoyer un e-mail de vérification",
       "resending": "Envoi de l’e-mail de vérification...",
-      "signIn": "Se connecter pour continuer"
+      "signIn": "Se connecter pour continuer",
+      "confirm": "Confirmer mon adresse e-mail",
+      "continueWithoutVerification": "Continuer vers mon espace"
     },
     "delivery": {
       "deliveryUnavailable": "Votre compte a été créé, mais l’e-mail de vérification n’a pas pu être envoyé. Réessayez ci-dessous.",
@@ -1802,11 +1810,15 @@
       },
       "pending": {
         "title": "Consultez votre boîte de réception.",
-        "description": "Vérifiez votre adresse e-mail avant d’accéder à votre espace VulcanForgeUI. Le lien expire après 30 minutes."
+        "description": "Consultez votre boîte de réception pour trouver le lien de vérification. Vous pouvez continuer à utiliser votre espace pendant ce temps."
       },
       "verified": {
         "title": "Votre adresse e-mail est vérifiée.",
         "description": "Votre compte est actif et votre espace est prêt."
+      },
+      "confirm": {
+        "title": "Confirmez votre adresse e-mail",
+        "description": "Utilisez le bouton ci-dessous pour confirmer cette adresse. L’ouverture du lien seule ne modifie pas votre compte."
       }
     }
   }

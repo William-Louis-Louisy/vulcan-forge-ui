@@ -372,8 +372,7 @@ export async function sendEmailVerificationEmail(
     locale: input.locale,
     verificationUrl,
   });
-  const timeoutMs =
-    options.timeoutMs ?? EMAIL_VERIFICATION_DELIVERY_TIMEOUT_MS;
+  const timeoutMs = options.timeoutMs ?? EMAIL_VERIFICATION_DELIVERY_TIMEOUT_MS;
   const from = getConfiguredValue(options.from ?? process.env.AUTH_EMAIL_FROM);
 
   if (transport === 'mailpit') {

@@ -68,8 +68,7 @@ describe('email verification route', () => {
         {
           method: 'POST',
           headers: {
-            Cookie:
-              'vulcan_email_verification_confirmation=opaque-value',
+            Cookie: 'vulcan_email_verification_confirmation=opaque-value',
             Origin: 'https://app.example.com',
           },
         },
@@ -96,8 +95,7 @@ describe('email verification route', () => {
         {
           method: 'POST',
           headers: {
-            Cookie:
-              'vulcan_email_verification_confirmation=opaque-value',
+            Cookie: 'vulcan_email_verification_confirmation=opaque-value',
             Origin: 'https://attacker.example.com',
           },
         },

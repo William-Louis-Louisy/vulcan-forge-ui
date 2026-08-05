@@ -265,7 +265,13 @@
       "userMenuLabel": "Open user menu",
       "workspaceLabel": "Switch workspace"
     },
-    "unknownUser": "unknown user"
+    "unknownUser": "unknown user",
+    "emailVerification": {
+      "title": "Verify your email address",
+      "description": "Verification strengthens account recovery and future collaboration features. You can keep using your workspace.",
+      "resend": "Resend email",
+      "resending": "Sending..."
+    }
   },
   "Common": {
     "actions": {
@@ -1772,7 +1778,9 @@
       "continue": "Continue to your workspace",
       "resend": "Send another verification email",
       "resending": "Sending verification email...",
-      "signIn": "Sign in to continue"
+      "signIn": "Sign in to continue",
+      "confirm": "Confirm email address",
+      "continueWithoutVerification": "Continue to workspace"
     },
     "delivery": {
       "deliveryUnavailable": "Your account was created, but we couldn't send the verification email. Try again below.",
@@ -1802,11 +1810,15 @@
       },
       "pending": {
         "title": "Check your inbox.",
-        "description": "Verify your email address before accessing your VulcanForgeUI workspace. The link expires after 30 minutes."
+        "description": "Check your inbox for a verification link. You can continue using your workspace while verification is pending."
       },
       "verified": {
         "title": "Your email address is verified.",
         "description": "Your account is active and your workspace is ready."
+      },
+      "confirm": {
+        "title": "Confirm your email address",
+        "description": "Use the button below to confirm this address. Opening the email link alone does not change your account."
       }
     }
   }

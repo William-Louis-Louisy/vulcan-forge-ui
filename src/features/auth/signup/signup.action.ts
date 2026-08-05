@@ -325,17 +325,13 @@ export async function signupAction(
     userId,
   });
 
-  let deliveryStatus: 'deliveryUnavailable' | 'rateLimited' | 'sent' =
-    'deliveryUnavailable';
-
   try {
-    const delivery = await sendEmailVerificationChallenge({
+    await sendEmailVerificationChallenge({
       email: parsed.data.email,
       headers: requestHeaders,
       locale,
       userId,
     });
-    deliveryStatus = delivery.status;
   } catch {
     recordAuthSecurityEvent('auth.signup.unexpected_error', {
       accountFingerprint: rateLimit.accountFingerprint,
@@ -350,7 +346,7 @@ export async function signupAction(
     await signIn('credentials', {
       email: parsed.data.email,
       password: acceptablePassword,
-      redirectTo: `/${locale}/verify-email?delivery=${deliveryStatus}`,
+      redirectTo: `/${locale}/app`,
     });
   } catch (error) {
     if (error instanceof AuthError) {

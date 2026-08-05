@@ -185,7 +185,7 @@ describe('signupAction', () => {
     );
   });
 
-  it('sends a verification challenge and redirects to the pending state', async () => {
+  it('sends a verification challenge and redirects to the workspace', async () => {
     await signupAction(initialSignupActionState, createSignupFormData());
 
     expect(mocks.sendVerification).toHaveBeenCalledWith({
@@ -197,7 +197,7 @@ describe('signupAction', () => {
     expect(mocks.signIn).toHaveBeenCalledWith('credentials', {
       email: 'william@example.com',
       password: 'strong-password-123',
-      redirectTo: '/en/verify-email?delivery=sent',
+      redirectTo: '/en/app',
     });
   });
 
@@ -212,7 +212,7 @@ describe('signupAction', () => {
     expect(mocks.signIn).toHaveBeenCalledWith(
       'credentials',
       expect.objectContaining({
-        redirectTo: '/en/verify-email?delivery=deliveryUnavailable',
+        redirectTo: '/en/app',
       }),
     );
   });
