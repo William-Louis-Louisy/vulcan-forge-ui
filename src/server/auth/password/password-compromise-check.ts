@@ -77,7 +77,10 @@ export async function checkPasswordCompromise(
     throw createUnavailableError();
   }
 
-  if (!body.length || Buffer.byteLength(body, 'utf8') > HIBP_MAX_RESPONSE_BYTES) {
+  if (
+    !body.length ||
+    Buffer.byteLength(body, 'utf8') > HIBP_MAX_RESPONSE_BYTES
+  ) {
     throw createUnavailableError();
   }
 
