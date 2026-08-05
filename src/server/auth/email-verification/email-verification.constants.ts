@@ -7,4 +7,6 @@ export const EMAIL_VERIFICATION_CONFIRMATION_COOKIE =
 export const EMAIL_VERIFICATION_CONFIRMATION_COOKIE_TTL_SECONDS = 10 * 60;
 
 export const EMAIL_VERIFICATION_DELIVERY_TIMEOUT_MS = 5_000;
+export const MAILPIT_DEFAULT_BASE_URL = 'http://localhost:8025';
+export const MAILPIT_SEND_PATH = '/api/v1/send';
 export const RESEND_EMAIL_ENDPOINT = 'https://api.resend.com/emails';
