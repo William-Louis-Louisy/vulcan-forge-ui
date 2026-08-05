@@ -101,13 +101,12 @@ export default async function EmailVerificationPage({
   const contentStatus = status ?? 'pending';
   const isVerified =
     contentStatus === 'verified' || contentStatus === 'alreadyVerified';
-  const canResend = Boolean(
-    user && !user.emailVerifiedAt && contentStatus !== 'confirm',
-  );
+  const canResend = Boolean(user && !user.emailVerifiedAt);
+  const isAuthenticated = Boolean(session?.user?.id);
 
   return (
     <>
-      <PublicHeader isAuthenticated={Boolean(session?.user?.id)} />
+      <PublicHeader isAuthenticated={isAuthenticated} />
 
       <main className="bg-background-app px-4 py-16 sm:px-6 lg:px-8">
         <section className="border-border-subtle bg-surface-primary mx-auto max-w-xl rounded-xl border p-6 shadow-sm sm:p-8">
@@ -154,14 +153,16 @@ export default async function EmailVerificationPage({
 
           {canResend ? <ResendEmailVerificationForm locale={locale} /> : null}
 
-          <div className="mt-6 text-center">
-            {isVerified && session?.user?.id ? (
+          <div className="mt-6 flex flex-col items-center gap-3 text-center">
+            {isAuthenticated ? (
               <AppLink href="/app" className="text-action-accent font-semibold">
-                {t('actions.continue')}
+                {isVerified
+                  ? t('actions.continue')
+                  : t('actions.continueWithoutVerification')}
               </AppLink>
             ) : null}
 
-            {!session?.user?.id && contentStatus !== 'confirm' ? (
+            {!isAuthenticated ? (
               <AppLink
                 href="/login"
                 className="text-action-accent font-semibold"
