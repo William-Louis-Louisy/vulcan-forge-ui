@@ -39,6 +39,8 @@ describe('email verification route', () => {
       ),
     );
 
+    const confirmationCookie = response.headers.get('Set-Cookie');
+
     expect(mocks.inspectToken).toHaveBeenCalledWith({
       token: 'opaque-value',
     });
@@ -48,10 +50,12 @@ describe('email verification route', () => {
       'https://app.example.com/fr/verify-email?status=confirm',
     );
     expect(response.headers.get('Location')).not.toContain('opaque-value');
-    expect(response.headers.get('Set-Cookie')).toContain(
+    expect(confirmationCookie).toContain(
       'vulcan_email_verification_confirmation=opaque-value',
     );
-    expect(response.headers.get('Set-Cookie')).toContain('HttpOnly');
+    expect(confirmationCookie).toContain('HttpOnly');
+    expect(confirmationCookie).toContain('SameSite=lax');
+    expect(confirmationCookie).toContain('Path=/api/auth/verify-email');
     expect(response.headers.get('Cache-Control')).toBe('no-store, max-age=0');
     expect(response.headers.get('Pragma')).toBe('no-cache');
     expect(response.headers.get('Referrer-Policy')).toBe('no-referrer');
