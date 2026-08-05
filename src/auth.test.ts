@@ -17,7 +17,7 @@ vi.mock('next-auth', () => ({
 }));
 
 vi.mock('next-auth/providers/credentials', () => ({
-  default: vi.fn((configuration) => configuration),
+  default: vi.fn((configuration: unknown) => configuration),
 }));
 
 vi.mock('@/server/auth/credentials-authorizer', () => ({
