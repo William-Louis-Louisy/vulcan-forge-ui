@@ -31,15 +31,15 @@ export async function GET(request: Request) {
     verified: 'auth.email_verification.verified',
   } as const;
 
-  recordAuthSecurityEvent(
-    unexpectedError
-      ? 'auth.email_verification.unexpected_error'
-      : eventByStatus[result.status],
-    {
-      reason: unexpectedError ? 'token_consumption' : undefined,
+  if (unexpectedError) {
+    recordAuthSecurityEvent('auth.email_verification.unexpected_error', {
+      reason: 'token_consumption',
+    });
+  } else {
+    recordAuthSecurityEvent(eventByStatus[result.status], {
       userId: result.userId,
-    },
-  );
+    });
+  }
 
   const redirectUrl = new URL(`/${locale}/verify-email`, requestUrl.origin);
   redirectUrl.searchParams.set('status', result.status);
