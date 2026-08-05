@@ -9,12 +9,9 @@ vi.mock('@/server/auth/auth-security-events', () => ({
   recordAuthSecurityEvent: mocks.recordEvent,
 }));
 
-vi.mock(
-  '@/server/auth/email-verification/email-verification.service',
-  () => ({
-    consumeEmailVerificationToken: mocks.consumeToken,
-  }),
-);
+vi.mock('@/server/auth/email-verification/email-verification.service', () => ({
+  consumeEmailVerificationToken: mocks.consumeToken,
+}));
 
 import { GET } from './route';
 
