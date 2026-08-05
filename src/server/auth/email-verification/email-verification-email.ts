@@ -106,6 +106,15 @@ function createVerificationUrl({
   return url.toString();
 }
 
+function escapeHtml(value: string) {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;');
+}
+
 function createEmailContent({
   locale,
   verificationUrl,
@@ -114,6 +123,7 @@ function createEmailContent({
   verificationUrl: string;
 }) {
   const copy = verificationEmailCopy[locale];
+  const escapedVerificationUrl = escapeHtml(verificationUrl);
   const html = `<!doctype html>
 <html lang="${locale}">
   <body style="margin:0;background:#f6f7f9;color:#111827;font-family:Arial,sans-serif;padding:32px 16px;">
@@ -122,11 +132,11 @@ function createEmailContent({
       <h1 style="font-size:28px;line-height:1.2;margin:0 0 16px;">${copy.heading}</h1>
       <p style="font-size:16px;line-height:1.6;margin:0 0 24px;">${copy.introduction}</p>
       <p style="margin:0 0 24px;">
-        <a href="${verificationUrl}" style="background:#111827;border-radius:8px;color:#ffffff;display:inline-block;font-size:16px;font-weight:700;padding:12px 18px;text-decoration:none;">${copy.action}</a>
+        <a href="${escapedVerificationUrl}" style="background:#111827;border-radius:8px;color:#ffffff;display:inline-block;font-size:16px;font-weight:700;padding:12px 18px;text-decoration:none;">${copy.action}</a>
       </p>
       <p style="font-size:14px;line-height:1.6;margin:0 0 16px;">${copy.expiry}</p>
       <p style="font-size:13px;line-height:1.6;margin:0 0 8px;">${copy.fallback}</p>
-      <p style="font-size:12px;line-height:1.6;margin:0;overflow-wrap:anywhere;">${verificationUrl}</p>
+      <p style="font-size:12px;line-height:1.6;margin:0;overflow-wrap:anywhere;">${escapedVerificationUrl}</p>
     </main>
   </body>
 </html>`;
