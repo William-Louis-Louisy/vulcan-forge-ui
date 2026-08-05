@@ -22,12 +22,13 @@ describe('EmailVerificationBanner', () => {
     expect(
       screen.getByRole('region', { name: /verify your email address/i }),
     ).toBeInTheDocument();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(
       screen.getByText(/you can keep using your workspace/i),
     ).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: /resend email/i }),
-    ).toBeInTheDocument();
+    ).toBeEnabled();
     expect(
       screen.getByText('Workspace content remains available.'),
     ).toBeInTheDocument();
