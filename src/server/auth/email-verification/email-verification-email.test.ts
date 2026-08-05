@@ -1,9 +1,20 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   EmailVerificationConfigurationError,
   EmailVerificationDeliveryError,
 } from './email-verification.errors';
 import { sendEmailVerificationEmail } from './email-verification-email';
+
+const verificationInput = {
+  email: 'william@example.com',
+  idempotencyKey: 'email-verification/token-1',
+  locale: 'fr' as const,
+  token: 'verification-token',
+};
+
+afterEach(() => {
+  vi.unstubAllEnvs();
+});
 
 describe('sendEmailVerificationEmail', () => {
   it('sends a localized single-use verification link through Resend', async () => {
@@ -12,20 +23,13 @@ describe('sendEmailVerificationEmail', () => {
         new Response(JSON.stringify({ id: 'email-1' }), { status: 200 }),
     );
 
-    await sendEmailVerificationEmail(
-      {
-        email: 'william@example.com',
-        idempotencyKey: 'email-verification/token-1',
-        locale: 'fr',
-        token: 'verification-token',
-      },
-      {
-        apiKey: 'test-api-key',
-        baseUrl: 'https://app.example.com',
-        fetchImpl,
-        from: 'VulcanForgeUI <auth@example.com>',
-      },
-    );
+    await sendEmailVerificationEmail(verificationInput, {
+      apiKey: 'test-api-key',
+      baseUrl: 'https://app.example.com',
+      fetchImpl,
+      from: 'VulcanForgeUI <auth@example.com>',
+      transport: 'resend',
+    });
 
     const call = fetchImpl.mock.calls[0];
     const body = JSON.parse(String(call?.[1]?.body)) as {
@@ -51,22 +55,66 @@ describe('sendEmailVerificationEmail', () => {
     expect(body.text).toContain('token=verification-token');
   });
 
-  it('fails closed when delivery configuration is missing', async () => {
+  it('captures local verification messages through the Mailpit HTTP API', async () => {
+    const fetchImpl = vi.fn(
+      async (_input: RequestInfo | URL, _init?: RequestInit) =>
+        new Response(JSON.stringify({ ID: 'message-1' }), { status: 200 }),
+    );
+
+    await sendEmailVerificationEmail(verificationInput, {
+      baseUrl: 'http://localhost:3000',
+      fetchImpl,
+      mailpitBaseUrl: 'http://localhost:8025',
+      transport: 'mailpit',
+    });
+
+    const call = fetchImpl.mock.calls[0];
+    const body = JSON.parse(String(call?.[1]?.body)) as {
+      From: { Email: string; Name?: string };
+      Headers: Record<string, string>;
+      HTML: string;
+      Subject: string;
+      Tags: string[];
+      Text: string;
+      To: { Email: string }[];
+    };
+
+    expect(String(call?.[0])).toBe('http://localhost:8025/api/v1/send');
+    expect(new Headers(call?.[1]?.headers).get('Authorization')).toBeNull();
+    expect(body.From).toEqual({
+      Email: 'auth@vulcanforge.local',
+      Name: 'VulcanForgeUI',
+    });
+    expect(body.To).toEqual([{ Email: 'william@example.com' }]);
+    expect(body.Tags).toEqual(['email-verification']);
+    expect(body.Headers['X-VulcanForge-Idempotency-Key']).toBe(
+      'email-verification/token-1',
+    );
+    expect(body.HTML).toContain('token=verification-token');
+    expect(body.Text).toContain('token=verification-token');
+  });
+
+  it('fails closed when Resend configuration is missing', async () => {
     await expect(
-      sendEmailVerificationEmail(
-        {
-          email: 'william@example.com',
-          idempotencyKey: 'email-verification/token-1',
-          locale: 'en',
-          token: 'verification-token',
-        },
-        {
-          apiKey: ' ',
-          baseUrl: 'https://app.example.com',
-          fetchImpl: vi.fn(),
-          from: ' ',
-        },
-      ),
+      sendEmailVerificationEmail(verificationInput, {
+        apiKey: ' ',
+        baseUrl: 'https://app.example.com',
+        fetchImpl: vi.fn(),
+        from: ' ',
+        transport: 'resend',
+      }),
+    ).rejects.toBeInstanceOf(EmailVerificationConfigurationError);
+  });
+
+  it('does not allow the local Mailpit transport in production', async () => {
+    vi.stubEnv('NODE_ENV', 'production');
+
+    await expect(
+      sendEmailVerificationEmail(verificationInput, {
+        baseUrl: 'https://app.example.com',
+        fetchImpl: vi.fn(),
+        transport: 'mailpit',
+      }),
     ).rejects.toBeInstanceOf(EmailVerificationConfigurationError);
   });
 
@@ -77,20 +125,13 @@ describe('sendEmailVerificationEmail', () => {
     );
 
     await expect(
-      sendEmailVerificationEmail(
-        {
-          email: 'william@example.com',
-          idempotencyKey: 'email-verification/token-1',
-          locale: 'en',
-          token: 'verification-token',
-        },
-        {
-          apiKey: 'test-api-key',
-          baseUrl: 'https://app.example.com',
-          fetchImpl,
-          from: 'VulcanForgeUI <auth@example.com>',
-        },
-      ),
+      sendEmailVerificationEmail(verificationInput, {
+        apiKey: 'test-api-key',
+        baseUrl: 'https://app.example.com',
+        fetchImpl,
+        from: 'VulcanForgeUI <auth@example.com>',
+        transport: 'resend',
+      }),
     ).rejects.toBeInstanceOf(EmailVerificationDeliveryError);
   });
 });
