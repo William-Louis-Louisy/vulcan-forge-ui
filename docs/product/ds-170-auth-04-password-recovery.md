@@ -2,7 +2,7 @@
 
 ## Status
 
-Architecture approved for implementation. Automated validation and manual product QA are required before the pull request leaves Draft.
+Implementation is complete. The migration, PostgreSQL integration suite, focused recovery tests, lint, strict TypeScript checks, formatting, complete test suite and production build have passed in the implementation workflows. The repository Quality workflow and manual product QA remain required before the pull request leaves Draft.
 
 ## Objective
 
@@ -74,14 +74,14 @@ The existing email infrastructure remains the single transport boundary:
 - HTML and plain-text messages in English and French;
 - bounded provider timeout and sanitized delivery failures.
 
-Two email types are required:
+Two email types are implemented:
 
 1. password-reset link;
 2. password-changed notification with no secret or reset link.
 
 ## Abuse controls
 
-Planned fixed-window policies:
+Implemented fixed-window policies:
 
 - recovery request account fingerprint: 5 per hour;
 - recovery request trusted-address fingerprint: 20 per hour;
@@ -92,13 +92,14 @@ Rate-limit keys contain HMAC fingerprints rather than raw email, IP or token val
 
 ## Security events
 
-The lifecycle will emit sanitized events for:
+The lifecycle emits sanitized events for:
 
 - request accepted;
 - request rate limited;
 - challenge sent;
 - delivery failed;
 - link opened;
+- compromised-password, password-check and hashing failures;
 - reset rejected as invalid or expired;
 - password reset completed;
 - password-changed notification failed;
@@ -108,20 +109,23 @@ Events may contain bounded reasons, user IDs, expiry timestamps, retry delays an
 
 ## Automated coverage
 
-Required automated coverage:
+Implemented automated coverage includes:
 
 - token generation, parsing and hashing;
 - persistence, replacement, expiry and single use;
 - concurrent challenge creation and consumption;
 - neutral request behavior for existing and nonexistent accounts;
-- request and reset throttling;
-- Mailpit and Resend localized payloads;
+- invisible request throttling and bounded reset throttling;
+- localized Mailpit and Resend payloads;
 - fragment cleanup and same-origin preparation;
+- cross-origin reset rejection;
 - password-policy and compromised-password failures;
 - atomic password update, challenge deletion and authentication-version increment;
-- invalidation of sessions issued before a reset;
-- successful login with the new password and rejection of the old password;
-- production build.
+- fail-closed authentication-version checks for stale, missing and unavailable sessions;
+- password-changed notification delivery without secrets;
+- complete repository test suite and production build.
+
+The old-password rejection and new-password login journey remains an explicit manual QA item because it validates the assembled browser, email, hashing and credentials flow rather than one isolated service.
 
 ## Manual QA
 
