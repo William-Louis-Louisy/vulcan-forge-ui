@@ -2,7 +2,6 @@
 
 import type { Locale } from '@/i18n/routing';
 import { useLocale, useTranslations } from 'next-intl';
-import { useSearchParams } from 'next/navigation';
 import { usePathname, useRouter } from '@/i18n/navigation';
 import { getLocaleSwitcherOptions } from '@/i18n/locale-switcher';
 import { getLocalizedAuthReturnTo } from '@/features/auth/shared/return-to';
@@ -20,7 +19,6 @@ export function LocaleSwitcher({
 }: LocaleSwitcherProps = {}) {
   const currentLocale = useLocale() as Locale;
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const router = useRouter();
   const t = useTranslations('LocaleSwitcher');
 
@@ -31,7 +29,7 @@ export function LocaleSwitcher({
       return;
     }
 
-    const nextSearchParams = new URLSearchParams(searchParams.toString());
+    const nextSearchParams = new URLSearchParams(window.location.search);
     const returnTo = nextSearchParams.get('returnTo');
 
     if (returnTo) {
