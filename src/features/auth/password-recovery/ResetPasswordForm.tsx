@@ -30,12 +30,23 @@ type ResetResponse = {
   status: ResetStatus | 'expired' | 'invalid';
 };
 
+type ResetFieldErrors = NonNullable<ResetResponse['fieldErrors']>;
+
+function removeFieldError(
+  fieldErrors: ResetFieldErrors,
+  field: keyof ResetFieldErrors,
+): ResetFieldErrors {
+  const nextFieldErrors = { ...fieldErrors };
+
+  delete nextFieldErrors[field];
+
+  return nextFieldErrors;
+}
+
 export function ResetPasswordForm() {
   const t = useTranslations('PasswordResetPage');
   const [status, setStatus] = useState<ResetStatus>('idle');
-  const [fieldErrors, setFieldErrors] = useState<
-    NonNullable<ResetResponse['fieldErrors']>
-  >({});
+  const [fieldErrors, setFieldErrors] = useState<ResetFieldErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
@@ -145,10 +156,7 @@ export function ResetPasswordForm() {
         value={password}
         onChange={(event) => {
           setPassword(event.currentTarget.value);
-          setFieldErrors((current) => ({
-            ...current,
-            password: undefined,
-          }));
+          setFieldErrors((current) => removeFieldError(current, 'password'));
         }}
         help={t('form.passwordHelp')}
         error={passwordError ? t(`validation.${passwordError}`) : undefined}
@@ -165,10 +173,9 @@ export function ResetPasswordForm() {
         value={passwordConfirmation}
         onChange={(event) => {
           setPasswordConfirmation(event.currentTarget.value);
-          setFieldErrors((current) => ({
-            ...current,
-            passwordConfirmation: undefined,
-          }));
+          setFieldErrors((current) =>
+            removeFieldError(current, 'passwordConfirmation'),
+          );
         }}
         error={
           confirmationError
