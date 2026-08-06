@@ -7,10 +7,7 @@ import { consumeAuthRateLimit } from '@/server/auth/auth-rate-limit';
 import { recordAuthSecurityEvent } from '@/server/auth/auth-security-events';
 import { prisma } from '@/server/db/prisma';
 import { sendPasswordRecoveryChallenge } from '@/server/auth/password-recovery/send-password-recovery.service';
-import {
-  requestPasswordRecoverySchema,
-  type RequestPasswordRecoveryValidationMessageKey,
-} from './request-password-recovery.schema';
+import { requestPasswordRecoverySchema } from './request-password-recovery.schema';
 import type { RequestPasswordRecoveryActionState } from './request-password-recovery.state';
 
 function getFormStringValue(formData: FormData, key: string) {
@@ -39,9 +36,7 @@ export async function requestPasswordRecoveryAction(
   if (!parsed.success) {
     return {
       fieldErrors: {
-        email: parsed.error.flatten().fieldErrors.email as
-          | RequestPasswordRecoveryValidationMessageKey[]
-          | undefined,
+        email: ['emailInvalid'],
       },
       status: 'error',
       values: { email },
