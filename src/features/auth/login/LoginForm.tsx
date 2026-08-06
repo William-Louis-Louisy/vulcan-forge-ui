@@ -2,6 +2,7 @@
 
 import { useActionState } from 'react';
 import { useTranslations } from 'next-intl';
+import { AppLink } from '@/components/navigation/AppLink';
 import { Button, Input } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
 import { loginAction } from './login.action';
@@ -111,6 +112,14 @@ export function LoginForm({
             {t(`validation.${passwordError}`)}
           </p>
         ) : null}
+        <div className="mt-3 text-right">
+          <AppLink
+            href="/forgot-password"
+            className="text-action-accent text-sm font-semibold"
+          >
+            {t('form.forgotPassword')}
+          </AppLink>
+        </div>
       </div>
 
       <Button type="submit" disabled={isPending} className="w-full">

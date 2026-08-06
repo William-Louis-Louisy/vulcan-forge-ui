@@ -1,0 +1,8 @@
+export const PASSWORD_RECOVERY_TOKEN_BYTES = 32;
+export const PASSWORD_RECOVERY_TOKEN_MAX_LENGTH = 128;
+export const PASSWORD_RECOVERY_TOKEN_TTL_MS = 30 * 60_000;
+export const PASSWORD_RECOVERY_CONFIRMATION_COOKIE =
+  'vulcan_password_recovery_confirmation';
+export const PASSWORD_RECOVERY_CONFIRMATION_COOKIE_TTL_SECONDS = 10 * 60;
+export const PASSWORD_RECOVERY_CONFIRMATION_COOKIE_PATH =
+  '/api/auth/password-recovery';

@@ -3,6 +3,7 @@ import type { AppLocale } from '@/domain/i18n';
 
 declare module 'next-auth' {
   interface User {
+    authVersion: number;
     id: string;
     locale: AppLocale;
   }
@@ -17,7 +18,9 @@ declare module 'next-auth' {
 
 declare module 'next-auth/jwt' {
   interface JWT {
-    id: string;
-    locale: AppLocale;
+    authVersion?: number;
+    id?: string;
+    invalidated?: boolean;
+    locale?: AppLocale;
   }
 }

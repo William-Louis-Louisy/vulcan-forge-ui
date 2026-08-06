@@ -1,6 +1,7 @@
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { authorizeCredentials } from '@/server/auth/credentials-authorizer';
+import { isAuthSessionVersionCurrent } from '@/server/auth/session-version';
 
 const nextAuth = NextAuth({
   session: {
@@ -22,17 +23,36 @@ const nextAuth = NextAuth({
     }),
   ],
   callbacks: {
-    jwt({ token, user }) {
+    async jwt({ token, user }) {
       if (user) {
-        token.id = user.id as string;
-        token.locale = user.locale as string;
+        token.authVersion = user.authVersion;
+        token.id = user.id;
+        token.invalidated = false;
+        token.locale = user.locale;
+        return token;
       }
+
+      if (
+        typeof token.authVersion !== 'number' ||
+        typeof token.id !== 'string'
+      ) {
+        token.invalidated = true;
+        return token;
+      }
+
+      token.invalidated = !(await isAuthSessionVersionCurrent({
+        authVersion: token.authVersion,
+        userId: token.id,
+      }));
 
       return token;
     },
     session({ session, token }) {
-      session.user.id = token.id as string;
-      session.user.locale = token.locale as 'en' | 'fr';
+      const tokenId = typeof token.id === 'string' ? token.id : '';
+      const tokenLocale = token.locale === 'fr' ? 'fr' : 'en';
+
+      session.user.id = token.invalidated ? '' : tokenId;
+      session.user.locale = tokenLocale;
 
       return session;
     },
