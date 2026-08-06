@@ -6,5 +6,9 @@ export {
   passwordsMatchDraft,
 } from './password-draft-validation';
 export type { PasswordDraftIssue } from './password-draft-validation';
-export { getDefaultAuthReturnTo, getSafeAuthReturnTo } from './return-to';
+export {
+  getDefaultAuthReturnTo,
+  getLocalizedAuthReturnTo,
+  getSafeAuthReturnTo,
+} from './return-to';
 export { formatPersonalWorkspaceName } from './workspace-name';
