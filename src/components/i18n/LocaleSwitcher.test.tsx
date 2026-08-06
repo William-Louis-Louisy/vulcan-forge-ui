@@ -37,7 +37,7 @@ describe('LocaleSwitcher', () => {
 
     await user.click(
       screen.getByRole('button', {
-        name: /switch to french/i,
+        name: /switch to français/i,
       }),
     );
 
