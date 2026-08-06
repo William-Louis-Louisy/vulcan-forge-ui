@@ -20,10 +20,8 @@ import {
   assertPasswordIsAcceptable,
   hashPassword,
 } from '@/server/auth/password/password.service';
-import {
-  formatPersonalWorkspaceName,
-  getSafeAuthReturnTo,
-} from '@/features/auth/shared';
+import { formatPersonalWorkspaceName } from '@/features/auth/shared/workspace-name';
+import { getSafeAuthReturnTo } from '@/features/auth/shared/return-to';
 import type { SignupActionState } from './signup.state';
 import { getSignupPersistenceError } from './signup.errors';
 import { createPersonalWorkspaceSlug } from '@/domain/workspaces/slug';
