@@ -36,9 +36,9 @@ Verification challenges use:
 - single-use, transactional consumption;
 - deletion after success, expiration, replacement or account deletion.
 
-The raw token exists only while constructing and delivering the verification link. It is never persisted or logged.
+The raw token exists only while constructing and delivering the verification link. It is never persisted. The delivered URL carries it in the fragment, which browsers do not send in HTTP requests, referrer headers or access-log paths.
 
-Opening a verification link with `GET` does not validate the account. The route inspects the challenge, stores the token briefly in a scoped `HttpOnly` cookie and redirects to a confirmation surface without retaining the token in the browser URL. Final verification requires a same-origin `POST`. This prevents automated email link scanners from validating accounts without an explicit user action.
+The delivered link targets `/{locale}/verify-email#token=...`. A small client bootstrap removes the fragment from browser history before sending the token in a bounded same-origin `POST` body to `/api/auth/verify-email/prepare`. The server inspects the challenge and stores the token briefly in a scoped `HttpOnly` cookie. Final verification still requires a separate same-origin `POST`. This keeps raw tokens out of HTTP URL logs while preventing automated email link scanners from validating accounts without an explicit user action.
 
 Malformed, unknown, expired, already-consumed and replaced links use bounded result states. Concurrent consumption permits only one successful verification.
 
@@ -151,7 +151,8 @@ The implementation includes tests for:
 - non-blocking authenticated sessions;
 - persistent verification reminder rendering;
 - email-change reverification and old-token invalidation;
-- link inspection on `GET` without token consumption;
+- fragment extraction with immediate browser URL cleanup;
+- bounded same-origin preparation using a request body rather than a token-bearing URL;
 - same-origin confirmation on `POST`;
 - PostgreSQL persistence of token hashes only;
 - successful single-use consumption;
@@ -175,6 +176,8 @@ The implementation includes tests for:
 ### Token lifecycle
 
 - [ ] The delivered link uses the configured application origin.
+- [ ] The delivered link carries the raw token only in the URL fragment, not in the query string.
+- [ ] Opening the link does not expose the raw token in Next.js or reverse-proxy request logs.
 - [ ] Opening the link displays a confirmation state without immediately setting `emailVerifiedAt`.
 - [ ] Confirming the link sets `emailVerifiedAt` and removes the active challenge.
 - [ ] The same link cannot be used twice.

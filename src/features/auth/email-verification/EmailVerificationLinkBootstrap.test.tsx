@@ -20,11 +20,7 @@ describe('EmailVerificationLinkBootstrap', () => {
   });
 
   it('removes the token fragment before preparing confirmation', async () => {
-    window.history.replaceState(
-      {},
-      '',
-      '/en/verify-email#token=opaque-value',
-    );
+    window.history.replaceState({}, '', '/en/verify-email#token=opaque-value');
     let capturedInit: RequestInit | undefined;
     const fetchImpl = vi.fn(
       async (_input: RequestInfo | URL, init?: RequestInit) => {
@@ -73,11 +69,7 @@ describe('EmailVerificationLinkBootstrap', () => {
   });
 
   it('uses the invalid state for an untrusted response payload', async () => {
-    window.history.replaceState(
-      {},
-      '',
-      '/fr/verify-email#token=opaque-value',
-    );
+    window.history.replaceState({}, '', '/fr/verify-email#token=opaque-value');
     vi.stubGlobal(
       'fetch',
       vi.fn(

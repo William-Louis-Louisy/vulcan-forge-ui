@@ -20,7 +20,10 @@ function createStatusRedirect({
   request: NextRequest;
   status: string;
 }) {
-  const redirectUrl = new URL(`/${locale}/verify-email`, request.nextUrl.origin);
+  const redirectUrl = new URL(
+    `/${locale}/verify-email`,
+    request.nextUrl.origin,
+  );
   redirectUrl.searchParams.set('status', status);
 
   const response = NextResponse.redirect(redirectUrl, 303);

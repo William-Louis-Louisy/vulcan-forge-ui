@@ -61,9 +61,7 @@ describe('email verification preparation route', () => {
     expect(confirmationCookie).toContain('HttpOnly');
     expect(confirmationCookie).toContain('SameSite=lax');
     expect(confirmationCookie).toContain('Path=/api/auth/verify-email');
-    expect(response.headers.get('Cache-Control')).toBe(
-      'no-store, max-age=0',
-    );
+    expect(response.headers.get('Cache-Control')).toBe('no-store, max-age=0');
     expect(mocks.recordEvent).toHaveBeenCalledWith(
       'auth.email_verification.link_opened',
       { userId: 'user-1' },

@@ -4,11 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import type { Locale } from '@/i18n/routing';
 
-type PreparationStatus =
-  | 'alreadyVerified'
-  | 'confirm'
-  | 'expired'
-  | 'invalid';
+type PreparationStatus = 'alreadyVerified' | 'confirm' | 'expired' | 'invalid';
 
 const preparationStatuses = new Set<PreparationStatus>([
   'alreadyVerified',
@@ -47,11 +43,7 @@ function getPreparationStatus(payload: unknown): PreparationStatus {
   return payload.status as PreparationStatus;
 }
 
-export function EmailVerificationLinkBootstrap({
-  locale,
-}: {
-  locale: Locale;
-}) {
+export function EmailVerificationLinkBootstrap({ locale }: { locale: Locale }) {
   const router = useRouter();
 
   useEffect(() => {
