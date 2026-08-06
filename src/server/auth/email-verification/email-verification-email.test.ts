@@ -50,9 +50,12 @@ describe('sendEmailVerificationEmail', () => {
     expect(body.to).toEqual(['william@example.com']);
     expect(body.subject).toContain('Vérifiez');
     expect(body.html).toContain(
-      'https://app.example.com/api/auth/verify-email?locale=fr&amp;',
+      'https://app.example.com/fr/verify-email#token=verification-token',
     );
-    expect(body.text).toContain('token=verification-token');
+    expect(body.html).not.toContain('/api/auth/verify-email?');
+    expect(body.text).toContain(
+      'https://app.example.com/fr/verify-email#token=verification-token',
+    );
   });
 
   it('captures local verification messages through the Mailpit HTTP API', async () => {
@@ -90,8 +93,12 @@ describe('sendEmailVerificationEmail', () => {
     expect(body.Headers['X-VulcanForge-Idempotency-Key']).toBe(
       'email-verification/token-1',
     );
-    expect(body.HTML).toContain('token=verification-token');
-    expect(body.Text).toContain('token=verification-token');
+    expect(body.HTML).toContain(
+      'http://localhost:3000/fr/verify-email#token=verification-token',
+    );
+    expect(body.Text).toContain(
+      'http://localhost:3000/fr/verify-email#token=verification-token',
+    );
   });
 
   it('fails closed when Resend configuration is missing', async () => {
