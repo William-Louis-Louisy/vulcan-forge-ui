@@ -83,7 +83,6 @@ jobs:
           npx prisma format
           npx prettier \
             package.json \
-            prisma/migrations/20260806103000_add_password_recovery/migration.sql \
             src/auth.ts \
             src/types/next-auth.d.ts \
             src/server/auth/auth-rate-limit.ts \
