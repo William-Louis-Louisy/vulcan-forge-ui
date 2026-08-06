@@ -4,26 +4,47 @@ import { hasLocale, useTranslations } from 'next-intl';
 import { AuthShell } from '@/components/layout/AuthShell';
 import { AppLink } from '@/components/navigation/AppLink';
 import { SignupForm } from '@/features/auth/signup/SignupForm';
+import { getSafeAuthReturnTo } from '@/features/auth/shared/return-to';
 
 type SignupPageProps = {
   params: Promise<{
     locale: string;
   }>;
+  searchParams: Promise<{
+    returnTo?: string;
+  }>;
 };
 
 const benefitKeys = ['tokens', 'accessibility', 'exports', 'ai'] as const;
 
-export default async function SignupPage({ params }: SignupPageProps) {
+export default async function SignupPage({
+  params,
+  searchParams,
+}: SignupPageProps) {
   const { locale: requestedLocale } = await params;
+  const { returnTo } = await searchParams;
 
   if (!hasLocale(routing.locales, requestedLocale)) {
     notFound();
   }
 
-  return <SignupPageContent locale={requestedLocale} />;
+  const locale = requestedLocale as Locale;
+
+  return (
+    <SignupPageContent
+      locale={locale}
+      returnTo={getSafeAuthReturnTo({ locale, returnTo })}
+    />
+  );
 }
 
-function SignupPageContent({ locale }: { locale: Locale }) {
+function SignupPageContent({
+  locale,
+  returnTo,
+}: {
+  locale: Locale;
+  returnTo: string;
+}) {
   const t = useTranslations('SignupPage');
 
   return (
@@ -35,11 +56,14 @@ function SignupPageContent({ locale }: { locale: Locale }) {
       benefits={benefitKeys.map((key) => t(`benefits.items.${key}`))}
       variant="signup"
     >
-      <SignupForm locale={locale} />
+      <SignupForm locale={locale} returnTo={returnTo} />
 
       <p className="text-content-secondary mt-6 text-center text-sm">
         {t('form.alreadyHaveAccount')}{' '}
-        <AppLink href="/login" className="text-action-accent font-semibold">
+        <AppLink
+          href={`/login?returnTo=${encodeURIComponent(returnTo)}`}
+          className="text-action-accent font-semibold"
+        >
           {t('form.signInLink')}
         </AppLink>
       </p>
