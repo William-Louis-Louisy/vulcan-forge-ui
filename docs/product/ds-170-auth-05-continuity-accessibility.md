@@ -2,7 +2,7 @@
 
 ## Status
 
-Implementation in progress on `feature/ds-170-auth-05-continuity-accessibility`.
+Implementation complete on `feature/ds-170-auth-05-continuity-accessibility`. Automated validation and manual QA remain required before the draft pull request can be marked ready.
 
 ## Objective
 
@@ -28,7 +28,7 @@ Accepted values:
 
 - are relative paths beginning with exactly one `/`;
 - stay inside `/{locale}/app`;
-- may preserve a query string;
+- may preserve a query string, including encoded query values;
 - use the locale currently handling the authentication journey.
 
 Rejected values include:
@@ -36,13 +36,16 @@ Rejected values include:
 - absolute URLs;
 - protocol-relative URLs;
 - paths containing backslashes or control characters;
+- encoded or repeatedly encoded path separators;
 - paths for another locale;
 - paths outside the authenticated application boundary;
 - malformed or ambiguous encodings.
 
 Every rejection falls back to `/{locale}/app`.
 
-The existing Next.js 16 proxy records the original GET/HEAD application target in a private upstream request header. The application layout overwrites any client-supplied value at the proxy boundary, validates it again, and includes only the validated value in the login redirect.
+The existing Next.js 16 proxy records the original GET/HEAD application target in a private upstream request header and overwrites any client-supplied value at that boundary. The application layout validates the resulting value again and includes only the validated destination in the login redirect. Next.js transport-only parameters such as `_rsc` are excluded from the public destination.
+
+Locale changes on login and signup translate the validated application prefix while preserving the remaining path, query and authentication reason.
 
 ### Shared authentication fields
 
@@ -54,7 +57,7 @@ Authentication forms share:
 - consistent help and error associations;
 - consistent styles based on the shared `Input` primitive.
 
-The password field preserves value and focus when visibility changes and supports both `current-password` and `new-password` autocomplete purposes.
+The password field preserves value, selection and focus when visibility changes and supports both `current-password` and `new-password` autocomplete purposes.
 
 ### Direct password feedback
 
@@ -63,6 +66,7 @@ Signup and reset provide deterministic local feedback while the user types:
 - password length is measured after NFC normalization in Unicode code points;
 - the accepted range is 15–128 code points;
 - confirmation matching updates locally;
+- stale server password errors disappear when the related field is edited;
 - no arbitrary weak/medium/strong score is shown;
 - the feedback is not announced on every keystroke through a noisy live region.
 
@@ -84,18 +88,18 @@ The initial personal workspace name is formatted from the validated signup local
 - English: `{name}'s workspace`;
 - French: `Espace de travail de {name}`.
 
-The fallback identity is localized instead of embedding the English word `User` in every locale.
+The fallback identity is localized instead of embedding the English word `User` in every locale. Existing workspaces are not renamed.
 
 ### Legal and trust boundary
 
-DS-170-AUTH-05 may introduce a reusable technical slot/component for signup legal destinations, but it must not:
+DS-170-AUTH-05 defines the technical integration boundary but deliberately does not render absent or unapproved legal destinations. It must not:
 
 - publish generic Terms or Privacy copy as approved legal text;
 - create broken links to absent pages;
 - combine service acceptance with optional marketing consent;
 - add pre-checked consent.
 
-Final pages, wording, policy versioning and legal validation belong to DS-170-AUTH-07.
+Final pages, wording, policy versioning, accessible signup/footer links and legal validation belong to DS-170-AUTH-07.
 
 ## Acceptance criteria
 
@@ -104,14 +108,15 @@ Final pages, wording, policy versioning and legal validation belong to DS-170-AU
 - an unauthenticated request to a nested application route reaches login with a validated `returnTo`;
 - successful login returns to that route and preserves its query string;
 - malformed, external and cross-locale destinations fall back to the locale application root;
-- signup links preserve a valid destination when the journey starts from login.
+- signup links preserve a valid destination when the journey starts from login;
+- locale switching preserves and localizes a valid destination.
 
 ### Accessibility and forms
 
 - login, signup and reset use the shared password field;
-- login supports reveal/hide without losing focus or value;
+- login supports reveal/hide without losing focus, selection or value;
 - field-validation failures render one focusable summary linked to invalid fields;
-- focus moves to the summary after a failed submission;
+- focus moves to the summary after a failed server submission;
 - inline errors and `aria-invalid` remain aligned with the summary;
 - email identifiers expose `autocomplete="username"`;
 - native constraints match the server contract where browser and server semantics agree;
@@ -119,7 +124,7 @@ Final pages, wording, policy versioning and legal validation belong to DS-170-AU
 
 ### Direct feedback
 
-- signup and reset show password-length progress before submission;
+- signup and reset show deterministic password-length feedback before submission;
 - confirmation mismatch feedback updates before submission;
 - long passphrases, spaces and Unicode remain supported;
 - compromised-password checks are not called while typing.
@@ -141,6 +146,7 @@ Final pages, wording, policy versioning and legal validation belong to DS-170-AU
 - [ ] Request a nested protected route with a query string while signed out.
 - [ ] Confirm login preserves and restores that destination.
 - [ ] Confirm an external or malformed `returnTo` falls back safely.
+- [ ] Change locale on login and signup and confirm the destination follows the selected locale.
 - [ ] Test login, signup and reset with keyboard-only navigation.
 - [ ] Confirm error-summary focus and links in English and French.
 - [ ] Confirm password reveal keeps focus, selection and value.
