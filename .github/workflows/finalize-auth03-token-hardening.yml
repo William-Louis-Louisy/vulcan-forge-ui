@@ -16,6 +16,8 @@ jobs:
   finalize:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      DATABASE_URL: postgresql://vulcan:vulcan_dev_password@localhost:5432/vulcan_forge_ui?schema=public
 
     steps:
       - name: Checkout branch
