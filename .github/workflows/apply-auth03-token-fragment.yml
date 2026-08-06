@@ -1,0 +1,924 @@
+name: Apply AUTH-03 token URL hardening
+
+on:
+  push:
+    branches:
+      - feature/ds-170-auth-03-email-verification
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-auth03-token-fragment-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v6
+        with:
+          ref: feature/ds-170-auth-03-email-verification
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Apply token fragment hardening
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+
+          function write(filePath, content) {
+            fs.mkdirSync(path.dirname(filePath), { recursive: true });
+            fs.writeFileSync(filePath, content.replace(/^\n/, ''));
+          }
+
+          function replaceExact(filePath, before, after) {
+            const current = fs.readFileSync(filePath, 'utf8');
+
+            if (!current.includes(before)) {
+              throw new Error(`Unable to locate expected content in ${filePath}`);
+            }
+
+            fs.writeFileSync(filePath, current.replace(before, after));
+          }
+
+          replaceExact(
+            'src/server/auth/email-verification/email-verification-email.ts',
+            [
+              '  const url = new URL(\'/api/auth/verify-email\', baseUrl);',
+              "  url.searchParams.set('locale', locale);",
+              "  url.searchParams.set('token', token);",
+              '',
+              '  return url.toString();',
+            ].join('\n'),
+            [
+              "  const url = new URL('/' + locale + '/verify-email', baseUrl);",
+              '  url.hash = new URLSearchParams({ token }).toString();',
+              '',
+              '  return url.toString();',
+            ].join('\n'),
+          );
+
+          replaceExact(
+            'src/server/auth/email-verification/email-verification-email.test.ts',
+            [
+              '    expect(body.html).toContain(',
+              "      'https://app.example.com/api/auth/verify-email?locale=fr&amp;',",
+              '    );',
+              "    expect(body.text).toContain('token=verification-token');",
+            ].join('\n'),
+            [
+              '    expect(body.html).toContain(',
+              "      'https://app.example.com/fr/verify-email#token=verification-token',",
+              '    );',
+              '    expect(body.html).not.toContain(\'/api/auth/verify-email?\');',
+              '    expect(body.text).toContain(',
+              "      'https://app.example.com/fr/verify-email#token=verification-token',",
+              '    );',
+            ].join('\n'),
+          );
+
+          replaceExact(
+            'src/server/auth/email-verification/email-verification-email.test.ts',
+            [
+              "    expect(body.HTML).toContain('token=verification-token');",
+              "    expect(body.Text).toContain('token=verification-token');",
+            ].join('\n'),
+            [
+              '    expect(body.HTML).toContain(',
+              "      'http://localhost:3000/fr/verify-email#token=verification-token',",
+              '    );',
+              '    expect(body.Text).toContain(',
+              "      'http://localhost:3000/fr/verify-email#token=verification-token',",
+              '    );',
+            ].join('\n'),
+          );
+
+          write(
+            'src/app/api/auth/verify-email/route.ts',
+            String.raw`
+          import type { NextRequest } from 'next/server';
+          import { NextResponse } from 'next/server';
+          import { defaultAppLocale, isAppLocale } from '@/domain/i18n';
+          import { recordAuthSecurityEvent } from '@/server/auth/auth-security-events';
+          import { EMAIL_VERIFICATION_CONFIRMATION_COOKIE } from '@/server/auth/email-verification/email-verification.constants';
+          import { consumeEmailVerificationToken } from '@/server/auth/email-verification/email-verification.service';
+
+          function getRequestLocale(request: NextRequest) {
+            const requestedLocale = request.nextUrl.searchParams.get('locale') ?? '';
+
+            return isAppLocale(requestedLocale)
+              ? requestedLocale
+              : defaultAppLocale;
+          }
+
+          function createStatusRedirect({
+            locale,
+            request,
+            status,
+          }: {
+            locale: string;
+            request: NextRequest;
+            status: string;
+          }) {
+            const redirectUrl = new URL(
+              '/' + locale + '/verify-email',
+              request.nextUrl.origin,
+            );
+            redirectUrl.searchParams.set('status', status);
+
+            const response = NextResponse.redirect(redirectUrl, 303);
+            response.headers.set('Cache-Control', 'no-store, max-age=0');
+            response.headers.set('Pragma', 'no-cache');
+            response.headers.set('Referrer-Policy', 'no-referrer');
+
+            return response;
+          }
+
+          function clearConfirmationCookie(response: NextResponse) {
+            response.cookies.set(EMAIL_VERIFICATION_CONFIRMATION_COOKIE, '', {
+              httpOnly: true,
+              maxAge: 0,
+              path: '/api/auth/verify-email',
+              sameSite: 'lax',
+              secure: process.env.NODE_ENV === 'production',
+            });
+          }
+
+          function hasSameOrigin(request: NextRequest) {
+            const origin = request.headers.get('origin');
+
+            if (!origin) {
+              return false;
+            }
+
+            try {
+              return new URL(origin).origin === request.nextUrl.origin;
+            } catch {
+              return false;
+            }
+          }
+
+          export async function POST(request: NextRequest) {
+            const locale = getRequestLocale(request);
+            const token = request.cookies.get(
+              EMAIL_VERIFICATION_CONFIRMATION_COOKIE,
+            )?.value;
+
+            let result: Awaited<ReturnType<typeof consumeEmailVerificationToken>>;
+            let unexpectedError = false;
+
+            if (!hasSameOrigin(request) || !token) {
+              result = {
+                status: 'invalid',
+                userId: null,
+              };
+            } else {
+              try {
+                result = await consumeEmailVerificationToken({ token });
+              } catch {
+                unexpectedError = true;
+                result = {
+                  status: 'invalid',
+                  userId: null,
+                };
+              }
+            }
+
+            if (unexpectedError) {
+              recordAuthSecurityEvent(
+                'auth.email_verification.unexpected_error',
+                {
+                  reason: 'token_consumption',
+                },
+              );
+            } else {
+              const eventByStatus = {
+                alreadyVerified: 'auth.email_verification.already_verified',
+                expired: 'auth.email_verification.expired',
+                invalid: 'auth.email_verification.invalid',
+                verified: 'auth.email_verification.verified',
+              } as const;
+
+              recordAuthSecurityEvent(eventByStatus[result.status], {
+                userId: result.userId,
+              });
+            }
+
+            const response = createStatusRedirect({
+              locale,
+              request,
+              status: result.status,
+            });
+            clearConfirmationCookie(response);
+
+            return response;
+          }
+          `,
+          );
+
+          write(
+            'src/app/api/auth/verify-email/route.test.ts',
+            String.raw`
+          import { NextRequest } from 'next/server';
+          import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+          const mocks = vi.hoisted(() => ({
+            consumeToken: vi.fn(),
+            recordEvent: vi.fn(),
+          }));
+
+          vi.mock('@/server/auth/auth-security-events', () => ({
+            recordAuthSecurityEvent: mocks.recordEvent,
+          }));
+
+          vi.mock('@/server/auth/email-verification/email-verification.service', () => ({
+            consumeEmailVerificationToken: mocks.consumeToken,
+          }));
+
+          import { POST } from './route';
+
+          describe('email verification confirmation route', () => {
+            beforeEach(() => {
+              vi.clearAllMocks();
+              mocks.consumeToken.mockResolvedValue({
+                status: 'verified',
+                userId: 'user-1',
+              });
+            });
+
+            it('consumes the prepared token only after a same-origin POST', async () => {
+              const response = await POST(
+                new NextRequest(
+                  'https://app.example.com/api/auth/verify-email?locale=fr',
+                  {
+                    method: 'POST',
+                    headers: {
+                      Cookie:
+                        'vulcan_email_verification_confirmation=opaque-value',
+                      Origin: 'https://app.example.com',
+                    },
+                  },
+                ),
+              );
+
+              expect(mocks.consumeToken).toHaveBeenCalledWith({
+                token: 'opaque-value',
+              });
+              expect(response.headers.get('Location')).toBe(
+                'https://app.example.com/fr/verify-email?status=verified',
+              );
+              expect(response.headers.get('Set-Cookie')).toContain('Max-Age=0');
+              expect(mocks.recordEvent).toHaveBeenCalledWith(
+                'auth.email_verification.verified',
+                { userId: 'user-1' },
+              );
+            });
+
+            it('rejects cross-origin confirmation without consuming the token', async () => {
+              const response = await POST(
+                new NextRequest(
+                  'https://app.example.com/api/auth/verify-email?locale=en',
+                  {
+                    method: 'POST',
+                    headers: {
+                      Cookie:
+                        'vulcan_email_verification_confirmation=opaque-value',
+                      Origin: 'https://attacker.example.com',
+                    },
+                  },
+                ),
+              );
+
+              expect(mocks.consumeToken).not.toHaveBeenCalled();
+              expect(response.headers.get('Location')).toBe(
+                'https://app.example.com/en/verify-email?status=invalid',
+              );
+            });
+
+            it('uses a bounded invalid state when token consumption fails', async () => {
+              mocks.consumeToken.mockRejectedValue(
+                new Error('database unavailable'),
+              );
+
+              const response = await POST(
+                new NextRequest(
+                  'https://app.example.com/api/auth/verify-email?locale=en',
+                  {
+                    method: 'POST',
+                    headers: {
+                      Cookie:
+                        'vulcan_email_verification_confirmation=opaque-value',
+                      Origin: 'https://app.example.com',
+                    },
+                  },
+                ),
+              );
+
+              expect(response.headers.get('Location')).toBe(
+                'https://app.example.com/en/verify-email?status=invalid',
+              );
+              expect(mocks.recordEvent).toHaveBeenCalledWith(
+                'auth.email_verification.unexpected_error',
+                { reason: 'token_consumption' },
+              );
+            });
+          });
+          `,
+          );
+
+          write(
+            'src/app/api/auth/verify-email/prepare/route.ts',
+            String.raw`
+          import type { NextRequest } from 'next/server';
+          import { NextResponse } from 'next/server';
+          import { recordAuthSecurityEvent } from '@/server/auth/auth-security-events';
+          import {
+            EMAIL_VERIFICATION_CONFIRMATION_COOKIE,
+            EMAIL_VERIFICATION_CONFIRMATION_COOKIE_TTL_SECONDS,
+            EMAIL_VERIFICATION_TOKEN_MAX_LENGTH,
+          } from '@/server/auth/email-verification/email-verification.constants';
+          import { inspectEmailVerificationToken } from '@/server/auth/email-verification/email-verification.service';
+
+          const PREPARE_BODY_MAX_LENGTH =
+            EMAIL_VERIFICATION_TOKEN_MAX_LENGTH + 64;
+
+          function hasSameOrigin(request: NextRequest) {
+            const origin = request.headers.get('origin');
+
+            if (!origin) {
+              return false;
+            }
+
+            try {
+              return new URL(origin).origin === request.nextUrl.origin;
+            } catch {
+              return false;
+            }
+          }
+
+          async function getTokenFromBody(request: NextRequest) {
+            const contentLengthValue = request.headers.get('content-length');
+
+            if (contentLengthValue) {
+              const contentLength = Number(contentLengthValue);
+
+              if (
+                !Number.isFinite(contentLength) ||
+                contentLength > PREPARE_BODY_MAX_LENGTH
+              ) {
+                return '';
+              }
+            }
+
+            try {
+              const rawBody = await request.text();
+
+              if (rawBody.length > PREPARE_BODY_MAX_LENGTH) {
+                return '';
+              }
+
+              const body: unknown = JSON.parse(rawBody);
+
+              if (!body || typeof body !== 'object' || !('token' in body)) {
+                return '';
+              }
+
+              const token = body.token;
+
+              return typeof token === 'string' &&
+                token.length > 0 &&
+                token.length <= EMAIL_VERIFICATION_TOKEN_MAX_LENGTH
+                ? token
+                : '';
+            } catch {
+              return '';
+            }
+          }
+
+          function clearConfirmationCookie(response: NextResponse) {
+            response.cookies.set(EMAIL_VERIFICATION_CONFIRMATION_COOKIE, '', {
+              httpOnly: true,
+              maxAge: 0,
+              path: '/api/auth/verify-email',
+              sameSite: 'lax',
+              secure: process.env.NODE_ENV === 'production',
+            });
+          }
+
+          export async function POST(request: NextRequest) {
+            const token = hasSameOrigin(request)
+              ? await getTokenFromBody(request)
+              : '';
+            let result: Awaited<ReturnType<typeof inspectEmailVerificationToken>>;
+            let unexpectedError = false;
+
+            if (!token) {
+              result = {
+                expiresAt: null,
+                status: 'invalid',
+                userId: null,
+              };
+            } else {
+              try {
+                result = await inspectEmailVerificationToken({ token });
+              } catch {
+                unexpectedError = true;
+                result = {
+                  expiresAt: null,
+                  status: 'invalid',
+                  userId: null,
+                };
+              }
+            }
+
+            if (unexpectedError) {
+              recordAuthSecurityEvent(
+                'auth.email_verification.unexpected_error',
+                {
+                  reason: 'token_inspection',
+                },
+              );
+            } else if (result.status === 'confirm') {
+              recordAuthSecurityEvent('auth.email_verification.link_opened', {
+                userId: result.userId,
+              });
+            } else {
+              const eventByStatus = {
+                alreadyVerified:
+                  'auth.email_verification.already_verified',
+                expired: 'auth.email_verification.expired',
+                invalid: 'auth.email_verification.invalid',
+              } as const;
+
+              recordAuthSecurityEvent(eventByStatus[result.status], {
+                userId: result.userId,
+              });
+            }
+
+            const response = NextResponse.json(
+              { status: result.status },
+              {
+                headers: {
+                  'Cache-Control': 'no-store, max-age=0',
+                  Pragma: 'no-cache',
+                  'Referrer-Policy': 'no-referrer',
+                },
+              },
+            );
+
+            if (result.status === 'confirm' && token) {
+              response.cookies.set(
+                EMAIL_VERIFICATION_CONFIRMATION_COOKIE,
+                token,
+                {
+                  httpOnly: true,
+                  maxAge:
+                    EMAIL_VERIFICATION_CONFIRMATION_COOKIE_TTL_SECONDS,
+                  path: '/api/auth/verify-email',
+                  sameSite: 'lax',
+                  secure: process.env.NODE_ENV === 'production',
+                },
+              );
+            } else {
+              clearConfirmationCookie(response);
+            }
+
+            return response;
+          }
+          `,
+          );
+
+          write(
+            'src/app/api/auth/verify-email/prepare/route.test.ts',
+            String.raw`
+          import { NextRequest } from 'next/server';
+          import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+          const mocks = vi.hoisted(() => ({
+            inspectToken: vi.fn(),
+            recordEvent: vi.fn(),
+          }));
+
+          vi.mock('@/server/auth/auth-security-events', () => ({
+            recordAuthSecurityEvent: mocks.recordEvent,
+          }));
+
+          vi.mock('@/server/auth/email-verification/email-verification.service', () => ({
+            inspectEmailVerificationToken: mocks.inspectToken,
+          }));
+
+          import { POST } from './route';
+
+          function createPrepareRequest({
+            origin = 'https://app.example.com',
+            token = 'opaque-value',
+          }: {
+            origin?: string;
+            token?: string;
+          } = {}) {
+            return new NextRequest(
+              'https://app.example.com/api/auth/verify-email/prepare',
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Origin: origin,
+                },
+                body: JSON.stringify({ token }),
+              },
+            );
+          }
+
+          describe('email verification preparation route', () => {
+            beforeEach(() => {
+              vi.clearAllMocks();
+              mocks.inspectToken.mockResolvedValue({
+                expiresAt: new Date('2099-01-01T00:00:00.000Z'),
+                status: 'confirm',
+                userId: 'user-1',
+              });
+            });
+
+            it('inspects a same-origin body token and stores it in a scoped cookie', async () => {
+              const response = await POST(createPrepareRequest());
+              const body = (await response.json()) as { status: string };
+              const confirmationCookie = response.headers.get('Set-Cookie');
+
+              expect(mocks.inspectToken).toHaveBeenCalledWith({
+                token: 'opaque-value',
+              });
+              expect(body).toEqual({ status: 'confirm' });
+              expect(confirmationCookie).toContain(
+                'vulcan_email_verification_confirmation=opaque-value',
+              );
+              expect(confirmationCookie).toContain('HttpOnly');
+              expect(confirmationCookie).toContain('SameSite=lax');
+              expect(confirmationCookie).toContain(
+                'Path=/api/auth/verify-email',
+              );
+              expect(response.headers.get('Cache-Control')).toBe(
+                'no-store, max-age=0',
+              );
+              expect(mocks.recordEvent).toHaveBeenCalledWith(
+                'auth.email_verification.link_opened',
+                { userId: 'user-1' },
+              );
+            });
+
+            it('rejects a cross-origin preparation request without inspecting the token', async () => {
+              const response = await POST(
+                createPrepareRequest({
+                  origin: 'https://attacker.example.com',
+                }),
+              );
+
+              expect(mocks.inspectToken).not.toHaveBeenCalled();
+              await expect(response.json()).resolves.toEqual({
+                status: 'invalid',
+              });
+              expect(response.headers.get('Set-Cookie')).toContain('Max-Age=0');
+            });
+
+            it('rejects an oversized token before database work', async () => {
+              const response = await POST(
+                createPrepareRequest({ token: 'a'.repeat(129) }),
+              );
+
+              expect(mocks.inspectToken).not.toHaveBeenCalled();
+              await expect(response.json()).resolves.toEqual({
+                status: 'invalid',
+              });
+            });
+
+            it('uses a bounded invalid state when token inspection fails', async () => {
+              mocks.inspectToken.mockRejectedValue(
+                new Error('database unavailable'),
+              );
+
+              const response = await POST(createPrepareRequest());
+
+              await expect(response.json()).resolves.toEqual({
+                status: 'invalid',
+              });
+              expect(mocks.recordEvent).toHaveBeenCalledWith(
+                'auth.email_verification.unexpected_error',
+                { reason: 'token_inspection' },
+              );
+            });
+          });
+          `,
+          );
+
+          write(
+            'src/features/auth/email-verification/EmailVerificationLinkBootstrap.tsx',
+            String.raw`
+          'use client';
+
+          import { useEffect } from 'react';
+          import { useRouter } from 'next/navigation';
+          import type { Locale } from '@/i18n/routing';
+
+          type PreparationStatus =
+            | 'alreadyVerified'
+            | 'confirm'
+            | 'expired'
+            | 'invalid';
+
+          const preparationStatuses = new Set<PreparationStatus>([
+            'alreadyVerified',
+            'confirm',
+            'expired',
+            'invalid',
+          ]);
+
+          function getFragmentToken() {
+            const fragment = window.location.hash.startsWith('#')
+              ? window.location.hash.slice(1)
+              : window.location.hash;
+
+            return new URLSearchParams(fragment).get('token') ?? '';
+          }
+
+          function removeFragmentFromBrowserUrl() {
+            window.history.replaceState(
+              window.history.state,
+              '',
+              window.location.pathname + window.location.search,
+            );
+          }
+
+          function getPreparationStatus(payload: unknown): PreparationStatus {
+            if (
+              !payload ||
+              typeof payload !== 'object' ||
+              !('status' in payload) ||
+              typeof payload.status !== 'string' ||
+              !preparationStatuses.has(payload.status as PreparationStatus)
+            ) {
+              return 'invalid';
+            }
+
+            return payload.status as PreparationStatus;
+          }
+
+          export function EmailVerificationLinkBootstrap({
+            locale,
+          }: {
+            locale: Locale;
+          }) {
+            const router = useRouter();
+
+            useEffect(() => {
+              const token = getFragmentToken();
+
+              if (!token) {
+                return;
+              }
+
+              removeFragmentFromBrowserUrl();
+
+              void (async () => {
+                let status: PreparationStatus = 'invalid';
+
+                try {
+                  const response = await fetch(
+                    '/api/auth/verify-email/prepare',
+                    {
+                      method: 'POST',
+                      body: JSON.stringify({ token }),
+                      cache: 'no-store',
+                      credentials: 'same-origin',
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                    },
+                  );
+
+                  if (response.ok) {
+                    status = getPreparationStatus(await response.json());
+                  }
+                } catch {
+                  status = 'invalid';
+                }
+
+                router.replace(
+                  '/' + locale + '/verify-email?status=' + status,
+                );
+              })();
+            }, [locale, router]);
+
+            return null;
+          }
+          `,
+          );
+
+          write(
+            'src/features/auth/email-verification/EmailVerificationLinkBootstrap.test.tsx',
+            String.raw`
+          import { render, waitFor } from '@testing-library/react';
+          import { beforeEach, describe, expect, it, vi } from 'vitest';
+          import { EmailVerificationLinkBootstrap } from './EmailVerificationLinkBootstrap';
+
+          const mocks = vi.hoisted(() => ({
+            replace: vi.fn(),
+          }));
+
+          vi.mock('next/navigation', () => ({
+            useRouter: () => ({
+              replace: mocks.replace,
+            }),
+          }));
+
+          describe('EmailVerificationLinkBootstrap', () => {
+            beforeEach(() => {
+              vi.clearAllMocks();
+              vi.unstubAllGlobals();
+              window.history.replaceState({}, '', '/en/verify-email');
+            });
+
+            it('removes the token fragment before preparing confirmation', async () => {
+              window.history.replaceState(
+                {},
+                '',
+                '/en/verify-email#token=opaque-value',
+              );
+              const fetchImpl = vi.fn(
+                async () =>
+                  new Response(JSON.stringify({ status: 'confirm' }), {
+                    status: 200,
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                  }),
+              );
+              vi.stubGlobal('fetch', fetchImpl);
+
+              render(<EmailVerificationLinkBootstrap locale="en" />);
+
+              expect(window.location.hash).toBe('');
+
+              await waitFor(() => {
+                expect(mocks.replace).toHaveBeenCalledWith(
+                  '/en/verify-email?status=confirm',
+                );
+              });
+
+              expect(fetchImpl).toHaveBeenCalledWith(
+                '/api/auth/verify-email/prepare',
+                expect.objectContaining({
+                  method: 'POST',
+                  credentials: 'same-origin',
+                }),
+              );
+              const request = fetchImpl.mock.calls[0]?.[1];
+              expect(JSON.parse(String(request?.body))).toEqual({
+                token: 'opaque-value',
+              });
+            });
+
+            it('does nothing when the page has no token fragment', () => {
+              const fetchImpl = vi.fn();
+              vi.stubGlobal('fetch', fetchImpl);
+
+              render(<EmailVerificationLinkBootstrap locale="en" />);
+
+              expect(fetchImpl).not.toHaveBeenCalled();
+              expect(mocks.replace).not.toHaveBeenCalled();
+            });
+
+            it('uses the invalid state for an untrusted response payload', async () => {
+              window.history.replaceState(
+                {},
+                '',
+                '/fr/verify-email#token=opaque-value',
+              );
+              vi.stubGlobal(
+                'fetch',
+                vi.fn(
+                  async () =>
+                    new Response(JSON.stringify({ status: 'unknown' }), {
+                      status: 200,
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                    }),
+                ),
+              );
+
+              render(<EmailVerificationLinkBootstrap locale="fr" />);
+
+              await waitFor(() => {
+                expect(mocks.replace).toHaveBeenCalledWith(
+                  '/fr/verify-email?status=invalid',
+                );
+              });
+            });
+          });
+          `,
+          );
+
+          replaceExact(
+            'src/app/[locale]/(public)/verify-email/page.tsx',
+            "import { ResendEmailVerificationForm } from '@/features/auth/email-verification/ResendEmailVerificationForm';",
+            [
+              "import { EmailVerificationLinkBootstrap } from '@/features/auth/email-verification/EmailVerificationLinkBootstrap';",
+              "import { ResendEmailVerificationForm } from '@/features/auth/email-verification/ResendEmailVerificationForm';",
+            ].join('\n'),
+          );
+
+          replaceExact(
+            'src/app/[locale]/(public)/verify-email/page.tsx',
+            [
+              '  return (',
+              '    <>',
+              '      <PublicHeader isAuthenticated={isAuthenticated} />',
+            ].join('\n'),
+            [
+              '  return (',
+              '    <>',
+              '      <EmailVerificationLinkBootstrap locale={locale} />',
+              '      <PublicHeader isAuthenticated={isAuthenticated} />',
+            ].join('\n'),
+          );
+
+          const docsPath = 'docs/product/ds-170-auth-03-email-verification.md';
+          replaceExact(
+            docsPath,
+            'The raw token exists only while constructing and delivering the verification link. It is never persisted or logged.',
+            'The raw token exists only while constructing and delivering the verification link. It is never persisted. The delivered URL carries it in the fragment, which browsers do not send in HTTP requests, referrer headers or access-log paths.',
+          );
+
+          replaceExact(
+            docsPath,
+            'Opening a verification link with `GET` does not validate the account. The route inspects the challenge, stores the token briefly in a scoped `HttpOnly` cookie and redirects to a confirmation surface without retaining the token in the browser URL. Final verification requires a same-origin `POST`. This prevents automated email link scanners from validating accounts without an explicit user action.',
+            'The delivered link targets `/{locale}/verify-email#token=...`. A small client bootstrap removes the fragment from browser history before sending the token in a bounded same-origin `POST` body to `/api/auth/verify-email/prepare`. The server inspects the challenge and stores the token briefly in a scoped `HttpOnly` cookie. Final verification still requires a separate same-origin `POST`. This keeps raw tokens out of HTTP URL logs while preventing automated email link scanners from validating accounts without an explicit user action.',
+          );
+
+          replaceExact(
+            docsPath,
+            '- link inspection on `GET` without token consumption;\n- same-origin confirmation on `POST`;',
+            '- fragment extraction with immediate browser URL cleanup;\n- bounded same-origin preparation using a request body rather than a token-bearing URL;\n- same-origin confirmation on `POST`;',
+          );
+
+          replaceExact(
+            docsPath,
+            [
+              '- [ ] The delivered link uses the configured application origin.',
+              '- [ ] Opening the link displays a confirmation state without immediately setting `emailVerifiedAt`.',
+            ].join('\n'),
+            [
+              '- [ ] The delivered link uses the configured application origin.',
+              '- [ ] The delivered link carries the raw token only in the URL fragment, not in the query string.',
+              '- [ ] Opening the link does not expose the raw token in Next.js or reverse-proxy request logs.',
+              '- [ ] Opening the link displays a confirmation state without immediately setting `emailVerifiedAt`.',
+            ].join('\n'),
+          );
+          NODE
+
+      - name: Format changed files
+        run: >-
+          npx prettier
+          docs/product/ds-170-auth-03-email-verification.md
+          src/app/[locale]/\(public\)/verify-email/page.tsx
+          src/app/api/auth/verify-email/route.ts
+          src/app/api/auth/verify-email/route.test.ts
+          src/app/api/auth/verify-email/prepare/route.ts
+          src/app/api/auth/verify-email/prepare/route.test.ts
+          src/features/auth/email-verification/EmailVerificationLinkBootstrap.tsx
+          src/features/auth/email-verification/EmailVerificationLinkBootstrap.test.tsx
+          src/server/auth/email-verification/email-verification-email.ts
+          src/server/auth/email-verification/email-verification-email.test.ts
+          --write
+
+      - name: Run focused validation
+        run: |
+          npm run lint
+          npm run typecheck
+          npx vitest run \
+            src/app/api/auth/verify-email/route.test.ts \
+            src/app/api/auth/verify-email/prepare/route.test.ts \
+            src/features/auth/email-verification/EmailVerificationLinkBootstrap.test.tsx \
+            src/server/auth/email-verification/email-verification-email.test.ts
+
+      - name: Remove temporary workflow
+        run: rm .github/workflows/apply-auth03-token-fragment.yml
+
+      - name: Commit token URL hardening
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "fix(auth): keep verification tokens out of request URLs"
+          git push origin HEAD:feature/ds-170-auth-03-email-verification
