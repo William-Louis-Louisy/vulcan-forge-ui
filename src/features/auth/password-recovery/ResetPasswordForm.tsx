@@ -143,7 +143,13 @@ export function ResetPasswordForm() {
         autoComplete="new-password"
         required
         value={password}
-        onChange={(event) => setPassword(event.currentTarget.value)}
+        onChange={(event) => {
+          setPassword(event.currentTarget.value);
+          setFieldErrors((current) => ({
+            ...current,
+            password: undefined,
+          }));
+        }}
         help={t('form.passwordHelp')}
         error={passwordError ? t(`validation.${passwordError}`) : undefined}
         showPasswordLabel={t('form.passwordVisibility.show')}
@@ -157,9 +163,13 @@ export function ResetPasswordForm() {
         autoComplete="new-password"
         required
         value={passwordConfirmation}
-        onChange={(event) =>
-          setPasswordConfirmation(event.currentTarget.value)
-        }
+        onChange={(event) => {
+          setPasswordConfirmation(event.currentTarget.value);
+          setFieldErrors((current) => ({
+            ...current,
+            passwordConfirmation: undefined,
+          }));
+        }}
         error={
           confirmationError
             ? t(`validation.${confirmationError}`)
