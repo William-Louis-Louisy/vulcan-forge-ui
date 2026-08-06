@@ -78,6 +78,7 @@ export const resetPasswordSchema = z
       });
     }
   })
-  .transform(({ passwordConfirmation: _confirmation, ...values }) => ({
+  .transform((values) => ({
     password: normalizePassword(values.password),
+    passwordConfirmation: normalizePassword(values.passwordConfirmation),
   }));
