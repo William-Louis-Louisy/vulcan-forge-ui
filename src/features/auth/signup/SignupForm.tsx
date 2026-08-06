@@ -37,18 +37,24 @@ export function SignupForm({ locale, returnTo }: SignupFormProps) {
   );
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
+  const [dismissedPasswordErrorState, setDismissedPasswordErrorState] =
+    useState<SignupActionState | null>(null);
+  const [
+    dismissedPasswordConfirmationErrorState,
+    setDismissedPasswordConfirmationErrorState,
+  ] = useState<SignupActionState | null>(null);
 
   const safeState = state ?? initialSignupActionState;
   const nameError = getFirstError(safeState.fieldErrors, 'name');
   const emailError = getFirstError(safeState.fieldErrors, 'email');
-  const serverPasswordError = getFirstError(
-    safeState.fieldErrors,
-    'password',
-  );
-  const serverPasswordConfirmationError = getFirstError(
-    safeState.fieldErrors,
-    'passwordConfirmation',
-  );
+  const serverPasswordError =
+    dismissedPasswordErrorState === safeState
+      ? null
+      : getFirstError(safeState.fieldErrors, 'password');
+  const serverPasswordConfirmationError =
+    dismissedPasswordConfirmationErrorState === safeState
+      ? null
+      : getFirstError(safeState.fieldErrors, 'passwordConfirmation');
   const passwordDraftIssue = getPasswordDraftIssue(password);
   const confirmationMatches = passwordsMatchDraft({
     password,
@@ -166,7 +172,10 @@ export function SignupForm({ locale, returnTo }: SignupFormProps) {
         autoComplete="new-password"
         required
         value={password}
-        onChange={(event) => setPassword(event.currentTarget.value)}
+        onChange={(event) => {
+          setPassword(event.currentTarget.value);
+          setDismissedPasswordErrorState(safeState);
+        }}
         help={t('form.passwordHelp')}
         error={passwordError ? t(`validation.${passwordError}`) : undefined}
         showPasswordLabel={t('form.passwordVisibility.show')}
@@ -180,9 +189,10 @@ export function SignupForm({ locale, returnTo }: SignupFormProps) {
         autoComplete="new-password"
         required
         value={passwordConfirmation}
-        onChange={(event) =>
-          setPasswordConfirmation(event.currentTarget.value)
-        }
+        onChange={(event) => {
+          setPasswordConfirmation(event.currentTarget.value);
+          setDismissedPasswordConfirmationErrorState(safeState);
+        }}
         error={
           passwordConfirmationError
             ? t(`validation.${passwordConfirmationError}`)
