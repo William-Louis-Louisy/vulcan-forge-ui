@@ -5,6 +5,7 @@ import { notFound, redirect } from 'next/navigation';
 import { PublicHeader } from '@/components/layout/PublicHeader';
 import { AppLink } from '@/components/navigation/AppLink';
 import { Button } from '@/components/ui';
+import { EmailVerificationLinkBootstrap } from '@/features/auth/email-verification/EmailVerificationLinkBootstrap';
 import { ResendEmailVerificationForm } from '@/features/auth/email-verification/ResendEmailVerificationForm';
 import { routing, type Locale } from '@/i18n/routing';
 import { prisma } from '@/server/db/prisma';
@@ -106,6 +107,7 @@ export default async function EmailVerificationPage({
 
   return (
     <>
+      <EmailVerificationLinkBootstrap locale={locale} />
       <PublicHeader isAuthenticated={isAuthenticated} />
 
       <main className="bg-background-app px-4 py-16 sm:px-6 lg:px-8">
