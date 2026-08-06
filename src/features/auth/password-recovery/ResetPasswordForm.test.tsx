@@ -41,7 +41,9 @@ describe('ResetPasswordForm', () => {
     await user.type(passwordInput, 'a sufficiently long password');
     await user.type(confirmationInput, 'a different long password');
 
-    expect(screen.getByText('Passwords do not match.')).toBeInTheDocument();
+    expect(
+      screen.getByText('The password confirmation does not match.'),
+    ).toBeInTheDocument();
   });
 
   it('uses reusable new-password fields and preserves focus on reveal', async () => {
