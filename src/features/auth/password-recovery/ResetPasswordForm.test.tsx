@@ -30,8 +30,8 @@ describe('ResetPasswordForm', () => {
 
     renderResetPasswordForm();
 
-    const passwordInput = screen.getByLabelText(/^password$/i);
-    const confirmationInput = screen.getByLabelText(/confirm password/i);
+    const passwordInput = screen.getByLabelText(/^new password$/i);
+    const confirmationInput = screen.getByLabelText(/confirm new password/i);
 
     await user.type(passwordInput, 'short');
 
@@ -51,10 +51,10 @@ describe('ResetPasswordForm', () => {
 
     renderResetPasswordForm();
 
-    const passwordInput = screen.getByLabelText(/^password$/i);
+    const passwordInput = screen.getByLabelText(/^new password$/i);
 
     expect(passwordInput).toHaveAttribute('autocomplete', 'new-password');
-    expect(screen.getByLabelText(/confirm password/i)).toHaveAttribute(
+    expect(screen.getByLabelText(/confirm new password/i)).toHaveAttribute(
       'autocomplete',
       'new-password',
     );
