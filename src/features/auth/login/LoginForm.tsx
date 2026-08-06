@@ -4,6 +4,11 @@ import { useActionState } from 'react';
 import { useTranslations } from 'next-intl';
 import { AppLink } from '@/components/navigation/AppLink';
 import { Button, Input } from '@/components/ui';
+import {
+  AuthErrorSummary,
+  PasswordField,
+  type AuthErrorSummaryItem,
+} from '@/features/auth/shared';
 import type { Locale } from '@/i18n/routing';
 import { loginAction } from './login.action';
 import { initialLoginActionState, type LoginActionState } from './login.state';
@@ -12,6 +17,7 @@ type LoginFormProps = {
   locale: Locale;
   registered?: boolean;
   authenticationRequired?: boolean;
+  returnTo: string;
 };
 
 function getFirstError(
@@ -25,8 +31,10 @@ export function LoginForm({
   locale,
   registered = false,
   authenticationRequired = false,
+  returnTo,
 }: LoginFormProps) {
   const t = useTranslations('LoginPage');
+  const passwordT = useTranslations('SignupPage.form.passwordVisibility');
   const errorT = useTranslations('ErrorSurfaces');
   const [state, formAction, isPending] = useActionState(
     loginAction,
@@ -36,10 +44,26 @@ export function LoginForm({
   const safeState = state ?? initialLoginActionState;
   const emailError = getFirstError(safeState.fieldErrors, 'email');
   const passwordError = getFirstError(safeState.fieldErrors, 'password');
+  const errorSummaryItems: AuthErrorSummaryItem[] = [];
+
+  if (emailError) {
+    errorSummaryItems.push({
+      fieldId: 'login-email',
+      message: t(`validation.${emailError}`),
+    });
+  }
+
+  if (passwordError) {
+    errorSummaryItems.push({
+      fieldId: 'login-password',
+      message: t(`validation.${passwordError}`),
+    });
+  }
 
   return (
-    <form action={formAction} className="mt-8 space-y-5">
+    <form action={formAction} className="mt-8 space-y-5" noValidate>
       <input type="hidden" name="locale" value={locale} />
+      <input type="hidden" name="returnTo" value={returnTo} />
 
       {authenticationRequired ? (
         <div
@@ -73,46 +97,49 @@ export function LoginForm({
         </p>
       ) : null}
 
+      <AuthErrorSummary focusKey={safeState} items={errorSummaryItems} />
+
       <div>
-        <label htmlFor="email" className="text-sm font-medium">
+        <label htmlFor="login-email" className="text-sm font-medium">
           {t('form.emailLabel')}
         </label>
         <Input
-          id="email"
+          id="login-email"
           name="email"
           type="email"
-          autoComplete="email"
+          autoComplete="username"
+          inputMode="email"
+          required
           defaultValue={safeState.values.email}
           invalid={Boolean(emailError)}
-          aria-describedby={emailError ? 'email-error' : undefined}
+          aria-describedby={emailError ? 'login-email-error' : undefined}
+          aria-errormessage={emailError ? 'login-email-error' : undefined}
           className="mt-2"
         />
         {emailError ? (
-          <p id="email-error" className="text-action-danger mt-2 text-sm">
+          <p
+            id="login-email-error"
+            className="text-action-danger mt-2 text-sm"
+          >
             {t(`validation.${emailError}`)}
           </p>
         ) : null}
       </div>
 
-      <div>
-        <label htmlFor="password" className="text-sm font-medium">
-          {t('form.passwordLabel')}
-        </label>
-        <Input
-          id="password"
+      <div className="space-y-3">
+        <PasswordField
+          id="login-password"
           name="password"
-          type="password"
+          label={t('form.passwordLabel')}
           autoComplete="current-password"
-          invalid={Boolean(passwordError)}
-          aria-describedby={passwordError ? 'password-error' : undefined}
-          className="mt-2"
+          required
+          error={
+            passwordError ? t(`validation.${passwordError}`) : undefined
+          }
+          showPasswordLabel={passwordT('show')}
+          hidePasswordLabel={passwordT('hide')}
         />
-        {passwordError ? (
-          <p id="password-error" className="text-action-danger mt-2 text-sm">
-            {t(`validation.${passwordError}`)}
-          </p>
-        ) : null}
-        <div className="mt-3 text-right">
+        <div className="text-right">
           <AppLink
             href="/forgot-password"
             className="text-action-accent text-sm font-semibold"
