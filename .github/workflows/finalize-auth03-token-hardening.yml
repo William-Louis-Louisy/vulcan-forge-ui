@@ -1,0 +1,109 @@
+name: Finalize AUTH-03 token hardening
+
+on:
+  push:
+    branches:
+      - feature/ds-170-auth-03-email-verification
+
+permissions:
+  contents: write
+
+concurrency:
+  group: finalize-auth03-token-hardening-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v6
+        with:
+          ref: feature/ds-170-auth-03-email-verification
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npm run db:generate
+
+      - name: Update security documentation
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const file = 'docs/product/ds-170-auth-03-email-verification.md';
+          let content = fs.readFileSync(file, 'utf8');
+
+          const replacements = [
+            [
+              'The raw token exists only while constructing and delivering the verification link. It is never persisted or logged.',
+              'The raw token exists only while constructing and delivering the verification link. It is never persisted. The delivered URL carries it in the fragment, which browsers do not send in HTTP requests, referrer headers or access-log paths.',
+            ],
+            [
+              'Opening a verification link with `GET` does not validate the account. The route inspects the challenge, stores the token briefly in a scoped `HttpOnly` cookie and redirects to a confirmation surface without retaining the token in the browser URL. Final verification requires a same-origin `POST`. This prevents automated email link scanners from validating accounts without an explicit user action.',
+              'The delivered link targets `/{locale}/verify-email#token=...`. A small client bootstrap removes the fragment from browser history before sending the token in a bounded same-origin `POST` body to `/api/auth/verify-email/prepare`. The server inspects the challenge and stores the token briefly in a scoped `HttpOnly` cookie. Final verification still requires a separate same-origin `POST`. This keeps raw tokens out of HTTP URL logs while preventing automated email link scanners from validating accounts without an explicit user action.',
+            ],
+            [
+              '- link inspection on `GET` without token consumption;\n- same-origin confirmation on `POST`;',
+              '- fragment extraction with immediate browser URL cleanup;\n- bounded same-origin preparation using a request body rather than a token-bearing URL;\n- same-origin confirmation on `POST`;',
+            ],
+            [
+              '- [ ] The delivered link uses the configured application origin.\n- [ ] Opening the link displays a confirmation state without immediately setting `emailVerifiedAt`.',
+              '- [ ] The delivered link uses the configured application origin.\n- [ ] The delivered link carries the raw token only in the URL fragment, not in the query string.\n- [ ] Opening the link does not expose the raw token in Next.js or reverse-proxy request logs.\n- [ ] Opening the link displays a confirmation state without immediately setting `emailVerifiedAt`.',
+            ],
+          ];
+
+          for (const [before, after] of replacements) {
+            if (!content.includes(before)) {
+              throw new Error(`Expected documentation text not found: ${before}`);
+            }
+
+            content = content.replace(before, after);
+          }
+
+          fs.writeFileSync(file, content);
+          NODE
+
+      - name: Format changed files
+        run: >-
+          npx prettier
+          docs/product/ds-170-auth-03-email-verification.md
+          src/app/[locale]/\(public\)/verify-email/page.tsx
+          src/app/api/auth/verify-email/route.ts
+          src/app/api/auth/verify-email/route.test.ts
+          src/app/api/auth/verify-email/prepare/route.ts
+          src/app/api/auth/verify-email/prepare/route.test.ts
+          src/features/auth/email-verification/EmailVerificationLinkBootstrap.tsx
+          src/features/auth/email-verification/EmailVerificationLinkBootstrap.test.tsx
+          src/server/auth/email-verification/email-verification-email.ts
+          src/server/auth/email-verification/email-verification-email.test.ts
+          --write
+
+      - name: Run focused validation
+        run: |
+          npm run lint
+          npm run typecheck
+          npx vitest run \
+            src/app/api/auth/verify-email/route.test.ts \
+            src/app/api/auth/verify-email/prepare/route.test.ts \
+            src/features/auth/email-verification/EmailVerificationLinkBootstrap.test.tsx \
+            src/server/auth/email-verification/email-verification-email.test.ts
+
+      - name: Remove temporary workflow
+        run: rm .github/workflows/finalize-auth03-token-hardening.yml
+
+      - name: Commit finalized hardening
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "fix(auth): keep verification tokens out of request URLs"
+          git push origin HEAD:feature/ds-170-auth-03-email-verification
