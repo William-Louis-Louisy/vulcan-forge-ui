@@ -11,6 +11,15 @@ describe('getSafeAuthReturnTo', () => {
     ).toBe('/en/app/projects/project-1/tokens?set=color&view=table');
   });
 
+  it('allows encoded separators inside query values', () => {
+    expect(
+      getSafeAuthReturnTo({
+        locale: 'en',
+        returnTo: '/en/app/search?path=%2Fcomponents%2Fbutton',
+      }),
+    ).toBe('/en/app/search?path=%2Fcomponents%2Fbutton');
+  });
+
   it.each([
     'https://example.com/en/app',
     '//example.com/en/app',
@@ -20,6 +29,7 @@ describe('getSafeAuthReturnTo', () => {
     '/en/app\\settings',
     '/en/app/%2f%2fevil.example',
     '/en/app/%5cevil.example',
+    '/en/app/%252f%252fevil.example',
     '/en/app#fragment',
     `/en/app${String.fromCharCode(0)}/settings`,
   ])('falls back for an unsafe destination: %s', (returnTo) => {
