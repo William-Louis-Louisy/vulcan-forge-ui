@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { NextIntlClientProvider } from 'next-intl';
@@ -9,19 +9,21 @@ const navigationMocks = vi.hoisted(() => ({
   replace: vi.fn(),
 }));
 
-vi.mock('next/navigation', () => ({
-  useSearchParams: () =>
-    new URLSearchParams(
-      'reason=authentication-required&returnTo=%2Fen%2Fapp%2Fprojects%2Fproject-1%2Ftokens%3Fset%3Dcolor',
-    ),
-}));
-
 vi.mock('@/i18n/navigation', () => ({
   usePathname: () => '/login',
   useRouter: () => ({
     replace: navigationMocks.replace,
   }),
 }));
+
+beforeEach(() => {
+  navigationMocks.replace.mockReset();
+  window.history.replaceState(
+    {},
+    '',
+    '/en/login?reason=authentication-required&returnTo=%2Fen%2Fapp%2Fprojects%2Fproject-1%2Ftokens%3Fset%3Dcolor',
+  );
+});
 
 describe('LocaleSwitcher', () => {
   it('localizes the validated return target and preserves other query values', async () => {
