@@ -209,8 +209,13 @@ describe.skipIf(!runDatabaseTests)(
         results.filter((result) => result.status === 'verified'),
       ).toHaveLength(1);
       expect(
-        results.filter((result) => result.status === 'invalid'),
+        results.filter((result) => result.status !== 'verified'),
       ).toHaveLength(1);
+      expect(
+        results.every((result) =>
+          ['alreadyVerified', 'invalid', 'verified'].includes(result.status),
+        ),
+      ).toBe(true);
     });
 
     it('allows only one concurrent token consumer to verify the account', async () => {
@@ -227,8 +232,13 @@ describe.skipIf(!runDatabaseTests)(
         results.filter((result) => result.status === 'verified'),
       ).toHaveLength(1);
       expect(
-        results.filter((result) => result.status === 'invalid'),
+        results.filter((result) => result.status !== 'verified'),
       ).toHaveLength(1);
+      expect(
+        results.every((result) =>
+          ['alreadyVerified', 'invalid', 'verified'].includes(result.status),
+        ),
+      ).toBe(true);
     });
   },
 );
