@@ -2,7 +2,7 @@
 
 ## Status
 
-Implementation is complete, including the non-blocking product policy and URL-fragment protection for raw verification tokens. Automated validation of the hardened flow and manual product QA are required before the pull request leaves Draft.
+Implementation and automated validation are complete. Quality run #1112 passed on commit `4bc7ea9` after the non-blocking product policy and URL-fragment protection for raw verification tokens were applied. Manual product QA remains required before the pull request leaves Draft.
 
 ## Objective
 
