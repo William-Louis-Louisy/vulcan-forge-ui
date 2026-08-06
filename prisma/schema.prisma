@@ -134,14 +134,16 @@ model User {
   email           String    @unique
   passwordHash    String
   emailVerifiedAt DateTime?
+  authVersion     Int       @default(0)
   imageUrl        String?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  preferences           UserPreference?
-  memberships           WorkspaceMember[]
-  ownedWorkspaces       Workspace[]             @relation("WorkspaceOwner")
+  preferences            UserPreference?
+  memberships            WorkspaceMember[]
+  ownedWorkspaces        Workspace[]             @relation("WorkspaceOwner")
   emailVerificationToken EmailVerificationToken?
+  passwordResetToken     PasswordResetToken?
 }
 
 model UserPreference {
@@ -156,6 +158,18 @@ model UserPreference {
 }
 
 model EmailVerificationToken {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([expiresAt])
+}
+
+model PasswordResetToken {
   id        String   @id @default(cuid())
   userId    String   @unique
   tokenHash String   @unique

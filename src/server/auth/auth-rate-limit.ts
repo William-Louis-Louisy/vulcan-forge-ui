@@ -7,7 +7,12 @@ import {
 } from './auth-request-context';
 import { recordAuthSecurityEvent } from './auth-security-events';
 
-export type AuthRateLimitOperation = 'emailVerification' | 'login' | 'signup';
+export type AuthRateLimitOperation =
+  | 'emailVerification'
+  | 'login'
+  | 'passwordRecoveryRequest'
+  | 'passwordResetAttempt'
+  | 'signup';
 
 type AuthRateLimitPolicy = {
   limit: number;
@@ -51,6 +56,26 @@ const authRateLimitPolicies: Record<
   login: {
     account: {
       limit: 8,
+      windowMs: 15 * minute,
+    },
+    ip: {
+      limit: 40,
+      windowMs: 15 * minute,
+    },
+  },
+  passwordRecoveryRequest: {
+    account: {
+      limit: 5,
+      windowMs: hour,
+    },
+    ip: {
+      limit: 20,
+      windowMs: hour,
+    },
+  },
+  passwordResetAttempt: {
+    account: {
+      limit: 10,
       windowMs: 15 * minute,
     },
     ip: {

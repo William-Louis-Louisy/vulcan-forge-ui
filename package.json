@@ -18,7 +18,7 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
-    "test:auth-integration": "vitest run src/server/auth/auth-rate-limit.integration.test.ts src/server/auth/email-verification/email-verification.integration.test.ts",
+    "test:auth-integration": "vitest run src/server/auth/auth-rate-limit.integration.test.ts src/server/auth/email-verification/email-verification.integration.test.ts src/server/auth/password-recovery/password-recovery.integration.test.ts",
     "audit:ui": "tsx scripts/audit-ui.ts",
     "quality": "npm run db:generate && npm run lint && npm run typecheck && npm run format:check && npm run audit:ui && npm run test && npm run build",
     "db:up": "docker compose up -d postgres",

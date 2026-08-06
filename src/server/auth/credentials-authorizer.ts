@@ -18,6 +18,7 @@ import {
 } from './password/password.service';
 
 type AuthenticatedUser = {
+  authVersion: number;
   email: string;
   id: string;
   name: string | null;
@@ -166,6 +167,7 @@ export async function authorizeCredentials(
       email: parsed.data.email,
     },
     select: {
+      authVersion: true,
       id: true,
       name: true,
       email: true,
@@ -221,6 +223,7 @@ export async function authorizeCredentials(
   });
 
   return {
+    authVersion: user.authVersion,
     id: user.id,
     name: user.name,
     email: user.email,

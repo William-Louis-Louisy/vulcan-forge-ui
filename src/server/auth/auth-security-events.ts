@@ -14,6 +14,16 @@ export type AuthSecurityEventName =
   | 'auth.password.rehash_failed'
   | 'auth.password.rehash_skipped'
   | 'auth.password.rehash_succeeded'
+  | 'auth.password_recovery.changed_notification_failed'
+  | 'auth.password_recovery.delivery_failed'
+  | 'auth.password_recovery.expired'
+  | 'auth.password_recovery.invalid'
+  | 'auth.password_recovery.link_opened'
+  | 'auth.password_recovery.rate_limited'
+  | 'auth.password_recovery.requested'
+  | 'auth.password_recovery.reset_completed'
+  | 'auth.password_recovery.sent'
+  | 'auth.password_recovery.unexpected_error'
   | 'auth.rate_limit.error'
   | 'auth.signup.created'
   | 'auth.signup.duplicate'
@@ -39,6 +49,12 @@ const warningEvents = new Set<AuthSecurityEventName>([
   'auth.login.rate_limited',
   'auth.password.rehash_failed',
   'auth.password.rehash_skipped',
+  'auth.password_recovery.changed_notification_failed',
+  'auth.password_recovery.delivery_failed',
+  'auth.password_recovery.expired',
+  'auth.password_recovery.invalid',
+  'auth.password_recovery.rate_limited',
+  'auth.password_recovery.unexpected_error',
   'auth.rate_limit.error',
   'auth.signup.duplicate',
   'auth.signup.password_check_unavailable',
