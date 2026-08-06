@@ -13,11 +13,12 @@ import { Input } from '@/components/ui';
 
 type PasswordFieldProps = Omit<
   ComponentPropsWithoutRef<typeof Input>,
-  'aria-describedby' | 'aria-errormessage' | 'invalid' | 'type'
+  'aria-describedby' | 'aria-errormessage' | 'id' | 'invalid' | 'type'
 > & {
   error?: string | null;
   help?: ReactNode;
   hidePasswordLabel: string;
+  id: string;
   label: string;
   showPasswordLabel: string;
 };
