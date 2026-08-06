@@ -13,6 +13,20 @@ function isLocalizedApplicationPath(pathname: string) {
   });
 }
 
+function getPublicRequestTarget(request: NextRequest) {
+  const searchParams = new URLSearchParams(request.nextUrl.searchParams);
+
+  // Next.js adds this transport-only parameter to React Server Component
+  // navigations. It is not part of the user's requested destination.
+  searchParams.delete('_rsc');
+
+  const query = searchParams.toString();
+
+  return query
+    ? `${request.nextUrl.pathname}?${query}`
+    : request.nextUrl.pathname;
+}
+
 export default function proxy(request: NextRequest) {
   const isPageRequest = request.method === 'GET' || request.method === 'HEAD';
 
@@ -24,10 +38,7 @@ export default function proxy(request: NextRequest) {
 
   // Always overwrite a client-supplied value at the proxy boundary. The
   // application layout validates this value again before exposing it in a URL.
-  requestHeaders.set(
-    AUTH_REQUEST_TARGET_HEADER,
-    `${request.nextUrl.pathname}${request.nextUrl.search}`,
-  );
+  requestHeaders.set(AUTH_REQUEST_TARGET_HEADER, getPublicRequestTarget(request));
 
   const forwardedRequest = new NextRequest(request.url, {
     headers: requestHeaders,
