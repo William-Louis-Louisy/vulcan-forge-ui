@@ -9,7 +9,9 @@ function isLocalizedApplicationPath(pathname: string) {
   return routing.locales.some((locale) => {
     const applicationRoot = `/${locale}/app`;
 
-    return pathname === applicationRoot || pathname.startsWith(`${applicationRoot}/`);
+    return (
+      pathname === applicationRoot || pathname.startsWith(`${applicationRoot}/`)
+    );
   });
 }
 
@@ -38,7 +40,10 @@ export default function proxy(request: NextRequest) {
 
   // Always overwrite a client-supplied value at the proxy boundary. The
   // application layout validates this value again before exposing it in a URL.
-  requestHeaders.set(AUTH_REQUEST_TARGET_HEADER, getPublicRequestTarget(request));
+  requestHeaders.set(
+    AUTH_REQUEST_TARGET_HEADER,
+    getPublicRequestTarget(request),
+  );
 
   const forwardedRequest = new NextRequest(request.url, {
     headers: requestHeaders,

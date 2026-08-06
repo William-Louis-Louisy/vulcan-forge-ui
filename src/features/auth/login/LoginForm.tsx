@@ -117,10 +117,7 @@ export function LoginForm({
           className="mt-2"
         />
         {emailError ? (
-          <p
-            id="login-email-error"
-            className="text-action-danger mt-2 text-sm"
-          >
+          <p id="login-email-error" className="text-action-danger mt-2 text-sm">
             {t(`validation.${emailError}`)}
           </p>
         ) : null}
@@ -133,9 +130,7 @@ export function LoginForm({
           label={t('form.passwordLabel')}
           autoComplete="current-password"
           required
-          error={
-            passwordError ? t(`validation.${passwordError}`) : undefined
-          }
+          error={passwordError ? t(`validation.${passwordError}`) : undefined}
           showPasswordLabel={passwordT('show')}
           hidePasswordLabel={passwordT('hide')}
         />

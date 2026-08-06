@@ -12,10 +12,7 @@ type AuthErrorSummaryProps = {
   items: AuthErrorSummaryItem[];
 };
 
-export function AuthErrorSummary({
-  focusKey,
-  items,
-}: AuthErrorSummaryProps) {
+export function AuthErrorSummary({ focusKey, items }: AuthErrorSummaryProps) {
   const summaryRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -33,7 +30,7 @@ export function AuthErrorSummary({
       ref={summaryRef}
       role="alert"
       tabIndex={-1}
-      className="border-action-danger/30 bg-action-danger/10 text-action-danger rounded-md border px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-action-danger focus-visible:ring-offset-2"
+      className="border-action-danger/30 bg-action-danger/10 text-action-danger focus-visible:ring-action-danger rounded-md border px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
     >
       <ul className="list-disc space-y-1 pl-5">
         {items.map((item) => (

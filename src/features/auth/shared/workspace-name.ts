@@ -8,7 +8,8 @@ export function formatPersonalWorkspaceName({
   userName: string | null | undefined;
 }) {
   const normalizedName = userName?.trim();
-  const displayName = normalizedName || (locale === 'fr' ? 'Utilisateur' : 'User');
+  const displayName =
+    normalizedName || (locale === 'fr' ? 'Utilisateur' : 'User');
 
   return locale === 'fr'
     ? `Espace de travail de ${displayName}`

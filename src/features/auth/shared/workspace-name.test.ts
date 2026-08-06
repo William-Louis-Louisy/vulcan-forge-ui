@@ -16,7 +16,7 @@ describe('formatPersonalWorkspaceName', () => {
       "User's workspace",
     );
     expect(formatPersonalWorkspaceName({ locale: 'fr', userName: '  ' })).toBe(
-      "Espace de travail de Utilisateur",
+      'Espace de travail de Utilisateur',
     );
   });
 });

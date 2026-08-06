@@ -51,8 +51,7 @@ export function ResetPasswordForm() {
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const serverPasswordError = fieldErrors.password?.[0] ?? null;
-  const serverConfirmationError =
-    fieldErrors.passwordConfirmation?.[0] ?? null;
+  const serverConfirmationError = fieldErrors.passwordConfirmation?.[0] ?? null;
   const passwordDraftIssue = getPasswordDraftIssue(password);
   const confirmationMatches = passwordsMatchDraft({
     password,
@@ -178,9 +177,7 @@ export function ResetPasswordForm() {
           );
         }}
         error={
-          confirmationError
-            ? t(`validation.${confirmationError}`)
-            : undefined
+          confirmationError ? t(`validation.${confirmationError}`) : undefined
         }
         showPasswordLabel={t('form.passwordVisibility.show')}
         hidePasswordLabel={t('form.passwordVisibility.hide')}

@@ -20,13 +20,7 @@ const textModeClassNames: Record<InputTextMode, string> = {
 };
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
-  {
-    className,
-    invalid = false,
-    size = 'md',
-    textMode = 'default',
-    ...props
-  },
+  { className, invalid = false, size = 'md', textMode = 'default', ...props },
   ref,
 ) {
   return (

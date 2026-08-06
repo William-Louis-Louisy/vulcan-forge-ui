@@ -41,9 +41,13 @@ export const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
     const [isVisible, setIsVisible] = useState(false);
     const helpId = help ? `${id}-help` : undefined;
     const errorId = error ? `${id}-error` : undefined;
-    const describedBy = [helpId, errorId].filter(Boolean).join(' ') || undefined;
+    const describedBy =
+      [helpId, errorId].filter(Boolean).join(' ') || undefined;
 
-    useImperativeHandle(forwardedRef, () => inputRef.current as HTMLInputElement);
+    useImperativeHandle(
+      forwardedRef,
+      () => inputRef.current as HTMLInputElement,
+    );
 
     function toggleVisibility() {
       const input = inputRef.current;

@@ -129,10 +129,7 @@ export function SignupForm({ locale, returnTo }: SignupFormProps) {
           className="mt-2"
         />
         {nameError ? (
-          <p
-            id="signup-name-error"
-            className="text-action-danger mt-2 text-sm"
-          >
+          <p id="signup-name-error" className="text-action-danger mt-2 text-sm">
             {t(`validation.${nameError}`)}
           </p>
         ) : null}
