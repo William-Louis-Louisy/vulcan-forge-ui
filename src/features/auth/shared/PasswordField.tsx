@@ -52,19 +52,15 @@ export const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
 
       setIsVisible((current) => !current);
 
-      requestAnimationFrame(() => {
-        const nextInput = inputRef.current;
+      if (!input) {
+        return;
+      }
 
-        if (!nextInput) {
-          return;
-        }
+      input.focus();
 
-        nextInput.focus();
-
-        if (selectionStart !== null && selectionEnd !== null) {
-          nextInput.setSelectionRange(selectionStart, selectionEnd);
-        }
-      });
+      if (selectionStart !== null && selectionEnd !== null) {
+        input.setSelectionRange(selectionStart, selectionEnd);
+      }
     }
 
     return (
