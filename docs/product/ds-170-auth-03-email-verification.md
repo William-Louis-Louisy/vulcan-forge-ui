@@ -2,7 +2,7 @@
 
 ## Status
 
-Implementation is in progress. The product policy has been corrected so email verification remains visible and recoverable without blocking the authenticated workspace. Automated validation and manual product QA are required before the pull request leaves Draft.
+Implementation is complete, including the non-blocking product policy and URL-fragment protection for raw verification tokens. Automated validation of the hardened flow and manual product QA are required before the pull request leaves Draft.
 
 ## Objective
 
@@ -138,88 +138,62 @@ Events may contain a user ID, account or client-address fingerprint, request ID,
 
 ## Automated coverage
 
-The implementation includes tests for:
+Automated coverage includes:
 
-- random URL-safe token generation and deterministic token hashing;
-- malformed token rejection;
-- locale-aware Resend requests and idempotency headers;
-- local Mailpit payloads and transport selection;
-- production rejection of the Mailpit transport;
-- missing delivery configuration and provider failures;
-- signup delivery followed by a normal workspace redirect;
-- authenticated resend behavior;
-- non-blocking authenticated sessions;
-- persistent verification reminder rendering;
-- email-change reverification and old-token invalidation;
-- fragment extraction with immediate browser URL cleanup;
-- bounded same-origin preparation using a request body rather than a token-bearing URL;
-- same-origin confirmation on `POST`;
-- PostgreSQL persistence of token hashes only;
-- successful single-use consumption;
-- expiration cleanup;
-- concurrent token consumption.
+- token hashing and single-use verification;
+- expiration and challenge replacement;
+- concurrent challenge creation and consumption;
+- account and trusted-address throttling;
+- localized Resend and Mailpit delivery payloads;
+- fragment-based verification URLs that keep tokens out of request paths;
+- immediate browser-fragment cleanup and bounded same-origin preparation;
+- same-origin confirmation and cross-origin rejection;
+- signup continuation when delivery is unavailable;
+- non-blocking application access and reminder rendering;
+- changed-email reverification;
+- localized action and page states.
 
-## Manual QA checklist
+## Manual QA
 
-### Local development and workspace access
+### Local setup
 
 - [ ] `npm run dev:up` starts PostgreSQL and Mailpit.
 - [ ] Mailpit is available at `http://localhost:8025`.
-- [ ] A new English account receives an English message in Mailpit.
-- [ ] A new French account receives a French message in Mailpit.
-- [ ] A new account is redirected to the localized application route.
-- [ ] An unverified account can navigate throughout the existing workspace.
-- [ ] The application shell displays the localized verification reminder.
-- [ ] The reminder does not cover or disable workspace content.
-- [ ] Delivery failure leaves the workspace usable and exposes the resend action.
+- [ ] The application starts without a Resend key.
 
-### Token lifecycle
+### Signup and workspace access
 
+- [ ] A new account is signed in and redirected directly to its localized workspace.
+- [ ] Workspace pages remain usable while `emailVerifiedAt` is null.
+- [ ] A visible verification reminder is shown without covering or disabling workspace content.
+- [ ] An unavailable local email service does not block signup or workspace access.
+
+### Local email delivery and verification
+
+- [ ] The initial or resent message appears in Mailpit in the selected locale.
 - [ ] The delivered link uses the configured application origin.
 - [ ] The delivered link carries the raw token only in the URL fragment, not in the query string.
 - [ ] Opening the link does not expose the raw token in Next.js or reverse-proxy request logs.
 - [ ] Opening the link displays a confirmation state without immediately setting `emailVerifiedAt`.
-- [ ] Confirming the link sets `emailVerifiedAt` and removes the active challenge.
-- [ ] The same link cannot be used twice.
-- [ ] A replaced link is invalid after a resend.
-- [ ] A link older than 30 minutes shows the localized expired state.
-- [ ] A malformed or unknown token shows the localized invalid state.
-- [ ] A cross-origin confirmation request is rejected.
-- [ ] Verification from another browser succeeds without requiring the original session.
+- [ ] Explicit confirmation sets `emailVerifiedAt`, deletes the challenge and removes the reminder.
+- [ ] Reusing the consumed link produces a bounded invalid or already-verified state.
+- [ ] An expired link produces the localized expired state.
+- [ ] A replacement challenge invalidates the previous link.
 
-### Resend controls
+### Resend and throttling
 
-- [ ] A resend creates and delivers a new link.
-- [ ] The previous link becomes invalid after resend.
-- [ ] The sixth account-scoped request within an hour is rate-limited.
-- [ ] A verified account cannot generate another challenge.
-- [ ] An unauthenticated resend request does not send an email.
-- [ ] A successful resend displays accessible status feedback in the application banner.
+- [ ] A resend creates one new challenge and invalidates the previous one.
+- [ ] Successful resend feedback is announced accessibly.
+- [ ] The account limit produces a localized cooldown state.
+- [ ] Delivery failure produces a recoverable localized state without restricting the workspace.
 
-### Email changes
+### Changed email
 
-- [ ] Changing only the display name preserves verification.
-- [ ] Changing the email requires the current password.
-- [ ] A successful email change clears verification and removes older challenges.
-- [ ] The account is signed out after the email change.
-- [ ] Signing in with the new address permits workspace access and displays the reminder.
-- [ ] Verification of the new address removes the reminder on the next application request.
+- [ ] Changing a verified address clears `emailVerifiedAt` and invalidates old challenges.
+- [ ] The user can sign in with the new address and continue using the workspace before reverification.
+- [ ] The new verification message is localized and confirms the updated address.
 
-### Production configuration
+### Privacy
 
-- [ ] Production rejects `AUTH_EMAIL_TRANSPORT=mailpit`.
-- [ ] Missing Resend configuration produces a bounded delivery failure without blocking access.
-- [ ] A configured Resend sender receives a successful provider response.
-
-### Logging and privacy
-
-- [ ] Successful delivery, link opening and verification emit their expected events.
-- [ ] Expired, invalid, rate-limited and failed-delivery paths emit bounded events.
-- [ ] Logs contain no raw email, raw IP, raw token, token hash, API key or session token.
-
-## Known boundaries
-
-- Resend domain verification and DNS configuration are external operational prerequisites and cannot be validated from repository code.
-- Mailpit is a development-only capture service and must not be exposed as a production transport.
-- Verification does not currently restrict product functionality. Future restrictions require an explicit capability-level product decision.
-- Password recovery and session revocation remain separate authentication roadmap items.
+- [ ] Security events do not contain raw email addresses, raw IP addresses, raw verification tokens, token hashes, provider API keys or session tokens.
+- [ ] Application and reverse-proxy request logs do not contain raw verification tokens.
