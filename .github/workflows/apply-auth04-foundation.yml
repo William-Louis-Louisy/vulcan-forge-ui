@@ -102,6 +102,9 @@ jobs:
       - name: Apply migrations
         run: npm run db:migrate:deploy
 
+      - name: Remove source helper
+        run: rm scripts/apply-auth04-foundation.cjs
+
       - name: Validate foundation
         run: |
           npm run test:auth-integration
@@ -110,10 +113,8 @@ jobs:
           npm run format:check
           npx vitest run src/server/auth/password-recovery/password-recovery-token.test.ts
 
-      - name: Remove temporary helpers
-        run: |
-          rm .github/workflows/apply-auth04-foundation.yml
-          rm scripts/apply-auth04-foundation.cjs
+      - name: Remove temporary workflow
+        run: rm .github/workflows/apply-auth04-foundation.yml
 
       - name: Commit foundation
         run: |
