@@ -3,6 +3,30 @@ import type { Locale } from '@/i18n/routing';
 const CONTROL_CHARACTER_PATTERN = /[\u0000-\u001f\u007f]/;
 const ENCODED_PATH_SEPARATOR_PATTERN = /%(?:2f|5c)/i;
 
+function hasAmbiguousPathSeparator(pathname: string) {
+  let candidate = pathname;
+
+  for (let pass = 0; pass < 3; pass += 1) {
+    if (ENCODED_PATH_SEPARATOR_PATTERN.test(candidate)) {
+      return true;
+    }
+
+    try {
+      const decodedCandidate = decodeURIComponent(candidate);
+
+      if (decodedCandidate === candidate) {
+        return false;
+      }
+
+      candidate = decodedCandidate;
+    } catch {
+      return true;
+    }
+  }
+
+  return ENCODED_PATH_SEPARATOR_PATTERN.test(candidate);
+}
+
 export function getDefaultAuthReturnTo(locale: Locale) {
   return `/${locale}/app`;
 }
@@ -22,7 +46,6 @@ export function getSafeAuthReturnTo({
 
   if (
     CONTROL_CHARACTER_PATTERN.test(returnTo) ||
-    ENCODED_PATH_SEPARATOR_PATTERN.test(returnTo) ||
     returnTo.includes('\\') ||
     !returnTo.startsWith('/') ||
     returnTo.startsWith('//')
@@ -38,7 +61,10 @@ export function getSafeAuthReturnTo({
     return fallback;
   }
 
-  if (parsed.origin !== 'https://vulcanforge.invalid') {
+  if (
+    parsed.origin !== 'https://vulcanforge.invalid' ||
+    hasAmbiguousPathSeparator(parsed.pathname)
+  ) {
     return fallback;
   }
 
