@@ -15,8 +15,8 @@ type PasswordFieldProps = Omit<
   ComponentPropsWithoutRef<typeof Input>,
   'aria-describedby' | 'aria-errormessage' | 'id' | 'invalid' | 'type'
 > & {
-  error?: string | null;
-  help?: ReactNode;
+  error?: string | null | undefined;
+  help?: ReactNode | undefined;
   hidePasswordLabel: string;
   id: string;
   label: string;
