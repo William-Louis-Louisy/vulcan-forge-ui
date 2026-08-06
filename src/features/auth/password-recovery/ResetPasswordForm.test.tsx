@@ -35,9 +35,7 @@ describe('ResetPasswordForm', () => {
 
     await user.type(passwordInput, 'short');
 
-    expect(
-      screen.getByText('Password must contain at least 15 characters.'),
-    ).toBeInTheDocument();
+    expect(screen.getByText('Use at least 15 characters.')).toBeInTheDocument();
 
     await user.clear(passwordInput);
     await user.type(passwordInput, 'a sufficiently long password');
