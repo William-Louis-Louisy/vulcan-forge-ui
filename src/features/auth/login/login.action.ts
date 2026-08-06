@@ -4,6 +4,7 @@ import { AuthError } from '@auth/core/errors';
 import { redirect } from 'next/navigation';
 import { signIn } from '@/auth';
 import { defaultAppLocale, isAppLocale } from '@/domain/i18n';
+import { getSafeAuthReturnTo } from '@/features/auth/shared/return-to';
 import { getLoginFormError } from './login.errors';
 import { loginSchema, type LoginValidationMessageKey } from './login.schema';
 import type { LoginActionState } from './login.state';
@@ -44,6 +45,10 @@ export async function loginAction(
   formData: FormData,
 ): Promise<LoginActionState> {
   const locale = getActionLocale(formData);
+  const returnTo = getSafeAuthReturnTo({
+    locale,
+    returnTo: getFormStringValue(formData, 'returnTo'),
+  });
 
   const values = {
     email: getFormStringValue(formData, 'email'),
@@ -67,7 +72,7 @@ export async function loginAction(
     await signIn('credentials', {
       email: parsed.data.email,
       password: parsed.data.password,
-      redirectTo: `/${locale}/app`,
+      redirectTo: returnTo,
     });
   } catch (error) {
     if (error instanceof AuthError) {
@@ -82,5 +87,5 @@ export async function loginAction(
     throw error;
   }
 
-  redirect(`/${locale}/app`);
+  redirect(returnTo);
 }
