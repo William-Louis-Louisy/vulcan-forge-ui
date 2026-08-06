@@ -2,7 +2,7 @@ import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { authorizeCredentials } from '@/server/auth/credentials-authorizer';
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+const nextAuth = NextAuth({
   session: {
     strategy: 'jwt',
   },
@@ -38,3 +38,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
   },
 });
+
+export const { auth, handlers, signIn, signOut } = nextAuth;
+
+/**
+ * Explicit alias used by the verification journey to document that pending
+ * accounts are valid authenticated sessions. Email verification is a product
+ * trust signal and a prerequisite for selected sensitive features, not a
+ * global authorization boundary for the workspace.
+ */
+export const authForEmailVerification = auth;

@@ -7,7 +7,7 @@ import {
 } from './auth-request-context';
 import { recordAuthSecurityEvent } from './auth-security-events';
 
-export type AuthRateLimitOperation = 'login' | 'signup';
+export type AuthRateLimitOperation = 'emailVerification' | 'login' | 'signup';
 
 type AuthRateLimitPolicy = {
   limit: number;
@@ -38,6 +38,16 @@ const authRateLimitPolicies: Record<
   AuthRateLimitOperation,
   Record<RateLimitBucketKind, AuthRateLimitPolicy>
 > = {
+  emailVerification: {
+    account: {
+      limit: 5,
+      windowMs: hour,
+    },
+    ip: {
+      limit: 20,
+      windowMs: hour,
+    },
+  },
   login: {
     account: {
       limit: 8,

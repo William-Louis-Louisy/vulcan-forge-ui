@@ -1,4 +1,13 @@
 export type AuthSecurityEventName =
+  | 'auth.email_verification.already_verified'
+  | 'auth.email_verification.delivery_failed'
+  | 'auth.email_verification.expired'
+  | 'auth.email_verification.invalid'
+  | 'auth.email_verification.link_opened'
+  | 'auth.email_verification.rate_limited'
+  | 'auth.email_verification.sent'
+  | 'auth.email_verification.unexpected_error'
+  | 'auth.email_verification.verified'
   | 'auth.login.rejected'
   | 'auth.login.rate_limited'
   | 'auth.login.succeeded'
@@ -21,6 +30,11 @@ type AuthSecurityEventMetadata = Record<
 >;
 
 const warningEvents = new Set<AuthSecurityEventName>([
+  'auth.email_verification.delivery_failed',
+  'auth.email_verification.expired',
+  'auth.email_verification.invalid',
+  'auth.email_verification.rate_limited',
+  'auth.email_verification.unexpected_error',
   'auth.login.rejected',
   'auth.login.rate_limited',
   'auth.password.rehash_failed',

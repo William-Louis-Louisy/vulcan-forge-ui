@@ -120,7 +120,7 @@ model DesignSystemProject {
   accessibilityReports AccessibilityReport[]
   documentationProfile DocumentationProfile?
   aiInstructionProfile AiInstructionProfile?
-  exportLogs            ExportLog[]
+  exportLogs           ExportLog[]
 
   @@unique([workspaceId, slug])
   @@index([workspaceId])
@@ -129,18 +129,19 @@ model DesignSystemProject {
 }
 
 model User {
-  id              String          @id @default(cuid())
+  id              String    @id @default(cuid())
   name            String?
-  email           String          @unique
+  email           String    @unique
   passwordHash    String
   emailVerifiedAt DateTime?
   imageUrl        String?
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
-  preferences     UserPreference?
-  memberships     WorkspaceMember[]
-  ownedWorkspaces Workspace[]     @relation("WorkspaceOwner")
+  preferences           UserPreference?
+  memberships           WorkspaceMember[]
+  ownedWorkspaces       Workspace[]             @relation("WorkspaceOwner")
+  emailVerificationToken EmailVerificationToken?
 }
 
 model UserPreference {
@@ -151,7 +152,19 @@ model UserPreference {
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
 
-  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model EmailVerificationToken {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([expiresAt])
 }
 
 model Workspace {
@@ -176,7 +189,7 @@ model WorkspaceSettings {
   createdAt        DateTime    @default(now())
   updatedAt        DateTime    @updatedAt
 
-  workspace        Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 }
 
 model WorkspaceMember {
@@ -187,64 +200,64 @@ model WorkspaceMember {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
-  workspace   Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([workspaceId, userId])
   @@index([userId])
 }
 
 model ProjectLocaleSettings {
-  id                   String              @id @default(cuid())
-  projectId            String              @unique
-  defaultLocale        AppLocale           @default(en)
-  supportedLocales     AppLocale[]         @default([en, fr])
-  documentationLocale  AppLocale           @default(en)
-  aiInstructionLocale  AppLocale           @default(en)
-  createdAt            DateTime            @default(now())
-  updatedAt            DateTime            @updatedAt
+  id                  String      @id @default(cuid())
+  projectId           String      @unique
+  defaultLocale       AppLocale   @default(en)
+  supportedLocales    AppLocale[] @default([en, fr])
+  documentationLocale AppLocale   @default(en)
+  aiInstructionLocale AppLocale   @default(en)
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
 
-  project              DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model BrandProfile {
-  id                  String              @id @default(cuid())
-  projectId           String              @unique
-  visualStyle         BrandVisualStyle    @default(minimal)
-  uiDensity           BrandUiDensity      @default(cozy)
-  inspirationKeywords String[]            @default([])
+  id                  String           @id @default(cuid())
+  projectId           String           @unique
+  visualStyle         BrandVisualStyle @default(minimal)
+  uiDensity           BrandUiDensity   @default(cozy)
+  inspirationKeywords String[]         @default([])
   localizedContent    Json
-  createdAt           DateTime            @default(now())
-  updatedAt           DateTime            @updatedAt
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
 
-  project             DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model TokenSet {
-  id        String              @id @default(cuid())
+  id        String       @id @default(cuid())
   projectId String
   type      TokenSetType
   name      String
   tokens    Json
-  createdAt DateTime            @default(now())
-  updatedAt DateTime            @updatedAt
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
 
-  project   DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@unique([projectId, type])
   @@index([projectId])
 }
 
 model Theme {
-  id        String              @id @default(cuid())
+  id        String    @id @default(cuid())
   projectId String
   mode      ThemeMode
   name      String
   tokens    Json
-  createdAt DateTime            @default(now())
-  updatedAt DateTime            @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
-  project   DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@unique([projectId, mode])
   @@index([projectId])
@@ -259,31 +272,31 @@ model ComponentContract {
   createdAt DateTime              @default(now())
   updatedAt DateTime              @updatedAt
 
-  project   DesignSystemProject   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@unique([projectId, type])
   @@index([projectId])
 }
 
 model DocumentationProfile {
-  id        String              @id @default(cuid())
-  projectId String              @unique
-  format    String              @default("markdown")
+  id        String   @id @default(cuid())
+  projectId String   @unique
+  format    String   @default("markdown")
   content   Json
-  createdAt DateTime            @default(now())
-  updatedAt DateTime            @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  project   DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model AiInstructionProfile {
-  id        String              @id @default(cuid())
-  projectId String              @unique
+  id        String   @id @default(cuid())
+  projectId String   @unique
   content   Json
-  createdAt DateTime            @default(now())
-  updatedAt DateTime            @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  project   DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model AccessibilityReport {
@@ -295,7 +308,7 @@ model AccessibilityReport {
   createdAt DateTime                  @default(now())
   updatedAt DateTime                  @updatedAt
 
-  project   DesignSystemProject       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@index([projectId])
   @@index([status])
@@ -303,15 +316,15 @@ model AccessibilityReport {
 }
 
 model ExportLog {
-  id           String              @id @default(cuid())
+  id           String       @id @default(cuid())
   projectId    String
   format       ExportFormat
   locale       AppLocale?
   status       ExportStatus
   errorMessage String?
-  createdAt    DateTime            @default(now())
+  createdAt    DateTime     @default(now())
 
-  project      DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@index([projectId])
   @@index([format])

@@ -1,9 +1,12 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { headers } from 'next/headers';
 
 import { auth, signOut } from '@/auth';
+import { recordAuthSecurityEvent } from '@/server/auth/auth-security-events';
 import { prisma } from '@/server/db/prisma';
+import { sendEmailVerificationChallenge } from '@/server/auth/email-verification/send-email-verification.service';
 import { verifyPassword } from '@/server/auth/password/password.service';
 import { accountProfileSchema } from './account-profile.schema';
 import type { UpdateAccountProfileActionState } from './update-account-profile.state';
@@ -119,15 +122,35 @@ export async function updateAccountProfileAction(
       }
     }
 
-    await prisma.user.update({
-      where: {
-        id: session.user.id,
-      },
-      data: {
-        name: parsedProfile.data.name,
-        email: parsedProfile.data.email,
-      },
-    });
+    if (emailChanged) {
+      await prisma.$transaction([
+        prisma.user.update({
+          where: {
+            id: session.user.id,
+          },
+          data: {
+            name: parsedProfile.data.name,
+            email: parsedProfile.data.email,
+            emailVerifiedAt: null,
+          },
+        }),
+        prisma.emailVerificationToken.deleteMany({
+          where: {
+            userId: session.user.id,
+          },
+        }),
+      ]);
+    } else {
+      await prisma.user.update({
+        where: {
+          id: session.user.id,
+        },
+        data: {
+          name: parsedProfile.data.name,
+          email: parsedProfile.data.email,
+        },
+      });
+    }
 
     revalidatePath(`/${parsedProfile.data.locale}/app/settings`);
   } catch {
@@ -140,6 +163,22 @@ export async function updateAccountProfileAction(
   }
 
   if (emailChanged) {
+    try {
+      await sendEmailVerificationChallenge({
+        email: parsedProfile.data.email,
+        headers: await headers(),
+        locale: parsedProfile.data.locale,
+        userId: session.user.id,
+      });
+    } catch {
+      recordAuthSecurityEvent('auth.email_verification.unexpected_error', {
+        reason: 'email_change_delivery',
+        userId: session.user.id,
+      });
+      // The next authenticated request is gated by the verification page, where
+      // the user can retry delivery without losing the completed email change.
+    }
+
     await signOut({
       redirectTo: `/${parsedProfile.data.locale}/login?emailUpdated=1`,
     });

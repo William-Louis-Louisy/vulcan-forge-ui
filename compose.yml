@@ -17,5 +17,15 @@ services:
       timeout: 5s
       retries: 5
 
+  mailpit:
+    image: axllent/mailpit:v1.30
+    container_name: vulcan-forge-ui-mailpit
+    restart: unless-stopped
+    environment:
+      MP_MAX_MESSAGES: 500
+    ports:
+      - '8025:8025'
+      - '1025:1025'
+
 volumes:
   postgres_data:

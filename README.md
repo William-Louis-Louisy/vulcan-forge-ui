@@ -6,16 +6,17 @@ VulcanForge UI is a multilingual SaaS for authoring accessible, exportable and A
 
 - Node.js version defined in `.nvmrc`;
 - npm;
-- PostgreSQL for persistence-backed development flows.
+- PostgreSQL for persistence-backed development flows;
+- Docker Compose for the local PostgreSQL and Mailpit services.
 
 ## Local development
 
-Create the local environment file, install dependencies and start the database:
+Create the local environment file, install dependencies and start PostgreSQL together with the local email inbox:
 
 ```bash
 cp .env.example .env
 npm ci
-npm run db:up
+npm run dev:up
 npm run db:migrate
 ```
 
@@ -25,14 +26,18 @@ Then start the development server:
 npm run dev
 ```
 
-The application is available at `http://localhost:3000`.
+The application is available at `http://localhost:3000`. Mailpit captures local verification messages at `http://localhost:8025`; no external email provider is required for development.
 
-Database helpers:
+Service helpers:
 
 ```bash
+npm run dev:up
+npm run dev:down
 npm run db:up
 npm run db:generate
 npm run db:migrate
+npm run mail:up
+npm run mail:logs
 ```
 
 ## Authentication configuration
@@ -92,3 +97,13 @@ The visual source of truth and implementation rules are documented under `docs/p
 - Auth.js;
 - Prisma and PostgreSQL;
 - Vitest and Testing Library.
+
+## Email verification
+
+New accounts and changed email addresses receive a single-use verification link that expires after 30 minutes. Only a SHA-256 token fingerprint is stored in PostgreSQL.
+
+Verification is intentionally non-blocking for the current workspace: an authenticated pending account can use the application and sees a persistent reminder with a resend action. Email ownership can later be required for selected sensitive or collaborative capabilities without making the core design-system editor unavailable.
+
+Local development uses Mailpit by default. Start it with `npm run mail:up` and inspect captured messages at `http://localhost:8025`.
+
+Production delivery uses the Resend HTTP API. Configure `AUTH_EMAIL_TRANSPORT=resend`, `RESEND_API_KEY`, `AUTH_EMAIL_FROM`, and `AUTH_EMAIL_BASE_URL` from `.env.example`. The sending address must use a verified Resend domain, and the production base URL must use HTTPS.

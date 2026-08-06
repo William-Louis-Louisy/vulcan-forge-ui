@@ -9,6 +9,7 @@ import {
   resetAuthAccountRateLimit,
 } from '@/server/auth/auth-rate-limit';
 import { recordAuthSecurityEvent } from '@/server/auth/auth-security-events';
+import { sendEmailVerificationChallenge } from '@/server/auth/email-verification/send-email-verification.service';
 import {
   PasswordCompromisedError,
   PasswordCompromiseCheckUnavailableError,
@@ -119,13 +120,14 @@ export async function signupAction(
     name: getFormStringValue(formData, 'name'),
     email: getFormStringValue(formData, 'email'),
   };
+  const requestHeaders = await headers();
 
   let rateLimit: Awaited<ReturnType<typeof consumeAuthRateLimit>>;
 
   try {
     rateLimit = await consumeAuthRateLimit({
       accountIdentifier: values.email,
-      headers: await headers(),
+      headers: requestHeaders,
       operation: 'signup',
     });
   } catch {
@@ -322,6 +324,23 @@ export async function signupAction(
     requestId: rateLimit.context.requestId,
     userId,
   });
+
+  try {
+    await sendEmailVerificationChallenge({
+      email: parsed.data.email,
+      headers: requestHeaders,
+      locale,
+      userId,
+    });
+  } catch {
+    recordAuthSecurityEvent('auth.signup.unexpected_error', {
+      accountFingerprint: rateLimit.accountFingerprint,
+      ipFingerprint: rateLimit.context.ipFingerprint,
+      reason: 'verification_delivery',
+      requestId: rateLimit.context.requestId,
+      userId,
+    });
+  }
 
   try {
     await signIn('credentials', {
