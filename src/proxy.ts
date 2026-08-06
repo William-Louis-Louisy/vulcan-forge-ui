@@ -4,15 +4,19 @@ import { AUTH_REQUEST_TARGET_HEADER } from '@/features/auth/shared/request-targe
 import { routing } from './i18n/routing';
 
 const handleI18nRouting = createMiddleware(routing);
-const applicationPathPattern = /^\/(?:en|fr)\/app(?:\/|$)/;
+
+function isLocalizedApplicationPath(pathname: string) {
+  return routing.locales.some((locale) => {
+    const applicationRoot = `/${locale}/app`;
+
+    return pathname === applicationRoot || pathname.startsWith(`${applicationRoot}/`);
+  });
+}
 
 export default function proxy(request: NextRequest) {
   const isPageRequest = request.method === 'GET' || request.method === 'HEAD';
-  const isApplicationRequest = applicationPathPattern.test(
-    request.nextUrl.pathname,
-  );
 
-  if (!isPageRequest || !isApplicationRequest) {
+  if (!isPageRequest || !isLocalizedApplicationPath(request.nextUrl.pathname)) {
     return handleI18nRouting(request);
   }
 
