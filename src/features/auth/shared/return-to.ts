@@ -53,3 +53,27 @@ export function getSafeAuthReturnTo({
 
   return `${parsed.pathname}${parsed.search}`;
 }
+
+export function getLocalizedAuthReturnTo({
+  currentLocale,
+  nextLocale,
+  returnTo,
+}: {
+  currentLocale: Locale;
+  nextLocale: Locale;
+  returnTo: string | null | undefined;
+}) {
+  const safeCurrentReturnTo = getSafeAuthReturnTo({
+    locale: currentLocale,
+    returnTo,
+  });
+  const currentPrefix = `/${currentLocale}`;
+  const localizedReturnTo = `/${nextLocale}${safeCurrentReturnTo.slice(
+    currentPrefix.length,
+  )}`;
+
+  return getSafeAuthReturnTo({
+    locale: nextLocale,
+    returnTo: localizedReturnTo,
+  });
+}
