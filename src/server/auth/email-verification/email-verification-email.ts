@@ -156,9 +156,8 @@ function createVerificationUrl({
   locale: AppLocale;
   token: string;
 }) {
-  const url = new URL('/api/auth/verify-email', baseUrl);
-  url.searchParams.set('locale', locale);
-  url.searchParams.set('token', token);
+  const url = new URL(`/${locale}/verify-email`, baseUrl);
+  url.hash = new URLSearchParams({ token }).toString();
 
   return url.toString();
 }
