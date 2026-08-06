@@ -85,21 +85,25 @@ jobs:
 
           path = Path('src/auth.ts')
           content = path.read_text()
-          before = """    session({ session, token }) {
-      session.user.id = token.invalidated ? '' : (token.id ?? '');
-      session.user.locale = token.locale ?? 'en';
-
-      return session;
-    },"""
-          after = """    session({ session, token }) {
-      const tokenId = typeof token.id === 'string' ? token.id : '';
-      const tokenLocale = token.locale === 'fr' ? 'fr' : 'en';
-
-      session.user.id = token.invalidated ? '' : tokenId;
-      session.user.locale = tokenLocale;
-
-      return session;
-    },"""
+          before = '\n'.join([
+              '    session({ session, token }) {',
+              "      session.user.id = token.invalidated ? '' : (token.id ?? '');",
+              "      session.user.locale = token.locale ?? 'en';",
+              '',
+              '      return session;',
+              '    },',
+          ])
+          after = '\n'.join([
+              '    session({ session, token }) {',
+              "      const tokenId = typeof token.id === 'string' ? token.id : '';",
+              "      const tokenLocale = token.locale === 'fr' ? 'fr' : 'en';",
+              '',
+              "      session.user.id = token.invalidated ? '' : tokenId;",
+              '      session.user.locale = tokenLocale;',
+              '',
+              '      return session;',
+              '    },',
+          ])
 
           if before not in content:
               raise SystemExit('Expected auth session callback not found')
