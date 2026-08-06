@@ -1,0 +1,106 @@
+name: Apply AUTH-04 flow
+
+on:
+  push:
+    branches:
+      - feature/ds-170-auth-04-password-recovery
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-auth04-flow-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: vulcan
+          POSTGRES_PASSWORD: vulcan_dev_password
+          POSTGRES_DB: vulcan_forge_ui
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U vulcan -d vulcan_forge_ui"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://vulcan:vulcan_dev_password@localhost:5432/vulcan_forge_ui?schema=public
+      RUN_AUTH_DATABASE_TESTS: 'true'
+      AUTH_RATE_LIMIT_SECRET: integration-rate-limit-secret
+      AUTH_TRUST_PROXY_HEADERS: 'false'
+      AUTH_RATE_LIMIT_FAIL_OPEN: 'false'
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v6
+        with:
+          ref: feature/ds-170-auth-04-password-recovery
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Apply localized copy and login link
+        run: python scripts/apply-auth04-copy.py
+
+      - name: Format implementation
+        run: >-
+          npx prettier
+          src/messages/en.json
+          src/messages/fr.json
+          src/features/auth/login/LoginForm.tsx
+          src/features/auth/password-recovery
+          src/server/auth/password-recovery
+          src/app/api/auth/password-recovery
+          src/app/[locale]/\(public\)/\(auth\)/forgot-password/page.tsx
+          src/app/[locale]/\(public\)/reset-password/page.tsx
+          --write
+
+      - name: Generate Prisma Client
+        run: npm run db:generate
+
+      - name: Apply migrations
+        run: npm run db:migrate:deploy
+
+      - name: Remove source helper
+        run: rm scripts/apply-auth04-copy.py
+
+      - name: Run focused validation
+        run: |
+          npm run test:auth-integration
+          npx vitest run \
+            src/server/auth/password-recovery/password-recovery-token.test.ts \
+            src/server/auth/password-recovery/password-recovery-email.test.ts \
+            src/app/api/auth/password-recovery/prepare/route.test.ts \
+            src/features/auth/password-recovery/PasswordRecoveryLinkBootstrap.test.tsx \
+            src/features/auth/password-recovery/request-password-recovery.action.test.ts
+          npm run lint
+          npm run typecheck
+          npm run format:check
+          npm run test
+          npm run build
+
+      - name: Remove temporary workflow
+        run: rm .github/workflows/apply-auth04-flow.yml
+
+      - name: Commit implementation
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "feat(auth): implement password recovery flow"
+          git push origin HEAD:feature/ds-170-auth-04-password-recovery
