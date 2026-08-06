@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getSafeAuthReturnTo } from './return-to';
+import { getLocalizedAuthReturnTo, getSafeAuthReturnTo } from './return-to';
 
 describe('getSafeAuthReturnTo', () => {
   it('preserves a localized application path and query string', () => {
@@ -21,7 +21,7 @@ describe('getSafeAuthReturnTo', () => {
     '/en/app/%2f%2fevil.example',
     '/en/app/%5cevil.example',
     '/en/app#fragment',
-    '/en/app\u0000/settings',
+    `/en/app${String.fromCharCode(0)}/settings`,
   ])('falls back for an unsafe destination: %s', (returnTo) => {
     expect(getSafeAuthReturnTo({ locale: 'en', returnTo })).toBe('/en/app');
   });
@@ -31,7 +31,32 @@ describe('getSafeAuthReturnTo', () => {
       '/fr/app',
     );
     expect(
-      getSafeAuthReturnTo({ locale: 'fr', returnTo: `/fr/app?${'a'.repeat(2_100)}` }),
+      getSafeAuthReturnTo({
+        locale: 'fr',
+        returnTo: `/fr/app?${'a'.repeat(2_100)}`,
+      }),
+    ).toBe('/fr/app');
+  });
+});
+
+describe('getLocalizedAuthReturnTo', () => {
+  it('changes the application locale and preserves path and query', () => {
+    expect(
+      getLocalizedAuthReturnTo({
+        currentLocale: 'en',
+        nextLocale: 'fr',
+        returnTo: '/en/app/projects/project-1/tokens?set=color',
+      }),
+    ).toBe('/fr/app/projects/project-1/tokens?set=color');
+  });
+
+  it('uses the next locale fallback for an invalid current destination', () => {
+    expect(
+      getLocalizedAuthReturnTo({
+        currentLocale: 'en',
+        nextLocale: 'fr',
+        returnTo: 'https://example.com/en/app',
+      }),
     ).toBe('/fr/app');
   });
 });
