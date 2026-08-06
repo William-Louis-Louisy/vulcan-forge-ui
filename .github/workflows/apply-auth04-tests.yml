@@ -54,14 +54,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Add focused tests
-        run: python scripts/add-auth04-tests.py
+      - name: Add and patch focused tests
+        run: |
+          python scripts/add-auth04-tests.py
+          python scripts/patch-auth04-tests.py
 
       - name: Format tests
         run: >-
           npx prettier
           src/app/api/auth/password-recovery/reset/route.test.ts
           src/server/auth/session-version.test.ts
+          src/server/auth/email-verification/email-verification.integration.test.ts
           --write
 
       - name: Generate Prisma Client
@@ -70,8 +73,10 @@ jobs:
       - name: Apply migrations
         run: npm run db:migrate:deploy
 
-      - name: Remove source helper
-        run: rm scripts/add-auth04-tests.py
+      - name: Remove source helpers
+        run: |
+          rm scripts/add-auth04-tests.py
+          rm scripts/patch-auth04-tests.py
 
       - name: Run validation
         run: |
