@@ -54,6 +54,27 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Repair generated test literals
+        run: |
+          python <<'PY'
+          from pathlib import Path
+
+          path = Path('scripts/apply-auth04-foundation.cjs')
+          content = path.read_text()
+          replacements = {
+              'email: `${localPart}${testEmailSuffix}`,': 'email: localPart + testEmailSuffix,',
+              'email: `reset${testEmailSuffix}`,': "email: 'reset' + testEmailSuffix,",
+              'passwordHash: `hash-${challenge.id}`,': "passwordHash: 'hash-' + challenge.id,",
+          }
+
+          for before, after in replacements.items():
+              if before not in content:
+                  raise SystemExit(f'Expected helper text missing: {before}')
+              content = content.replace(before, after)
+
+          path.write_text(content)
+          PY
+
       - name: Apply foundation
         run: node scripts/apply-auth04-foundation.cjs
 
