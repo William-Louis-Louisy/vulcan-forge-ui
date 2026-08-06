@@ -11,7 +11,10 @@ afterEach(() => {
 
 describe('sendPasswordRecoveryEmail', () => {
   it('sends a fragment-protected reset link through Resend', async () => {
-    const fetchImpl = vi.fn(async () => new Response('{}', { status: 200 }));
+    const fetchImpl = vi.fn(
+      async (_input: RequestInfo | URL, _init?: RequestInit) =>
+        new Response('{}', { status: 200 }),
+    );
 
     await sendPasswordRecoveryEmail(
       {
@@ -47,7 +50,10 @@ describe('sendPasswordRecoveryEmail', () => {
   });
 
   it('captures a password-changed notification without a token', async () => {
-    const fetchImpl = vi.fn(async () => new Response('{}', { status: 200 }));
+    const fetchImpl = vi.fn(
+      async (_input: RequestInfo | URL, _init?: RequestInit) =>
+        new Response('{}', { status: 200 }),
+    );
 
     await sendPasswordRecoveryEmail(
       {

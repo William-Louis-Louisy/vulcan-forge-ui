@@ -16,7 +16,10 @@ vi.mock('@/server/auth/password-recovery/password-recovery.service', () => ({
 
 import { POST } from './route';
 
-function createRequest(origin = 'https://app.example.com', token = 'opaque-token') {
+function createRequest(
+  origin = 'https://app.example.com',
+  token = 'opaque-token',
+) {
   return new NextRequest(
     'https://app.example.com/api/auth/password-recovery/prepare',
     {

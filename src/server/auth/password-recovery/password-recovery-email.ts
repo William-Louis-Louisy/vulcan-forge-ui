@@ -100,7 +100,8 @@ function requiredUrl(value: string | undefined, fallback: string | null) {
 function getTransport(override?: EmailTransport) {
   const configured = override ?? process.env.AUTH_EMAIL_TRANSPORT;
   const transport =
-    configured ?? (process.env.NODE_ENV === 'production' ? 'resend' : 'mailpit');
+    configured ??
+    (process.env.NODE_ENV === 'production' ? 'resend' : 'mailpit');
 
   if (
     !['mailpit', 'resend'].includes(transport) ||
@@ -112,7 +113,10 @@ function getTransport(override?: EmailTransport) {
   return transport as EmailTransport;
 }
 
-function createResetUrl(input: SendPasswordRecoveryEmailInput, baseUrl?: string) {
+function createResetUrl(
+  input: SendPasswordRecoveryEmailInput,
+  baseUrl?: string,
+) {
   if (input.kind !== 'reset') {
     return null;
   }
@@ -142,7 +146,10 @@ function escapeHtml(value: string) {
     .replaceAll('>', '&gt;');
 }
 
-function createContent(input: SendPasswordRecoveryEmailInput, resetUrl: string | null) {
+function createContent(
+  input: SendPasswordRecoveryEmailInput,
+  resetUrl: string | null,
+) {
   const copy = copyByKind[input.kind][input.locale];
   const safeUrl = resetUrl ? escapeHtml(resetUrl) : null;
   const action =
@@ -165,12 +172,20 @@ function createContent(input: SendPasswordRecoveryEmailInput, resetUrl: string |
   return { copy, html, text };
 }
 
-async function deliver(url: string, init: RequestInit, fetchImpl: typeof fetch, timeoutMs: number) {
+async function deliver(
+  url: string,
+  init: RequestInit,
+  fetchImpl: typeof fetch,
+  timeoutMs: number,
+) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
-    const response = await fetchImpl(url, { ...init, signal: controller.signal });
+    const response = await fetchImpl(url, {
+      ...init,
+      signal: controller.signal,
+    });
 
     if (!response.ok) {
       throw new Error('delivery rejected');
@@ -252,7 +267,9 @@ export async function sendPasswordRecoveryEmail(
         Headers: {
           'X-VulcanForge-Idempotency-Key': input.idempotencyKey,
         },
-        Tags: [input.kind === 'reset' ? 'password-recovery' : 'password-changed'],
+        Tags: [
+          input.kind === 'reset' ? 'password-recovery' : 'password-changed',
+        ],
       }),
     },
     fetchImpl,

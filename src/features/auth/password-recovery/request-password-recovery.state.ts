@@ -10,10 +10,11 @@ export type RequestPasswordRecoveryActionState = {
   };
 };
 
-export const initialRequestPasswordRecoveryActionState: RequestPasswordRecoveryActionState = {
-  fieldErrors: {},
-  status: 'idle',
-  values: {
-    email: '',
-  },
-};
+export const initialRequestPasswordRecoveryActionState: RequestPasswordRecoveryActionState =
+  {
+    fieldErrors: {},
+    status: 'idle',
+    values: {
+      email: '',
+    },
+  };

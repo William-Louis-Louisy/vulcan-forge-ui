@@ -1043,7 +1043,8 @@
       "passwordLabel": "Mot de passe",
       "signupLink": "Créer un compte",
       "submit": "Se connecter",
-      "submitPending": "Connexion..."
+      "submitPending": "Connexion...",
+      "forgotPassword": "Mot de passe oublié ?"
     },
     "registeredSuccess": "Votre compte a été créé. Vous pouvez maintenant vous connecter.",
     "title": "Connectez-vous à votre espace.",
@@ -1820,6 +1821,81 @@
         "title": "Confirmez votre adresse e-mail",
         "description": "Utilisez le bouton ci-dessous pour confirmer cette adresse. L’ouverture du lien seule ne modifie pas votre compte."
       }
+    }
+  },
+  "PasswordRecoveryRequestPage": {
+    "backToLogin": "Retour à la connexion",
+    "benefits": {
+      "title": "Récupération sécurisée du compte",
+      "items": {
+        "neutral": "La réponse ne révèle jamais si un compte existe.",
+        "singleUse": "Les liens expirent après 30 minutes et ne fonctionnent qu’une fois.",
+        "sessions": "Une réinitialisation invalide les sessions existantes."
+      }
+    },
+    "description": "Saisissez l’adresse e-mail du compte. Nous enverrons les instructions lorsque l’adresse est éligible.",
+    "eyebrow": "Récupération du compte",
+    "form": {
+      "emailLabel": "Adresse e-mail du compte",
+      "submit": "Envoyer les instructions",
+      "submitPending": "Envoi..."
+    },
+    "submitted": "Lorsqu’un compte éligible correspond à cette adresse, les instructions arriveront prochainement.",
+    "title": "Mot de passe oublié ?",
+    "validation": {
+      "emailInvalid": "Saisissez une adresse e-mail valide."
+    }
+  },
+  "PasswordResetPage": {
+    "actions": {
+      "backToLogin": "Retour à la connexion",
+      "requestNewLink": "Demander un nouveau lien",
+      "signIn": "Se connecter avec le nouveau mot de passe"
+    },
+    "eyebrow": "Récupération du compte",
+    "form": {
+      "passwordConfirmationLabel": "Confirmer le nouveau mot de passe",
+      "passwordHelp": "Utilisez au moins 15 caractères. Les phrases de passe et les espaces sont autorisés.",
+      "passwordLabel": "Nouveau mot de passe",
+      "passwordVisibility": {
+        "hide": "Masquer le mot de passe",
+        "show": "Afficher le mot de passe"
+      },
+      "submit": "Réinitialiser le mot de passe",
+      "submitPending": "Réinitialisation..."
+    },
+    "states": {
+      "confirm": {
+        "description": "Choisissez un nouveau mot de passe pour votre compte VulcanForgeUI.",
+        "title": "Choisissez un nouveau mot de passe"
+      },
+      "expired": {
+        "description": "Ce lien de récupération a expiré. Demandez un nouveau lien pour continuer.",
+        "title": "Lien de récupération expiré"
+      },
+      "invalid": {
+        "description": "Ce lien est invalide, remplacé ou déjà utilisé.",
+        "title": "Lien de récupération indisponible"
+      },
+      "pending": {
+        "description": "Ouvrez le dernier lien de récupération reçu par e-mail pour continuer.",
+        "title": "Consultez votre e-mail"
+      },
+      "reset": {
+        "description": "Votre mot de passe a été modifié et les sessions existantes ont été invalidées.",
+        "title": "Mot de passe modifié"
+      }
+    },
+    "validation": {
+      "passwordCheckUnavailable": "La vérification de sécurité est temporairement indisponible. Réessayez plus tard.",
+      "passwordCompromised": "Choisissez un mot de passe absent des fuites de données connues.",
+      "passwordConfirmationMismatch": "La confirmation ne correspond pas au mot de passe.",
+      "passwordHashingUnavailable": "Le stockage sécurisé est temporairement indisponible. Réessayez plus tard.",
+      "passwordInvalidUnicode": "Le mot de passe contient des caractères Unicode non pris en charge.",
+      "passwordMinLength": "Utilisez au moins 15 caractères.",
+      "passwordTooLong": "Utilisez au maximum 128 caractères.",
+      "rateLimited": "Trop de tentatives. Patientez avant de réessayer.",
+      "unexpected": "La réinitialisation a échoué. Réessayez plus tard."
     }
   }
 }

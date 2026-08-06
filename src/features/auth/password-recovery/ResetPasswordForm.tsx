@@ -165,7 +165,9 @@ export function ResetPasswordForm() {
             autoComplete="new-password"
             aria-invalid={Boolean(confirmationError)}
             aria-describedby={
-              confirmationError ? 'reset-password-confirmation-error' : undefined
+              confirmationError
+                ? 'reset-password-confirmation-error'
+                : undefined
             }
             className={`${inputClassName} pr-12`}
           />

@@ -1043,7 +1043,8 @@
       "passwordLabel": "Password",
       "signupLink": "Create an account",
       "submit": "Sign in",
-      "submitPending": "Signing in..."
+      "submitPending": "Signing in...",
+      "forgotPassword": "Forgot password?"
     },
     "registeredSuccess": "Your account has been created. You can now sign in.",
     "title": "Sign in to your workspace.",
@@ -1820,6 +1821,81 @@
         "title": "Confirm your email address",
         "description": "Use the button below to confirm this address. Opening the email link alone does not change your account."
       }
+    }
+  },
+  "PasswordRecoveryRequestPage": {
+    "backToLogin": "Back to sign in",
+    "benefits": {
+      "title": "Secure account recovery",
+      "items": {
+        "neutral": "The response never reveals whether an account exists.",
+        "singleUse": "Recovery links expire after 30 minutes and work only once.",
+        "sessions": "A completed reset invalidates existing sessions."
+      }
+    },
+    "description": "Enter your account email. We will send recovery instructions when the address is eligible.",
+    "eyebrow": "Account recovery",
+    "form": {
+      "emailLabel": "Account email",
+      "submit": "Send recovery instructions",
+      "submitPending": "Submitting..."
+    },
+    "submitted": "When an eligible account matches this address, recovery instructions will arrive shortly.",
+    "title": "Forgot your password?",
+    "validation": {
+      "emailInvalid": "Enter a valid email address."
+    }
+  },
+  "PasswordResetPage": {
+    "actions": {
+      "backToLogin": "Back to sign in",
+      "requestNewLink": "Request a new recovery link",
+      "signIn": "Sign in with the new password"
+    },
+    "eyebrow": "Account recovery",
+    "form": {
+      "passwordConfirmationLabel": "Confirm new password",
+      "passwordHelp": "Use at least 15 characters. Passphrases and spaces are allowed.",
+      "passwordLabel": "New password",
+      "passwordVisibility": {
+        "hide": "Hide password",
+        "show": "Show password"
+      },
+      "submit": "Reset password",
+      "submitPending": "Resetting..."
+    },
+    "states": {
+      "confirm": {
+        "description": "Choose a new password for your VulcanForgeUI account.",
+        "title": "Choose a new password"
+      },
+      "expired": {
+        "description": "This recovery link has expired. Request a new link to continue.",
+        "title": "Recovery link expired"
+      },
+      "invalid": {
+        "description": "This recovery link is invalid, replaced or already used.",
+        "title": "Recovery link unavailable"
+      },
+      "pending": {
+        "description": "Open the latest recovery link from your email to continue.",
+        "title": "Check your email"
+      },
+      "reset": {
+        "description": "Your password has been changed and existing sessions have been invalidated.",
+        "title": "Password changed"
+      }
+    },
+    "validation": {
+      "passwordCheckUnavailable": "Password safety checks are temporarily unavailable. Try again later.",
+      "passwordCompromised": "Choose a password that has not appeared in known data breaches.",
+      "passwordConfirmationMismatch": "The password confirmation does not match.",
+      "passwordHashingUnavailable": "Secure password storage is temporarily unavailable. Try again later.",
+      "passwordInvalidUnicode": "The password contains unsupported Unicode characters.",
+      "passwordMinLength": "Use at least 15 characters.",
+      "passwordTooLong": "Use no more than 128 characters.",
+      "rateLimited": "Too many attempts. Wait before trying again.",
+      "unexpected": "We could not reset the password. Try again later."
     }
   }
 }

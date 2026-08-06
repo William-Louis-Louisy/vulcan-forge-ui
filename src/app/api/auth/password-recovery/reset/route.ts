@@ -59,7 +59,10 @@ function hasSameOrigin(request: NextRequest) {
 async function getBody(request: NextRequest) {
   const contentLength = Number(request.headers.get('content-length') ?? '0');
 
-  if (!Number.isFinite(contentLength) || contentLength > RESET_BODY_MAX_LENGTH) {
+  if (
+    !Number.isFinite(contentLength) ||
+    contentLength > RESET_BODY_MAX_LENGTH
+  ) {
     return null;
   }
 
@@ -135,15 +138,20 @@ export async function POST(request: NextRequest) {
   if (!parsed.success) {
     const fieldErrors = parsed.error.flatten().fieldErrors;
 
+    const normalizedFieldErrors: NonNullable<ResetResponse['fieldErrors']> = {};
+
+    if (fieldErrors.password?.length) {
+      normalizedFieldErrors.password =
+        fieldErrors.password as ResetPasswordValidationMessageKey[];
+    }
+
+    if (fieldErrors.passwordConfirmation?.length) {
+      normalizedFieldErrors.passwordConfirmation =
+        fieldErrors.passwordConfirmation as ResetPasswordValidationMessageKey[];
+    }
+
     return createResponse({
-      fieldErrors: {
-        password: fieldErrors.password as
-          | ResetPasswordValidationMessageKey[]
-          | undefined,
-        passwordConfirmation: fieldErrors.passwordConfirmation as
-          | ResetPasswordValidationMessageKey[]
-          | undefined,
-      },
+      fieldErrors: normalizedFieldErrors,
       status: 'error',
     });
   }

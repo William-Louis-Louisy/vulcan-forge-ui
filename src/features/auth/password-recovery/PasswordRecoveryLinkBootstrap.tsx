@@ -42,11 +42,7 @@ function getStatus(payload: unknown): PreparationStatus {
   return payload.status as PreparationStatus;
 }
 
-export function PasswordRecoveryLinkBootstrap({
-  locale,
-}: {
-  locale: Locale;
-}) {
+export function PasswordRecoveryLinkBootstrap({ locale }: { locale: Locale }) {
   const router = useRouter();
 
   useEffect(() => {
