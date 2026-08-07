@@ -27,7 +27,7 @@ export default async function PricingPage() {
         <p className="border-action-accent/30 bg-action-accent/10 text-action-accent inline-flex rounded-full border px-3 py-1 text-xs font-semibold">
           {t('eyebrow')}
         </p>
-        <h1 className="mt-6 font-[family-name:var(--font-fraunces)] text-5xl leading-[1.02] font-semibold tracking-[-0.045em] text-balance sm:text-6xl">
+        <h1 className="font-display mt-6 text-5xl leading-[1.02] font-semibold tracking-[-0.045em] text-balance sm:text-6xl">
           {t('titleBefore')}{' '}
           <em className="text-content-tertiary font-medium">
             {t('titleAccent')}
@@ -69,7 +69,7 @@ export default async function PricingPage() {
               </div>
 
               <div className="mt-7 flex items-baseline gap-2">
-                <p className="font-[family-name:var(--font-fraunces)] text-5xl font-semibold tracking-[-0.04em]">
+                <p className="font-display text-5xl font-semibold tracking-[-0.04em]">
                   {t(`tiers.${tierKey}.price`)}
                 </p>
                 <p className="text-content-tertiary text-sm">
@@ -114,7 +114,7 @@ export default async function PricingPage() {
       </section>
 
       <section className="mx-auto mt-20 max-w-7xl">
-        <h2 className="font-[family-name:var(--font-fraunces)] text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+        <h2 className="font-display text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
           {t('faq.title')}
         </h2>
         <div className="border-border-subtle mt-8 grid border-y md:grid-cols-3">

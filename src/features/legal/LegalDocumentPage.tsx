@@ -15,7 +15,7 @@ export function LegalDocumentPage({
           <p className="text-action-accent text-xs font-semibold tracking-[0.16em] uppercase">
             {document.eyebrow}
           </p>
-          <h1 className="mt-5 font-[family-name:var(--font-fraunces)] text-4xl leading-tight font-semibold tracking-[-0.035em] sm:text-5xl">
+          <h1 className="font-display mt-5 text-4xl leading-tight font-semibold tracking-[-0.035em] sm:text-5xl">
             {document.title}
           </h1>
           <p className="text-content-secondary mt-5 max-w-3xl text-base leading-7 sm:text-lg">
@@ -41,7 +41,7 @@ export function LegalDocumentPage({
         <div className="mt-12 space-y-12">
           {document.sections.map((section) => (
             <section key={section.title}>
-              <h2 className="font-[family-name:var(--font-fraunces)] text-2xl font-semibold tracking-[-0.025em] sm:text-3xl">
+              <h2 className="font-display text-2xl font-semibold tracking-[-0.025em] sm:text-3xl">
                 {section.title}
               </h2>
 

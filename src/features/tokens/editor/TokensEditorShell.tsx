@@ -22,6 +22,8 @@ import type { CreateDesignTokenFormLabels } from '../CreateDesignTokenForm';
 import {
   filterTokenRows,
   createTokenEditorUrl,
+  getNextSelectedTokenPathAfterDeletion,
+  resolveSelectedToken,
 } from './tokens-editor-shell.utils';
 import type { CreateTypographyTokenFormLabels } from '../CreateTypographyTokenForm';
 import { useMemo, useState } from 'react';
@@ -130,11 +132,11 @@ export function TokensEditorShell({
     });
   }, [activeTokenSet, tokenSearchQuery]);
 
-  const selectedToken =
-    filteredTokenRows.find((row) => row.path === selectedTokenPath) ??
-    filteredTokenRows[0] ??
-    activeTokenSet?.rows[0] ??
-    null;
+  const selectedToken = resolveSelectedToken({
+    activeRows: activeTokenSet?.rows ?? [],
+    filteredRows: filteredTokenRows,
+    selectedTokenPath,
+  });
 
   const primitiveColorAliasOptions = useMemo(
     () => getPrimitiveColorTokenAliasOptions(activeTokenSet?.rows ?? []),
@@ -247,6 +249,21 @@ export function TokensEditorShell({
     });
   }
 
+  function handleTokenDeleted(tokenPath: string) {
+    const nextTokenPath = getNextSelectedTokenPathAfterDeletion({
+      rows: activeTokenSet?.rows ?? [],
+      deletedTokenPath: tokenPath,
+      query: tokenSearchQuery,
+    });
+
+    setSelectedTokenPath(nextTokenPath);
+    updateUrl({
+      set: activeTokenSetType,
+      token: nextTokenPath,
+      q: tokenSearchQuery,
+    });
+  }
+
   const selectedTokenSetType = activeTokenSet?.type ?? activeTokenSetType;
 
   return (
@@ -326,6 +343,7 @@ export function TokensEditorShell({
           labels={labels.inspector}
           onTokenRenamed={handleTokenRenamed}
           onTokenValueUpdated={handleTokenValueUpdated}
+          onTokenDeleted={handleTokenDeleted}
         />
       </aside>
 

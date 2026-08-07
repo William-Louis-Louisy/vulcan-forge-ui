@@ -38,7 +38,7 @@ export default async function HomePage() {
               {t('hero.eyebrow')}
             </p>
 
-            <h1 className="mt-7 font-[family-name:var(--font-fraunces)] text-5xl leading-[0.98] font-semibold tracking-[-0.045em] text-balance sm:text-6xl lg:text-7xl">
+            <h1 className="font-display mt-7 text-5xl leading-[0.98] font-semibold tracking-[-0.045em] text-balance sm:text-6xl lg:text-7xl">
               {t('hero.titleBefore')}{' '}
               <em className="text-action-accent font-medium">
                 {t('hero.titleAccent')}
@@ -80,7 +80,7 @@ export default async function HomePage() {
             <p className="text-action-accent text-xs font-semibold tracking-[0.18em] uppercase">
               {t('problems.eyebrow')}
             </p>
-            <h2 className="mt-4 font-[family-name:var(--font-fraunces)] text-4xl leading-tight font-semibold tracking-[-0.035em] sm:text-5xl">
+            <h2 className="font-display mt-4 text-4xl leading-tight font-semibold tracking-[-0.035em] sm:text-5xl">
               {t('problems.title')}
             </h2>
           </div>
@@ -113,7 +113,7 @@ export default async function HomePage() {
               <p className="text-action-accent text-xs font-semibold tracking-[0.18em] uppercase">
                 {t('capabilities.eyebrow')}
               </p>
-              <h2 className="mt-4 font-[family-name:var(--font-fraunces)] text-4xl leading-tight font-semibold tracking-[-0.035em] sm:text-5xl">
+              <h2 className="font-display mt-4 text-4xl leading-tight font-semibold tracking-[-0.035em] sm:text-5xl">
                 {t('capabilities.title')}
               </h2>
               <p className="text-content-secondary mt-5 leading-7">
@@ -147,7 +147,7 @@ export default async function HomePage() {
               <p className="text-action-accent text-xs font-semibold tracking-[0.18em] uppercase">
                 {t('exports.eyebrow')}
               </p>
-              <h2 className="mt-4 font-[family-name:var(--font-fraunces)] text-4xl leading-tight font-semibold tracking-[-0.035em] sm:text-5xl">
+              <h2 className="font-display mt-4 text-4xl leading-tight font-semibold tracking-[-0.035em] sm:text-5xl">
                 {t('exports.title')}
               </h2>
             </div>
@@ -190,7 +190,7 @@ export default async function HomePage() {
             <p className="text-action-accent text-xs font-semibold tracking-[0.18em] uppercase">
               {t('audiences.eyebrow')}
             </p>
-            <h2 className="mt-4 font-[family-name:var(--font-fraunces)] text-4xl leading-tight font-semibold tracking-[-0.035em] sm:text-5xl">
+            <h2 className="font-display mt-4 text-4xl leading-tight font-semibold tracking-[-0.035em] sm:text-5xl">
               {t('audiences.title')}
             </h2>
           </div>
@@ -216,7 +216,7 @@ export default async function HomePage() {
       <section className="border-border-subtle px-6 pb-20 lg:px-8 lg:pb-24">
         <div className="border-border-strong mx-auto flex max-w-7xl flex-col gap-8 border p-7 sm:p-10 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-2xl">
-            <h2 className="font-[family-name:var(--font-fraunces)] text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+            <h2 className="font-display text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
               {t('finalCta.title')}
             </h2>
             <p className="text-content-secondary mt-3 leading-7">

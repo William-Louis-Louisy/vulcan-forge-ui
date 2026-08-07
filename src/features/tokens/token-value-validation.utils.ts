@@ -1,5 +1,8 @@
 import { isHexColorValue } from './tokens-editor.utils';
-import type { DesignTokenType } from '@/domain/design-system';
+import {
+  normalizeTypographyTokenValue,
+  type DesignTokenType,
+} from '@/domain/design-system';
 
 export type TokenValueValidationError =
   | 'tokenValueRequired'
@@ -12,14 +15,6 @@ export type TokenValueValidationError =
 const cssLengthPattern = /^-?\d+(\.\d+)?(px|rem|em|%|vh|vw|vmin|vmax|ch|ex)$/;
 
 const cssDurationPattern = /^\d+(\.\d+)?(ms|s)$/;
-
-const typographyAllowedProperties = new Set([
-  'fontFamily',
-  'fontSize',
-  'fontWeight',
-  'lineHeight',
-  'letterSpacing',
-]);
 
 export function validateTokenValueForType({
   type,
@@ -57,40 +52,10 @@ export function validateTokenValueForType({
   }
 
   if (type === 'typography') {
-    return validateTypographyTokenValue(trimmedValue);
+    return normalizeTypographyTokenValue({ value: trimmedValue })
+      ? null
+      : 'tokenTypographyValueInvalid';
   }
 
   return null;
-}
-
-function validateTypographyTokenValue(
-  value: string,
-): TokenValueValidationError | null {
-  try {
-    const parsedValue: unknown = JSON.parse(value);
-
-    if (
-      typeof parsedValue !== 'object' ||
-      parsedValue === null ||
-      Array.isArray(parsedValue)
-    ) {
-      return 'tokenTypographyValueInvalid';
-    }
-
-    const entries = Object.entries(parsedValue);
-
-    if (entries.length === 0) {
-      return 'tokenTypographyValueInvalid';
-    }
-
-    const hasOnlyAllowedProperties = entries.every(
-      ([key, entryValue]) =>
-        typographyAllowedProperties.has(key) &&
-        (typeof entryValue === 'string' || typeof entryValue === 'number'),
-    );
-
-    return hasOnlyAllowedProperties ? null : 'tokenTypographyValueInvalid';
-  } catch {
-    return 'tokenTypographyValueInvalid';
-  }
 }

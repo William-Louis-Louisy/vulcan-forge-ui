@@ -11,6 +11,7 @@ import { isTokenSetType } from './tokens-editor.utils';
 import { defaultAppLocale, isAppLocale } from '@/domain/i18n';
 import { validateTokenValueForType } from './token-value-validation.utils';
 import type { UpdateDesignTokenValueActionState } from './update-design-token-value.state';
+import { normalizeTypographyTokenValue } from '@/domain/design-system';
 
 function getFormStringValue(formData: FormData, key: string): string {
   const value = formData.get(key);
@@ -101,6 +102,22 @@ export async function updateDesignTokenValueAction(
     };
   }
 
+  const storedValue =
+    tokenSetType === 'typography'
+      ? normalizeTypographyTokenValue({ value: values.value })
+      : values.value.trim();
+
+  if (storedValue === null) {
+    return {
+      status: 'error',
+      fieldErrors: {
+        value: ['tokenTypographyValueInvalid'],
+      },
+      formError: null,
+      values,
+    };
+  }
+
   const tokenIndex = parsedTokensResult.tokens.findIndex(
     (token) => token.path === tokenPath,
   );
@@ -129,7 +146,7 @@ export async function updateDesignTokenValueAction(
     index === tokenIndex
       ? {
           ...currentToken,
-          value: values.value.trim(),
+          value: storedValue,
         }
       : currentToken,
   );

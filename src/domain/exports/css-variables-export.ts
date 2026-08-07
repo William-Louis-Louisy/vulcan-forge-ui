@@ -72,7 +72,7 @@ export function tokenPathToCssVariableName(path: string): string {
   return `--${segments.join('-')}`;
 }
 
-function stringifyCssValue(value: DesignToken['value']): string | null {
+function stringifyCssValue(value: unknown): string | null {
   if (
     typeof value === 'string' ||
     typeof value === 'number' ||
@@ -82,6 +82,32 @@ function stringifyCssValue(value: DesignToken['value']): string | null {
   }
 
   return null;
+}
+
+function flattenCssTokenValue({
+  path,
+  value,
+}: {
+  path: string;
+  value: DesignToken['value'];
+}): Array<{ path: string; value: string }> {
+  const primitiveValue = stringifyCssValue(value);
+
+  if (primitiveValue !== null) {
+    return [{ path, value: primitiveValue }];
+  }
+
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    return [];
+  }
+
+  return Object.entries(value).flatMap(([key, nestedValue]) => {
+    const stringValue = stringifyCssValue(nestedValue);
+
+    return stringValue === null
+      ? []
+      : [{ path: `${path}.${key}`, value: stringValue }];
+  });
 }
 
 function createCssFileName(projectName: string): string {
@@ -301,9 +327,12 @@ function createTokenVariables({
       return [];
     }
 
-    const value = stringifyCssValue(resolvedToken.resolvedValue);
+    const flattenedValues = flattenCssTokenValue({
+      path: resolvedToken.path,
+      value: resolvedToken.resolvedValue,
+    });
 
-    if (!value) {
+    if (flattenedValues.length === 0) {
       skippedTokens.push({
         path: sourceToken.path,
         reason: 'unsupportedValue',
@@ -312,14 +341,12 @@ function createTokenVariables({
       return [];
     }
 
-    return [
-      {
-        path: resolvedToken.path,
-        name: tokenPathToCssVariableName(resolvedToken.path),
-        value,
-        scope: ':root' as const,
-      },
-    ];
+    return flattenedValues.map((flattenedValue) => ({
+      path: flattenedValue.path,
+      name: tokenPathToCssVariableName(flattenedValue.path),
+      value: flattenedValue.value,
+      scope: ':root' as const,
+    }));
   });
 
   return {

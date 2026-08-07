@@ -26,9 +26,15 @@ const tokens: DesignToken[] = [
     status: 'ready',
   },
   {
-    path: 'typography.fontWeight.semibold',
+    path: 'typography.body.base',
     type: 'typography',
-    value: 600,
+    value: {
+      fontFamily: 'Inter',
+      fontSize: '1rem',
+      fontWeight: 600,
+      lineHeight: '1.5',
+      letterSpacing: '-0.01em',
+    },
     status: 'ready',
   },
 ];
@@ -39,8 +45,8 @@ describe('tokenPathToCssVariableName', () => {
       '--color-semantic-action-primary',
     );
 
-    expect(tokenPathToCssVariableName('typography.fontWeight.semibold')).toBe(
-      '--typography-font-weight-semibold',
+    expect(tokenPathToCssVariableName('typography.body.base.fontWeight')).toBe(
+      '--typography-body-base-font-weight',
     );
   });
 });
@@ -63,7 +69,19 @@ describe('generateCssVariablesExport', () => {
       '--color-semantic-action-primary: #ff8731;',
     );
     expect(result.content).toContain('--spacing-4: 1rem;');
-    expect(result.content).toContain('--typography-font-weight-semibold: 600;');
+    expect(result.content).toContain(
+      '--typography-body-base-font-family: Inter;',
+    );
+    expect(result.content).toContain('--typography-body-base-font-size: 1rem;');
+    expect(result.content).toContain(
+      '--typography-body-base-font-weight: 600;',
+    );
+    expect(result.content).toContain(
+      '--typography-body-base-line-height: 1.5;',
+    );
+    expect(result.content).toContain(
+      '--typography-body-base-letter-spacing: -0.01em;',
+    );
 
     expect(result.skippedTokens).toEqual([]);
   });
