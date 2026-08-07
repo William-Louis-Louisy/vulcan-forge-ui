@@ -2,7 +2,7 @@
 
 ## Status
 
-Implementation complete on `feature/ds-170-auth-05-continuity-accessibility`. Automated validation and manual QA remain required before the draft pull request can be marked ready.
+Implementation complete on `feature/ds-170-auth-05-continuity-accessibility`. Manual QA was approved on 2026-08-07. The pull request remains draft until the latest automated Quality workflow passes.
 
 ## Objective
 
@@ -143,17 +143,19 @@ Final pages, wording, policy versioning, accessible signup/footer links and lega
 
 ## Manual QA checklist
 
-- [ ] Request a nested protected route with a query string while signed out.
-- [ ] Confirm login preserves and restores that destination.
-- [ ] Confirm an external or malformed `returnTo` falls back safely.
-- [ ] Change locale on login and signup and confirm the destination follows the selected locale.
-- [ ] Test login, signup and reset with keyboard-only navigation.
-- [ ] Confirm error-summary focus and links in English and French.
-- [ ] Confirm password reveal keeps focus, selection and value.
-- [ ] Confirm password managers recognize email as username and the correct password purpose.
-- [ ] Confirm password feedback with ASCII, spaces, accents and supplementary Unicode characters.
-- [ ] Confirm the compromised-password check still runs only on submission.
-- [ ] Create English and French accounts and inspect their initial workspace names.
+- [x] Request a nested protected route with a query string while signed out.
+- [x] Confirm login preserves and restores that destination.
+- [x] Confirm an external or malformed `returnTo` falls back safely.
+- [x] Change locale on login and signup and confirm the destination follows the selected locale.
+- [x] Test login, signup and reset with keyboard-only navigation.
+- [x] Confirm error-summary focus and links in English and French.
+- [x] Confirm password reveal keeps focus, selection and value.
+- [x] Confirm password managers recognize email as username and the correct password purpose.
+- [x] Confirm password feedback with ASCII, spaces, accents and supplementary Unicode characters.
+- [x] Confirm the compromised-password check still runs only on submission.
+- [x] Create English and French accounts and inspect their initial workspace names.
+
+Manual QA approved by the project owner on 2026-08-07.
 
 ## Deferred
 
