@@ -30,7 +30,9 @@ jobs:
           cache: npm
 
       - name: Apply implementation patch
-        run: python scripts/ds170_08a_apply.py
+        run: |
+          python scripts/ds170_08a_apply.py
+          python scripts/ds170_08a_fix.py
 
       - name: Install dependencies
         run: npm ci
@@ -43,6 +45,7 @@ jobs:
           npx prettier --write \
             src/domain/design-system/design-token.schema.ts \
             src/domain/design-system/design-token.schema.test.ts \
+            src/domain/design-system/mvp-seed-templates.ts \
             src/domain/exports/css-variables-export.ts \
             src/domain/exports/css-variables-export.test.ts \
             src/features/tokens/typography-token-value.utils.ts \
@@ -75,6 +78,7 @@ jobs:
         run: >-
           npm test --
           src/domain/design-system/design-token.schema.test.ts
+          src/domain/design-system/mvp-seed-templates.test.ts
           src/domain/exports/css-variables-export.test.ts
           src/features/tokens/typography-token-value.utils.test.ts
           src/features/tokens/delete-token.utils.test.ts
@@ -83,6 +87,7 @@ jobs:
       - name: Remove one-off implementation tooling
         run: |
           rm scripts/ds170_08a_apply.py
+          rm scripts/ds170_08a_fix.py
           rm .github/workflows/ds-170-08a-implementation.yml
 
       - name: Commit implementation
