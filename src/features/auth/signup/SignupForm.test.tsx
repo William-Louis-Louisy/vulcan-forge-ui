@@ -1,3 +1,4 @@
+import type { AnchorHTMLAttributes } from 'react';
 import { SignupForm } from './SignupForm';
 import enMessages from '@/messages/en.json';
 import { describe, expect, it, vi } from 'vitest';
@@ -7,6 +8,12 @@ import { render, screen } from '@testing-library/react';
 
 vi.mock('./signup.action', () => ({
   signupAction: vi.fn(),
+}));
+
+vi.mock('@/components/navigation/AppLink', () => ({
+  AppLink: ({ href, ...props }: AnchorHTMLAttributes<HTMLAnchorElement>) => (
+    <a href={href} {...props} />
+  ),
 }));
 
 function renderSignupForm() {
@@ -84,5 +91,19 @@ describe('SignupForm', () => {
     expect(
       container.querySelector<HTMLInputElement>('input[name="returnTo"]'),
     ).toHaveValue('/en/app/projects/project-1');
+  });
+
+  it('places explicit Terms and Privacy destinations next to account creation', () => {
+    renderSignupForm();
+
+    expect(
+      screen.getByRole('link', { name: 'Terms of Use' }),
+    ).toHaveAttribute('href', '/terms');
+    expect(
+      screen.getByRole('link', { name: 'Privacy Notice' }),
+    ).toHaveAttribute('href', '/privacy');
+    expect(
+      screen.getByText(/By creating an account, you agree to the/i),
+    ).toBeInTheDocument();
   });
 });

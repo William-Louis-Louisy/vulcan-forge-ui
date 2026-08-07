@@ -1,6 +1,18 @@
+import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { useTranslations } from 'next-intl';
+import type { Locale } from '@/i18n/routing';
 import { PublicBrandLockup } from './PublicBrandLockup';
+
+const legalNavigationMessages = {
+  en: {
+    privacy: 'Privacy',
+    terms: 'Terms',
+  },
+  fr: {
+    privacy: 'Confidentialité',
+    terms: "Conditions d’utilisation",
+  },
+} satisfies Record<Locale, { privacy: string; terms: string }>;
 
 export function PublicFooter({
   isAuthenticated = false,
@@ -8,6 +20,8 @@ export function PublicFooter({
   isAuthenticated?: boolean;
 }) {
   const t = useTranslations('PublicFooter');
+  const locale = useLocale() as Locale;
+  const legalMessages = legalNavigationMessages[locale];
   const accountHref = isAuthenticated ? '/app' : '/login';
 
   return (
@@ -47,6 +61,18 @@ export function PublicFooter({
             className="text-content-secondary hover:text-content-primary transition"
           >
             {isAuthenticated ? t('dashboard') : t('signIn')}
+          </Link>
+          <Link
+            href="/terms"
+            className="text-content-secondary hover:text-content-primary transition"
+          >
+            {legalMessages.terms}
+          </Link>
+          <Link
+            href="/privacy"
+            className="text-content-secondary hover:text-content-primary transition"
+          >
+            {legalMessages.privacy}
           </Link>
         </nav>
       </div>

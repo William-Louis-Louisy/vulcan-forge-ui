@@ -3,6 +3,7 @@
 import { useActionState, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Button, Input } from '@/components/ui';
+import { AppLink } from '@/components/navigation/AppLink';
 import {
   AuthErrorSummary,
   PasswordField,
@@ -12,6 +13,7 @@ import {
 } from '@/features/auth/shared';
 import type { Locale } from '@/i18n/routing';
 import { signupAction } from './signup.action';
+import { getSignupLegalMessages } from './signup-legal.messages';
 import {
   initialSignupActionState,
   type SignupActionState,
@@ -31,6 +33,7 @@ function getFirstError(
 
 export function SignupForm({ locale, returnTo }: SignupFormProps) {
   const t = useTranslations('SignupPage');
+  const legalMessages = getSignupLegalMessages(locale);
   const [state, formAction, isPending] = useActionState(
     signupAction,
     initialSignupActionState,
@@ -202,6 +205,24 @@ export function SignupForm({ locale, returnTo }: SignupFormProps) {
       <Button type="submit" disabled={isPending} className="w-full">
         {isPending ? t('form.submitPending') : t('form.submit')}
       </Button>
+
+      <p className="text-content-tertiary text-center text-xs leading-5">
+        {legalMessages.beforeTerms}{' '}
+        <AppLink
+          href="/terms"
+          className="text-content-secondary font-semibold underline underline-offset-2"
+        >
+          {legalMessages.terms}
+        </AppLink>{' '}
+        {legalMessages.betweenLinks}{' '}
+        <AppLink
+          href="/privacy"
+          className="text-content-secondary font-semibold underline underline-offset-2"
+        >
+          {legalMessages.privacy}
+        </AppLink>
+        .
+      </p>
     </form>
   );
 }
