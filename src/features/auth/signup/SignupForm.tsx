@@ -98,7 +98,7 @@ export function SignupForm({ locale, returnTo }: SignupFormProps) {
   }
 
   return (
-    <form action={formAction} className="mt-8 space-y-5">
+    <form action={formAction} className="mt-6 space-y-4">
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="returnTo" value={returnTo} />
 
