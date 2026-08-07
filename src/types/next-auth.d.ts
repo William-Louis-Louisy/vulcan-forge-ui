@@ -22,5 +22,6 @@ declare module 'next-auth/jwt' {
     id?: string;
     invalidated?: boolean;
     locale?: AppLocale;
+    sessionStartedAt?: number;
   }
 }

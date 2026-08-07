@@ -1,11 +1,21 @@
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { authorizeCredentials } from '@/server/auth/credentials-authorizer';
+import {
+  AUTH_SESSION_ABSOLUTE_MAX_AGE_SECONDS,
+  getAuthEpochSeconds,
+  isAuthSessionWithinAbsoluteLifetime,
+  resolveAuthSessionStartedAt,
+} from '@/server/auth/session-policy';
 import { isAuthSessionVersionCurrent } from '@/server/auth/session-version';
 
 const nextAuth = NextAuth({
   session: {
     strategy: 'jwt',
+    maxAge: AUTH_SESSION_ABSOLUTE_MAX_AGE_SECONDS,
+  },
+  jwt: {
+    maxAge: AUTH_SESSION_ABSOLUTE_MAX_AGE_SECONDS,
   },
   providers: [
     Credentials({
@@ -29,17 +39,26 @@ const nextAuth = NextAuth({
         token.id = user.id;
         token.invalidated = false;
         token.locale = user.locale;
+        token.sessionStartedAt = getAuthEpochSeconds();
         return token;
       }
 
+      const sessionStartedAt = resolveAuthSessionStartedAt({
+        sessionStartedAt: token.sessionStartedAt,
+        tokenIssuedAt: token.iat,
+      });
+
       if (
         typeof token.authVersion !== 'number' ||
-        typeof token.id !== 'string'
+        typeof token.id !== 'string' ||
+        sessionStartedAt === null ||
+        !isAuthSessionWithinAbsoluteLifetime({ sessionStartedAt })
       ) {
         token.invalidated = true;
         return token;
       }
 
+      token.sessionStartedAt = sessionStartedAt;
       token.invalidated = !(await isAuthSessionVersionCurrent({
         authVersion: token.authVersion,
         userId: token.id,

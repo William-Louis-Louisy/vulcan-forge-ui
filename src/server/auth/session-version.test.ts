@@ -2,19 +2,24 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
   findUser: vi.fn(),
+  updateUsers: vi.fn(),
 }));
 
 vi.mock('@/server/db/prisma', () => ({
   prisma: {
     user: {
       findUnique: mocks.findUser,
+      updateMany: mocks.updateUsers,
     },
   },
 }));
 
-import { isAuthSessionVersionCurrent } from './session-version';
+import {
+  isAuthSessionVersionCurrent,
+  revokeAllAuthSessions,
+} from './session-version';
 
-describe('isAuthSessionVersionCurrent', () => {
+describe('session versioning', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -40,5 +45,31 @@ describe('isAuthSessionVersionCurrent', () => {
     await expect(
       isAuthSessionVersionCurrent({ authVersion: 0, userId: 'user-1' }),
     ).resolves.toBe(false);
+  });
+
+  it('revokes every issued session by incrementing the persisted version', async () => {
+    mocks.updateUsers.mockResolvedValue({ count: 1 });
+
+    await expect(revokeAllAuthSessions({ userId: 'user-1' })).resolves.toBe(
+      true,
+    );
+    expect(mocks.updateUsers).toHaveBeenCalledWith({
+      where: {
+        id: 'user-1',
+      },
+      data: {
+        authVersion: {
+          increment: 1,
+        },
+      },
+    });
+  });
+
+  it('does not report a successful global revocation when the account is missing', async () => {
+    mocks.updateUsers.mockResolvedValue({ count: 0 });
+
+    await expect(revokeAllAuthSessions({ userId: 'missing' })).resolves.toBe(
+      false,
+    );
   });
 });

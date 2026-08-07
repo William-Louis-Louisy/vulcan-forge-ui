@@ -11,6 +11,7 @@ export type AuthSecurityEventName =
   | 'auth.login.rejected'
   | 'auth.login.rate_limited'
   | 'auth.login.succeeded'
+  | 'auth.logout.succeeded'
   | 'auth.password.rehash_failed'
   | 'auth.password.rehash_skipped'
   | 'auth.password.rehash_succeeded'
@@ -28,6 +29,8 @@ export type AuthSecurityEventName =
   | 'auth.password_recovery.sent'
   | 'auth.password_recovery.unexpected_error'
   | 'auth.rate_limit.error'
+  | 'auth.session.revocation_failed'
+  | 'auth.session.revoked_all'
   | 'auth.signup.created'
   | 'auth.signup.duplicate'
   | 'auth.signup.password_check_unavailable'
@@ -62,6 +65,7 @@ const warningEvents = new Set<AuthSecurityEventName>([
   'auth.password_recovery.rate_limited',
   'auth.password_recovery.unexpected_error',
   'auth.rate_limit.error',
+  'auth.session.revocation_failed',
   'auth.signup.duplicate',
   'auth.signup.password_check_unavailable',
   'auth.signup.password_compromised',
