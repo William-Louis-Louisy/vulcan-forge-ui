@@ -9,7 +9,7 @@ const messages = {
   },
   fr: {
     beforeTerms: 'En créant un compte, vous acceptez les',
-    terms: "Conditions d’utilisation",
+    terms: 'Conditions d’utilisation',
     betweenLinks: 'et reconnaissez avoir pris connaissance de la',
     privacy: 'Politique de confidentialité',
   },

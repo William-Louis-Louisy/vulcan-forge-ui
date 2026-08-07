@@ -10,7 +10,7 @@ const legalNavigationMessages = {
   },
   fr: {
     privacy: 'Confidentialité',
-    terms: "Conditions d’utilisation",
+    terms: 'Conditions d’utilisation',
   },
 } satisfies Record<Locale, { privacy: string; terms: string }>;
 

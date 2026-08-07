@@ -19,7 +19,7 @@ describe('legal content', () => {
     ).toBe('Terms of Use');
     expect(
       getLegalDocument({ locale: 'fr', kind: 'terms', publisher }).title,
-    ).toBe("Conditions d’utilisation");
+    ).toBe('Conditions d’utilisation');
     expect(
       getLegalDocument({ locale: 'en', kind: 'privacy', publisher }).title,
     ).toBe('Privacy Notice');

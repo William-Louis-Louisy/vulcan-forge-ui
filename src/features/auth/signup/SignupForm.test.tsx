@@ -96,9 +96,10 @@ describe('SignupForm', () => {
   it('places explicit Terms and Privacy destinations next to account creation', () => {
     renderSignupForm();
 
-    expect(
-      screen.getByRole('link', { name: 'Terms of Use' }),
-    ).toHaveAttribute('href', '/terms');
+    expect(screen.getByRole('link', { name: 'Terms of Use' })).toHaveAttribute(
+      'href',
+      '/terms',
+    );
     expect(
       screen.getByRole('link', { name: 'Privacy Notice' }),
     ).toHaveAttribute('href', '/privacy');

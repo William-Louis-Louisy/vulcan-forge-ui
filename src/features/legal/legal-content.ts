@@ -45,63 +45,63 @@ function getTermsDocument(
   if (locale === 'fr') {
     return {
       eyebrow: 'Légal · Bêta publique',
-      title: "Conditions d’utilisation",
+      title: 'Conditions d’utilisation',
       description:
-        "Ces conditions encadrent l’accès et l’utilisation de la bêta actuelle de VulcanForge UI.",
+        'Ces conditions encadrent l’accès et l’utilisation de la bêta actuelle de VulcanForge UI.',
       lastUpdatedLabel: 'Dernière mise à jour',
       lastUpdatedDisplay: '7 août 2026',
       publicationWarningTitle: 'Informations de publication incomplètes',
       publicationWarning:
-        "L’identité complète de l’exploitant et son contact juridique doivent être configurés avant de considérer cette page comme prête pour une ouverture publique.",
+        'L’identité complète de l’exploitant et son contact juridique doivent être configurés avant de considérer cette page comme prête pour une ouverture publique.',
       sections: [
         {
           title: '1. Périmètre et statut de la bêta',
           paragraphs: [
-            "VulcanForge UI est actuellement proposé en bêta. Les fonctionnalités, limites et modalités d’accès peuvent évoluer pendant cette phase.",
-            "La bêta est actuellement gratuite et aucune facturation n’est activée dans le produit.",
+            'VulcanForge UI est actuellement proposé en bêta. Les fonctionnalités, limites et modalités d’accès peuvent évoluer pendant cette phase.',
+            'La bêta est actuellement gratuite et aucune facturation n’est activée dans le produit.',
           ],
         },
         {
           title: '2. Compte et sécurité',
           paragraphs: [
-            "Vous devez utiliser une adresse électronique que vous contrôlez et protéger vos identifiants. Vous êtes responsable des actions réalisées depuis votre compte tant qu’elles résultent de l’utilisation de vos moyens d’authentification.",
-            "Les fonctions de vérification d’adresse, récupération de mot de passe et révocation de sessions servent à sécuriser l’accès au compte.",
+            'Vous devez utiliser une adresse électronique que vous contrôlez et protéger vos identifiants. Vous êtes responsable des actions réalisées depuis votre compte tant qu’elles résultent de l’utilisation de vos moyens d’authentification.',
+            'Les fonctions de vérification d’adresse, récupération de mot de passe et révocation de sessions servent à sécuriser l’accès au compte.',
           ],
         },
         {
           title: '3. Utilisation acceptable',
           items: [
-            "utiliser le service conformément aux lois applicables ;",
-            "ne pas tenter de contourner les contrôles d’authentification, de limitation ou d’autorisation ;",
-            "ne pas perturber volontairement le service ni lancer de trafic automatisé abusif ;",
-            "ne pas utiliser VulcanForge UI pour stocker ou diffuser du contenu illicite ou portant atteinte aux droits de tiers.",
+            'utiliser le service conformément aux lois applicables ;',
+            'ne pas tenter de contourner les contrôles d’authentification, de limitation ou d’autorisation ;',
+            'ne pas perturber volontairement le service ni lancer de trafic automatisé abusif ;',
+            'ne pas utiliser VulcanForge UI pour stocker ou diffuser du contenu illicite ou portant atteinte aux droits de tiers.',
           ],
         },
         {
           title: '4. Contenu de projet et exports',
           paragraphs: [
-            "Vous restez responsable des contenus, règles, tokens, composants et autres informations que vous saisissez dans vos projets ainsi que de l’usage des exports générés à partir de ces données.",
-            "Ces conditions ne transfèrent pas à VulcanForge UI la propriété de vos contenus de projet. Le service les traite uniquement dans la mesure nécessaire à la fourniture des fonctionnalités demandées.",
+            'Vous restez responsable des contenus, règles, tokens, composants et autres informations que vous saisissez dans vos projets ainsi que de l’usage des exports générés à partir de ces données.',
+            'Ces conditions ne transfèrent pas à VulcanForge UI la propriété de vos contenus de projet. Le service les traite uniquement dans la mesure nécessaire à la fourniture des fonctionnalités demandées.',
           ],
         },
         {
           title: '5. Disponibilité de la bêta',
           paragraphs: [
-            "La bêta peut être modifiée, interrompue ou indisponible ponctuellement. Conservez une copie des exports ou informations dont vous avez besoin en dehors du service.",
-            "Les fonctionnalités expérimentales doivent être vérifiées avant tout usage critique ou en production.",
+            'La bêta peut être modifiée, interrompue ou indisponible ponctuellement. Conservez une copie des exports ou informations dont vous avez besoin en dehors du service.',
+            'Les fonctionnalités expérimentales doivent être vérifiées avant tout usage critique ou en production.',
           ],
         },
         {
           title: '6. Suspension et suppression du compte',
           paragraphs: [
-            "Vous pouvez supprimer votre compte depuis les paramètres prévus à cet effet. Une utilisation abusive, une tentative d’atteinte à la sécurité ou une obligation légale peut justifier une restriction ou suspension d’accès.",
+            'Vous pouvez supprimer votre compte depuis les paramètres prévus à cet effet. Une utilisation abusive, une tentative d’atteinte à la sécurité ou une obligation légale peut justifier une restriction ou suspension d’accès.',
           ],
         },
         {
           title: '7. Exploitant, contact et évolution des conditions',
           paragraphs: [
             `Exploitant déclaré pour ce déploiement : ${publisher.name}. Contact juridique et confidentialité : ${contact}.`,
-            "La date de mise à jour figure en haut de cette page. Toute évolution importante de ces conditions devra être reflétée dans une version mise à jour avant qu’elle ne s’applique au parcours public concerné.",
+            'La date de mise à jour figure en haut de cette page. Toute évolution importante de ces conditions devra être reflétée dans une version mise à jour avant qu’elle ne s’applique au parcours public concerné.',
           ],
         },
       ],
@@ -189,76 +189,76 @@ function getPrivacyDocument(
       lastUpdatedDisplay: '7 août 2026',
       publicationWarningTitle: 'Informations de publication incomplètes',
       publicationWarning:
-        "L’identité complète du responsable de traitement et son point de contact doivent être configurés et la qualification juridique finale doit être validée avant une ouverture publique.",
+        'L’identité complète du responsable de traitement et son point de contact doivent être configurés et la qualification juridique finale doit être validée avant une ouverture publique.',
       sections: [
         {
           title: '1. Responsable du traitement et contact',
           paragraphs: [
             `Responsable déclaré pour ce déploiement : ${publisher.name}. Contact relatif aux données personnelles : ${contact}.`,
-            "Lorsque les informations de publication ne sont pas configurées, ce document décrit le comportement technique du produit mais ne doit pas être considéré comme une notice juridique finalisée pour un lancement public.",
+            'Lorsque les informations de publication ne sont pas configurées, ce document décrit le comportement technique du produit mais ne doit pas être considéré comme une notice juridique finalisée pour un lancement public.',
           ],
         },
         {
           title: '2. Données traitées',
           items: [
-            "données de compte : nom, adresse électronique, statut de vérification, langue et préférences d’interface ;",
-            "données d’authentification et de sécurité : hash du mot de passe, version d’authentification, métadonnées de session, empreintes HMAC de limitation, identifiants techniques et événements de sécurité ;",
-            "challenges de vérification et récupération : empreinte cryptographique du token, date d’expiration et métadonnées nécessaires au parcours ;",
-            "données produit : espaces de travail, projets de design system, tokens, thèmes, composants, réglages, documentation et données nécessaires aux exports.",
+            'données de compte : nom, adresse électronique, statut de vérification, langue et préférences d’interface ;',
+            'données d’authentification et de sécurité : hash du mot de passe, version d’authentification, métadonnées de session, empreintes HMAC de limitation, identifiants techniques et événements de sécurité ;',
+            'challenges de vérification et récupération : empreinte cryptographique du token, date d’expiration et métadonnées nécessaires au parcours ;',
+            'données produit : espaces de travail, projets de design system, tokens, thèmes, composants, réglages, documentation et données nécessaires aux exports.',
           ],
         },
         {
           title: '3. Finalités et bases juridiques prévues',
           items: [
-            "création et gestion du compte, des espaces de travail et des projets : traitement nécessaire à la fourniture du service demandé ;",
-            "authentification, récupération, vérification d’adresse, prévention des abus et révocation de sessions : protection du service et des comptes ;",
-            "envoi des messages transactionnels nécessaires à la vérification et à la récupération du compte ;",
-            "production des fonctionnalités, contrôles d’accessibilité et exports demandés par l’utilisateur.",
+            'création et gestion du compte, des espaces de travail et des projets : traitement nécessaire à la fourniture du service demandé ;',
+            'authentification, récupération, vérification d’adresse, prévention des abus et révocation de sessions : protection du service et des comptes ;',
+            'envoi des messages transactionnels nécessaires à la vérification et à la récupération du compte ;',
+            'production des fonctionnalités, contrôles d’accessibilité et exports demandés par l’utilisateur.',
           ],
           paragraphs: [
-            "Pour la bêta actuelle, la qualification envisagée est l’exécution du service pour les opérations de compte et de produit, et l’intérêt légitime de sécurisation pour les contrôles de sécurité et d’abus. Cette qualification doit être confirmée par l’exploitant avant l’ouverture publique.",
-            "Le parcours d’inscription n’ajoute aucun consentement marketing pré-coché ou implicite.",
+            'Pour la bêta actuelle, la qualification envisagée est l’exécution du service pour les opérations de compte et de produit, et l’intérêt légitime de sécurisation pour les contrôles de sécurité et d’abus. Cette qualification doit être confirmée par l’exploitant avant l’ouverture publique.',
+            'Le parcours d’inscription n’ajoute aucun consentement marketing pré-coché ou implicite.',
           ],
         },
         {
           title: '4. Mots de passe et contrôle de compromission',
           paragraphs: [
-            "Le mot de passe en clair n’est pas conservé. Les nouveaux mots de passe sont stockés sous forme de hash Argon2id après normalisation et validation.",
-            "Lors de la création ou du remplacement d’un mot de passe, le service Pwned Passwords est interrogé avec seulement les cinq premiers caractères hexadécimaux du SHA-1 du mot de passe normalisé. Le mot de passe complet et son hash complet ne sont pas transmis à ce service.",
+            'Le mot de passe en clair n’est pas conservé. Les nouveaux mots de passe sont stockés sous forme de hash Argon2id après normalisation et validation.',
+            'Lors de la création ou du remplacement d’un mot de passe, le service Pwned Passwords est interrogé avec seulement les cinq premiers caractères hexadécimaux du SHA-1 du mot de passe normalisé. Le mot de passe complet et son hash complet ne sont pas transmis à ce service.',
           ],
         },
         {
           title: '5. Destinataires et prestataires techniques',
           items: [
-            "la base PostgreSQL et l’hébergement utilisés par le déploiement pour fournir l’application ;",
-            "Resend dans les environnements déployés configurés pour l’envoi des emails transactionnels de vérification et de récupération ;",
-            "Pwned Passwords pour le contrôle par k-anonymat des nouveaux mots de passe ;",
-            "les services d’hébergement et de journalisation réellement configurés par l’exploitant.",
+            'la base PostgreSQL et l’hébergement utilisés par le déploiement pour fournir l’application ;',
+            'Resend dans les environnements déployés configurés pour l’envoi des emails transactionnels de vérification et de récupération ;',
+            'Pwned Passwords pour le contrôle par k-anonymat des nouveaux mots de passe ;',
+            'les services d’hébergement et de journalisation réellement configurés par l’exploitant.',
           ],
           paragraphs: [
-            "Les prestataires d’hébergement, leurs lieux de traitement et les éventuels transferts hors Espace économique européen dépendent du déploiement final et doivent être documentés par l’exploitant avant un lancement public.",
+            'Les prestataires d’hébergement, leurs lieux de traitement et les éventuels transferts hors Espace économique européen dépendent du déploiement final et doivent être documentés par l’exploitant avant un lancement public.',
           ],
         },
         {
           title: '6. Durées de conservation',
           items: [
-            "les données de compte et de projet présentes dans la base principale sont conservées tant que le compte existe et sont supprimées avec le compte selon les relations de suppression du modèle actuel ;",
-            "les challenges de vérification d’adresse et de récupération expirent après 30 minutes et sont supprimés après utilisation, remplacement, expiration ou suppression du compte ;",
-            "les états de limitation sont bornés par les fenêtres de contrôle prévues par le système anti-abus ;",
-            "la durée des sauvegardes, logs d’infrastructure et journaux de plateforme dépend des fournisseurs de déploiement et doit être fixée dans la configuration opérationnelle finale.",
+            'les données de compte et de projet présentes dans la base principale sont conservées tant que le compte existe et sont supprimées avec le compte selon les relations de suppression du modèle actuel ;',
+            'les challenges de vérification d’adresse et de récupération expirent après 30 minutes et sont supprimés après utilisation, remplacement, expiration ou suppression du compte ;',
+            'les états de limitation sont bornés par les fenêtres de contrôle prévues par le système anti-abus ;',
+            'la durée des sauvegardes, logs d’infrastructure et journaux de plateforme dépend des fournisseurs de déploiement et doit être fixée dans la configuration opérationnelle finale.',
           ],
         },
         {
           title: '7. Cookies et sessions',
           paragraphs: [
-            "Le parcours d’authentification utilise les cookies et mécanismes de session nécessaires au fonctionnement d’Auth.js et aux contrôles de sécurité associés. AUTH-07 n’introduit aucun cookie publicitaire ou de consentement marketing.",
+            'Le parcours d’authentification utilise les cookies et mécanismes de session nécessaires au fonctionnement d’Auth.js et aux contrôles de sécurité associés. AUTH-07 n’introduit aucun cookie publicitaire ou de consentement marketing.',
           ],
         },
         {
           title: '8. Vos droits',
           paragraphs: [
-            "Selon le traitement concerné et la législation applicable, vous pouvez disposer de droits d’accès, rectification, effacement, limitation, portabilité et opposition. Adressez votre demande au contact de confidentialité indiqué ci-dessus.",
-            "Vous pouvez également introduire une réclamation auprès de la CNIL si vous estimez que vos droits relatifs aux données personnelles ne sont pas respectés.",
+            'Selon le traitement concerné et la législation applicable, vous pouvez disposer de droits d’accès, rectification, effacement, limitation, portabilité et opposition. Adressez votre demande au contact de confidentialité indiqué ci-dessus.',
+            'Vous pouvez également introduire une réclamation auprès de la CNIL si vous estimez que vos droits relatifs aux données personnelles ne sont pas respectés.',
           ],
           externalLink: {
             href: 'https://www.cnil.fr/fr/adresser-une-plainte',
@@ -268,8 +268,8 @@ function getPrivacyDocument(
         {
           title: '9. Décisions automatisées et évolutions',
           paragraphs: [
-            "Les contrôles automatiques de sécurité, de mot de passe et de limitation servent à protéger le compte et le service ; le produit actuel ne met pas en œuvre de décision automatisée produisant des effets juridiques ou similaires sur la personne.",
-            "Toute nouvelle finalité, intégration de suivi, fonctionnalité marketing ou modification substantielle du traitement doit entraîner une réévaluation de cette politique avant son déploiement public.",
+            'Les contrôles automatiques de sécurité, de mot de passe et de limitation servent à protéger le compte et le service ; le produit actuel ne met pas en œuvre de décision automatisée produisant des effets juridiques ou similaires sur la personne.',
+            'Toute nouvelle finalité, intégration de suivi, fonctionnalité marketing ou modification substantielle du traitement doit entraîner une réévaluation de cette politique avant son déploiement public.',
           ],
         },
       ],

@@ -32,7 +32,9 @@ export function getLegalPublisher(
     LEGAL_CONTACT_EMAIL: process.env.LEGAL_CONTACT_EMAIL,
   },
 ): LegalPublisher {
-  const configuredName = getOptionalTrimmedValue(environment.LEGAL_OPERATOR_NAME);
+  const configuredName = getOptionalTrimmedValue(
+    environment.LEGAL_OPERATOR_NAME,
+  );
   const contactEmail = getLegalContactEmail(environment.LEGAL_CONTACT_EMAIL);
 
   return {
