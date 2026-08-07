@@ -26,7 +26,7 @@ export function AuthShell({
   return (
     <main className="bg-background-app text-content-primary min-h-[calc(100vh-3.5rem)]">
       <div className="grid min-h-[calc(100vh-3.5rem)] lg:grid-cols-2">
-        <section className="flex items-center justify-center px-6 py-14 sm:px-10 lg:px-14 lg:py-16">
+        <section className="flex items-center justify-center px-6 py-14 sm:px-10 lg:px-14">
           <div className="w-full max-w-md">
             <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
               {eyebrow}
