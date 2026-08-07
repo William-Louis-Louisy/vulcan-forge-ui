@@ -4,6 +4,11 @@ export type LegalPublisher = {
   publicationReady: boolean;
 };
 
+type LegalPublicationEnvironment = {
+  LEGAL_OPERATOR_NAME?: string;
+  LEGAL_CONTACT_EMAIL?: string;
+};
+
 const FALLBACK_OPERATOR_NAME = 'VulcanForge UI';
 
 function getOptionalTrimmedValue(value: string | undefined) {
@@ -22,10 +27,7 @@ function getLegalContactEmail(value: string | undefined) {
 }
 
 export function getLegalPublisher(
-  environment: Pick<
-    NodeJS.ProcessEnv,
-    'LEGAL_OPERATOR_NAME' | 'LEGAL_CONTACT_EMAIL'
-  > = process.env,
+  environment: LegalPublicationEnvironment = process.env,
 ): LegalPublisher {
   const configuredName = getOptionalTrimmedValue(environment.LEGAL_OPERATOR_NAME);
   const contactEmail = getLegalContactEmail(environment.LEGAL_CONTACT_EMAIL);
