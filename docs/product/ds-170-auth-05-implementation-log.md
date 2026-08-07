@@ -26,9 +26,11 @@ This file records implementation and verification progress for the continuity an
 - [x] lint passed on the implementation branch;
 - [x] typecheck passed on the implementation branch;
 - [x] formatter applied to the implementation branch;
-- [ ] latest complete `npm run quality` workflow passes;
-- [ ] manual keyboard, responsive and password-manager QA is complete.
+- [x] manual keyboard, responsive and password-manager QA approved on 2026-08-07;
+- [ ] latest complete `npm run quality` workflow passes.
+
+The previous complete Quality attempt failed before checkout because GitHub Actions returned `Service Unavailable` while resolving action download information. No project command ran in that failed attempt.
 
 ## Pull request
 
-Draft PR #138 remains intentionally in draft until automated validation and manual QA are complete.
+Draft PR #138 remains intentionally in draft until the latest automated Quality workflow passes. Once it passes, the PR can be marked ready for review and prepared for merge.
