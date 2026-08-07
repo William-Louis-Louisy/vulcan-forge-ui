@@ -79,7 +79,7 @@ describe('component-token-bindings utils', () => {
     });
   });
 
-  it('counts invalid token sets', () => {
+  it('accepts an empty authored token set', () => {
     expect(
       parseComponentTokenSets([
         {
@@ -89,8 +89,14 @@ describe('component-token-bindings utils', () => {
         },
       ]),
     ).toEqual({
-      tokenSets: [],
-      invalidTokenSetsCount: 1,
+      tokenSets: [
+        {
+          type: 'color',
+          name: 'Colors',
+          tokens: [],
+        },
+      ],
+      invalidTokenSetsCount: 0,
     });
   });
 
