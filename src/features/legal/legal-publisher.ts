@@ -5,8 +5,8 @@ export type LegalPublisher = {
 };
 
 type LegalPublicationEnvironment = {
-  LEGAL_OPERATOR_NAME?: string;
-  LEGAL_CONTACT_EMAIL?: string;
+  LEGAL_OPERATOR_NAME: string | undefined;
+  LEGAL_CONTACT_EMAIL: string | undefined;
 };
 
 const FALLBACK_OPERATOR_NAME = 'VulcanForge UI';
