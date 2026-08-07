@@ -12,7 +12,9 @@ type SessionSecuritySectionProps = {
   locale: Locale;
 };
 
-export function SessionSecuritySection({ locale }: SessionSecuritySectionProps) {
+export function SessionSecuritySection({
+  locale,
+}: SessionSecuritySectionProps) {
   const messages = getSessionSecurityMessages(locale);
   const [state, formAction, isPending] = useActionState(
     logoutAllSessionsAction,
@@ -37,7 +39,10 @@ export function SessionSecuritySection({ locale }: SessionSecuritySectionProps) 
           </p>
 
           {state.formError ? (
-            <p role="alert" className="text-action-danger mt-3 text-xs font-semibold">
+            <p
+              role="alert"
+              className="text-action-danger mt-3 text-xs font-semibold"
+            >
               {messages.error}
             </p>
           ) : null}

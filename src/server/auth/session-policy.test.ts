@@ -75,7 +75,9 @@ describe('session policy', () => {
         sessionStartedAt: Number.NaN,
       }),
     ).toBe(false);
-    expect(getAuthSessionExpiresAtIso({ sessionStartedAt: Number.NaN })).toBeNull();
+    expect(
+      getAuthSessionExpiresAtIso({ sessionStartedAt: Number.NaN }),
+    ).toBeNull();
   });
 
   it('exposes the absolute expiry as an ISO timestamp', () => {

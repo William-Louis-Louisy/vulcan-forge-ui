@@ -50,9 +50,9 @@ describe('session versioning', () => {
   it('revokes every issued session by incrementing the persisted version', async () => {
     mocks.updateUsers.mockResolvedValue({ count: 1 });
 
-    await expect(
-      revokeAllAuthSessions({ userId: 'user-1' }),
-    ).resolves.toBe(true);
+    await expect(revokeAllAuthSessions({ userId: 'user-1' })).resolves.toBe(
+      true,
+    );
     expect(mocks.updateUsers).toHaveBeenCalledWith({
       where: {
         id: 'user-1',
@@ -68,8 +68,8 @@ describe('session versioning', () => {
   it('does not report a successful global revocation when the account is missing', async () => {
     mocks.updateUsers.mockResolvedValue({ count: 0 });
 
-    await expect(
-      revokeAllAuthSessions({ userId: 'missing' }),
-    ).resolves.toBe(false);
+    await expect(revokeAllAuthSessions({ userId: 'missing' })).resolves.toBe(
+      false,
+    );
   });
 });
