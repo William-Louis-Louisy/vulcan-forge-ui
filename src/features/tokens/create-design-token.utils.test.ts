@@ -64,7 +64,7 @@ describe('createDesignToken', () => {
     }
   });
 
-  it('creates a typography token as a JSON string value', () => {
+  it('creates a typography token as a composite value', () => {
     const value = JSON.stringify({
       fontSize: '1rem',
       fontWeight: 600,
@@ -84,7 +84,11 @@ describe('createDesignToken', () => {
       expect(result.token).toMatchObject({
         path: 'typography.body.md',
         type: 'typography',
-        value,
+        value: {
+          fontSize: '1rem',
+          fontWeight: 600,
+          lineHeight: '1.5',
+        },
         status: 'draft',
       });
     }
