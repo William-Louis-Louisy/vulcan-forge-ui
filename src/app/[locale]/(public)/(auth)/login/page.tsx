@@ -4,6 +4,7 @@ import { hasLocale, useTranslations } from 'next-intl';
 import { AuthShell } from '@/components/layout/AuthShell';
 import { AppLink } from '@/components/navigation/AppLink';
 import { LoginForm } from '@/features/auth/login/LoginForm';
+import { getSafeAuthReturnTo } from '@/features/auth/shared/return-to';
 
 type LoginPageProps = {
   params: Promise<{
@@ -12,6 +13,7 @@ type LoginPageProps = {
   searchParams: Promise<{
     reason?: string;
     registered?: string;
+    returnTo?: string;
   }>;
 };
 
@@ -22,17 +24,20 @@ export default async function LoginPage({
   searchParams,
 }: LoginPageProps) {
   const { locale: requestedLocale } = await params;
-  const { reason, registered } = await searchParams;
+  const { reason, registered, returnTo } = await searchParams;
 
   if (!hasLocale(routing.locales, requestedLocale)) {
     notFound();
   }
 
+  const locale = requestedLocale as Locale;
+
   return (
     <LoginPageContent
-      locale={requestedLocale}
+      locale={locale}
       registered={registered === '1'}
       authenticationRequired={reason === 'authentication-required'}
+      returnTo={getSafeAuthReturnTo({ locale, returnTo })}
     />
   );
 }
@@ -41,10 +46,12 @@ function LoginPageContent({
   locale,
   registered,
   authenticationRequired,
+  returnTo,
 }: {
   locale: Locale;
   registered: boolean;
   authenticationRequired: boolean;
+  returnTo: string;
 }) {
   const t = useTranslations('LoginPage');
 
@@ -61,11 +68,15 @@ function LoginPageContent({
         locale={locale}
         registered={registered}
         authenticationRequired={authenticationRequired}
+        returnTo={returnTo}
       />
 
       <p className="text-content-secondary mt-6 text-center text-sm">
         {t('form.noAccount')}{' '}
-        <AppLink href="/signup" className="text-action-accent font-semibold">
+        <AppLink
+          href={`/signup?returnTo=${encodeURIComponent(returnTo)}`}
+          className="text-action-accent font-semibold"
+        >
           {t('form.signupLink')}
         </AppLink>
       </p>

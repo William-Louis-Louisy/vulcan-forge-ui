@@ -1,9 +1,15 @@
 'use client';
 
 import { useActionState, useState } from 'react';
-import { EyeIcon, EyeSlashIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
-import { Button } from '@/components/ui';
+import { Button, Input } from '@/components/ui';
+import {
+  AuthErrorSummary,
+  PasswordField,
+  getPasswordDraftIssue,
+  passwordsMatchDraft,
+  type AuthErrorSummaryItem,
+} from '@/features/auth/shared';
 import type { Locale } from '@/i18n/routing';
 import { signupAction } from './signup.action';
 import {
@@ -13,10 +19,8 @@ import {
 
 type SignupFormProps = {
   locale: Locale;
+  returnTo: string;
 };
-
-const inputClassName =
-  'border-border-subtle bg-surface-primary text-content-primary focus:border-action-primary mt-2 w-full rounded-md border px-3 py-2 outline-none transition';
 
 function getFirstError(
   errors: SignupActionState['fieldErrors'] | undefined,
@@ -25,28 +29,75 @@ function getFirstError(
   return errors?.[field]?.[0] ?? null;
 }
 
-export function SignupForm({ locale }: SignupFormProps) {
+export function SignupForm({ locale, returnTo }: SignupFormProps) {
   const t = useTranslations('SignupPage');
   const [state, formAction, isPending] = useActionState(
     signupAction,
     initialSignupActionState,
   );
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isPasswordConfirmationVisible, setIsPasswordConfirmationVisible] =
-    useState(false);
+  const [password, setPassword] = useState('');
+  const [passwordConfirmation, setPasswordConfirmation] = useState('');
+  const [dismissedPasswordErrorState, setDismissedPasswordErrorState] =
+    useState<SignupActionState | null>(null);
+  const [
+    dismissedPasswordConfirmationErrorState,
+    setDismissedPasswordConfirmationErrorState,
+  ] = useState<SignupActionState | null>(null);
 
   const safeState = state ?? initialSignupActionState;
   const nameError = getFirstError(safeState.fieldErrors, 'name');
   const emailError = getFirstError(safeState.fieldErrors, 'email');
-  const passwordError = getFirstError(safeState.fieldErrors, 'password');
-  const passwordConfirmationError = getFirstError(
-    safeState.fieldErrors,
-    'passwordConfirmation',
-  );
+  const serverPasswordError =
+    dismissedPasswordErrorState === safeState
+      ? null
+      : getFirstError(safeState.fieldErrors, 'password');
+  const serverPasswordConfirmationError =
+    dismissedPasswordConfirmationErrorState === safeState
+      ? null
+      : getFirstError(safeState.fieldErrors, 'passwordConfirmation');
+  const passwordDraftIssue = getPasswordDraftIssue(password);
+  const confirmationMatches = passwordsMatchDraft({
+    password,
+    confirmation: passwordConfirmation,
+  });
+  const passwordError = serverPasswordError ?? passwordDraftIssue;
+  const passwordConfirmationError =
+    serverPasswordConfirmationError ??
+    (confirmationMatches ? null : 'passwordConfirmationMismatch');
+  const errorSummaryItems: AuthErrorSummaryItem[] = [];
+
+  if (nameError) {
+    errorSummaryItems.push({
+      fieldId: 'signup-name',
+      message: t(`validation.${nameError}`),
+    });
+  }
+
+  if (emailError) {
+    errorSummaryItems.push({
+      fieldId: 'signup-email',
+      message: t(`validation.${emailError}`),
+    });
+  }
+
+  if (serverPasswordError) {
+    errorSummaryItems.push({
+      fieldId: 'signup-password',
+      message: t(`validation.${serverPasswordError}`),
+    });
+  }
+
+  if (serverPasswordConfirmationError) {
+    errorSummaryItems.push({
+      fieldId: 'signup-password-confirmation',
+      message: t(`validation.${serverPasswordConfirmationError}`),
+    });
+  }
 
   return (
     <form action={formAction} className="mt-8 space-y-5">
       <input type="hidden" name="locale" value={locale} />
+      <input type="hidden" name="returnTo" value={returnTo} />
 
       {safeState.formError ? (
         <p
@@ -57,156 +108,100 @@ export function SignupForm({ locale }: SignupFormProps) {
         </p>
       ) : null}
 
+      <AuthErrorSummary focusKey={safeState} items={errorSummaryItems} />
+
       <div>
-        <label htmlFor="name" className="text-sm font-medium">
+        <label htmlFor="signup-name" className="text-sm font-medium">
           {t('form.nameLabel')}
         </label>
-        <input
-          id="name"
+        <Input
+          id="signup-name"
           name="name"
           type="text"
           autoComplete="name"
+          required
+          minLength={2}
+          maxLength={80}
           defaultValue={safeState.values.name}
-          aria-invalid={Boolean(nameError)}
-          aria-describedby={nameError ? 'name-error' : undefined}
-          className={inputClassName}
+          invalid={Boolean(nameError)}
+          aria-describedby={nameError ? 'signup-name-error' : undefined}
+          aria-errormessage={nameError ? 'signup-name-error' : undefined}
+          className="mt-2"
         />
         {nameError ? (
-          <p id="name-error" className="text-action-danger mt-2 text-sm">
+          <p id="signup-name-error" className="text-action-danger mt-2 text-sm">
             {t(`validation.${nameError}`)}
           </p>
         ) : null}
       </div>
 
       <div>
-        <label htmlFor="email" className="text-sm font-medium">
+        <label htmlFor="signup-email" className="text-sm font-medium">
           {t('form.emailLabel')}
         </label>
-        <input
-          id="email"
+        <Input
+          id="signup-email"
           name="email"
           type="email"
-          autoComplete="email"
+          inputMode="email"
+          autoComplete="username"
+          required
           defaultValue={safeState.values.email}
-          aria-invalid={Boolean(emailError)}
-          aria-describedby={emailError ? 'email-error' : undefined}
-          className={inputClassName}
+          invalid={Boolean(emailError)}
+          aria-describedby={emailError ? 'signup-email-error' : undefined}
+          aria-errormessage={emailError ? 'signup-email-error' : undefined}
+          className="mt-2"
         />
         {emailError ? (
-          <p id="email-error" className="text-action-danger mt-2 text-sm">
+          <p
+            id="signup-email-error"
+            className="text-action-danger mt-2 text-sm"
+          >
             {t(`validation.${emailError}`)}
           </p>
         ) : null}
       </div>
 
-      <div>
-        <label htmlFor="password" className="text-sm font-medium">
-          {t('form.passwordLabel')}
-        </label>
-        <div className="relative">
-          <input
-            id="password"
-            name="password"
-            type={isPasswordVisible ? 'text' : 'password'}
-            autoComplete="new-password"
-            aria-invalid={Boolean(passwordError)}
-            aria-describedby={
-              passwordError ? 'password-help password-error' : 'password-help'
-            }
-            className={`${inputClassName} pr-12`}
-          />
-          <PasswordVisibilityButton
-            isVisible={isPasswordVisible}
-            onToggle={() => setIsPasswordVisible((current) => !current)}
-            controls="password"
-            showLabel={t('form.passwordVisibility.show')}
-            hideLabel={t('form.passwordVisibility.hide')}
-          />
-        </div>
-        <p id="password-help" className="text-content-tertiary mt-2 text-sm">
-          {t('form.passwordHelp')}
-        </p>
-        {passwordError ? (
-          <p id="password-error" className="text-action-danger mt-2 text-sm">
-            {t(`validation.${passwordError}`)}
-          </p>
-        ) : null}
-      </div>
+      <PasswordField
+        id="signup-password"
+        name="password"
+        label={t('form.passwordLabel')}
+        autoComplete="new-password"
+        required
+        value={password}
+        onChange={(event) => {
+          setPassword(event.currentTarget.value);
+          setDismissedPasswordErrorState(safeState);
+        }}
+        help={t('form.passwordHelp')}
+        error={passwordError ? t(`validation.${passwordError}`) : undefined}
+        showPasswordLabel={t('form.passwordVisibility.show')}
+        hidePasswordLabel={t('form.passwordVisibility.hide')}
+      />
 
-      <div>
-        <label htmlFor="passwordConfirmation" className="text-sm font-medium">
-          {t('form.passwordConfirmationLabel')}
-        </label>
-        <div className="relative">
-          <input
-            id="passwordConfirmation"
-            name="passwordConfirmation"
-            type={isPasswordConfirmationVisible ? 'text' : 'password'}
-            autoComplete="new-password"
-            aria-invalid={Boolean(passwordConfirmationError)}
-            aria-describedby={
-              passwordConfirmationError
-                ? 'password-confirmation-error'
-                : undefined
-            }
-            className={`${inputClassName} pr-12`}
-          />
-          <PasswordVisibilityButton
-            isVisible={isPasswordConfirmationVisible}
-            onToggle={() =>
-              setIsPasswordConfirmationVisible((current) => !current)
-            }
-            controls="passwordConfirmation"
-            showLabel={t('form.passwordVisibility.show')}
-            hideLabel={t('form.passwordVisibility.hide')}
-          />
-        </div>
-        {passwordConfirmationError ? (
-          <p
-            id="password-confirmation-error"
-            className="text-action-danger mt-2 text-sm"
-          >
-            {t(`validation.${passwordConfirmationError}`)}
-          </p>
-        ) : null}
-      </div>
+      <PasswordField
+        id="signup-password-confirmation"
+        name="passwordConfirmation"
+        label={t('form.passwordConfirmationLabel')}
+        autoComplete="new-password"
+        required
+        value={passwordConfirmation}
+        onChange={(event) => {
+          setPasswordConfirmation(event.currentTarget.value);
+          setDismissedPasswordConfirmationErrorState(safeState);
+        }}
+        error={
+          passwordConfirmationError
+            ? t(`validation.${passwordConfirmationError}`)
+            : undefined
+        }
+        showPasswordLabel={t('form.passwordVisibility.show')}
+        hidePasswordLabel={t('form.passwordVisibility.hide')}
+      />
 
       <Button type="submit" disabled={isPending} className="w-full">
         {isPending ? t('form.submitPending') : t('form.submit')}
       </Button>
     </form>
-  );
-}
-
-function PasswordVisibilityButton({
-  controls,
-  hideLabel,
-  isVisible,
-  onToggle,
-  showLabel,
-}: {
-  controls: string;
-  hideLabel: string;
-  isVisible: boolean;
-  onToggle: () => void;
-  showLabel: string;
-}) {
-  const label = isVisible ? hideLabel : showLabel;
-
-  return (
-    <button
-      type="button"
-      aria-controls={controls}
-      aria-label={label}
-      aria-pressed={isVisible}
-      onClick={onToggle}
-      className="border-border-subtle text-content-secondary hover:bg-surface-secondary hover:text-content-primary absolute right-0 bottom-0 flex h-[calc(100%-0.5rem)] w-11 items-center justify-center rounded-r-md border-l transition"
-    >
-      {isVisible ? (
-        <EyeSlashIcon aria-hidden="true" size={18} weight="bold" />
-      ) : (
-        <EyeIcon aria-hidden="true" size={18} weight="bold" />
-      )}
-    </button>
   );
 }

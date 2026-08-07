@@ -1,10 +1,16 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
-import { EyeIcon, EyeSlashIcon } from '@phosphor-icons/react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui';
 import { AppLink } from '@/components/navigation/AppLink';
+import {
+  AuthErrorSummary,
+  PasswordField,
+  getPasswordDraftIssue,
+  passwordsMatchDraft,
+  type AuthErrorSummaryItem,
+} from '@/features/auth/shared';
 import type { ResetPasswordValidationMessageKey } from './reset-password.schema';
 
 type ResetStatus =
@@ -24,20 +30,52 @@ type ResetResponse = {
   status: ResetStatus | 'expired' | 'invalid';
 };
 
-const inputClassName =
-  'border-border-subtle bg-surface-primary text-content-primary focus:border-action-primary mt-2 w-full rounded-md border px-3 py-2 outline-none transition';
+type ResetFieldErrors = NonNullable<ResetResponse['fieldErrors']>;
+
+function removeFieldError(
+  fieldErrors: ResetFieldErrors,
+  field: keyof ResetFieldErrors,
+): ResetFieldErrors {
+  const nextFieldErrors = { ...fieldErrors };
+
+  delete nextFieldErrors[field];
+
+  return nextFieldErrors;
+}
 
 export function ResetPasswordForm() {
   const t = useTranslations('PasswordResetPage');
   const [status, setStatus] = useState<ResetStatus>('idle');
-  const [fieldErrors, setFieldErrors] = useState<
-    NonNullable<ResetResponse['fieldErrors']>
-  >({});
+  const [fieldErrors, setFieldErrors] = useState<ResetFieldErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
-  const passwordError = fieldErrors.password?.[0] ?? null;
-  const confirmationError = fieldErrors.passwordConfirmation?.[0] ?? null;
+  const [password, setPassword] = useState('');
+  const [passwordConfirmation, setPasswordConfirmation] = useState('');
+  const serverPasswordError = fieldErrors.password?.[0] ?? null;
+  const serverConfirmationError = fieldErrors.passwordConfirmation?.[0] ?? null;
+  const passwordDraftIssue = getPasswordDraftIssue(password);
+  const confirmationMatches = passwordsMatchDraft({
+    password,
+    confirmation: passwordConfirmation,
+  });
+  const passwordError = serverPasswordError ?? passwordDraftIssue;
+  const confirmationError =
+    serverConfirmationError ??
+    (confirmationMatches ? null : 'passwordConfirmationMismatch');
+  const errorSummaryItems: AuthErrorSummaryItem[] = [];
+
+  if (serverPasswordError) {
+    errorSummaryItems.push({
+      fieldId: 'reset-password',
+      message: t(`validation.${serverPasswordError}`),
+    });
+  }
+
+  if (serverConfirmationError) {
+    errorSummaryItems.push({
+      fieldId: 'reset-password-confirmation',
+      message: t(`validation.${serverConfirmationError}`),
+    });
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -45,14 +83,12 @@ export function ResetPasswordForm() {
     setStatus('idle');
     setFieldErrors({});
 
-    const formData = new FormData(event.currentTarget);
-
     try {
       const response = await fetch('/api/auth/password-recovery/reset', {
         method: 'POST',
         body: JSON.stringify({
-          password: formData.get('password'),
-          passwordConfirmation: formData.get('passwordConfirmation'),
+          password,
+          passwordConfirmation,
         }),
         cache: 'no-store',
         credentials: 'same-origin',
@@ -108,123 +144,48 @@ export function ResetPasswordForm() {
         </p>
       ) : null}
 
-      <div>
-        <label htmlFor="reset-password" className="text-sm font-medium">
-          {t('form.passwordLabel')}
-        </label>
-        <div className="relative">
-          <input
-            id="reset-password"
-            name="password"
-            type={isPasswordVisible ? 'text' : 'password'}
-            autoComplete="new-password"
-            aria-invalid={Boolean(passwordError)}
-            aria-describedby={
-              passwordError
-                ? 'reset-password-help reset-password-error'
-                : 'reset-password-help'
-            }
-            className={`${inputClassName} pr-12`}
-          />
-          <VisibilityButton
-            controls="reset-password"
-            isVisible={isPasswordVisible}
-            onToggle={() => setIsPasswordVisible((current) => !current)}
-            showLabel={t('form.passwordVisibility.show')}
-            hideLabel={t('form.passwordVisibility.hide')}
-          />
-        </div>
-        <p
-          id="reset-password-help"
-          className="text-content-tertiary mt-2 text-sm"
-        >
-          {t('form.passwordHelp')}
-        </p>
-        {passwordError ? (
-          <p
-            id="reset-password-error"
-            className="text-action-danger mt-2 text-sm"
-          >
-            {t(`validation.${passwordError}`)}
-          </p>
-        ) : null}
-      </div>
+      <AuthErrorSummary focusKey={fieldErrors} items={errorSummaryItems} />
 
-      <div>
-        <label
-          htmlFor="reset-password-confirmation"
-          className="text-sm font-medium"
-        >
-          {t('form.passwordConfirmationLabel')}
-        </label>
-        <div className="relative">
-          <input
-            id="reset-password-confirmation"
-            name="passwordConfirmation"
-            type={isConfirmationVisible ? 'text' : 'password'}
-            autoComplete="new-password"
-            aria-invalid={Boolean(confirmationError)}
-            aria-describedby={
-              confirmationError
-                ? 'reset-password-confirmation-error'
-                : undefined
-            }
-            className={`${inputClassName} pr-12`}
-          />
-          <VisibilityButton
-            controls="reset-password-confirmation"
-            isVisible={isConfirmationVisible}
-            onToggle={() => setIsConfirmationVisible((current) => !current)}
-            showLabel={t('form.passwordVisibility.show')}
-            hideLabel={t('form.passwordVisibility.hide')}
-          />
-        </div>
-        {confirmationError ? (
-          <p
-            id="reset-password-confirmation-error"
-            className="text-action-danger mt-2 text-sm"
-          >
-            {t(`validation.${confirmationError}`)}
-          </p>
-        ) : null}
-      </div>
+      <PasswordField
+        id="reset-password"
+        name="password"
+        label={t('form.passwordLabel')}
+        autoComplete="new-password"
+        required
+        value={password}
+        onChange={(event) => {
+          setPassword(event.currentTarget.value);
+          setFieldErrors((current) => removeFieldError(current, 'password'));
+        }}
+        help={t('form.passwordHelp')}
+        error={passwordError ? t(`validation.${passwordError}`) : undefined}
+        showPasswordLabel={t('form.passwordVisibility.show')}
+        hidePasswordLabel={t('form.passwordVisibility.hide')}
+      />
+
+      <PasswordField
+        id="reset-password-confirmation"
+        name="passwordConfirmation"
+        label={t('form.passwordConfirmationLabel')}
+        autoComplete="new-password"
+        required
+        value={passwordConfirmation}
+        onChange={(event) => {
+          setPasswordConfirmation(event.currentTarget.value);
+          setFieldErrors((current) =>
+            removeFieldError(current, 'passwordConfirmation'),
+          );
+        }}
+        error={
+          confirmationError ? t(`validation.${confirmationError}`) : undefined
+        }
+        showPasswordLabel={t('form.passwordVisibility.show')}
+        hidePasswordLabel={t('form.passwordVisibility.hide')}
+      />
 
       <Button type="submit" disabled={isSubmitting} className="w-full">
         {isSubmitting ? t('form.submitPending') : t('form.submit')}
       </Button>
     </form>
-  );
-}
-
-function VisibilityButton({
-  controls,
-  hideLabel,
-  isVisible,
-  onToggle,
-  showLabel,
-}: {
-  controls: string;
-  hideLabel: string;
-  isVisible: boolean;
-  onToggle: () => void;
-  showLabel: string;
-}) {
-  const label = isVisible ? hideLabel : showLabel;
-
-  return (
-    <button
-      type="button"
-      aria-controls={controls}
-      aria-label={label}
-      aria-pressed={isVisible}
-      onClick={onToggle}
-      className="border-border-subtle text-content-secondary hover:bg-surface-secondary hover:text-content-primary absolute right-0 bottom-0 flex h-[calc(100%-0.5rem)] w-11 items-center justify-center rounded-r-md border-l transition"
-    >
-      {isVisible ? (
-        <EyeSlashIcon aria-hidden="true" size={18} weight="bold" />
-      ) : (
-        <EyeIcon aria-hidden="true" size={18} weight="bold" />
-      )}
-    </button>
   );
 }

@@ -2,9 +2,12 @@ import { auth } from '@/auth';
 import { hasLocale } from 'next-intl';
 import type { ReactNode } from 'react';
 import { getTranslations } from 'next-intl/server';
+import { headers } from 'next/headers';
 import { notFound, redirect } from 'next/navigation';
 import { AppShell } from '@/components/layout/AppShell';
 import { EmailVerificationBanner } from '@/features/auth/email-verification/EmailVerificationBanner';
+import { getSafeAuthReturnTo } from '@/features/auth/shared/return-to';
+import { AUTH_REQUEST_TARGET_HEADER } from '@/features/auth/shared/request-target';
 import { getAppShellData } from '@/features/app-navigation/app-shell.queries';
 import { routing, type Locale } from '@/i18n/routing';
 import { prisma } from '@/server/db/prisma';
@@ -16,6 +19,21 @@ type AppLayoutProps = {
   }>;
 };
 
+function getAuthenticationRequiredUrl({
+  locale,
+  returnTo,
+}: {
+  locale: Locale;
+  returnTo: string | null;
+}) {
+  const searchParams = new URLSearchParams({
+    reason: 'authentication-required',
+    returnTo: getSafeAuthReturnTo({ locale, returnTo }),
+  });
+
+  return `/${locale}/login?${searchParams.toString()}`;
+}
+
 export default async function AppLayout({ children, params }: AppLayoutProps) {
   const { locale: requestedLocale } = await params;
 
@@ -24,10 +42,15 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
   }
 
   const locale = requestedLocale as Locale;
+  const requestHeaders = await headers();
+  const authenticationRequiredUrl = getAuthenticationRequiredUrl({
+    locale,
+    returnTo: requestHeaders.get(AUTH_REQUEST_TARGET_HEADER),
+  });
   const session = await auth();
 
   if (!session?.user) {
-    redirect(`/${locale}/login?reason=authentication-required`);
+    redirect(authenticationRequiredUrl);
   }
 
   const [user, t, appShellData] = await Promise.all([
@@ -47,7 +70,7 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
   ]);
 
   if (!user) {
-    redirect(`/${locale}/login?reason=authentication-required`);
+    redirect(authenticationRequiredUrl);
   }
 
   return (

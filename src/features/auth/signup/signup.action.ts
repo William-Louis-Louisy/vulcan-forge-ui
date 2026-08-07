@@ -20,6 +20,8 @@ import {
   assertPasswordIsAcceptable,
   hashPassword,
 } from '@/server/auth/password/password.service';
+import { formatPersonalWorkspaceName } from '@/features/auth/shared/workspace-name';
+import { getSafeAuthReturnTo } from '@/features/auth/shared/return-to';
 import type { SignupActionState } from './signup.state';
 import { getSignupPersistenceError } from './signup.errors';
 import { createPersonalWorkspaceSlug } from '@/domain/workspaces/slug';
@@ -116,6 +118,10 @@ export async function signupAction(
   formData: FormData,
 ): Promise<SignupActionState> {
   const locale = getActionLocale(formData);
+  const returnTo = getSafeAuthReturnTo({
+    locale,
+    returnTo: getFormStringValue(formData, 'returnTo'),
+  });
   const values = {
     name: getFormStringValue(formData, 'name'),
     email: getFormStringValue(formData, 'email'),
@@ -273,7 +279,10 @@ export async function signupAction(
 
       await tx.workspace.create({
         data: {
-          name: `${user.name ?? 'User'}'s workspace`,
+          name: formatPersonalWorkspaceName({
+            locale,
+            userName: user.name,
+          }),
           slug: createPersonalWorkspaceSlug(user.id),
           ownerId: user.id,
           settings: {
@@ -346,7 +355,7 @@ export async function signupAction(
     await signIn('credentials', {
       email: parsed.data.email,
       password: acceptablePassword,
-      redirectTo: `/${locale}/app`,
+      redirectTo: returnTo,
     });
   } catch (error) {
     if (error instanceof AuthError) {

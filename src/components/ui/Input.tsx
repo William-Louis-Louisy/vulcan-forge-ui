@@ -1,4 +1,4 @@
-import type { InputHTMLAttributes } from 'react';
+import { forwardRef, type InputHTMLAttributes } from 'react';
 
 export type InputSize = 'sm' | 'md';
 export type InputTextMode = 'default' | 'technical';
@@ -19,15 +19,13 @@ const textModeClassNames: Record<InputTextMode, string> = {
   technical: 'font-mono',
 };
 
-export function Input({
-  className,
-  invalid = false,
-  size = 'md',
-  textMode = 'default',
-  ...props
-}: InputProps) {
+export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
+  { className, invalid = false, size = 'md', textMode = 'default', ...props },
+  ref,
+) {
   return (
     <input
+      ref={ref}
       aria-invalid={invalid || props['aria-invalid'] || undefined}
       className={[
         'border-border-subtle bg-surface-primary text-content-primary placeholder:text-content-tertiary w-full rounded-md border transition outline-none',
@@ -44,4 +42,4 @@ export function Input({
       {...props}
     />
   );
-}
+});
