@@ -7,6 +7,7 @@ import { routing, type Locale } from '@/i18n/routing';
 import { SettingsForm } from '@/features/settings/SettingsForm';
 import { AccountProfileForm } from '@/features/settings/AccountProfileForm';
 import { DeleteAccountSection } from '@/features/settings/DeleteAccountSection';
+import { SessionSecuritySection } from '@/features/settings/SessionSecuritySection';
 import { getSettingsPageData } from '@/features/settings/settings.queries';
 
 type SettingsPageProps = {
@@ -59,6 +60,7 @@ export default async function SettingsPage({ params }: SettingsPageProps) {
           }}
         />
         <SettingsForm initialSettings={pageData.settings} />
+        <SessionSecuritySection locale={locale} />
         <DeleteAccountSection email={pageData.user.email} locale={locale} />
       </div>
     </section>

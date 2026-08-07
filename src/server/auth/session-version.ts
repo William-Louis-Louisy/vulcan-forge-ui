@@ -22,3 +22,18 @@ export async function isAuthSessionVersionCurrent({
     return false;
   }
 }
+
+export async function revokeAllAuthSessions({ userId }: { userId: string }) {
+  const result = await prisma.user.updateMany({
+    where: {
+      id: userId,
+    },
+    data: {
+      authVersion: {
+        increment: 1,
+      },
+    },
+  });
+
+  return result.count === 1;
+}
