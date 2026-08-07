@@ -4,7 +4,6 @@ import { authorizeCredentials } from '@/server/auth/credentials-authorizer';
 import {
   AUTH_SESSION_ABSOLUTE_MAX_AGE_SECONDS,
   getAuthEpochSeconds,
-  getAuthSessionExpiresAtIso,
   isAuthSessionWithinAbsoluteLifetime,
   resolveAuthSessionStartedAt,
 } from '@/server/auth/session-policy';
@@ -70,21 +69,9 @@ const nextAuth = NextAuth({
     session({ session, token }) {
       const tokenId = typeof token.id === 'string' ? token.id : '';
       const tokenLocale = token.locale === 'fr' ? 'fr' : 'en';
-      const sessionStartedAt = resolveAuthSessionStartedAt({
-        sessionStartedAt: token.sessionStartedAt,
-        tokenIssuedAt: token.iat,
-      });
 
       session.user.id = token.invalidated ? '' : tokenId;
       session.user.locale = tokenLocale;
-
-      if (sessionStartedAt !== null) {
-        const expires = getAuthSessionExpiresAtIso({ sessionStartedAt });
-
-        if (expires) {
-          session.expires = expires;
-        }
-      }
 
       return session;
     },

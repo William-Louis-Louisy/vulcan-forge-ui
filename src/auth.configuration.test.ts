@@ -11,7 +11,6 @@ const mocks = vi.hoisted(() => ({
 vi.mock('next-auth', () => ({
   default: vi.fn((configuration: unknown) => {
     mocks.configuration = configuration;
-
     return {
       auth: mocks.rawAuth,
       handlers: {},
@@ -38,42 +37,24 @@ import './auth';
 
 type JwtCallback = (input: {
   token: Record<string, unknown>;
-  user?: {
-    authVersion: number;
-    id: string;
-    locale: 'en' | 'fr';
-  } | null;
+  user?: { authVersion: number; id: string; locale: 'en' | 'fr' } | null;
 }) => Promise<Record<string, unknown>>;
 
 type SessionCallback = (input: {
   session: {
     expires: string;
-    user: {
-      id: string;
-      locale: 'en' | 'fr';
-    };
+    user: { id: string; locale: 'en' | 'fr' };
   };
   token: Record<string, unknown>;
 }) => {
   expires: string;
-  user: {
-    id: string;
-    locale: 'en' | 'fr';
-  };
+  user: { id: string; locale: 'en' | 'fr' };
 };
 
 type AuthConfigurationProbe = {
-  callbacks: {
-    jwt: JwtCallback;
-    session: SessionCallback;
-  };
-  jwt: {
-    maxAge: number;
-  };
-  session: {
-    maxAge: number;
-    strategy: string;
-  };
+  callbacks: { jwt: JwtCallback; session: SessionCallback };
+  jwt: { maxAge: number };
+  session: { maxAge: number; strategy: string };
 };
 
 const configuration = mocks.configuration as AuthConfigurationProbe;
@@ -100,11 +81,7 @@ describe('Auth.js session configuration', () => {
 
     const token = await configuration.callbacks.jwt({
       token: {},
-      user: {
-        authVersion: 4,
-        id: 'user-1',
-        locale: 'fr',
-      },
+      user: { authVersion: 4, id: 'user-1', locale: 'fr' },
     });
 
     expect(token).toMatchObject({
@@ -172,14 +149,11 @@ describe('Auth.js session configuration', () => {
     expect(token.invalidated).toBe(true);
   });
 
-  it('exposes the absolute expiry and removes the user id from invalid sessions', () => {
+  it('removes the user id from invalid sessions without rewriting the Auth.js envelope expiry', () => {
     const session = configuration.callbacks.session({
       session: {
-        expires: '2099-01-01T00:00:00.000Z',
-        user: {
-          id: 'placeholder',
-          locale: 'en',
-        },
+        expires: '2026-08-14T08:00:00.000Z',
+        user: { id: 'placeholder', locale: 'en' },
       },
       token: {
         id: 'user-1',
@@ -191,10 +165,7 @@ describe('Auth.js session configuration', () => {
 
     expect(session).toEqual({
       expires: '2026-08-14T08:00:00.000Z',
-      user: {
-        id: '',
-        locale: 'fr',
-      },
+      user: { id: '', locale: 'fr' },
     });
   });
 });
