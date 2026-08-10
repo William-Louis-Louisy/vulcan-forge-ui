@@ -1,0 +1,49 @@
+name: DS-170-08A selection fixer bootstrap
+
+on:
+  push:
+    branches:
+      - feature/ds-170-08a-token-editor-reliability
+    paths:
+      - .github/workflows/ds-170-08a-selection-fix-bootstrap.yml
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/ds-170-08a-token-editor-reliability
+          fetch-depth: 0
+
+      - name: Add Prisma generation to selection fixer
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('.github/workflows/ds-170-08a-selection-fix.yml')
+          text = path.read_text()
+          old = """      - name: Run typecheck
+        run: npm run typecheck
+"""
+          new = """      - name: Generate Prisma Client
+        run: npm run db:generate
+
+      - name: Run typecheck
+        run: npm run typecheck
+"""
+          if text.count(old) != 1:
+              raise SystemExit('Selection fixer typecheck step changed')
+          path.write_text(text.replace(old, new, 1))
+          PY
+
+      - name: Commit repaired fixer
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/workflows/ds-170-08a-selection-fix.yml
+          git commit -m "chore: generate Prisma before selection fixer typecheck"
+          git push origin HEAD:feature/ds-170-08a-token-editor-reliability
