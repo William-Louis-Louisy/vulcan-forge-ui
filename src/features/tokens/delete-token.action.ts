@@ -3,13 +3,16 @@
 import { revalidatePath } from 'next/cache';
 import { auth } from '@/auth';
 import { prisma } from '@/server/db/prisma';
+import type { Prisma } from '@/generated/prisma/client';
 import { defaultAppLocale, isAppLocale } from '@/domain/i18n';
 import { isTokenSetType } from './tokens-editor.utils';
+import { parseStoredTokenSetTokens } from './token-set-save.service';
 import {
-  parseStoredTokenSetTokens,
-  saveValidatedTokenSetTokens,
-} from './token-set-save.service';
-import { findTokenDependencies, removeTokenByPath } from './delete-token.utils';
+  detachComponentTokenBindings,
+  detachThemeTokenReferences,
+  findTokenDependencies,
+  removeTokenByPath,
+} from './delete-token.utils';
 import type { DeleteTokenActionState } from './delete-token.state';
 
 function getFormStringValue(formData: FormData, key: string): string {
@@ -22,6 +25,10 @@ function getActionLocale(formData: FormData) {
   const rawLocale = getFormStringValue(formData, 'locale');
 
   return isAppLocale(rawLocale) ? rawLocale : defaultAppLocale;
+}
+
+function toInputJsonValue(value: unknown): Prisma.InputJsonValue {
+  return JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
 }
 
 export async function deleteTokenAction(
@@ -74,12 +81,14 @@ export async function deleteTokenAction(
       },
       themes: {
         select: {
+          id: true,
           name: true,
           tokens: true,
         },
       },
       componentContracts: {
         select: {
+          id: true,
           name: true,
           contract: true,
         },
@@ -140,31 +149,99 @@ export async function deleteTokenAction(
     themes: project.themes,
     componentContracts: project.componentContracts,
   });
+  const blockingDependencies = dependencies.filter(
+    (dependency) => dependency.kind === 'token',
+  );
 
-  if (dependencies.length > 0) {
+  if (blockingDependencies.length > 0) {
     return {
       status: 'error',
       formError: 'tokenInUse',
-      dependencies,
+      dependencies: blockingDependencies,
       deletedTokenPath: null,
     };
   }
 
-  const saveResult = await saveValidatedTokenSetTokens({
-    tokenSetId: tokenSet.id,
-    tokens: removeResult.tokens,
+  const themeUpdates = project.themes.flatMap((theme) => {
+    const result = detachThemeTokenReferences({
+      tokens: theme.tokens,
+      tokenPath,
+    });
+
+    return result.removedCount > 0
+      ? [
+          {
+            id: theme.id,
+            tokens: result.value,
+          },
+        ]
+      : [];
+  });
+  const componentUpdates = project.componentContracts.flatMap((component) => {
+    const result = detachComponentTokenBindings({
+      contract: component.contract,
+      tokenPath,
+    });
+
+    return result.removedCount > 0
+      ? [
+          {
+            id: component.id,
+            contract: result.value,
+          },
+        ]
+      : [];
   });
 
-  if (saveResult.status === 'error') {
+  try {
+    await prisma.$transaction([
+      prisma.tokenSet.update({
+        where: {
+          id: tokenSet.id,
+        },
+        data: {
+          tokens: toInputJsonValue(removeResult.tokens),
+        },
+      }),
+      ...themeUpdates.map((theme) =>
+        prisma.theme.update({
+          where: {
+            id: theme.id,
+          },
+          data: {
+            tokens: toInputJsonValue(theme.tokens),
+          },
+        }),
+      ),
+      ...componentUpdates.map((component) =>
+        prisma.componentContract.update({
+          where: {
+            id: component.id,
+          },
+          data: {
+            contract: toInputJsonValue(component.contract),
+          },
+        }),
+      ),
+    ]);
+  } catch {
     return {
       status: 'error',
-      formError: saveResult.error,
+      formError: 'unexpected',
       dependencies: [],
       deletedTokenPath: null,
     };
   }
 
-  revalidatePath(`/${locale}/app/projects/${projectSlug}/tokens`);
+  for (const section of [
+    'tokens',
+    'themes',
+    'components',
+    'accessibility',
+    'exports',
+  ]) {
+    revalidatePath(`/${locale}/app/projects/${projectSlug}/${section}`);
+  }
 
   return {
     status: 'success',
