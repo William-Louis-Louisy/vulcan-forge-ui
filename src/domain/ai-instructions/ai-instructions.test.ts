@@ -21,6 +21,18 @@ const tokens: DesignToken[] = [
     status: 'ready',
   },
   {
+    path: 'typography.body.base',
+    type: 'typography',
+    value: {
+      fontFamily: 'Inter Tight, system-ui, sans-serif',
+      fontSize: '1rem',
+      fontWeight: 400,
+      lineHeight: '1.5',
+      letterSpacing: '0em',
+    },
+    status: 'ready',
+  },
+  {
     path: 'color.legacy.brand',
     type: 'color',
     value: '#000000',
@@ -177,6 +189,9 @@ describe('generateAiInstructions', () => {
     expect(result.content).toContain('## Token rules');
     expect(result.content).toContain('## Component rules');
     expect(result.content).toContain('- **Anatomy:** root, label, icon');
+    expect(result.content).toContain(
+      '{"fontFamily":"Inter Tight, system-ui, sans-serif","fontSize":"1rem","fontWeight":400,"lineHeight":"1.5","letterSpacing":"0em"}',
+    );
     expect(result.content).not.toContain('[object Object]');
     expect(result.content).toContain('## Accessibility rules');
     expect(result.content).toContain('## Forbidden patterns');
