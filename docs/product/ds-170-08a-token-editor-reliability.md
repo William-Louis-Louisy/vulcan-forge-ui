@@ -10,7 +10,8 @@ Resolve the token-authoring defects found during the final DS-170 product journe
 
 - tokens can be deleted safely without trapping new projects behind seeded Theme or Component references;
 - typography tokens edit and preview reliably;
-- saving a token does not unexpectedly switch the inspector to another token;
+- saving or renaming a token does not unexpectedly switch the inspector to another token;
+- initial/default selection follows the first token in the visible list order;
 - composite token values remain structurally useful in generated exports;
 - application typography uses semantic CSS/Tailwind font roles instead of arbitrary family expressions.
 
@@ -73,9 +74,13 @@ An authored token set is allowed to become empty; the editor already has a valid
 
 ### Stable inspector selection
 
-Selection is now resolved against the complete active token set before filtered search results. Saving a value or description that causes the current token to stop matching the search therefore keeps the inspector on the token the user was editing.
+Selection is resolved against the complete active token set before filtered search results. Saving a value or description that causes the current token to stop matching the search therefore keeps the inspector on the token the user was editing.
 
-After deletion, selection moves deterministically to a remaining token or to the empty state.
+A token path rename is treated as one logical selection transition. The editor records the source and target paths before the server action runs, moves the selected path and URL to the intended target immediately, and keeps rendering the source token while revalidation still exposes the old row. Once refreshed rows contain the renamed path, selection resolves naturally to that target. A failed rename restores the original path and URL instead of falling back to an unrelated token.
+
+Default selection uses the same display-order rules as the token list. Color tokens are ordered by the visible Primitive/Semantic grouping and namespace label, then naturally by path. As a result, opening Tokens without an explicit token query and switching token-set tabs select the first token the user actually sees rather than the first token in persistence order.
+
+After deletion, selection moves deterministically to a remaining token in that same visible order or to the empty state.
 
 ### Semantic application fonts
 
@@ -102,7 +107,8 @@ Focused regression coverage verifies:
 - token deletion and dependency discovery;
 - Theme reference detachment while preserving sibling mappings;
 - ComponentContract binding detachment while preserving the contract;
-- selected-token stability across filtering and deletion;
+- selected-token stability across filtering, rename revalidation and deletion;
+- default selection ordering matching the visible token list;
 - flattened typography CSS variables;
 - structured composite typography output in AI Instructions.
 
@@ -110,13 +116,18 @@ The repository Quality workflow remains the final merge gate for lint, strict Ty
 
 ## Manual QA checklist
 
+- [ ] Open Tokens without an explicit `token` query and verify the first token rendered in the active list is selected instead of a persistence-order token such as the first `Primitive · Neutral` entry.
+- [ ] Switch token-set tabs and verify the first token rendered in each list becomes selected.
+- [ ] Rename a non-first token and verify the same logical token remains selected throughout save/revalidation, then shows its new path in the list, preview, inspector and URL.
+- [ ] Rename a token while a search is active, including a rename that no longer matches the search, and verify the renamed token remains selected.
+- [ ] Attempt an invalid or duplicate rename and verify the original token remains selected and the URL returns to its original path.
 - [ ] Open an existing project created before DS-170-08A and verify the seeded typography tokens populate the appropriate editor fields instead of showing empty inputs.
 - [ ] Create a new composite typography token, save it, reselect it and verify every authored field persists.
 - [ ] Verify Inter/Inter Tight, Fraunces and JetBrains Mono visibly affect the typography preview, and that an unavailable arbitrary family falls back cleanly without an automatic network font request.
 - [ ] Edit spacing, radius, motion, typography values and token descriptions while a search is active; confirm saving never jumps to a different token solely because the edited token no longer matches the search.
 - [ ] Verify the token delete action is right-aligned with the other inspector actions.
 - [ ] On desktop, verify token deletion opens a centered confirmation modal; on mobile, verify the same flow is presented as a bottom sheet with its action row and safe-area spacing intact.
-- [ ] Delete an unreferenced token and verify the nearest remaining token stays selected.
+- [ ] Delete an unreferenced token and verify the nearest remaining token in visible order stays selected.
 - [ ] Delete the final token in a set and verify the editor reaches a valid empty state and still allows creating a new token.
 - [ ] Delete a token referenced only by a Theme and verify deletion succeeds, the Theme mapping is removed and its preview uses the existing fallback state.
 - [ ] Delete a token referenced only by a ComponentContract and verify deletion succeeds, the binding is removed and the component preview uses its existing default/fallback rendering.
