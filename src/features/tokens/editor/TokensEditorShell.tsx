@@ -28,7 +28,7 @@ import {
   type PendingTokenRename,
 } from './tokens-editor-shell.utils';
 import type { CreateTypographyTokenFormLabels } from '../CreateTypographyTokenForm';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import type { Locale } from '@/i18n/routing';
 import { ProjectWorkspaceHeader, WorkspaceState } from '@/components/ui';
@@ -151,49 +151,6 @@ export function TokensEditorShell({
     [activeTokenSet],
   );
 
-  const pendingRenameSourceExists =
-    pendingTokenRename !== null &&
-    orderedActiveTokenRows.some(
-      (row) => row.path === pendingTokenRename.currentTokenPath,
-    );
-  const pendingRenameTargetExists =
-    pendingTokenRename !== null &&
-    orderedActiveTokenRows.some(
-      (row) => row.path === pendingTokenRename.nextTokenPath,
-    );
-
-  useEffect(() => {
-    if (
-      !pendingTokenRename ||
-      !pendingRenameTargetExists ||
-      pendingRenameSourceExists
-    ) {
-      return;
-    }
-
-    const nextTokenPath = pendingTokenRename.nextTokenPath;
-
-    setSelectedTokenPath(nextTokenPath);
-    setPendingTokenRename(null);
-
-    window.history.replaceState(
-      null,
-      '',
-      createTokenEditorUrl({
-        pathname: window.location.pathname,
-        tokenSetType: activeTokenSetType,
-        tokenPath: nextTokenPath,
-        tokenSearchQuery,
-      }),
-    );
-  }, [
-    activeTokenSetType,
-    pendingRenameSourceExists,
-    pendingRenameTargetExists,
-    pendingTokenRename,
-    tokenSearchQuery,
-  ]);
-
   function updateUrl(nextState: {
     set?: TokenSetType;
     token?: string | null;
@@ -225,6 +182,7 @@ export function TokensEditorShell({
     const nextSelectedTokenPath =
       sortTokenRowsForDisplay(nextTokenSet?.rows ?? [])[0]?.path ?? null;
 
+    setPendingTokenRename(null);
     setActiveTokenSetType(tokenSetType);
     setSelectedTokenPath(nextSelectedTokenPath);
     updateUrl({
@@ -264,14 +222,18 @@ export function TokensEditorShell({
 
   function handleTokenRenameStarted(rename: PendingTokenRename) {
     setPendingTokenRename(rename);
+    setSelectedTokenPath(rename.nextTokenPath);
+    updateUrl({
+      token: rename.nextTokenPath,
+    });
   }
 
   function handleTokenRenameFailed(currentTokenPath: string) {
-    setPendingTokenRename((pendingRename) =>
-      pendingRename?.currentTokenPath === currentTokenPath
-        ? null
-        : pendingRename,
-    );
+    setPendingTokenRename(null);
+    setSelectedTokenPath(currentTokenPath);
+    updateUrl({
+      token: currentTokenPath,
+    });
   }
 
   function handleNewTokenClick() {
