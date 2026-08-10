@@ -68,6 +68,18 @@ export type DesignToken = {
   status: DesignTokenStatus;
 };
 
+export function stringifyDesignTokenValue(value: DesignTokenValue): string {
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  if (typeof value === 'number' || typeof value === 'boolean') {
+    return String(value);
+  }
+
+  return JSON.stringify(value);
+}
+
 type TypographyTokenField = keyof TypographyTokenValue;
 
 function getLegacyTypographyField(
