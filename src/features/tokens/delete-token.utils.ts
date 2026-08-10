@@ -16,6 +16,11 @@ export type DeleteTokenResult =
       error: 'tokenNotFound';
     };
 
+export type DetachTokenReferencesResult = {
+  value: unknown;
+  removedCount: number;
+};
+
 function parseTokenArray(tokens: unknown): DesignToken[] {
   if (!Array.isArray(tokens)) {
     return [];
@@ -62,6 +67,132 @@ function collectReferenceLocations({
   }
 
   return [];
+}
+
+type RemoveJsonReferenceResult = {
+  value: unknown;
+  removedCount: number;
+  shouldRemove: boolean;
+};
+
+function removeJsonReference({
+  value,
+  reference,
+}: {
+  value: unknown;
+  reference: string;
+}): RemoveJsonReferenceResult {
+  if (value === reference) {
+    return {
+      value: null,
+      removedCount: 1,
+      shouldRemove: true,
+    };
+  }
+
+  if (Array.isArray(value)) {
+    let removedCount = 0;
+    const nextValue = value.flatMap((item) => {
+      const result = removeJsonReference({
+        value: item,
+        reference,
+      });
+
+      removedCount += result.removedCount;
+
+      return result.shouldRemove ? [] : [result.value];
+    });
+
+    return {
+      value: nextValue,
+      removedCount,
+      shouldRemove: false,
+    };
+  }
+
+  if (typeof value === 'object' && value !== null) {
+    let removedCount = 0;
+    const nextValue = Object.fromEntries(
+      Object.entries(value).flatMap(([key, nestedValue]) => {
+        const result = removeJsonReference({
+          value: nestedValue,
+          reference,
+        });
+
+        removedCount += result.removedCount;
+
+        return result.shouldRemove ? [] : [[key, result.value]];
+      }),
+    );
+
+    return {
+      value: nextValue,
+      removedCount,
+      shouldRemove: false,
+    };
+  }
+
+  return {
+    value,
+    removedCount: 0,
+    shouldRemove: false,
+  };
+}
+
+export function detachThemeTokenReferences({
+  tokens,
+  tokenPath,
+}: {
+  tokens: unknown;
+  tokenPath: string;
+}): DetachTokenReferencesResult {
+  const result = removeJsonReference({
+    value: tokens,
+    reference: pathToTokenReference(tokenPath),
+  });
+
+  return {
+    value: result.shouldRemove ? {} : result.value,
+    removedCount: result.removedCount,
+  };
+}
+
+export function detachComponentTokenBindings({
+  contract,
+  tokenPath,
+}: {
+  contract: unknown;
+  tokenPath: string;
+}): DetachTokenReferencesResult {
+  const parsedContract = componentContractSchema.safeParse(contract);
+
+  if (!parsedContract.success) {
+    return {
+      value: contract,
+      removedCount: 0,
+    };
+  }
+
+  const nextTokenBindings = parsedContract.data.tokenBindings.filter(
+    (binding) => binding.tokenPath !== tokenPath,
+  );
+  const removedCount =
+    parsedContract.data.tokenBindings.length - nextTokenBindings.length;
+
+  if (removedCount === 0) {
+    return {
+      value: contract,
+      removedCount: 0,
+    };
+  }
+
+  return {
+    value: {
+      ...parsedContract.data,
+      tokenBindings: nextTokenBindings,
+    },
+    removedCount,
+  };
 }
 
 export function findTokenDependencies({
