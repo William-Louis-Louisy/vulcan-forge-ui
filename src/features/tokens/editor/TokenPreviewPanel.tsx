@@ -26,6 +26,7 @@ type TokenPreviewPanelProps = {
 };
 
 const bundledFontFamilyVariables: Record<string, string> = {
+  inter: '--font-inter-tight',
   'inter tight': '--font-inter-tight',
   fraunces: '--font-fraunces',
   'jetbrains mono': '--font-jetbrains-mono',
