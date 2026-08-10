@@ -60,7 +60,7 @@ describe('tokens editor selection', () => {
       resolveSelectedToken({
         activeRows: beforeRename,
         filteredRows: beforeRename,
-        selectedTokenPath: sourcePath,
+        selectedTokenPath: targetPath,
         pendingRename,
       })?.path,
     ).toBe(sourcePath);
@@ -69,7 +69,7 @@ describe('tokens editor selection', () => {
       resolveSelectedToken({
         activeRows: afterRename,
         filteredRows: afterRename,
-        selectedTokenPath: sourcePath,
+        selectedTokenPath: targetPath,
         pendingRename,
       })?.path,
     ).toBe(targetPath);
