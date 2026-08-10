@@ -227,7 +227,7 @@ export const mvpTokenSetSeeds = [
         path: 'typography.body.base',
         type: 'typography',
         value: {
-          fontFamily: 'Inter, system-ui, sans-serif',
+          fontFamily: 'Inter Tight, system-ui, sans-serif',
           fontSize: '1rem',
           fontWeight: 400,
           lineHeight: '1.5',

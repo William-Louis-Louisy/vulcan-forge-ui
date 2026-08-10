@@ -37,7 +37,8 @@ const copy = {
       tokenSetNotFound: 'The token set could not be found.',
       tokenSetMalformed: 'The token set cannot be edited safely.',
       tokenNotFound: 'The token no longer exists.',
-      tokenInUse: 'Unlink the token references below before deleting this token.',
+      tokenInUse:
+        'Unlink the token references below before deleting this token.',
       tokenValidationFailed: 'The token set could not be saved safely.',
       unexpected: 'The token could not be deleted. Try again.',
     },
@@ -54,7 +55,8 @@ const copy = {
     cancel: 'Annuler',
     delete: 'Supprimer définitivement',
     deleting: 'Suppression…',
-    dependencyTitle: 'La suppression est bloquée par ces références de tokens :',
+    dependencyTitle:
+      'La suppression est bloquée par ces références de tokens :',
     dependencyKinds: {
       token: 'Token',
       theme: 'Thème',

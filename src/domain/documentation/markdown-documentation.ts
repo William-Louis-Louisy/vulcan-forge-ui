@@ -4,6 +4,7 @@ import {
 } from '@/domain/i18n';
 import {
   getComponentAnatomyPartKey,
+  stringifyDesignTokenValue,
   type BrandProfile,
   type ComponentContract,
   type DesignToken,
@@ -184,18 +185,6 @@ function createMarkdownTable(headers: string[], rows: string[][]): string {
       (row) => `| ${row.map((cell) => escapeMarkdown(cell)).join(' | ')} |`,
     ),
   ].join('\n');
-}
-
-function stringifyTokenValue(value: DesignToken['value']): string {
-  if (typeof value === 'string') {
-    return value;
-  }
-
-  if (typeof value === 'number' || typeof value === 'boolean') {
-    return String(value);
-  }
-
-  return JSON.stringify(value);
 }
 
 function countThemeTokens(tokens: Record<string, unknown>): number {
@@ -401,7 +390,7 @@ function renderTokensSection({
       tokens.map((token) => [
         token.path,
         token.type,
-        stringifyTokenValue(token.value),
+        stringifyDesignTokenValue(token.value),
         token.description
           ? resolveDocumentationString({
               path: `tokens.${token.path}.description`,
