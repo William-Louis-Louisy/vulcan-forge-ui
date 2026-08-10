@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import type { DesignToken } from '@/domain/design-system';
-import { findTokenDependencies, removeTokenByPath } from './delete-token.utils';
+import {
+  detachComponentTokenBindings,
+  detachThemeTokenReferences,
+  findTokenDependencies,
+  removeTokenByPath,
+} from './delete-token.utils';
 
 const tokens: DesignToken[] = [
   {
@@ -87,5 +92,62 @@ describe('delete-token utils', () => {
         label: 'Button · background',
       },
     ]);
+  });
+
+  it('detaches a deleted token from theme mappings while preserving siblings', () => {
+    const result = detachThemeTokenReferences({
+      tokenPath: 'color.primitive.blue.500',
+      tokens: {
+        color: {
+          background: '{color.primitive.neutral.0}',
+          accent: '{color.primitive.blue.500}',
+        },
+      },
+    });
+
+    expect(result).toEqual({
+      removedCount: 1,
+      value: {
+        color: {
+          background: '{color.primitive.neutral.0}',
+        },
+      },
+    });
+  });
+
+  it('detaches matching component bindings while preserving the contract', () => {
+    const result = detachComponentTokenBindings({
+      tokenPath: 'color.primitive.blue.500',
+      contract: {
+        type: 'button',
+        name: 'Button',
+        purpose: { en: 'Triggers an action.' },
+        tokenBindings: [
+          {
+            key: 'background',
+            tokenType: 'color',
+            tokenPath: 'color.primitive.blue.500',
+          },
+          {
+            key: 'radius',
+            tokenType: 'radius',
+            tokenPath: 'radius.md',
+          },
+        ],
+      },
+    });
+
+    expect(result.removedCount).toBe(1);
+    expect(result.value).toMatchObject({
+      type: 'button',
+      name: 'Button',
+      tokenBindings: [
+        {
+          key: 'radius',
+          tokenType: 'radius',
+          tokenPath: 'radius.md',
+        },
+      ],
+    });
   });
 });
