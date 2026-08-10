@@ -104,7 +104,11 @@ export function resolveSelectedToken({
     return directlySelectedToken;
   }
 
-  if (pendingRename && pendingRename.currentTokenPath === selectedTokenPath) {
+  if (
+    pendingRename &&
+    (pendingRename.currentTokenPath === selectedTokenPath ||
+      pendingRename.nextTokenPath === selectedTokenPath)
+  ) {
     const renamedToken = activeRows.find(
       (row) => row.path === pendingRename.nextTokenPath,
     );
