@@ -37,6 +37,11 @@ type TokenRenameFormProps = {
   currentTokenPath: string;
   labels: TokenRenameFormLabels;
   onRenamed?: (nextTokenPath: string) => void;
+  onRenameStarted?: (rename: {
+    currentTokenPath: string;
+    nextTokenPath: string;
+  }) => void;
+  onRenameFailed?: (currentTokenPath: string) => void;
 };
 
 export function TokenRenameForm({
@@ -46,6 +51,8 @@ export function TokenRenameForm({
   currentTokenPath,
   labels,
   onRenamed,
+  onRenameStarted,
+  onRenameFailed,
 }: TokenRenameFormProps) {
   const [draftTokenPath, setDraftTokenPath] = useState(currentTokenPath);
   const [state, formAction, isPending] = useActionState(renameTokenAction, {
@@ -76,13 +83,27 @@ export function TokenRenameForm({
     if (state.status === 'success') {
       onRenamed?.(state.values.nextTokenPath);
     }
-  }, [onRenamed, state.status, state.values.nextTokenPath]);
+
+    if (state.status === 'error') {
+      onRenameFailed?.(currentTokenPath);
+    }
+  }, [
+    currentTokenPath,
+    onRenameFailed,
+    onRenamed,
+    state.status,
+    state.values.nextTokenPath,
+  ]);
 
   const nextTokenPathErrors = hasCurrentActionError
     ? (state.fieldErrors.nextTokenPath ?? [])
     : [];
 
   function handleSubmitCapture() {
+    onRenameStarted?.({
+      currentTokenPath,
+      nextTokenPath: draftTokenPath.trim(),
+    });
     markCurrentDraftSubmitted();
     preserveSaveContext();
   }

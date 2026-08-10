@@ -1,4 +1,67 @@
-import type { TokenRowData, TokenSetType } from '../tokens-editor.utils';
+import {
+  isEditablePrimitiveColorTokenRow,
+  isEditableSemanticColorTokenRow,
+  type TokenRowData,
+  type TokenSetType,
+} from '../tokens-editor.utils';
+
+export type PendingTokenRename = {
+  currentTokenPath: string;
+  nextTokenPath: string;
+};
+
+function compareNaturally(firstValue: string, secondValue: string) {
+  return firstValue.localeCompare(secondValue, undefined, {
+    numeric: true,
+    sensitivity: 'base',
+  });
+}
+
+function getColorTokenNamespace(path: string) {
+  return path.split('.')[2] ?? 'base';
+}
+
+function formatTokenNamespaceLabel(namespace: string) {
+  return namespace
+    .split(/[-_]/)
+    .filter(Boolean)
+    .map((segment) => segment[0]?.toUpperCase() + segment.slice(1))
+    .join(' ');
+}
+
+function getTokenDisplayGroupSortKey(row: TokenRowData) {
+  if (isEditablePrimitiveColorTokenRow(row)) {
+    return {
+      order: 0,
+      label: formatTokenNamespaceLabel(getColorTokenNamespace(row.path)),
+    };
+  }
+
+  if (isEditableSemanticColorTokenRow(row)) {
+    return {
+      order: 1,
+      label: formatTokenNamespaceLabel(getColorTokenNamespace(row.path)),
+    };
+  }
+
+  return {
+    order: 2,
+    label: '',
+  };
+}
+
+export function sortTokenRowsForDisplay(rows: TokenRowData[]) {
+  return [...rows].sort((firstRow, secondRow) => {
+    const firstGroup = getTokenDisplayGroupSortKey(firstRow);
+    const secondGroup = getTokenDisplayGroupSortKey(secondRow);
+
+    return (
+      firstGroup.order - secondGroup.order ||
+      compareNaturally(firstGroup.label, secondGroup.label) ||
+      compareNaturally(firstRow.path, secondRow.path)
+    );
+  });
+}
 
 export function filterTokenRows({
   rows,
@@ -26,17 +89,40 @@ export function resolveSelectedToken({
   activeRows,
   filteredRows,
   selectedTokenPath,
+  pendingRename = null,
 }: {
   activeRows: TokenRowData[];
   filteredRows: TokenRowData[];
   selectedTokenPath: string | null;
+  pendingRename?: PendingTokenRename | null;
 }) {
-  return (
-    activeRows.find((row) => row.path === selectedTokenPath) ??
-    filteredRows[0] ??
-    activeRows[0] ??
-    null
+  const directlySelectedToken = activeRows.find(
+    (row) => row.path === selectedTokenPath,
   );
+
+  if (directlySelectedToken) {
+    return directlySelectedToken;
+  }
+
+  if (pendingRename && pendingRename.currentTokenPath === selectedTokenPath) {
+    const renamedToken = activeRows.find(
+      (row) => row.path === pendingRename.nextTokenPath,
+    );
+
+    if (renamedToken) {
+      return renamedToken;
+    }
+
+    const sourceToken = activeRows.find(
+      (row) => row.path === pendingRename.currentTokenPath,
+    );
+
+    if (sourceToken) {
+      return sourceToken;
+    }
+  }
+
+  return filteredRows[0] ?? activeRows[0] ?? null;
 }
 
 export function getNextSelectedTokenPathAfterDeletion({

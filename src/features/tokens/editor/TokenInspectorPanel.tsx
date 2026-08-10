@@ -44,6 +44,11 @@ type TokenInspectorPanelProps = {
   primitiveColorAliasOptions: PrimitiveColorTokenAliasOption[];
   labels: TokenInspectorPanelLabels;
   onTokenRenamed?: (nextTokenPath: string) => void;
+  onTokenRenameStarted: (rename: {
+    currentTokenPath: string;
+    nextTokenPath: string;
+  }) => void;
+  onTokenRenameFailed: (currentTokenPath: string) => void;
   onTokenValueUpdated: (tokenPath: string) => void;
   onTokenDeleted: (tokenPath: string) => void;
 };
@@ -56,6 +61,8 @@ export function TokenInspectorPanel({
   primitiveColorAliasOptions,
   labels,
   onTokenRenamed,
+  onTokenRenameStarted,
+  onTokenRenameFailed,
   onTokenValueUpdated,
   onTokenDeleted,
 }: TokenInspectorPanelProps) {
@@ -137,6 +144,8 @@ export function TokenInspectorPanel({
           currentTokenPath={token.path}
           labels={labels.rename}
           {...(onTokenRenamed ? { onRenamed: onTokenRenamed } : {})}
+          onRenameStarted={onTokenRenameStarted}
+          onRenameFailed={onTokenRenameFailed}
         />
 
         <div className="mt-4">

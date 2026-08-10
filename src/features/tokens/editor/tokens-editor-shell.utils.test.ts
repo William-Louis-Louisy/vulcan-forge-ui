@@ -3,16 +3,21 @@ import type { TokenRowData } from '../tokens-editor.utils';
 import {
   getNextSelectedTokenPathAfterDeletion,
   resolveSelectedToken,
+  sortTokenRowsForDisplay,
 } from './tokens-editor-shell.utils';
 
-function createRow(path: string, value: string): TokenRowData {
+function createRow(
+  path: string,
+  value: string,
+  type = 'spacing',
+): TokenRowData {
   return {
     id: path,
     path,
-    type: 'spacing',
+    type,
     value,
     rawValue: value,
-    isColorValue: false,
+    isColorValue: type === 'color' && value.startsWith('#'),
     validationStatus: 'valid',
     errorMessages: [],
   };
@@ -33,6 +38,61 @@ describe('tokens editor selection', () => {
         selectedTokenPath: 'spacing.4',
       })?.path,
     ).toBe('spacing.4');
+  });
+
+  it('keeps the renamed token selected while refreshed rows replace the old path', () => {
+    const sourcePath = 'spacing.old';
+    const targetPath = 'spacing.renamed';
+    const pendingRename = {
+      currentTokenPath: sourcePath,
+      nextTokenPath: targetPath,
+    };
+    const beforeRename = [
+      createRow(sourcePath, '1rem'),
+      createRow('spacing.other', '2rem'),
+    ];
+    const afterRename = [
+      createRow(targetPath, '1rem'),
+      createRow('spacing.other', '2rem'),
+    ];
+
+    expect(
+      resolveSelectedToken({
+        activeRows: beforeRename,
+        filteredRows: beforeRename,
+        selectedTokenPath: sourcePath,
+        pendingRename,
+      })?.path,
+    ).toBe(sourcePath);
+
+    expect(
+      resolveSelectedToken({
+        activeRows: afterRename,
+        filteredRows: afterRename,
+        selectedTokenPath: sourcePath,
+        pendingRename,
+      })?.path,
+    ).toBe(targetPath);
+  });
+
+  it('orders the default selection exactly like the visible color-token list', () => {
+    const unorderedRows = [
+      createRow(
+        'color.semantic.background.primary',
+        '{color.primitive.brand.500}',
+        'color',
+      ),
+      createRow('color.primitive.neutral.100', '#f5f5f5', 'color'),
+      createRow('color.primitive.brand.500', '#6366f1', 'color'),
+    ];
+
+    expect(
+      sortTokenRowsForDisplay(unorderedRows).map((row) => row.path),
+    ).toEqual([
+      'color.primitive.brand.500',
+      'color.primitive.neutral.100',
+      'color.semantic.background.primary',
+    ]);
   });
 
   it('selects a stable neighboring token after deletion', () => {
