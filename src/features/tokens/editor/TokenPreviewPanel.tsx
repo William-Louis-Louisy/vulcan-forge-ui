@@ -25,6 +25,12 @@ type TokenPreviewPanelProps = {
   labels: TokenPreviewPanelLabels;
 };
 
+const bundledFontFamilyVariables: Record<string, string> = {
+  'inter tight': '--font-inter-tight',
+  fraunces: '--font-fraunces',
+  'jetbrains mono': '--font-jetbrains-mono',
+};
+
 export function TokenPreviewPanel({
   token,
   tokenSetType,
@@ -257,13 +263,13 @@ function getSafeCssLength(value: string) {
     : undefined;
 }
 
-function getTypographyPreviewStyle(rawValue: unknown): CSSProperties {
+export function getTypographyPreviewStyle(rawValue: unknown): CSSProperties {
   if (!isRecord(rawValue)) {
     return {};
   }
 
   return {
-    fontFamily: getStringStyleValue(rawValue.fontFamily),
+    fontFamily: getTypographyPreviewFontFamily(rawValue.fontFamily),
     fontSize: getStyleValue(rawValue.fontSize),
     fontWeight: getStyleValue(rawValue.fontWeight),
     lineHeight: getStyleValue(rawValue.lineHeight),
@@ -271,14 +277,37 @@ function getTypographyPreviewStyle(rawValue: unknown): CSSProperties {
   };
 }
 
+function getTypographyPreviewFontFamily(value: unknown) {
+  if (typeof value !== 'string') {
+    return undefined;
+  }
+
+  const families = value
+    .split(',')
+    .map((family) => family.trim())
+    .filter(Boolean);
+  const [primaryFamily, ...fallbackFamilies] = families;
+
+  if (!primaryFamily) {
+    return undefined;
+  }
+
+  const normalizedPrimaryFamily = primaryFamily
+    .replace(/^['"]|['"]$/g, '')
+    .toLowerCase();
+  const bundledVariable = bundledFontFamilyVariables[normalizedPrimaryFamily];
+
+  if (!bundledVariable) {
+    return value;
+  }
+
+  return [`var(${bundledVariable})`, ...fallbackFamilies].join(', ');
+}
+
 function getStyleValue(value: unknown) {
   return typeof value === 'string' || typeof value === 'number'
     ? value
     : undefined;
-}
-
-function getStringStyleValue(value: unknown) {
-  return typeof value === 'string' ? value : undefined;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
