@@ -1,0 +1,100 @@
+name: DS-170-08A finalize fixes
+
+on:
+  push:
+    branches:
+      - feature/ds-170-08a-token-editor-reliability
+    paths:
+      - .github/workflows/ds-170-08a-finalize.yml
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/ds-170-08a-token-editor-reliability
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Apply targeted corrections
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          seed_path = Path('src/domain/design-system/mvp-seed-templates.ts')
+          seed = seed_path.read_text()
+          old_seed = "fontFamily: 'Inter, system-ui, sans-serif',"
+          new_seed = "fontFamily: 'Inter Tight, system-ui, sans-serif',"
+          if seed.count(old_seed) != 1:
+              raise SystemExit('Expected exactly one legacy Inter seed')
+          seed_path.write_text(seed.replace(old_seed, new_seed))
+
+          docs_path = Path('src/domain/documentation/markdown-documentation.ts')
+          docs = docs_path.read_text()
+          old_import = """import {\n  getComponentAnatomyPartKey,\n  type BrandProfile,\n  type ComponentContract,\n  type DesignToken,\n} from '@/domain/design-system';"""
+          new_import = """import {\n  getComponentAnatomyPartKey,\n  stringifyDesignTokenValue,\n  type BrandProfile,\n  type ComponentContract,\n  type DesignToken,\n} from '@/domain/design-system';"""
+          if old_import not in docs:
+              raise SystemExit('Markdown documentation import shape changed')
+          docs = docs.replace(old_import, new_import, 1)
+
+          old_serializer = """function stringifyTokenValue(value: DesignToken['value']): string {\n  if (typeof value === 'string') {\n    return value;\n  }\n\n  if (typeof value === 'number' || typeof value === 'boolean') {\n    return String(value);\n  }\n\n  return JSON.stringify(value);\n}\n\n"""
+          if old_serializer not in docs:
+              raise SystemExit('Markdown documentation serializer shape changed')
+          docs = docs.replace(old_serializer, '', 1)
+          if 'stringifyTokenValue(token.value)' not in docs:
+              raise SystemExit('Markdown documentation serializer call not found')
+          docs = docs.replace(
+              'stringifyTokenValue(token.value)',
+              'stringifyDesignTokenValue(token.value)',
+          )
+          docs_path.write_text(docs)
+          PY
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Format corrected slice
+        run: >-
+          npx prettier --write
+          src/features/tokens/DeleteTokenControl.tsx
+          src/features/tokens/delete-token.action.ts
+          src/features/tokens/delete-token.utils.ts
+          src/features/tokens/delete-token.utils.test.ts
+          src/features/tokens/editor/TokenPreviewPanel.tsx
+          src/features/tokens/editor/TokenPreviewPanel.test.ts
+          src/domain/design-system/design-token.schema.ts
+          src/domain/design-system/mvp-seed-templates.ts
+          src/domain/ai-instructions/ai-instructions.ts
+          src/domain/ai-instructions/ai-instructions.test.ts
+          src/domain/documentation/markdown-documentation.ts
+
+      - name: Commit finalized corrections
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            src/features/tokens/DeleteTokenControl.tsx \
+            src/features/tokens/delete-token.action.ts \
+            src/features/tokens/delete-token.utils.ts \
+            src/features/tokens/delete-token.utils.test.ts \
+            src/features/tokens/editor/TokenPreviewPanel.tsx \
+            src/features/tokens/editor/TokenPreviewPanel.test.ts \
+            src/domain/design-system/design-token.schema.ts \
+            src/domain/design-system/mvp-seed-templates.ts \
+            src/domain/ai-instructions/ai-instructions.ts \
+            src/domain/ai-instructions/ai-instructions.test.ts \
+            src/domain/documentation/markdown-documentation.ts
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "fix(tokens): finalize QA corrections"
+          git push origin HEAD:feature/ds-170-08a-token-editor-reliability
