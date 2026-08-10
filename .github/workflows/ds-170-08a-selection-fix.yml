@@ -181,6 +181,9 @@ jobs:
       - name: Run focused selection tests
         run: npm run test -- src/features/tokens/editor/tokens-editor-shell.utils.test.ts
 
+      - name: Generate Prisma Client
+        run: npm run db:generate
+
       - name: Run typecheck
         run: npm run typecheck
 
