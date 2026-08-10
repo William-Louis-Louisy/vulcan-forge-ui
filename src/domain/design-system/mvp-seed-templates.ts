@@ -224,32 +224,18 @@ export const mvpTokenSetSeeds = [
     name: 'Typography',
     tokens: [
       {
-        path: 'typography.fontFamily.sans',
+        path: 'typography.body.base',
         type: 'typography',
-        value: 'Inter, system-ui, sans-serif',
-        description: {
-          en: 'Default sans-serif font stack.',
-          fr: 'Pile de police sans-serif par défaut.',
+        value: {
+          fontFamily: 'Inter Tight, system-ui, sans-serif',
+          fontSize: '1rem',
+          fontWeight: 400,
+          lineHeight: '1.5',
+          letterSpacing: '0em',
         },
-        status: 'ready',
-      },
-      {
-        path: 'typography.fontSize.base',
-        type: 'typography',
-        value: '1rem',
         description: {
-          en: 'Default body font size.',
-          fr: 'Taille de texte par défaut.',
-        },
-        status: 'ready',
-      },
-      {
-        path: 'typography.fontWeight.semibold',
-        type: 'typography',
-        value: 600,
-        description: {
-          en: 'Semibold font weight.',
-          fr: 'Graisse de texte semi-bold.',
+          en: 'Default body text style.',
+          fr: 'Style de texte courant par défaut.',
         },
         status: 'ready',
       },

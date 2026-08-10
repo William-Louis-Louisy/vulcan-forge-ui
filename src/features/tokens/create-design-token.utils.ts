@@ -2,7 +2,11 @@ import {
   validateTokenValueForType,
   type TokenValueValidationError,
 } from './token-value-validation.utils';
-import type { DesignToken, DesignTokenType } from '@/domain/design-system';
+import {
+  normalizeTypographyTokenValue,
+  type DesignToken,
+  type DesignTokenType,
+} from '@/domain/design-system';
 
 export type CreateDesignTokenError =
   | 'tokenPathAlreadyExists'
@@ -80,7 +84,22 @@ export function createDesignToken({
     };
   }
 
-  const description: DesignToken['description'] = {};
+  let storedValue: DesignToken['value'] = nextValue;
+
+  if (type === 'typography') {
+    const typographyValue = normalizeTypographyTokenValue({ value: nextValue });
+
+    if (!typographyValue) {
+      return {
+        status: 'error',
+        error: 'tokenTypographyValueInvalid',
+      };
+    }
+
+    storedValue = typographyValue;
+  }
+
+  const description: NonNullable<DesignToken['description']> = {};
 
   if (descriptionEn?.trim()) {
     description.en = descriptionEn.trim();
@@ -93,7 +112,7 @@ export function createDesignToken({
   const token: DesignToken = {
     path: nextPath,
     type,
-    value: nextValue,
+    value: storedValue,
     status: 'draft',
     ...(Object.keys(description).length > 0 ? { description } : {}),
   };

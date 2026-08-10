@@ -70,9 +70,7 @@ export function renameTokenAndMigrateReferences({
     return {
       ...renamedToken,
       value: shouldMigrateValue ? nextReference : renamedToken.value,
-      reference: shouldMigrateReference
-        ? nextReference
-        : renamedToken.reference,
+      ...(shouldMigrateReference ? { reference: nextReference } : {}),
     };
   });
 

@@ -31,7 +31,7 @@ export function AuthShell({
             <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
               {eyebrow}
             </p>
-            <h1 className="mt-4 font-[family-name:var(--font-fraunces)] text-4xl leading-[1.06] font-semibold tracking-[-0.04em] sm:text-5xl">
+            <h1 className="font-display mt-4 text-4xl leading-[1.06] font-semibold tracking-[-0.04em] sm:text-5xl">
               {title}
             </h1>
             <p className="text-content-secondary mt-5 leading-7">
@@ -57,7 +57,7 @@ export function AuthShell({
                 <p className="text-action-accent text-xs font-semibold tracking-[0.18em] uppercase">
                   {t('signup.eyebrow')}
                 </p>
-                <h2 className="mt-4 max-w-lg font-[family-name:var(--font-fraunces)] text-4xl leading-tight font-semibold tracking-[-0.035em]">
+                <h2 className="font-display mt-4 max-w-lg text-4xl leading-tight font-semibold tracking-[-0.035em]">
                   {benefitsTitle}
                 </h2>
                 <ul className="border-border-on-inverse divide-border-on-inverse mt-10 divide-y border-y">

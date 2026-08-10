@@ -1,3 +1,8 @@
+import {
+  normalizeTypographyTokenValue,
+  type TypographyTokenValue,
+} from '@/domain/design-system';
+
 export type TypographyTokenFormValues = {
   fontFamily: string;
   fontSize: string;
@@ -13,10 +18,6 @@ const emptyTypographyTokenFormValues: TypographyTokenFormValues = {
   lineHeight: '',
   letterSpacing: '',
 };
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
 
 function stringifyTypographyFieldValue(value: unknown): string {
   if (typeof value === 'string' || typeof value === 'number') {
@@ -41,35 +42,31 @@ export function createEmptyTypographyTokenFormValues(): TypographyTokenFormValue
 }
 
 export function parseTypographyTokenValue(
-  value: string,
+  value: unknown,
+  tokenPath?: string,
 ): TypographyTokenFormValues {
-  if (!value.trim()) {
+  const normalizedValue = normalizeTypographyTokenValue({
+    value,
+    ...(tokenPath ? { tokenPath } : {}),
+  });
+
+  if (!normalizedValue) {
     return createEmptyTypographyTokenFormValues();
   }
 
-  try {
-    const parsedValue: unknown = JSON.parse(value);
-
-    if (!isRecord(parsedValue)) {
-      return createEmptyTypographyTokenFormValues();
-    }
-
-    return {
-      fontFamily: stringifyTypographyFieldValue(parsedValue.fontFamily),
-      fontSize: stringifyTypographyFieldValue(parsedValue.fontSize),
-      fontWeight: stringifyTypographyFieldValue(parsedValue.fontWeight),
-      lineHeight: stringifyTypographyFieldValue(parsedValue.lineHeight),
-      letterSpacing: stringifyTypographyFieldValue(parsedValue.letterSpacing),
-    };
-  } catch {
-    return createEmptyTypographyTokenFormValues();
-  }
+  return {
+    fontFamily: stringifyTypographyFieldValue(normalizedValue.fontFamily),
+    fontSize: stringifyTypographyFieldValue(normalizedValue.fontSize),
+    fontWeight: stringifyTypographyFieldValue(normalizedValue.fontWeight),
+    lineHeight: stringifyTypographyFieldValue(normalizedValue.lineHeight),
+    letterSpacing: stringifyTypographyFieldValue(normalizedValue.letterSpacing),
+  };
 }
 
 export function serializeTypographyTokenFormValues(
   values: TypographyTokenFormValues,
 ): string {
-  const nextValue: Record<string, string | number> = {};
+  const nextValue: TypographyTokenValue = {};
 
   const fontFamily = values.fontFamily.trim();
   const fontSize = values.fontSize.trim();

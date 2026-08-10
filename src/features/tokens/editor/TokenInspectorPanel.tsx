@@ -18,6 +18,7 @@ import {
 import type { Locale } from '@/i18n/routing';
 import { TokenValueEditor } from './TokenValueEditor';
 import { TokenDescriptionEditor } from '../TokenDescriptionEditor';
+import { DeleteTokenControl } from '../DeleteTokenControl';
 
 export type TokenInspectorPanelLabels = {
   eyebrow: string;
@@ -43,7 +44,13 @@ type TokenInspectorPanelProps = {
   primitiveColorAliasOptions: PrimitiveColorTokenAliasOption[];
   labels: TokenInspectorPanelLabels;
   onTokenRenamed?: (nextTokenPath: string) => void;
+  onTokenRenameStarted: (rename: {
+    currentTokenPath: string;
+    nextTokenPath: string;
+  }) => void;
+  onTokenRenameFailed: (currentTokenPath: string) => void;
   onTokenValueUpdated: (tokenPath: string) => void;
+  onTokenDeleted: (tokenPath: string) => void;
 };
 
 export function TokenInspectorPanel({
@@ -54,7 +61,10 @@ export function TokenInspectorPanel({
   primitiveColorAliasOptions,
   labels,
   onTokenRenamed,
+  onTokenRenameStarted,
+  onTokenRenameFailed,
   onTokenValueUpdated,
+  onTokenDeleted,
 }: TokenInspectorPanelProps) {
   if (!token) {
     return (
@@ -119,7 +129,7 @@ export function TokenInspectorPanel({
               locale={locale}
               projectSlug={projectSlug}
               tokenPath={token.path}
-              initialValue={token.value}
+              initialValue={token.rawValue}
               labels={labels.typographyValue}
               onUpdated={onTokenValueUpdated}
             />
@@ -134,6 +144,8 @@ export function TokenInspectorPanel({
           currentTokenPath={token.path}
           labels={labels.rename}
           {...(onTokenRenamed ? { onRenamed: onTokenRenamed } : {})}
+          onRenameStarted={onTokenRenameStarted}
+          onRenameFailed={onTokenRenameFailed}
         />
 
         <div className="mt-4">
@@ -151,6 +163,15 @@ export function TokenInspectorPanel({
             initialDescriptionFr={token.description?.fr ?? ''}
           />
         </div>
+
+        <DeleteTokenControl
+          key={`delete:${tokenSetType}:${token.path}`}
+          locale={locale}
+          projectSlug={projectSlug}
+          tokenPath={token.path}
+          tokenSetType={tokenSetType}
+          onDeleted={onTokenDeleted}
+        />
       </div>
     </aside>
   );

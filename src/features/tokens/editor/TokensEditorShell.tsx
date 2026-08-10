@@ -22,6 +22,10 @@ import type { CreateDesignTokenFormLabels } from '../CreateDesignTokenForm';
 import {
   filterTokenRows,
   createTokenEditorUrl,
+  getNextSelectedTokenPathAfterDeletion,
+  resolveSelectedToken,
+  sortTokenRowsForDisplay,
+  type PendingTokenRename,
 } from './tokens-editor-shell.utils';
 import type { CreateTypographyTokenFormLabels } from '../CreateTypographyTokenForm';
 import { useMemo, useState } from 'react';
@@ -92,6 +96,8 @@ export function TokensEditorShell({
   );
   const [createTokenFormType, setCreateTokenFormType] =
     useState<TokenSetType | null>(null);
+  const [pendingTokenRename, setPendingTokenRename] =
+    useState<PendingTokenRename | null>(null);
 
   const tokenSetCounts = useMemo(
     () =>
@@ -119,22 +125,26 @@ export function TokensEditorShell({
     tokenSets[0] ??
     null;
 
-  const filteredTokenRows = useMemo(() => {
-    if (!activeTokenSet) {
-      return [];
-    }
+  const orderedActiveTokenRows = useMemo(
+    () => sortTokenRowsForDisplay(activeTokenSet?.rows ?? []),
+    [activeTokenSet],
+  );
 
-    return filterTokenRows({
-      rows: activeTokenSet.rows,
-      query: tokenSearchQuery,
-    });
-  }, [activeTokenSet, tokenSearchQuery]);
+  const filteredTokenRows = useMemo(
+    () =>
+      filterTokenRows({
+        rows: orderedActiveTokenRows,
+        query: tokenSearchQuery,
+      }),
+    [orderedActiveTokenRows, tokenSearchQuery],
+  );
 
-  const selectedToken =
-    filteredTokenRows.find((row) => row.path === selectedTokenPath) ??
-    filteredTokenRows[0] ??
-    activeTokenSet?.rows[0] ??
-    null;
+  const selectedToken = resolveSelectedToken({
+    activeRows: orderedActiveTokenRows,
+    filteredRows: filteredTokenRows,
+    selectedTokenPath,
+    pendingRename: pendingTokenRename,
+  });
 
   const primitiveColorAliasOptions = useMemo(
     () => getPrimitiveColorTokenAliasOptions(activeTokenSet?.rows ?? []),
@@ -169,8 +179,10 @@ export function TokensEditorShell({
       (tokenSet) => tokenSet.type === tokenSetType,
     );
 
-    const nextSelectedTokenPath = nextTokenSet?.rows[0]?.path ?? null;
+    const nextSelectedTokenPath =
+      sortTokenRowsForDisplay(nextTokenSet?.rows ?? [])[0]?.path ?? null;
 
+    setPendingTokenRename(null);
     setActiveTokenSetType(tokenSetType);
     setSelectedTokenPath(nextSelectedTokenPath);
     updateUrl({
@@ -180,6 +192,7 @@ export function TokensEditorShell({
   }
 
   function handleTokenSelect(tokenPath: string) {
+    setPendingTokenRename(null);
     setSelectedTokenPath(tokenPath);
     updateUrl({
       token: tokenPath,
@@ -195,10 +208,31 @@ export function TokensEditorShell({
   }
 
   function handleTokenRenamed(nextTokenPath: string) {
+    if (!orderedActiveTokenRows.some((row) => row.path === nextTokenPath)) {
+      return;
+    }
+
     setSelectedTokenPath(nextTokenPath);
+    setPendingTokenRename(null);
 
     updateUrl({
       token: nextTokenPath,
+    });
+  }
+
+  function handleTokenRenameStarted(rename: PendingTokenRename) {
+    setPendingTokenRename(rename);
+    setSelectedTokenPath(rename.nextTokenPath);
+    updateUrl({
+      token: rename.nextTokenPath,
+    });
+  }
+
+  function handleTokenRenameFailed(currentTokenPath: string) {
+    setPendingTokenRename(null);
+    setSelectedTokenPath(currentTokenPath);
+    updateUrl({
+      token: currentTokenPath,
     });
   }
 
@@ -226,6 +260,7 @@ export function TokensEditorShell({
     tokenPath: string;
   }) {
     setCreateTokenFormType(null);
+    setPendingTokenRename(null);
     setActiveTokenSetType(tokenSetType);
     setTokenSearchQuery('');
     setSelectedTokenPath(tokenPath);
@@ -238,11 +273,28 @@ export function TokensEditorShell({
   }
 
   function handleTokenValueUpdated(tokenPath: string) {
+    setPendingTokenRename(null);
     setSelectedTokenPath(tokenPath);
 
     updateUrl({
       set: activeTokenSetType,
       token: tokenPath,
+      q: tokenSearchQuery,
+    });
+  }
+
+  function handleTokenDeleted(tokenPath: string) {
+    const nextTokenPath = getNextSelectedTokenPathAfterDeletion({
+      rows: orderedActiveTokenRows,
+      deletedTokenPath: tokenPath,
+      query: tokenSearchQuery,
+    });
+
+    setPendingTokenRename(null);
+    setSelectedTokenPath(nextTokenPath);
+    updateUrl({
+      set: activeTokenSetType,
+      token: nextTokenPath,
       q: tokenSearchQuery,
     });
   }
@@ -325,7 +377,10 @@ export function TokensEditorShell({
           primitiveColorAliasOptions={primitiveColorAliasOptions}
           labels={labels.inspector}
           onTokenRenamed={handleTokenRenamed}
+          onTokenRenameStarted={handleTokenRenameStarted}
+          onTokenRenameFailed={handleTokenRenameFailed}
           onTokenValueUpdated={handleTokenValueUpdated}
+          onTokenDeleted={handleTokenDeleted}
         />
       </aside>
 

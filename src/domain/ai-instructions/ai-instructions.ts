@@ -4,6 +4,7 @@ import {
 } from '@/domain/i18n';
 import {
   getComponentAnatomyPartKey,
+  stringifyDesignTokenValue,
   type BrandProfile,
   type ComponentContract,
   type DesignToken,
@@ -206,10 +207,6 @@ function createAiInstructionsFileName({
   return `${toKebabCase(projectName) || 'design-system'}-ai-instructions-${locale}.md`;
 }
 
-function stringifyTokenValue(value: DesignToken['value']): string {
-  return String(value);
-}
-
 function normalizeLocalizedString(localizedString: {
   en?: string | undefined;
   fr?: string | undefined;
@@ -397,7 +394,7 @@ function renderTokenRules({
     .map((token) => {
       const reference = token.reference ? ` → ${token.reference}` : '';
 
-      return `- \`${token.path}\` (${token.type}, ${t.tokenStatus[token.status]}) = \`${stringifyTokenValue(token.value)}\`${reference}`;
+      return `- \`${token.path}\` (${token.type}, ${t.tokenStatus[token.status]}) = \`${stringifyDesignTokenValue(token.value)}\`${reference}`;
     });
 
   return [

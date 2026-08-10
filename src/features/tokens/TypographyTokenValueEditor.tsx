@@ -40,7 +40,7 @@ type TypographyTokenValueEditorProps = {
   locale: Locale;
   projectSlug: string;
   tokenPath: string;
-  initialValue: string;
+  initialValue: unknown;
   labels: TypographyTokenValueEditorLabels;
   onUpdated: (tokenPath: string) => void;
 };
@@ -57,20 +57,27 @@ export function TypographyTokenValueEditor({
   labels,
   onUpdated,
 }: TypographyTokenValueEditorProps) {
+  const initialTypographyValues = parseTypographyTokenValue(
+    initialValue,
+    tokenPath,
+  );
+  const initialSerializedValue = hasTypographyFieldValue(
+    initialTypographyValues,
+  )
+    ? serializeTypographyTokenFormValues(initialTypographyValues)
+    : '';
   const [state, formAction, isPending] = useActionState(
     updateDesignTokenValueAction,
     {
       ...initialUpdateDesignTokenValueActionState,
       values: {
-        value: initialValue,
+        value: initialSerializedValue,
       },
     },
   );
 
   const [typographyValues, setTypographyValues] =
-    useState<TypographyTokenFormValues>(() =>
-      parseTypographyTokenValue(initialValue),
-    );
+    useState<TypographyTokenFormValues>(() => initialTypographyValues);
   const sourceId = `typography-token-value:${projectSlug}:${tokenPath}`;
   const preserveSaveContext = usePreserveSaveContext(sourceId);
 
@@ -94,7 +101,7 @@ export function TypographyTokenValueEditor({
   } = useActionBackedProjectSaveStatus({
     sourceId,
     currentFingerprint: serializedTypographyValue,
-    initialSavedFingerprint: initialValue,
+    initialSavedFingerprint: initialSerializedValue,
     actionStatus: state.status,
     successfulFingerprint,
     isPending,

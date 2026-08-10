@@ -60,7 +60,9 @@ export function parseTokenSetTokens(tokens: unknown): ParsedTokenSetTokens {
 }
 
 export function formatTokenValue(value: DesignToken['value']): string {
-  return String(value);
+  return typeof value === 'object' && value !== null
+    ? JSON.stringify(value)
+    : String(value);
 }
 
 export function isHexColorValue(value: string): boolean {
