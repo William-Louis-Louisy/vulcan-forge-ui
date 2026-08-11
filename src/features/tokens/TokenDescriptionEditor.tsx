@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/ui';
+import { Button, ContextualHelp } from '@/components/ui';
 import {
   initialUpdateTokenDescriptionActionState,
   type UpdateTokenDescriptionActionState,
@@ -17,6 +17,8 @@ type TokenDescriptionEditorProps = {
   projectSlug: string;
   tokenSetType: string;
   tokenPath: string;
+  sectionLabel: string;
+  descriptionRecommended: boolean;
   initialDescriptionEn: string;
   initialDescriptionFr: string;
 };
@@ -40,6 +42,8 @@ export function TokenDescriptionEditor({
   projectSlug,
   tokenSetType,
   tokenPath,
+  sectionLabel,
+  descriptionRecommended,
   initialDescriptionEn,
   initialDescriptionFr,
 }: TokenDescriptionEditorProps) {
@@ -92,8 +96,11 @@ export function TokenDescriptionEditor({
   const descriptionFrError = hasCurrentActionError
     ? getFirstError(state.fieldErrors, 'descriptionFr')
     : null;
-  const isEnglishMissing = descriptionEn.trim().length === 0;
-  const isFrenchMissing = descriptionFr.trim().length === 0;
+  const showEnglishWarning =
+    descriptionRecommended && descriptionEn.trim().length === 0;
+  const showFrenchWarning =
+    descriptionRecommended && descriptionFr.trim().length === 0;
+  const descriptionHelp = t('descriptionEditor.fallbackNotice');
 
   function handleSubmitCapture() {
     markCurrentDraftSubmitted();
@@ -101,145 +108,156 @@ export function TokenDescriptionEditor({
   }
 
   return (
-    <form
-      action={formAction}
-      onSubmitCapture={handleSubmitCapture}
-      className="border-border-subtle border-b pb-2"
-    >
-      <input type="hidden" name="locale" value={locale} />
-      <input type="hidden" name="projectSlug" value={projectSlug} />
-      <input type="hidden" name="tokenSetType" value={tokenSetType} />
-      <input type="hidden" name="tokenPath" value={tokenPath} />
-
-      <div className="mt-3 grid gap-3">
-        <div>
-          <label
-            htmlFor={`description-en-${tokenPath}`}
-            className="text-content-secondary text-xs font-semibold"
-          >
-            {t('descriptionEditor.fields.en')}
-          </label>
-
-          <textarea
-            id={`description-en-${tokenPath}`}
-            name="descriptionEn"
-            rows={3}
-            value={descriptionEn}
-            onChange={(event) => setDescriptionEn(event.target.value)}
-            aria-invalid={Boolean(descriptionEnError)}
-            aria-describedby={
-              descriptionEnError
-                ? `description-en-${tokenPath}-error`
-                : isEnglishMissing
-                  ? `description-en-${tokenPath}-warning`
-                  : undefined
-            }
-            className="border-border-subtle bg-surface-primary focus:border-action-primary mt-1 w-full rounded-md border px-3 py-2 font-mono text-sm outline-none"
-          />
-
-          {isEnglishMissing ? (
-            <p
-              id={`description-en-${tokenPath}-warning`}
-              className="text-action-warning mt-1 text-xs font-semibold"
-            >
-              {t('descriptionEditor.missingLanguage')}
-            </p>
-          ) : null}
-
-          {descriptionEnError ? (
-            <p
-              id={`description-en-${tokenPath}-error`}
-              className="text-action-danger mt-1 text-xs font-semibold"
-            >
-              {t(`descriptionEditor.validation.${descriptionEnError}`)}
-            </p>
-          ) : null}
-        </div>
-
-        <div>
-          <label
-            htmlFor={`description-fr-${tokenPath}`}
-            className="text-content-secondary text-xs font-semibold"
-          >
-            {t('descriptionEditor.fields.fr')}
-          </label>
-
-          <textarea
-            id={`description-fr-${tokenPath}`}
-            name="descriptionFr"
-            rows={3}
-            value={descriptionFr}
-            onChange={(event) => setDescriptionFr(event.target.value)}
-            aria-invalid={Boolean(descriptionFrError)}
-            aria-describedby={
-              descriptionFrError
-                ? `description-fr-${tokenPath}-error`
-                : isFrenchMissing
-                  ? `description-fr-${tokenPath}-warning`
-                  : undefined
-            }
-            className="border-border-subtle bg-surface-primary focus:border-action-primary mt-1 w-full rounded-md border px-3 py-2 font-mono text-sm outline-none"
-          />
-
-          {isFrenchMissing ? (
-            <p
-              id={`description-fr-${tokenPath}-warning`}
-              className="text-action-warning mt-1 text-xs font-semibold"
-            >
-              {t('descriptionEditor.missingLanguage')}
-            </p>
-          ) : null}
-
-          {descriptionFrError ? (
-            <p
-              id={`description-fr-${tokenPath}-error`}
-              className="text-action-danger mt-1 text-xs font-semibold"
-            >
-              {t(`descriptionEditor.validation.${descriptionFrError}`)}
-            </p>
-          ) : null}
-        </div>
+    <div className="mt-4">
+      <div className="flex items-center gap-1.5">
+        <p className="text-content-tertiary text-xs font-semibold tracking-[0.16em] uppercase">
+          {sectionLabel}
+        </p>
+        <ContextualHelp
+          content={descriptionHelp}
+          ariaLabel={`${sectionLabel}: ${descriptionHelp}`}
+        />
       </div>
 
-      <div className="mt-3 flex flex-col gap-2">
-        <p className="text-content-tertiary text-xs">
-          {t('descriptionEditor.fallbackNotice')}
-        </p>
-        <div className="inline-flex items-center justify-end">
-          <Button type="submit" disabled={isPending || !hasUnsavedChanges}>
+      <form
+        action={formAction}
+        onSubmitCapture={handleSubmitCapture}
+        className="border-border-subtle border-b pb-2"
+      >
+        <input type="hidden" name="locale" value={locale} />
+        <input type="hidden" name="projectSlug" value={projectSlug} />
+        <input type="hidden" name="tokenSetType" value={tokenSetType} />
+        <input type="hidden" name="tokenPath" value={tokenPath} />
+
+        <div className="mt-3 grid gap-3">
+          <div>
+            <label
+              htmlFor={`description-en-${tokenPath}`}
+              className="text-content-secondary text-xs font-semibold"
+            >
+              {t('descriptionEditor.fields.en')}
+            </label>
+
+            <textarea
+              id={`description-en-${tokenPath}`}
+              name="descriptionEn"
+              rows={3}
+              value={descriptionEn}
+              onChange={(event) => setDescriptionEn(event.target.value)}
+              aria-invalid={Boolean(descriptionEnError)}
+              aria-describedby={
+                descriptionEnError
+                  ? `description-en-${tokenPath}-error`
+                  : showEnglishWarning
+                    ? `description-en-${tokenPath}-warning`
+                    : undefined
+              }
+              className="border-border-subtle bg-surface-primary focus:border-action-primary mt-1 w-full rounded-md border px-3 py-2 font-mono text-sm outline-none"
+            />
+
+            {showEnglishWarning ? (
+              <p
+                id={`description-en-${tokenPath}-warning`}
+                className="text-action-warning mt-1 text-xs font-semibold"
+              >
+                {t('descriptionEditor.missingLanguage')}
+              </p>
+            ) : null}
+
+            {descriptionEnError ? (
+              <p
+                id={`description-en-${tokenPath}-error`}
+                className="text-action-danger mt-1 text-xs font-semibold"
+              >
+                {t(`descriptionEditor.validation.${descriptionEnError}`)}
+              </p>
+            ) : null}
+          </div>
+
+          <div>
+            <label
+              htmlFor={`description-fr-${tokenPath}`}
+              className="text-content-secondary text-xs font-semibold"
+            >
+              {t('descriptionEditor.fields.fr')}
+            </label>
+
+            <textarea
+              id={`description-fr-${tokenPath}`}
+              name="descriptionFr"
+              rows={3}
+              value={descriptionFr}
+              onChange={(event) => setDescriptionFr(event.target.value)}
+              aria-invalid={Boolean(descriptionFrError)}
+              aria-describedby={
+                descriptionFrError
+                  ? `description-fr-${tokenPath}-error`
+                  : showFrenchWarning
+                    ? `description-fr-${tokenPath}-warning`
+                    : undefined
+              }
+              className="border-border-subtle bg-surface-primary focus:border-action-primary mt-1 w-full rounded-md border px-3 py-2 font-mono text-sm outline-none"
+            />
+
+            {showFrenchWarning ? (
+              <p
+                id={`description-fr-${tokenPath}-warning`}
+                className="text-action-warning mt-1 text-xs font-semibold"
+              >
+                {t('descriptionEditor.missingLanguage')}
+              </p>
+            ) : null}
+
+            {descriptionFrError ? (
+              <p
+                id={`description-fr-${tokenPath}-error`}
+                className="text-action-danger mt-1 text-xs font-semibold"
+              >
+                {t(`descriptionEditor.validation.${descriptionFrError}`)}
+              </p>
+            ) : null}
+          </div>
+        </div>
+
+        <div className="mt-3 flex justify-end">
+          <Button
+            type="submit"
+            size="sm"
+            disabled={isPending || !hasUnsavedChanges}
+          >
             {isPending
               ? t('descriptionEditor.saving')
               : t('descriptionEditor.save')}
           </Button>
         </div>
-      </div>
 
-      {hasCurrentActionError && state.formError ? (
-        <p
-          role="alert"
-          className="text-action-danger mt-2 text-xs font-semibold"
-        >
-          {t(`descriptionEditor.validation.${state.formError}`)}
-        </p>
-      ) : null}
+        {hasCurrentActionError && state.formError ? (
+          <p
+            role="alert"
+            className="text-action-danger mt-2 text-xs font-semibold"
+          >
+            {t(`descriptionEditor.validation.${state.formError}`)}
+          </p>
+        ) : null}
 
-      {hasUnsavedChanges ? (
-        <p
-          role="status"
-          className="text-action-warning mt-2 text-xs font-semibold"
-        >
-          {t('saveStatus.unsaved')}
-        </p>
-      ) : null}
+        {hasUnsavedChanges ? (
+          <p
+            role="status"
+            className="text-action-warning mt-2 text-xs font-semibold"
+          >
+            {t('saveStatus.unsaved')}
+          </p>
+        ) : null}
 
-      {state.status === 'success' && !hasUnsavedChanges ? (
-        <p
-          role="status"
-          className="text-action-success mt-2 text-xs font-semibold"
-        >
-          {t('saveStatus.saved')}
-        </p>
-      ) : null}
-    </form>
+        {state.status === 'success' && !hasUnsavedChanges ? (
+          <p
+            role="status"
+            className="text-action-success mt-2 text-xs font-semibold"
+          >
+            {t('saveStatus.saved')}
+          </p>
+        ) : null}
+      </form>
+    </div>
   );
 }
