@@ -39,7 +39,11 @@ export function AppTopbar({
       {leading}
 
       <div
-        className="text-content-secondary hidden min-w-0 shrink-0 cursor-default select-none items-center gap-2 px-2 text-sm font-medium md:flex"
+        className={[
+          'text-content-secondary hidden min-w-0 shrink-0 items-center gap-2 px-2 text-sm font-medium md:flex',
+          'cursor-default',
+          'select-none',
+        ].join(' ')}
         title={workspaceName}
       >
         <span className="bg-action-accent text-action-accent-content flex size-4 items-center justify-center rounded-[4px] text-[9.5px] font-bold">
