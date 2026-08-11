@@ -32,7 +32,8 @@ export const brandOnboardingMessages = {
             label: 'Neutral',
           },
           custom: {
-            description: 'A direction defined through your own guidance.',
+            description:
+              'Start without a visual preset, then refine the Brand profile after project creation.',
             label: 'Custom',
           },
         },
@@ -72,7 +73,8 @@ export const brandOnboardingMessages = {
             label: 'Neutre',
           },
           custom: {
-            description: 'Une direction définie par vos propres indications.',
+            description:
+              'Démarrez sans preset visuel, puis affinez le profil Brand après la création du projet.',
             label: 'Personnalisé',
           },
         },
