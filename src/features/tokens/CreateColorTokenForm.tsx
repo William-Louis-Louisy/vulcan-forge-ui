@@ -78,7 +78,9 @@ export function CreateColorTokenForm({
     initialCreateColorTokenActionState,
   );
 
-  const [primitiveValue, setPrimitiveValue] = useState(() => state.values.value);
+  const [primitiveValue, setPrimitiveValue] = useState(
+    () => state.values.value,
+  );
   const [primitiveValueTouched, setPrimitiveValueTouched] = useState(false);
   const [referencePath, setReferencePath] = useState(
     () =>

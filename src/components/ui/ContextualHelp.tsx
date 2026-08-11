@@ -51,7 +51,7 @@ export function ContextualHelp({
           'border-border-subtle bg-surface-primary text-content-secondary shadow-elevated pointer-events-none absolute right-0 bottom-full z-60 mb-2 w-64 max-w-[calc(100vw-2rem)] rounded-md border px-3 py-2 text-xs leading-5 transition-opacity',
           isOpen
             ? 'visible opacity-100'
-            : 'invisible opacity-0 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100',
+            : 'invisible opacity-0 group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100',
         ].join(' ')}
       >
         {content}

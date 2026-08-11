@@ -1,9 +1,6 @@
 'use client';
 
-import {
-  CaretDownIcon,
-  CaretRightIcon,
-} from '@phosphor-icons/react';
+import { CaretDownIcon, CaretRightIcon } from '@phosphor-icons/react';
 import { useState } from 'react';
 import {
   getResolvedColorValueForReference,
