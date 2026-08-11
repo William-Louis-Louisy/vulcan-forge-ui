@@ -119,8 +119,7 @@ export function CreateColorTokenForm({
 
   const pathDraft = pathDrafts[kind];
   const submittedPathErrors = state.fieldErrors.path ?? [];
-  const pathErrors =
-    pathDraft === state.values.path ? submittedPathErrors : [];
+  const pathErrors = pathDraft === state.values.path ? submittedPathErrors : [];
   const submittedValueErrors = state.fieldErrors.value ?? [];
   const referencePathErrors = state.fieldErrors.referencePath ?? [];
   const trimmedPrimitiveValue = primitiveValue.trim();
