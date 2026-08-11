@@ -53,6 +53,8 @@ export type CreateColorTokenFormLabels = {
 type CreateColorTokenFormProps = {
   locale: Locale;
   projectSlug: string;
+  initialPath: string;
+  initialKind: 'primitive' | 'semantic';
   primitiveColorAliasOptions: PrimitiveColorTokenAliasOption[];
   labels: CreateColorTokenFormLabels;
   onCancel: () => void;
@@ -62,21 +64,22 @@ type CreateColorTokenFormProps = {
 export function CreateColorTokenForm({
   locale,
   projectSlug,
+  initialPath,
+  initialKind,
   primitiveColorAliasOptions,
   labels,
   onCancel,
   onCreated,
 }: CreateColorTokenFormProps) {
-  const [kind, setKind] = useState<'primitive' | 'semantic'>('primitive');
+  const [kind, setKind] = useState<'primitive' | 'semantic'>(initialKind);
 
   const [state, formAction, isPending] = useActionState(
     createColorTokenAction,
     initialCreateColorTokenActionState,
   );
 
-  const [primitiveValue, setPrimitiveValue] = useState(
-    () => state.values.value || '#000000',
-  );
+  const [primitiveValue, setPrimitiveValue] = useState(() => state.values.value);
+  const [primitiveValueTouched, setPrimitiveValueTouched] = useState(false);
   const [referencePath, setReferencePath] = useState(
     () =>
       state.values.referencePath || primitiveColorAliasOptions[0]?.path || '',
@@ -107,12 +110,17 @@ export function CreateColorTokenForm({
           ? null
           : 'tokenColorValueInvalid';
   const valueErrors: CreateColorTokenValidationMessageKey[] =
-    localPrimitiveValueError
+    localPrimitiveValueError && primitiveValueTouched
       ? [localPrimitiveValueError]
       : primitiveValue === state.values.value
         ? submittedValueErrors
         : [];
   const hasInvalidPrimitiveValue = Boolean(localPrimitiveValueError);
+
+  function handlePrimitiveValueChange(value: string) {
+    setPrimitiveValueTouched(true);
+    setPrimitiveValue(value);
+  }
 
   return (
     <form
@@ -176,10 +184,11 @@ export function CreateColorTokenForm({
           <Input
             id="create-token-path"
             name="path"
-            defaultValue={state.values.path}
+            defaultValue={state.values.path || initialPath}
             invalid={pathErrors.length > 0}
             textMode="technical"
             className="mt-2"
+            autoFocus
             placeholder={
               kind === 'primitive'
                 ? 'color.primitive.azure.500'
@@ -204,7 +213,7 @@ export function CreateColorTokenForm({
               label={labels.valueLabel}
               locale={locale}
               value={primitiveValue}
-              onValueChange={setPrimitiveValue}
+              onValueChange={handlePrimitiveValueChange}
               invalid={valueErrors.length > 0}
               disabled={isPending}
               ariaDescribedBy={
