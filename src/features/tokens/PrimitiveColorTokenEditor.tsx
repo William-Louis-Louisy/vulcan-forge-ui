@@ -91,25 +91,21 @@ export function PrimitiveColorTokenEditor({
       <input type="hidden" name="projectSlug" value={projectSlug} />
       <input type="hidden" name="tokenPath" value={tokenPath} />
 
-      <div className="relative">
-        <ColorPickerField
-          id={`primitive-color-${tokenPath}`}
-          name="value"
-          label={t('primitiveColorEditor.label')}
-          locale={locale}
-          value={draftValue}
-          onValueChange={setDraftValue}
-          fallbackValue={initialValue}
-          invalid={Boolean(valueError)}
-          disabled={isPending}
-          ariaDescribedBy={valueError ? errorId : undefined}
-        />
-        <ContextualHelp
-          content={helpText}
-          ariaLabel={helpText}
-          className="absolute top-0 right-0"
-        />
-      </div>
+      <ColorPickerField
+        id={`primitive-color-${tokenPath}`}
+        name="value"
+        label={t('primitiveColorEditor.label')}
+        labelAccessory={
+          <ContextualHelp content={helpText} ariaLabel={helpText} />
+        }
+        locale={locale}
+        value={draftValue}
+        onValueChange={setDraftValue}
+        fallbackValue={initialValue}
+        invalid={Boolean(valueError)}
+        disabled={isPending}
+        ariaDescribedBy={valueError ? errorId : undefined}
+      />
 
       <div className="flex justify-end">
         <Button
