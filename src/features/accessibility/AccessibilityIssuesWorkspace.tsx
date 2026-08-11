@@ -1,9 +1,7 @@
 import type { ReactNode } from 'react';
 import type { AccessibilityCenterIssue } from './accessibility-center.utils';
-import {
-  AccessibilityIssuesWorkspaceClient,
-  type AccessibilityIssuesClientLabels,
-} from './AccessibilityIssuesWorkspaceClient';
+import type { AccessibilityIssuesClientLabels } from './AccessibilityIssuesWorkspaceClient';
+import { AccessibilityIssuesSortableWorkspaceClient } from './AccessibilityIssuesSortableWorkspaceClient';
 
 type AccessibilityIssuesLabels = AccessibilityIssuesClientLabels & {
   details: AccessibilityIssuesClientLabels['details'] & {
@@ -47,7 +45,7 @@ export function AccessibilityIssuesWorkspace({
   );
 
   return (
-    <AccessibilityIssuesWorkspaceClient
+    <AccessibilityIssuesSortableWorkspaceClient
       projectSlug={projectSlug}
       issues={issues}
       ratioLabels={ratioLabels}
@@ -76,6 +74,6 @@ export function AccessibilityIssuesWorkspace({
       beforeIssues={beforeIssues}
     >
       {children}
-    </AccessibilityIssuesWorkspaceClient>
+    </AccessibilityIssuesSortableWorkspaceClient>
   );
 }
