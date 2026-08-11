@@ -1,9 +1,9 @@
 'use client';
 
 import { useMemo, useState, type ReactNode } from 'react';
-import { useTranslations } from 'next-intl';
 import { Select } from '@/components/ui';
 import type { AccessibilityCenterIssue } from './accessibility-center.utils';
+import type { AccessibilityIssueSortLabels } from './AccessibilityIssuesWorkspace';
 import {
   AccessibilityIssuesWorkspaceClient,
   type AccessibilityIssuesClientLabels,
@@ -16,6 +16,7 @@ type AccessibilityIssuesSortableWorkspaceClientProps = {
   issues: AccessibilityCenterIssue[];
   ratioLabels: Record<string, string>;
   labels: AccessibilityIssuesClientLabels;
+  sortLabels: AccessibilityIssueSortLabels;
   header?: ReactNode;
   beforeIssues?: ReactNode;
   children?: ReactNode;
@@ -71,11 +72,11 @@ export function AccessibilityIssuesSortableWorkspaceClient({
   issues,
   ratioLabels,
   labels,
+  sortLabels,
   header,
   beforeIssues,
   children,
 }: AccessibilityIssuesSortableWorkspaceClientProps) {
-  const t = useTranslations('AccessibilityCenterPage');
   const [sortKey, setSortKey] = useState<AccessibilityIssueSortKey | ''>('');
   const sortedIssues = useMemo(
     () => (sortKey ? sortIssues(issues, sortKey, labels) : issues),
@@ -83,11 +84,11 @@ export function AccessibilityIssuesSortableWorkspaceClient({
   );
   const sortOptions = useMemo(
     () => [
-      { value: 'severity', label: t('issues.sort.options.severity') },
-      { value: 'scope', label: t('issues.sort.options.scope') },
-      { value: 'rule', label: t('issues.sort.options.rule') },
+      { value: 'severity', label: sortLabels.options.severity },
+      { value: 'scope', label: sortLabels.options.scope },
+      { value: 'rule', label: sortLabels.options.rule },
     ],
-    [t],
+    [sortLabels],
   );
   const sortControl =
     issues.length > 1 ? (
@@ -97,13 +98,13 @@ export function AccessibilityIssuesSortableWorkspaceClient({
             htmlFor="accessibility-issues-sort"
             className="text-content-tertiary text-xs font-semibold"
           >
-            {t('issues.sort.label')}
+            {sortLabels.label}
           </label>
           <Select
             id="accessibility-issues-sort"
             value={sortKey}
             options={sortOptions}
-            placeholder={t('issues.sort.label')}
+            placeholder={sortLabels.label}
             onValueChange={(value) =>
               setSortKey(value as AccessibilityIssueSortKey)
             }
