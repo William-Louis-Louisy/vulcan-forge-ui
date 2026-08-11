@@ -13,7 +13,10 @@ import { parseStoredTokenSetTokens } from './token-set-save.service';
 import { revalidatePath } from 'next/cache';
 import { isTokenSetType } from './tokens-editor.utils';
 import { defaultAppLocale, isAppLocale } from '@/domain/i18n';
-import { renameTokenAcrossProject } from './rename-token.utils';
+import {
+  renameTokenAcrossProject,
+  type ProjectTokenSetForRename,
+} from './rename-token.utils';
 import { prisma } from '@/server/db/prisma';
 import type { Prisma } from '@/generated/prisma/client';
 
@@ -149,7 +152,7 @@ export async function renameTokenAction(
     };
   }
 
-  const parsedTokenSets = [];
+  const parsedTokenSets: ProjectTokenSetForRename[] = [];
 
   for (const tokenSet of project.tokenSets) {
     const parsedTokensResult = parseStoredTokenSetTokens(tokenSet.tokens);
