@@ -68,9 +68,17 @@ export function ContextualHelp({
           popover="manual"
           data-placement={placement}
           style={popoverStyle}
-          className="border-border-subtle bg-surface-primary text-content-secondary shadow-elevated pointer-events-none fixed z-80 m-0 w-64 max-w-[calc(100vw-2rem)] rounded-md border px-3 py-2 text-xs leading-5"
+          className="border-action-info text-content-secondary shadow-elevated pointer-events-none fixed z-80 m-0 flex w-64 max-w-[calc(100vw-2rem)] flex-row items-center rounded-md border bg-[#b0cdf5]/95 px-4 py-3 text-xs leading-5"
         >
-          {content}
+          <span className="border-action-info mr-4">
+            <InfoIcon
+              aria-hidden="true"
+              size={20}
+              weight="fill"
+              className="text-action-info"
+            />
+          </span>
+          <span>{content}</span>
         </div>
       ) : null}
     </span>

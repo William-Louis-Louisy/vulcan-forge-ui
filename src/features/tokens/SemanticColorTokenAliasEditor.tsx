@@ -71,7 +71,6 @@ export function SemanticColorTokenAliasEditor({
     hasValidationError: hasPrimitiveOptions && !selectedOption,
   });
   const preserveSaveContext = usePreserveSaveContext(sourceId);
-  const previewValue = selectedOption?.value ?? resolvedColorValue;
   const referencePathError = hasCurrentActionError
     ? getFirstError(state.fieldErrors)
     : null;
@@ -137,19 +136,8 @@ export function SemanticColorTokenAliasEditor({
         </Button>
       </div>
 
-      {previewValue || !hasPrimitiveOptions ? (
+      {!hasPrimitiveOptions ? (
         <div className="mt-2 flex items-center gap-2">
-          {previewValue ? (
-            <span
-              role="img"
-              aria-label={t('semanticAliasEditor.previewLabel', {
-                value: previewValue,
-              })}
-              className="border-border-subtle size-5 rounded-full border"
-              style={{ backgroundColor: previewValue }}
-            />
-          ) : null}
-
           {!hasPrimitiveOptions ? (
             <p className="text-content-tertiary text-xs">
               {t('semanticAliasEditor.noPrimitiveOptions')}

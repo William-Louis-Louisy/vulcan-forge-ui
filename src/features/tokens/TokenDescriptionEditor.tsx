@@ -230,7 +230,7 @@ export function TokenDescriptionEditor({
           </p>
         ) : null}
 
-        <div className="mt-3 flex justify-end">
+        <div className="mt-1 flex justify-end">
           <Button
             type="submit"
             size="sm"

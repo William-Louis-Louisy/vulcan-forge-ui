@@ -167,7 +167,7 @@ export function ComponentVisualMatrix({
         </div>
       ) : null}
 
-      <div className="border-border-subtle bg-surface-primary overflow-x-auto rounded-lg border p-3 shadow-sm">
+      <div className="border-border-subtle bg-background-subtle overflow-x-auto rounded-lg border p-3 shadow-sm">
         <table className="w-full min-w-max border-separate border-spacing-0">
           <thead>
             <tr>

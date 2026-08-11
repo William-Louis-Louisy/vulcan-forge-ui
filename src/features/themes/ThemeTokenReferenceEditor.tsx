@@ -121,7 +121,7 @@ export function ThemeTokenReferenceEditor({
           </p>
         </div>
 
-        <div className="min-w-0 sm:col-start-2 sm:row-start-1">
+        <div className="col-span-2 min-w-0 sm:col-start-2 sm:row-start-1">
           <label
             htmlFor={inputId}
             className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase"
@@ -137,12 +137,8 @@ export function ThemeTokenReferenceEditor({
             placeholder={labels.placeholder}
             disabled={!hasOptions}
             onValueChange={setSelectedTokenPath}
-            className="mt-1"
+            className="mt-1 w-full"
           />
-
-          <p className="text-content-tertiary mt-1 min-w-0 font-mono text-[0.6875rem] break-all">
-            {labels.currentReference}: {displayedReference}
-          </p>
 
           {!hasOptions && showNoOptionsMessage ? (
             <p className="text-action-warning mt-1 text-xs font-semibold">
@@ -151,32 +147,7 @@ export function ThemeTokenReferenceEditor({
           ) : null}
         </div>
 
-        <div className="min-w-0 sm:col-start-1 sm:row-start-2 2xl:col-start-3 2xl:row-start-1">
-          <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase">
-            {labels.resolvedValue}
-          </p>
-          <div className="mt-1 flex min-w-0 items-center gap-2">
-            <span
-              role="img"
-              aria-label={`${labels.resolvedValue}: ${displayedResolvedValue ?? '—'}`}
-              className="border-border-subtle size-5 shrink-0 rounded-full border"
-              style={{
-                backgroundColor: displayedResolvedValue ?? 'transparent',
-              }}
-            />
-            <span className="text-content-secondary min-w-0 truncate font-mono text-xs">
-              {displayedResolvedValue ?? '—'}
-            </span>
-          </div>
-
-          {legacyDirectValue && !initialReferencePath ? (
-            <p className="text-action-warning mt-1 min-w-0 text-[0.6875rem] font-semibold break-all">
-              {labels.legacyDirectValue}: {legacyDirectValue}
-            </p>
-          ) : null}
-        </div>
-
-        <div className="flex min-w-0 items-center justify-between gap-3 sm:col-start-2 sm:row-start-2 2xl:col-start-4 2xl:row-start-1 2xl:min-w-[10.5rem] 2xl:justify-end">
+        <div className="flex min-w-0 items-center justify-between gap-3 sm:col-start-2 sm:row-start-2 2xl:col-start-4 2xl:row-start-1 2xl:min-w-42 2xl:justify-end">
           <span
             className={[
               'shrink-0 rounded-full px-2 py-1 text-[0.6875rem] font-semibold whitespace-nowrap',

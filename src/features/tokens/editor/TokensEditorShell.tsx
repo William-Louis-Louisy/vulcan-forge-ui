@@ -379,7 +379,7 @@ export function TokensEditorShell({
         </div>
       </div>
 
-      <aside className="border-border-subtle grid min-h-0 border-t xl:grid-rows-[auto_minmax(0,1fr)] xl:overflow-hidden xl:border-t-0 xl:border-l">
+      <aside className="border-border-subtle bg-background-sunken grid min-h-0 border-t xl:grid-rows-[auto_minmax(0,1fr)] xl:overflow-hidden xl:border-t-0 xl:border-l">
         <TokenPreviewPanel
           token={selectedToken}
           tokenSetType={selectedTokenSetType}
