@@ -7,8 +7,8 @@ import {
   type UpdateSemanticColorTokenActionState,
 } from './update-semantic-color-token.state';
 import { useActionState, useMemo, useState } from 'react';
-import type { PrimitiveColorTokenAliasOption } from './tokens-editor.utils';
 import { Button, ContextualHelp, Select } from '@/components/ui';
+import type { PrimitiveColorTokenAliasOption } from './tokens-editor.utils';
 import { updateSemanticColorTokenAction } from './update-semantic-color-token.action';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 import { useActionBackedProjectSaveStatus } from '@/features/save-context/useActionBackedProjectSaveStatus';
@@ -33,7 +33,6 @@ export function SemanticColorTokenAliasEditor({
   projectSlug,
   tokenPath,
   initialReferencePath,
-  resolvedColorValue,
   primitiveOptions,
 }: SemanticColorTokenAliasEditorProps) {
   const t = useTranslations('TokensEditorPage');
