@@ -110,25 +110,25 @@ export function DesignTokenValueEditor({
 
       <label
         htmlFor={`token-value-${tokenPath}`}
-        className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase"
+        className="text-content-tertiary text-xs font-semibold tracking-[0.16em] uppercase"
       >
         {labels.label}
       </label>
 
-      <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center">
-        <input
-          id={`token-value-${tokenPath}`}
-          name="value"
-          value={draftValue}
-          onChange={(event) => setDraftValue(event.target.value)}
-          aria-invalid={valueErrors.length > 0}
-          className="border-border-subtle bg-surface-primary focus:border-action-primary w-full rounded-md border px-3 py-2 font-mono text-sm outline-none"
-        />
+      <input
+        id={`token-value-${tokenPath}`}
+        name="value"
+        value={draftValue}
+        onChange={(event) => setDraftValue(event.target.value)}
+        aria-invalid={valueErrors.length > 0}
+        className="border-border-subtle bg-surface-primary focus:border-action-primary mt-2 w-full rounded-md border px-3 py-2 font-mono text-sm outline-none"
+      />
 
+      <div className="mt-2 flex justify-end">
         <Button
           type="submit"
+          size="sm"
           disabled={isPending || !hasUnsavedChanges || Boolean(localValueError)}
-          className="bg-action-primary text-action-primary-content rounded-lg px-3 py-2 text-sm font-semibold disabled:opacity-60"
         >
           {isPending ? '…' : labels.submit}
         </Button>
