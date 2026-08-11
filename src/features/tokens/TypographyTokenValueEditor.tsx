@@ -147,7 +147,7 @@ export function TypographyTokenValueEditor({
       <input type="hidden" name="tokenPath" value={tokenPath} />
       <input type="hidden" name="value" value={serializedTypographyValue} />
 
-      <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
+      <p className="text-content-tertiary text-xs font-semibold tracking-[0.16em] uppercase">
         {labels.title}
       </p>
 
@@ -245,9 +245,10 @@ export function TypographyTokenValueEditor({
         </p>
       ) : null}
 
-      <div className="mt-2 inline-flex w-full items-center justify-end">
+      <div className="mt-2 flex justify-end">
         <Button
           type="submit"
+          size="sm"
           disabled={isPending || !hasUnsavedChanges || Boolean(localValueError)}
         >
           {isPending ? '…' : labels.submit}
