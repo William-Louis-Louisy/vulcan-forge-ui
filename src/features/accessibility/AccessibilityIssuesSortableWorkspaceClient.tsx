@@ -67,10 +67,9 @@ export function AccessibilityIssuesSortableWorkspaceClient({
   children,
 }: AccessibilityIssuesSortableWorkspaceClientProps) {
   const t = useTranslations('AccessibilityCenterPage');
-  const [sortKey, setSortKey] =
-    useState<AccessibilityIssueSortKey>('severity');
+  const [sortKey, setSortKey] = useState<AccessibilityIssueSortKey | ''>('');
   const sortedIssues = useMemo(
-    () => sortIssues(issues, sortKey, labels),
+    () => (sortKey ? sortIssues(issues, sortKey, labels) : issues),
     [issues, labels, sortKey],
   );
   const sortOptions = useMemo(
@@ -95,9 +94,8 @@ export function AccessibilityIssuesSortableWorkspaceClient({
             id="accessibility-issues-sort"
             value={sortKey}
             options={sortOptions}
-            onValueChange={(value) =>
-              setSortKey(value as AccessibilityIssueSortKey)
-            }
+            placeholder={t('issues.sort.label')}
+            onValueChange={(value) => setSortKey(value)}
             className="mt-1 w-full"
           />
         </div>
