@@ -4,8 +4,8 @@ import type {
   ThemeColorKey,
   ThemeColorTokenOption,
 } from './themes-editor.utils';
-import { Button, Select } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
+import { Button, Select } from '@/components/ui';
 import { useActionState, useMemo, useState } from 'react';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 import { updateThemeTokenReferenceAction } from './update-theme-token-reference.action';
@@ -50,8 +50,6 @@ export function ThemeTokenReferenceEditor({
   themeId,
   colorKey,
   initialReferencePath,
-  legacyDirectValue,
-  resolvedValue,
   options,
   showNoOptionsMessage = true,
   labels,
@@ -64,10 +62,6 @@ export function ThemeTokenReferenceEditor({
   const initialValue = initialReferencePath ?? '';
   const [selectedTokenPath, setSelectedTokenPath] = useState(initialValue);
 
-  const selectedOption = useMemo(
-    () => options.find((option) => option.path === selectedTokenPath) ?? null,
-    [options, selectedTokenPath],
-  );
   const selectOptions = useMemo(
     () =>
       options.map((option) => ({
@@ -82,12 +76,6 @@ export function ThemeTokenReferenceEditor({
   const hasUnsavedChanges = selectedTokenPath !== initialValue;
   const hasOptions = options.length > 0;
   const inputId = `${themeId}-${colorKey}-token-reference`;
-  const displayedResolvedValue = selectedOption?.value ?? resolvedValue ?? null;
-  const displayedReference = selectedTokenPath
-    ? `{${selectedTokenPath}}`
-    : initialReferencePath
-      ? `{${initialReferencePath}}`
-      : '—';
 
   const preserveSaveContext = usePreserveSaveContext(
     `theme-token-reference:${projectSlug}:${themeId}:${colorKey}`,
