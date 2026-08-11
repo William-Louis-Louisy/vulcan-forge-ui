@@ -27,6 +27,7 @@ type CreateDesignTokenFormProps = {
   locale: Locale;
   projectSlug: string;
   type: DesignTokenType;
+  initialPath: string;
   labels: CreateDesignTokenFormLabels;
   onCancel: () => void;
   onCreated?: (tokenPath: string) => void;
@@ -36,6 +37,7 @@ export function CreateDesignTokenForm({
   locale,
   projectSlug,
   type,
+  initialPath,
   labels,
   onCancel,
   onCreated,
@@ -89,10 +91,11 @@ export function CreateDesignTokenForm({
           <Input
             id={`create-${type}-token-path`}
             name="path"
-            defaultValue={state.values.path}
+            defaultValue={state.values.path || initialPath}
             invalid={pathErrors.length > 0}
             textMode="technical"
             className="mt-2"
+            autoFocus
             placeholder={labels.pathPlaceholder}
           />
 
