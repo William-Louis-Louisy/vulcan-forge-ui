@@ -18,6 +18,19 @@ vi.mock('@/components/navigation/AppLink', () => ({
   ),
 }));
 
+vi.mock('next-intl', () => ({
+  useTranslations: () => (key: string) => {
+    const messages: Record<string, string> = {
+      'issues.sort.label': 'Sort issues',
+      'issues.sort.options.severity': 'Severity',
+      'issues.sort.options.scope': 'Scope',
+      'issues.sort.options.rule': 'Rule',
+    };
+
+    return messages[key] ?? key;
+  },
+}));
+
 const issues: AccessibilityCenterIssue[] = [
   {
     id: 'light:contentOnBackground:contrastWarning',
@@ -258,6 +271,29 @@ describe('AccessibilityIssuesWorkspace', () => {
     expect(tokensLink.getAttribute('href')).toContain(
       '/app/projects/forge/tokens',
     );
+  });
+
+  it('sorts issues by severity without persisting the choice', async () => {
+    const user = userEvent.setup();
+    render(
+      <AccessibilityIssuesWorkspace
+        projectSlug="forge"
+        issues={issues}
+        labels={labels}
+      />,
+    );
+
+    const table = screen.getByRole('table');
+    let issueRows = within(table).getAllByRole('row').slice(1);
+
+    expect(issueRows[0]).toHaveTextContent('Contrast warning');
+
+    await user.click(screen.getByRole('combobox', { name: 'Sort issues' }));
+    await user.click(screen.getByRole('option', { name: 'Severity' }));
+
+    issueRows = within(table).getAllByRole('row').slice(1);
+    expect(issueRows[0]).toHaveTextContent('Token resolution error');
+    expect(issueRows[1]).toHaveTextContent('Contrast warning');
   });
 
   it('opens the components registry and exposes component context', () => {
