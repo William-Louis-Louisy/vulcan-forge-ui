@@ -1,34 +1,17 @@
 const DEFAULT_PROJECT_SWATCHES = ['#ffffff', '#070707', '#FF8731', '#586644'];
-
-const PROJECT_SWATCH_TOKEN_PATH_GROUPS = [
-  [
-    'color.semantic.background.app',
-    'color.primitive.neutral.950',
-    'color.bg.app',
-    'color.background.app',
-  ],
-  [
-    'color.primitive.neutral.0',
-    'color.primitive.neutral.50',
-    'color.semantic.foreground.primary',
-    'color.fg.primary',
-  ],
-  [
-    'color.semantic.action.primary',
-    'color.primitive.accent.primary',
-    'color.action.primary',
-    'color.action.accent',
-  ],
-  [
-    'color.primitive.accent.secondary',
-    'color.semantic.action.secondary',
-    'color.action.secondary',
-    'color.semantic.action.danger',
-    'color.action.danger',
-  ],
-];
+const PROJECT_SWATCH_THEME_ROLES = [
+  'background',
+  'surface',
+  'accent',
+  'content',
+] as const;
 
 type RawTokenSet = {
+  tokens: unknown;
+};
+
+type RawTheme = {
+  mode: unknown;
   tokens: unknown;
 };
 
@@ -36,6 +19,11 @@ type RawToken = {
   path?: unknown;
   value?: unknown;
   reference?: unknown;
+};
+
+type ProjectPaletteInput = {
+  tokenSets: RawTokenSet[];
+  themes: RawTheme[];
 };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -127,36 +115,95 @@ function resolveTokenColor({
   });
 }
 
-function resolveFirstAvailableColor({
-  paths,
+function getThemeRoleValue(themeTokens: unknown, role: string): unknown {
+  if (!isRecord(themeTokens)) {
+    return null;
+  }
+
+  const color = themeTokens.color;
+
+  if (!isRecord(color)) {
+    return null;
+  }
+
+  return color[role];
+}
+
+function resolveThemeRoleColor({
+  themeTokens,
+  role,
   tokenMap,
 }: {
-  paths: string[];
+  themeTokens: unknown;
+  role: string;
   tokenMap: Map<string, RawToken>;
 }) {
-  for (const path of paths) {
+  const rawValue = getThemeRoleValue(themeTokens, role);
+
+  if (isHexColor(rawValue)) {
+    return rawValue;
+  }
+
+  const referencePath = getReferencePath(rawValue);
+
+  return referencePath
+    ? resolveTokenColor({
+        path: referencePath,
+        tokenMap,
+      })
+    : null;
+}
+
+function createAvailableResolvedColors(tokenMap: Map<string, RawToken>) {
+  const colors: string[] = [];
+
+  for (const path of tokenMap.keys()) {
     const color = resolveTokenColor({
       path,
       tokenMap,
     });
 
-    if (color) {
-      return color;
+    if (color && !colors.includes(color)) {
+      colors.push(color);
     }
   }
 
-  return null;
+  return colors;
 }
 
-export function createProjectCardSwatches(tokenSets: RawTokenSet[]) {
+export function createProjectCardSwatches({
+  tokenSets,
+  themes,
+}: ProjectPaletteInput) {
   const tokenMap = createTokenMap(tokenSets);
+  const preferredTheme =
+    themes.find((theme) => theme.mode === 'light') ?? themes[0] ?? null;
+  const availableResolvedColors = createAvailableResolvedColors(tokenMap);
+  const usedColors = new Set<string>();
 
-  return PROJECT_SWATCH_TOKEN_PATH_GROUPS.map((paths, index) => {
-    return (
-      resolveFirstAvailableColor({
-        paths,
-        tokenMap,
-      }) ?? DEFAULT_PROJECT_SWATCHES[index]
+  return PROJECT_SWATCH_THEME_ROLES.map((role, index) => {
+    const themeColor = preferredTheme
+      ? resolveThemeRoleColor({
+          themeTokens: preferredTheme.tokens,
+          role,
+          tokenMap,
+        })
+      : null;
+
+    if (themeColor) {
+      usedColors.add(themeColor);
+      return themeColor;
+    }
+
+    const availableColor = availableResolvedColors.find(
+      (color) => !usedColors.has(color),
     );
+
+    if (availableColor) {
+      usedColors.add(availableColor);
+      return availableColor;
+    }
+
+    return DEFAULT_PROJECT_SWATCHES[index] ?? '#000000';
   });
 }

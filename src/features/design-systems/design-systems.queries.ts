@@ -12,6 +12,10 @@ export type DesignSystemListItem = {
     type: 'color' | 'spacing' | 'radius' | 'typography' | 'motion';
     tokens: unknown;
   }[];
+  themes: {
+    mode: string;
+    tokens: unknown;
+  }[];
 };
 
 export type DesignSystemsPageData = {
@@ -92,6 +96,15 @@ export async function getDesignSystemsPageData(
                 },
                 select: {
                   type: true,
+                  tokens: true,
+                },
+              },
+              themes: {
+                orderBy: {
+                  createdAt: 'asc',
+                },
+                select: {
+                  mode: true,
                   tokens: true,
                 },
               },
