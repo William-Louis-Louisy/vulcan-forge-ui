@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { TokenRowData } from '../tokens-editor.utils';
 import {
   getNextSelectedTokenPathAfterDeletion,
+  getTokenCreationPathPrefix,
   resolveSelectedToken,
   sortTokenRowsForDisplay,
 } from './tokens-editor-shell.utils';
@@ -28,6 +29,26 @@ const rows = [
   createRow('spacing.2', '0.5rem'),
   createRow('spacing.4', '1rem'),
 ];
+
+describe('token creation context', () => {
+  it('keeps the selected token namespace and removes only the final path segment', () => {
+    expect(getTokenCreationPathPrefix('color.primitive.neutral.500')).toBe(
+      'color.primitive.neutral.',
+    );
+    expect(getTokenCreationPathPrefix('color.semantic.action.primary')).toBe(
+      'color.semantic.action.',
+    );
+    expect(getTokenCreationPathPrefix('typography.body.base')).toBe(
+      'typography.body.',
+    );
+    expect(getTokenCreationPathPrefix('spacing.4')).toBe('spacing.');
+  });
+
+  it('returns no prefix when there is no usable parent path', () => {
+    expect(getTokenCreationPathPrefix(null)).toBe('');
+    expect(getTokenCreationPathPrefix('token')).toBe('');
+  });
+});
 
 describe('tokens editor selection', () => {
   it('keeps the explicitly selected token even when a search no longer matches it', () => {
