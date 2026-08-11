@@ -41,9 +41,9 @@ export function TokenPreviewPanel({
 }: TokenPreviewPanelProps) {
   if (!token) {
     return (
-      <aside className="border-border-subtle flex h-76 min-h-0 flex-col overflow-hidden border-b">
+      <aside className="border-border-subtle flex min-h-0 flex-col overflow-hidden border-b">
         <header className="border-border-subtle shrink-0 border-b px-4 py-3">
-          <p className="text-content-tertiary text-[11px] font-semibold tracking-[0.16em] uppercase">
+          <p className="text-content-tertiary text-xs font-semibold tracking-[0.16em] uppercase">
             {labels.title}
           </p>
         </header>
@@ -66,20 +66,16 @@ export function TokenPreviewPanel({
       : null;
 
   return (
-    <aside className="border-border-subtle flex h-76 min-h-0 flex-col overflow-hidden border-b">
+    <aside className="border-border-subtle flex min-h-0 flex-col overflow-hidden border-b">
       <header className="border-border-subtle flex shrink-0 items-start justify-between gap-3 border-b px-4 py-3">
         <div className="min-w-0">
-          <p className="text-content-tertiary text-[11px] font-semibold tracking-[0.16em] uppercase">
+          <p className="text-content-tertiary text-xs font-semibold tracking-[0.16em] uppercase">
             {labels.title}
           </p>
-
-          <h2 className="text-content-primary mt-0.5 truncate text-sm font-semibold">
-            {tokenSetLabel}
-          </h2>
         </div>
 
-        <span className="text-content-tertiary max-w-40 truncate font-mono text-[11px]">
-          {token.path}
+        <span className="text-content-tertiary max-w-40 truncate font-mono text-xs">
+          {tokenSetLabel}
         </span>
       </header>
 
@@ -90,24 +86,6 @@ export function TokenPreviewPanel({
           resolvedColorValue={resolvedColorValue}
           labels={labels}
         />
-
-        <dl className="border-border-subtle mt-3 grid gap-2 border-t pt-3">
-          <TokenPreviewMetadataRow label={labels.value} value={token.value} />
-
-          {token.reference ? (
-            <TokenPreviewMetadataRow
-              label={labels.reference}
-              value={token.reference}
-            />
-          ) : null}
-
-          {resolvedColorValue ? (
-            <TokenPreviewMetadataRow
-              label={labels.resolvedValue}
-              value={resolvedColorValue}
-            />
-          ) : null}
-        </dl>
       </div>
     </aside>
   );
@@ -138,7 +116,7 @@ function TokenPreviewSample({
               {labels.unresolved}
             </p>
           ) : (
-            <span className="bg-preview-contrast-surface text-preview-contrast-content rounded-full px-2 py-1 font-mono text-[11px] font-semibold">
+            <span className="bg-preview-contrast-surface text-preview-contrast-content rounded-full px-2 py-1 font-mono text-xs font-semibold">
               {resolvedColorValue}
             </span>
           )}
@@ -212,23 +190,6 @@ function TokenPreviewSample({
   return (
     <div className="border-border-subtle bg-background-sunken rounded-md border p-4">
       <p className="text-content-secondary font-mono text-sm">{token.value}</p>
-    </div>
-  );
-}
-
-function TokenPreviewMetadataRow({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="grid grid-cols-[5.5rem_minmax(0,1fr)] gap-3">
-      <dt className="text-content-tertiary text-xs font-medium">{label}</dt>
-      <dd className="text-content-secondary truncate font-mono text-xs">
-        {value}
-      </dd>
     </div>
   );
 }
