@@ -15,6 +15,7 @@ import {
 } from './TokenInspectorPanel';
 import {
   getPrimitiveColorTokenAliasOptions,
+  isEditableSemanticColorTokenRow,
   type TokenSetType,
 } from '../tokens-editor.utils';
 import type { CreateColorTokenFormLabels } from '../CreateColorTokenForm';
@@ -23,6 +24,7 @@ import {
   filterTokenRows,
   createTokenEditorUrl,
   getNextSelectedTokenPathAfterDeletion,
+  getTokenCreationPathPrefix,
   resolveSelectedToken,
   sortTokenRowsForDisplay,
   type PendingTokenRename,
@@ -75,6 +77,12 @@ type TokensEditorShellProps = {
   labels: TokensEditorShellLabels;
 };
 
+type TokenCreationContext = {
+  type: TokenSetType;
+  initialPath: string;
+  initialColorKind: 'primitive' | 'semantic';
+};
+
 export function TokensEditorShell({
   locale,
   projectSlug,
@@ -94,8 +102,8 @@ export function TokensEditorShell({
   const [tokenSearchQuery, setTokenSearchQuery] = useState(
     initialTokenSearchQuery,
   );
-  const [createTokenFormType, setCreateTokenFormType] =
-    useState<TokenSetType | null>(null);
+  const [tokenCreationContext, setTokenCreationContext] =
+    useState<TokenCreationContext | null>(null);
   const [pendingTokenRename, setPendingTokenRename] =
     useState<PendingTokenRename | null>(null);
 
@@ -112,7 +120,11 @@ export function TokensEditorShell({
       tokenSets.reduce(
         (count, tokenSet) =>
           count +
-          tokenSet.rows.filter((row) => !row.description?.en?.trim()).length,
+          tokenSet.rows.filter(
+            (row) =>
+              isEditableSemanticColorTokenRow(row) &&
+              !row.description?.en?.trim(),
+          ).length,
         0,
       ),
     [tokenSets],
@@ -244,12 +256,19 @@ export function TokensEditorShell({
       activeTokenSetType === 'motion' ||
       activeTokenSetType === 'typography'
     ) {
-      setCreateTokenFormType(activeTokenSetType);
+      setTokenCreationContext({
+        type: activeTokenSetType,
+        initialPath: getTokenCreationPathPrefix(selectedToken?.path ?? null),
+        initialColorKind:
+          selectedToken && isEditableSemanticColorTokenRow(selectedToken)
+            ? 'semantic'
+            : 'primitive',
+      });
     }
   }
 
   function handleCreateTokenCancel() {
-    setCreateTokenFormType(null);
+    setTokenCreationContext(null);
   }
 
   function handleTokenCreated({
@@ -259,7 +278,7 @@ export function TokensEditorShell({
     tokenSetType: TokenSetType;
     tokenPath: string;
   }) {
-    setCreateTokenFormType(null);
+    setTokenCreationContext(null);
     setPendingTokenRename(null);
     setActiveTokenSetType(tokenSetType);
     setTokenSearchQuery('');
@@ -385,9 +404,11 @@ export function TokensEditorShell({
       </aside>
 
       <TokenCreationDialog
-        type={createTokenFormType}
+        type={tokenCreationContext?.type ?? null}
         locale={locale}
         projectSlug={projectSlug}
+        initialPath={tokenCreationContext?.initialPath ?? ''}
+        initialColorKind={tokenCreationContext?.initialColorKind ?? 'primitive'}
         primitiveColorAliasOptions={primitiveColorAliasOptions}
         labels={labels}
         onClose={handleCreateTokenCancel}
