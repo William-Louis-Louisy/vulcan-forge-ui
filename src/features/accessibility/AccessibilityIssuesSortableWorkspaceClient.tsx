@@ -44,16 +44,25 @@ function sortIssues(
     if (sortKey === 'severity') {
       result = severityRank[left.severity] - severityRank[right.severity];
     } else if (sortKey === 'scope') {
-      result = compareText(labels.scopes[left.scope], labels.scopes[right.scope]);
+      result = compareText(
+        labels.scopes[left.scope],
+        labels.scopes[right.scope],
+      );
     } else {
-      result = compareText(labels.issueCodes[left.code], labels.issueCodes[right.code]);
+      result = compareText(
+        labels.issueCodes[left.code],
+        labels.issueCodes[right.code],
+      );
     }
 
     if (result !== 0) {
       return result;
     }
 
-    return compareText(labels.issueCodes[left.code], labels.issueCodes[right.code]);
+    return compareText(
+      labels.issueCodes[left.code],
+      labels.issueCodes[right.code],
+    );
   });
 }
 
