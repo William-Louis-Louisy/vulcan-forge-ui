@@ -1,0 +1,54 @@
+name: DS-170-08B1 format
+
+on:
+  push:
+    branches:
+      - feature/ds-170-08b1-token-reference-integrity
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          ref: feature/ds-170-08b1-token-reference-integrity
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Format DS-170-08B1 files
+        run: >-
+          npx prettier --write
+          docs/product/ds-170-08b1-token-reference-integrity.md
+          src/features/design-systems/ProjectCard.tsx
+          src/features/design-systems/design-systems.queries.ts
+          src/features/design-systems/project-card-swatches.utils.test.ts
+          src/features/design-systems/project-card-swatches.utils.ts
+          src/features/tokens/rename-token.action.ts
+          src/features/tokens/rename-token.utils.test.ts
+          src/features/tokens/rename-token.utils.ts
+
+      - name: Commit formatting
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/product/ds-170-08b1-token-reference-integrity.md src/features/design-systems/ProjectCard.tsx src/features/design-systems/design-systems.queries.ts src/features/design-systems/project-card-swatches.utils.test.ts src/features/design-systems/project-card-swatches.utils.ts src/features/tokens/rename-token.action.ts src/features/tokens/rename-token.utils.test.ts src/features/tokens/rename-token.utils.ts
+          if git diff --cached --quiet; then
+            echo "No formatting changes needed."
+            exit 0
+          fi
+          git commit -m "style: format DS-170-08B1 changes"
+          git push origin HEAD:feature/ds-170-08b1-token-reference-integrity
