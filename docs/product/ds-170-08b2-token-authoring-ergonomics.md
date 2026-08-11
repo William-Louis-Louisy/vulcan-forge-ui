@@ -78,7 +78,9 @@ The migrated help includes:
 - semantic alias guidance;
 - description/fallback language guidance.
 
-`ColorPickerField` already owns its internal label and is a substantial shared interactive primitive. Rather than restructure that component solely for this slice, `PrimitiveColorTokenEditor` positions the contextual-help trigger on the same label row. The user-visible result remains help directly beside the value label while the color picker implementation stays isolated.
+Manual QA exposed that a normal absolutely positioned tooltip could still be clipped or covered by ancestor stacking/overflow contexts regardless of its local z-index. `ContextualHelp` therefore reuses the existing anchored top-layer popover infrastructure used by the color picker. Its content is rendered in the browser top layer while remaining anchored to the information trigger.
+
+`ColorPickerField` now exposes a `labelAccessory` slot. `PrimitiveColorTokenEditor` uses that slot for `ContextualHelp`, so the help trigger is structurally rendered immediately to the right of the Value label instead of being absolutely positioned relative to the whole picker.
 
 Error, validation, saved and unsaved messages remain inline because they describe current state rather than optional help.
 
@@ -98,6 +100,8 @@ Examples:
 Only the parent path is copied. The path input receives initial focus so the next segment can be typed immediately.
 
 For color tokens, the creation kind also follows the selected color token when it is clearly primitive or semantic.
+
+The color creation form keeps a separate path draft for Primitive and Semantic. Switching kind therefore switches namespace instead of leaving an incompatible path in place. For example, a form opened from `color.primitive.neutral.500` starts at `color.primitive.neutral.`; switching to Semantic starts at `color.semantic.`. Switching back restores the Primitive draft, including any text the user had already entered. The inverse behavior applies when the form is opened from a semantic token.
 
 The selected token's value and descriptions are intentionally not copied. Copying those fields would be a Duplicate Token operation, which is a different product action and is outside this slice.
 
@@ -141,12 +145,14 @@ The full Quality workflow remains the integration gate for lint, TypeScript, for
 2. Confirm Preview shows the lightweight title/TokenSet/sample structure without duplicate token metadata.
 3. Confirm Inspector keeps the compact path and Value → Rename → Description → Delete hierarchy.
 4. Confirm value, alias, rename, typography and description save actions are small and placed below their controls.
-5. Open primitive-color, semantic-alias and description contextual help by hover, keyboard focus and click/tap; confirm the information remains available on mobile.
-6. Select `color.primitive.neutral.500`, open New Token and confirm the path starts at `color.primitive.neutral.`, the kind is Primitive, value/descriptions are not copied, and typing continues at the end of the path.
-7. Repeat contextual creation from a semantic color, spacing, radius, motion and typography token.
-8. Confirm an empty primitive description creates no missing-description badge/header/per-field warning and can still be saved.
-9. Confirm an empty semantic color English description still produces the intended missing-description guidance.
-10. Recheck token selection, rename, delete and typography preview behavior from DS-170-08A/08B1 on desktop and mobile.
+5. Open primitive-color, semantic-alias and description contextual help by hover, keyboard focus and click/tap; confirm the tooltip renders above surrounding panels and clipped/scrollable ancestors, and remains available on mobile.
+6. Confirm the primitive-color contextual-help trigger is immediately to the right of the Value label, not aligned with the opacity control or the far edge of the picker.
+7. Select `color.primitive.neutral.500`, open New Token and confirm the path starts at `color.primitive.neutral.`, the kind is Primitive, value/descriptions are not copied, and typing continues at the end of the path.
+8. From that same form, switch to Semantic and confirm the path becomes `color.semantic.`. Enter a semantic path fragment, switch back to Primitive and confirm the Primitive draft is restored; switch again to Semantic and confirm the semantic draft is restored.
+9. Repeat the inverse transition from a form opened on a semantic color token, then repeat contextual creation from spacing, radius, motion and typography tokens.
+10. Confirm an empty primitive description creates no missing-description badge/header/per-field warning and can still be saved.
+11. Confirm an empty semantic color English description still produces the intended missing-description guidance.
+12. Recheck token selection, rename, delete, color picker and typography preview behavior from DS-170-08A/08B1 on desktop and mobile.
 
 ## Deliberate exclusions
 
