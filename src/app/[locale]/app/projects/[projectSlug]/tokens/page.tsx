@@ -2,6 +2,7 @@ import { auth } from '@/auth';
 import { hasLocale } from 'next-intl';
 import {
   createTokenRows,
+  isEditableSemanticColorTokenRow,
   sortTokenSetsByType,
   getActiveTokenSetType,
   type TokenSetType,
@@ -85,7 +86,8 @@ export default async function TokensEditorPage({
   const totalTokenCount = allTokenRows.length;
 
   const missingEnglishDescriptionCount = allTokenRows.filter(
-    (row) => !row.description?.en?.trim(),
+    (row) =>
+      isEditableSemanticColorTokenRow(row) && !row.description?.en?.trim(),
   ).length;
 
   const initialActiveTokenSet =

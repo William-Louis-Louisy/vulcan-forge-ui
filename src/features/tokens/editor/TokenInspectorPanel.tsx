@@ -3,6 +3,7 @@ import {
   type TokenRenameFormLabels,
 } from '../TokenRenameForm';
 import {
+  isEditableSemanticColorTokenRow,
   type TokenRowData,
   type TokenSetType,
   type PrimitiveColorTokenAliasOption,
@@ -68,9 +69,9 @@ export function TokenInspectorPanel({
 }: TokenInspectorPanelProps) {
   if (!token) {
     return (
-      <aside className="border-border-subtle bg-surface-primary shadow-soft flex min-h-0 flex-col overflow-hidden rounded-lg border xl:h-full">
+      <aside className="border-border-subtle flex min-h-0 flex-col xl:h-full xl:overflow-hidden">
         <header className="border-border-subtle shrink-0 border-b px-4 py-3">
-          <p className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase">
+          <p className="text-content-tertiary text-xs font-semibold tracking-[0.16em] uppercase">
             {labels.eyebrow}
           </p>
         </header>
@@ -87,15 +88,13 @@ export function TokenInspectorPanel({
   return (
     <aside className="border-border-subtle flex min-h-0 flex-col xl:h-full xl:overflow-hidden">
       <header className="border-border-subtle shrink-0 border-b px-4 py-3">
-        <p className="text-content-tertiary text-[11px] font-semibold tracking-[0.16em] uppercase">
+        <p className="text-content-tertiary text-xs font-semibold tracking-[0.16em] uppercase">
           {labels.eyebrow}
         </p>
 
-        <h2 className="wrap-break-words mt-2 font-mono text-base font-semibold">
+        <h2 className="wrap-break-words mt-2 font-mono text-xs font-semibold">
           {token.path}
         </h2>
-
-        <p className="text-content-secondary mt-1 text-xs">{tokenSetType}</p>
       </header>
 
       <div className="p-4 xl:min-h-0 xl:flex-1 xl:overflow-y-auto">
@@ -148,21 +147,17 @@ export function TokenInspectorPanel({
           onRenameFailed={onTokenRenameFailed}
         />
 
-        <div className="mt-4">
-          <p className="text-content-tertiary text-xs font-semibold tracking-[0.16em] uppercase">
-            {labels.description}
-          </p>
-
-          <TokenDescriptionEditor
-            key={`${token.type}:${token.path}`}
-            locale={locale}
-            projectSlug={projectSlug}
-            tokenSetType={tokenSetType}
-            tokenPath={token.path}
-            initialDescriptionEn={token.description?.en ?? ''}
-            initialDescriptionFr={token.description?.fr ?? ''}
-          />
-        </div>
+        <TokenDescriptionEditor
+          key={`${token.type}:${token.path}`}
+          locale={locale}
+          projectSlug={projectSlug}
+          tokenSetType={tokenSetType}
+          tokenPath={token.path}
+          sectionLabel={labels.description}
+          descriptionRecommended={isEditableSemanticColorTokenRow(token)}
+          initialDescriptionEn={token.description?.en ?? ''}
+          initialDescriptionFr={token.description?.fr ?? ''}
+        />
 
         <DeleteTokenControl
           key={`delete:${tokenSetType}:${token.path}`}

@@ -49,6 +49,7 @@ export type CreateTypographyTokenFormLabels = {
 type CreateTypographyTokenFormProps = {
   locale: Locale;
   projectSlug: string;
+  initialPath: string;
   labels: CreateTypographyTokenFormLabels;
   onCancel: () => void;
   onCreated?: (tokenPath: string) => void;
@@ -61,6 +62,7 @@ function hasTypographyFieldValue(values: TypographyTokenFormValues) {
 export function CreateTypographyTokenForm({
   locale,
   projectSlug,
+  initialPath,
   labels,
   onCancel,
   onCreated,
@@ -141,10 +143,11 @@ export function CreateTypographyTokenForm({
           <Input
             id="create-typography-token-path"
             name="path"
-            defaultValue={state.values.path}
+            defaultValue={state.values.path || initialPath}
             invalid={pathErrors.length > 0}
             textMode="technical"
             className="mt-2"
+            autoFocus
             placeholder={labels.pathPlaceholder}
           />
 

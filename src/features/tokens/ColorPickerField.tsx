@@ -5,6 +5,7 @@ import {
   useRef,
   useState,
   useSyncExternalStore,
+  type ReactNode,
   type PointerEvent as ReactPointerEvent,
   type KeyboardEvent as ReactKeyboardEvent,
 } from 'react';
@@ -123,6 +124,7 @@ function ChannelInput({
 export type ColorPickerFieldProps = {
   id: string;
   label: string;
+  labelAccessory?: ReactNode;
   locale: Locale;
   value: string;
   onValueChange: (value: string) => void;
@@ -136,6 +138,7 @@ export type ColorPickerFieldProps = {
 export function ColorPickerField({
   id,
   label,
+  labelAccessory,
   locale,
   value,
   onValueChange,
@@ -501,12 +504,15 @@ export function ColorPickerField({
 
   return (
     <div className="grid min-w-0 gap-2">
-      <label
-        htmlFor={id}
-        className="text-content-tertiary text-xs font-semibold tracking-[0.16em] uppercase"
-      >
-        {label}
-      </label>
+      <div className="flex items-center gap-1.5">
+        <label
+          htmlFor={id}
+          className="text-content-tertiary text-xs font-semibold tracking-[0.16em] uppercase"
+        >
+          {label}
+        </label>
+        {labelAccessory}
+      </div>
 
       <div ref={containerRef} className="relative min-w-0">
         <div className="flex min-w-0 items-stretch gap-2">

@@ -36,6 +36,8 @@ type TokenCreationDialogProps = {
   type: TokenSetType | null;
   locale: Locale;
   projectSlug: string;
+  initialPath: string;
+  initialColorKind: 'primitive' | 'semantic';
   primitiveColorAliasOptions: PrimitiveColorTokenAliasOption[];
   labels: TokenCreationDialogLabels;
   onClose: () => void;
@@ -69,6 +71,8 @@ export function TokenCreationDialog({
   type,
   locale,
   projectSlug,
+  initialPath,
+  initialColorKind,
   primitiveColorAliasOptions,
   labels,
   onClose,
@@ -85,6 +89,8 @@ export function TokenCreationDialog({
         <CreateColorTokenForm
           locale={locale}
           projectSlug={projectSlug}
+          initialPath={initialPath}
+          initialKind={initialColorKind}
           primitiveColorAliasOptions={primitiveColorAliasOptions}
           labels={labels.createColorToken}
           onCancel={onClose}
@@ -99,6 +105,7 @@ export function TokenCreationDialog({
           locale={locale}
           projectSlug={projectSlug}
           type="spacing"
+          initialPath={initialPath}
           labels={labels.createDesignToken.spacing}
           onCancel={onClose}
           onCreated={(tokenPath) =>
@@ -112,6 +119,7 @@ export function TokenCreationDialog({
           locale={locale}
           projectSlug={projectSlug}
           type="radius"
+          initialPath={initialPath}
           labels={labels.createDesignToken.radius}
           onCancel={onClose}
           onCreated={(tokenPath) =>
@@ -125,6 +133,7 @@ export function TokenCreationDialog({
           locale={locale}
           projectSlug={projectSlug}
           type="motion"
+          initialPath={initialPath}
           labels={labels.createDesignToken.motion}
           onCancel={onClose}
           onCreated={(tokenPath) =>
@@ -137,6 +146,7 @@ export function TokenCreationDialog({
         <CreateTypographyTokenForm
           locale={locale}
           projectSlug={projectSlug}
+          initialPath={initialPath}
           labels={labels.createTypographyToken}
           onCancel={onClose}
           onCreated={(tokenPath) =>

@@ -88,7 +88,7 @@ export function ComponentResponsiveWorkspace({
           aria-labelledby="components-workspace-tab-preview"
           className={[
             activePanel === 'preview' ? 'grid' : 'hidden',
-            'border-border-subtle min-h-0 min-w-0 content-start gap-6 border-t lg:col-start-2 lg:grid xl:col-start-auto xl:h-full xl:overflow-y-auto xl:border-t-0 xl:border-l',
+            'border-border-subtle bg-background-sunken min-h-0 min-w-0 content-start gap-6 border-t lg:col-start-2 lg:grid xl:col-start-auto xl:h-full xl:overflow-y-auto xl:border-t-0 xl:border-l',
           ].join(' ')}
         >
           {preview}

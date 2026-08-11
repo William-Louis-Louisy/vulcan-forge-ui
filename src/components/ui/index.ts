@@ -4,6 +4,8 @@ export { Badge } from './Badge';
 export type { BadgeProps } from './Badge';
 export { ColorValueSwatch } from './ColorValueSwatch';
 export type { ColorValueSwatchProps } from './ColorValueSwatch';
+export { ContextualHelp } from './ContextualHelp';
+export type { ContextualHelpProps } from './ContextualHelp';
 export { EmptyState } from './EmptyState';
 export type { EmptyStateProps } from './EmptyState';
 export { ErrorState } from './ErrorState';

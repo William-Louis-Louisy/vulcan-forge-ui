@@ -1,3 +1,7 @@
+'use client';
+
+import { CaretDownIcon, CaretRightIcon } from '@phosphor-icons/react';
+import { useState } from 'react';
 import {
   getResolvedColorValueForReference,
   isEditablePrimitiveColorTokenRow,
@@ -153,6 +157,10 @@ export function TokenSetListPanel({
   onTokenSelect,
   primitiveColorAliasOptions,
 }: TokenSetListPanelProps) {
+  const [collapsedGroupIds, setCollapsedGroupIds] = useState<Set<string>>(
+    () => new Set(),
+  );
+
   if (!tokenSet.isReadable) {
     return (
       <WorkspaceState
@@ -171,74 +179,115 @@ export function TokenSetListPanel({
     labels: labels.groups,
   });
 
+  function toggleGroup(groupId: string) {
+    setCollapsedGroupIds((currentGroupIds) => {
+      const nextGroupIds = new Set(currentGroupIds);
+
+      if (nextGroupIds.has(groupId)) {
+        nextGroupIds.delete(groupId);
+      } else {
+        nextGroupIds.add(groupId);
+      }
+
+      return nextGroupIds;
+    });
+  }
+
   return (
     <div className="shadow-soft flex min-h-0 flex-col xl:h-full xl:overflow-hidden">
       {tokenGroups.length > 0 ? (
         <div className="p-4 xl:min-h-0 xl:flex-1 xl:overflow-y-auto">
           <div className="grid gap-4">
-            {tokenGroups.map((group) => (
-              <section key={group.id}>
-                <div className="mb-2 flex items-center gap-2">
-                  <h3 className="text-content-tertiary text-[11px] font-semibold tracking-[0.18em] uppercase">
-                    {group.label}
+            {tokenGroups.map((group) => {
+              const isExpanded = !collapsedGroupIds.has(group.id);
+              const groupPanelId = `token-group-${group.id}`;
+
+              return (
+                <section key={group.id}>
+                  <h3 className="mb-2">
+                    <button
+                      type="button"
+                      aria-expanded={isExpanded}
+                      aria-controls={groupPanelId}
+                      onClick={() => toggleGroup(group.id)}
+                      className="text-content-tertiary hover:text-content-primary focus-visible:outline-border-focus flex w-full items-center gap-2 rounded-sm text-left text-xs font-semibold tracking-[0.16em] uppercase transition focus-visible:outline-2 focus-visible:outline-offset-2"
+                    >
+                      {isExpanded ? (
+                        <CaretDownIcon aria-hidden="true" size={14} />
+                      ) : (
+                        <CaretRightIcon aria-hidden="true" size={14} />
+                      )}
+
+                      <span>{group.label}</span>
+
+                      <span className="bg-background-sunken text-content-tertiary rounded-full px-2 py-0.5 text-xs font-semibold tracking-normal">
+                        {group.rows.length}
+                      </span>
+                    </button>
                   </h3>
 
-                  <span className="bg-background-sunken text-content-tertiary rounded-full px-2 py-0.5 text-[11px] font-semibold">
-                    {group.rows.length}
-                  </span>
-                </div>
+                  {isExpanded ? (
+                    <div
+                      id={groupPanelId}
+                      className="border-border-subtle bg-surface-primary overflow-hidden rounded-md border"
+                    >
+                      {group.rows.map((row) => {
+                        const isSelected = row.path === selectedTokenPath;
+                        const isSemanticDescriptionMissing =
+                          isEditableSemanticColorTokenRow(row) &&
+                          !row.description?.en?.trim();
 
-                <div className="border-border-subtle bg-surface-primary overflow-hidden rounded-md border">
-                  {group.rows.map((row) => {
-                    const isSelected = row.path === selectedTokenPath;
+                        return (
+                          <button
+                            key={row.path}
+                            type="button"
+                            aria-current={isSelected ? 'page' : undefined}
+                            onClick={() => onTokenSelect(row.path)}
+                            className={[
+                              'border-border-subtle flex w-full items-center gap-3 border-b px-4 py-3 text-left last:border-b-0',
+                              isSelected
+                                ? 'bg-background-sunken'
+                                : 'hover:bg-background-subtle',
+                            ].join(' ')}
+                          >
+                            {row.type === 'color' ? (
+                              <TokenPreviewSwatch
+                                row={row}
+                                primitiveColorAliasOptions={
+                                  primitiveColorAliasOptions
+                                }
+                              />
+                            ) : null}
 
-                    return (
-                      <button
-                        key={row.path}
-                        type="button"
-                        aria-current={isSelected ? 'page' : undefined}
-                        onClick={() => onTokenSelect(row.path)}
-                        className={[
-                          'border-border-subtle flex w-full items-center gap-3 border-b px-4 py-3 text-left last:border-b-0',
-                          isSelected
-                            ? 'bg-background-sunken'
-                            : 'hover:bg-background-subtle',
-                        ].join(' ')}
-                      >
-                        {row.type === 'color' ? (
-                          <TokenPreviewSwatch
-                            row={row}
-                            primitiveColorAliasOptions={
-                              primitiveColorAliasOptions
-                            }
-                          />
-                        ) : null}
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate font-mono text-sm font-semibold">
+                                {row.path}
+                              </p>
 
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate font-mono text-[13px] font-semibold">
-                            {row.path}
-                          </p>
+                              <p className="text-content-secondary mt-0.5 truncate font-mono text-xs">
+                                {row.value}
+                              </p>
+                            </div>
 
-                          <p className="text-content-secondary mt-0.5 truncate font-mono text-[11px]">
-                            {row.value}
-                          </p>
-                        </div>
+                            {isSemanticDescriptionMissing ? (
+                              <span className="text-action-warning bg-action-warning/10 rounded-full px-2 py-0.5 text-xs font-semibold">
+                                {labels.missingEnglishDescription}
+                              </span>
+                            ) : null}
 
-                        {!row.description?.en?.trim() ? (
-                          <span className="text-action-warning bg-action-warning/10 rounded-full px-2 py-0.5 text-[11px] font-semibold">
-                            {labels.missingEnglishDescription}
-                          </span>
-                        ) : null}
-
-                        <span className="text-content-tertiary text-base">
-                          ›
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </section>
-            ))}
+                            <CaretRightIcon
+                              aria-hidden="true"
+                              className="text-content-tertiary shrink-0"
+                              size={16}
+                            />
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ) : null}
+                </section>
+              );
+            })}
           </div>
         </div>
       ) : (

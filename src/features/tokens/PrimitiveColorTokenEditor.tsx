@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/ui';
+import { Button, ContextualHelp } from '@/components/ui';
 import { useTranslations } from 'next-intl';
 import type { Locale } from '@/i18n/routing';
 import {
@@ -73,8 +73,8 @@ export function PrimitiveColorTokenEditor({
     ? getFirstError(state.fieldErrors)
     : null;
   const valueError = localValueError ?? submittedValueError;
-  const helpId = `primitive-color-${tokenPath}-help`;
   const errorId = `primitive-color-${tokenPath}-error`;
+  const helpText = t('primitiveColorEditor.help');
 
   function handleSubmitCapture() {
     markCurrentDraftSubmitted();
@@ -95,18 +95,22 @@ export function PrimitiveColorTokenEditor({
         id={`primitive-color-${tokenPath}`}
         name="value"
         label={t('primitiveColorEditor.label')}
+        labelAccessory={
+          <ContextualHelp content={helpText} ariaLabel={helpText} />
+        }
         locale={locale}
         value={draftValue}
         onValueChange={setDraftValue}
         fallbackValue={initialValue}
         invalid={Boolean(valueError)}
         disabled={isPending}
-        ariaDescribedBy={valueError ? `${helpId} ${errorId}` : helpId}
+        ariaDescribedBy={valueError ? errorId : undefined}
       />
 
       <div className="flex justify-end">
         <Button
           type="submit"
+          size="sm"
           disabled={isPending || !hasUnsavedChanges || Boolean(localValueError)}
         >
           {isPending
@@ -114,10 +118,6 @@ export function PrimitiveColorTokenEditor({
             : t('primitiveColorEditor.save')}
         </Button>
       </div>
-
-      <p id={helpId} className="text-content-tertiary mt-2 text-xs">
-        {t('primitiveColorEditor.help')}
-      </p>
 
       {valueError ? (
         <p

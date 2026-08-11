@@ -63,6 +63,17 @@ export function sortTokenRowsForDisplay(rows: TokenRowData[]) {
   });
 }
 
+export function getTokenCreationPathPrefix(tokenPath: string | null) {
+  const normalizedPath = tokenPath?.trim() ?? '';
+  const finalSeparatorIndex = normalizedPath.lastIndexOf('.');
+
+  if (finalSeparatorIndex < 0) {
+    return '';
+  }
+
+  return normalizedPath.slice(0, finalSeparatorIndex + 1);
+}
+
 export function filterTokenRows({
   rows,
   query,

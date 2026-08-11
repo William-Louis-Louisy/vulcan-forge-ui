@@ -35,7 +35,7 @@ export function TokenSetTabs({
               ].join(' ')}
             >
               <span>{tokenSetLabels[tokenSetType]}</span>
-              <span className="text-content-tertiary font-mono text-[11px]">
+              <span className="text-content-tertiary font-mono text-xs">
                 {tokenSetCounts[tokenSetType] ?? 0}
               </span>
             </button>

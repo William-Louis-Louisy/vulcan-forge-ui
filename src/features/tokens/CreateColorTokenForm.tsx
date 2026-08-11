@@ -50,24 +50,46 @@ export type CreateColorTokenFormLabels = {
   };
 };
 
+type ColorTokenKind = 'primitive' | 'semantic';
+
 type CreateColorTokenFormProps = {
   locale: Locale;
   projectSlug: string;
+  initialPath: string;
+  initialKind: ColorTokenKind;
   primitiveColorAliasOptions: PrimitiveColorTokenAliasOption[];
   labels: CreateColorTokenFormLabels;
   onCancel: () => void;
   onCreated?: (tokenPath: string) => void;
 };
 
+function createInitialPathDrafts({
+  initialPath,
+  initialKind,
+}: {
+  initialPath: string;
+  initialKind: ColorTokenKind;
+}): Record<ColorTokenKind, string> {
+  return {
+    primitive: initialKind === 'primitive' ? initialPath : 'color.primitive.',
+    semantic: initialKind === 'semantic' ? initialPath : 'color.semantic.',
+  };
+}
+
 export function CreateColorTokenForm({
   locale,
   projectSlug,
+  initialPath,
+  initialKind,
   primitiveColorAliasOptions,
   labels,
   onCancel,
   onCreated,
 }: CreateColorTokenFormProps) {
-  const [kind, setKind] = useState<'primitive' | 'semantic'>('primitive');
+  const [kind, setKind] = useState<ColorTokenKind>(initialKind);
+  const [pathDrafts, setPathDrafts] = useState<Record<ColorTokenKind, string>>(
+    () => createInitialPathDrafts({ initialPath, initialKind }),
+  );
 
   const [state, formAction, isPending] = useActionState(
     createColorTokenAction,
@@ -75,8 +97,9 @@ export function CreateColorTokenForm({
   );
 
   const [primitiveValue, setPrimitiveValue] = useState(
-    () => state.values.value || '#000000',
+    () => state.values.value,
   );
+  const [primitiveValueTouched, setPrimitiveValueTouched] = useState(false);
   const [referencePath, setReferencePath] = useState(
     () =>
       state.values.referencePath || primitiveColorAliasOptions[0]?.path || '',
@@ -94,7 +117,9 @@ export function CreateColorTokenForm({
     onCreated?.(state.values.path);
   }, [onCreated, state.status, state.values.path]);
 
-  const pathErrors = state.fieldErrors.path ?? [];
+  const pathDraft = pathDrafts[kind];
+  const submittedPathErrors = state.fieldErrors.path ?? [];
+  const pathErrors = pathDraft === state.values.path ? submittedPathErrors : [];
   const submittedValueErrors = state.fieldErrors.value ?? [];
   const referencePathErrors = state.fieldErrors.referencePath ?? [];
   const trimmedPrimitiveValue = primitiveValue.trim();
@@ -107,12 +132,24 @@ export function CreateColorTokenForm({
           ? null
           : 'tokenColorValueInvalid';
   const valueErrors: CreateColorTokenValidationMessageKey[] =
-    localPrimitiveValueError
+    localPrimitiveValueError && primitiveValueTouched
       ? [localPrimitiveValueError]
       : primitiveValue === state.values.value
         ? submittedValueErrors
         : [];
   const hasInvalidPrimitiveValue = Boolean(localPrimitiveValueError);
+
+  function handlePrimitiveValueChange(value: string) {
+    setPrimitiveValueTouched(true);
+    setPrimitiveValue(value);
+  }
+
+  function handlePathChange(value: string) {
+    setPathDrafts((currentDrafts) => ({
+      ...currentDrafts,
+      [kind]: value,
+    }));
+  }
 
   return (
     <form
@@ -176,10 +213,12 @@ export function CreateColorTokenForm({
           <Input
             id="create-token-path"
             name="path"
-            defaultValue={state.values.path}
+            value={pathDraft}
+            onChange={(event) => handlePathChange(event.target.value)}
             invalid={pathErrors.length > 0}
             textMode="technical"
             className="mt-2"
+            autoFocus
             placeholder={
               kind === 'primitive'
                 ? 'color.primitive.azure.500'
@@ -204,7 +243,7 @@ export function CreateColorTokenForm({
               label={labels.valueLabel}
               locale={locale}
               value={primitiveValue}
-              onValueChange={setPrimitiveValue}
+              onValueChange={handlePrimitiveValueChange}
               invalid={valueErrors.length > 0}
               disabled={isPending}
               ariaDescribedBy={

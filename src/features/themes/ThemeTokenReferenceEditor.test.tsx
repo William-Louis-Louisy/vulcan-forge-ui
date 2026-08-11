@@ -78,11 +78,14 @@ function renderEditor({
 }
 
 describe('ThemeTokenReferenceEditor', () => {
-  it('shows mapping data without a redundant theme-role swatch', () => {
+  it('shows mapping data without redundant theme-role or reference previews', () => {
     const { container } = renderEditor();
     const layout = container.querySelector('[data-theme-mapping-layout]');
     const layoutClassNames = layout?.className.split(' ') ?? [];
     const themeRole = container.querySelector('[data-theme-role="background"]');
+    const tokenSelect = screen.getByRole('combobox', {
+      name: 'Choose token for Background',
+    });
 
     expect(
       container.querySelector('[data-theme-mapping-row="background"]'),
@@ -100,35 +103,35 @@ describe('ThemeTokenReferenceEditor', () => {
     ).toBe(false);
     expect(themeRole).toHaveTextContent('background');
     expect(themeRole?.querySelector('[aria-hidden="true"]')).toBeNull();
+    expect(tokenSelect).toHaveTextContent('color.semantic.background.app');
+    expect(tokenSelect).toHaveTextContent('#f7f3eb');
     expect(
-      screen.getByText('Current reference: {color.semantic.background.app}'),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole('img', { name: 'Resolved value: #f7f3eb' }),
-    ).toBeInTheDocument();
+      screen.queryByText('Current reference: {color.semantic.background.app}'),
+    ).not.toBeInTheDocument();
     expect(screen.getByText('Saved')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Save mapping' })).toBeDisabled();
   });
 
-  it('updates the preview value and save state when another token is selected', async () => {
+  it('updates the selected token data and save state when another token is selected', async () => {
     const user = userEvent.setup();
     renderEditor();
 
-    await user.click(
-      screen.getByRole('combobox', { name: 'Choose token for Background' }),
-    );
+    const tokenSelect = screen.getByRole('combobox', {
+      name: 'Choose token for Background',
+    });
+
+    await user.click(tokenSelect);
     await user.click(
       screen.getByRole('option', {
         name: 'color.primitive.neutral.0 #ffffff',
       }),
     );
 
+    expect(tokenSelect).toHaveTextContent('color.primitive.neutral.0');
+    expect(tokenSelect).toHaveTextContent('#ffffff');
     expect(
-      screen.getByText('Current reference: {color.primitive.neutral.0}'),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole('img', { name: 'Resolved value: #ffffff' }),
-    ).toBeInTheDocument();
+      screen.queryByText('Current reference: {color.primitive.neutral.0}'),
+    ).not.toBeInTheDocument();
     expect(screen.getByText('Unsaved')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Save mapping' })).toBeEnabled();
   });
