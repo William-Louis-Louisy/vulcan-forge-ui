@@ -95,7 +95,9 @@ export function AccessibilityIssuesSortableWorkspaceClient({
             value={sortKey}
             options={sortOptions}
             placeholder={t('issues.sort.label')}
-            onValueChange={(value) => setSortKey(value)}
+            onValueChange={(value) =>
+              setSortKey(value as AccessibilityIssueSortKey)
+            }
             className="mt-1 w-full"
           />
         </div>
