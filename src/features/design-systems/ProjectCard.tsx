@@ -38,7 +38,10 @@ export function ProjectCard({
   updatedAtLabel,
   labels,
 }: ProjectCardProps) {
-  const swatches = createProjectCardSwatches(project.tokenSets);
+  const swatches = createProjectCardSwatches({
+    tokenSets: project.tokenSets,
+    themes: project.themes,
+  });
 
   return (
     <Card padding="lg" className="group min-h-55 transition hover:shadow-md">
