@@ -8,7 +8,7 @@ import {
 } from './update-semantic-color-token.state';
 import { useActionState, useMemo, useState } from 'react';
 import type { PrimitiveColorTokenAliasOption } from './tokens-editor.utils';
-import { Button, Select } from '@/components/ui';
+import { Button, ContextualHelp, Select } from '@/components/ui';
 import { updateSemanticColorTokenAction } from './update-semantic-color-token.action';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 import { useActionBackedProjectSaveStatus } from '@/features/save-context/useActionBackedProjectSaveStatus';
@@ -75,8 +75,10 @@ export function SemanticColorTokenAliasEditor({
   const referencePathError = hasCurrentActionError
     ? getFirstError(state.fieldErrors)
     : null;
-  const helpId = `semantic-alias-${tokenPath}-help`;
   const errorId = `semantic-alias-${tokenPath}-error`;
+  const helpText = hasPrimitiveOptions
+    ? t('semanticAliasEditor.help')
+    : t('semanticAliasEditor.noPrimitiveOptions');
 
   function handleSubmitCapture() {
     markCurrentDraftSubmitted();
@@ -93,14 +95,17 @@ export function SemanticColorTokenAliasEditor({
       <input type="hidden" name="projectSlug" value={projectSlug} />
       <input type="hidden" name="tokenPath" value={tokenPath} />
 
-      <label
-        htmlFor={`semantic-alias-${tokenPath}`}
-        className="text-content-tertiary text-xs font-semibold tracking-[0.18em] uppercase"
-      >
-        {t('semanticAliasEditor.label')}
-      </label>
+      <div className="flex items-center gap-1.5">
+        <label
+          htmlFor={`semantic-alias-${tokenPath}`}
+          className="text-content-tertiary text-xs font-semibold tracking-[0.16em] uppercase"
+        >
+          {t('semanticAliasEditor.label')}
+        </label>
+        <ContextualHelp content={helpText} ariaLabel={helpText} />
+      </div>
 
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
+      <div className="flex flex-col gap-2 sm:items-end">
         <Select
           id={`semantic-alias-${tokenPath}`}
           name="referencePath"
@@ -115,13 +120,14 @@ export function SemanticColorTokenAliasEditor({
           placeholder={t('semanticAliasEditor.label')}
           disabled={!hasPrimitiveOptions || isPending}
           invalid={Boolean(referencePathError)}
-          ariaDescribedBy={referencePathError ? errorId : helpId}
+          ariaDescribedBy={referencePathError ? errorId : undefined}
           textMode="technical"
-          className="flex-1"
+          className="mt-2 w-full flex-1"
         />
 
         <Button
           type="submit"
+          size="sm"
           disabled={isPending || !hasPrimitiveOptions || !hasUnsavedChanges}
           className="w-full sm:w-auto"
         >
@@ -131,24 +137,26 @@ export function SemanticColorTokenAliasEditor({
         </Button>
       </div>
 
-      <div className="mt-2 flex items-center gap-2">
-        {previewValue ? (
-          <span
-            role="img"
-            aria-label={t('semanticAliasEditor.previewLabel', {
-              value: previewValue,
-            })}
-            className="border-border-subtle size-5 rounded-full border"
-            style={{ backgroundColor: previewValue }}
-          />
-        ) : null}
+      {previewValue || !hasPrimitiveOptions ? (
+        <div className="mt-2 flex items-center gap-2">
+          {previewValue ? (
+            <span
+              role="img"
+              aria-label={t('semanticAliasEditor.previewLabel', {
+                value: previewValue,
+              })}
+              className="border-border-subtle size-5 rounded-full border"
+              style={{ backgroundColor: previewValue }}
+            />
+          ) : null}
 
-        <p id={helpId} className="text-content-tertiary text-xs">
-          {hasPrimitiveOptions
-            ? t('semanticAliasEditor.help')
-            : t('semanticAliasEditor.noPrimitiveOptions')}
-        </p>
-      </div>
+          {!hasPrimitiveOptions ? (
+            <p className="text-content-tertiary text-xs">
+              {t('semanticAliasEditor.noPrimitiveOptions')}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
 
       {referencePathError ? (
         <p
