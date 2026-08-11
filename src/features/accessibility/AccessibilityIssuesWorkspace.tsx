@@ -3,17 +3,7 @@ import type { AccessibilityCenterIssue } from './accessibility-center.utils';
 import type { AccessibilityIssuesClientLabels } from './AccessibilityIssuesWorkspaceClient';
 import { AccessibilityIssuesSortableWorkspaceClient } from './AccessibilityIssuesSortableWorkspaceClient';
 
-export type AccessibilityIssueSortLabels = {
-  label: string;
-  options: {
-    severity: string;
-    scope: string;
-    rule: string;
-  };
-};
-
 type AccessibilityIssuesLabels = AccessibilityIssuesClientLabels & {
-  sort: AccessibilityIssueSortLabels;
   details: AccessibilityIssuesClientLabels['details'] & {
     ratioValue: (ratio: string, required: string) => string;
   };
@@ -59,7 +49,6 @@ export function AccessibilityIssuesWorkspace({
       projectSlug={projectSlug}
       issues={issues}
       ratioLabels={ratioLabels}
-      sortLabels={labels.sort}
       labels={{
         ...labels,
         details: {
