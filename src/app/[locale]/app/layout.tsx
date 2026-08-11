@@ -5,7 +5,11 @@ import { getTranslations } from 'next-intl/server';
 import { headers } from 'next/headers';
 import { notFound, redirect } from 'next/navigation';
 import { AppShell } from '@/components/layout/AppShell';
-import { EmailVerificationBanner } from '@/features/auth/email-verification/EmailVerificationBanner';
+import {
+  EmailVerificationBanner,
+  EmailVerificationNoticeProvider,
+  EmailVerificationTopbarTrigger,
+} from '@/features/auth/email-verification/EmailVerificationBanner';
 import { getSafeAuthReturnTo } from '@/features/auth/shared/return-to';
 import { AUTH_REQUEST_TARGET_HEADER } from '@/features/auth/shared/request-target';
 import { getAppShellData } from '@/features/app-navigation/app-shell.queries';
@@ -73,42 +77,51 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
     redirect(authenticationRequiredUrl);
   }
 
+  const requiresEmailVerification = !user.emailVerifiedAt;
+
   return (
-    <AppShell
-      userEmail={session.user.email ?? t('unknownUser')}
-      workspaceName={appShellData.workspaceName ?? t('sidebar.workspace')}
-      projects={appShellData.projects}
-      themePreference={appShellData.themePreference}
-      labels={{
-        navigationLabel: t('navigationLabel'),
-        navigationItems: {
-          dashboard: t('navigationItems.dashboard'),
-        },
-        topbar: {
-          settings: t('navigationItems.settings'),
-          userMenuLabel: t('topbar.userMenuLabel'),
-          account: t('topbar.account'),
-          breadcrumb: {
-            ariaLabel: t('topbar.breadcrumbLabel'),
-            allProjects: t('navigationItems.projects'),
-            saveStatus: {
-              saved: t('topbar.saveStatus.saved'),
-              unsaved: t('topbar.saveStatus.unsaved'),
-              saving: t('topbar.saveStatus.saving'),
-              error: t('topbar.saveStatus.error'),
+    <EmailVerificationNoticeProvider>
+      <AppShell
+        userEmail={session.user.email ?? t('unknownUser')}
+        workspaceName={appShellData.workspaceName ?? t('sidebar.workspace')}
+        projects={appShellData.projects}
+        themePreference={appShellData.themePreference}
+        topbarStatus={
+          requiresEmailVerification ? <EmailVerificationTopbarTrigger /> : null
+        }
+        floatingLayer={
+          requiresEmailVerification ? (
+            <EmailVerificationBanner locale={locale} />
+          ) : null
+        }
+        labels={{
+          navigationLabel: t('navigationLabel'),
+          navigationItems: {
+            dashboard: t('navigationItems.dashboard'),
+          },
+          topbar: {
+            settings: t('navigationItems.settings'),
+            userMenuLabel: t('topbar.userMenuLabel'),
+            account: t('topbar.account'),
+            breadcrumb: {
+              ariaLabel: t('topbar.breadcrumbLabel'),
+              allProjects: t('navigationItems.projects'),
+              saveStatus: {
+                saved: t('topbar.saveStatus.saved'),
+                unsaved: t('topbar.saveStatus.unsaved'),
+                saving: t('topbar.saveStatus.saving'),
+                error: t('topbar.saveStatus.error'),
+              },
             },
           },
-        },
-        sidebar: {
-          workspace: t('sidebar.workspace'),
-          beta: t('sidebar.beta'),
-        },
-      }}
-    >
-      {!user.emailVerifiedAt ? (
-        <EmailVerificationBanner locale={locale} />
-      ) : null}
-      {children}
-    </AppShell>
+          sidebar: {
+            workspace: t('sidebar.workspace'),
+            beta: t('sidebar.beta'),
+          },
+        }}
+      >
+        {children}
+      </AppShell>
+    </EmailVerificationNoticeProvider>
   );
 }
