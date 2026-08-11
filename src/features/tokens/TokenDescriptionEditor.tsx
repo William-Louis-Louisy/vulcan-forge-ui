@@ -17,8 +17,8 @@ type TokenDescriptionEditorProps = {
   projectSlug: string;
   tokenSetType: string;
   tokenPath: string;
-  sectionLabel: string;
-  descriptionRecommended: boolean;
+  sectionLabel?: string;
+  descriptionRecommended?: boolean;
   initialDescriptionEn: string;
   initialDescriptionFr: string;
 };
@@ -96,10 +96,13 @@ export function TokenDescriptionEditor({
   const descriptionFrError = hasCurrentActionError
     ? getFirstError(state.fieldErrors, 'descriptionFr')
     : null;
+  const shouldRecommendDescription =
+    descriptionRecommended ??
+    (tokenSetType === 'color' && tokenPath.startsWith('color.semantic.'));
   const showEnglishWarning =
-    descriptionRecommended && descriptionEn.trim().length === 0;
+    shouldRecommendDescription && descriptionEn.trim().length === 0;
   const showFrenchWarning =
-    descriptionRecommended && descriptionFr.trim().length === 0;
+    shouldRecommendDescription && descriptionFr.trim().length === 0;
   const descriptionHelp = t('descriptionEditor.fallbackNotice');
 
   function handleSubmitCapture() {
@@ -109,15 +112,17 @@ export function TokenDescriptionEditor({
 
   return (
     <div className="mt-4">
-      <div className="flex items-center gap-1.5">
-        <p className="text-content-tertiary text-xs font-semibold tracking-[0.16em] uppercase">
-          {sectionLabel}
-        </p>
-        <ContextualHelp
-          content={descriptionHelp}
-          ariaLabel={`${sectionLabel}: ${descriptionHelp}`}
-        />
-      </div>
+      {sectionLabel ? (
+        <div className="flex items-center gap-1.5">
+          <p className="text-content-tertiary text-xs font-semibold tracking-[0.16em] uppercase">
+            {sectionLabel}
+          </p>
+          <ContextualHelp
+            content={descriptionHelp}
+            ariaLabel={`${sectionLabel}: ${descriptionHelp}`}
+          />
+        </div>
+      ) : null}
 
       <form
         action={formAction}
@@ -218,6 +223,12 @@ export function TokenDescriptionEditor({
             ) : null}
           </div>
         </div>
+
+        {!sectionLabel ? (
+          <p className="text-content-tertiary mt-3 text-xs">
+            {descriptionHelp}
+          </p>
+        ) : null}
 
         <div className="mt-3 flex justify-end">
           <Button
