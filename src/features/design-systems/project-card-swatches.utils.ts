@@ -179,7 +179,7 @@ export function createProjectCardSwatches({
   const preferredTheme =
     themes.find((theme) => theme.mode === 'light') ?? themes[0] ?? null;
   const availableResolvedColors = createAvailableResolvedColors(tokenMap);
-  const usedFallbackColors = new Set<string>();
+  const usedColors = new Set<string>();
 
   return PROJECT_SWATCH_THEME_ROLES.map((role, index) => {
     const themeColor = preferredTheme
@@ -191,15 +191,16 @@ export function createProjectCardSwatches({
       : null;
 
     if (themeColor) {
+      usedColors.add(themeColor);
       return themeColor;
     }
 
     const availableColor = availableResolvedColors.find(
-      (color) => !usedFallbackColors.has(color),
+      (color) => !usedColors.has(color),
     );
 
     if (availableColor) {
-      usedFallbackColors.add(availableColor);
+      usedColors.add(availableColor);
       return availableColor;
     }
 
