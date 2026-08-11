@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
 import { useActionState, useEffect, useState } from 'react';
 import { renameTokenAction } from './rename-token.action';
@@ -156,14 +157,14 @@ export function TokenRenameForm({
           </p>
         ) : null}
 
-        <div className="inline-flex w-full items-center justify-end">
-          <button
+        <div className="mt-2 flex justify-end">
+          <Button
             type="submit"
+            size="sm"
             disabled={isPending || !hasUnsavedChanges}
-            className="bg-action-primary text-action-primary-content mt-2 self-end rounded-md px-4 py-2 text-sm font-semibold disabled:opacity-60"
           >
             {isPending ? '…' : labels.submit}
-          </button>
+          </Button>
         </div>
       </div>
     </form>
