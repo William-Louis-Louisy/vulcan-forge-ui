@@ -21,6 +21,7 @@ type AppTopbarProps = {
   navigationItems: Record<PrivateNavigationItemKey, string>;
   workspaceName?: string;
   leading?: ReactNode;
+  status?: ReactNode;
 };
 
 export function AppTopbar({
@@ -30,6 +31,7 @@ export function AppTopbar({
   navigationItems,
   workspaceName = 'Atelier Lyon',
   leading,
+  status,
 }: AppTopbarProps) {
   return (
     <header className="border-border-subtle bg-background-sunken flex h-12 min-w-0 shrink-0 items-center gap-2 border-b px-3 sm:px-4">
@@ -37,7 +39,7 @@ export function AppTopbar({
       {leading}
 
       <div
-        className="text-content-secondary hidden min-w-0 shrink-0 items-center gap-2 px-2 text-sm font-medium md:flex"
+        className="text-content-secondary hidden min-w-0 shrink-0 cursor-default select-none items-center gap-2 px-2 text-sm font-medium md:flex"
         title={workspaceName}
       >
         <span className="bg-action-accent text-action-accent-content flex size-4 items-center justify-center rounded-[4px] text-[9.5px] font-bold">
@@ -49,6 +51,8 @@ export function AppTopbar({
       <ProjectTopbarBreadcrumbTrail labels={labels.breadcrumb} />
 
       <div className="ml-auto flex shrink-0 items-center gap-2">
+        {status}
+
         <div className="hidden lg:block">
           <LocaleSwitcher />
         </div>
