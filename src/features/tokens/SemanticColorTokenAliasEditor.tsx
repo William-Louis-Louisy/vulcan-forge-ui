@@ -120,7 +120,7 @@ export function SemanticColorTokenAliasEditor({
           placeholder={t('semanticAliasEditor.label')}
           disabled={!hasPrimitiveOptions || isPending}
           invalid={Boolean(referencePathError)}
-          ariaDescribedBy={referencePathError ? errorId : undefined}
+          {...(referencePathError ? { ariaDescribedBy: errorId } : {})}
           textMode="technical"
           className="mt-2 w-full flex-1"
         />
