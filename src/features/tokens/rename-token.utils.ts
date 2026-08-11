@@ -252,10 +252,7 @@ export function renameTokenAcrossProject({
     tokenSet.tokens.some(
       (token) =>
         token.path === trimmedNextTokenPath &&
-        !(
-          tokenSet.id === targetTokenSetId &&
-          token.path === currentTokenPath
-        ),
+        !(tokenSet.id === targetTokenSetId && token.path === currentTokenPath),
     ),
   );
 
@@ -323,7 +320,9 @@ export function renameTokenAcrossProject({
   });
 
   const componentUpdates = componentContracts.flatMap((component) => {
-    const parsedContract = componentContractSchema.safeParse(component.contract);
+    const parsedContract = componentContractSchema.safeParse(
+      component.contract,
+    );
 
     if (!parsedContract.success) {
       return [];
