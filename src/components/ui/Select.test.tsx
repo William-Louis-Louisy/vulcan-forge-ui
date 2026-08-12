@@ -26,7 +26,7 @@ function SelectFixture({ disabled = false }: { disabled?: boolean }) {
   );
 
   return (
-    <div>
+    <div className="overflow-hidden">
       <label htmlFor="theme-token">Choose token</label>
       <Select
         id="theme-token"
@@ -60,6 +60,18 @@ describe('Select', () => {
         name: 'color.primitive.neutral.0 #ffffff',
       }),
     ).toBeInTheDocument();
+  });
+
+  it('renders the open listbox as a fixed top-layer surface', async () => {
+    const user = userEvent.setup();
+    render(<SelectFixture />);
+
+    await user.click(screen.getByRole('combobox', { name: 'Choose token' }));
+
+    const listbox = screen.getByRole('listbox');
+
+    expect(listbox).toHaveStyle({ position: 'fixed' });
+    expect(listbox).not.toHaveClass('absolute');
   });
 
   it('supports keyboard selection and closes after activation', async () => {
