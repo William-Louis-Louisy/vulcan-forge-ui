@@ -10,6 +10,7 @@ import {
   type KeyboardEvent,
 } from 'react';
 
+import { useAnchoredTopLayerPopover } from '@/components/interaction/useAnchoredTopLayerPopover';
 import { useDismissiblePopover } from '@/components/interaction/useDismissiblePopover';
 
 export type SelectOption<Value extends string = string> = {
@@ -98,6 +99,7 @@ export function Select<Value extends string>({
   const listboxId = `${id}-${generatedId}-listbox`;
   const { close, containerRef, isOpen, setIsOpen, triggerRef } =
     useDismissiblePopover();
+  const listboxRef = useRef<HTMLUListElement>(null);
   const selectedOption = useMemo(
     () => options.find((option) => option.value === value) ?? null,
     [options, value],
@@ -111,6 +113,14 @@ export function Select<Value extends string>({
   );
   const typeaheadRef = useRef('');
   const typeaheadTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { placement, popoverStyle } = useAnchoredTopLayerPopover({
+    contentKey: `${value}:${options.length}`,
+    isOpen,
+    matchTriggerWidth: true,
+    popoverRef: listboxRef,
+    preferredAxis: 'vertical',
+    triggerRef,
+  });
 
   useEffect(() => {
     if (!isOpen || activeIndex < 0) {
@@ -356,9 +366,13 @@ export function Select<Value extends string>({
 
       {isOpen ? (
         <ul
+          ref={listboxRef}
           id={listboxId}
           role="listbox"
-          className="border-border-subtle bg-surface-primary shadow-elevated absolute top-full right-0 left-0 z-50 mt-1 max-h-72 overflow-y-auto rounded-md border p-1"
+          popover="manual"
+          data-placement={placement}
+          style={popoverStyle}
+          className="border-border-subtle bg-surface-primary shadow-elevated z-50 max-h-72 overflow-y-auto rounded-md border p-1"
         >
           {options.map((option, index) => {
             const isSelected = option.value === value;
