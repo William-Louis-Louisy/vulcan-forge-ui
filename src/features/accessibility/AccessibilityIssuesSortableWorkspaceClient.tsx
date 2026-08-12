@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, type ReactNode } from 'react';
+import { Fragment, useMemo, useState, type ReactNode } from 'react';
 import { useTranslations } from 'next-intl';
 import { Select } from '@/components/ui';
 import type { AccessibilityCenterIssue } from './accessibility-center.utils';
@@ -123,8 +123,12 @@ export function AccessibilityIssuesSortableWorkspaceClient({
       beforeIssues={
         beforeIssues || sortControl ? (
           <div className="grid min-w-0 gap-4">
-            {beforeIssues}
-            {sortControl}
+            {beforeIssues ? (
+              <Fragment key="before-issues">{beforeIssues}</Fragment>
+            ) : null}
+            {sortControl ? (
+              <Fragment key="sort-control">{sortControl}</Fragment>
+            ) : null}
           </div>
         ) : undefined
       }
