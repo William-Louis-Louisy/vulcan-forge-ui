@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { describe, expect, it } from 'vitest';
@@ -72,6 +72,23 @@ describe('Select', () => {
 
     expect(listbox).toHaveStyle({ position: 'fixed' });
     expect(listbox).not.toHaveClass('absolute');
+  });
+
+  it('closes on surrounding scroll without closing while the listbox scrolls', async () => {
+    const user = userEvent.setup();
+    render(<SelectFixture />);
+    const combobox = screen.getByRole('combobox', { name: 'Choose token' });
+
+    await user.click(combobox);
+
+    const listbox = screen.getByRole('listbox');
+    fireEvent.scroll(listbox);
+
+    expect(screen.getByRole('listbox')).toBeInTheDocument();
+
+    fireEvent.scroll(document);
+
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
   });
 
   it('supports keyboard selection and closes after activation', async () => {
