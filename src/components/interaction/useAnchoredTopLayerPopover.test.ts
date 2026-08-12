@@ -66,4 +66,43 @@ describe('calculateAnchoredPopoverPosition', () => {
       top: 168,
     });
   });
+
+  it('keeps vertical popovers below the trigger even when side space exists', () => {
+    expect(
+      calculateAnchoredPopoverPosition({
+        popoverHeight: 240,
+        popoverWidth: 320,
+        preferredAxis: 'vertical',
+        triggerRect,
+        viewportHeight: 1080,
+        viewportWidth: 1920,
+      }),
+    ).toEqual({
+      left: 600,
+      placement: 'bottom',
+      top: 468,
+    });
+  });
+
+  it('places vertical popovers above when there is more room above', () => {
+    expect(
+      calculateAnchoredPopoverPosition({
+        popoverHeight: 280,
+        popoverWidth: 320,
+        preferredAxis: 'vertical',
+        triggerRect: {
+          bottom: 760,
+          left: 500,
+          right: 820,
+          top: 720,
+        },
+        viewportHeight: 800,
+        viewportWidth: 1280,
+      }),
+    ).toEqual({
+      left: 500,
+      placement: 'top',
+      top: 432,
+    });
+  });
 });
