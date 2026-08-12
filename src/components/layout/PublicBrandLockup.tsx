@@ -17,6 +17,7 @@ export function PublicBrandLockup({
     <span
       className={[
         'inline-flex items-center font-semibold tracking-[-0.025em]',
+        'select-none',
         compact ? 'gap-2 text-sm' : 'gap-2.5 text-base',
         inverse ? 'text-content-inverse' : 'text-content-primary',
         className,

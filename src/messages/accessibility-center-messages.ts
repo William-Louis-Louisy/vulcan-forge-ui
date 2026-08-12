@@ -14,6 +14,14 @@ export const accessibilityCenterMessages = {
           rule: 'Rule',
           affected: 'Affected',
         },
+        sort: {
+          label: 'Sort issues',
+          options: {
+            severity: 'Severity',
+            scope: 'Scope',
+            rule: 'Rule',
+          },
+        },
         scopes: {
           themeContrast: 'Theme contrast',
           tokenResolution: 'Token resolution',
@@ -126,6 +134,14 @@ export const accessibilityCenterMessages = {
           scope: 'Périmètre',
           rule: 'Règle',
           affected: 'Élément concerné',
+        },
+        sort: {
+          label: 'Trier les problèmes',
+          options: {
+            severity: 'Sévérité',
+            scope: 'Périmètre',
+            rule: 'Règle',
+          },
         },
         scopes: {
           themeContrast: 'Contraste du thème',

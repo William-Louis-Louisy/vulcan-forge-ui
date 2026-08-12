@@ -34,6 +34,8 @@ type AppShellProps = {
   projects: ProjectSwitcherProject[];
   themePreference: ThemePreference;
   workspaceName?: string;
+  topbarStatus?: ReactNode;
+  floatingLayer?: ReactNode;
 };
 
 export function AppShell({
@@ -43,6 +45,8 @@ export function AppShell({
   projects,
   themePreference,
   workspaceName,
+  topbarStatus,
+  floatingLayer,
 }: AppShellProps) {
   return (
     <ProjectTopbarBreadcrumbProvider projects={projects}>
@@ -56,6 +60,7 @@ export function AppShell({
           labels={labels.topbar}
           navigationLabel={labels.navigationLabel}
           navigationItems={labels.navigationItems}
+          status={topbarStatus}
         />
 
         <div className="flex min-h-0 flex-1 overflow-hidden">
@@ -79,6 +84,8 @@ export function AppShell({
             <main>{children}</main>
           </div>
         </div>
+
+        {floatingLayer}
       </div>
     </ProjectTopbarBreadcrumbProvider>
   );

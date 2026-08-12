@@ -13,6 +13,7 @@ import type { projectSettingsMessages } from '../messages/project-settings-messa
 import type { publicSurfaceMessages } from '../messages/public-surface-messages';
 import type { productEditorPreviewMessages } from '../messages/product-editor-preview-messages';
 import type { errorSurfaceMessages } from '../messages/error-surface-messages';
+import type { journeyPolishMessages } from '../messages/journey-polish-messages';
 
 type DeepMerge<Left, Right> = {
   [Key in keyof Left | keyof Right]: Key extends keyof Right
@@ -73,7 +74,10 @@ type PublicMessages = DeepMerge<
 type ScopedMessages = DeepMerge<
   DeepMerge<
     DeepMerge<ComponentMessages, ProductMessages>,
-    (typeof brandOnboardingMessages)['en']
+    DeepMerge<
+      (typeof brandOnboardingMessages)['en'],
+      (typeof journeyPolishMessages)['en']
+    >
   >,
   DeepMerge<PublicMessages, (typeof errorSurfaceMessages)['en']>
 >;

@@ -30,7 +30,6 @@ export const projectEditorNavItems = [
     key: 'accessibility',
     path: 'accessibility',
     isEnabled: true,
-    severity: 'warning',
   },
   {
     key: 'documentation',
