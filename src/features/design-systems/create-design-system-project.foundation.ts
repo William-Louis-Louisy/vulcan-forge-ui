@@ -54,7 +54,17 @@ export function buildDesignSystemProjectFoundation(
       create: seedTemplates.themes.map((theme) => ({
         mode: theme.mode,
         name: theme.name,
-        tokens: toInputJsonValue(theme.tokens),
+        tokens: toInputJsonValue(
+          theme.mode === 'light'
+            ? {
+                ...theme.tokens,
+                color: {
+                  ...theme.tokens.color,
+                  accent: '{color.primitive.accent.secondary}',
+                },
+              }
+            : theme.tokens,
+        ),
       })),
     },
     componentContracts: {
