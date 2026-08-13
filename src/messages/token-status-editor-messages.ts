@@ -50,7 +50,8 @@ export const tokenStatusEditorMessages = {
         },
         deprecated: {
           label: 'Déprécié',
-          description: 'Conservé pour compatibilité ; éviter tout nouvel usage.',
+          description:
+            'Conservé pour compatibilité ; éviter tout nouvel usage.',
         },
       },
       save: 'Enregistrer le statut',
