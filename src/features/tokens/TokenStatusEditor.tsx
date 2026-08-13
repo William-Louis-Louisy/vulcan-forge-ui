@@ -43,7 +43,8 @@ export function TokenStatusEditor({
       },
     },
   );
-  const sourceId = `design-token-status:${projectSlug}:${tokenSetType}:${tokenPath}`;
+  const sourceId =
+    `design-token-status:${projectSlug}:${tokenSetType}:${tokenPath}`;
   const successfulFingerprint =
     state.status === 'success' ? state.values.tokenStatus : null;
   const {
@@ -112,7 +113,11 @@ export function TokenStatusEditor({
       />
 
       <div className="mt-2 flex justify-end">
-        <Button type="submit" size="sm" disabled={isPending || !hasUnsavedChanges}>
+        <Button
+          type="submit"
+          size="sm"
+          disabled={isPending || !hasUnsavedChanges}
+        >
           {isPending ? t('saving') : t('save')}
         </Button>
       </div>
@@ -124,19 +129,28 @@ export function TokenStatusEditor({
       ) : null}
 
       {hasCurrentActionError && state.formError ? (
-        <p role="alert" className="text-action-danger mt-2 text-xs font-semibold">
+        <p
+          role="alert"
+          className="text-action-danger mt-2 text-xs font-semibold"
+        >
           {t(`formErrors.${state.formError}`)}
         </p>
       ) : null}
 
       {hasUnsavedChanges ? (
-        <p role="status" className="text-action-warning mt-2 text-xs font-semibold">
+        <p
+          role="status"
+          className="text-action-warning mt-2 text-xs font-semibold"
+        >
           {t('unsaved')}
         </p>
       ) : null}
 
       {state.status === 'success' && !hasUnsavedChanges ? (
-        <p role="status" className="text-action-success mt-2 text-xs font-semibold">
+        <p
+          role="status"
+          className="text-action-success mt-2 text-xs font-semibold"
+        >
           {t('saved')}
         </p>
       ) : null}
