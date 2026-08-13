@@ -14,6 +14,7 @@ import type { publicSurfaceMessages } from '../messages/public-surface-messages'
 import type { productEditorPreviewMessages } from '../messages/product-editor-preview-messages';
 import type { errorSurfaceMessages } from '../messages/error-surface-messages';
 import type { journeyPolishMessages } from '../messages/journey-polish-messages';
+import type { tokenStatusEditorMessages } from '../messages/token-status-editor-messages';
 
 type DeepMerge<Left, Right> = {
   [Key in keyof Left | keyof Right]: Key extends keyof Right
@@ -79,7 +80,13 @@ type ScopedMessages = DeepMerge<
       (typeof journeyPolishMessages)['en']
     >
   >,
-  DeepMerge<PublicMessages, (typeof errorSurfaceMessages)['en']>
+  DeepMerge<
+    PublicMessages,
+    DeepMerge<
+      (typeof errorSurfaceMessages)['en'],
+      (typeof tokenStatusEditorMessages)['en']
+    >
+  >
 >;
 
 type Messages = WidenMessageValues<
