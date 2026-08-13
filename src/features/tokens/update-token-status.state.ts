@@ -18,11 +18,12 @@ export type UpdateTokenStatusActionState = {
   };
 };
 
-export const initialUpdateTokenStatusActionState: UpdateTokenStatusActionState = {
-  status: 'idle',
-  fieldErrors: {},
-  formError: null,
-  values: {
-    tokenStatus: '',
-  },
-};
+export const initialUpdateTokenStatusActionState: UpdateTokenStatusActionState =
+  {
+    status: 'idle',
+    fieldErrors: {},
+    formError: null,
+    values: {
+      tokenStatus: '',
+    },
+  };
