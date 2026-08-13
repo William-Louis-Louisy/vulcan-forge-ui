@@ -116,6 +116,7 @@ export function BrandProfileEditor({
     profile,
     supportedLocales: project.supportedLocales,
   });
+  const hasMultipleSupportedLocales = project.supportedLocales.length > 1;
 
   useEffect(() => {
     if (state.status === 'success') {
@@ -261,17 +262,19 @@ export function BrandProfileEditor({
         projectName={productName}
         actions={
           <div className="flex flex-wrap items-center justify-end gap-3">
-            {missingTranslationCount > 0 ? (
-              <Badge size="sm" variant="warning">
-                {t('missingTranslations.badge', {
-                  count: missingTranslationCount,
-                })}
-              </Badge>
-            ) : (
-              <Badge size="sm" variant="success">
-                {t('missingTranslations.complete')}
-              </Badge>
-            )}
+            {hasMultipleSupportedLocales ? (
+              missingTranslationCount > 0 ? (
+                <Badge size="sm" variant="warning">
+                  {t('missingTranslations.badge', {
+                    count: missingTranslationCount,
+                  })}
+                </Badge>
+              ) : (
+                <Badge size="sm" variant="success">
+                  {t('missingTranslations.complete')}
+                </Badge>
+              )
+            ) : null}
 
             <Button
               type="submit"

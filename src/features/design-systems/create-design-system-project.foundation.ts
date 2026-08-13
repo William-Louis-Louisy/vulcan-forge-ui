@@ -9,6 +9,16 @@ import {
   type BrandVisualStyle,
 } from '@/domain/design-system';
 
+const accessibleLightThemeTokens = {
+  color: {
+    background: '{color.primitive.neutral.50}',
+    surface: '{color.primitive.neutral.0}',
+    content: '{color.primitive.neutral.950}',
+    muted: '{color.primitive.neutral.700}',
+    accent: '{color.primitive.accent.secondary}',
+  },
+} as const;
+
 function toInputJsonValue(value: unknown): Prisma.InputJsonValue {
   return value as Prisma.InputJsonValue;
 }
@@ -54,7 +64,9 @@ export function buildDesignSystemProjectFoundation(
       create: seedTemplates.themes.map((theme) => ({
         mode: theme.mode,
         name: theme.name,
-        tokens: toInputJsonValue(theme.tokens),
+        tokens: toInputJsonValue(
+          theme.mode === 'light' ? accessibleLightThemeTokens : theme.tokens,
+        ),
       })),
     },
     componentContracts: {

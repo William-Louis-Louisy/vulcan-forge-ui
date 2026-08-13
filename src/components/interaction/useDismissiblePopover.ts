@@ -20,11 +20,12 @@ export function useDismissiblePopover() {
       return;
     }
 
+    function isInsideContainer(target: EventTarget | null) {
+      return target instanceof Node && containerRef.current?.contains(target);
+    }
+
     function handlePointerDown(event: PointerEvent) {
-      if (
-        event.target instanceof Node &&
-        !containerRef.current?.contains(event.target)
-      ) {
+      if (!isInsideContainer(event.target)) {
         close();
       }
     }
@@ -38,12 +39,24 @@ export function useDismissiblePopover() {
       triggerRef.current?.focus();
     }
 
+    function handleScroll(event: Event) {
+      if (isInsideContainer(event.target)) {
+        return;
+      }
+
+      close();
+    }
+
     document.addEventListener('pointerdown', handlePointerDown);
     document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('scroll', handleScroll, true);
+    window.visualViewport?.addEventListener('scroll', handleScroll);
 
     return () => {
       document.removeEventListener('pointerdown', handlePointerDown);
       document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('scroll', handleScroll, true);
+      window.visualViewport?.removeEventListener('scroll', handleScroll);
     };
   }, [close, isOpen]);
 
