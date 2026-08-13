@@ -20,6 +20,7 @@ import type { Locale } from '@/i18n/routing';
 import { TokenValueEditor } from './TokenValueEditor';
 import { TokenDescriptionEditor } from '../TokenDescriptionEditor';
 import { DeleteTokenControl } from '../DeleteTokenControl';
+import { TokenStatusEditor } from '../TokenStatusEditor';
 
 export type TokenInspectorPanelLabels = {
   eyebrow: string;
@@ -134,6 +135,18 @@ export function TokenInspectorPanel({
             />
           ) : null}
         </div>
+
+        {token.status ? (
+          <TokenStatusEditor
+            key={`status:${tokenSetType}:${token.path}:${token.status}`}
+            locale={locale}
+            projectSlug={projectSlug}
+            tokenSetType={tokenSetType}
+            tokenPath={token.path}
+            initialStatus={token.status}
+            onUpdated={onTokenValueUpdated}
+          />
+        ) : null}
 
         <TokenRenameForm
           key={token.path}
