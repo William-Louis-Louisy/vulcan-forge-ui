@@ -43,8 +43,7 @@ export function TokenStatusEditor({
       },
     },
   );
-  const sourceId =
-    `design-token-status:${projectSlug}:${tokenSetType}:${tokenPath}`;
+  const sourceId = `token-status:${projectSlug}:${tokenSetType}:${tokenPath}`;
   const successfulFingerprint =
     state.status === 'success' ? state.values.tokenStatus : null;
   const {
