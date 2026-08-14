@@ -49,3 +49,21 @@ export type BrandProfileLocalizedContent = z.infer<
   typeof brandProfileLocalizedContentSchema
 >;
 export type BrandProfile = z.infer<typeof brandProfileSchema>;
+
+export const defaultBrandProfile: BrandProfile = brandProfileSchema.parse({
+  visualStyle: 'minimal',
+  uiDensity: 'cozy',
+  inspirationKeywords: [],
+  localizedContent: {},
+});
+
+export function parseStoredBrandProfile(value: {
+  visualStyle: unknown;
+  uiDensity: unknown;
+  inspirationKeywords: unknown;
+  localizedContent: unknown;
+}): BrandProfile {
+  const parsed = brandProfileSchema.safeParse(value);
+
+  return parsed.success ? parsed.data : defaultBrandProfile;
+}
