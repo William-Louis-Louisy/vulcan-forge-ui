@@ -24,9 +24,7 @@ export type GeneratedAccessibilitySummary = {
   contrastPairs: GeneratedAccessibilityContrastPair[];
 };
 
-function statusFromScore(
-  score: number,
-): GeneratedAccessibilitySummaryStatus {
+function statusFromScore(score: number): GeneratedAccessibilitySummaryStatus {
   if (score >= 90) {
     return 'healthy';
   }
