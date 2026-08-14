@@ -9,10 +9,7 @@ import {
   type DesignToken,
   type DesignTokenType as TokenSetType,
 } from '@/domain/design-system';
-import {
-  exportLogFormats,
-  type ExportLogFormat,
-} from '@/domain/exports';
+import { exportLogFormats, type ExportLogFormat } from '@/domain/exports';
 import type { AppLocale } from '@/domain/i18n';
 import type { ProjectOverviewPageData } from './project-overview.queries';
 
