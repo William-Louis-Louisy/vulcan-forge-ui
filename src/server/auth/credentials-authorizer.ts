@@ -1,5 +1,5 @@
+import { loginSchema } from '@/domain/auth';
 import { prisma } from '@/server/db/prisma';
-import { loginSchema } from '@/features/auth/login/login.schema';
 import { RateLimitedCredentialsError } from './auth-errors';
 import {
   consumeAuthRateLimit,
