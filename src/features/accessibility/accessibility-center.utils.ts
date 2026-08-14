@@ -1,23 +1,19 @@
 import { z } from 'zod';
 import {
+  createThemeColorTokenOptions,
   designTokenSchema,
+  getThemeContrastPairs,
   resolveDesignTokens,
+  sortThemesByMode,
   type ComponentContractType,
+  type DesignSystemTheme as ThemeEditorTheme,
   type DesignTokenType,
+  type ThemeColorKey,
+  type ThemeColorPair,
+  type ThemeMode,
   type TokenResolutionError,
 } from '@/domain/design-system';
 import type { AppLocale } from '@/domain/i18n';
-import type {
-  ThemeMode,
-  ThemeColorKey,
-  ThemeColorPair,
-  ThemeEditorTheme,
-} from '@/features/themes/themes-editor.utils';
-import {
-  sortThemesByMode,
-  getThemeContrastPairs,
-  createThemeColorTokenOptions,
-} from '@/features/themes/themes-editor.utils';
 import {
   createExpandedAccessibilityIssues,
   type ExpandedAccessibilityIssue,
