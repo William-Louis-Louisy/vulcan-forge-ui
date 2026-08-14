@@ -1,3 +1,4 @@
+// Visual design-system authoring only. This module does not handle authentication or credentials.
 import {
   validateTokenValueForType,
   type TokenValueValidationError,
@@ -113,7 +114,7 @@ export function createDesignToken({
     path: nextPath,
     type,
     value: storedValue,
-    status: 'draft',
+    status: 'ready',
     ...(Object.keys(description).length > 0 ? { description } : {}),
   };
 

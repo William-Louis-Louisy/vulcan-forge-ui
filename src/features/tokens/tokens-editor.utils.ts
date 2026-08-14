@@ -79,6 +79,7 @@ export type TokenRowData = {
   rawValue: unknown;
   reference?: string;
   description?: DesignToken['description'];
+  status?: DesignToken['status'];
   isColorValue: boolean;
   validationStatus: TokenRowValidationStatus;
   errorMessages: string[];
@@ -127,6 +128,7 @@ export function createTokenRows(tokens: unknown): TokenRowsResult {
           type: parsedToken.data.type,
           value,
           rawValue: parsedToken.data.value,
+          status: parsedToken.data.status,
           isColorValue:
             parsedToken.data.type === 'color' && isHexColorValue(value),
           validationStatus: 'valid',
@@ -164,7 +166,7 @@ export function createTokenRows(tokens: unknown): TokenRowsResult {
         rawValue: fallbackValue,
         isColorValue:
           typeof fallbackValue === 'string' && isHexColorValue(fallbackValue),
-        validationStatus: 'invalid',
+        validationStatus: 'invalid' as const,
         errorMessages: zodErrorToLocalizedIssues(parsedToken.error).map(
           (issue) =>
             issue.path
