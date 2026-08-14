@@ -1,28 +1,22 @@
 import {
   createTokenDictionary,
-  designTokenSetSchema,
+  parseComponentTokenSets,
   resolveDesignToken,
-  type ComponentContract,
+  type ComponentResolvedTokenBinding as DomainComponentResolvedTokenBinding,
+  type ComponentTokenBindingResolution as DomainComponentTokenBindingResolution,
   type DesignToken,
   type DesignTokenSet,
   type TokenDictionary,
 } from '@/domain/design-system';
 
-export type ComponentResolvedTokenBinding = {
-  key: string;
-  tokenType: DesignToken['type'];
-  tokenPath: string;
-  value: DesignToken['value'];
-  resolvedValue: DesignToken['value'];
-  status: DesignToken['status'];
-  isResolved: boolean;
-};
+export {
+  parseComponentTokenSets,
+  resolveComponentTokenBindings,
+  createComponentTokenBindingResolution,
+} from '@/domain/design-system';
 
-export type ComponentTokenBindingResolution = {
-  bindings: Record<string, ComponentResolvedTokenBinding>;
-  missingBindings: ComponentContract['tokenBindings'];
-  invalidTokenSetsCount: number;
-};
+export type ComponentResolvedTokenBinding = DomainComponentResolvedTokenBinding;
+export type ComponentTokenBindingResolution = DomainComponentTokenBindingResolution;
 
 export type ComponentTokenOption = {
   type: DesignToken['type'];
@@ -79,41 +73,7 @@ export function createComponentTokenOptions(
   );
 }
 
-export function parseComponentTokenSets(
-  tokenSets: Array<{
-    type: string;
-    name: string;
-    tokens: unknown;
-  }>,
-): {
-  tokenSets: DesignTokenSet[];
-  invalidTokenSetsCount: number;
-} {
-  const parsedTokenSets: DesignTokenSet[] = [];
-  let invalidTokenSetsCount = 0;
-
-  for (const tokenSet of tokenSets) {
-    const parsedTokenSet = designTokenSetSchema.safeParse({
-      type: tokenSet.type,
-      name: tokenSet.name,
-      tokens: tokenSet.tokens,
-    });
-
-    if (!parsedTokenSet.success) {
-      invalidTokenSetsCount += 1;
-      continue;
-    }
-
-    parsedTokenSets.push(parsedTokenSet.data);
-  }
-
-  return {
-    tokenSets: parsedTokenSets,
-    invalidTokenSetsCount,
-  };
-}
-
-function createComponentTokenDictionary(
+function createPreviewTokenDictionary(
   tokenSets: DesignTokenSet[],
 ): TokenDictionary {
   return createTokenDictionary(
@@ -121,7 +81,7 @@ function createComponentTokenDictionary(
   );
 }
 
-function resolveComponentTokenValue({
+function resolvePreviewTokenValue({
   dictionary,
   token,
 }: {
@@ -134,68 +94,6 @@ function resolveComponentTokenValue({
   });
 
   return resolvedToken.isResolved ? resolvedToken.resolvedValue : token.value;
-}
-
-export function resolveComponentTokenBindings({
-  bindings,
-  tokenSets,
-}: {
-  bindings: ComponentContract['tokenBindings'];
-  tokenSets: DesignTokenSet[];
-}): Omit<ComponentTokenBindingResolution, 'invalidTokenSetsCount'> {
-  const resolvedBindings: Record<string, ComponentResolvedTokenBinding> = {};
-  const missingBindings: ComponentContract['tokenBindings'] = [];
-  const dictionary = createComponentTokenDictionary(tokenSets);
-
-  for (const binding of bindings) {
-    const token = dictionary.get(binding.tokenPath);
-
-    if (!token || token.type !== binding.tokenType) {
-      missingBindings.push(binding);
-      continue;
-    }
-
-    resolvedBindings[binding.key] = {
-      key: binding.key,
-      tokenType: token.type,
-      tokenPath: binding.tokenPath,
-      value: token.value,
-      resolvedValue: resolveComponentTokenValue({
-        dictionary,
-        token,
-      }),
-      status: token.status,
-      isResolved: true,
-    };
-  }
-
-  return {
-    bindings: resolvedBindings,
-    missingBindings,
-  };
-}
-
-export function createComponentTokenBindingResolution({
-  bindings,
-  rawTokenSets,
-}: {
-  bindings: ComponentContract['tokenBindings'];
-  rawTokenSets: Array<{
-    type: string;
-    name: string;
-    tokens: unknown;
-  }>;
-}): ComponentTokenBindingResolution {
-  const parsedTokenSets = parseComponentTokenSets(rawTokenSets);
-  const resolvedBindings = resolveComponentTokenBindings({
-    bindings,
-    tokenSets: parsedTokenSets.tokenSets,
-  });
-
-  return {
-    ...resolvedBindings,
-    invalidTokenSetsCount: parsedTokenSets.invalidTokenSetsCount,
-  };
 }
 
 export function normalizeComponentPreviewTokenRole(
@@ -251,14 +149,14 @@ export function createComponentPreviewSemanticPalette(
   }>,
 ): ComponentPreviewSemanticPalette {
   const { tokenSets } = parseComponentTokenSets(rawTokenSets);
-  const dictionary = createComponentTokenDictionary(tokenSets);
+  const dictionary = createPreviewTokenDictionary(tokenSets);
   const colors = tokenSets.flatMap((tokenSet) =>
     tokenSet.tokens.flatMap((token) => {
       if (token.type !== 'color') {
         return [];
       }
 
-      const resolvedValue = resolveComponentTokenValue({ dictionary, token });
+      const resolvedValue = resolvePreviewTokenValue({ dictionary, token });
 
       if (
         typeof resolvedValue !== 'string' ||
