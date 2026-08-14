@@ -9,7 +9,6 @@ import {
   renameTokenSchema,
   type RenameTokenValidationMessageKey,
 } from './token-rename.schema';
-import { parseStoredTokenSetTokens } from './token-set-save.service';
 import { revalidatePath } from 'next/cache';
 import { isTokenSetType } from './tokens-editor.utils';
 import { defaultAppLocale, isAppLocale } from '@/domain/i18n';
@@ -17,8 +16,11 @@ import {
   renameTokenAcrossProject,
   type ProjectTokenSetForRename,
 } from './rename-token.utils';
-import { prisma } from '@/server/db/prisma';
-import type { Prisma } from '@/generated/prisma/client';
+import {
+  getEditableTokenMutationProjectForUser,
+  parseStoredTokenSetTokens,
+  saveDesignSystemTokenMutation,
+} from '@/server/design-system/token-mutations';
 
 function getFormStringValue(formData: FormData, key: string): string {
   const value = formData.get(key);
@@ -45,10 +47,6 @@ function normalizeFieldErrors(
   }
 
   return normalizedErrors;
-}
-
-function toInputJsonValue(value: unknown): Prisma.InputJsonValue {
-  return JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
 }
 
 export async function renameTokenAction(
@@ -95,50 +93,21 @@ export async function renameTokenAction(
     };
   }
 
-  const project = await prisma.designSystemProject.findFirst({
-    where: {
-      slug: projectSlug,
-      workspace: {
-        members: {
-          some: {
-            userId: session.user.id,
-          },
-        },
-      },
-    },
-    select: {
-      id: true,
-      tokenSets: {
-        select: {
-          id: true,
-          type: true,
-          tokens: true,
-        },
-      },
-      themes: {
-        select: {
-          id: true,
-          tokens: true,
-        },
-      },
-      componentContracts: {
-        select: {
-          id: true,
-          contract: true,
-        },
-      },
-    },
+  const projectResult = await getEditableTokenMutationProjectForUser({
+    userId: session.user.id,
+    projectSlug,
   });
 
-  if (!project) {
+  if (projectResult.status === 'error') {
     return {
       status: 'error',
       fieldErrors: {},
-      formError: 'projectNotFound',
+      formError: projectResult.error,
       values,
     };
   }
 
+  const project = projectResult.project;
   const targetTokenSet = project.tokenSets.find(
     (tokenSet) => tokenSet.type === tokenSetType,
   );
@@ -190,44 +159,17 @@ export async function renameTokenAction(
     };
   }
 
-  try {
-    await prisma.$transaction([
-      ...renameResult.tokenSetUpdates.map((tokenSet) =>
-        prisma.tokenSet.update({
-          where: {
-            id: tokenSet.id,
-          },
-          data: {
-            tokens: toInputJsonValue(tokenSet.tokens),
-          },
-        }),
-      ),
-      ...renameResult.themeUpdates.map((theme) =>
-        prisma.theme.update({
-          where: {
-            id: theme.id,
-          },
-          data: {
-            tokens: toInputJsonValue(theme.tokens),
-          },
-        }),
-      ),
-      ...renameResult.componentUpdates.map((component) =>
-        prisma.componentContract.update({
-          where: {
-            id: component.id,
-          },
-          data: {
-            contract: toInputJsonValue(component.contract),
-          },
-        }),
-      ),
-    ]);
-  } catch {
+  const saveResult = await saveDesignSystemTokenMutation({
+    tokenSetUpdates: renameResult.tokenSetUpdates,
+    themeUpdates: renameResult.themeUpdates,
+    componentUpdates: renameResult.componentUpdates,
+  });
+
+  if (saveResult.status === 'error') {
     return {
       status: 'error',
       fieldErrors: {},
-      formError: 'unexpected',
+      formError: saveResult.error,
       values,
     };
   }
