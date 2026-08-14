@@ -1,7 +1,4 @@
-import {
-  exportLogFormats,
-  type ExportLogFormat,
-} from '@/domain/exports';
+import { exportLogFormats, type ExportLogFormat } from '@/domain/exports';
 
 export { exportLogFormats };
 export type { ExportLogFormat };
