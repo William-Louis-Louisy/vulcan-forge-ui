@@ -1,8 +1,6 @@
 import {
   aiInstructionsSections,
-  aiInstructionsStrictnessLevels,
   type AiInstructionsSection,
-  type AiInstructionsStrictness,
 } from '@/domain/ai-instructions';
 import type { AppLocale } from '@/domain/i18n';
 
