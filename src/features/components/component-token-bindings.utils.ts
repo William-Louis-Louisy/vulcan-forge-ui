@@ -1,8 +1,11 @@
 import {
+  createTokenDictionary,
   designTokenSetSchema,
+  resolveDesignToken,
   type ComponentContract,
   type DesignToken,
   type DesignTokenSet,
+  type TokenDictionary,
 } from '@/domain/design-system';
 
 export type ComponentResolvedTokenBinding = {
@@ -110,67 +113,27 @@ export function parseComponentTokenSets(
   };
 }
 
-function getTokenReferencePath(value: DesignToken['value']): string | null {
-  if (typeof value !== 'string') {
-    return null;
-  }
-
-  const referenceMatch = value.match(/^\{([a-zA-Z0-9._-]+)\}$/);
-
-  return referenceMatch?.[1] ?? null;
+function createComponentTokenDictionary(
+  tokenSets: DesignTokenSet[],
+): TokenDictionary {
+  return createTokenDictionary(
+    tokenSets.flatMap((tokenSet) => tokenSet.tokens),
+  );
 }
 
-function findTokenByPath({
-  tokenSets,
-  tokenPath,
-}: {
-  tokenSets: DesignTokenSet[];
-  tokenPath: string;
-}): DesignToken | null {
-  for (const tokenSet of tokenSets) {
-    const token = tokenSet.tokens.find(
-      (candidate) => candidate.path === tokenPath,
-    );
-
-    if (token) {
-      return token;
-    }
-  }
-
-  return null;
-}
-
-function resolveTokenValue({
-  tokenSets,
+function resolveComponentTokenValue({
+  dictionary,
   token,
-  visitedPaths = new Set<string>(),
 }: {
-  tokenSets: DesignTokenSet[];
+  dictionary: TokenDictionary;
   token: DesignToken;
-  visitedPaths?: Set<string>;
 }): DesignToken['value'] {
-  const referencePath = getTokenReferencePath(token.reference ?? token.value);
-
-  if (!referencePath || visitedPaths.has(referencePath)) {
-    return token.value;
-  }
-
-  visitedPaths.add(referencePath);
-
-  const referencedToken = findTokenByPath({
-    tokenSets,
-    tokenPath: referencePath,
+  const resolvedToken = resolveDesignToken({
+    token,
+    dictionary,
   });
 
-  if (!referencedToken) {
-    return token.value;
-  }
-
-  return resolveTokenValue({
-    tokenSets,
-    token: referencedToken,
-    visitedPaths,
-  });
+  return resolvedToken.isResolved ? resolvedToken.resolvedValue : token.value;
 }
 
 export function resolveComponentTokenBindings({
@@ -182,12 +145,10 @@ export function resolveComponentTokenBindings({
 }): Omit<ComponentTokenBindingResolution, 'invalidTokenSetsCount'> {
   const resolvedBindings: Record<string, ComponentResolvedTokenBinding> = {};
   const missingBindings: ComponentContract['tokenBindings'] = [];
+  const dictionary = createComponentTokenDictionary(tokenSets);
 
   for (const binding of bindings) {
-    const token = findTokenByPath({
-      tokenSets,
-      tokenPath: binding.tokenPath,
-    });
+    const token = dictionary.get(binding.tokenPath);
 
     if (!token || token.type !== binding.tokenType) {
       missingBindings.push(binding);
@@ -199,8 +160,8 @@ export function resolveComponentTokenBindings({
       tokenType: token.type,
       tokenPath: binding.tokenPath,
       value: token.value,
-      resolvedValue: resolveTokenValue({
-        tokenSets,
+      resolvedValue: resolveComponentTokenValue({
+        dictionary,
         token,
       }),
       status: token.status,
@@ -290,13 +251,14 @@ export function createComponentPreviewSemanticPalette(
   }>,
 ): ComponentPreviewSemanticPalette {
   const { tokenSets } = parseComponentTokenSets(rawTokenSets);
+  const dictionary = createComponentTokenDictionary(tokenSets);
   const colors = tokenSets.flatMap((tokenSet) =>
     tokenSet.tokens.flatMap((token) => {
       if (token.type !== 'color') {
         return [];
       }
 
-      const resolvedValue = resolveTokenValue({ tokenSets, token });
+      const resolvedValue = resolveComponentTokenValue({ dictionary, token });
 
       if (
         typeof resolvedValue !== 'string' ||
