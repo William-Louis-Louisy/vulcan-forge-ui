@@ -4,8 +4,10 @@ import { auth } from '@/auth';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/server/db/prisma';
 import { defaultAppLocale, isAppLocale, type AppLocale } from '@/domain/i18n';
-import type { ComponentContractType } from '@/domain/design-system';
-import type { ThemeMode } from '@/features/themes/themes-editor.utils';
+import type {
+  ComponentContractType,
+  ThemeMode,
+} from '@/domain/design-system';
 import { createAccessibilityCenterReport } from './accessibility-center.utils';
 import type { SaveAccessibilityReportActionState } from './save-accessibility-report.state';
 import { persistAccessibilityReportForUser } from './accessibility-report-persistence.service';
