@@ -28,6 +28,7 @@ export type DesignSystemProjectSourceTokenSet = {
   type: string;
   name: string;
   tokens: DesignToken[];
+  isMalformed: boolean;
 };
 
 export type DesignSystemProjectSourceTheme = {
@@ -85,10 +86,21 @@ export type DesignSystemProjectSourceInput = {
   }>;
 };
 
-function parseStoredTokenSetTokens(tokens: unknown): DesignToken[] {
+function parseStoredTokenSetTokens(tokens: unknown): {
+  tokens: DesignToken[];
+  isMalformed: boolean;
+} {
   const parsedTokens = designTokenArraySchema.safeParse(tokens);
 
-  return parsedTokens.success ? parsedTokens.data : [];
+  return parsedTokens.success
+    ? {
+        tokens: parsedTokens.data,
+        isMalformed: false,
+      }
+    : {
+        tokens: [],
+        isMalformed: true,
+      };
 }
 
 function normalizeThemeTokens(tokens: unknown): Record<string, unknown> {
@@ -108,7 +120,7 @@ export function createDesignSystemProjectSource({
     id: tokenSet.id,
     type: tokenSet.type,
     name: tokenSet.name,
-    tokens: parseStoredTokenSetTokens(tokenSet.tokens),
+    ...parseStoredTokenSetTokens(tokenSet.tokens),
   }));
 
   const components = componentContracts.flatMap((componentContract) => {

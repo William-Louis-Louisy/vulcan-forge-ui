@@ -3,7 +3,7 @@ import {
   evaluateContrast,
   isHexColor,
   type ContrastEvaluation,
-} from '@/domain/accessibility';
+} from '@/domain/accessibility/contrast';
 import { designTokenSchema } from './design-token.schema';
 import {
   pathToTokenReference,
@@ -207,8 +207,8 @@ export function getThemeColorValue({
 
   if (referencePath) {
     return (
-      colorTokenOptions.find((option) => option.path === referencePath)
-        ?.value ?? null
+      colorTokenOptions.find((option) => option.path === referencePath)?.value ??
+      null
     );
   }
 

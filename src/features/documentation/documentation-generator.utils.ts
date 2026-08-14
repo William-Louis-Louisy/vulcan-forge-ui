@@ -1,13 +1,10 @@
+import {
+  documentationSections,
+  type MarkdownDocumentationSection,
+} from '@/domain/documentation';
 import type { AppLocale } from '@/domain/i18n';
-import type { MarkdownDocumentationSection } from '@/domain/documentation';
 
-export const documentationSections = [
-  'overview',
-  'tokens',
-  'themes',
-  'components',
-  'accessibility',
-] as const satisfies readonly MarkdownDocumentationSection[];
+export { documentationSections } from '@/domain/documentation';
 
 export type DocumentationSectionSelection = Record<
   MarkdownDocumentationSection,
