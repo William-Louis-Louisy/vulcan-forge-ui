@@ -2,11 +2,13 @@
 
 import { revalidatePath } from 'next/cache';
 import { auth } from '@/auth';
-import { prisma } from '@/server/db/prisma';
-import type { Prisma } from '@/generated/prisma/client';
 import { defaultAppLocale, isAppLocale } from '@/domain/i18n';
 import { isTokenSetType } from './tokens-editor.utils';
-import { parseStoredTokenSetTokens } from './token-set-save.service';
+import {
+  getEditableTokenMutationProjectForUser,
+  parseStoredTokenSetTokens,
+  saveDesignSystemTokenMutation,
+} from '@/server/design-system/token-mutations';
 import {
   detachComponentTokenBindings,
   detachThemeTokenReferences,
@@ -25,10 +27,6 @@ function getActionLocale(formData: FormData) {
   const rawLocale = getFormStringValue(formData, 'locale');
 
   return isAppLocale(rawLocale) ? rawLocale : defaultAppLocale;
-}
-
-function toInputJsonValue(value: unknown): Prisma.InputJsonValue {
-  return JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
 }
 
 export async function deleteTokenAction(
@@ -60,51 +58,21 @@ export async function deleteTokenAction(
     };
   }
 
-  const project = await prisma.designSystemProject.findFirst({
-    where: {
-      slug: projectSlug,
-      workspace: {
-        members: {
-          some: {
-            userId: session.user.id,
-          },
-        },
-      },
-    },
-    select: {
-      tokenSets: {
-        select: {
-          id: true,
-          type: true,
-          tokens: true,
-        },
-      },
-      themes: {
-        select: {
-          id: true,
-          name: true,
-          tokens: true,
-        },
-      },
-      componentContracts: {
-        select: {
-          id: true,
-          name: true,
-          contract: true,
-        },
-      },
-    },
+  const projectResult = await getEditableTokenMutationProjectForUser({
+    userId: session.user.id,
+    projectSlug,
   });
 
-  if (!project) {
+  if (projectResult.status === 'error') {
     return {
       status: 'error',
-      formError: 'projectNotFound',
+      formError: projectResult.error,
       dependencies: [],
       deletedTokenPath: null,
     };
   }
 
+  const project = projectResult.project;
   const tokenSet = project.tokenSets.find(
     (candidate) => candidate.type === tokenSetType,
   );
@@ -193,41 +161,21 @@ export async function deleteTokenAction(
       : [];
   });
 
-  try {
-    await prisma.$transaction([
-      prisma.tokenSet.update({
-        where: {
-          id: tokenSet.id,
-        },
-        data: {
-          tokens: toInputJsonValue(removeResult.tokens),
-        },
-      }),
-      ...themeUpdates.map((theme) =>
-        prisma.theme.update({
-          where: {
-            id: theme.id,
-          },
-          data: {
-            tokens: toInputJsonValue(theme.tokens),
-          },
-        }),
-      ),
-      ...componentUpdates.map((component) =>
-        prisma.componentContract.update({
-          where: {
-            id: component.id,
-          },
-          data: {
-            contract: toInputJsonValue(component.contract),
-          },
-        }),
-      ),
-    ]);
-  } catch {
+  const saveResult = await saveDesignSystemTokenMutation({
+    tokenSetUpdates: [
+      {
+        id: tokenSet.id,
+        tokens: removeResult.tokens,
+      },
+    ],
+    themeUpdates,
+    componentUpdates,
+  });
+
+  if (saveResult.status === 'error') {
     return {
       status: 'error',
-      formError: 'unexpected',
+      formError: saveResult.error,
       dependencies: [],
       deletedTokenPath: null,
     };
