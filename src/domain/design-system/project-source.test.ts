@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { defaultBrandProfile } from './brand-profile.schema';
-import { createDesignSystemProjectSource } from './project-source';
+import {
+  createDesignSystemProjectSource,
+  type DesignSystemProjectSourceInput,
+} from './project-source';
 
 const project = {
   id: 'project-1',
@@ -13,7 +16,7 @@ const project = {
 
 const updatedAt = new Date('2026-08-14T12:00:00.000Z');
 
-function createSourceInput() {
+function createSourceInput(): DesignSystemProjectSourceInput {
   return {
     project: {
       ...project,
@@ -43,7 +46,7 @@ function createSourceInput() {
     themes: [
       {
         id: 'theme-light',
-        mode: 'light' as const,
+        mode: 'light',
         name: 'Light',
         tokens: {
           color: {
@@ -56,7 +59,7 @@ function createSourceInput() {
     componentContracts: [
       {
         id: 'component-button',
-        type: 'button' as const,
+        type: 'button',
         name: 'Button',
         contract: {
           type: 'button',
