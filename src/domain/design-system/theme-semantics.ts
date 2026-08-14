@@ -102,7 +102,8 @@ export function sortThemesByMode<T extends { mode: ThemeMode }>(
 ): T[] {
   return [...themes].sort(
     (firstTheme, secondTheme) =>
-      themeModes.indexOf(firstTheme.mode) - themeModes.indexOf(secondTheme.mode),
+      themeModes.indexOf(firstTheme.mode) -
+      themeModes.indexOf(secondTheme.mode),
   );
 }
 
@@ -206,8 +207,8 @@ export function getThemeColorValue({
 
   if (referencePath) {
     return (
-      colorTokenOptions.find((option) => option.path === referencePath)?.value ??
-      null
+      colorTokenOptions.find((option) => option.path === referencePath)
+        ?.value ?? null
     );
   }
 
@@ -226,15 +227,18 @@ export function getThemeContrastPairs({
       tokens,
       colorKey: pair.foregroundKey,
     });
+
     const backgroundReferencePath = getThemeColorReferencePath({
       tokens,
       colorKey: pair.backgroundKey,
     });
+
     const foregroundValue = getThemeColorValue({
       tokens,
       colorKey: pair.foregroundKey,
       colorTokenOptions,
     });
+
     const backgroundValue = getThemeColorValue({
       tokens,
       colorKey: pair.backgroundKey,
