@@ -37,7 +37,10 @@ function getImportSpecifiers(source: string): string[] {
   return [...specifiers];
 }
 
-function resolveProjectImport(sourceFile: string, specifier: string): string | null {
+function resolveProjectImport(
+  sourceFile: string,
+  specifier: string,
+): string | null {
   if (specifier.startsWith('@/')) {
     return path.resolve(srcRoot, specifier.slice(2));
   }
