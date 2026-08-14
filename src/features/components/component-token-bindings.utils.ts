@@ -16,7 +16,8 @@ export {
 } from '@/domain/design-system';
 
 export type ComponentResolvedTokenBinding = DomainComponentResolvedTokenBinding;
-export type ComponentTokenBindingResolution = DomainComponentTokenBindingResolution;
+export type ComponentTokenBindingResolution =
+  DomainComponentTokenBindingResolution;
 
 export type ComponentTokenOption = {
   type: DesignToken['type'];
