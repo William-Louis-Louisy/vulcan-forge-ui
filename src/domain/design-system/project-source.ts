@@ -9,10 +9,7 @@ import {
   type ComponentContract,
   type ComponentContractType,
 } from './component-contract.schema';
-import {
-  designTokenSchema,
-  type DesignToken,
-} from './design-token.schema';
+import { designTokenSchema, type DesignToken } from './design-token.schema';
 import type { ThemeMode } from './theme.schema';
 
 const designTokenArraySchema = z.array(designTokenSchema);
@@ -95,9 +92,7 @@ function parseStoredTokenSetTokens(tokens: unknown): DesignToken[] {
 }
 
 function normalizeThemeTokens(tokens: unknown): Record<string, unknown> {
-  return typeof tokens === 'object' &&
-    tokens !== null &&
-    !Array.isArray(tokens)
+  return typeof tokens === 'object' && tokens !== null && !Array.isArray(tokens)
     ? (tokens as Record<string, unknown>)
     : {};
 }
