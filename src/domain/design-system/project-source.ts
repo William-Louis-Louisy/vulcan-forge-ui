@@ -10,9 +10,14 @@ import {
   type ComponentContractType,
 } from './component-contract.schema';
 import { designTokenSchema, type DesignToken } from './design-token.schema';
-import type { ThemeMode } from './theme.schema';
+import {
+  jsonValueSchema,
+  type JsonValue,
+  type ThemeMode,
+} from './theme.schema';
 
 const designTokenArraySchema = z.array(designTokenSchema);
+const themeTokensSchema = z.record(z.string(), jsonValueSchema);
 
 export type DesignSystemProjectSourceProject = {
   id: string;
@@ -35,7 +40,7 @@ export type DesignSystemProjectSourceTheme = {
   id: string;
   mode: ThemeMode;
   name: string;
-  tokens: Record<string, unknown>;
+  tokens: Record<string, JsonValue>;
   updatedAt: Date;
 };
 
@@ -103,10 +108,10 @@ function parseStoredTokenSetTokens(tokens: unknown): {
       };
 }
 
-function normalizeThemeTokens(tokens: unknown): Record<string, unknown> {
-  return typeof tokens === 'object' && tokens !== null && !Array.isArray(tokens)
-    ? (tokens as Record<string, unknown>)
-    : {};
+function normalizeThemeTokens(tokens: unknown): Record<string, JsonValue> {
+  const parsedTokens = themeTokensSchema.safeParse(tokens);
+
+  return parsedTokens.success ? parsedTokens.data : {};
 }
 
 export function createDesignSystemProjectSource({
