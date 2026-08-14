@@ -7,3 +7,4 @@ export * from './design-token.schema';
 export * from './brand-profile.schema';
 export * from './component-contract.schema';
 export * from './component-token-bindings';
+export * from './project-source';
