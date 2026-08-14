@@ -85,6 +85,7 @@ describe('canonical design system project source', () => {
       uiDensity: 'cozy',
     });
     expect(source.tokenSets[0]?.tokens).toHaveLength(1);
+    expect(source.tokenSets[0]?.isMalformed).toBe(false);
     expect(source.tokens).toEqual(source.tokenSets[0]?.tokens);
     expect(source.themes[0]).toMatchObject({
       id: 'theme-light',
@@ -126,6 +127,7 @@ describe('canonical design system project source', () => {
 
     expect(source.brand).toEqual(defaultBrandProfile);
     expect(source.tokenSets[0]?.tokens).toEqual([]);
+    expect(source.tokenSets[0]?.isMalformed).toBe(true);
     expect(source.tokens).toEqual([]);
     expect(source.themes[0]?.tokens).toEqual({});
     expect(source.components).toEqual([]);

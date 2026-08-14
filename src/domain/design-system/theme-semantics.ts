@@ -3,7 +3,7 @@ import {
   evaluateContrast,
   isHexColor,
   type ContrastEvaluation,
-} from '@/domain/accessibility';
+} from '@/domain/accessibility/contrast';
 import { designTokenSchema } from './design-token.schema';
 import {
   pathToTokenReference,

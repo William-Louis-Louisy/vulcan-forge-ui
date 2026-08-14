@@ -1,26 +1,15 @@
-import { z } from 'zod';
+import { createGeneratedAccessibilitySummary } from '@/domain/accessibility';
 import type {
+  DocumentationProfileContent,
   MarkdownDocumentationInput,
   MarkdownDocumentationTheme,
 } from '@/domain/documentation';
 import {
-  designTokenSchema,
-  componentContractSchema,
-  type DesignToken,
-  type ComponentContract,
-} from '@/domain/design-system';
-import {
-  parseDocumentationProfileContent,
   defaultDocumentationProfileContent,
-  type DocumentationProfileContent,
-} from './documentation-profile.schema';
-import { prisma } from '@/server/db/prisma';
+  parseDocumentationProfileContent,
+} from '@/domain/documentation';
 import type { AppLocale } from '@/domain/i18n';
-import type { ThemeMode } from '@/features/themes/themes-editor.utils';
-import { createAccessibilityCenterReport } from '@/features/accessibility/accessibility-center.utils';
-import { parseStoredBrandProfile } from '@/features/brand/brand-profile.utils';
-
-const designTokenArraySchema = z.array(designTokenSchema);
+import { getDesignSystemProjectConsumerSnapshotForUser } from '@/server/design-system/project-source';
 
 export type DocumentationGeneratorInput = Omit<
   MarkdownDocumentationInput,
@@ -34,24 +23,6 @@ export type DocumentationGeneratorPageData = {
   documentationInput: DocumentationGeneratorInput;
 };
 
-function parseTokenSetTokens(tokens: unknown): DesignToken[] {
-  const parsedTokens = designTokenArraySchema.safeParse(tokens);
-
-  return parsedTokens.success ? parsedTokens.data : [];
-}
-
-function parseComponentContract(contract: unknown): ComponentContract | null {
-  const parsedContract = componentContractSchema.safeParse(contract);
-
-  return parsedContract.success ? parsedContract.data : null;
-}
-
-function asThemeTokens(tokens: unknown): Record<string, unknown> {
-  return typeof tokens === 'object' && tokens !== null
-    ? (tokens as Record<string, unknown>)
-    : {};
-}
-
 export async function getDocumentationGeneratorPageData({
   userId,
   projectSlug,
@@ -59,152 +30,48 @@ export async function getDocumentationGeneratorPageData({
   userId: string;
   projectSlug: string;
 }): Promise<DocumentationGeneratorPageData | null> {
-  const project = await prisma.designSystemProject.findFirst({
-    where: {
-      slug: projectSlug,
-      workspace: {
-        members: {
-          some: {
-            userId,
-          },
-        },
-      },
-    },
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      description: true,
-      defaultLocale: true,
-      documentationProfile: {
-        select: {
-          content: true,
-        },
-      },
-      brandProfile: {
-        select: {
-          visualStyle: true,
-          uiDensity: true,
-          inspirationKeywords: true,
-          localizedContent: true,
-        },
-      },
-      supportedLocales: true,
-      localeSettings: {
-        select: {
-          documentationLocale: true,
-        },
-      },
-      tokenSets: {
-        orderBy: {
-          type: 'asc',
-        },
-        select: {
-          type: true,
-          tokens: true,
-        },
-      },
-      themes: {
-        orderBy: {
-          mode: 'asc',
-        },
-        select: {
-          id: true,
-          mode: true,
-          name: true,
-          tokens: true,
-          updatedAt: true,
-        },
-      },
-      componentContracts: {
-        orderBy: {
-          type: 'asc',
-        },
-        select: {
-          contract: true,
-        },
-      },
-    },
+  const snapshot = await getDesignSystemProjectConsumerSnapshotForUser({
+    userId,
+    projectSlug,
   });
 
-  if (!project) {
+  if (!snapshot) {
     return null;
   }
 
-  const tokens = project.tokenSets.flatMap((tokenSet) =>
-    parseTokenSetTokens(tokenSet.tokens),
-  );
-
-  const themes: MarkdownDocumentationTheme[] = project.themes.map((theme) => ({
-    mode: theme.mode as MarkdownDocumentationTheme['mode'],
-    name: theme.name,
-    tokens: asThemeTokens(theme.tokens),
-  }));
-
-  const accessibilityThemes = project.themes.map((theme) => ({
-    id: theme.id,
-    mode: theme.mode as ThemeMode,
+  const { source } = snapshot;
+  const fallbackLocale =
+    (snapshot.localeSettings?.documentationLocale as AppLocale | undefined) ??
+    source.project.defaultLocale;
+  const accessibility = createGeneratedAccessibilitySummary(source);
+  const themes: MarkdownDocumentationTheme[] = source.themes.map((theme) => ({
+    mode: theme.mode,
     name: theme.name,
     tokens: theme.tokens,
-    updatedAt: theme.updatedAt,
   }));
 
-  const components = project.componentContracts
-    .map((componentContract) =>
-      parseComponentContract(componentContract.contract),
-    )
-    .filter((contract): contract is ComponentContract => contract !== null);
-
-  const colorTokenSet = project.tokenSets.find(
-    (tokenSet) => tokenSet.type === 'color',
-  );
-
-  const accessibilityReport = colorTokenSet
-    ? createAccessibilityCenterReport({
-        colorTokenSetTokens: colorTokenSet.tokens,
-        themes: accessibilityThemes,
-      })
-    : null;
-
   return {
-    savedProfile: project.documentationProfile
-      ? parseDocumentationProfileContent(project.documentationProfile.content)
-      : {
-          ...defaultDocumentationProfileContent,
-          locale:
-            (project.localeSettings?.documentationLocale as
-              | AppLocale
-              | undefined) ?? (project.defaultLocale as AppLocale),
-        },
-    projectSlug: project.slug,
-    fallbackLocale:
-      (project.localeSettings?.documentationLocale as AppLocale | undefined) ??
-      (project.defaultLocale as AppLocale),
+    savedProfile:
+      snapshot.documentationProfileContent !== null
+        ? parseDocumentationProfileContent(snapshot.documentationProfileContent)
+        : {
+            ...defaultDocumentationProfileContent,
+            locale: fallbackLocale,
+          },
+    projectSlug: source.project.slug,
+    fallbackLocale,
     documentationInput: {
       project: {
-        name: project.name,
-        description: project.description,
-        defaultLocale: project.defaultLocale as AppLocale,
-        supportedLocales: project.supportedLocales as AppLocale[],
+        name: source.project.name,
+        description: source.project.description,
+        defaultLocale: source.project.defaultLocale,
+        supportedLocales: source.project.supportedLocales,
       },
-      brand: project.brandProfile
-        ? parseStoredBrandProfile(project.brandProfile)
-        : null,
-      tokens,
+      brand: source.brand,
+      tokens: source.tokens,
       themes,
-      components,
-      accessibility: accessibilityReport
-        ? {
-            score: accessibilityReport.score,
-            status: accessibilityReport.status,
-            contrastPairs: accessibilityReport.contrastPairs.map((pair) => ({
-              pairId: pair.pairId,
-              themeName: pair.themeName,
-              status: pair.status,
-              ratio: pair.ratio,
-            })),
-          }
-        : null,
+      components: source.components.map((component) => component.contract),
+      accessibility,
     },
   };
 }

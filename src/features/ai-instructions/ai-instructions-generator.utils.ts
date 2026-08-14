@@ -1,21 +1,13 @@
-import type {
-  AiInstructionsSection,
-  AiInstructionsStrictness,
+import {
+  aiInstructionsSections,
+  type AiInstructionsSection,
 } from '@/domain/ai-instructions';
 import type { AppLocale } from '@/domain/i18n';
 
-export const aiInstructionsSections = [
-  'tokenRules',
-  'componentRules',
-  'accessibilityRules',
-  'forbiddenPatterns',
-] as const satisfies readonly AiInstructionsSection[];
-
-export const aiInstructionsStrictnessLevels = [
-  'balanced',
-  'strict',
-  'veryStrict',
-] as const satisfies readonly AiInstructionsStrictness[];
+export {
+  aiInstructionsSections,
+  aiInstructionsStrictnessLevels,
+} from '@/domain/ai-instructions';
 
 export type AiInstructionsSectionSelection = Record<
   AiInstructionsSection,
