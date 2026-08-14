@@ -99,10 +99,14 @@ export type SaveDesignSystemTokenMutationResult =
     }
   | {
       status: 'error';
-      error: Extract<TokenSetSaveError, 'tokenValidationFailed' | 'unexpected'>;
+      error: Extract<TokenSetSaveError, 'unexpected'>;
     };
 
 function toInputJsonValue(value: unknown): Prisma.InputJsonValue {
+  return value as Prisma.InputJsonValue;
+}
+
+function toSerializedInputJsonValue(value: unknown): Prisma.InputJsonValue {
   return JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
 }
 
@@ -281,36 +285,15 @@ export async function saveDesignSystemTokenMutation({
   themeUpdates,
   componentUpdates,
 }: DesignSystemTokenMutationUpdates): Promise<SaveDesignSystemTokenMutationResult> {
-  const validatedTokenSetUpdates: Array<{
-    id: string;
-    tokens: DesignToken[];
-  }> = [];
-
-  for (const tokenSet of tokenSetUpdates) {
-    const parsedTokens = designTokenArraySchema.safeParse(tokenSet.tokens);
-
-    if (!parsedTokens.success) {
-      return {
-        status: 'error',
-        error: 'tokenValidationFailed',
-      };
-    }
-
-    validatedTokenSetUpdates.push({
-      id: tokenSet.id,
-      tokens: parsedTokens.data,
-    });
-  }
-
   try {
     await prisma.$transaction([
-      ...validatedTokenSetUpdates.map((tokenSet) =>
+      ...tokenSetUpdates.map((tokenSet) =>
         prisma.tokenSet.update({
           where: {
             id: tokenSet.id,
           },
           data: {
-            tokens: toInputJsonValue(tokenSet.tokens),
+            tokens: toSerializedInputJsonValue(tokenSet.tokens),
           },
         }),
       ),
@@ -320,7 +303,7 @@ export async function saveDesignSystemTokenMutation({
             id: theme.id,
           },
           data: {
-            tokens: toInputJsonValue(theme.tokens),
+            tokens: toSerializedInputJsonValue(theme.tokens),
           },
         }),
       ),
@@ -330,7 +313,7 @@ export async function saveDesignSystemTokenMutation({
             id: component.id,
           },
           data: {
-            contract: toInputJsonValue(component.contract),
+            contract: toSerializedInputJsonValue(component.contract),
           },
         }),
       ),
