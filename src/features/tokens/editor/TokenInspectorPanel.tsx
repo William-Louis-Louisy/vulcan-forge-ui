@@ -136,18 +136,6 @@ export function TokenInspectorPanel({
           ) : null}
         </div>
 
-        {token.status ? (
-          <TokenStatusEditor
-            key={`status:${tokenSetType}:${token.path}:${token.status}`}
-            locale={locale}
-            projectSlug={projectSlug}
-            tokenSetType={tokenSetType}
-            tokenPath={token.path}
-            initialStatus={token.status}
-            onUpdated={onTokenValueUpdated}
-          />
-        ) : null}
-
         <TokenRenameForm
           key={token.path}
           locale={locale}
@@ -171,6 +159,18 @@ export function TokenInspectorPanel({
           initialDescriptionEn={token.description?.en ?? ''}
           initialDescriptionFr={token.description?.fr ?? ''}
         />
+
+        {token.status ? (
+          <TokenStatusEditor
+            key={`status:${tokenSetType}:${token.path}:${token.status}`}
+            locale={locale}
+            projectSlug={projectSlug}
+            tokenSetType={tokenSetType}
+            tokenPath={token.path}
+            initialStatus={token.status}
+            onUpdated={onTokenValueUpdated}
+          />
+        ) : null}
 
         <DeleteTokenControl
           key={`delete:${tokenSetType}:${token.path}`}
