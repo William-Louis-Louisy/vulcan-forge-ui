@@ -1,4 +1,4 @@
-import { componentContractSchema, type ComponentContract } from './component-contract.schema';
+import type { ComponentContract } from './component-contract.schema';
 import {
   designTokenSetSchema,
   type DesignToken,
@@ -139,10 +139,4 @@ export function createComponentTokenBindingResolution({
     ...resolvedBindings,
     invalidTokenSetsCount: parsedTokenSets.invalidTokenSetsCount,
   };
-}
-
-export function parseComponentContract(value: unknown): ComponentContract | null {
-  const parsedContract = componentContractSchema.safeParse(value);
-
-  return parsedContract.success ? parsedContract.data : null;
 }
