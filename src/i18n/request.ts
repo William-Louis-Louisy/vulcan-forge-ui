@@ -16,6 +16,7 @@ import { publicSurfaceMessages } from '@/messages/public-surface-messages';
 import { productEditorPreviewMessages } from '@/messages/product-editor-preview-messages';
 import { errorSurfaceMessages } from '@/messages/error-surface-messages';
 import { journeyPolishMessages } from '@/messages/journey-polish-messages';
+import { tokenStatusEditorMessages } from '@/messages/token-status-editor-messages';
 
 const messagesByLocale = {
   en: () => import('../messages/en.json').then((module) => module.default),
@@ -48,6 +49,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
     productEditorPreviewMessages[locale],
     errorSurfaceMessages[locale],
     journeyPolishMessages[locale],
+    tokenStatusEditorMessages[locale],
   ].reduce<MessageObject>(mergeMessages, {});
 
   return {

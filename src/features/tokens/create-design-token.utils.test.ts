@@ -3,7 +3,7 @@ import type { DesignToken } from '@/domain/design-system';
 import { createDesignToken } from './create-design-token.utils';
 
 describe('createDesignToken', () => {
-  it('creates a spacing token', () => {
+  it('creates a spacing token as ready', () => {
     const result = createDesignToken({
       tokens: [],
       type: 'spacing',
@@ -20,7 +20,7 @@ describe('createDesignToken', () => {
         path: 'spacing.4',
         type: 'spacing',
         value: '1rem',
-        status: 'draft',
+        status: 'ready',
         description: {
           en: 'Base spacing',
           fr: 'Espacement de base',
@@ -29,7 +29,7 @@ describe('createDesignToken', () => {
     }
   });
 
-  it('creates a radius token', () => {
+  it('creates a radius token as ready', () => {
     const result = createDesignToken({
       tokens: [],
       type: 'radius',
@@ -44,12 +44,12 @@ describe('createDesignToken', () => {
         path: 'radius.md',
         type: 'radius',
         value: '0.5rem',
-        status: 'draft',
+        status: 'ready',
       });
     }
   });
 
-  it('creates a motion token', () => {
+  it('creates a motion token as ready', () => {
     const result = createDesignToken({
       tokens: [],
       type: 'motion',
@@ -61,10 +61,11 @@ describe('createDesignToken', () => {
 
     if (result.status === 'success') {
       expect(result.token.value).toBe('150ms');
+      expect(result.token.status).toBe('ready');
     }
   });
 
-  it('creates a typography token as a composite value', () => {
+  it('creates a typography token as a ready composite value', () => {
     const value = JSON.stringify({
       fontSize: '1rem',
       fontWeight: 600,
@@ -89,7 +90,7 @@ describe('createDesignToken', () => {
           fontWeight: 600,
           lineHeight: '1.5',
         },
-        status: 'draft',
+        status: 'ready',
       });
     }
   });

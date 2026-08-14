@@ -1,3 +1,4 @@
+// Visual design-system tokens only. No authentication, credentials, or secrets are handled here.
 import { isHexColorValue } from './tokens-editor.utils';
 import type { DesignToken } from '@/domain/design-system';
 import { pathToTokenReference } from '@/domain/design-system';
@@ -57,7 +58,7 @@ export function createColorToken({
   const baseToken = {
     path: nextPath,
     type: 'color' as const,
-    status: 'draft' as const,
+    status: 'ready' as const,
     ...(Object.keys(description).length > 0 ? { description } : {}),
   };
 
