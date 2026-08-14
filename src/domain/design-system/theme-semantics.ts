@@ -207,8 +207,8 @@ export function getThemeColorValue({
 
   if (referencePath) {
     return (
-      colorTokenOptions.find((option) => option.path === referencePath)?.value ??
-      null
+      colorTokenOptions.find((option) => option.path === referencePath)
+        ?.value ?? null
     );
   }
 
