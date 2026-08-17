@@ -94,7 +94,7 @@ describe('delete-token utils', () => {
     ]);
   });
 
-  it('finds token references nested inside composite token values', () => {
+  it('finds composite references across separate token sets', () => {
     const dependencies = findTokenDependencies({
       tokenPath: 'spacing.scale.4',
       tokenSets: [
@@ -106,6 +106,10 @@ describe('delete-token utils', () => {
               value: '16px',
               status: 'ready',
             },
+          ],
+        },
+        {
+          tokens: [
             {
               path: 'typography.body.md',
               type: 'typography',
