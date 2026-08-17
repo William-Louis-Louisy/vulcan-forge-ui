@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest';
+import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { describe, expect, it } from 'vitest';
 import {
   createTokenDictionary,
   type DesignToken,
@@ -80,12 +81,12 @@ describe('TokenPreviewPanel typography rendering', () => {
     }
 
     const markup = renderToStaticMarkup(
-      <TokenPreviewPanel
-        token={token}
-        tokenSetType="typography"
-        tokenSetLabel="Typography"
-        primitiveColorAliasOptions={[]}
-        labels={{
+      createElement(TokenPreviewPanel, {
+        token,
+        tokenSetType: 'typography',
+        tokenSetLabel: 'Typography',
+        primitiveColorAliasOptions: [],
+        labels: {
           title: 'Preview',
           empty: 'Empty',
           sample: 'Sample',
@@ -93,8 +94,8 @@ describe('TokenPreviewPanel typography rendering', () => {
           reference: 'Reference',
           resolvedValue: 'Resolved value',
           unresolved: 'Unresolved',
-        }}
-      />,
+        },
+      }),
     );
 
     expect(markup).toContain('font-size:1.25rem');
