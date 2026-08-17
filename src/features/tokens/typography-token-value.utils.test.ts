@@ -93,6 +93,28 @@ describe('typography-token-value utils', () => {
     });
   });
 
+  it('preserves token references in typography fields during serialization', () => {
+    const serializedValue = serializeTypographyTokenFormValues({
+      fontFamily: 'Inter',
+      fontSize: '{spacing.test.reference}',
+      fontWeight: '',
+      lineHeight: '1.5',
+      letterSpacing: '',
+    });
+
+    expect(JSON.parse(serializedValue)).toEqual({
+      fontFamily: 'Inter',
+      fontSize: '{spacing.test.reference}',
+      lineHeight: '1.5',
+    });
+    expect(
+      validateTokenValueForType({
+        type: 'typography',
+        value: serializedValue,
+      }),
+    ).toBeNull();
+  });
+
   it('omits empty typography fields', () => {
     const serializedValue = serializeTypographyTokenFormValues({
       fontFamily: 'Inter',
