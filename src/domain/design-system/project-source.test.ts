@@ -99,6 +99,49 @@ describe('canonical design system project source', () => {
     });
   });
 
+  it('sorts stored tokens naturally by path for canonical consumers', () => {
+    const input = createSourceInput();
+    input.tokenSets.push({
+      id: 'spacing',
+      type: 'spacing',
+      name: 'Spacing',
+      tokens: [
+        {
+          path: 'spacing.scale.10',
+          type: 'spacing',
+          value: '40px',
+          status: 'ready',
+        },
+        {
+          path: 'spacing.base',
+          type: 'spacing',
+          value: '4px',
+          status: 'ready',
+        },
+        {
+          path: 'spacing.scale.2',
+          type: 'spacing',
+          value: '8px',
+          status: 'ready',
+        },
+      ],
+    });
+
+    const source = createDesignSystemProjectSource(input);
+
+    expect(source.tokenSets[1]?.tokens.map((token) => token.path)).toEqual([
+      'spacing.base',
+      'spacing.scale.2',
+      'spacing.scale.10',
+    ]);
+    expect(source.tokens.map((token) => token.path)).toEqual([
+      'color.primitive.blue.500',
+      'spacing.base',
+      'spacing.scale.2',
+      'spacing.scale.10',
+    ]);
+  });
+
   it('keeps storage fallbacks deterministic for malformed nested content', () => {
     const input = createSourceInput();
 
