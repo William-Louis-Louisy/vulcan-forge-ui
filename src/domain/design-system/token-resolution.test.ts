@@ -123,7 +123,7 @@ describe('resolveDesignTokens', () => {
     });
   });
 
-  it('resolves references nested inside typography composite values', () => {
+  it('resolves references inside typography composites', () => {
     const result = resolveDesignTokens([
       {
         path: 'spacing.scale.4',
@@ -160,7 +160,7 @@ describe('resolveDesignTokens', () => {
     });
   });
 
-  it('resolves alias chains referenced from typography composite values', () => {
+  it('resolves alias chains inside typography composites', () => {
     const result = resolveDesignTokens([
       {
         path: 'spacing.base',
@@ -199,7 +199,7 @@ describe('resolveDesignTokens', () => {
     });
   });
 
-  it('keeps a missing nested typography reference visible and reports it', () => {
+  it('reports missing references inside typography composites', () => {
     const result = resolveDesignTokens([
       {
         path: 'typography.body.md',
@@ -229,7 +229,7 @@ describe('resolveDesignTokens', () => {
     });
   });
 
-  it('reports circular references reached from typography composite values', () => {
+  it('reports circular references inside typography composites', () => {
     const result = resolveDesignTokens([
       {
         path: 'spacing.a',
