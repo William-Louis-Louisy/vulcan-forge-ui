@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { getTypographyPreviewStyle } from './TokenPreviewPanel';
+import { renderToStaticMarkup } from 'react-dom/server';
+import {
+  createTokenDictionary,
+  type DesignToken,
+} from '@/domain/design-system';
+import { createTokenRows } from '../tokens-editor.utils';
+import {
+  getTypographyPreviewStyle,
+  TokenPreviewPanel,
+} from './TokenPreviewPanel';
 
 describe('getTypographyPreviewStyle', () => {
   it('maps bundled font families to the loaded next/font variables', () => {
@@ -35,5 +44,60 @@ describe('getTypographyPreviewStyle', () => {
         fontFamily: 'Roboto, Arial, sans-serif',
       }).fontFamily,
     ).toBe('Roboto, Arial, sans-serif');
+  });
+});
+
+describe('TokenPreviewPanel typography rendering', () => {
+  it('renders resolved spacing references as font-size and letter-spacing styles', () => {
+    const spacingToken = {
+      path: 'spacing.test.reference',
+      type: 'spacing',
+      value: '1.25rem',
+      status: 'ready',
+    } satisfies DesignToken;
+    const typographyToken = {
+      path: 'typography.body.test',
+      type: 'typography',
+      value: {
+        fontFamily: 'Inter Tight, system-ui, sans-serif',
+        fontSize: '{spacing.test.reference}',
+        fontWeight: 400,
+        lineHeight: '1.5',
+        letterSpacing: '{spacing.test.reference}',
+      },
+      status: 'ready',
+    } satisfies DesignToken;
+    const dictionary = createTokenDictionary([spacingToken, typographyToken]);
+    const token = createTokenRows([typographyToken], dictionary).rows[0];
+
+    expect(token?.resolvedValue).toMatchObject({
+      fontSize: '1.25rem',
+      letterSpacing: '1.25rem',
+    });
+
+    if (!token) {
+      throw new Error('Expected the typography token row to be created.');
+    }
+
+    const markup = renderToStaticMarkup(
+      <TokenPreviewPanel
+        token={token}
+        tokenSetType="typography"
+        tokenSetLabel="Typography"
+        primitiveColorAliasOptions={[]}
+        labels={{
+          title: 'Preview',
+          empty: 'Empty',
+          sample: 'Sample',
+          value: 'Value',
+          reference: 'Reference',
+          resolvedValue: 'Resolved value',
+          unresolved: 'Unresolved',
+        }}
+      />,
+    );
+
+    expect(markup).toContain('font-size:1.25rem');
+    expect(markup).toContain('letter-spacing:1.25rem');
   });
 });
