@@ -1,6 +1,6 @@
 import {
-  isTokenReference,
   normalizeTypographyTokenValue,
+  tokenReferenceToPath,
   type TypographyTokenValue,
 } from '@/domain/design-system';
 import {
@@ -403,6 +403,10 @@ function stringifyTypographyFieldValue(value: unknown): string | null {
     : null;
 }
 
+function hasTokenReferenceSyntax(value: unknown): boolean {
+  return typeof value === 'string' && tokenReferenceToPath(value) !== null;
+}
+
 export function createTypographyPreviewModel({
   rawValue,
   resolvedValue,
@@ -428,7 +432,7 @@ export function createTypographyPreviewModel({
       return [];
     }
 
-    const fieldIsReference = isTokenReference(rawFieldValue);
+    const fieldIsReference = hasTokenReferenceSyntax(rawFieldValue);
 
     return [
       {
@@ -439,7 +443,7 @@ export function createTypographyPreviewModel({
         isResolved:
           !fieldIsReference ||
           (resolvedFieldValue !== null &&
-            !isTokenReference(resolvedFieldValue) &&
+            !hasTokenReferenceSyntax(resolvedFieldValue) &&
             resolvedFieldValue !== rawFieldValue),
       } satisfies TypographyPreviewField,
     ];
@@ -468,7 +472,7 @@ export function getTypographyPreviewStyle(rawValue: unknown): CSSProperties {
 }
 
 function getTypographyPreviewFontFamily(value: unknown) {
-  if (typeof value !== 'string' || isTokenReference(value)) {
+  if (typeof value !== 'string' || hasTokenReferenceSyntax(value)) {
     return undefined;
   }
 
@@ -495,7 +499,7 @@ function getTypographyPreviewFontFamily(value: unknown) {
 }
 
 function getStyleValue(value: unknown) {
-  if (isTokenReference(value)) {
+  if (hasTokenReferenceSyntax(value)) {
     return undefined;
   }
 
