@@ -11,7 +11,11 @@ import { isTokenSetType } from './tokens-editor.utils';
 import { defaultAppLocale, isAppLocale } from '@/domain/i18n';
 import { validateTokenValueForType } from './token-value-validation.utils';
 import type { UpdateDesignTokenValueActionState } from './update-design-token-value.state';
-import { normalizeTypographyTokenValue } from '@/domain/design-system';
+import {
+  createTokenDictionary,
+  normalizeTypographySpacingReferences,
+  normalizeTypographyTokenValue,
+} from '@/domain/design-system';
 
 function getFormStringValue(formData: FormData, key: string): string {
   const value = formData.get(key);
@@ -23,6 +27,22 @@ function getActionLocale(formData: FormData) {
   const rawLocale = getFormStringValue(formData, 'locale');
 
   return isAppLocale(rawLocale) ? rawLocale : defaultAppLocale;
+}
+
+function createProjectTokenDictionary(
+  tokenSets: Array<{
+    tokens: unknown;
+  }>,
+) {
+  const projectTokens = tokenSets.flatMap((tokenSet) => {
+    const parsedTokensResult = parseStoredTokenSetTokens(tokenSet.tokens);
+
+    return parsedTokensResult.status === 'success'
+      ? parsedTokensResult.tokens
+      : [];
+  });
+
+  return createTokenDictionary(projectTokens);
 }
 
 export async function updateDesignTokenValueAction(
@@ -102,12 +122,12 @@ export async function updateDesignTokenValueAction(
     };
   }
 
-  const storedValue =
+  const normalizedTypographyValue =
     tokenSetType === 'typography'
       ? normalizeTypographyTokenValue({ value: values.value })
-      : values.value.trim();
+      : null;
 
-  if (storedValue === null) {
+  if (tokenSetType === 'typography' && normalizedTypographyValue === null) {
     return {
       status: 'error',
       fieldErrors: {
@@ -117,6 +137,31 @@ export async function updateDesignTokenValueAction(
       values,
     };
   }
+
+  const normalizedTypographyReferences = normalizedTypographyValue
+    ? normalizeTypographySpacingReferences({
+        value: normalizedTypographyValue,
+        dictionary: createProjectTokenDictionary(
+          tokenSetResult.projectTokenSets,
+        ),
+      })
+    : null;
+
+  if (normalizedTypographyReferences?.status === 'error') {
+    return {
+      status: 'error',
+      fieldErrors: {
+        value: ['tokenTypographyValueInvalid'],
+      },
+      formError: null,
+      values,
+    };
+  }
+
+  const storedValue =
+    normalizedTypographyReferences?.status === 'success'
+      ? normalizedTypographyReferences.value
+      : values.value.trim();
 
   const tokenIndex = parsedTokensResult.tokens.findIndex(
     (token) => token.path === tokenPath,
