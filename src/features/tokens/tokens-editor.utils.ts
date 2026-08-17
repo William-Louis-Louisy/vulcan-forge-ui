@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import {
-  createTokenDictionary,
   designTokenSchema,
   designTokenTypeSchema,
   pathToTokenReference,
@@ -57,28 +56,6 @@ export function parseTokenSetTokens(tokens: unknown): ParsedTokenSetTokens {
     tokens: result.data,
     isValid: true,
   };
-}
-
-function parseResolvableTokenSetTokens(tokens: unknown): DesignToken[] {
-  if (!Array.isArray(tokens)) {
-    return [];
-  }
-
-  return tokens.flatMap((token) => {
-    const parsedToken = designTokenSchema.safeParse(token);
-
-    return parsedToken.success ? [parsedToken.data] : [];
-  });
-}
-
-export function createTokensEditorTokenDictionary(
-  tokenSets: readonly { tokens: unknown }[],
-): TokenDictionary {
-  return createTokenDictionary(
-    tokenSets.flatMap((tokenSet) =>
-      parseResolvableTokenSetTokens(tokenSet.tokens),
-    ),
-  );
 }
 
 export function formatTokenValue(value: DesignToken['value']): string {

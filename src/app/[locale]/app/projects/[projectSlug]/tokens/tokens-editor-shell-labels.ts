@@ -402,13 +402,6 @@ export function buildTokensEditorShellLabels({
       reference: t('preview.reference'),
       resolvedValue: t('preview.resolvedValue'),
       unresolved: t('preview.unresolved'),
-      typography: {
-        fontFamily: t('typographyValueEditor.fontFamilyLabel'),
-        fontSize: t('typographyValueEditor.fontSizeLabel'),
-        fontWeight: t('typographyValueEditor.fontWeightLabel'),
-        lineHeight: t('typographyValueEditor.lineHeightLabel'),
-        letterSpacing: t('typographyValueEditor.letterSpacingLabel'),
-      },
     },
   };
 }
