@@ -1,10 +1,9 @@
 import { auth } from '@/auth';
-import { createTokenDictionary } from '@/domain/design-system';
 import { hasLocale } from 'next-intl';
 import {
   createTokenRows,
+  createTokensEditorTokenDictionary,
   isEditableSemanticColorTokenRow,
-  parseTokenSetTokens,
   sortTokenSetsByType,
   getActiveTokenSetType,
   type TokenSetType,
@@ -68,11 +67,7 @@ export default async function TokensEditorPage({
   }
 
   const sortedTokenSets = sortTokenSetsByType(pageData.tokenSets);
-  const tokenDictionary = createTokenDictionary(
-    sortedTokenSets.flatMap(
-      (tokenSet) => parseTokenSetTokens(tokenSet.tokens).tokens,
-    ),
-  );
+  const tokenDictionary = createTokensEditorTokenDictionary(sortedTokenSets);
 
   const tokenSetViewModels: TokenSetEditorViewModel[] = sortedTokenSets.map(
     (tokenSet) => {
