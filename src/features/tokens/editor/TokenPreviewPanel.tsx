@@ -414,7 +414,9 @@ export function createTypographyPreviewModel({
   rawValue: unknown;
   resolvedValue?: unknown;
 }): TypographyPreviewModel {
-  const rawTypographyValue = normalizeTypographyTokenValue({ value: rawValue });
+  const rawTypographyValue = normalizeTypographyTokenValue({
+    value: rawValue,
+  });
   const resolvedTypographyValue = normalizeTypographyTokenValue({
     value: resolvedValue ?? rawValue,
   });
