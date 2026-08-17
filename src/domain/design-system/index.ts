@@ -1,6 +1,7 @@
 export * from './theme.schema';
 export * from './theme-semantics';
 export * from './token-resolution';
+export * from './typography-reference-normalization';
 export * from './zod-error-mapper';
 export * from './mvp-seed-templates';
 export * from './design-token.schema';
