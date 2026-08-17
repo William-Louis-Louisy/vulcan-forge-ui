@@ -18,6 +18,17 @@ export type NormalizeTypographySpacingReferencesResult =
       referencePath: string;
     };
 
+type NormalizeSpacingReferenceFieldResult =
+  | {
+      status: 'success';
+      value: string | undefined;
+    }
+  | {
+      status: 'error';
+      field: TypographySpacingReferenceField;
+      referencePath: string;
+    };
+
 function normalizeSpacingReferenceField({
   field,
   value,
@@ -26,9 +37,7 @@ function normalizeSpacingReferenceField({
   field: TypographySpacingReferenceField;
   value: string | undefined;
   dictionary: TokenDictionary;
-}):
-  | { status: 'success'; value: string | undefined }
-  | { status: 'error'; field: TypographySpacingReferenceField; referencePath: string } {
+}): NormalizeSpacingReferenceFieldResult {
   if (value === undefined) {
     return {
       status: 'success',
