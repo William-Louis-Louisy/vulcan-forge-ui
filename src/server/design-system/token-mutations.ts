@@ -21,10 +21,15 @@ export type EditableTokenSet = {
   tokens: unknown;
 };
 
+export type EditableProjectTokenSet = EditableTokenSet & {
+  type: string;
+};
+
 export type EditableTokenSetResult =
   | {
       status: 'success';
       tokenSet: EditableTokenSet;
+      projectTokenSets: EditableProjectTokenSet[];
     }
   | {
       status: 'error';
@@ -131,7 +136,13 @@ export async function getEditableTokenSetForUser({
       },
     },
     select: {
-      id: true,
+      tokenSets: {
+        select: {
+          id: true,
+          type: true,
+          tokens: true,
+        },
+      },
     },
   });
 
@@ -142,16 +153,9 @@ export async function getEditableTokenSetForUser({
     };
   }
 
-  const tokenSet = await prisma.tokenSet.findFirst({
-    where: {
-      projectId: project.id,
-      type: tokenSetType,
-    },
-    select: {
-      id: true,
-      tokens: true,
-    },
-  });
+  const tokenSet = project.tokenSets.find(
+    (candidateTokenSet) => candidateTokenSet.type === tokenSetType,
+  );
 
   if (!tokenSet) {
     return {
@@ -162,7 +166,11 @@ export async function getEditableTokenSetForUser({
 
   return {
     status: 'success',
-    tokenSet,
+    tokenSet: {
+      id: tokenSet.id,
+      tokens: tokenSet.tokens,
+    },
+    projectTokenSets: project.tokenSets,
   };
 }
 
