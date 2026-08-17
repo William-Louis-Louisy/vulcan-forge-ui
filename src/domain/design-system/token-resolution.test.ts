@@ -270,12 +270,7 @@ describe('resolveDesignTokens', () => {
           code: 'circularReference',
           tokenPath: 'typography.body.md',
           referencePath: 'spacing.a',
-          chain: [
-            'typography.body.md',
-            'spacing.a',
-            'spacing.b',
-            'spacing.a',
-          ],
+          chain: ['typography.body.md', 'spacing.a', 'spacing.b', 'spacing.a'],
         },
       ],
     });
