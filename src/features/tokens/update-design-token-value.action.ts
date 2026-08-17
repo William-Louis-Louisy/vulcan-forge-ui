@@ -29,22 +29,6 @@ function getActionLocale(formData: FormData) {
   return isAppLocale(rawLocale) ? rawLocale : defaultAppLocale;
 }
 
-function createProjectTokenDictionary(
-  tokenSets: Array<{
-    tokens: unknown;
-  }>,
-) {
-  const projectTokens = tokenSets.flatMap((tokenSet) => {
-    const parsedTokensResult = parseStoredTokenSetTokens(tokenSet.tokens);
-
-    return parsedTokensResult.status === 'success'
-      ? parsedTokensResult.tokens
-      : [];
-  });
-
-  return createTokenDictionary(projectTokens);
-}
-
 export async function updateDesignTokenValueAction(
   _previousState: UpdateDesignTokenValueActionState,
   formData: FormData,
@@ -141,9 +125,7 @@ export async function updateDesignTokenValueAction(
   const normalizedTypographyReferences = normalizedTypographyValue
     ? normalizeTypographySpacingReferences({
         value: normalizedTypographyValue,
-        dictionary: createProjectTokenDictionary(
-          tokenSetResult.projectTokenSets,
-        ),
+        dictionary: createTokenDictionary(tokenSetResult.projectTokens),
       })
     : null;
 
