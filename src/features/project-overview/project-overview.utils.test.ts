@@ -5,7 +5,7 @@ import {
   mvpThemeSeeds,
   mvpTokenSetSeeds,
 } from '@/domain/design-system';
-import { exportLogFormats } from '@/features/exports/export-center.utils';
+import { exportLogFormats } from '@/domain/exports';
 import type { ProjectOverviewPageData } from './project-overview.queries';
 import { createProjectOverviewViewModel } from './project-overview.utils';
 

@@ -1,20 +1,17 @@
 import { z } from 'zod';
-import { zodErrorToLocalizedIssues } from '@/domain/design-system';
-import { designTokenSchema, type DesignToken } from '@/domain/design-system';
 import {
+  designTokenSchema,
+  designTokenTypeSchema,
   pathToTokenReference,
   tokenReferenceToPath,
+  zodErrorToLocalizedIssues,
+  type DesignToken,
+  type DesignTokenType,
 } from '@/domain/design-system';
 
-export const tokenSetTypes = [
-  'color',
-  'spacing',
-  'radius',
-  'typography',
-  'motion',
-] as const;
+export const tokenSetTypes = designTokenTypeSchema.options;
 
-export type TokenSetType = (typeof tokenSetTypes)[number];
+export type TokenSetType = DesignTokenType;
 
 export type ParsedTokenSetTokens = {
   tokens: DesignToken[];
@@ -24,7 +21,7 @@ export type ParsedTokenSetTokens = {
 const designTokenArraySchema = z.array(designTokenSchema);
 
 export function isTokenSetType(value: string): value is TokenSetType {
-  return tokenSetTypes.includes(value as TokenSetType);
+  return designTokenTypeSchema.safeParse(value).success;
 }
 
 export function getActiveTokenSetType(value: string | string[] | undefined) {
