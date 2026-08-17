@@ -3,10 +3,12 @@ import {
   designTokenSchema,
   designTokenTypeSchema,
   pathToTokenReference,
+  resolveDesignToken,
   tokenReferenceToPath,
   zodErrorToLocalizedIssues,
   type DesignToken,
   type DesignTokenType,
+  type TokenDictionary,
 } from '@/domain/design-system';
 
 export const tokenSetTypes = designTokenTypeSchema.options;
@@ -74,6 +76,7 @@ export type TokenRowData = {
   type: string;
   value: string;
   rawValue: unknown;
+  resolvedValue?: unknown;
   reference?: string;
   description?: DesignToken['description'];
   status?: DesignToken['status'];
@@ -103,7 +106,10 @@ function getRecordStringValue(
     : fallback;
 }
 
-export function createTokenRows(tokens: unknown): TokenRowsResult {
+export function createTokenRows(
+  tokens: unknown,
+  dictionary?: TokenDictionary,
+): TokenRowsResult {
   if (!Array.isArray(tokens)) {
     return {
       rows: [],
@@ -118,6 +124,12 @@ export function createTokenRows(tokens: unknown): TokenRowsResult {
 
       if (parsedToken.success) {
         const value = formatTokenValue(parsedToken.data.value);
+        const resolvedToken = dictionary
+          ? resolveDesignToken({
+              token: parsedToken.data,
+              dictionary,
+            })
+          : null;
 
         const row: TokenRowData = {
           id: parsedToken.data.path,
@@ -125,6 +137,7 @@ export function createTokenRows(tokens: unknown): TokenRowsResult {
           type: parsedToken.data.type,
           value,
           rawValue: parsedToken.data.value,
+          resolvedValue: resolvedToken?.resolvedValue ?? parsedToken.data.value,
           status: parsedToken.data.status,
           isColorValue:
             parsedToken.data.type === 'color' && isHexColorValue(value),
