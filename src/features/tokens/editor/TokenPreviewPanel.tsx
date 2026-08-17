@@ -352,7 +352,7 @@ function TypographyFieldSpecimen({
     return (
       <div className="border-border-subtle bg-surface-primary mt-3 overflow-x-auto rounded border px-3 py-2">
         <span
-          className="text-content-primary inline-block whitespace-nowrap text-sm"
+          className="text-content-primary inline-block text-sm whitespace-nowrap"
           style={{ letterSpacing: previewStyle.letterSpacing }}
         >
           LETTER SPACING
@@ -390,9 +390,7 @@ function getSafeCssLength(value: string) {
     return trimmedValue;
   }
 
-  return /^-?\d*\.?\d+(px|rem|em|%|vh|vw|vmin|vmax|ch|ex)$/.test(
-    trimmedValue,
-  )
+  return /^-?\d*\.?\d+(px|rem|em|%|vh|vw|vmin|vmax|ch|ex)$/.test(trimmedValue)
     ? trimmedValue
     : undefined;
 }
