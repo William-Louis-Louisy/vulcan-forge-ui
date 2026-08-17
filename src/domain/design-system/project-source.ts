@@ -91,6 +91,17 @@ export type DesignSystemProjectSourceInput = {
   }>;
 };
 
+function compareTokenPaths(firstToken: DesignToken, secondToken: DesignToken) {
+  return firstToken.path.localeCompare(secondToken.path, undefined, {
+    numeric: true,
+    sensitivity: 'base',
+  });
+}
+
+function sortTokensByPath(tokens: readonly DesignToken[]): DesignToken[] {
+  return [...tokens].sort(compareTokenPaths);
+}
+
 function parseStoredTokenSetTokens(tokens: unknown): {
   tokens: DesignToken[];
   isMalformed: boolean;
@@ -99,7 +110,7 @@ function parseStoredTokenSetTokens(tokens: unknown): {
 
   return parsedTokens.success
     ? {
-        tokens: parsedTokens.data,
+        tokens: sortTokensByPath(parsedTokens.data),
         isMalformed: false,
       }
     : {
@@ -152,7 +163,9 @@ export function createDesignSystemProjectSource({
     project,
     brand: brandProfile ? parseStoredBrandProfile(brandProfile) : null,
     tokenSets: normalizedTokenSets,
-    tokens: normalizedTokenSets.flatMap((tokenSet) => tokenSet.tokens),
+    tokens: sortTokensByPath(
+      normalizedTokenSets.flatMap((tokenSet) => tokenSet.tokens),
+    ),
     themes: themes.map((theme) => ({
       id: theme.id,
       mode: theme.mode,
