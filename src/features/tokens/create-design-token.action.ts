@@ -117,11 +117,12 @@ export async function createDesignTokenAction(
       };
     }
 
-    const normalizedTypographyReferences =
-      normalizeTypographySpacingReferences({
+    const normalizedTypographyReferences = normalizeTypographySpacingReferences(
+      {
         value: normalizedTypographyValue,
         dictionary: createTokenDictionary(tokenSetResult.projectTokens),
-      });
+      },
+    );
 
     if (normalizedTypographyReferences.status === 'error') {
       return {
