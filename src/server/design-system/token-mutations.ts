@@ -21,15 +21,11 @@ export type EditableTokenSet = {
   tokens: unknown;
 };
 
-export type EditableProjectTokenSet = EditableTokenSet & {
-  type: string;
-};
-
 export type EditableTokenSetResult =
   | {
       status: 'success';
       tokenSet: EditableTokenSet;
-      projectTokenSets: EditableProjectTokenSet[];
+      projectTokens: DesignToken[];
     }
   | {
       status: 'error';
@@ -115,6 +111,18 @@ function toSerializedInputJsonValue(value: unknown): Prisma.InputJsonValue {
   return JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
 }
 
+function collectValidProjectTokens(
+  tokenSets: Array<{
+    tokens: unknown;
+  }>,
+): DesignToken[] {
+  return tokenSets.flatMap((tokenSet) => {
+    const parsedTokens = designTokenArraySchema.safeParse(tokenSet.tokens);
+
+    return parsedTokens.success ? parsedTokens.data : [];
+  });
+}
+
 export async function getEditableTokenSetForUser({
   userId,
   projectSlug,
@@ -170,7 +178,7 @@ export async function getEditableTokenSetForUser({
       id: tokenSet.id,
       tokens: tokenSet.tokens,
     },
-    projectTokenSets: project.tokenSets,
+    projectTokens: collectValidProjectTokens(project.tokenSets),
   };
 }
 
