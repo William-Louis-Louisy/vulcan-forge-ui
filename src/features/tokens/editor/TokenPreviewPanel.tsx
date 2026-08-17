@@ -166,7 +166,9 @@ function TokenPreviewSample({
       <div className="border-border-subtle bg-background-sunken rounded-md border p-4">
         <p
           className="text-content-primary"
-          style={getTypographyPreviewStyle(token.rawValue)}
+          style={getTypographyPreviewStyle(
+            token.resolvedValue ?? token.rawValue,
+          )}
         >
           Aa · {labels.sample}
         </p>
