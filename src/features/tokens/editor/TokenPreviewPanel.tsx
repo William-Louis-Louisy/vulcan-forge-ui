@@ -1,9 +1,4 @@
 import {
-  normalizeTypographyTokenValue,
-  tokenReferenceToPath,
-  type TypographyTokenValue,
-} from '@/domain/design-system';
-import {
   isHexColorValue,
   getResolvedColorValueForReference,
   type TokenRowData,
@@ -20,13 +15,6 @@ export type TokenPreviewPanelLabels = {
   reference: string;
   resolvedValue: string;
   unresolved: string;
-  typography: {
-    fontFamily: string;
-    fontSize: string;
-    fontWeight: string;
-    lineHeight: string;
-    letterSpacing: string;
-  };
 };
 
 type TokenPreviewPanelProps = {
@@ -42,29 +30,6 @@ const bundledFontFamilyVariables: Record<string, string> = {
   'inter tight': '--font-inter-tight',
   fraunces: '--font-fraunces',
   'jetbrains mono': '--font-jetbrains-mono',
-};
-
-const typographyPreviewFieldKeys = [
-  'fontFamily',
-  'fontSize',
-  'fontWeight',
-  'lineHeight',
-  'letterSpacing',
-] as const satisfies readonly (keyof TypographyTokenValue)[];
-
-type TypographyPreviewFieldKey = (typeof typographyPreviewFieldKeys)[number];
-
-export type TypographyPreviewField = {
-  key: TypographyPreviewFieldKey;
-  rawValue: string | null;
-  resolvedValue: string | null;
-  isReference: boolean;
-  isResolved: boolean;
-};
-
-export type TypographyPreviewModel = {
-  style: CSSProperties;
-  fields: TypographyPreviewField[];
 };
 
 export function TokenPreviewPanel({
@@ -197,7 +162,18 @@ function TokenPreviewSample({
   }
 
   if (tokenSetType === 'typography') {
-    return <TypographyPreview token={token} labels={labels} />;
+    return (
+      <div className="border-border-subtle bg-background-sunken rounded-md border p-4">
+        <p
+          className="text-content-primary"
+          style={getTypographyPreviewStyle(
+            token.resolvedValue ?? token.rawValue,
+          )}
+        >
+          Aa · {labels.sample}
+        </p>
+      </div>
+    );
   }
 
   if (tokenSetType === 'motion') {
@@ -218,150 +194,6 @@ function TokenPreviewSample({
       <p className="text-content-secondary font-mono text-sm">{token.value}</p>
     </div>
   );
-}
-
-function TypographyPreview({
-  token,
-  labels,
-}: {
-  token: TokenRowData;
-  labels: TokenPreviewPanelLabels;
-}) {
-  const model = createTypographyPreviewModel({
-    rawValue: token.rawValue,
-    resolvedValue: token.resolvedValue,
-  });
-
-  return (
-    <div className="grid gap-3">
-      <div className="border-border-subtle bg-surface-primary overflow-x-auto rounded-md border p-4">
-        <div className="min-w-max py-2">
-          <p className="text-content-primary" style={model.style}>
-            Aa · {labels.sample}
-          </p>
-        </div>
-      </div>
-
-      <div className="grid gap-2 sm:grid-cols-2">
-        {model.fields.map((field) => (
-          <TypographyPreviewFieldCard
-            key={field.key}
-            field={field}
-            label={labels.typography[field.key]}
-            labels={labels}
-            previewStyle={model.style}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function TypographyPreviewFieldCard({
-  field,
-  label,
-  labels,
-  previewStyle,
-}: {
-  field: TypographyPreviewField;
-  label: string;
-  labels: TokenPreviewPanelLabels;
-  previewStyle: CSSProperties;
-}) {
-  return (
-    <div className="border-border-subtle bg-background-sunken min-w-0 rounded-md border p-3">
-      <div className="flex items-start justify-between gap-2">
-        <p className="text-content-tertiary text-xs font-semibold">{label}</p>
-        {field.isReference && !field.isResolved ? (
-          <span className="text-action-warning text-xs font-semibold">
-            {labels.unresolved}
-          </span>
-        ) : null}
-      </div>
-
-      <TypographyFieldValues field={field} labels={labels} />
-      <TypographyFieldSpecimen field={field} previewStyle={previewStyle} />
-    </div>
-  );
-}
-
-function TypographyFieldValues({
-  field,
-  labels,
-}: {
-  field: TypographyPreviewField;
-  labels: TokenPreviewPanelLabels;
-}) {
-  if (field.isReference) {
-    return (
-      <dl className="mt-2 grid gap-1.5 text-xs">
-        <div className="min-w-0">
-          <dt className="text-content-tertiary">{labels.reference}</dt>
-          <dd className="text-content-secondary truncate font-mono">
-            {field.rawValue}
-          </dd>
-        </div>
-        <div className="min-w-0">
-          <dt className="text-content-tertiary">{labels.resolvedValue}</dt>
-          <dd
-            className={
-              field.isResolved
-                ? 'text-content-primary truncate font-mono font-semibold'
-                : 'text-action-warning truncate font-mono font-semibold'
-            }
-          >
-            {field.isResolved ? field.resolvedValue : labels.unresolved}
-          </dd>
-        </div>
-      </dl>
-    );
-  }
-
-  return (
-    <p className="text-content-primary mt-2 truncate font-mono text-xs font-semibold">
-      {field.resolvedValue ?? field.rawValue}
-    </p>
-  );
-}
-
-function TypographyFieldSpecimen({
-  field,
-  previewStyle,
-}: {
-  field: TypographyPreviewField;
-  previewStyle: CSSProperties;
-}) {
-  if (!field.isResolved) {
-    return null;
-  }
-
-  if (field.key === 'fontSize') {
-    return (
-      <div className="border-border-subtle bg-surface-primary mt-3 overflow-hidden rounded border px-3 py-2">
-        <span
-          className="text-content-primary inline-block leading-none"
-          style={{ fontSize: previewStyle.fontSize }}
-        >
-          Aa
-        </span>
-      </div>
-    );
-  }
-
-  if (field.key === 'letterSpacing') {
-    return (
-      <div className="border-border-subtle bg-surface-primary mt-3 overflow-x-auto rounded border px-3 py-2">
-        <span
-          className="text-content-primary inline-block text-sm whitespace-nowrap"
-          style={{ letterSpacing: previewStyle.letterSpacing }}
-        >
-          LETTER SPACING
-        </span>
-      </div>
-    );
-  }
-
-  return null;
 }
 
 function getResolvedColorValue({
@@ -390,89 +222,27 @@ function getSafeCssLength(value: string) {
     return trimmedValue;
   }
 
-  return /^-?\d*\.?\d+(px|rem|em|%|vh|vw|vmin|vmax|ch|ex)$/.test(trimmedValue)
+  return /^-?\d*\.?\d+(px|rem|em|%|vh|vw)$/.test(trimmedValue)
     ? trimmedValue
     : undefined;
 }
 
-function stringifyTypographyFieldValue(value: unknown): string | null {
-  return typeof value === 'string' || typeof value === 'number'
-    ? String(value)
-    : null;
-}
-
-function hasTokenReferenceSyntax(value: unknown): boolean {
-  return typeof value === 'string' && tokenReferenceToPath(value) !== null;
-}
-
-export function createTypographyPreviewModel({
-  rawValue,
-  resolvedValue,
-}: {
-  rawValue: unknown;
-  resolvedValue?: unknown;
-}): TypographyPreviewModel {
-  const rawTypographyValue = normalizeTypographyTokenValue({
-    value: rawValue,
-  });
-  const resolvedTypographyValue = normalizeTypographyTokenValue({
-    value: resolvedValue ?? rawValue,
-  });
-  const effectiveResolvedValue = resolvedTypographyValue ?? rawTypographyValue;
-
-  const fields = typographyPreviewFieldKeys.flatMap((key) => {
-    const rawFieldValue = stringifyTypographyFieldValue(
-      rawTypographyValue?.[key],
-    );
-    const resolvedFieldValue = stringifyTypographyFieldValue(
-      effectiveResolvedValue?.[key],
-    );
-
-    if (rawFieldValue === null && resolvedFieldValue === null) {
-      return [];
-    }
-
-    const fieldIsReference = hasTokenReferenceSyntax(rawFieldValue);
-
-    return [
-      {
-        key,
-        rawValue: rawFieldValue,
-        resolvedValue: resolvedFieldValue,
-        isReference: fieldIsReference,
-        isResolved:
-          !fieldIsReference ||
-          (resolvedFieldValue !== null &&
-            !hasTokenReferenceSyntax(resolvedFieldValue) &&
-            resolvedFieldValue !== rawFieldValue),
-      } satisfies TypographyPreviewField,
-    ];
-  });
-
-  return {
-    style: getTypographyPreviewStyle(effectiveResolvedValue),
-    fields,
-  };
-}
-
 export function getTypographyPreviewStyle(rawValue: unknown): CSSProperties {
-  const typographyValue = normalizeTypographyTokenValue({ value: rawValue });
-
-  if (!typographyValue) {
+  if (!isRecord(rawValue)) {
     return {};
   }
 
   return {
-    fontFamily: getTypographyPreviewFontFamily(typographyValue.fontFamily),
-    fontSize: getStyleValue(typographyValue.fontSize),
-    fontWeight: getStyleValue(typographyValue.fontWeight),
-    lineHeight: getStyleValue(typographyValue.lineHeight),
-    letterSpacing: getStyleValue(typographyValue.letterSpacing),
+    fontFamily: getTypographyPreviewFontFamily(rawValue.fontFamily),
+    fontSize: getStyleValue(rawValue.fontSize),
+    fontWeight: getStyleValue(rawValue.fontWeight),
+    lineHeight: getStyleValue(rawValue.lineHeight),
+    letterSpacing: getStyleValue(rawValue.letterSpacing),
   };
 }
 
 function getTypographyPreviewFontFamily(value: unknown) {
-  if (typeof value !== 'string' || hasTokenReferenceSyntax(value)) {
+  if (typeof value !== 'string') {
     return undefined;
   }
 
@@ -487,7 +257,7 @@ function getTypographyPreviewFontFamily(value: unknown) {
   }
 
   const normalizedPrimaryFamily = primaryFamily
-    .replace(/^['"]|['"]$/g, '')
+    .replace(/^['\"]|['\"]$/g, '')
     .toLowerCase();
   const bundledVariable = bundledFontFamilyVariables[normalizedPrimaryFamily];
 
@@ -499,11 +269,11 @@ function getTypographyPreviewFontFamily(value: unknown) {
 }
 
 function getStyleValue(value: unknown) {
-  if (hasTokenReferenceSyntax(value)) {
-    return undefined;
-  }
-
   return typeof value === 'string' || typeof value === 'number'
     ? value
     : undefined;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
 }
