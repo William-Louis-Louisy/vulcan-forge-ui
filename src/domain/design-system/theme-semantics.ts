@@ -55,7 +55,7 @@ export type ThemeColorTokenOption = {
 
 export type ThemeColorPair = {
   key: string;
-  foregroundKey: ThemeCoreColorKey;
+  foregroundKey: ThemeColorKey;
   backgroundKey: ThemeCoreColorKey;
   foregroundReferencePath: string | null;
   backgroundReferencePath: string | null;
@@ -95,9 +95,49 @@ export const themeContrastPairDefinitions = [
     foregroundKey: 'accent',
     backgroundKey: 'surface',
   },
+  {
+    key: 'infoOnBackground',
+    foregroundKey: 'info',
+    backgroundKey: 'background',
+  },
+  {
+    key: 'infoOnSurface',
+    foregroundKey: 'info',
+    backgroundKey: 'surface',
+  },
+  {
+    key: 'successOnBackground',
+    foregroundKey: 'success',
+    backgroundKey: 'background',
+  },
+  {
+    key: 'successOnSurface',
+    foregroundKey: 'success',
+    backgroundKey: 'surface',
+  },
+  {
+    key: 'warningOnBackground',
+    foregroundKey: 'warning',
+    backgroundKey: 'background',
+  },
+  {
+    key: 'warningOnSurface',
+    foregroundKey: 'warning',
+    backgroundKey: 'surface',
+  },
+  {
+    key: 'dangerOnBackground',
+    foregroundKey: 'danger',
+    backgroundKey: 'background',
+  },
+  {
+    key: 'dangerOnSurface',
+    foregroundKey: 'danger',
+    backgroundKey: 'surface',
+  },
 ] as const satisfies readonly {
   key: string;
-  foregroundKey: ThemeCoreColorKey;
+  foregroundKey: ThemeColorKey;
   backgroundKey: ThemeCoreColorKey;
 }[];
 
