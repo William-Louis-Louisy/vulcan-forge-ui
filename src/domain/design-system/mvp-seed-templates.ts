@@ -164,6 +164,50 @@ export const mvpTokenSetSeeds = [
         status: 'ready',
       },
       {
+        path: 'color.semantic.status.info',
+        type: 'color',
+        value: '{color.primitive.blue.600}',
+        reference: '{color.primitive.blue.600}',
+        description: {
+          en: 'Default informational status color for component contracts.',
+          fr: 'Couleur de statut informative par défaut pour les contrats de composants.',
+        },
+        status: 'ready',
+      },
+      {
+        path: 'color.semantic.status.success',
+        type: 'color',
+        value: '{color.primitive.green.700}',
+        reference: '{color.primitive.green.700}',
+        description: {
+          en: 'Default success status color for component contracts.',
+          fr: 'Couleur de statut de succès par défaut pour les contrats de composants.',
+        },
+        status: 'ready',
+      },
+      {
+        path: 'color.semantic.status.warning',
+        type: 'color',
+        value: '{color.primitive.amber.700}',
+        reference: '{color.primitive.amber.700}',
+        description: {
+          en: 'Default warning status color for component contracts.',
+          fr: 'Couleur de statut d’avertissement par défaut pour les contrats de composants.',
+        },
+        status: 'ready',
+      },
+      {
+        path: 'color.semantic.status.danger',
+        type: 'color',
+        value: '{color.primitive.red.700}',
+        reference: '{color.primitive.red.700}',
+        description: {
+          en: 'Default danger status color for component contracts.',
+          fr: 'Couleur de statut de danger par défaut pour les contrats de composants.',
+        },
+        status: 'ready',
+      },
+      {
         path: 'color.semantic.status.info.light',
         type: 'color',
         value: '{color.primitive.blue.600}',
@@ -838,7 +882,44 @@ export const mvpComponentContractSeeds = [
         },
       },
     ],
-    tokenBindings: [],
+    tokenBindings: [
+      {
+        key: 'info',
+        tokenType: 'color',
+        tokenPath: 'color.semantic.status.info',
+        description: {
+          en: 'Color used by the informational alert variant.',
+          fr: 'Couleur utilisée par la variante d’alerte informative.',
+        },
+      },
+      {
+        key: 'success',
+        tokenType: 'color',
+        tokenPath: 'color.semantic.status.success',
+        description: {
+          en: 'Color used by the success alert variant.',
+          fr: 'Couleur utilisée par la variante d’alerte de succès.',
+        },
+      },
+      {
+        key: 'warning',
+        tokenType: 'color',
+        tokenPath: 'color.semantic.status.warning',
+        description: {
+          en: 'Color used by the warning alert variant.',
+          fr: 'Couleur utilisée par la variante d’alerte d’avertissement.',
+        },
+      },
+      {
+        key: 'danger',
+        tokenType: 'color',
+        tokenPath: 'color.semantic.status.danger',
+        description: {
+          en: 'Color used by the danger alert variant.',
+          fr: 'Couleur utilisée par la variante d’alerte de danger.',
+        },
+      },
+    ],
   },
   {
     type: 'dialog',
