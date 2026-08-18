@@ -147,7 +147,9 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-function isThemeStatusColorKey(value: ThemeColorKey): value is ThemeStatusColorKey {
+function isThemeStatusColorKey(
+  value: ThemeColorKey,
+): value is ThemeStatusColorKey {
   return themeStatusColorKeys.some((key) => key === value);
 }
 
