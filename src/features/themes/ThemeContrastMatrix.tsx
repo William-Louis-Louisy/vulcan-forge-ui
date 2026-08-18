@@ -63,7 +63,10 @@ function getGradeClassName(grade: ContrastGrade) {
   return 'bg-action-danger/10 text-action-danger';
 }
 
-function formatReference(referencePath: string | null, colorKey: ThemeColorKey) {
+function formatReference(
+  referencePath: string | null,
+  colorKey: ThemeColorKey,
+) {
   return referencePath ? `{${referencePath}}` : colorKey;
 }
 
