@@ -14,7 +14,7 @@ import { themeModeSchema, type ThemeMode } from './theme.schema';
 
 export const themeModes = themeModeSchema.options;
 
-export const themeColorKeys = [
+export const themeCoreColorKeys = [
   'background',
   'surface',
   'content',
@@ -22,6 +22,20 @@ export const themeColorKeys = [
   'accent',
 ] as const;
 
+export const themeStatusColorKeys = [
+  'info',
+  'success',
+  'warning',
+  'danger',
+] as const;
+
+export const themeColorKeys = [
+  ...themeCoreColorKeys,
+  ...themeStatusColorKeys,
+] as const;
+
+export type ThemeCoreColorKey = (typeof themeCoreColorKeys)[number];
+export type ThemeStatusColorKey = (typeof themeStatusColorKeys)[number];
 export type ThemeColorKey = (typeof themeColorKeys)[number];
 
 export type DesignSystemTheme = {
@@ -41,8 +55,8 @@ export type ThemeColorTokenOption = {
 
 export type ThemeColorPair = {
   key: string;
-  foregroundKey: ThemeColorKey;
-  backgroundKey: ThemeColorKey;
+  foregroundKey: ThemeCoreColorKey;
+  backgroundKey: ThemeCoreColorKey;
   foregroundReferencePath: string | null;
   backgroundReferencePath: string | null;
   foregroundValue: string | null;
@@ -83,8 +97,8 @@ export const themeContrastPairDefinitions = [
   },
 ] as const satisfies readonly {
   key: string;
-  foregroundKey: ThemeColorKey;
-  backgroundKey: ThemeColorKey;
+  foregroundKey: ThemeCoreColorKey;
+  backgroundKey: ThemeCoreColorKey;
 }[];
 
 const designTokenArraySchema = z.array(designTokenSchema);
