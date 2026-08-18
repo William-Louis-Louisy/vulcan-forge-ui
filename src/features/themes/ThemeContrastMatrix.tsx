@@ -1,4 +1,8 @@
-import type { ThemeColorPair, ThemeCoreColorKey } from './themes-editor.utils';
+import type {
+  ThemeColorKey,
+  ThemeColorPair,
+  ThemeCoreColorKey,
+} from './themes-editor.utils';
 
 type ContrastStatus = 'pass' | 'warning' | 'fail';
 type ContrastGrade = 'aaa' | 'aa' | 'largeOnly' | 'fail';
@@ -15,7 +19,7 @@ export type ThemeContrastMatrixLabels = {
   statuses: Record<ContrastStatus, string>;
   grades: Record<ContrastGrade, string>;
   pairLabels: Record<string, string>;
-  colorLabels: Record<ThemeCoreColorKey, string>;
+  colorLabels: Record<ThemeColorKey, string>;
 };
 
 type ThemeContrastMatrixProps = {
@@ -23,11 +27,12 @@ type ThemeContrastMatrixProps = {
   labels: ThemeContrastMatrixLabels;
 };
 
-function uniqueColorKeys(
-  pairs: ThemeColorPair[],
-  key: 'foregroundKey' | 'backgroundKey',
-): ThemeCoreColorKey[] {
-  return Array.from(new Set(pairs.map((pair) => pair[key])));
+function uniqueForegroundKeys(pairs: ThemeColorPair[]): ThemeColorKey[] {
+  return Array.from(new Set(pairs.map((pair) => pair.foregroundKey)));
+}
+
+function uniqueBackgroundKeys(pairs: ThemeColorPair[]): ThemeCoreColorKey[] {
+  return Array.from(new Set(pairs.map((pair) => pair.backgroundKey)));
 }
 
 function getGrade(ratio: number): ContrastGrade {
@@ -58,10 +63,7 @@ function getGradeClassName(grade: ContrastGrade) {
   return 'bg-action-danger/10 text-action-danger';
 }
 
-function formatReference(
-  referencePath: string | null,
-  colorKey: ThemeCoreColorKey,
-) {
+function formatReference(referencePath: string | null, colorKey: ThemeColorKey) {
   return referencePath ? `{${referencePath}}` : colorKey;
 }
 
@@ -69,8 +71,8 @@ export function ThemeContrastMatrix({
   pairs,
   labels,
 }: ThemeContrastMatrixProps) {
-  const foregroundKeys = uniqueColorKeys(pairs, 'foregroundKey');
-  const backgroundKeys = uniqueColorKeys(pairs, 'backgroundKey');
+  const foregroundKeys = uniqueForegroundKeys(pairs);
+  const backgroundKeys = uniqueBackgroundKeys(pairs);
   const compliantCount = pairs.filter(
     (pair) =>
       pair.contrast?.isValid &&
