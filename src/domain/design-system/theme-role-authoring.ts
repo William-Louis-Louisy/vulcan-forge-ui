@@ -34,7 +34,9 @@ export type CreateThemeColorRoleResult =
 
 const themeTokensSchema = z.record(z.string(), jsonValueSchema);
 
-function isJsonObject(value: JsonValue | undefined): value is Record<string, JsonValue> {
+function isJsonObject(
+  value: JsonValue | undefined,
+): value is Record<string, JsonValue> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
@@ -67,7 +69,10 @@ export function createThemeColorRole({
 
   const currentColorTokens = parsedTokens.data.color;
 
-  if (currentColorTokens !== undefined && !isJsonObject(currentColorTokens)) {
+  if (
+    currentColorTokens !== undefined &&
+    !isJsonObject(currentColorTokens)
+  ) {
     return {
       status: 'error',
       error: 'themeTokensMalformed',
