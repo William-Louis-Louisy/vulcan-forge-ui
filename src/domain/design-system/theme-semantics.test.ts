@@ -61,24 +61,24 @@ describe('theme semantics', () => {
       },
     });
 
-    expect(pairs.map((pair) => [pair.foregroundKey, pair.backgroundKey])).toEqual(
-      [
-        ['content', 'background'],
-        ['content', 'surface'],
-        ['muted', 'background'],
-        ['muted', 'surface'],
-        ['accent', 'background'],
-        ['accent', 'surface'],
-        ['info', 'background'],
-        ['info', 'surface'],
-        ['success', 'background'],
-        ['success', 'surface'],
-        ['warning', 'background'],
-        ['warning', 'surface'],
-        ['danger', 'background'],
-        ['danger', 'surface'],
-      ],
-    );
+    expect(
+      pairs.map((pair) => [pair.foregroundKey, pair.backgroundKey]),
+    ).toEqual([
+      ['content', 'background'],
+      ['content', 'surface'],
+      ['muted', 'background'],
+      ['muted', 'surface'],
+      ['accent', 'background'],
+      ['accent', 'surface'],
+      ['info', 'background'],
+      ['info', 'surface'],
+      ['success', 'background'],
+      ['success', 'surface'],
+      ['warning', 'background'],
+      ['warning', 'surface'],
+      ['danger', 'background'],
+      ['danger', 'surface'],
+    ]);
     expect(
       pairs
         .filter((pair) =>
