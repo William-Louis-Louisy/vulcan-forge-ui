@@ -8,6 +8,14 @@ import {
 } from './component-contract.schema';
 import { themeSchema, type ThemeSeed } from './theme.schema';
 
+function requiredAnatomyPart(key: string, en: string, fr: string) {
+  return {
+    key,
+    label: { en, fr },
+    requirement: 'required' as const,
+  };
+}
+
 export const mvpTokenSetSeeds = [
   {
     type: 'color',
@@ -289,7 +297,7 @@ export const mvpThemeSeeds = [
         surface: '{color.primitive.neutral.0}',
         content: '{color.primitive.neutral.950}',
         muted: '{color.primitive.neutral.700}',
-        accent: '{color.primitive.accent.primary}',
+        accent: '{color.primitive.accent.secondary}',
       },
     },
   },
@@ -317,7 +325,11 @@ export const mvpComponentContractSeeds = [
       fr: 'Déclenche une action importante de l’utilisateur.',
     },
     status: 'ready',
-    anatomy: ['root', 'label', 'icon'],
+    anatomy: [
+      requiredAnatomyPart('root', 'Root', 'Racine'),
+      requiredAnatomyPart('label', 'Label', 'Libellé'),
+      requiredAnatomyPart('icon', 'Icon', 'Icône'),
+    ],
     variants: [
       {
         key: 'primary',
@@ -337,6 +349,10 @@ export const mvpComponentContractSeeds = [
       },
     ],
     states: [
+      {
+        key: 'focusVisible',
+        label: { en: 'Focus visible', fr: 'Focus visible' },
+      },
       {
         key: 'disabled',
         label: { en: 'Disabled', fr: 'Désactivé' },
@@ -397,7 +413,7 @@ export const mvpComponentContractSeeds = [
       {
         key: 'background',
         tokenType: 'color',
-        tokenPath: 'color.background.default',
+        tokenPath: 'color.semantic.action.primary',
         description: {
           en: 'Default button background.',
           fr: 'Fond par défaut du bouton.',
@@ -406,7 +422,7 @@ export const mvpComponentContractSeeds = [
       {
         key: 'foreground',
         tokenType: 'color',
-        tokenPath: 'color.foreground.default',
+        tokenPath: 'color.primitive.neutral.950',
       },
       {
         key: 'radius',
@@ -428,7 +444,13 @@ export const mvpComponentContractSeeds = [
       fr: 'Collecte une saisie textuelle courte de l’utilisateur.',
     },
     status: 'ready',
-    anatomy: ['root', 'label', 'input', 'hint', 'error'],
+    anatomy: [
+      requiredAnatomyPart('root', 'Root', 'Racine'),
+      requiredAnatomyPart('label', 'Label', 'Libellé'),
+      requiredAnatomyPart('input', 'Input', 'Champ'),
+      requiredAnatomyPart('hint', 'Hint', 'Aide'),
+      requiredAnatomyPart('error', 'Error', 'Erreur'),
+    ],
     variants: [
       {
         key: 'default',
@@ -439,6 +461,10 @@ export const mvpComponentContractSeeds = [
       {
         key: 'focus',
         label: { en: 'Focus', fr: 'Focus' },
+      },
+      {
+        key: 'focusVisible',
+        label: { en: 'Focus visible', fr: 'Focus visible' },
       },
       {
         key: 'invalid',
@@ -506,7 +532,12 @@ export const mvpComponentContractSeeds = [
       fr: 'Regroupe des contenus et actions liés.',
     },
     status: 'ready',
-    anatomy: ['root', 'header', 'content', 'footer'],
+    anatomy: [
+      requiredAnatomyPart('root', 'Root', 'Racine'),
+      requiredAnatomyPart('header', 'Header', 'En-tête'),
+      requiredAnatomyPart('content', 'Content', 'Contenu'),
+      requiredAnatomyPart('footer', 'Footer', 'Pied de page'),
+    ],
     variants: [
       {
         key: 'default',
@@ -567,7 +598,12 @@ export const mvpComponentContractSeeds = [
       fr: 'Communique un feedback, un statut ou un avertissement.',
     },
     status: 'ready',
-    anatomy: ['root', 'icon', 'title', 'description'],
+    anatomy: [
+      requiredAnatomyPart('root', 'Root', 'Racine'),
+      requiredAnatomyPart('icon', 'Icon', 'Icône'),
+      requiredAnatomyPart('title', 'Title', 'Titre'),
+      requiredAnatomyPart('description', 'Description', 'Description'),
+    ],
     variants: [
       {
         key: 'info',
@@ -636,7 +672,13 @@ export const mvpComponentContractSeeds = [
       fr: 'Affiche une tâche, confirmation ou décision focalisée.',
     },
     status: 'ready',
-    anatomy: ['root', 'overlay', 'title', 'description', 'actions'],
+    anatomy: [
+      requiredAnatomyPart('root', 'Root', 'Racine'),
+      requiredAnatomyPart('overlay', 'Overlay', 'Superposition'),
+      requiredAnatomyPart('title', 'Title', 'Titre'),
+      requiredAnatomyPart('description', 'Description', 'Description'),
+      requiredAnatomyPart('actions', 'Actions', 'Actions'),
+    ],
     variants: [
       {
         key: 'default',
@@ -647,13 +689,20 @@ export const mvpComponentContractSeeds = [
         label: { en: 'Danger', fr: 'Danger' },
       },
     ],
-    states: ['open', 'closed'].map((key) => ({
-      key,
-      label:
-        key === 'open'
-          ? { en: 'Open', fr: 'Ouverte' }
-          : { en: 'Closed', fr: 'Fermée' },
-    })),
+    states: [
+      {
+        key: 'open',
+        label: { en: 'Open', fr: 'Ouverte' },
+      },
+      {
+        key: 'closed',
+        label: { en: 'Closed', fr: 'Fermée' },
+      },
+      {
+        key: 'focusVisible',
+        label: { en: 'Focus visible', fr: 'Focus visible' },
+      },
+    ],
     accessibility: [
       {
         key: 'focus-management',
