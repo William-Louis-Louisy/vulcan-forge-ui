@@ -221,10 +221,18 @@ describe('PreviewPanel', () => {
     expect(screen.getByLabelText('Email address')).toBeInTheDocument();
     expect(screen.getByText('Design system card')).toBeInTheDocument();
     expect(screen.getAllByRole('status')).toHaveLength(4);
-    expect(screen.getByText(/Info · Token update available/)).toBeInTheDocument();
-    expect(screen.getByText(/Success · Token update available/)).toBeInTheDocument();
-    expect(screen.getByText(/Warning · Token update available/)).toBeInTheDocument();
-    expect(screen.getByText(/Danger · Token update available/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Info · Token update available/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Success · Token update available/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Warning · Token update available/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Danger · Token update available/),
+    ).toBeInTheDocument();
     expect(
       screen.getByLabelText('Background: #f7f3eb (Resolved)'),
     ).toBeInTheDocument();
