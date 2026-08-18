@@ -10,12 +10,16 @@ import {
 } from './index';
 
 const semanticStatusTokenPaths = [
+  'color.semantic.status.info',
   'color.semantic.status.info.light',
   'color.semantic.status.info.dark',
+  'color.semantic.status.success',
   'color.semantic.status.success.light',
   'color.semantic.status.success.dark',
+  'color.semantic.status.warning',
   'color.semantic.status.warning.light',
   'color.semantic.status.warning.dark',
+  'color.semantic.status.danger',
   'color.semantic.status.danger.light',
   'color.semantic.status.danger.dark',
 ] as const;
@@ -42,7 +46,7 @@ describe('mvp seed templates', () => {
     ]);
   });
 
-  it('provides semantic status colors for light and dark themes', () => {
+  it('provides component and theme semantic status colors', () => {
     const seedTemplates = getMvpSeedTemplates();
     const colorTokenSet = seedTemplates.tokenSets.find(
       (tokenSet) => tokenSet.type === 'color',
@@ -72,6 +76,21 @@ describe('mvp seed templates', () => {
       warning: '{color.semantic.status.warning.dark}',
       danger: '{color.semantic.status.danger.dark}',
     });
+  });
+
+  it('binds Alert variants to generic semantic status tokens', () => {
+    const alert = getMvpSeedTemplates().componentContracts.find(
+      (contract) => contract.type === 'alert',
+    );
+
+    expect(
+      alert?.tokenBindings.map((binding) => [binding.key, binding.tokenPath]),
+    ).toEqual([
+      ['info', 'color.semantic.status.info'],
+      ['success', 'color.semantic.status.success'],
+      ['warning', 'color.semantic.status.warning'],
+      ['danger', 'color.semantic.status.danger'],
+    ]);
   });
 
   it('provides the expected MVP component contracts', () => {
