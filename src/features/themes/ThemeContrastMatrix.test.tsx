@@ -37,6 +37,10 @@ const labels: ThemeContrastMatrixLabels = {
     content: 'Content',
     muted: 'Muted',
     accent: 'Accent',
+    info: 'Info',
+    success: 'Success',
+    warning: 'Warning',
+    danger: 'Danger',
   },
 };
 
