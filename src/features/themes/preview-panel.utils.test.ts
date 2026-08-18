@@ -21,6 +21,10 @@ const lightTheme: ThemeEditorTheme = {
       content: '#111827',
       muted: '#3a4454',
       accent: '#ff8731',
+      info: '#2563eb',
+      success: '#15803d',
+      warning: '#b45309',
+      danger: '#b91c1c',
     },
   },
 };
@@ -37,6 +41,10 @@ const darkTheme: ThemeEditorTheme = {
       content: '#e2e7ef',
       muted: '#a0b1ca',
       accent: '#ff8731',
+      info: '#60a5fa',
+      success: '#4ade80',
+      warning: '#fbbf24',
+      danger: '#f87171',
     },
   },
 };
@@ -56,18 +64,18 @@ describe('preview panel utils', () => {
         content: '#111827',
         muted: '#3a4454',
         accent: '#ff8731',
+        info: '#2563eb',
+        success: '#15803d',
+        warning: '#b45309',
+        danger: '#b91c1c',
         accentContent: '#111111',
       },
-      resolvedColorCount: 5,
+      resolvedColorCount: 9,
       fallbackColorKeys: [],
     });
-    expect(previewTheme.palette.map((entry) => entry.status)).toEqual([
-      'resolved',
-      'resolved',
-      'resolved',
-      'resolved',
-      'resolved',
-    ]);
+    expect(previewTheme.palette.map((entry) => entry.status)).toEqual(
+      Array.from({ length: 9 }, () => 'resolved'),
+    );
   });
 
   it('uses a resolved semantic action color when the theme accent references it', () => {
@@ -132,6 +140,10 @@ describe('preview panel utils', () => {
       'surface',
       'content',
       'muted',
+      'info',
+      'success',
+      'warning',
+      'danger',
     ]);
     expect(previewTheme.resolvedColorCount).toBe(1);
     expect(previewTheme.colors).toMatchObject({
@@ -140,6 +152,10 @@ describe('preview panel utils', () => {
       content: '#e2e7ef',
       muted: '#a0b1ca',
       accent: '#003366',
+      info: '#60a5fa',
+      success: '#4ade80',
+      warning: '#fbbf24',
+      danger: '#f87171',
       accentContent: '#ffffff',
     });
   });
