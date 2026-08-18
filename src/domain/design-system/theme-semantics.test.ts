@@ -1,9 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import {
   createThemeColorTokenOptions,
+  getThemeColorValue,
   getThemeContrastPairs,
   isThemeMode,
   sortThemesByMode,
+  themeColorKeys,
+  themeCoreColorKeys,
+  themeStatusColorKeys,
 } from './theme-semantics';
 
 describe('theme semantics', () => {
@@ -19,6 +23,51 @@ describe('theme semantics', () => {
     ).toEqual([
       { mode: 'light', name: 'Light' },
       { mode: 'dark', name: 'Dark' },
+    ]);
+  });
+
+  it('keeps core contrast roles separate from editable status roles', () => {
+    expect(themeCoreColorKeys).toEqual([
+      'background',
+      'surface',
+      'content',
+      'muted',
+      'accent',
+    ]);
+    expect(themeStatusColorKeys).toEqual([
+      'info',
+      'success',
+      'warning',
+      'danger',
+    ]);
+    expect(themeColorKeys).toEqual([
+      ...themeCoreColorKeys,
+      ...themeStatusColorKeys,
+    ]);
+
+    expect(
+      getThemeContrastPairs({
+        tokens: {
+          color: {
+            background: '#ffffff',
+            surface: '#ffffff',
+            content: '#070707',
+            muted: '#3A4454',
+            accent: '#586644',
+            info: '#2563EB',
+            success: '#15803D',
+            warning: '#B45309',
+            danger: '#B91C1C',
+          },
+        },
+      }).map((pair) => [pair.foregroundKey, pair.backgroundKey]),
+    ).toEqual([
+      ['content', 'background'],
+      ['content', 'surface'],
+      ['muted', 'background'],
+      ['muted', 'surface'],
+      ['accent', 'background'],
+      ['accent', 'surface'],
     ]);
   });
 
@@ -59,5 +108,35 @@ describe('theme semantics', () => {
         status: 'pass',
       },
     });
+  });
+
+  it('resolves semantic status role references like other theme colors', () => {
+    const colorTokenOptions = createThemeColorTokenOptions([
+      {
+        path: 'color.primitive.blue.600',
+        type: 'color',
+        value: '#2563EB',
+        status: 'ready',
+      },
+      {
+        path: 'color.semantic.status.info.light',
+        type: 'color',
+        value: '{color.primitive.blue.600}',
+        reference: '{color.primitive.blue.600}',
+        status: 'ready',
+      },
+    ]);
+
+    expect(
+      getThemeColorValue({
+        tokens: {
+          color: {
+            info: '{color.semantic.status.info.light}',
+          },
+        },
+        colorKey: 'info',
+        colorTokenOptions,
+      }),
+    ).toBe('#2563EB');
   });
 });
