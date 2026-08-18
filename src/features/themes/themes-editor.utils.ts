@@ -1,5 +1,7 @@
 export {
   themeModes,
+  themeCoreColorKeys,
+  themeStatusColorKeys,
   themeColorKeys,
   themeContrastPairDefinitions,
   isThemeMode,
@@ -10,6 +12,8 @@ export {
   getThemeColorValue,
   getThemeContrastPairs,
   type ThemeMode,
+  type ThemeCoreColorKey,
+  type ThemeStatusColorKey,
   type ThemeColorKey,
   type ThemeColorTokenOption,
   type ThemeColorPair,
