@@ -93,6 +93,14 @@ export const accessibilityCenterMessages = {
       pairs: {
         mutedOnSurface: 'Secondary content on surface',
         accentOnSurface: 'Accent on surface',
+        infoOnBackground: 'Info on background',
+        infoOnSurface: 'Info on surface',
+        successOnBackground: 'Success on background',
+        successOnSurface: 'Success on surface',
+        warningOnBackground: 'Warning on background',
+        warningOnSurface: 'Warning on surface',
+        dangerOnBackground: 'Danger on background',
+        dangerOnSurface: 'Danger on surface',
       },
       score: {
         validationSummary: 'Validation summary',
@@ -206,7 +214,7 @@ export const accessibilityCenterMessages = {
           anatomy: 'Libellés de l’anatomie',
           variants: 'Libellés des variantes',
           sizes: 'Libellés des tailles',
-          states: 'Libellés des états',
+          states: 'États',
           accessibility: 'Règles d’accessibilité',
           focusVisible: 'État focus-visible',
           tokenBindings: 'Liaisons de tokens',
@@ -215,6 +223,14 @@ export const accessibilityCenterMessages = {
       pairs: {
         mutedOnSurface: 'Contenu secondaire sur surface',
         accentOnSurface: 'Accent sur surface',
+        infoOnBackground: 'Information sur arrière-plan',
+        infoOnSurface: 'Information sur surface',
+        successOnBackground: 'Succès sur arrière-plan',
+        successOnSurface: 'Succès sur surface',
+        warningOnBackground: 'Avertissement sur arrière-plan',
+        warningOnSurface: 'Avertissement sur surface',
+        dangerOnBackground: 'Danger sur arrière-plan',
+        dangerOnSurface: 'Danger sur surface',
       },
       score: {
         validationSummary: 'Synthèse de validation',
