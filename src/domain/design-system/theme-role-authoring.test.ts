@@ -45,26 +45,23 @@ describe('theme role authoring', () => {
     });
   });
 
-  it(
-    'allows a known semantic role to be authored when a legacy theme does not have it yet',
-    () => {
-      expect(
-        createThemeColorRole({
-          tokens: {
-            color: {
-              background: '#ffffff',
-            },
+  it('allows a known semantic role to be authored when a legacy theme does not have it yet', () => {
+    expect(
+      createThemeColorRole({
+        tokens: {
+          color: {
+            background: '#ffffff',
           },
-          roleKey: 'info',
-          tokenPath: 'color.semantic.status.info.light',
-        }),
-      ).toMatchObject({
-        status: 'success',
+        },
         roleKey: 'info',
-        tokenReference: '{color.semantic.status.info.light}',
-      });
-    },
-  );
+        tokenPath: 'color.semantic.status.info.light',
+      }),
+    ).toMatchObject({
+      status: 'success',
+      roleKey: 'info',
+      tokenReference: '{color.semantic.status.info.light}',
+    });
+  });
 
   it('rejects a role key that already exists in the selected theme', () => {
     expect(
