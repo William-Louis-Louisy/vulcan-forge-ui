@@ -271,6 +271,14 @@ function ThemeEditorPanel({
             mutedOnSurface: t('contrast.pairs.mutedOnSurface'),
             accentOnBackground: t('contrast.pairs.accentOnBackground'),
             accentOnSurface: t('contrast.pairs.accentOnSurface'),
+            infoOnBackground: t('contrast.pairs.infoOnBackground'),
+            infoOnSurface: t('contrast.pairs.infoOnSurface'),
+            successOnBackground: t('contrast.pairs.successOnBackground'),
+            successOnSurface: t('contrast.pairs.successOnSurface'),
+            warningOnBackground: t('contrast.pairs.warningOnBackground'),
+            warningOnSurface: t('contrast.pairs.warningOnSurface'),
+            dangerOnBackground: t('contrast.pairs.dangerOnBackground'),
+            dangerOnSurface: t('contrast.pairs.dangerOnSurface'),
           },
           colorLabels: {
             background: t('themeMapping.keys.background'),
@@ -278,6 +286,10 @@ function ThemeEditorPanel({
             content: t('themeMapping.keys.content'),
             muted: t('themeMapping.keys.muted'),
             accent: t('themeMapping.keys.accent'),
+            info: t('themeMapping.keys.info'),
+            success: t('themeMapping.keys.success'),
+            warning: t('themeMapping.keys.warning'),
+            danger: t('themeMapping.keys.danger'),
           },
         }}
       />

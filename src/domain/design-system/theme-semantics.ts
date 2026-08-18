@@ -14,7 +14,7 @@ import { themeModeSchema, type ThemeMode } from './theme.schema';
 
 export const themeModes = themeModeSchema.options;
 
-export const themeColorKeys = [
+export const themeCoreColorKeys = [
   'background',
   'surface',
   'content',
@@ -22,6 +22,20 @@ export const themeColorKeys = [
   'accent',
 ] as const;
 
+export const themeStatusColorKeys = [
+  'info',
+  'success',
+  'warning',
+  'danger',
+] as const;
+
+export const themeColorKeys = [
+  ...themeCoreColorKeys,
+  ...themeStatusColorKeys,
+] as const;
+
+export type ThemeCoreColorKey = (typeof themeCoreColorKeys)[number];
+export type ThemeStatusColorKey = (typeof themeStatusColorKeys)[number];
 export type ThemeColorKey = (typeof themeColorKeys)[number];
 
 export type DesignSystemTheme = {
@@ -42,7 +56,7 @@ export type ThemeColorTokenOption = {
 export type ThemeColorPair = {
   key: string;
   foregroundKey: ThemeColorKey;
-  backgroundKey: ThemeColorKey;
+  backgroundKey: ThemeCoreColorKey;
   foregroundReferencePath: string | null;
   backgroundReferencePath: string | null;
   foregroundValue: string | null;
@@ -81,16 +95,62 @@ export const themeContrastPairDefinitions = [
     foregroundKey: 'accent',
     backgroundKey: 'surface',
   },
+  {
+    key: 'infoOnBackground',
+    foregroundKey: 'info',
+    backgroundKey: 'background',
+  },
+  {
+    key: 'infoOnSurface',
+    foregroundKey: 'info',
+    backgroundKey: 'surface',
+  },
+  {
+    key: 'successOnBackground',
+    foregroundKey: 'success',
+    backgroundKey: 'background',
+  },
+  {
+    key: 'successOnSurface',
+    foregroundKey: 'success',
+    backgroundKey: 'surface',
+  },
+  {
+    key: 'warningOnBackground',
+    foregroundKey: 'warning',
+    backgroundKey: 'background',
+  },
+  {
+    key: 'warningOnSurface',
+    foregroundKey: 'warning',
+    backgroundKey: 'surface',
+  },
+  {
+    key: 'dangerOnBackground',
+    foregroundKey: 'danger',
+    backgroundKey: 'background',
+  },
+  {
+    key: 'dangerOnSurface',
+    foregroundKey: 'danger',
+    backgroundKey: 'surface',
+  },
 ] as const satisfies readonly {
   key: string;
   foregroundKey: ThemeColorKey;
-  backgroundKey: ThemeColorKey;
+  backgroundKey: ThemeCoreColorKey;
 }[];
 
 const designTokenArraySchema = z.array(designTokenSchema);
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function isThemeStatusColorKey(
+  value: ThemeColorKey,
+): value is ThemeStatusColorKey {
+  return themeStatusColorKeys.some((key) => key === value);
 }
 
 export function isThemeMode(value: string): value is ThemeMode {
@@ -222,45 +282,58 @@ export function getThemeContrastPairs({
   tokens: unknown;
   colorTokenOptions?: ThemeColorTokenOption[];
 }): ThemeColorPair[] {
-  return themeContrastPairDefinitions.map((pair) => {
-    const foregroundReferencePath = getThemeColorReferencePath({
-      tokens,
-      colorKey: pair.foregroundKey,
-    });
+  return themeContrastPairDefinitions
+    .filter((pair) => {
+      if (!isThemeStatusColorKey(pair.foregroundKey)) {
+        return true;
+      }
 
-    const backgroundReferencePath = getThemeColorReferencePath({
-      tokens,
-      colorKey: pair.backgroundKey,
-    });
+      return (
+        getThemeColorRawValue({
+          tokens,
+          colorKey: pair.foregroundKey,
+        }) !== null
+      );
+    })
+    .map((pair) => {
+      const foregroundReferencePath = getThemeColorReferencePath({
+        tokens,
+        colorKey: pair.foregroundKey,
+      });
 
-    const foregroundValue = getThemeColorValue({
-      tokens,
-      colorKey: pair.foregroundKey,
-      colorTokenOptions,
-    });
+      const backgroundReferencePath = getThemeColorReferencePath({
+        tokens,
+        colorKey: pair.backgroundKey,
+      });
 
-    const backgroundValue = getThemeColorValue({
-      tokens,
-      colorKey: pair.backgroundKey,
-      colorTokenOptions,
-    });
+      const foregroundValue = getThemeColorValue({
+        tokens,
+        colorKey: pair.foregroundKey,
+        colorTokenOptions,
+      });
 
-    return {
-      key: pair.key,
-      foregroundKey: pair.foregroundKey,
-      backgroundKey: pair.backgroundKey,
-      foregroundReferencePath,
-      backgroundReferencePath,
-      foregroundValue,
-      backgroundValue,
-      contrast:
-        foregroundValue && backgroundValue
-          ? evaluateContrast({
-              foreground: foregroundValue,
-              background: backgroundValue,
-              textSize: 'normal',
-            })
-          : null,
-    };
-  });
+      const backgroundValue = getThemeColorValue({
+        tokens,
+        colorKey: pair.backgroundKey,
+        colorTokenOptions,
+      });
+
+      return {
+        key: pair.key,
+        foregroundKey: pair.foregroundKey,
+        backgroundKey: pair.backgroundKey,
+        foregroundReferencePath,
+        backgroundReferencePath,
+        foregroundValue,
+        backgroundValue,
+        contrast:
+          foregroundValue && backgroundValue
+            ? evaluateContrast({
+                foreground: foregroundValue,
+                background: backgroundValue,
+                textSize: 'normal',
+              })
+            : null,
+      };
+    });
 }

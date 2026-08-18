@@ -15,6 +15,10 @@ export type PreviewThemeColors = {
   content: string;
   muted: string;
   accent: string;
+  info: string;
+  success: string;
+  warning: string;
+  danger: string;
   accentContent: string;
   accentSoft: string;
   border: string;
@@ -37,10 +41,9 @@ export type PreviewTheme = {
   fallbackColorKeys: ThemeColorKey[];
 };
 
-type PreviewThemeBaseColors = Pick<
-  PreviewThemeColors,
-  'background' | 'surface' | 'content' | 'muted' | 'accent' | 'border'
->;
+type PreviewThemeBaseColors = Record<ThemeColorKey, string> & {
+  border: string;
+};
 
 const fallbackThemeColors: Record<ThemeMode, PreviewThemeBaseColors> = {
   light: {
@@ -49,6 +52,10 @@ const fallbackThemeColors: Record<ThemeMode, PreviewThemeBaseColors> = {
     content: '#111827',
     muted: '#3a4454',
     accent: '#ff8731',
+    info: '#2563eb',
+    success: '#15803d',
+    warning: '#b45309',
+    danger: '#b91c1c',
     border: '#d9d2c4',
   },
   dark: {
@@ -57,6 +64,10 @@ const fallbackThemeColors: Record<ThemeMode, PreviewThemeBaseColors> = {
     content: '#e2e7ef',
     muted: '#a0b1ca',
     accent: '#ff8731',
+    info: '#60a5fa',
+    success: '#4ade80',
+    warning: '#fbbf24',
+    danger: '#f87171',
     border: '#303030',
   },
 };
@@ -114,6 +125,10 @@ export function createPreviewTheme({
       content: paletteByKey.content,
       muted: paletteByKey.muted,
       accent: paletteByKey.accent,
+      info: paletteByKey.info,
+      success: paletteByKey.success,
+      warning: paletteByKey.warning,
+      danger: paletteByKey.danger,
       accentContent,
       accentSoft: `color-mix(in srgb, ${paletteByKey.accent} 16%, ${paletteByKey.surface})`,
       border: fallbackColors.border,

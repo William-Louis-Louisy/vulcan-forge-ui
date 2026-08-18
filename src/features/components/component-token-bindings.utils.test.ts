@@ -2,6 +2,7 @@ import {
   parseComponentTokenSets,
   createComponentTokenOptions,
   getComponentPreviewBinding,
+  getComponentPreviewStatusBinding,
   resolveComponentTokenBindings,
   normalizeComponentPreviewTokenRole,
   createComponentPreviewSemanticPalette,
@@ -283,6 +284,29 @@ describe('component-token-bindings utils', () => {
     expect(
       getComponentPreviewBinding(resolution, 'background')?.resolvedValue,
     ).toBe('#2563eb');
+  });
+
+  it('finds an explicit semantic status binding for Alert previews', () => {
+    const resolution = createComponentTokenBindingResolution({
+      bindings: [
+        {
+          key: 'success',
+          tokenType: 'color',
+          tokenPath: 'color.semantic.status.success',
+        },
+      ],
+      rawTokenSets: [
+        {
+          type: colorTokenSet.type,
+          name: colorTokenSet.name,
+          tokens: colorTokenSet.tokens,
+        },
+      ],
+    });
+
+    expect(
+      getComponentPreviewStatusBinding(resolution, 'success')?.resolvedValue,
+    ).toBe('#16a34a');
   });
 
   it('creates semantic action and status palettes with missing tone metadata', () => {

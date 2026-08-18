@@ -142,6 +142,15 @@ export function getComponentPreviewBinding(
   );
 }
 
+export function getComponentPreviewStatusBinding(
+  tokenBindingResolution: ComponentTokenBindingResolution,
+  tone: ComponentPreviewStatusTone,
+): ComponentResolvedTokenBinding | undefined {
+  return Object.values(tokenBindingResolution.bindings).find(
+    (binding) => binding.key.trim().toLowerCase() === tone,
+  );
+}
+
 export function createComponentPreviewSemanticPalette(
   rawTokenSets: Array<{
     type: string;

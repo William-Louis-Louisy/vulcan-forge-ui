@@ -18,6 +18,12 @@ export const themeEditorMessages = {
         noTokenOptionsTitle: 'No usable color token',
         noTokenOptionsDescription:
           'Theme roles require at least one color token that resolves to a valid HEX value. Create or repair color tokens before editing these mappings.',
+        keys: {
+          info: 'Info',
+          success: 'Success',
+          warning: 'Warning',
+          danger: 'Danger',
+        },
       },
       contrast: {
         title: 'Contrast matrix',
@@ -32,6 +38,14 @@ export const themeEditorMessages = {
         pairs: {
           mutedOnSurface: 'Muted content on surface',
           accentOnSurface: 'Accent on surface',
+          infoOnBackground: 'Info on background',
+          infoOnSurface: 'Info on surface',
+          successOnBackground: 'Success on background',
+          successOnSurface: 'Success on surface',
+          warningOnBackground: 'Warning on background',
+          warningOnSurface: 'Warning on surface',
+          dangerOnBackground: 'Danger on background',
+          dangerOnSurface: 'Danger on surface',
         },
       },
       states: {
@@ -59,6 +73,12 @@ export const themeEditorMessages = {
         noTokenOptionsTitle: 'Aucun token couleur utilisable',
         noTokenOptionsDescription:
           'Les rôles du thème nécessitent au moins un token couleur résolu en valeur HEX valide. Créez ou corrigez les tokens couleur avant de modifier ces mappings.',
+        keys: {
+          info: 'Information',
+          success: 'Succès',
+          warning: 'Avertissement',
+          danger: 'Danger',
+        },
       },
       contrast: {
         title: 'Matrice de contraste',
@@ -73,6 +93,14 @@ export const themeEditorMessages = {
         pairs: {
           mutedOnSurface: 'Contenu atténué sur surface',
           accentOnSurface: 'Accent sur surface',
+          infoOnBackground: 'Information sur arrière-plan',
+          infoOnSurface: 'Information sur surface',
+          successOnBackground: 'Succès sur arrière-plan',
+          successOnSurface: 'Succès sur surface',
+          warningOnBackground: 'Avertissement sur arrière-plan',
+          warningOnSurface: 'Avertissement sur surface',
+          dangerOnBackground: 'Danger sur arrière-plan',
+          dangerOnSurface: 'Danger sur surface',
         },
       },
       states: {

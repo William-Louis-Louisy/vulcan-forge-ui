@@ -8,6 +8,7 @@ import type { ComponentRegistryItem } from './components-registry.utils';
 import { toResolvableLocalizedString } from './components-registry-page.utils';
 import {
   getComponentPreviewBinding,
+  getComponentPreviewStatusBinding,
   type ComponentPreviewSemanticPalette,
   type ComponentPreviewStatusTone,
   type ComponentPreviewTokenRole,
@@ -281,6 +282,26 @@ export function createPreviewTokenStyles(
   };
 }
 
+export function getAlertPreviewStatusColor({
+  tokenBindingResolution,
+  semanticPalette,
+  variantKey,
+}: {
+  tokenBindingResolution: ComponentTokenBindingResolution;
+  semanticPalette: ComponentPreviewSemanticPalette;
+  variantKey: string;
+}): string {
+  const tone = getAlertPreviewTone(variantKey);
+  const boundValue = getComponentPreviewStatusBinding(
+    tokenBindingResolution,
+    tone,
+  )?.resolvedValue;
+
+  return typeof boundValue === 'string'
+    ? boundValue
+    : semanticPalette.status[tone];
+}
+
 export function ComponentPreview({
   type,
   name,
@@ -368,7 +389,11 @@ export function ComponentPreview({
         isDisabled={isDisabled}
         isLoading={isLoading}
         previewTokenStyles={previewTokenStyles}
-        statusColor={semanticPalette.status[getAlertPreviewTone(variantKey)]}
+        statusColor={getAlertPreviewStatusColor({
+          tokenBindingResolution,
+          semanticPalette,
+          variantKey,
+        })}
       />
     );
   }

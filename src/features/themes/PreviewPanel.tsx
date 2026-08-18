@@ -11,6 +11,8 @@ import {
   type PreviewThemePaletteEntry,
 } from './preview-panel.utils';
 
+const previewStatusTones = ['info', 'success', 'warning', 'danger'] as const;
+
 export type PreviewPanelLabels = {
   title: string;
   description: string;
@@ -289,16 +291,32 @@ export function PreviewPanel({
             </PreviewBlock>
 
             <PreviewBlock title={labels.components.alert}>
-              <div
-                role="status"
-                className="rounded-md border border-(--preview-accent) bg-(--preview-accent-soft) p-3"
-              >
-                <h3 className="text-xs font-semibold text-(--preview-content)">
-                  {labels.alert.title}
-                </h3>
-                <p className="mt-1 text-[0.6875rem] leading-4 text-(--preview-muted)">
-                  {labels.alert.description}
-                </p>
+              <div className="grid gap-2">
+                {previewStatusTones.map((tone) => {
+                  const statusColor = activeTheme.colors[tone];
+
+                  return (
+                    <div
+                      key={tone}
+                      role="status"
+                      className="rounded-md border p-3"
+                      style={{
+                        borderColor: statusColor,
+                        backgroundColor: `color-mix(in srgb, ${statusColor} 12%, ${activeTheme.colors.surface})`,
+                      }}
+                    >
+                      <h3
+                        className="text-xs font-semibold"
+                        style={{ color: statusColor }}
+                      >
+                        {t(`paletteKeys.${tone}`)} · {labels.alert.title}
+                      </h3>
+                      <p className="mt-1 text-[0.6875rem] leading-4 text-(--preview-muted)">
+                        {labels.alert.description}
+                      </p>
+                    </div>
+                  );
+                })}
               </div>
             </PreviewBlock>
           </div>

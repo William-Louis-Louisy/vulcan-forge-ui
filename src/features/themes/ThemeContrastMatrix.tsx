@@ -1,4 +1,8 @@
-import type { ThemeColorKey, ThemeColorPair } from './themes-editor.utils';
+import type {
+  ThemeColorKey,
+  ThemeColorPair,
+  ThemeCoreColorKey,
+} from './themes-editor.utils';
 
 type ContrastStatus = 'pass' | 'warning' | 'fail';
 type ContrastGrade = 'aaa' | 'aa' | 'largeOnly' | 'fail';
@@ -23,11 +27,12 @@ type ThemeContrastMatrixProps = {
   labels: ThemeContrastMatrixLabels;
 };
 
-function uniqueColorKeys(
-  pairs: ThemeColorPair[],
-  key: 'foregroundKey' | 'backgroundKey',
-): ThemeColorKey[] {
-  return Array.from(new Set(pairs.map((pair) => pair[key])));
+function uniqueForegroundKeys(pairs: ThemeColorPair[]): ThemeColorKey[] {
+  return Array.from(new Set(pairs.map((pair) => pair.foregroundKey)));
+}
+
+function uniqueBackgroundKeys(pairs: ThemeColorPair[]): ThemeCoreColorKey[] {
+  return Array.from(new Set(pairs.map((pair) => pair.backgroundKey)));
 }
 
 function getGrade(ratio: number): ContrastGrade {
@@ -69,8 +74,8 @@ export function ThemeContrastMatrix({
   pairs,
   labels,
 }: ThemeContrastMatrixProps) {
-  const foregroundKeys = uniqueColorKeys(pairs, 'foregroundKey');
-  const backgroundKeys = uniqueColorKeys(pairs, 'backgroundKey');
+  const foregroundKeys = uniqueForegroundKeys(pairs);
+  const backgroundKeys = uniqueBackgroundKeys(pairs);
   const compliantCount = pairs.filter(
     (pair) =>
       pair.contrast?.isValid &&

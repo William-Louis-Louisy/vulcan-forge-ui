@@ -52,6 +52,10 @@ const themes: PreviewTheme[] = [
       content: '#111827',
       muted: '#3a4454',
       accent: '#ff8731',
+      info: '#2563eb',
+      success: '#15803d',
+      warning: '#b45309',
+      danger: '#b91c1c',
       accentContent: '#111111',
       accentSoft: 'color-mix(in srgb, #ff8731 16%, #ffffff)',
       border: '#d9d2c4',
@@ -87,8 +91,32 @@ const themes: PreviewTheme[] = [
         rawValue: '{color.primitive.accent.primary}',
         status: 'resolved',
       },
+      {
+        key: 'info',
+        value: '#2563eb',
+        rawValue: '{color.semantic.status.info.light}',
+        status: 'resolved',
+      },
+      {
+        key: 'success',
+        value: '#15803d',
+        rawValue: '{color.semantic.status.success.light}',
+        status: 'resolved',
+      },
+      {
+        key: 'warning',
+        value: '#b45309',
+        rawValue: '{color.semantic.status.warning.light}',
+        status: 'resolved',
+      },
+      {
+        key: 'danger',
+        value: '#b91c1c',
+        rawValue: '{color.semantic.status.danger.light}',
+        status: 'resolved',
+      },
     ],
-    resolvedColorCount: 5,
+    resolvedColorCount: 9,
     fallbackColorKeys: [],
   },
   {
@@ -101,6 +129,10 @@ const themes: PreviewTheme[] = [
       content: '#e2e7ef',
       muted: '#a0b1ca',
       accent: '#ff8731',
+      info: '#60a5fa',
+      success: '#4ade80',
+      warning: '#fbbf24',
+      danger: '#f87171',
       accentContent: '#111111',
       accentSoft: 'color-mix(in srgb, #ff8731 16%, #1e1e1e)',
       border: '#303030',
@@ -136,8 +168,32 @@ const themes: PreviewTheme[] = [
         rawValue: '{color.primitive.accent.primary}',
         status: 'resolved',
       },
+      {
+        key: 'info',
+        value: '#60a5fa',
+        rawValue: '{color.semantic.status.info.dark}',
+        status: 'resolved',
+      },
+      {
+        key: 'success',
+        value: '#4ade80',
+        rawValue: '{color.semantic.status.success.dark}',
+        status: 'resolved',
+      },
+      {
+        key: 'warning',
+        value: '#fbbf24',
+        rawValue: '{color.semantic.status.warning.dark}',
+        status: 'resolved',
+      },
+      {
+        key: 'danger',
+        value: '#f87171',
+        rawValue: '{color.semantic.status.danger.dark}',
+        status: 'resolved',
+      },
     ],
-    resolvedColorCount: 4,
+    resolvedColorCount: 8,
     fallbackColorKeys: ['muted'],
   },
 ];
@@ -155,7 +211,7 @@ function renderPreviewPanel() {
 }
 
 describe('PreviewPanel', () => {
-  it('renders core component previews and a two-row rail header', () => {
+  it('renders core component previews and all semantic alert tones', () => {
     const { container } = renderPreviewPanel();
 
     expect(
@@ -164,11 +220,23 @@ describe('PreviewPanel', () => {
     expect(screen.getByText('Primary action')).toBeInTheDocument();
     expect(screen.getByLabelText('Email address')).toBeInTheDocument();
     expect(screen.getByText('Design system card')).toBeInTheDocument();
-    expect(screen.getByRole('status')).toBeInTheDocument();
+    expect(screen.getAllByRole('status')).toHaveLength(4);
+    expect(
+      screen.getByText(/Info · Token update available/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Success · Token update available/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Warning · Token update available/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Danger · Token update available/),
+    ).toBeInTheDocument();
     expect(
       screen.getByLabelText('Background: #f7f3eb (Resolved)'),
     ).toBeInTheDocument();
-    expect(screen.getByText('5/5')).toBeInTheDocument();
+    expect(screen.getByText('9/9')).toBeInTheDocument();
     expect(container.querySelector('[data-preview-panel-header]')).toHaveClass(
       'grid-cols-[minmax(0,1fr)_auto]',
     );
@@ -195,7 +263,7 @@ describe('PreviewPanel', () => {
       'aria-pressed',
       'true',
     );
-    expect(screen.getByText('4/5')).toBeInTheDocument();
+    expect(screen.getByText('8/9')).toBeInTheDocument();
     expect(
       screen.getByText(/Fallback colors are displayed for: Muted/),
     ).toBeInTheDocument();
