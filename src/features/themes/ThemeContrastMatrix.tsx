@@ -1,4 +1,7 @@
-import type { ThemeColorKey, ThemeColorPair } from './themes-editor.utils';
+import type {
+  ThemeColorPair,
+  ThemeCoreColorKey,
+} from './themes-editor.utils';
 
 type ContrastStatus = 'pass' | 'warning' | 'fail';
 type ContrastGrade = 'aaa' | 'aa' | 'largeOnly' | 'fail';
@@ -15,7 +18,7 @@ export type ThemeContrastMatrixLabels = {
   statuses: Record<ContrastStatus, string>;
   grades: Record<ContrastGrade, string>;
   pairLabels: Record<string, string>;
-  colorLabels: Record<ThemeColorKey, string>;
+  colorLabels: Record<ThemeCoreColorKey, string>;
 };
 
 type ThemeContrastMatrixProps = {
@@ -26,7 +29,7 @@ type ThemeContrastMatrixProps = {
 function uniqueColorKeys(
   pairs: ThemeColorPair[],
   key: 'foregroundKey' | 'backgroundKey',
-): ThemeColorKey[] {
+): ThemeCoreColorKey[] {
   return Array.from(new Set(pairs.map((pair) => pair[key])));
 }
 
@@ -60,7 +63,7 @@ function getGradeClassName(grade: ContrastGrade) {
 
 function formatReference(
   referencePath: string | null,
-  colorKey: ThemeColorKey,
+  colorKey: ThemeCoreColorKey,
 ) {
   return referencePath ? `{${referencePath}}` : colorKey;
 }
