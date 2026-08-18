@@ -26,7 +26,7 @@ describe('theme semantics', () => {
     ]);
   });
 
-  it('keeps core contrast roles separate from editable status roles', () => {
+  it('evaluates status roles against theme background and surface', () => {
     expect(themeCoreColorKeys).toEqual([
       'background',
       'surface',
@@ -45,30 +45,45 @@ describe('theme semantics', () => {
       ...themeStatusColorKeys,
     ]);
 
-    expect(
-      getThemeContrastPairs({
-        tokens: {
-          color: {
-            background: '#ffffff',
-            surface: '#ffffff',
-            content: '#070707',
-            muted: '#3A4454',
-            accent: '#586644',
-            info: '#2563EB',
-            success: '#15803D',
-            warning: '#B45309',
-            danger: '#B91C1C',
-          },
+    const pairs = getThemeContrastPairs({
+      tokens: {
+        color: {
+          background: '#F7F3EB',
+          surface: '#ffffff',
+          content: '#070707',
+          muted: '#3A4454',
+          accent: '#586644',
+          info: '#2563EB',
+          success: '#15803D',
+          warning: '#B45309',
+          danger: '#B91C1C',
         },
-      }).map((pair) => [pair.foregroundKey, pair.backgroundKey]),
-    ).toEqual([
-      ['content', 'background'],
-      ['content', 'surface'],
-      ['muted', 'background'],
-      ['muted', 'surface'],
-      ['accent', 'background'],
-      ['accent', 'surface'],
-    ]);
+      },
+    });
+
+    expect(pairs.map((pair) => [pair.foregroundKey, pair.backgroundKey])).toEqual(
+      [
+        ['content', 'background'],
+        ['content', 'surface'],
+        ['muted', 'background'],
+        ['muted', 'surface'],
+        ['accent', 'background'],
+        ['accent', 'surface'],
+        ['info', 'background'],
+        ['info', 'surface'],
+        ['success', 'background'],
+        ['success', 'surface'],
+        ['warning', 'background'],
+        ['warning', 'surface'],
+        ['danger', 'background'],
+        ['danger', 'surface'],
+      ],
+    );
+    expect(
+      pairs
+        .filter((pair) => themeStatusColorKeys.includes(pair.foregroundKey as never))
+        .every((pair) => pair.contrast?.status === 'pass'),
+    ).toBe(true);
   });
 
   it('resolves theme references before evaluating contrast', () => {
