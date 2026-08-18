@@ -147,6 +147,10 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+function isThemeStatusColorKey(value: ThemeColorKey): value is ThemeStatusColorKey {
+  return themeStatusColorKeys.some((key) => key === value);
+}
+
 export function isThemeMode(value: string): value is ThemeMode {
   return themeModeSchema.safeParse(value).success;
 }
@@ -276,45 +280,58 @@ export function getThemeContrastPairs({
   tokens: unknown;
   colorTokenOptions?: ThemeColorTokenOption[];
 }): ThemeColorPair[] {
-  return themeContrastPairDefinitions.map((pair) => {
-    const foregroundReferencePath = getThemeColorReferencePath({
-      tokens,
-      colorKey: pair.foregroundKey,
-    });
+  return themeContrastPairDefinitions
+    .filter((pair) => {
+      if (!isThemeStatusColorKey(pair.foregroundKey)) {
+        return true;
+      }
 
-    const backgroundReferencePath = getThemeColorReferencePath({
-      tokens,
-      colorKey: pair.backgroundKey,
-    });
+      return (
+        getThemeColorRawValue({
+          tokens,
+          colorKey: pair.foregroundKey,
+        }) !== null
+      );
+    })
+    .map((pair) => {
+      const foregroundReferencePath = getThemeColorReferencePath({
+        tokens,
+        colorKey: pair.foregroundKey,
+      });
 
-    const foregroundValue = getThemeColorValue({
-      tokens,
-      colorKey: pair.foregroundKey,
-      colorTokenOptions,
-    });
+      const backgroundReferencePath = getThemeColorReferencePath({
+        tokens,
+        colorKey: pair.backgroundKey,
+      });
 
-    const backgroundValue = getThemeColorValue({
-      tokens,
-      colorKey: pair.backgroundKey,
-      colorTokenOptions,
-    });
+      const foregroundValue = getThemeColorValue({
+        tokens,
+        colorKey: pair.foregroundKey,
+        colorTokenOptions,
+      });
 
-    return {
-      key: pair.key,
-      foregroundKey: pair.foregroundKey,
-      backgroundKey: pair.backgroundKey,
-      foregroundReferencePath,
-      backgroundReferencePath,
-      foregroundValue,
-      backgroundValue,
-      contrast:
-        foregroundValue && backgroundValue
-          ? evaluateContrast({
-              foreground: foregroundValue,
-              background: backgroundValue,
-              textSize: 'normal',
-            })
-          : null,
-    };
-  });
+      const backgroundValue = getThemeColorValue({
+        tokens,
+        colorKey: pair.backgroundKey,
+        colorTokenOptions,
+      });
+
+      return {
+        key: pair.key,
+        foregroundKey: pair.foregroundKey,
+        backgroundKey: pair.backgroundKey,
+        foregroundReferencePath,
+        backgroundReferencePath,
+        foregroundValue,
+        backgroundValue,
+        contrast:
+          foregroundValue && backgroundValue
+            ? evaluateContrast({
+                foreground: foregroundValue,
+                background: backgroundValue,
+                textSize: 'normal',
+              })
+            : null,
+      };
+    });
 }
