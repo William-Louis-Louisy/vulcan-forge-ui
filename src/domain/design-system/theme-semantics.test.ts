@@ -81,7 +81,9 @@ describe('theme semantics', () => {
     );
     expect(
       pairs
-        .filter((pair) => themeStatusColorKeys.includes(pair.foregroundKey as never))
+        .filter((pair) =>
+          themeStatusColorKeys.some((key) => key === pair.foregroundKey),
+        )
         .every((pair) => pair.contrast?.status === 'pass'),
     ).toBe(true);
   });
