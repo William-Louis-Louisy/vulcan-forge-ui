@@ -88,6 +88,29 @@ describe('theme semantics', () => {
     ).toBe(true);
   });
 
+  it('does not invent missing status-role issues for legacy themes', () => {
+    const pairs = getThemeContrastPairs({
+      tokens: {
+        color: {
+          background: '#ffffff',
+          surface: '#ffffff',
+          content: '#070707',
+          muted: '#3A4454',
+          accent: '#586644',
+        },
+      },
+    });
+
+    expect(pairs.map((pair) => pair.key)).toEqual([
+      'contentOnBackground',
+      'contentOnSurface',
+      'mutedOnBackground',
+      'mutedOnSurface',
+      'accentOnBackground',
+      'accentOnSurface',
+    ]);
+  });
+
   it('resolves theme references before evaluating contrast', () => {
     const colorTokenOptions = createThemeColorTokenOptions([
       {
