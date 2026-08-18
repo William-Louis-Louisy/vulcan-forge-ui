@@ -123,6 +123,159 @@ describe('resolveDesignTokens', () => {
     });
   });
 
+  it('resolves references inside typography composites', () => {
+    const result = resolveDesignTokens([
+      {
+        path: 'spacing.scale.4',
+        type: 'spacing',
+        value: '16px',
+        status: 'ready',
+      },
+      {
+        path: 'typography.body.md',
+        type: 'typography',
+        value: {
+          fontFamily: 'Inter',
+          fontSize: '{spacing.scale.4}',
+          lineHeight: '1.5',
+        },
+        status: 'ready',
+      },
+    ]);
+
+    expect(
+      getResolvedTokenByPath({
+        path: 'typography.body.md',
+        result,
+      }),
+    ).toMatchObject({
+      resolvedValue: {
+        fontFamily: 'Inter',
+        fontSize: '16px',
+        lineHeight: '1.5',
+      },
+      resolvedReferencePath: null,
+      isResolved: true,
+      errors: [],
+    });
+  });
+
+  it('resolves alias chains inside typography composites', () => {
+    const result = resolveDesignTokens([
+      {
+        path: 'spacing.base',
+        type: 'spacing',
+        value: '16px',
+        status: 'ready',
+      },
+      {
+        path: 'spacing.scale.4',
+        type: 'spacing',
+        value: '{spacing.base}',
+        reference: '{spacing.base}',
+        status: 'ready',
+      },
+      {
+        path: 'typography.body.md',
+        type: 'typography',
+        value: {
+          fontSize: '{spacing.scale.4}',
+        },
+        status: 'ready',
+      },
+    ]);
+
+    expect(
+      getResolvedTokenByPath({
+        path: 'typography.body.md',
+        result,
+      }),
+    ).toMatchObject({
+      resolvedValue: {
+        fontSize: '16px',
+      },
+      isResolved: true,
+      errors: [],
+    });
+  });
+
+  it('reports missing references inside typography composites', () => {
+    const result = resolveDesignTokens([
+      {
+        path: 'typography.body.md',
+        type: 'typography',
+        value: {
+          fontFamily: 'Inter',
+          fontSize: '{spacing.missing}',
+        },
+        status: 'ready',
+      },
+    ]);
+
+    expect(result.errors).toEqual([
+      {
+        code: 'tokenNotFound',
+        tokenPath: 'typography.body.md',
+        referencePath: 'spacing.missing',
+        chain: ['typography.body.md'],
+      },
+    ]);
+    expect(result.tokens[0]).toMatchObject({
+      resolvedValue: {
+        fontFamily: 'Inter',
+        fontSize: '{spacing.missing}',
+      },
+      isResolved: false,
+    });
+  });
+
+  it('reports circular references inside typography composites', () => {
+    const result = resolveDesignTokens([
+      {
+        path: 'spacing.a',
+        type: 'spacing',
+        value: '{spacing.b}',
+        reference: '{spacing.b}',
+        status: 'ready',
+      },
+      {
+        path: 'spacing.b',
+        type: 'spacing',
+        value: '{spacing.a}',
+        reference: '{spacing.a}',
+        status: 'ready',
+      },
+      {
+        path: 'typography.body.md',
+        type: 'typography',
+        value: {
+          fontSize: '{spacing.a}',
+        },
+        status: 'ready',
+      },
+    ]);
+
+    expect(
+      getResolvedTokenByPath({
+        path: 'typography.body.md',
+        result,
+      }),
+    ).toMatchObject({
+      resolvedValue: {
+        fontSize: '{spacing.a}',
+      },
+      isResolved: false,
+      errors: [
+        {
+          code: 'circularReference',
+          tokenPath: 'typography.body.md',
+          referencePath: 'spacing.a',
+          chain: ['typography.body.md', 'spacing.a', 'spacing.b', 'spacing.a'],
+        },
+      ],
+    });
+  });
+
   it('returns an error when a reference target does not exist', () => {
     const result = resolveDesignTokens([
       {

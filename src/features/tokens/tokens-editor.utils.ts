@@ -1,20 +1,19 @@
 import { z } from 'zod';
-import { zodErrorToLocalizedIssues } from '@/domain/design-system';
-import { designTokenSchema, type DesignToken } from '@/domain/design-system';
 import {
+  designTokenSchema,
+  designTokenTypeSchema,
   pathToTokenReference,
+  resolveDesignToken,
   tokenReferenceToPath,
+  zodErrorToLocalizedIssues,
+  type DesignToken,
+  type DesignTokenType,
+  type TokenDictionary,
 } from '@/domain/design-system';
 
-export const tokenSetTypes = [
-  'color',
-  'spacing',
-  'radius',
-  'typography',
-  'motion',
-] as const;
+export const tokenSetTypes = designTokenTypeSchema.options;
 
-export type TokenSetType = (typeof tokenSetTypes)[number];
+export type TokenSetType = DesignTokenType;
 
 export type ParsedTokenSetTokens = {
   tokens: DesignToken[];
@@ -24,7 +23,7 @@ export type ParsedTokenSetTokens = {
 const designTokenArraySchema = z.array(designTokenSchema);
 
 export function isTokenSetType(value: string): value is TokenSetType {
-  return tokenSetTypes.includes(value as TokenSetType);
+  return designTokenTypeSchema.safeParse(value).success;
 }
 
 export function getActiveTokenSetType(value: string | string[] | undefined) {
@@ -77,8 +76,10 @@ export type TokenRowData = {
   type: string;
   value: string;
   rawValue: unknown;
+  resolvedValue?: unknown;
   reference?: string;
   description?: DesignToken['description'];
+  status?: DesignToken['status'];
   isColorValue: boolean;
   validationStatus: TokenRowValidationStatus;
   errorMessages: string[];
@@ -105,7 +106,10 @@ function getRecordStringValue(
     : fallback;
 }
 
-export function createTokenRows(tokens: unknown): TokenRowsResult {
+export function createTokenRows(
+  tokens: unknown,
+  dictionary?: TokenDictionary,
+): TokenRowsResult {
   if (!Array.isArray(tokens)) {
     return {
       rows: [],
@@ -120,6 +124,12 @@ export function createTokenRows(tokens: unknown): TokenRowsResult {
 
       if (parsedToken.success) {
         const value = formatTokenValue(parsedToken.data.value);
+        const resolvedToken = dictionary
+          ? resolveDesignToken({
+              token: parsedToken.data,
+              dictionary,
+            })
+          : null;
 
         const row: TokenRowData = {
           id: parsedToken.data.path,
@@ -127,6 +137,8 @@ export function createTokenRows(tokens: unknown): TokenRowsResult {
           type: parsedToken.data.type,
           value,
           rawValue: parsedToken.data.value,
+          resolvedValue: resolvedToken?.resolvedValue ?? parsedToken.data.value,
+          status: parsedToken.data.status,
           isColorValue:
             parsedToken.data.type === 'color' && isHexColorValue(value),
           validationStatus: 'valid',
@@ -164,7 +176,7 @@ export function createTokenRows(tokens: unknown): TokenRowsResult {
         rawValue: fallbackValue,
         isColorValue:
           typeof fallbackValue === 'string' && isHexColorValue(fallbackValue),
-        validationStatus: 'invalid',
+        validationStatus: 'invalid' as const,
         errorMessages: zodErrorToLocalizedIssues(parsedToken.error).map(
           (issue) =>
             issue.path

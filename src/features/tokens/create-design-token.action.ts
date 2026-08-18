@@ -9,7 +9,12 @@ import {
 import { revalidatePath } from 'next/cache';
 import { isTokenSetType } from './tokens-editor.utils';
 import { defaultAppLocale, isAppLocale } from '@/domain/i18n';
-import type { DesignTokenType } from '@/domain/design-system';
+import {
+  createTokenDictionary,
+  normalizeTypographySpacingReferences,
+  normalizeTypographyTokenValue,
+  type DesignTokenType,
+} from '@/domain/design-system';
 import { createDesignToken } from './create-design-token.utils';
 import type { CreateDesignTokenActionState } from './create-design-token.state';
 
@@ -94,11 +99,50 @@ export async function createDesignTokenAction(
     };
   }
 
+  let valueToCreate = values.value;
+
+  if (type === 'typography') {
+    const normalizedTypographyValue = normalizeTypographyTokenValue({
+      value: values.value,
+    });
+
+    if (!normalizedTypographyValue) {
+      return {
+        status: 'error',
+        fieldErrors: {
+          value: ['tokenTypographyValueInvalid'],
+        },
+        formError: null,
+        values,
+      };
+    }
+
+    const normalizedTypographyReferences = normalizeTypographySpacingReferences(
+      {
+        value: normalizedTypographyValue,
+        dictionary: createTokenDictionary(tokenSetResult.projectTokens),
+      },
+    );
+
+    if (normalizedTypographyReferences.status === 'error') {
+      return {
+        status: 'error',
+        fieldErrors: {
+          value: ['tokenTypographyValueInvalid'],
+        },
+        formError: null,
+        values,
+      };
+    }
+
+    valueToCreate = JSON.stringify(normalizedTypographyReferences.value);
+  }
+
   const createResult = createDesignToken({
     tokens: parsedTokensResult.tokens,
     type,
     path: values.path,
-    value: values.value,
+    value: valueToCreate,
     descriptionEn: values.descriptionEn,
     descriptionFr: values.descriptionFr,
   });

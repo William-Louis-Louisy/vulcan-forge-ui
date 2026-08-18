@@ -122,6 +122,82 @@ describe('component-token-bindings utils', () => {
     expect(result.bindings.radius?.resolvedValue).toBe('0.5rem');
   });
 
+  it('preserves the bound token value when its reference target is missing', () => {
+    const missingReference = '{color.primitive.missing}';
+    const tokenSet: DesignTokenSet = {
+      type: 'color',
+      name: 'Colors',
+      tokens: [
+        {
+          path: 'color.background.broken',
+          type: 'color',
+          value: missingReference,
+          reference: missingReference,
+          status: 'ready',
+        },
+      ],
+    };
+
+    const result = resolveComponentTokenBindings({
+      bindings: [
+        {
+          key: 'background',
+          tokenType: 'color',
+          tokenPath: 'color.background.broken',
+        },
+      ],
+      tokenSets: [tokenSet],
+    });
+
+    expect(result.missingBindings).toEqual([]);
+    expect(result.bindings.background).toMatchObject({
+      value: missingReference,
+      resolvedValue: missingReference,
+      isResolved: true,
+    });
+  });
+
+  it('preserves the bound token value when its reference chain is circular', () => {
+    const tokenSet: DesignTokenSet = {
+      type: 'color',
+      name: 'Colors',
+      tokens: [
+        {
+          path: 'color.semantic.a',
+          type: 'color',
+          value: '{color.semantic.b}',
+          reference: '{color.semantic.b}',
+          status: 'ready',
+        },
+        {
+          path: 'color.semantic.b',
+          type: 'color',
+          value: '{color.semantic.a}',
+          reference: '{color.semantic.a}',
+          status: 'ready',
+        },
+      ],
+    };
+
+    const result = resolveComponentTokenBindings({
+      bindings: [
+        {
+          key: 'background',
+          tokenType: 'color',
+          tokenPath: 'color.semantic.a',
+        },
+      ],
+      tokenSets: [tokenSet],
+    });
+
+    expect(result.missingBindings).toEqual([]);
+    expect(result.bindings.background).toMatchObject({
+      value: '{color.semantic.b}',
+      resolvedValue: '{color.semantic.b}',
+      isResolved: true,
+    });
+  });
+
   it('reports missing bindings when the token path is not found', () => {
     const missingBinding: ComponentContract['tokenBindings'][number] = {
       key: 'paddingX',

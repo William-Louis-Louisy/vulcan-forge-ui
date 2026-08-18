@@ -215,7 +215,10 @@ export function findTokenDependencies({
         continue;
       }
 
-      if (token.reference === reference || token.value === reference) {
+      if (
+        token.reference === reference ||
+        collectReferenceLocations({ value: token.value, reference }).length > 0
+      ) {
         dependencies.push({
           kind: 'token',
           label: token.path,

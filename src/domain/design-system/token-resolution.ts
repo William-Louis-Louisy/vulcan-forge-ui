@@ -1,4 +1,7 @@
-import type { DesignToken } from './design-token.schema';
+import {
+  designTokenValueSchema,
+  type DesignToken,
+} from './design-token.schema';
 
 export type TokenResolutionErrorCode =
   | 'tokenNotFound'
@@ -34,6 +37,11 @@ type ResolveTokenValueResult = {
   resolvedValue: DesignToken['value'];
   resolvedReferencePath: string | null;
   chain: string[];
+  errors: TokenResolutionError[];
+};
+
+type ResolveNestedValueResult = {
+  value: unknown;
   errors: TokenResolutionError[];
 };
 
@@ -80,6 +88,127 @@ function createError({
   return error;
 }
 
+function resolveNestedValue({
+  value,
+  dictionary,
+  chain,
+  rootTokenPath,
+}: {
+  value: unknown;
+  dictionary: TokenDictionary;
+  chain: string[];
+  rootTokenPath: string;
+}): ResolveNestedValueResult {
+  if (isTokenReference(value)) {
+    const referencePath = tokenReferenceToPath(value);
+
+    if (!referencePath) {
+      return {
+        value,
+        errors: [
+          createError({
+            code: 'invalidReference',
+            tokenPath: rootTokenPath,
+            chain,
+          }),
+        ],
+      };
+    }
+
+    if (chain.includes(referencePath)) {
+      return {
+        value,
+        errors: [
+          createError({
+            code: 'circularReference',
+            tokenPath: rootTokenPath,
+            referencePath,
+            chain: [...chain, referencePath],
+          }),
+        ],
+      };
+    }
+
+    const referencedToken = dictionary.get(referencePath);
+
+    if (!referencedToken) {
+      return {
+        value,
+        errors: [
+          createError({
+            code: 'tokenNotFound',
+            tokenPath: rootTokenPath,
+            referencePath,
+            chain,
+          }),
+        ],
+      };
+    }
+
+    const nestedResolution = resolveTokenValue({
+      token: referencedToken,
+      dictionary,
+      chain: [...chain, referencePath],
+      rootTokenPath,
+    });
+
+    return {
+      value:
+        nestedResolution.errors.length === 0
+          ? nestedResolution.resolvedValue
+          : value,
+      errors: nestedResolution.errors,
+    };
+  }
+
+  if (Array.isArray(value)) {
+    const resolvedItems = value.map((item) =>
+      resolveNestedValue({
+        value: item,
+        dictionary,
+        chain,
+        rootTokenPath,
+      }),
+    );
+
+    return {
+      value: resolvedItems.map((item) => item.value),
+      errors: resolvedItems.flatMap((item) => item.errors),
+    };
+  }
+
+  if (typeof value === 'object' && value !== null) {
+    const resolvedEntries = Object.entries(value).map(([key, nestedValue]) => {
+      const result = resolveNestedValue({
+        value: nestedValue,
+        dictionary,
+        chain,
+        rootTokenPath,
+      });
+
+      return {
+        key,
+        ...result,
+      };
+    });
+
+    return {
+      value: Object.fromEntries(
+        resolvedEntries.map(({ key, value: resolvedValue }) => [
+          key,
+          resolvedValue,
+        ]),
+      ),
+      errors: resolvedEntries.flatMap((entry) => entry.errors),
+    };
+  }
+
+  return {
+    value,
+    errors: [],
+  };
+}
+
 function resolveTokenValue({
   token,
   dictionary,
@@ -94,11 +223,46 @@ function resolveTokenValue({
   const referenceValue = token.reference ?? token.value;
 
   if (!isTokenReference(referenceValue)) {
+    if (typeof token.value !== 'object' || token.value === null) {
+      return {
+        resolvedValue: token.value,
+        resolvedReferencePath: null,
+        chain,
+        errors: [],
+      };
+    }
+
+    const nestedResolution = resolveNestedValue({
+      value: token.value,
+      dictionary,
+      chain,
+      rootTokenPath,
+    });
+    const parsedResolvedValue = designTokenValueSchema.safeParse(
+      nestedResolution.value,
+    );
+
+    if (!parsedResolvedValue.success) {
+      return {
+        resolvedValue: token.value,
+        resolvedReferencePath: null,
+        chain,
+        errors: [
+          ...nestedResolution.errors,
+          createError({
+            code: 'unresolvedReference',
+            tokenPath: rootTokenPath,
+            chain,
+          }),
+        ],
+      };
+    }
+
     return {
-      resolvedValue: token.value,
+      resolvedValue: parsedResolvedValue.data,
       resolvedReferencePath: null,
       chain,
-      errors: [],
+      errors: nestedResolution.errors,
     };
   }
 

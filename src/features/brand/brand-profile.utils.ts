@@ -1,7 +1,10 @@
-import {
-  brandProfileSchema,
-  type BrandProfile,
-  type BrandProfileLocalizedContent,
+import type {
+  BrandProfile,
+  BrandProfileLocalizedContent,
+} from '@/domain/design-system';
+export {
+  defaultBrandProfile,
+  parseStoredBrandProfile,
 } from '@/domain/design-system';
 import {
   getMissingLocalizedStringLocales,
@@ -19,24 +22,6 @@ export const brandLocalizedFieldKeys = [
 ] as const;
 
 export type BrandLocalizedFieldKey = (typeof brandLocalizedFieldKeys)[number];
-
-export const defaultBrandProfile: BrandProfile = brandProfileSchema.parse({
-  visualStyle: 'minimal',
-  uiDensity: 'cozy',
-  inspirationKeywords: [],
-  localizedContent: {},
-});
-
-export function parseStoredBrandProfile(value: {
-  visualStyle: unknown;
-  uiDensity: unknown;
-  inspirationKeywords: unknown;
-  localizedContent: unknown;
-}): BrandProfile {
-  const parsed = brandProfileSchema.safeParse(value);
-
-  return parsed.success ? parsed.data : defaultBrandProfile;
-}
 
 export function resolveBrandLocalizedField({
   profile,

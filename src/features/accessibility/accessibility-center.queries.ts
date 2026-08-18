@@ -1,10 +1,10 @@
 import { prisma } from '@/server/db/prisma';
 import type { AppLocale } from '@/domain/i18n';
-import type { ComponentContractType } from '@/domain/design-system';
 import type {
+  ComponentContractType,
+  DesignSystemTheme,
   ThemeMode,
-  ThemeEditorTheme,
-} from '@/features/themes/themes-editor.utils';
+} from '@/domain/design-system';
 
 export type AccessibilityCenterTokenSetData = {
   id: string;
@@ -31,7 +31,7 @@ export type AccessibilityCenterPageData = {
   };
   colorTokenSet: AccessibilityCenterTokenSetData | null;
   tokenSets: AccessibilityCenterTokenSetData[];
-  themes: ThemeEditorTheme[];
+  themes: DesignSystemTheme[];
   componentContracts: AccessibilityCenterComponentContractData[];
   latestAccessibilityReport: {
     id: string;

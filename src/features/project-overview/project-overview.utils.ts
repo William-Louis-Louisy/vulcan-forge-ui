@@ -1,19 +1,16 @@
 import {
+  createAccessibilityCenterReport,
+  type AccessibilityCenterReport,
+} from '@/domain/accessibility';
+import {
   componentContractSchema,
   designTokenSchema,
   type ComponentContract,
   type DesignToken,
+  type DesignTokenType as TokenSetType,
 } from '@/domain/design-system';
+import { exportLogFormats, type ExportLogFormat } from '@/domain/exports';
 import type { AppLocale } from '@/domain/i18n';
-import {
-  createAccessibilityCenterReport,
-  type AccessibilityCenterReport,
-} from '@/features/accessibility/accessibility-center.utils';
-import {
-  exportLogFormats,
-  type ExportLogFormat,
-} from '@/features/exports/export-center.utils';
-import type { TokenSetType } from '@/features/tokens/tokens-editor.utils';
 import type { ProjectOverviewPageData } from './project-overview.queries';
 
 export type ProjectOverviewTokenSetCoverage = {

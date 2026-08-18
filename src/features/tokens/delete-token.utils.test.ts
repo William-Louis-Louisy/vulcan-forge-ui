@@ -94,6 +94,46 @@ describe('delete-token utils', () => {
     ]);
   });
 
+  it('finds composite references across separate token sets', () => {
+    const dependencies = findTokenDependencies({
+      tokenPath: 'spacing.scale.4',
+      tokenSets: [
+        {
+          tokens: [
+            {
+              path: 'spacing.scale.4',
+              type: 'spacing',
+              value: '16px',
+              status: 'ready',
+            },
+          ],
+        },
+        {
+          tokens: [
+            {
+              path: 'typography.body.md',
+              type: 'typography',
+              value: {
+                fontFamily: 'Inter',
+                fontSize: '{spacing.scale.4}',
+              },
+              status: 'ready',
+            },
+          ],
+        },
+      ],
+      themes: [],
+      componentContracts: [],
+    });
+
+    expect(dependencies).toEqual([
+      {
+        kind: 'token',
+        label: 'typography.body.md',
+      },
+    ]);
+  });
+
   it('detaches a deleted token from theme mappings while preserving siblings', () => {
     const result = detachThemeTokenReferences({
       tokenPath: 'color.primitive.blue.500',
