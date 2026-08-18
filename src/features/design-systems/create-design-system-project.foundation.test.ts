@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createAccessibilityCenterReport } from '@/features/accessibility/accessibility-center.utils';
+import { createAccessibilityCenterReport } from '@/domain/accessibility';
 import { buildDesignSystemProjectFoundation } from './create-design-system-project.foundation';
 
 const testDate = new Date('2026-01-01T00:00:00.000Z');
@@ -56,7 +56,7 @@ describe('buildDesignSystemProjectFoundation', () => {
     expect(foundation.aiInstructionProfile.create).toBeDefined();
   });
 
-  it('seeds new projects without key contrast pair failures', () => {
+  it('seeds new projects without internally generated accessibility issues', () => {
     const foundation = createFoundation();
     const colorTokenSet = foundation.tokenSets.create.find(
       (tokenSet) => tokenSet.type === 'color',
@@ -64,21 +64,37 @@ describe('buildDesignSystemProjectFoundation', () => {
     const report = createAccessibilityCenterReport({
       colorTokenSetTokens: colorTokenSet?.tokens ?? [],
       themes: foundation.themes.create.map((theme) => ({
-        id: `seed-${theme.mode}`,
+        id: `seed-theme-${theme.mode}`,
         mode: theme.mode,
         name: theme.name,
         tokens: theme.tokens,
         updatedAt: testDate,
       })),
+      defaultLocale: foundation.localeSettings.create.defaultLocale,
+      supportedLocales: foundation.localeSettings.create.supportedLocales,
+      tokenSets: foundation.tokenSets.create.map((tokenSet, index) => ({
+        id: `seed-token-set-${index}`,
+        type: tokenSet.type,
+        name: tokenSet.name,
+        tokens: tokenSet.tokens,
+      })),
+      componentContracts: foundation.componentContracts.create.map(
+        (componentContract, index) => ({
+          id: `seed-component-${index}`,
+          type: componentContract.type,
+          name: componentContract.name,
+          contract: componentContract.contract,
+        }),
+      ),
     });
 
     expect(report.contrastPairs).not.toHaveLength(0);
     expect(report.contrastPairs.every((pair) => pair.status === 'pass')).toBe(
       true,
     );
-    expect(
-      report.issues.filter((issue) => issue.scope === 'themeContrast'),
-    ).toHaveLength(0);
+    expect(report.issues).toEqual([]);
+    expect(report.score).toBe(100);
+    expect(report.status).toBe('healthy');
   });
 
   it('maps the legacy enterprise direction to technical', () => {
