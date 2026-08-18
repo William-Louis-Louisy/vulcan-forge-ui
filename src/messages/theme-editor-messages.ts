@@ -18,6 +18,12 @@ export const themeEditorMessages = {
         noTokenOptionsTitle: 'No usable color token',
         noTokenOptionsDescription:
           'Theme roles require at least one color token that resolves to a valid HEX value. Create or repair color tokens before editing these mappings.',
+        keys: {
+          info: 'Info',
+          success: 'Success',
+          warning: 'Warning',
+          danger: 'Danger',
+        },
       },
       contrast: {
         title: 'Contrast matrix',
@@ -59,6 +65,12 @@ export const themeEditorMessages = {
         noTokenOptionsTitle: 'Aucun token couleur utilisable',
         noTokenOptionsDescription:
           'Les rôles du thème nécessitent au moins un token couleur résolu en valeur HEX valide. Créez ou corrigez les tokens couleur avant de modifier ces mappings.',
+        keys: {
+          info: 'Information',
+          success: 'Succès',
+          warning: 'Avertissement',
+          danger: 'Danger',
+        },
       },
       contrast: {
         title: 'Matrice de contraste',
