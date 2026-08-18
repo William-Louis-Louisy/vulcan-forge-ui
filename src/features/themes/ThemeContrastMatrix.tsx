@@ -1,7 +1,4 @@
-import type {
-  ThemeColorPair,
-  ThemeCoreColorKey,
-} from './themes-editor.utils';
+import type { ThemeColorPair, ThemeCoreColorKey } from './themes-editor.utils';
 
 type ContrastStatus = 'pass' | 'warning' | 'fail';
 type ContrastGrade = 'aaa' | 'aa' | 'largeOnly' | 'fail';
