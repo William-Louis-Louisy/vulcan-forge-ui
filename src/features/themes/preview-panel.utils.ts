@@ -3,8 +3,8 @@ import {
   getThemeColorRawValue,
   getThemeColorValue,
   sortThemesByMode,
-  themeColorKeys,
-  type ThemeColorKey,
+  themeCoreColorKeys,
+  type ThemeCoreColorKey,
   type ThemeEditorTheme,
   type ThemeMode,
 } from './themes-editor.utils';
@@ -21,7 +21,7 @@ export type PreviewThemeColors = {
 };
 
 export type PreviewThemePaletteEntry = {
-  key: ThemeColorKey;
+  key: ThemeCoreColorKey;
   value: string;
   rawValue: string | null;
   status: 'resolved' | 'fallback';
@@ -34,7 +34,7 @@ export type PreviewTheme = {
   colors: PreviewThemeColors;
   palette: PreviewThemePaletteEntry[];
   resolvedColorCount: number;
-  fallbackColorKeys: ThemeColorKey[];
+  fallbackColorKeys: ThemeCoreColorKey[];
 };
 
 type PreviewThemeBaseColors = Pick<
@@ -75,7 +75,7 @@ export function createPreviewTheme({
       (option) => option.path === 'color.semantic.action.primary',
     )?.value ?? null;
 
-  const palette = themeColorKeys.map((key) => {
+  const palette = themeCoreColorKeys.map((key) => {
     const rawValue = getThemeColorRawValue({
       tokens: theme.tokens,
       colorKey: key,
@@ -98,7 +98,7 @@ export function createPreviewTheme({
 
   const paletteByKey = Object.fromEntries(
     palette.map((entry) => [entry.key, entry.value]),
-  ) as Record<ThemeColorKey, string>;
+  ) as Record<ThemeCoreColorKey, string>;
   const fallbackColorKeys = palette
     .filter((entry) => entry.status === 'fallback')
     .map((entry) => entry.key);
