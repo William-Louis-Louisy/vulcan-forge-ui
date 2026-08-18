@@ -69,10 +69,7 @@ export function createThemeColorRole({
 
   const currentColorTokens = parsedTokens.data.color;
 
-  if (
-    currentColorTokens !== undefined &&
-    !isJsonObject(currentColorTokens)
-  ) {
+  if (currentColorTokens !== undefined && !isJsonObject(currentColorTokens)) {
     return {
       status: 'error',
       error: 'themeTokensMalformed',
