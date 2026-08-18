@@ -77,41 +77,38 @@ describe('theme mutation storage boundary', () => {
     );
   });
 
-  it(
-    'rejects missing themes and token paths that are not valid resolved color options',
-    async () => {
-      mocks.findTheme.mockResolvedValueOnce(null);
+  it('rejects missing themes and token paths that are not valid resolved color options', async () => {
+    mocks.findTheme.mockResolvedValueOnce(null);
 
-      await expect(
-        createThemeColorRoleForUser({
-          userId: 'user-1',
-          projectSlug: 'project-one',
-          themeId: 'missing-theme',
-          roleKey: 'border-subtle',
-          tokenPath: 'color.semantic.border.subtle',
-        }),
-      ).resolves.toEqual({
-        status: 'error',
-        error: 'themeNotFound',
-      });
+    await expect(
+      createThemeColorRoleForUser({
+        userId: 'user-1',
+        projectSlug: 'project-one',
+        themeId: 'missing-theme',
+        roleKey: 'border-subtle',
+        tokenPath: 'color.semantic.border.subtle',
+      }),
+    ).resolves.toEqual({
+      status: 'error',
+      error: 'themeNotFound',
+    });
 
-      mocks.findTheme.mockResolvedValueOnce(createStoredTheme());
+    mocks.findTheme.mockResolvedValueOnce(createStoredTheme());
 
-      await expect(
-        createThemeColorRoleForUser({
-          userId: 'user-1',
-          projectSlug: 'project-one',
-          themeId: 'theme-light',
-          roleKey: 'border-subtle',
-          tokenPath: 'color.semantic.missing',
-        }),
-      ).resolves.toEqual({
-        status: 'error',
-        error: 'invalidTokenReference',
-      });
-      expect(mocks.updateTheme).not.toHaveBeenCalled();
-    },
-  );
+    await expect(
+      createThemeColorRoleForUser({
+        userId: 'user-1',
+        projectSlug: 'project-one',
+        themeId: 'theme-light',
+        roleKey: 'border-subtle',
+        tokenPath: 'color.semantic.missing',
+      }),
+    ).resolves.toEqual({
+      status: 'error',
+      error: 'invalidTokenReference',
+    });
+    expect(mocks.updateTheme).not.toHaveBeenCalled();
+  });
 
   it('preserves domain errors such as duplicate role keys', async () => {
     mocks.findTheme.mockResolvedValue(
@@ -173,24 +170,21 @@ describe('theme mutation storage boundary', () => {
     });
   });
 
-  it(
-    'reports persistence failures without leaking them across the feature boundary',
-    async () => {
-      mocks.findTheme.mockResolvedValue(createStoredTheme());
-      mocks.updateTheme.mockRejectedValue(new Error('database unavailable'));
+  it('reports persistence failures without leaking them across the feature boundary', async () => {
+    mocks.findTheme.mockResolvedValue(createStoredTheme());
+    mocks.updateTheme.mockRejectedValue(new Error('database unavailable'));
 
-      await expect(
-        createThemeColorRoleForUser({
-          userId: 'user-1',
-          projectSlug: 'project-one',
-          themeId: 'theme-light',
-          roleKey: 'border-subtle',
-          tokenPath: 'color.semantic.border.subtle',
-        }),
-      ).resolves.toEqual({
-        status: 'error',
-        error: 'unexpected',
-      });
-    },
-  );
+    await expect(
+      createThemeColorRoleForUser({
+        userId: 'user-1',
+        projectSlug: 'project-one',
+        themeId: 'theme-light',
+        roleKey: 'border-subtle',
+        tokenPath: 'color.semantic.border.subtle',
+      }),
+    ).resolves.toEqual({
+      status: 'error',
+      error: 'unexpected',
+    });
+  });
 });
