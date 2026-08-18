@@ -38,6 +38,14 @@ export const themeEditorMessages = {
         pairs: {
           mutedOnSurface: 'Muted content on surface',
           accentOnSurface: 'Accent on surface',
+          infoOnBackground: 'Info on background',
+          infoOnSurface: 'Info on surface',
+          successOnBackground: 'Success on background',
+          successOnSurface: 'Success on surface',
+          warningOnBackground: 'Warning on background',
+          warningOnSurface: 'Warning on surface',
+          dangerOnBackground: 'Danger on background',
+          dangerOnSurface: 'Danger on surface',
         },
       },
       states: {
@@ -85,6 +93,14 @@ export const themeEditorMessages = {
         pairs: {
           mutedOnSurface: 'Contenu atténué sur surface',
           accentOnSurface: 'Accent sur surface',
+          infoOnBackground: 'Information sur arrière-plan',
+          infoOnSurface: 'Information sur surface',
+          successOnBackground: 'Succès sur arrière-plan',
+          successOnSurface: 'Succès sur surface',
+          warningOnBackground: 'Avertissement sur arrière-plan',
+          warningOnSurface: 'Avertissement sur surface',
+          dangerOnBackground: 'Danger sur arrière-plan',
+          dangerOnSurface: 'Danger sur surface',
         },
       },
       states: {
