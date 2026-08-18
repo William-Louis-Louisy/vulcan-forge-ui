@@ -111,6 +111,32 @@ describe('theme semantics', () => {
     ]);
   });
 
+  it('evaluates only the status roles that are authored on a legacy theme', () => {
+    const pairs = getThemeContrastPairs({
+      tokens: {
+        color: {
+          background: '#ffffff',
+          surface: '#ffffff',
+          content: '#070707',
+          muted: '#3A4454',
+          accent: '#586644',
+          danger: '#B91C1C',
+        },
+      },
+    });
+
+    expect(pairs.map((pair) => pair.key)).toEqual([
+      'contentOnBackground',
+      'contentOnSurface',
+      'mutedOnBackground',
+      'mutedOnSurface',
+      'accentOnBackground',
+      'accentOnSurface',
+      'dangerOnBackground',
+      'dangerOnSurface',
+    ]);
+  });
+
   it('resolves theme references before evaluating contrast', () => {
     const colorTokenOptions = createThemeColorTokenOptions([
       {
