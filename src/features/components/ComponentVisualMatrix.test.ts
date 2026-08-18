@@ -3,11 +3,15 @@ import type { ComponentRegistryItem } from './components-registry.utils';
 import {
   createPreviewTokenStyles,
   createVisualMatrixAxes,
+  getAlertPreviewStatusColor,
   getAlertPreviewTone,
   getPreviewSizeCategory,
   isInteractiveCardVariant,
 } from './ComponentVisualMatrix';
-import type { ComponentTokenBindingResolution } from './component-token-bindings.utils';
+import type {
+  ComponentPreviewSemanticPalette,
+  ComponentTokenBindingResolution,
+} from './component-token-bindings.utils';
 
 describe('createVisualMatrixAxes', () => {
   it('uses documented variants, sizes and states', () => {
@@ -85,6 +89,68 @@ describe('component-specific preview recipes', () => {
     ['destructive', 'danger'],
   ])('maps the %s alert variant to the %s tone', (variant, expected) => {
     expect(getAlertPreviewTone(variant)).toBe(expected);
+  });
+
+  it('prefers an explicit Alert status binding over the semantic palette fallback', () => {
+    const resolution: ComponentTokenBindingResolution = {
+      invalidTokenSetsCount: 0,
+      missingBindings: [],
+      bindings: {
+        success: {
+          key: 'success',
+          tokenType: 'color',
+          tokenPath: 'color.semantic.status.success',
+          value: '{color.primitive.green.700}',
+          resolvedValue: '#15803d',
+          status: 'ready',
+          isResolved: true,
+        },
+      },
+    };
+    const semanticPalette: ComponentPreviewSemanticPalette = {
+      action: {},
+      status: {
+        info: '#2563eb',
+        success: '#00ff00',
+        warning: '#b45309',
+        danger: '#b91c1c',
+      },
+      missingStatusTones: [],
+    };
+
+    expect(
+      getAlertPreviewStatusColor({
+        tokenBindingResolution: resolution,
+        semanticPalette,
+        variantKey: 'success',
+      }),
+    ).toBe('#15803d');
+  });
+
+  it('falls back to the semantic palette when Alert has no explicit status binding', () => {
+    const resolution: ComponentTokenBindingResolution = {
+      invalidTokenSetsCount: 0,
+      missingBindings: [],
+      bindings: {},
+    };
+    const semanticPalette: ComponentPreviewSemanticPalette = {
+      action: {},
+      status: {
+        info: '#2563eb',
+        success: '#15803d',
+        warning: '#b45309',
+        danger: '#b91c1c',
+      },
+      missingStatusTones: [],
+    };
+
+    expect(
+      getAlertPreviewStatusColor({
+        tokenBindingResolution: resolution,
+        semanticPalette,
+        variantKey: 'warning',
+      }),
+    ).toBe('#b45309');
   });
 
   it('recognizes interactive card variants without affecting default cards', () => {
