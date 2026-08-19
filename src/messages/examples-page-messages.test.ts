@@ -27,6 +27,12 @@ describe('examplesPageMessages', () => {
     ).toContain('fictif');
   });
 
+  it('keeps the walkthrough centered on five connected workflow stages', () => {
+    expect(
+      Object.keys(examplesPageMessages.en.ExamplesPage.workflow.steps),
+    ).toEqual(['token', 'theme', 'component', 'accessibility', 'delivery']);
+  });
+
   it('documents the six beta delivery formats', () => {
     const englishFormats =
       examplesPageMessages.en.ExamplesPage.delivery.formatLabels;
