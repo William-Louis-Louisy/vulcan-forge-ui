@@ -2,8 +2,10 @@ import type { Prisma } from '@/generated/prisma/client';
 import {
   createThemeColorRole,
   createThemeColorTokenOptions,
+  deleteThemeColorRole,
   updateThemeColorRoleReference,
   type CreateThemeColorRoleError,
+  type DeleteThemeColorRoleError,
   type UpdateThemeColorRoleReferenceError,
 } from '@/domain/design-system';
 import { prisma } from '@/server/db/prisma';
@@ -12,6 +14,11 @@ export type CreateThemeColorRoleForUserError =
   | 'themeNotFound'
   | 'invalidTokenReference'
   | CreateThemeColorRoleError
+  | 'unexpected';
+
+export type DeleteThemeColorRoleForUserError =
+  | 'themeNotFound'
+  | DeleteThemeColorRoleError
   | 'unexpected';
 
 export type UpdateThemeColorRoleReferenceForUserError =
@@ -29,6 +36,16 @@ export type CreateThemeColorRoleForUserResult =
   | {
       status: 'error';
       error: CreateThemeColorRoleForUserError;
+    };
+
+export type DeleteThemeColorRoleForUserResult =
+  | {
+      status: 'success';
+      roleKey: string;
+    }
+  | {
+      status: 'error';
+      error: DeleteThemeColorRoleForUserError;
     };
 
 export type UpdateThemeColorRoleReferenceForUserResult =
@@ -191,6 +208,57 @@ export async function createThemeColorRoleForUser({
     status: 'success',
     roleKey: roleCreation.roleKey,
     tokenReference: roleCreation.tokenReference,
+  };
+}
+
+export async function deleteThemeColorRoleForUser({
+  userId,
+  projectSlug,
+  themeId,
+  roleKey,
+}: {
+  userId: string;
+  projectSlug: string;
+  themeId: string;
+  roleKey: string;
+}): Promise<DeleteThemeColorRoleForUserResult> {
+  const theme = await getEditableThemeForUser({
+    userId,
+    projectSlug,
+    themeId,
+  });
+
+  if (!theme) {
+    return {
+      status: 'error',
+      error: 'themeNotFound',
+    };
+  }
+
+  const roleDeletion = deleteThemeColorRole({
+    tokens: theme.tokens,
+    roleKey,
+  });
+
+  if (roleDeletion.status === 'error') {
+    return roleDeletion;
+  }
+
+  const persisted = await persistThemeTokens({
+    themeId: theme.id,
+    tokens: roleDeletion.tokens,
+  });
+
+  if (!persisted) {
+    return {
+      status: 'error',
+      error: 'unexpected',
+    };
+  }
+
+  return {
+    status: 'success',
+    roleKey: roleDeletion.roleKey,
   };
 }
 
