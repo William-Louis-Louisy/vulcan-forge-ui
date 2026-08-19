@@ -92,7 +92,8 @@ export const examplesPageMessages = {
           alert: {
             title: 'Alert',
             purpose: 'Status feedback tied to semantic status colors.',
-            accessibility: 'semantic tone · readable content · no color-only meaning',
+            accessibility:
+              'semantic tone · readable content · no color-only meaning',
             previewStatus: 'Success',
             previewMessage: 'Export completed with the current project source.',
           },
@@ -231,7 +232,8 @@ export const examplesPageMessages = {
         items: {
           button: {
             title: 'Button',
-            purpose: 'Action interactive principale avec des états visuels explicites.',
+            purpose:
+              'Action interactive principale avec des états visuels explicites.',
             accessibility: 'clavier · focus visible · état disabled',
             previewPrimary: 'Action principale',
             previewSecondary: 'Secondaire',
@@ -248,7 +250,8 @@ export const examplesPageMessages = {
       },
       accessibility: {
         eyebrow: 'L’accessibilité comme donnée source',
-        title: 'Les contrôles restent liés aux décisions qui les ont produits.',
+        title:
+          'Les contrôles restent liés aux décisions qui les ont produits.',
         description:
           'VulcanForge UI évalue ce qui peut être déduit du projet structuré tout en laissant explicites les responsabilités d’accessibilité qui nécessitent une revue humaine.',
         checks: {
