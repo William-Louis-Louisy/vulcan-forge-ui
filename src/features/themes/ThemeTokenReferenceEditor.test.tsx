@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import type { ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { ThemeTokenReferenceEditor } from './ThemeTokenReferenceEditor';
 
@@ -28,6 +29,9 @@ const labels = {
     invalidPayload: 'Invalid payload',
     themeNotFound: 'Theme not found',
     invalidTokenReference: 'Invalid token reference',
+    invalidRoleKey: 'Invalid role key',
+    invalidTokenPath: 'Invalid token path',
+    themeTokensMalformed: 'Malformed theme tokens',
     unexpected: 'Unexpected error',
   },
 };
@@ -48,15 +52,19 @@ const options = [
 ];
 
 function renderEditor({
+  roleKey = 'background',
   initialReferencePath = 'color.semantic.background.app',
   resolvedValue = '#f7f3eb',
   availableOptions = options,
   showNoOptionsMessage,
+  secondaryAction,
 }: {
+  roleKey?: string;
   initialReferencePath?: string | null;
   resolvedValue?: string | null;
   availableOptions?: typeof options;
   showNoOptionsMessage?: boolean;
+  secondaryAction?: ReactNode;
 } = {}) {
   const optionalProps =
     showNoOptionsMessage === undefined ? {} : { showNoOptionsMessage };
@@ -66,11 +74,12 @@ function renderEditor({
       locale="en"
       projectSlug="forge"
       themeId="light-theme"
-      colorKey="background"
+      roleKey={roleKey}
       initialReferencePath={initialReferencePath}
       legacyDirectValue={null}
       resolvedValue={resolvedValue}
       options={availableOptions}
+      secondaryAction={secondaryAction}
       labels={labels}
       {...optionalProps}
     />,
@@ -110,6 +119,41 @@ describe('ThemeTokenReferenceEditor', () => {
     ).not.toBeInTheDocument();
     expect(screen.getByText('Saved')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Save mapping' })).toBeDisabled();
+  });
+
+  it('renders authored custom role keys through the same mapping control', () => {
+    const { container } = renderEditor({
+      roleKey: 'border-subtle',
+      initialReferencePath: 'color.primitive.neutral.0',
+      resolvedValue: '#ffffff',
+    });
+    const customMappingRow = container.querySelector(
+      '[data-theme-mapping-row="border-subtle"]',
+    );
+    const customThemeRole = container.querySelector(
+      '[data-theme-role="border-subtle"]',
+    );
+    const roleKeyInput = container.querySelector('input[name="roleKey"]');
+
+    expect(customMappingRow).toBeInTheDocument();
+    expect(customThemeRole).toHaveTextContent('border-subtle');
+    expect(roleKeyInput).toHaveValue('border-subtle');
+  });
+
+  it('keeps a custom destructive action outside the mapping form', () => {
+    const { container } = renderEditor({
+      roleKey: 'border-subtle',
+      secondaryAction: <button type="button">Delete role</button>,
+    });
+    const mappingRow = container.querySelector(
+      '[data-theme-mapping-row="border-subtle"]',
+    );
+    const mappingForm = mappingRow?.querySelector('form');
+    const deleteButton = screen.getByRole('button', { name: 'Delete role' });
+
+    expect(mappingForm).toBeInTheDocument();
+    expect(mappingForm).not.toContainElement(deleteButton);
+    expect(deleteButton.closest('form')).toBeNull();
   });
 
   it('updates the selected token data and save state when another token is selected', async () => {

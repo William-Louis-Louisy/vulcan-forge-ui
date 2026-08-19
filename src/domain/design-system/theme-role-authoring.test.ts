@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   createThemeColorRole,
   themeRoleKeySchema,
+  updateThemeColorRoleReference,
 } from './theme-role-authoring';
 
 describe('theme role authoring', () => {
@@ -77,6 +78,66 @@ describe('theme role authoring', () => {
     ).toEqual({
       status: 'error',
       error: 'roleAlreadyExists',
+    });
+  });
+
+  it('updates an existing custom role without mutating unrelated theme tokens', () => {
+    const tokens = {
+      color: {
+        background: '{color.semantic.background}',
+        'border-subtle': '{color.semantic.border.default}',
+      },
+      radius: {
+        card: '{radius.md}',
+      },
+    };
+
+    expect(
+      updateThemeColorRoleReference({
+        tokens,
+        roleKey: 'border-subtle',
+        tokenPath: 'color.semantic.border.subtle',
+      }),
+    ).toEqual({
+      status: 'success',
+      roleKey: 'border-subtle',
+      tokenReference: '{color.semantic.border.subtle}',
+      tokens: {
+        color: {
+          background: '{color.semantic.background}',
+          'border-subtle': '{color.semantic.border.subtle}',
+        },
+        radius: {
+          card: '{radius.md}',
+        },
+      },
+    });
+    expect(tokens.color['border-subtle']).toBe(
+      '{color.semantic.border.default}',
+    );
+  });
+
+  it('can set a valid role that is still missing from a legacy theme', () => {
+    expect(
+      updateThemeColorRoleReference({
+        tokens: {
+          color: {
+            background: '{color.semantic.background}',
+          },
+        },
+        roleKey: 'info',
+        tokenPath: 'color.semantic.status.info.light',
+      }),
+    ).toMatchObject({
+      status: 'success',
+      roleKey: 'info',
+      tokenReference: '{color.semantic.status.info.light}',
+      tokens: {
+        color: {
+          background: '{color.semantic.background}',
+          info: '{color.semantic.status.info.light}',
+        },
+      },
     });
   });
 

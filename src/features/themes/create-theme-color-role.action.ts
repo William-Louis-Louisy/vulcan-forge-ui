@@ -1,10 +1,10 @@
 'use server';
 
 import { auth } from '@/auth';
-import { updateThemeColorRoleReferenceForUser } from '@/server/design-system/theme-mutations';
+import { createThemeColorRoleForUser } from '@/server/design-system/theme-mutations';
+import { createThemeColorRoleSchema } from './create-theme-color-role.schema';
+import type { CreateThemeColorRoleActionState } from './create-theme-color-role.state';
 import { revalidateThemeConsumers } from './revalidate-theme-consumers';
-import { updateThemeTokenReferenceSchema } from './theme-token-reference.schema';
-import type { UpdateThemeTokenReferenceActionState } from './update-theme-token-reference.state';
 
 function getFormStringValue(formData: FormData, key: string): string {
   const value = formData.get(key);
@@ -12,11 +12,11 @@ function getFormStringValue(formData: FormData, key: string): string {
   return typeof value === 'string' ? value : '';
 }
 
-export async function updateThemeTokenReferenceAction(
-  _previousState: UpdateThemeTokenReferenceActionState,
+export async function createThemeColorRoleAction(
+  _previousState: CreateThemeColorRoleActionState,
   formData: FormData,
-): Promise<UpdateThemeTokenReferenceActionState> {
-  const parsedPayload = updateThemeTokenReferenceSchema.safeParse({
+): Promise<CreateThemeColorRoleActionState> {
+  const parsedPayload = createThemeColorRoleSchema.safeParse({
     locale: getFormStringValue(formData, 'locale'),
     projectSlug: getFormStringValue(formData, 'projectSlug'),
     themeId: getFormStringValue(formData, 'themeId'),
@@ -40,7 +40,7 @@ export async function updateThemeTokenReferenceAction(
     };
   }
 
-  const updateResult = await updateThemeColorRoleReferenceForUser({
+  const createResult = await createThemeColorRoleForUser({
     userId: session.user.id,
     projectSlug: parsedPayload.data.projectSlug,
     themeId: parsedPayload.data.themeId,
@@ -48,10 +48,10 @@ export async function updateThemeTokenReferenceAction(
     tokenPath: parsedPayload.data.tokenPath,
   });
 
-  if (updateResult.status === 'error') {
+  if (createResult.status === 'error') {
     return {
       status: 'error',
-      formError: updateResult.error,
+      formError: createResult.error,
     };
   }
 

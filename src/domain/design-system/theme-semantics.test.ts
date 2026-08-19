@@ -1,8 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import {
   createThemeColorTokenOptions,
+  deleteThemeColorRole,
+  getThemeColorRoleKeys,
   getThemeColorValue,
   getThemeContrastPairs,
+  isCustomThemeColorRoleKey,
+  isThemeColorKey,
   isThemeMode,
   sortThemesByMode,
   themeColorKeys,
@@ -24,6 +28,89 @@ describe('theme semantics', () => {
       { mode: 'light', name: 'Light' },
       { mode: 'dark', name: 'Dark' },
     ]);
+  });
+
+  it('keeps known roles first and appends authored custom roles alphabetically', () => {
+    expect(isThemeColorKey('background')).toBe(true);
+    expect(isThemeColorKey('border-subtle')).toBe(false);
+    expect(isCustomThemeColorRoleKey('border-subtle')).toBe(true);
+    expect(isCustomThemeColorRoleKey('background')).toBe(false);
+    expect(isCustomThemeColorRoleKey('invalid_role')).toBe(false);
+    expect(
+      getThemeColorRoleKeys({
+        color: {
+          background: '#ffffff',
+          overlay: '{color.semantic.overlay}',
+          'border-subtle': '{color.semantic.border.subtle}',
+          invalid_role: '{color.semantic.invalid}',
+        },
+      }),
+    ).toEqual([...themeColorKeys, 'border-subtle', 'overlay']);
+  });
+
+  it('deletes only the selected custom role without mutating the source theme', () => {
+    const tokens = {
+      color: {
+        background: '#ffffff',
+        'border-subtle': '{color.semantic.border.subtle}',
+        overlay: '{color.semantic.overlay}',
+      },
+      radius: {
+        card: '{radius.md}',
+      },
+    };
+
+    expect(
+      deleteThemeColorRole({
+        tokens,
+        roleKey: 'border-subtle',
+      }),
+    ).toEqual({
+      status: 'success',
+      roleKey: 'border-subtle',
+      tokens: {
+        color: {
+          background: '#ffffff',
+          overlay: '{color.semantic.overlay}',
+        },
+        radius: {
+          card: '{radius.md}',
+        },
+      },
+    });
+    expect(tokens.color['border-subtle']).toBe(
+      '{color.semantic.border.subtle}',
+    );
+  });
+
+  it('protects built-in roles and reports missing custom roles', () => {
+    expect(
+      deleteThemeColorRole({
+        tokens: {
+          color: {
+            background: '#ffffff',
+          },
+        },
+        roleKey: 'background',
+      }),
+    ).toEqual({
+      status: 'error',
+      error: 'protectedRole',
+    });
+
+    expect(
+      deleteThemeColorRole({
+        tokens: {
+          color: {
+            background: '#ffffff',
+          },
+        },
+        roleKey: 'overlay',
+      }),
+    ).toEqual({
+      status: 'error',
+      error: 'roleNotFound',
+    });
   });
 
   it('evaluates status roles against theme background and surface', () => {

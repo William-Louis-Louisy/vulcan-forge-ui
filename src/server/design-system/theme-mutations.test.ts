@@ -14,13 +14,29 @@ vi.mock('@/server/db/prisma', () => ({
   },
 }));
 
-import { createThemeColorRoleForUser } from './theme-mutations';
+import {
+  createThemeColorRoleForUser,
+  deleteThemeColorRoleForUser,
+  updateThemeColorRoleReferenceForUser,
+} from './theme-mutations';
 
 const colorTokens = [
+  {
+    path: 'color.semantic.border.default',
+    type: 'color',
+    value: '#94A3B8',
+    status: 'ready',
+  },
   {
     path: 'color.semantic.border.subtle',
     type: 'color',
     value: '#64748B',
+    status: 'ready',
+  },
+  {
+    path: 'color.semantic.status.info.light',
+    type: 'color',
+    value: '#2563EB',
     status: 'ready',
   },
 ];
@@ -168,6 +184,136 @@ describe('theme mutation storage boundary', () => {
         id: true,
       },
     });
+  });
+
+  it('deletes a custom role through the same authorized boundary', async () => {
+    mocks.findTheme.mockResolvedValue(
+      createStoredTheme({
+        color: {
+          background: '#ffffff',
+          'border-subtle': '{color.semantic.border.subtle}',
+          overlay: '{color.semantic.border.default}',
+        },
+      }),
+    );
+
+    await expect(
+      deleteThemeColorRoleForUser({
+        userId: 'user-1',
+        projectSlug: 'project-one',
+        themeId: 'theme-light',
+        roleKey: 'border-subtle',
+      }),
+    ).resolves.toEqual({
+      status: 'success',
+      roleKey: 'border-subtle',
+    });
+
+    expect(mocks.updateTheme).toHaveBeenCalledWith({
+      where: {
+        id: 'theme-light',
+      },
+      data: {
+        tokens: {
+          color: {
+            background: '#ffffff',
+            overlay: '{color.semantic.border.default}',
+          },
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+  });
+
+  it('refuses to delete built-in theme roles', async () => {
+    mocks.findTheme.mockResolvedValue(createStoredTheme());
+
+    await expect(
+      deleteThemeColorRoleForUser({
+        userId: 'user-1',
+        projectSlug: 'project-one',
+        themeId: 'theme-light',
+        roleKey: 'background',
+      }),
+    ).resolves.toEqual({
+      status: 'error',
+      error: 'protectedRole',
+    });
+    expect(mocks.updateTheme).not.toHaveBeenCalled();
+  });
+
+  it('updates an existing custom role through the same authorized boundary', async () => {
+    mocks.findTheme.mockResolvedValue(
+      createStoredTheme({
+        color: {
+          background: '#ffffff',
+          'border-subtle': '{color.semantic.border.default}',
+        },
+      }),
+    );
+
+    await expect(
+      updateThemeColorRoleReferenceForUser({
+        userId: 'user-1',
+        projectSlug: 'project-one',
+        themeId: 'theme-light',
+        roleKey: 'border-subtle',
+        tokenPath: 'color.semantic.border.subtle',
+      }),
+    ).resolves.toEqual({
+      status: 'success',
+      roleKey: 'border-subtle',
+      tokenReference: '{color.semantic.border.subtle}',
+    });
+
+    expect(mocks.updateTheme).toHaveBeenCalledWith({
+      where: {
+        id: 'theme-light',
+      },
+      data: {
+        tokens: {
+          color: {
+            background: '#ffffff',
+            'border-subtle': '{color.semantic.border.subtle}',
+          },
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+  });
+
+  it('can populate a missing known role on a legacy theme through the update boundary', async () => {
+    mocks.findTheme.mockResolvedValue(createStoredTheme());
+
+    await expect(
+      updateThemeColorRoleReferenceForUser({
+        userId: 'user-1',
+        projectSlug: 'project-one',
+        themeId: 'theme-light',
+        roleKey: 'info',
+        tokenPath: 'color.semantic.status.info.light',
+      }),
+    ).resolves.toEqual({
+      status: 'success',
+      roleKey: 'info',
+      tokenReference: '{color.semantic.status.info.light}',
+    });
+    expect(mocks.updateTheme).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: {
+          tokens: {
+            color: {
+              background: '#ffffff',
+              info: '{color.semantic.status.info.light}',
+            },
+          },
+        },
+      }),
+    );
   });
 
   it('reports persistence failures without leaking them across the feature boundary', async () => {

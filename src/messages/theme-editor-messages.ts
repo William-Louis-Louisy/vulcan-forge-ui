@@ -24,6 +24,65 @@ export const themeEditorMessages = {
           warning: 'Warning',
           danger: 'Danger',
         },
+        createRole: {
+          title: 'Custom color roles',
+          description:
+            'Add a semantic role to this theme only. Other theme modes are not changed automatically.',
+          open: 'Add role',
+          cancel: 'Cancel',
+          roleKeyLabel: 'Role key',
+          roleKeyPlaceholder: 'e.g. border-subtle',
+          roleKeyHint:
+            'Use lowercase letters, numbers and hyphens. This stable key is also used in exports.',
+          tokenLabel: 'Color token',
+          tokenPlaceholder: 'Select a token',
+          submit: 'Add role',
+          submitting: 'Adding role…',
+          added: 'Role added.',
+          errors: {
+            unauthorized: 'You are not authorized to edit this theme.',
+            invalidPayload: 'The role form contains invalid data.',
+            themeNotFound: 'This theme could not be found.',
+            invalidTokenReference:
+              'Select a color token that resolves to a valid HEX value.',
+            invalidRoleKey:
+              'Use a lowercase role key with letters, numbers and hyphens only.',
+            invalidTokenPath: 'The selected token path is invalid.',
+            themeTokensMalformed:
+              'The stored theme color mappings are malformed and cannot be edited safely.',
+            roleAlreadyExists:
+              'This role already exists in the selected theme.',
+            unexpected: 'The role could not be added. Please try again.',
+          },
+        },
+        deleteRole: {
+          request: 'Delete role',
+          confirmationTitle: 'Delete {roleKey}?',
+          confirmationDescription:
+            'This removes the custom role from this theme only. The referenced token is kept. This action cannot be undone.',
+          cancel: 'Cancel',
+          delete: 'Delete role',
+          deleting: 'Deleting…',
+          errors: {
+            unauthorized: 'You are not authorized to edit this theme.',
+            invalidPayload: 'The delete request contains invalid data.',
+            themeNotFound: 'This theme could not be found.',
+            invalidRoleKey: 'This custom role key is invalid.',
+            protectedRole: 'Built-in theme roles cannot be deleted.',
+            themeTokensMalformed:
+              'The stored theme color mappings are malformed and cannot be edited safely.',
+            roleNotFound: 'This custom role no longer exists.',
+            unexpected: 'The role could not be deleted. Please try again.',
+          },
+        },
+        form: {
+          errors: {
+            invalidRoleKey: 'This theme role key is invalid.',
+            invalidTokenPath: 'The selected token path is invalid.',
+            themeTokensMalformed:
+              'The stored theme color mappings are malformed and cannot be edited safely.',
+          },
+        },
       },
       contrast: {
         title: 'Contrast matrix',
@@ -78,6 +137,67 @@ export const themeEditorMessages = {
           success: 'Succès',
           warning: 'Avertissement',
           danger: 'Danger',
+        },
+        createRole: {
+          title: 'Rôles couleur personnalisés',
+          description:
+            'Ajoutez un rôle sémantique à ce thème uniquement. Les autres modes ne sont pas modifiés automatiquement.',
+          open: 'Ajouter un rôle',
+          cancel: 'Annuler',
+          roleKeyLabel: 'Clé du rôle',
+          roleKeyPlaceholder: 'ex. border-subtle',
+          roleKeyHint:
+            'Utilisez des lettres minuscules, des chiffres et des tirets. Cette clé stable est aussi utilisée dans les exports.',
+          tokenLabel: 'Token couleur',
+          tokenPlaceholder: 'Sélectionner un token',
+          submit: 'Ajouter le rôle',
+          submitting: 'Ajout du rôle…',
+          added: 'Rôle ajouté.',
+          errors: {
+            unauthorized: 'Vous n’êtes pas autorisé à modifier ce thème.',
+            invalidPayload:
+              'Le formulaire du rôle contient des données invalides.',
+            themeNotFound: 'Ce thème est introuvable.',
+            invalidTokenReference:
+              'Sélectionnez un token couleur résolu en valeur HEX valide.',
+            invalidRoleKey:
+              'Utilisez une clé en minuscules avec uniquement des lettres, des chiffres et des tirets.',
+            invalidTokenPath: 'Le chemin du token sélectionné est invalide.',
+            themeTokensMalformed:
+              'Les mappings couleur enregistrés pour ce thème sont invalides et ne peuvent pas être modifiés en toute sécurité.',
+            roleAlreadyExists: 'Ce rôle existe déjà dans le thème sélectionné.',
+            unexpected: 'Le rôle n’a pas pu être ajouté. Réessayez.',
+          },
+        },
+        deleteRole: {
+          request: 'Supprimer le rôle',
+          confirmationTitle: 'Supprimer {roleKey} ?',
+          confirmationDescription:
+            'Ce rôle personnalisé sera supprimé de ce thème uniquement. Le token référencé est conservé. Cette action est irréversible.',
+          cancel: 'Annuler',
+          delete: 'Supprimer le rôle',
+          deleting: 'Suppression…',
+          errors: {
+            unauthorized: 'Vous n’êtes pas autorisé à modifier ce thème.',
+            invalidPayload:
+              'La demande de suppression contient des données invalides.',
+            themeNotFound: 'Ce thème est introuvable.',
+            invalidRoleKey: 'La clé de ce rôle personnalisé est invalide.',
+            protectedRole:
+              'Les rôles intégrés du thème ne peuvent pas être supprimés.',
+            themeTokensMalformed:
+              'Les mappings couleur enregistrés pour ce thème sont invalides et ne peuvent pas être modifiés en toute sécurité.',
+            roleNotFound: 'Ce rôle personnalisé n’existe plus.',
+            unexpected: 'Le rôle n’a pas pu être supprimé. Réessayez.',
+          },
+        },
+        form: {
+          errors: {
+            invalidRoleKey: 'La clé de ce rôle de thème est invalide.',
+            invalidTokenPath: 'Le chemin du token sélectionné est invalide.',
+            themeTokensMalformed:
+              'Les mappings couleur enregistrés pour ce thème sont invalides et ne peuvent pas être modifiés en toute sécurité.',
+          },
         },
       },
       contrast: {

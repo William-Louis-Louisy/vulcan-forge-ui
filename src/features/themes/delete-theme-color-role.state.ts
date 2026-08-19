@@ -1,19 +1,21 @@
-export type UpdateThemeTokenReferenceActionState = {
+export type DeleteThemeColorRoleActionState = {
   status: 'idle' | 'success' | 'error';
   formError:
     | 'unauthorized'
     | 'invalidPayload'
     | 'themeNotFound'
-    | 'invalidTokenReference'
     | 'invalidRoleKey'
-    | 'invalidTokenPath'
+    | 'protectedRole'
     | 'themeTokensMalformed'
+    | 'roleNotFound'
     | 'unexpected'
     | null;
+  deletedRoleKey: string | null;
 };
 
-export const initialUpdateThemeTokenReferenceActionState: UpdateThemeTokenReferenceActionState =
+export const initialDeleteThemeColorRoleActionState: DeleteThemeColorRoleActionState =
   {
     status: 'idle',
     formError: null,
+    deletedRoleKey: null,
   };

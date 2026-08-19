@@ -1,4 +1,4 @@
-export type UpdateThemeTokenReferenceActionState = {
+export type CreateThemeColorRoleActionState = {
   status: 'idle' | 'success' | 'error';
   formError:
     | 'unauthorized'
@@ -8,11 +8,12 @@ export type UpdateThemeTokenReferenceActionState = {
     | 'invalidRoleKey'
     | 'invalidTokenPath'
     | 'themeTokensMalformed'
+    | 'roleAlreadyExists'
     | 'unexpected'
     | null;
 };
 
-export const initialUpdateThemeTokenReferenceActionState: UpdateThemeTokenReferenceActionState =
+export const initialCreateThemeColorRoleActionState: CreateThemeColorRoleActionState =
   {
     status: 'idle',
     formError: null,

@@ -5,6 +5,7 @@ import {
   type ContrastEvaluation,
 } from '@/domain/accessibility/contrast';
 import { designTokenSchema } from './design-token.schema';
+import { themeRoleKeySchema } from './theme-role-authoring';
 import {
   pathToTokenReference,
   resolveDesignTokens,
@@ -63,6 +64,23 @@ export type ThemeColorPair = {
   backgroundValue: string | null;
   contrast: ContrastEvaluation | null;
 };
+
+export type DeleteThemeColorRoleError =
+  | 'invalidRoleKey'
+  | 'protectedRole'
+  | 'themeTokensMalformed'
+  | 'roleNotFound';
+
+export type DeleteThemeColorRoleResult =
+  | {
+      status: 'success';
+      roleKey: string;
+      tokens: Record<string, unknown>;
+    }
+  | {
+      status: 'error';
+      error: DeleteThemeColorRoleError;
+    };
 
 export const themeContrastPairDefinitions = [
   {
@@ -153,6 +171,83 @@ function isThemeStatusColorKey(
   return themeStatusColorKeys.some((key) => key === value);
 }
 
+export function isThemeColorKey(value: string): value is ThemeColorKey {
+  return themeColorKeys.some((key) => key === value);
+}
+
+export function isCustomThemeColorRoleKey(value: string): boolean {
+  return themeRoleKeySchema.safeParse(value).success && !isThemeColorKey(value);
+}
+
+export function deleteThemeColorRole({
+  tokens,
+  roleKey,
+}: {
+  tokens: unknown;
+  roleKey: string;
+}): DeleteThemeColorRoleResult {
+  const parsedRoleKey = themeRoleKeySchema.safeParse(roleKey);
+
+  if (!parsedRoleKey.success) {
+    return {
+      status: 'error',
+      error: 'invalidRoleKey',
+    };
+  }
+
+  if (isThemeColorKey(parsedRoleKey.data)) {
+    return {
+      status: 'error',
+      error: 'protectedRole',
+    };
+  }
+
+  if (!isRecord(tokens)) {
+    return {
+      status: 'error',
+      error: 'themeTokensMalformed',
+    };
+  }
+
+  const colorTokens = tokens.color;
+
+  if (colorTokens === undefined) {
+    return {
+      status: 'error',
+      error: 'roleNotFound',
+    };
+  }
+
+  if (!isRecord(colorTokens)) {
+    return {
+      status: 'error',
+      error: 'themeTokensMalformed',
+    };
+  }
+
+  if (!Object.prototype.hasOwnProperty.call(colorTokens, parsedRoleKey.data)) {
+    return {
+      status: 'error',
+      error: 'roleNotFound',
+    };
+  }
+
+  const nextColorTokens = Object.fromEntries(
+    Object.entries(colorTokens).filter(
+      ([currentRoleKey]) => currentRoleKey !== parsedRoleKey.data,
+    ),
+  );
+
+  return {
+    status: 'success',
+    roleKey: parsedRoleKey.data,
+    tokens: {
+      ...tokens,
+      color: nextColorTokens,
+    },
+  };
+}
+
 export function isThemeMode(value: string): value is ThemeMode {
   return themeModeSchema.safeParse(value).success;
 }
@@ -208,12 +303,26 @@ export function createThemeColorTokenOptions(
     });
 }
 
+export function getThemeColorRoleKeys(tokens: unknown): string[] {
+  if (!isRecord(tokens) || !isRecord(tokens.color)) {
+    return [...themeColorKeys];
+  }
+
+  const customRoleKeys = Object.keys(tokens.color)
+    .filter((roleKey) => isCustomThemeColorRoleKey(roleKey))
+    .sort((firstRoleKey, secondRoleKey) =>
+      firstRoleKey.localeCompare(secondRoleKey),
+    );
+
+  return [...themeColorKeys, ...customRoleKeys];
+}
+
 export function getThemeColorRawValue({
   tokens,
   colorKey,
 }: {
   tokens: unknown;
-  colorKey: ThemeColorKey;
+  colorKey: string;
 }): string | null {
   if (!isRecord(tokens)) {
     return null;
@@ -235,7 +344,7 @@ export function getThemeColorReferencePath({
   colorKey,
 }: {
   tokens: unknown;
-  colorKey: ThemeColorKey;
+  colorKey: string;
 }): string | null {
   const rawValue = getThemeColorRawValue({
     tokens,
@@ -251,7 +360,7 @@ export function getThemeColorValue({
   colorTokenOptions = [],
 }: {
   tokens: unknown;
-  colorKey: ThemeColorKey;
+  colorKey: string;
   colorTokenOptions?: ThemeColorTokenOption[];
 }): string | null {
   const rawValue = getThemeColorRawValue({
