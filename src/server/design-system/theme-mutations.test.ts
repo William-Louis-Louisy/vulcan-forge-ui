@@ -14,9 +14,18 @@ vi.mock('@/server/db/prisma', () => ({
   },
 }));
 
-import { createThemeColorRoleForUser } from './theme-mutations';
+import {
+  createThemeColorRoleForUser,
+  updateThemeColorRoleReferenceForUser,
+} from './theme-mutations';
 
 const colorTokens = [
+  {
+    path: 'color.semantic.border.default',
+    type: 'color',
+    value: '#94A3B8',
+    status: 'ready',
+  },
   {
     path: 'color.semantic.border.subtle',
     type: 'color',
@@ -168,6 +177,66 @@ describe('theme mutation storage boundary', () => {
         id: true,
       },
     });
+  });
+
+  it('updates an existing custom role through the same authorized boundary', async () => {
+    mocks.findTheme.mockResolvedValue(
+      createStoredTheme({
+        color: {
+          background: '#ffffff',
+          'border-subtle': '{color.semantic.border.default}',
+        },
+      }),
+    );
+
+    await expect(
+      updateThemeColorRoleReferenceForUser({
+        userId: 'user-1',
+        projectSlug: 'project-one',
+        themeId: 'theme-light',
+        roleKey: 'border-subtle',
+        tokenPath: 'color.semantic.border.subtle',
+      }),
+    ).resolves.toEqual({
+      status: 'success',
+      roleKey: 'border-subtle',
+      tokenReference: '{color.semantic.border.subtle}',
+    });
+
+    expect(mocks.updateTheme).toHaveBeenCalledWith({
+      where: {
+        id: 'theme-light',
+      },
+      data: {
+        tokens: {
+          color: {
+            background: '#ffffff',
+            'border-subtle': '{color.semantic.border.subtle}',
+          },
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+  });
+
+  it('does not create missing roles through the update mutation', async () => {
+    mocks.findTheme.mockResolvedValue(createStoredTheme());
+
+    await expect(
+      updateThemeColorRoleReferenceForUser({
+        userId: 'user-1',
+        projectSlug: 'project-one',
+        themeId: 'theme-light',
+        roleKey: 'border-subtle',
+        tokenPath: 'color.semantic.border.subtle',
+      }),
+    ).resolves.toEqual({
+      status: 'error',
+      error: 'roleNotFound',
+    });
+    expect(mocks.updateTheme).not.toHaveBeenCalled();
   });
 
   it('reports persistence failures without leaking them across the feature boundary', async () => {
