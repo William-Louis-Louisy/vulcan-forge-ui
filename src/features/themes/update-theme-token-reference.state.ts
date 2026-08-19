@@ -8,7 +8,6 @@ export type UpdateThemeTokenReferenceActionState = {
     | 'invalidRoleKey'
     | 'invalidTokenPath'
     | 'themeTokensMalformed'
-    | 'roleNotFound'
     | 'unexpected'
     | null;
 };
