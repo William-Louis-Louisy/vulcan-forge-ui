@@ -5,6 +5,7 @@ import {
   type ContrastEvaluation,
 } from '@/domain/accessibility/contrast';
 import { designTokenSchema } from './design-token.schema';
+import { themeRoleKeySchema } from './theme-role-authoring';
 import {
   pathToTokenReference,
   resolveDesignTokens,
@@ -153,6 +154,10 @@ function isThemeStatusColorKey(
   return themeStatusColorKeys.some((key) => key === value);
 }
 
+export function isThemeColorKey(value: string): value is ThemeColorKey {
+  return themeColorKeys.some((key) => key === value);
+}
+
 export function isThemeMode(value: string): value is ThemeMode {
   return themeModeSchema.safeParse(value).success;
 }
@@ -208,12 +213,29 @@ export function createThemeColorTokenOptions(
     });
 }
 
+export function getThemeColorRoleKeys(tokens: unknown): string[] {
+  if (!isRecord(tokens) || !isRecord(tokens.color)) {
+    return [...themeColorKeys];
+  }
+
+  const customRoleKeys = Object.keys(tokens.color)
+    .filter(
+      (roleKey) =>
+        !isThemeColorKey(roleKey) && themeRoleKeySchema.safeParse(roleKey).success,
+    )
+    .sort((firstRoleKey, secondRoleKey) =>
+      firstRoleKey.localeCompare(secondRoleKey),
+    );
+
+  return [...themeColorKeys, ...customRoleKeys];
+}
+
 export function getThemeColorRawValue({
   tokens,
   colorKey,
 }: {
   tokens: unknown;
-  colorKey: ThemeColorKey;
+  colorKey: string;
 }): string | null {
   if (!isRecord(tokens)) {
     return null;
@@ -235,7 +257,7 @@ export function getThemeColorReferencePath({
   colorKey,
 }: {
   tokens: unknown;
-  colorKey: ThemeColorKey;
+  colorKey: string;
 }): string | null {
   const rawValue = getThemeColorRawValue({
     tokens,
@@ -251,7 +273,7 @@ export function getThemeColorValue({
   colorTokenOptions = [],
 }: {
   tokens: unknown;
-  colorKey: ThemeColorKey;
+  colorKey: string;
   colorTokenOptions?: ThemeColorTokenOption[];
 }): string | null {
   const rawValue = getThemeColorRawValue({
