@@ -41,7 +41,7 @@ export function PublicHeader({ isAuthenticated = false }: PublicHeaderProps) {
             {t('pricing')}
           </Link>
           <Link
-            href="/#example"
+            href="/examples"
             className="text-content-secondary hover:text-content-primary text-sm font-medium transition"
           >
             {t('example')}

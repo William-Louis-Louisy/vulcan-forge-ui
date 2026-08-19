@@ -62,7 +62,7 @@ export function PublicMobileMenu({
                 {labels.product}
               </Link>
               <Link
-                href="/#example"
+                href="/examples"
                 onClick={close}
                 className="text-content-secondary hover:bg-background-subtle hover:text-content-primary rounded-md px-3 py-2.5 text-sm font-medium transition"
               >
