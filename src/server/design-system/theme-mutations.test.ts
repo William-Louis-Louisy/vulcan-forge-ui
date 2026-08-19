@@ -32,6 +32,12 @@ const colorTokens = [
     value: '#64748B',
     status: 'ready',
   },
+  {
+    path: 'color.semantic.status.info.light',
+    type: 'color',
+    value: '#2563EB',
+    status: 'ready',
+  },
 ];
 
 function createStoredTheme(
@@ -221,7 +227,7 @@ describe('theme mutation storage boundary', () => {
     });
   });
 
-  it('does not create missing roles through the update mutation', async () => {
+  it('can populate a missing known role on a legacy theme through the update boundary', async () => {
     mocks.findTheme.mockResolvedValue(createStoredTheme());
 
     await expect(
@@ -229,14 +235,26 @@ describe('theme mutation storage boundary', () => {
         userId: 'user-1',
         projectSlug: 'project-one',
         themeId: 'theme-light',
-        roleKey: 'border-subtle',
-        tokenPath: 'color.semantic.border.subtle',
+        roleKey: 'info',
+        tokenPath: 'color.semantic.status.info.light',
       }),
     ).resolves.toEqual({
-      status: 'error',
-      error: 'roleNotFound',
+      status: 'success',
+      roleKey: 'info',
+      tokenReference: '{color.semantic.status.info.light}',
     });
-    expect(mocks.updateTheme).not.toHaveBeenCalled();
+    expect(mocks.updateTheme).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: {
+          tokens: {
+            color: {
+              background: '#ffffff',
+              info: '{color.semantic.status.info.light}',
+            },
+          },
+        },
+      }),
+    );
   });
 
   it('reports persistence failures without leaking them across the feature boundary', async () => {
