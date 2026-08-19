@@ -7,13 +7,14 @@ import {
   type PreviewPanelLabels,
 } from '@/features/themes/PreviewPanel';
 import {
-  themeColorKeys,
   sortThemesByMode,
   getThemeColorValue,
   getThemeContrastPairs,
   getThemeColorRawValue,
   getThemeColorReferencePath,
   createThemeColorTokenOptions,
+  getThemeColorRoleKeys,
+  isThemeColorKey,
   type ThemeEditorTheme,
 } from '@/features/themes/themes-editor.utils';
 import { getTranslations } from 'next-intl/server';
@@ -22,6 +23,7 @@ import { routing, type Locale } from '@/i18n/routing';
 import { createPreviewThemes } from '@/features/themes/preview-panel.utils';
 import { getThemesEditorPageData } from '@/features/themes/themes-editor.queries';
 import { ThemeTokenReferenceEditor } from '@/features/themes/ThemeTokenReferenceEditor';
+import { ThemeColorRoleCreateForm } from '@/features/themes/ThemeColorRoleCreateForm';
 import { ThemeContrastMatrix } from '@/features/themes/ThemeContrastMatrix';
 import { ThemesResponsiveWorkspace } from '@/features/themes/ThemesResponsiveWorkspace';
 
@@ -133,6 +135,7 @@ function ThemeEditorPanel({
     tokens: theme.tokens,
     colorTokenOptions,
   });
+  const roleKeys = getThemeColorRoleKeys(theme.tokens);
   const isDefaultTheme = theme.mode === 'light';
   const hasColorTokenOptions = colorTokenOptions.length > 0;
 
@@ -181,29 +184,74 @@ function ThemeEditorPanel({
           </p>
         </header>
 
+        <ThemeColorRoleCreateForm
+          locale={locale}
+          projectSlug={projectSlug}
+          themeId={theme.id}
+          options={colorTokenOptions}
+          labels={{
+            title: t('themeMapping.createRole.title'),
+            description: t('themeMapping.createRole.description'),
+            open: t('themeMapping.createRole.open'),
+            cancel: t('themeMapping.createRole.cancel'),
+            roleKeyLabel: t('themeMapping.createRole.roleKeyLabel'),
+            roleKeyPlaceholder: t('themeMapping.createRole.roleKeyPlaceholder'),
+            roleKeyHint: t('themeMapping.createRole.roleKeyHint'),
+            tokenLabel: t('themeMapping.createRole.tokenLabel'),
+            tokenPlaceholder: t('themeMapping.createRole.tokenPlaceholder'),
+            submit: t('themeMapping.createRole.submit'),
+            submitting: t('themeMapping.createRole.submitting'),
+            added: t('themeMapping.createRole.added'),
+            errors: {
+              unauthorized: t('themeMapping.createRole.errors.unauthorized'),
+              invalidPayload: t('themeMapping.createRole.errors.invalidPayload'),
+              themeNotFound: t('themeMapping.createRole.errors.themeNotFound'),
+              invalidTokenReference: t(
+                'themeMapping.createRole.errors.invalidTokenReference',
+              ),
+              invalidRoleKey: t(
+                'themeMapping.createRole.errors.invalidRoleKey',
+              ),
+              invalidTokenPath: t(
+                'themeMapping.createRole.errors.invalidTokenPath',
+              ),
+              themeTokensMalformed: t(
+                'themeMapping.createRole.errors.themeTokensMalformed',
+              ),
+              roleAlreadyExists: t(
+                'themeMapping.createRole.errors.roleAlreadyExists',
+              ),
+              unexpected: t('themeMapping.createRole.errors.unexpected'),
+            },
+          }}
+        />
+
         <div className="grid min-w-0 gap-2 p-3 sm:p-4">
-          {themeColorKeys.map((colorKey) => {
+          {roleKeys.map((roleKey) => {
             const rawValue = getThemeColorRawValue({
               tokens: theme.tokens,
-              colorKey,
+              colorKey: roleKey,
             });
             const referencePath = getThemeColorReferencePath({
               tokens: theme.tokens,
-              colorKey,
+              colorKey: roleKey,
             });
             const resolvedValue = getThemeColorValue({
               tokens: theme.tokens,
-              colorKey,
+              colorKey: roleKey,
               colorTokenOptions,
             });
+            const roleLabel = isThemeColorKey(roleKey)
+              ? t(`themeMapping.keys.${roleKey}`)
+              : roleKey;
 
             return (
               <ThemeTokenReferenceEditor
-                key={colorKey}
+                key={roleKey}
                 locale={locale}
                 projectSlug={projectSlug}
                 themeId={theme.id}
-                colorKey={colorKey}
+                roleKey={roleKey}
                 initialReferencePath={referencePath}
                 legacyDirectValue={referencePath ? null : rawValue}
                 resolvedValue={resolvedValue}
@@ -212,7 +260,7 @@ function ThemeEditorPanel({
                 labels={{
                   slotLabel: t('themeMapping.slotLabel'),
                   selectLabel: t('themeMapping.selectLabel', {
-                    colorName: t(`themeMapping.keys.${colorKey}`),
+                    colorName: roleLabel,
                   }),
                   placeholder: t('themeMapping.placeholder'),
                   currentReference: t('themeMapping.currentReference'),
@@ -231,6 +279,15 @@ function ThemeEditorPanel({
                     themeNotFound: t('themeMapping.form.errors.themeNotFound'),
                     invalidTokenReference: t(
                       'themeMapping.form.errors.invalidTokenReference',
+                    ),
+                    invalidRoleKey: t(
+                      'themeMapping.form.errors.invalidRoleKey',
+                    ),
+                    invalidTokenPath: t(
+                      'themeMapping.form.errors.invalidTokenPath',
+                    ),
+                    themeTokensMalformed: t(
+                      'themeMapping.form.errors.themeTokensMalformed',
                     ),
                     unexpected: t('themeMapping.form.errors.unexpected'),
                   },
