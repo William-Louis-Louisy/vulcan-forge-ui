@@ -1,14 +1,15 @@
 'use client';
 
-import { useActionState, useState } from 'react';
-import { Button, Dialog, DialogActions } from '@/components/ui';
-import type { Locale } from '@/i18n/routing';
-import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
-import { deleteThemeColorRoleAction } from './delete-theme-color-role.action';
 import {
   initialDeleteThemeColorRoleActionState,
   type DeleteThemeColorRoleActionState,
 } from './delete-theme-color-role.state';
+import type { Locale } from '@/i18n/routing';
+import { useActionState, useState } from 'react';
+import { TrashIcon } from '@phosphor-icons/react';
+import { Button, Dialog, DialogActions } from '@/components/ui';
+import { deleteThemeColorRoleAction } from './delete-theme-color-role.action';
+import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 
 type DeleteThemeColorRoleErrorKey = Exclude<
   DeleteThemeColorRoleActionState['formError'],
@@ -65,13 +66,13 @@ export function ThemeColorRoleDeleteControl({
     <>
       <Button
         type="button"
-        variant="ghost"
+        variant="ghostDanger"
         size="sm"
         data-theme-role-delete={roleKey}
         onClick={() => setIsOpen(true)}
-        className="text-action-danger hover:bg-action-danger/10 hover:text-action-danger"
+        className="gap-2"
       >
-        {labels.request}
+        <TrashIcon size={18} /> {labels.request}
       </Button>
 
       <Dialog

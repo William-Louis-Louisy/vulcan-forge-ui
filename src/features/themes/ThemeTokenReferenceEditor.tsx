@@ -184,7 +184,7 @@ export function ThemeTokenReferenceEditor({
       </form>
 
       {secondaryAction ? (
-        <div className="border-border-subtle flex justify-end border-t px-3 py-2 sm:px-4">
+        <div className="border-border-subtle bg-background-subtle/30 flex justify-end border-t px-3 py-2 sm:px-4">
           {secondaryAction}
         </div>
       ) : null}
