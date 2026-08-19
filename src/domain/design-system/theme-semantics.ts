@@ -221,7 +221,8 @@ export function getThemeColorRoleKeys(tokens: unknown): string[] {
   const customRoleKeys = Object.keys(tokens.color)
     .filter(
       (roleKey) =>
-        !isThemeColorKey(roleKey) && themeRoleKeySchema.safeParse(roleKey).success,
+        !isThemeColorKey(roleKey) &&
+        themeRoleKeySchema.safeParse(roleKey).success,
     )
     .sort((firstRoleKey, secondRoleKey) =>
       firstRoleKey.localeCompare(secondRoleKey),
