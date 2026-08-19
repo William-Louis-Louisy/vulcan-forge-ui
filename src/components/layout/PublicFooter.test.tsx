@@ -14,10 +14,7 @@ vi.mock('@/i18n/navigation', () => ({
 describe('PublicFooter', () => {
   it('keeps core public destinations reachable from footer navigation', () => {
     render(
-      <NextIntlClientProvider
-        locale="en"
-        messages={publicSurfaceMessages.en}
-      >
+      <NextIntlClientProvider locale="en" messages={publicSurfaceMessages.en}>
         <PublicFooter />
       </NextIntlClientProvider>,
     );
