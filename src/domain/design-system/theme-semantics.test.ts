@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import {
   createThemeColorTokenOptions,
+  getThemeColorRoleKeys,
   getThemeColorValue,
   getThemeContrastPairs,
+  isThemeColorKey,
   isThemeMode,
   sortThemesByMode,
   themeColorKeys,
@@ -24,6 +26,21 @@ describe('theme semantics', () => {
       { mode: 'light', name: 'Light' },
       { mode: 'dark', name: 'Dark' },
     ]);
+  });
+
+  it('keeps known roles first and appends authored custom roles alphabetically', () => {
+    expect(isThemeColorKey('background')).toBe(true);
+    expect(isThemeColorKey('border-subtle')).toBe(false);
+    expect(
+      getThemeColorRoleKeys({
+        color: {
+          background: '#ffffff',
+          overlay: '{color.semantic.overlay}',
+          'border-subtle': '{color.semantic.border.subtle}',
+          invalid_role: '{color.semantic.invalid}',
+        },
+      }),
+    ).toEqual([...themeColorKeys, 'border-subtle', 'overlay']);
   });
 
   it('evaluates status roles against theme background and surface', () => {
