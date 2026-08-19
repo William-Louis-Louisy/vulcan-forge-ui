@@ -20,6 +20,25 @@ export type CreateThemeColorRoleError =
   | 'themeTokensMalformed'
   | 'roleAlreadyExists';
 
+export type UpdateThemeColorRoleReferenceError =
+  | 'invalidRoleKey'
+  | 'invalidTokenPath'
+  | 'themeTokensMalformed'
+  | 'roleNotFound';
+
+type PreparedThemeColorRoleMutation =
+  | {
+      status: 'success';
+      roleKey: ThemeRoleKey;
+      tokenReference: string;
+      tokens: Record<string, JsonValue>;
+      colorTokens: Record<string, JsonValue>;
+    }
+  | {
+      status: 'error';
+      error: 'invalidRoleKey' | 'invalidTokenPath' | 'themeTokensMalformed';
+    };
+
 export type CreateThemeColorRoleResult =
   | {
       status: 'success';
@@ -32,6 +51,18 @@ export type CreateThemeColorRoleResult =
       error: CreateThemeColorRoleError;
     };
 
+export type UpdateThemeColorRoleReferenceResult =
+  | {
+      status: 'success';
+      roleKey: ThemeRoleKey;
+      tokenReference: string;
+      tokens: Record<string, JsonValue>;
+    }
+  | {
+      status: 'error';
+      error: UpdateThemeColorRoleReferenceError;
+    };
+
 const themeTokensSchema = z.record(z.string(), jsonValueSchema);
 
 function isJsonObject(
@@ -40,7 +71,7 @@ function isJsonObject(
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-export function createThemeColorRole({
+function prepareThemeColorRoleMutation({
   tokens,
   roleKey,
   tokenPath,
@@ -48,7 +79,7 @@ export function createThemeColorRole({
   tokens: unknown;
   roleKey: string;
   tokenPath: string;
-}): CreateThemeColorRoleResult {
+}): PreparedThemeColorRoleMutation {
   const parsedRoleKey = themeRoleKeySchema.safeParse(roleKey);
 
   if (!parsedRoleKey.success) {
@@ -85,9 +116,40 @@ export function createThemeColorRole({
     };
   }
 
-  const colorTokens = currentColorTokens ?? {};
+  return {
+    status: 'success',
+    roleKey: parsedRoleKey.data,
+    tokenReference,
+    tokens: parsedTokens.data,
+    colorTokens: currentColorTokens ?? {},
+  };
+}
 
-  if (Object.prototype.hasOwnProperty.call(colorTokens, parsedRoleKey.data)) {
+export function createThemeColorRole({
+  tokens,
+  roleKey,
+  tokenPath,
+}: {
+  tokens: unknown;
+  roleKey: string;
+  tokenPath: string;
+}): CreateThemeColorRoleResult {
+  const preparedMutation = prepareThemeColorRoleMutation({
+    tokens,
+    roleKey,
+    tokenPath,
+  });
+
+  if (preparedMutation.status === 'error') {
+    return preparedMutation;
+  }
+
+  if (
+    Object.prototype.hasOwnProperty.call(
+      preparedMutation.colorTokens,
+      preparedMutation.roleKey,
+    )
+  ) {
     return {
       status: 'error',
       error: 'roleAlreadyExists',
@@ -96,13 +158,58 @@ export function createThemeColorRole({
 
   return {
     status: 'success',
-    roleKey: parsedRoleKey.data,
-    tokenReference,
+    roleKey: preparedMutation.roleKey,
+    tokenReference: preparedMutation.tokenReference,
     tokens: {
-      ...parsedTokens.data,
+      ...preparedMutation.tokens,
       color: {
-        ...colorTokens,
-        [parsedRoleKey.data]: tokenReference,
+        ...preparedMutation.colorTokens,
+        [preparedMutation.roleKey]: preparedMutation.tokenReference,
+      },
+    },
+  };
+}
+
+export function updateThemeColorRoleReference({
+  tokens,
+  roleKey,
+  tokenPath,
+}: {
+  tokens: unknown;
+  roleKey: string;
+  tokenPath: string;
+}): UpdateThemeColorRoleReferenceResult {
+  const preparedMutation = prepareThemeColorRoleMutation({
+    tokens,
+    roleKey,
+    tokenPath,
+  });
+
+  if (preparedMutation.status === 'error') {
+    return preparedMutation;
+  }
+
+  if (
+    !Object.prototype.hasOwnProperty.call(
+      preparedMutation.colorTokens,
+      preparedMutation.roleKey,
+    )
+  ) {
+    return {
+      status: 'error',
+      error: 'roleNotFound',
+    };
+  }
+
+  return {
+    status: 'success',
+    roleKey: preparedMutation.roleKey,
+    tokenReference: preparedMutation.tokenReference,
+    tokens: {
+      ...preparedMutation.tokens,
+      color: {
+        ...preparedMutation.colorTokens,
+        [preparedMutation.roleKey]: preparedMutation.tokenReference,
       },
     },
   };
