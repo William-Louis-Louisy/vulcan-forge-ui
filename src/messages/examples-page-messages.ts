@@ -37,7 +37,8 @@ export const examplesPageMessages = {
       },
       workflow: {
         eyebrow: 'The workflow',
-        title: 'Not five tools sitting next to each other. One chain of decisions.',
+        title:
+          'Not five tools sitting next to each other. One chain of decisions.',
         description:
           'Follow the same design decision as it moves through Aurora. Nothing is re-entered just to keep another document, export or prompt in sync.',
         steps: {
@@ -67,7 +68,8 @@ export const examplesPageMessages = {
             title: 'Catch contradictions before they spread.',
             description:
               'Contrast checks use resolved theme values, while component contracts make requirements such as focus-visible states explicit. Automated checks stay separate from manual review.',
-            insight: 'Accessibility is connected to the decisions that affect it.',
+            insight:
+              'Accessibility is connected to the decisions that affect it.',
           },
           delivery: {
             kicker: '05 · Ship',
@@ -135,7 +137,8 @@ export const examplesPageMessages = {
       },
       delivery: {
         eyebrow: 'One source · multiple consumers',
-        title: 'The same system can leave the product in the format your stack needs.',
+        title:
+          'The same system can leave the product in the format your stack needs.',
         description:
           'Code-oriented exports, documentation and AI guidance are different views of the same structured project.',
         formatLabels: {
@@ -149,7 +152,8 @@ export const examplesPageMessages = {
       },
       finalCta: {
         eyebrow: 'Your turn',
-        title: 'Turn your design system into infrastructure, not a folder of notes.',
+        title:
+          'Turn your design system into infrastructure, not a folder of notes.',
         description:
           'Start with the decisions you already have. VulcanForge UI gives them a structure the rest of your product can actually use.',
         cta: 'Build my design system',
@@ -195,7 +199,8 @@ export const examplesPageMessages = {
       },
       workflow: {
         eyebrow: 'Le workflow',
-        title: 'Pas cinq outils posés côte à côte. Une seule chaîne de décisions.',
+        title:
+          'Pas cinq outils posés côte à côte. Une seule chaîne de décisions.',
         description:
           'Suivez la même décision à travers Aurora. Rien n’est ressaisi juste pour maintenir un autre document, un export ou un prompt à jour.',
         steps: {
@@ -225,7 +230,8 @@ export const examplesPageMessages = {
             title: 'Repérez les contradictions avant qu’elles se propagent.',
             description:
               'Les contrastes sont calculés à partir des valeurs réellement résolues dans les thèmes. Les contrats de composants rendent aussi explicites des exigences comme le focus visible, sans confondre contrôles automatiques et revue humaine.',
-            insight: 'L’accessibilité reste liée aux décisions qui l’impactent.',
+            insight:
+              'L’accessibilité reste liée aux décisions qui l’impactent.',
           },
           delivery: {
             kicker: '05 · Livrer',
@@ -272,7 +278,8 @@ export const examplesPageMessages = {
       },
       drift: {
         eyebrow: 'Pourquoi ça compte',
-        title: 'Chaque copie manuelle est un nouvel endroit où le système peut dériver.',
+        title:
+          'Chaque copie manuelle est un nouvel endroit où le système peut dériver.',
         description:
           'Un fichier de tokens, une page de documentation, une note sur un composant et un prompt peuvent être parfaitement cohérents aujourd’hui, puis se contredire une semaine plus tard. VulcanForge UI réduit le nombre d’endroits où la même décision doit être recopiée.',
         scatteredTitle: 'Quand les décisions sont dispersées',
@@ -293,7 +300,8 @@ export const examplesPageMessages = {
       },
       delivery: {
         eyebrow: 'Une source · plusieurs usages',
-        title: 'Le même système peut sortir dans le format dont votre stack a besoin.',
+        title:
+          'Le même système peut sortir dans le format dont votre stack a besoin.',
         description:
           'Les exports orientés code, la documentation et les consignes IA ne sont que des vues différentes du même projet structuré.',
         formatLabels: {
@@ -307,7 +315,8 @@ export const examplesPageMessages = {
       },
       finalCta: {
         eyebrow: 'À vous',
-        title: 'Faites de votre design system une infrastructure, pas un dossier de notes.',
+        title:
+          'Faites de votre design system une infrastructure, pas un dossier de notes.',
         description:
           'Partez des décisions que vous avez déjà. VulcanForge UI leur donne une structure que le reste de votre produit peut réellement exploiter.',
         cta: 'Construire mon design system',
