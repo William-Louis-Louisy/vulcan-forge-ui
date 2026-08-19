@@ -60,8 +60,6 @@ export const themeEditorMessages = {
             invalidTokenPath: 'The selected token path is invalid.',
             themeTokensMalformed:
               'The stored theme color mappings are malformed and cannot be edited safely.',
-            roleNotFound:
-              'This theme role no longer exists. Refresh the page and try again.',
           },
         },
       },
@@ -155,8 +153,6 @@ export const themeEditorMessages = {
             invalidTokenPath: 'Le chemin du token sélectionné est invalide.',
             themeTokensMalformed:
               'Les mappings couleur enregistrés pour ce thème sont invalides et ne peuvent pas être modifiés en toute sécurité.',
-            roleNotFound:
-              'Ce rôle de thème n’existe plus. Actualisez la page puis réessayez.',
           },
         },
       },
