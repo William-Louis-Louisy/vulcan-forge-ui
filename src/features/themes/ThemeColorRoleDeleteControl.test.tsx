@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { ThemeColorRoleDeleteControl } from './ThemeColorRoleDeleteControl';
 
 vi.mock('@/features/save-context/usePreserveSaveContext', () => ({
@@ -10,6 +10,17 @@ vi.mock('@/features/save-context/usePreserveSaveContext', () => ({
 vi.mock('./delete-theme-color-role.action', () => ({
   deleteThemeColorRoleAction: vi.fn(),
 }));
+
+beforeAll(() => {
+  HTMLDialogElement.prototype.showModal = vi.fn(function (
+    this: HTMLDialogElement,
+  ) {
+    this.setAttribute('open', '');
+  });
+  HTMLDialogElement.prototype.close = vi.fn(function (this: HTMLDialogElement) {
+    this.removeAttribute('open');
+  });
+});
 
 const labels = {
   request: 'Delete role',
