@@ -23,8 +23,7 @@ export type CreateThemeColorRoleError =
 export type UpdateThemeColorRoleReferenceError =
   | 'invalidRoleKey'
   | 'invalidTokenPath'
-  | 'themeTokensMalformed'
-  | 'roleNotFound';
+  | 'themeTokensMalformed';
 
 type PreparedThemeColorRoleMutation =
   | {
@@ -187,18 +186,6 @@ export function updateThemeColorRoleReference({
 
   if (preparedMutation.status === 'error') {
     return preparedMutation;
-  }
-
-  if (
-    !Object.prototype.hasOwnProperty.call(
-      preparedMutation.colorTokens,
-      preparedMutation.roleKey,
-    )
-  ) {
-    return {
-      status: 'error',
-      error: 'roleNotFound',
-    };
   }
 
   return {
