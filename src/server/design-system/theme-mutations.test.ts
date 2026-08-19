@@ -16,6 +16,7 @@ vi.mock('@/server/db/prisma', () => ({
 
 import {
   createThemeColorRoleForUser,
+  deleteThemeColorRoleForUser,
   updateThemeColorRoleReferenceForUser,
 } from './theme-mutations';
 
@@ -183,6 +184,64 @@ describe('theme mutation storage boundary', () => {
         id: true,
       },
     });
+  });
+
+  it('deletes a custom role through the same authorized boundary', async () => {
+    mocks.findTheme.mockResolvedValue(
+      createStoredTheme({
+        color: {
+          background: '#ffffff',
+          'border-subtle': '{color.semantic.border.subtle}',
+          overlay: '{color.semantic.border.default}',
+        },
+      }),
+    );
+
+    await expect(
+      deleteThemeColorRoleForUser({
+        userId: 'user-1',
+        projectSlug: 'project-one',
+        themeId: 'theme-light',
+        roleKey: 'border-subtle',
+      }),
+    ).resolves.toEqual({
+      status: 'success',
+      roleKey: 'border-subtle',
+    });
+
+    expect(mocks.updateTheme).toHaveBeenCalledWith({
+      where: {
+        id: 'theme-light',
+      },
+      data: {
+        tokens: {
+          color: {
+            background: '#ffffff',
+            overlay: '{color.semantic.border.default}',
+          },
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+  });
+
+  it('refuses to delete built-in theme roles', async () => {
+    mocks.findTheme.mockResolvedValue(createStoredTheme());
+
+    await expect(
+      deleteThemeColorRoleForUser({
+        userId: 'user-1',
+        projectSlug: 'project-one',
+        themeId: 'theme-light',
+        roleKey: 'background',
+      }),
+    ).resolves.toEqual({
+      status: 'error',
+      error: 'protectedRole',
+    });
+    expect(mocks.updateTheme).not.toHaveBeenCalled();
   });
 
   it('updates an existing custom role through the same authorized boundary', async () => {
