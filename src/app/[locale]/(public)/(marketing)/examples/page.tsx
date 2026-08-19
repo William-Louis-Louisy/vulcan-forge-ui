@@ -165,7 +165,9 @@ export default async function ExamplesPage() {
           <div className="mt-12 grid gap-5 lg:grid-cols-2">
             <article className="border-border-subtle bg-surface-primary border">
               <div className="border-border-subtle border-b p-5 sm:p-6">
-                <h3 className="text-lg font-semibold">{t('model.tokensTitle')}</h3>
+                <h3 className="text-lg font-semibold">
+                  {t('model.tokensTitle')}
+                </h3>
                 <p className="text-content-secondary mt-2 text-sm leading-6">
                   {t('model.tokensDescription')}
                 </p>
@@ -195,7 +197,9 @@ export default async function ExamplesPage() {
 
             <article className="border-border-subtle bg-surface-primary border">
               <div className="border-border-subtle border-b p-5 sm:p-6">
-                <h3 className="text-lg font-semibold">{t('model.rolesTitle')}</h3>
+                <h3 className="text-lg font-semibold">
+                  {t('model.rolesTitle')}
+                </h3>
                 <p className="text-content-secondary mt-2 text-sm leading-6">
                   {t('model.rolesDescription')}
                 </p>
@@ -264,7 +268,10 @@ export default async function ExamplesPage() {
                     </p>
 
                     {key === 'button' ? (
-                      <div aria-hidden="true" className="mt-6 flex flex-wrap gap-2">
+                      <div
+                        aria-hidden="true"
+                        className="mt-6 flex flex-wrap gap-2"
+                      >
                         <span className="bg-action-primary text-action-primary-content rounded-md px-3 py-2 text-xs font-semibold">
                           {t('contracts.items.button.previewPrimary')}
                         </span>
