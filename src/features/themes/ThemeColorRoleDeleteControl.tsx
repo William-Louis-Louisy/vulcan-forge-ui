@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useEffect, useState } from 'react';
+import { useActionState, useState } from 'react';
 import { Button, Dialog, DialogActions } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
@@ -40,18 +40,26 @@ export function ThemeColorRoleDeleteControl({
 }: ThemeColorRoleDeleteControlProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [state, formAction, isPending] = useActionState(
-    deleteThemeColorRoleAction,
+    async (
+      previousState: DeleteThemeColorRoleActionState,
+      formData: FormData,
+    ) => {
+      const nextState = await deleteThemeColorRoleAction(
+        previousState,
+        formData,
+      );
+
+      if (nextState.status === 'success') {
+        setIsOpen(false);
+      }
+
+      return nextState;
+    },
     initialDeleteThemeColorRoleActionState,
   );
   const preserveSaveContext = usePreserveSaveContext(
     `theme-color-role-delete:${projectSlug}:${themeId}:${roleKey}`,
   );
-
-  useEffect(() => {
-    if (state.status === 'success') {
-      setIsOpen(false);
-    }
-  }, [state.status]);
 
   return (
     <>
