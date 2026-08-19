@@ -5,6 +5,10 @@ export type UpdateThemeTokenReferenceActionState = {
     | 'invalidPayload'
     | 'themeNotFound'
     | 'invalidTokenReference'
+    | 'invalidRoleKey'
+    | 'invalidTokenPath'
+    | 'themeTokensMalformed'
+    | 'roleNotFound'
     | 'unexpected'
     | null;
 };
