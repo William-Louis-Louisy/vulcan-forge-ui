@@ -240,7 +240,8 @@ export const examplesPageMessages = {
           },
           alert: {
             title: 'Alert',
-            purpose: 'Retour de statut relié aux couleurs sémantiques de statut.',
+            purpose:
+              'Retour de statut relié aux couleurs sémantiques de statut.',
             accessibility:
               'ton sémantique · contenu lisible · aucune information transmise uniquement par la couleur',
             previewStatus: 'Succès',
@@ -250,8 +251,7 @@ export const examplesPageMessages = {
       },
       accessibility: {
         eyebrow: 'L’accessibilité comme donnée source',
-        title:
-          'Les contrôles restent liés aux décisions qui les ont produits.',
+        title: 'Les contrôles restent liés aux décisions qui les ont produits.',
         description:
           'VulcanForge UI évalue ce qui peut être déduit du projet structuré tout en laissant explicites les responsabilités d’accessibilité qui nécessitent une revue humaine.',
         checks: {
