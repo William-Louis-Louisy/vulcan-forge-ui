@@ -2,7 +2,7 @@
 
 import { Button, Input, Select } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
-import { useActionState, useEffect, useMemo, useState } from 'react';
+import { useActionState, useMemo, useState } from 'react';
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 import type { ThemeColorTokenOption } from './themes-editor.utils';
 import { createThemeColorRoleAction } from './create-theme-color-role.action';
@@ -69,16 +69,6 @@ export function ThemeColorRoleCreateForm({
   const roleKeyInputId = `${themeId}-new-theme-role-key`;
   const roleKeyHintId = `${roleKeyInputId}-hint`;
   const tokenSelectId = `${themeId}-new-theme-role-token`;
-
-  useEffect(() => {
-    if (state.status !== 'success') {
-      return;
-    }
-
-    setRoleKey('');
-    setSelectedTokenPath('');
-    setIsOpen(false);
-  }, [state.status]);
 
   return (
     <div
