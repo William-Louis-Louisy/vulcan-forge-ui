@@ -204,7 +204,9 @@ function ThemeEditorPanel({
             added: t('themeMapping.createRole.added'),
             errors: {
               unauthorized: t('themeMapping.createRole.errors.unauthorized'),
-              invalidPayload: t('themeMapping.createRole.errors.invalidPayload'),
+              invalidPayload: t(
+                'themeMapping.createRole.errors.invalidPayload',
+              ),
               themeNotFound: t('themeMapping.createRole.errors.themeNotFound'),
               invalidTokenReference: t(
                 'themeMapping.createRole.errors.invalidTokenReference',
