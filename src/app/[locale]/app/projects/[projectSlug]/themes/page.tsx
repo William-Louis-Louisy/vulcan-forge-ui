@@ -14,6 +14,7 @@ import {
   getThemeColorReferencePath,
   createThemeColorTokenOptions,
   getThemeColorRoleKeys,
+  isCustomThemeColorRoleKey,
   isThemeColorKey,
   type ThemeEditorTheme,
 } from '@/features/themes/themes-editor.utils';
@@ -24,6 +25,7 @@ import { createPreviewThemes } from '@/features/themes/preview-panel.utils';
 import { getThemesEditorPageData } from '@/features/themes/themes-editor.queries';
 import { ThemeTokenReferenceEditor } from '@/features/themes/ThemeTokenReferenceEditor';
 import { ThemeColorRoleCreateForm } from '@/features/themes/ThemeColorRoleCreateForm';
+import { ThemeColorRoleDeleteControl } from '@/features/themes/ThemeColorRoleDeleteControl';
 import { ThemeContrastMatrix } from '@/features/themes/ThemeContrastMatrix';
 import { ThemesResponsiveWorkspace } from '@/features/themes/ThemesResponsiveWorkspace';
 
@@ -243,6 +245,7 @@ function ThemeEditorPanel({
               colorKey: roleKey,
               colorTokenOptions,
             });
+            const isCustomRole = isCustomThemeColorRoleKey(roleKey);
             const roleLabel = isThemeColorKey(roleKey)
               ? t(`themeMapping.keys.${roleKey}`)
               : roleKey;
@@ -259,6 +262,55 @@ function ThemeEditorPanel({
                 resolvedValue={resolvedValue}
                 options={colorTokenOptions}
                 showNoOptionsMessage={false}
+                secondaryAction={
+                  isCustomRole ? (
+                    <ThemeColorRoleDeleteControl
+                      locale={locale}
+                      projectSlug={projectSlug}
+                      themeId={theme.id}
+                      roleKey={roleKey}
+                      labels={{
+                        request: t('themeMapping.deleteRole.request'),
+                        confirmationTitle: t(
+                          'themeMapping.deleteRole.confirmationTitle',
+                          { roleKey },
+                        ),
+                        confirmationDescription: t(
+                          'themeMapping.deleteRole.confirmationDescription',
+                        ),
+                        cancel: t('themeMapping.deleteRole.cancel'),
+                        delete: t('themeMapping.deleteRole.delete'),
+                        deleting: t('themeMapping.deleteRole.deleting'),
+                        errors: {
+                          unauthorized: t(
+                            'themeMapping.deleteRole.errors.unauthorized',
+                          ),
+                          invalidPayload: t(
+                            'themeMapping.deleteRole.errors.invalidPayload',
+                          ),
+                          themeNotFound: t(
+                            'themeMapping.deleteRole.errors.themeNotFound',
+                          ),
+                          invalidRoleKey: t(
+                            'themeMapping.deleteRole.errors.invalidRoleKey',
+                          ),
+                          protectedRole: t(
+                            'themeMapping.deleteRole.errors.protectedRole',
+                          ),
+                          themeTokensMalformed: t(
+                            'themeMapping.deleteRole.errors.themeTokensMalformed',
+                          ),
+                          roleNotFound: t(
+                            'themeMapping.deleteRole.errors.roleNotFound',
+                          ),
+                          unexpected: t(
+                            'themeMapping.deleteRole.errors.unexpected',
+                          ),
+                        },
+                      }}
+                    />
+                  ) : undefined
+                }
                 labels={{
                   slotLabel: t('themeMapping.slotLabel'),
                   selectLabel: t('themeMapping.selectLabel', {
