@@ -1,9 +1,6 @@
 'use client';
 
-import type {
-  ThemeColorKey,
-  ThemeColorTokenOption,
-} from './themes-editor.utils';
+import type { ThemeColorTokenOption } from './themes-editor.utils';
 import type { Locale } from '@/i18n/routing';
 import { Button, Select } from '@/components/ui';
 import { useActionState, useMemo, useState } from 'react';
@@ -15,7 +12,7 @@ type ThemeTokenReferenceEditorProps = {
   locale: Locale;
   projectSlug: string;
   themeId: string;
-  colorKey: ThemeColorKey;
+  roleKey: string;
   initialReferencePath: string | null;
   legacyDirectValue: string | null;
   resolvedValue: string | null;
@@ -38,6 +35,10 @@ type ThemeTokenReferenceEditorProps = {
       | 'invalidPayload'
       | 'themeNotFound'
       | 'invalidTokenReference'
+      | 'invalidRoleKey'
+      | 'invalidTokenPath'
+      | 'themeTokensMalformed'
+      | 'roleNotFound'
       | 'unexpected',
       string
     >;
@@ -48,7 +49,7 @@ export function ThemeTokenReferenceEditor({
   locale,
   projectSlug,
   themeId,
-  colorKey,
+  roleKey,
   initialReferencePath,
   options,
   showNoOptionsMessage = true,
@@ -75,37 +76,37 @@ export function ThemeTokenReferenceEditor({
 
   const hasUnsavedChanges = selectedTokenPath !== initialValue;
   const hasOptions = options.length > 0;
-  const inputId = `${themeId}-${colorKey}-token-reference`;
+  const inputId = `${themeId}-${roleKey}-token-reference`;
 
   const preserveSaveContext = usePreserveSaveContext(
-    `theme-token-reference:${projectSlug}:${themeId}:${colorKey}`,
+    `theme-token-reference:${projectSlug}:${themeId}:${roleKey}`,
   );
 
   return (
     <form
       action={formAction}
       onSubmitCapture={preserveSaveContext}
-      data-theme-mapping-row={colorKey}
+      data-theme-mapping-row={roleKey}
       className="border-border-subtle bg-surface-primary min-w-0 rounded-md border px-3 py-3 sm:px-4"
     >
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="projectSlug" value={projectSlug} />
       <input type="hidden" name="themeId" value={themeId} />
-      <input type="hidden" name="colorKey" value={colorKey} />
+      <input type="hidden" name="roleKey" value={roleKey} />
 
       <div
         data-theme-mapping-layout
         className="grid min-w-0 gap-4 sm:grid-cols-2 2xl:grid-cols-[minmax(6rem,0.55fr)_minmax(14rem,1.65fr)_minmax(7rem,0.7fr)_minmax(10.5rem,auto)] 2xl:items-center"
       >
         <div
-          data-theme-role={colorKey}
+          data-theme-role={roleKey}
           className="min-w-0 sm:col-start-1 sm:row-start-1"
         >
           <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.14em] uppercase">
             {labels.slotLabel}
           </p>
           <p className="mt-1 truncate font-mono text-sm font-semibold">
-            {colorKey}
+            {roleKey}
           </p>
         </div>
 
