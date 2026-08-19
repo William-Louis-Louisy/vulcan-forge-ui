@@ -55,6 +55,26 @@ export const themeEditorMessages = {
             unexpected: 'The role could not be added. Please try again.',
           },
         },
+        deleteRole: {
+          request: 'Delete role',
+          confirmationTitle: 'Delete {roleKey}?',
+          confirmationDescription:
+            'This removes the custom role from this theme only. The referenced token is kept. This action cannot be undone.',
+          cancel: 'Cancel',
+          delete: 'Delete role',
+          deleting: 'Deleting…',
+          errors: {
+            unauthorized: 'You are not authorized to edit this theme.',
+            invalidPayload: 'The delete request contains invalid data.',
+            themeNotFound: 'This theme could not be found.',
+            invalidRoleKey: 'This custom role key is invalid.',
+            protectedRole: 'Built-in theme roles cannot be deleted.',
+            themeTokensMalformed:
+              'The stored theme color mappings are malformed and cannot be edited safely.',
+            roleNotFound: 'This custom role no longer exists.',
+            unexpected: 'The role could not be deleted. Please try again.',
+          },
+        },
         form: {
           errors: {
             invalidRoleKey: 'This theme role key is invalid.',
@@ -147,6 +167,26 @@ export const themeEditorMessages = {
               'Les mappings couleur enregistrés pour ce thème sont invalides et ne peuvent pas être modifiés en toute sécurité.',
             roleAlreadyExists: 'Ce rôle existe déjà dans le thème sélectionné.',
             unexpected: 'Le rôle n’a pas pu être ajouté. Réessayez.',
+          },
+        },
+        deleteRole: {
+          request: 'Supprimer le rôle',
+          confirmationTitle: 'Supprimer {roleKey} ?',
+          confirmationDescription:
+            'Ce rôle personnalisé sera supprimé de ce thème uniquement. Le token référencé est conservé. Cette action est irréversible.',
+          cancel: 'Annuler',
+          delete: 'Supprimer le rôle',
+          deleting: 'Suppression…',
+          errors: {
+            unauthorized: 'Vous n’êtes pas autorisé à modifier ce thème.',
+            invalidPayload: 'La demande de suppression contient des données invalides.',
+            themeNotFound: 'Ce thème est introuvable.',
+            invalidRoleKey: 'La clé de ce rôle personnalisé est invalide.',
+            protectedRole: 'Les rôles intégrés du thème ne peuvent pas être supprimés.',
+            themeTokensMalformed:
+              'Les mappings couleur enregistrés pour ce thème sont invalides et ne peuvent pas être modifiés en toute sécurité.',
+            roleNotFound: 'Ce rôle personnalisé n’existe plus.',
+            unexpected: 'Le rôle n’a pas pu être supprimé. Réessayez.',
           },
         },
         form: {
