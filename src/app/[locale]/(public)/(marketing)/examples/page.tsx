@@ -1,49 +1,55 @@
+import type { CSSProperties } from 'react';
 import { ArrowRightIcon, CheckIcon } from '@phosphor-icons/react/dist/ssr';
 import { getTranslations } from 'next-intl/server';
 import { auth } from '@/auth';
-import { ProductEditorPreview } from '@/components/layout/ProductEditorPreview';
 import { PublicButtonLink } from '@/components/layout/PublicButtonLink';
 
-const workflowKeys = [
-  'tokens',
-  'themes',
-  'components',
+const flowNodes = [
+  {
+    key: 'token',
+    value: 'color.brand.600',
+    detail: '#A94E2F',
+  },
+  {
+    key: 'theme',
+    value: 'accent',
+    detail: 'Light',
+  },
+  {
+    key: 'component',
+    value: 'Button.primary',
+    detail: 'background',
+  },
+  {
+    key: 'accessibility',
+    value: '5.50:1',
+    detail: 'AA',
+  },
+  {
+    key: 'delivery',
+    value: 'tokens.css',
+    detail: 'rules.md',
+  },
+] as const;
+
+const workflowStepKeys = [
+  'token',
+  'theme',
+  'component',
   'accessibility',
-  'exports',
+  'delivery',
 ] as const;
 
-const tokenRows = [
-  { key: 'background', path: 'color.bg.app', kind: 'primitive' },
-  { key: 'surface', path: 'color.bg.surface', kind: 'semantic' },
-  { key: 'content', path: 'color.fg.primary', kind: 'semantic' },
-  { key: 'accent', path: 'color.accent', kind: 'primitive' },
-  { key: 'border', path: 'color.border.line', kind: 'semantic' },
+const differentiatorKeys = [
+  'source',
+  'semantics',
+  'contracts',
+  'accessibility',
+  'ai',
 ] as const;
 
-const roleRows = [
-  { role: 'background', reference: 'color.bg.app', custom: false },
-  { role: 'surface', reference: 'color.bg.surface', custom: false },
-  { role: 'content', reference: 'color.fg.primary', custom: false },
-  { role: 'accent', reference: 'color.accent', custom: false },
-  { role: 'border-subtle', reference: 'color.border.line', custom: true },
-] as const;
-
-const componentKeys = ['button', 'alert'] as const;
-
-const componentTechnicalDetails = {
-  button: {
-    variants: 'primary · secondary · ghost',
-    states: 'default · hover · focusVisible · disabled',
-    bindings: 'action · content · border',
-  },
-  alert: {
-    variants: 'info · success · warning · danger',
-    states: 'default',
-    bindings: 'status.info · status.success · status.warning · status.danger',
-  },
-} as const;
-
-const accessibilityCheckKeys = ['contrast', 'focus', 'manual'] as const;
+const scatteredKeys = ['token', 'docs', 'component', 'ai'] as const;
+const connectedKeys = ['source', 'theme', 'component', 'outputs'] as const;
 
 const exportFormats = [
   { key: 'css', fileName: 'tokens.css' },
@@ -53,6 +59,17 @@ const exportFormats = [
   { key: 'markdown', fileName: 'README.md' },
   { key: 'aiInstructions', fileName: 'rules.md' },
 ] as const;
+
+const gridStyle = {
+  backgroundImage:
+    'linear-gradient(color-mix(in srgb, var(--vf-border-on-inverse) 45%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--vf-border-on-inverse) 45%, transparent) 1px, transparent 1px)',
+  backgroundSize: '36px 36px',
+} satisfies CSSProperties;
+
+const glowStyle = {
+  backgroundImage:
+    'radial-gradient(circle at 18% 12%, color-mix(in srgb, var(--vf-action-accent) 22%, transparent), transparent 30%), radial-gradient(circle at 82% 24%, color-mix(in srgb, var(--vf-action-info) 18%, transparent), transparent 28%)',
+} satisfies CSSProperties;
 
 export default async function ExamplesPage() {
   const [t, session] = await Promise.all([
@@ -64,357 +81,474 @@ export default async function ExamplesPage() {
 
   return (
     <main className="bg-background-app text-content-primary overflow-hidden">
-      <section className="border-border-subtle border-b px-6 py-16 sm:py-20 lg:px-8 lg:py-24">
-        <div className="mx-auto grid max-w-7xl gap-14 lg:grid-cols-[minmax(0,0.85fr)_minmax(32rem,1.15fr)] lg:items-center">
-          <div className="max-w-3xl">
-            <p className="border-action-accent/30 bg-action-accent/10 text-action-accent inline-flex rounded-full border px-3 py-1 text-xs font-semibold">
-              {t('hero.eyebrow')}
-            </p>
+      <section className="bg-surface-inverse text-content-on-inverse relative isolate overflow-hidden px-6 py-16 sm:py-20 lg:min-h-[calc(100vh-5rem)] lg:px-8 lg:py-24">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-80"
+          style={glowStyle}
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-30"
+          style={gridStyle}
+        />
 
-            <h1 className="font-display mt-7 text-5xl leading-[0.98] font-semibold tracking-[-0.045em] text-balance sm:text-6xl lg:text-7xl">
+        <div className="relative mx-auto grid max-w-7xl gap-16 lg:grid-cols-[minmax(0,0.72fr)_minmax(38rem,1.28fr)] lg:items-center">
+          <div className="max-w-3xl">
+            <div className="border-border-on-inverse bg-surface-primary/5 inline-flex items-center gap-2 border px-3 py-1.5 text-xs font-semibold backdrop-blur">
+              <span
+                aria-hidden="true"
+                className="bg-action-accent size-1.5 rounded-full"
+              />
+              {t('hero.eyebrow')}
+            </div>
+
+            <h1 className="font-display mt-8 text-5xl leading-[0.94] font-semibold tracking-[-0.055em] text-balance sm:text-6xl lg:text-7xl xl:text-[5.5rem]">
               {t('hero.titleBefore')}{' '}
               <em className="text-action-accent font-medium">
                 {t('hero.titleAccent')}
-              </em>{' '}
-              {t('hero.titleAfter')}
+              </em>
             </h1>
 
-            <p className="text-content-secondary mt-7 max-w-2xl text-lg leading-8">
+            <p className="text-content-on-inverse/70 mt-8 max-w-2xl text-lg leading-8 sm:text-xl">
               {t('hero.description')}
             </p>
 
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <PublicButtonLink href={primaryHref} size="lg" className="gap-2">
-                {isAuthenticated
-                  ? t('hero.dashboardCta')
-                  : t('hero.primaryCta')}
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+              <PublicButtonLink href="#workflow" size="lg" className="gap-2">
+                {t('hero.secondaryCta')}
                 <ArrowRightIcon aria-hidden="true" size={16} weight="bold" />
               </PublicButtonLink>
               <PublicButtonLink
-                href="/examples#workflow"
+                href={primaryHref}
                 variant="secondary"
                 size="lg"
+                className="border-border-on-inverse bg-surface-primary/5 text-content-on-inverse hover:bg-surface-primary/10"
               >
-                {t('hero.secondaryCta')}
+                {isAuthenticated
+                  ? t('hero.dashboardCta')
+                  : t('hero.primaryCta')}
               </PublicButtonLink>
             </div>
 
-            <p className="border-border-subtle text-content-tertiary mt-6 border-l pl-4 text-xs leading-5">
+            <p className="text-content-on-inverse/50 mt-6 text-xs leading-5">
               {t('hero.disclosure')}
             </p>
           </div>
 
-          <ProductEditorPreview />
+          <div className="border-border-on-inverse bg-surface-inverse/80 relative overflow-hidden border p-4 shadow-2xl backdrop-blur sm:p-6 lg:p-8">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 opacity-25"
+              style={gridStyle}
+            />
+
+            <div className="relative">
+              <div className="border-border-on-inverse flex flex-wrap items-center justify-between gap-4 border-b pb-5">
+                <div>
+                  <p className="text-content-on-inverse/45 font-mono text-[10px] tracking-[0.16em] uppercase">
+                    Aurora System
+                  </p>
+                  <p className="mt-1 text-sm font-semibold">
+                    color.brand.600 → delivery
+                  </p>
+                </div>
+                <div className="border-border-on-inverse bg-surface-primary/5 flex items-center gap-2 border px-2.5 py-1.5 text-[11px] font-semibold">
+                  <span
+                    aria-hidden="true"
+                    className="bg-action-success size-1.5 rounded-full"
+                  />
+                  5 connected layers
+                </div>
+              </div>
+
+              <div className="relative mt-8 grid gap-3 md:grid-cols-5 md:gap-2">
+                <div
+                  aria-hidden="true"
+                  className="bg-border-on-inverse absolute top-1/2 left-[8%] hidden h-px w-[84%] -translate-y-1/2 md:block"
+                />
+
+                {flowNodes.map((node, index) => (
+                  <div
+                    key={node.key}
+                    className="border-border-on-inverse bg-surface-inverse relative z-10 min-w-0 border p-4 md:min-h-44"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-action-accent font-mono text-[10px]">
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
+                      {index < flowNodes.length - 1 ? (
+                        <ArrowRightIcon
+                          aria-hidden="true"
+                          className="text-content-on-inverse/35 md:hidden"
+                          size={14}
+                        />
+                      ) : null}
+                    </div>
+
+                    <p className="text-content-on-inverse/55 mt-6 text-[10px] font-semibold tracking-[0.12em] uppercase">
+                      {t(`hero.flow.${node.key}.label`)}
+                    </p>
+                    <p className="mt-2 truncate font-mono text-xs font-semibold">
+                      {node.value}
+                    </p>
+                    <p className="text-action-accent mt-1 truncate font-mono text-[11px]">
+                      {node.detail}
+                    </p>
+                    <p className="text-content-on-inverse/45 mt-5 text-[11px] leading-5">
+                      {t(`hero.flow.${node.key}.caption`)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="border-border-on-inverse mt-6 grid gap-px border bg-border-on-inverse sm:grid-cols-3">
+                <div className="bg-surface-inverse p-4">
+                  <p className="text-content-on-inverse/45 text-[10px] font-semibold uppercase">
+                    Source
+                  </p>
+                  <p className="mt-2 font-mono text-xs">#A94E2F</p>
+                </div>
+                <div className="bg-surface-inverse p-4">
+                  <p className="text-content-on-inverse/45 text-[10px] font-semibold uppercase">
+                    Resolved contrast
+                  </p>
+                  <p className="mt-2 font-mono text-xs">5.50:1 · AA</p>
+                </div>
+                <div className="bg-surface-inverse p-4">
+                  <p className="text-content-on-inverse/45 text-[10px] font-semibold uppercase">
+                    Outputs
+                  </p>
+                  <p className="mt-2 font-mono text-xs">6 formats</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section
-        id="workflow"
-        className="scroll-mt-20 px-6 py-20 lg:px-8 lg:py-24"
-      >
+      <section id="workflow" className="scroll-mt-20 px-6 py-24 lg:px-8 lg:py-32">
         <div className="mx-auto max-w-7xl">
-          <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
-            <div>
-              <p className="text-action-accent text-xs font-semibold tracking-[0.18em] uppercase">
-                {t('workflow.eyebrow')}
-              </p>
-              <h2 className="font-display mt-4 text-4xl leading-tight font-semibold tracking-[-0.035em] sm:text-5xl">
-                {t('workflow.title')}
-              </h2>
-            </div>
-            <p className="text-content-secondary max-w-2xl leading-7 lg:justify-self-end">
+          <div className="max-w-4xl">
+            <p className="text-action-accent text-xs font-semibold tracking-[0.2em] uppercase">
+              {t('workflow.eyebrow')}
+            </p>
+            <h2 className="font-display mt-5 text-4xl leading-[1.03] font-semibold tracking-[-0.04em] text-balance sm:text-5xl lg:text-6xl">
+              {t('workflow.title')}
+            </h2>
+            <p className="text-content-secondary mt-6 max-w-3xl text-lg leading-8">
               {t('workflow.description')}
             </p>
           </div>
 
-          <div className="border-border-subtle mt-12 grid border-y sm:grid-cols-2 lg:grid-cols-5">
-            {workflowKeys.map((key, index) => (
+          <div className="mt-20 space-y-24 lg:space-y-32">
+            {workflowStepKeys.map((key, index) => (
               <article
                 key={key}
-                className="border-border-subtle border-b py-6 sm:px-5 lg:border-r lg:border-b-0 lg:last:border-r-0"
+                className="relative grid gap-10 lg:grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)] lg:gap-20"
               >
-                <p className="text-action-accent font-mono text-xs">
-                  {String(index + 1).padStart(2, '0')}
-                </p>
-                <h3 className="mt-4 font-semibold">
-                  {t(`workflow.items.${key}.title`)}
-                </h3>
-                <p className="text-content-secondary mt-2 text-sm leading-6">
-                  {t(`workflow.items.${key}.description`)}
-                </p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
+                <div className="lg:sticky lg:top-28 lg:self-start">
+                  <p className="text-action-accent font-mono text-xs font-semibold">
+                    {t(`workflow.steps.${key}.kicker`)}
+                  </p>
+                  <h3 className="font-display mt-5 text-3xl leading-tight font-semibold tracking-[-0.03em] sm:text-4xl">
+                    {t(`workflow.steps.${key}.title`)}
+                  </h3>
+                  <p className="text-content-secondary mt-5 max-w-xl leading-7">
+                    {t(`workflow.steps.${key}.description`)}
+                  </p>
+                  <div className="border-border-subtle mt-7 border-l pl-4">
+                    <p className="text-content-primary text-sm font-semibold leading-6">
+                      {t(`workflow.steps.${key}.insight`)}
+                    </p>
+                  </div>
+                </div>
 
-      <section className="border-border-subtle bg-background-sunken border-y px-6 py-20 lg:px-8 lg:py-24">
-        <div className="mx-auto max-w-7xl">
-          <div className="max-w-3xl">
-            <p className="text-action-accent text-xs font-semibold tracking-[0.18em] uppercase">
-              {t('model.eyebrow')}
-            </p>
-            <h2 className="font-display mt-4 text-4xl leading-tight font-semibold tracking-[-0.035em] sm:text-5xl">
-              {t('model.title')}
-            </h2>
-            <p className="text-content-secondary mt-5 leading-7">
-              {t('model.description')}
-            </p>
-          </div>
-
-          <div className="mt-12 grid gap-5 lg:grid-cols-2">
-            <article className="border-border-subtle bg-surface-primary border">
-              <div className="border-border-subtle border-b p-5 sm:p-6">
-                <h3 className="text-lg font-semibold">
-                  {t('model.tokensTitle')}
-                </h3>
-                <p className="text-content-secondary mt-2 text-sm leading-6">
-                  {t('model.tokensDescription')}
-                </p>
-              </div>
-
-              <div className="divide-border-subtle divide-y">
-                {tokenRows.map((row) => (
+                <div className="border-border-subtle bg-background-sunken relative min-h-[25rem] overflow-hidden border p-5 sm:p-8 lg:min-h-[32rem] lg:p-10">
                   <div
-                    key={row.path}
-                    className="grid gap-3 p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:px-6"
-                  >
-                    <div className="min-w-0">
-                      <code className="block truncate text-sm font-semibold">
-                        {row.path}
-                      </code>
-                      <p className="text-content-secondary mt-1 text-xs">
-                        {t(`model.tokenPurposes.${row.key}`)}
-                      </p>
-                    </div>
-                    <span className="bg-background-subtle text-content-tertiary w-fit rounded-sm px-2 py-1 text-[11px] font-semibold sm:justify-self-end">
-                      {t(`model.tokenKinds.${row.kind}`)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </article>
-
-            <article className="border-border-subtle bg-surface-primary border">
-              <div className="border-border-subtle border-b p-5 sm:p-6">
-                <h3 className="text-lg font-semibold">
-                  {t('model.rolesTitle')}
-                </h3>
-                <p className="text-content-secondary mt-2 text-sm leading-6">
-                  {t('model.rolesDescription')}
-                </p>
-              </div>
-
-              <div className="divide-border-subtle divide-y">
-                {roleRows.map((row) => (
-                  <div
-                    key={row.role}
-                    className="grid gap-3 p-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] sm:items-center sm:px-6"
-                  >
-                    <div className="flex min-w-0 items-center gap-2">
-                      <code className="truncate text-sm font-semibold">
-                        {row.role}
-                      </code>
-                      {row.custom ? (
-                        <span className="border-border-subtle bg-background-subtle text-content-tertiary shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-semibold">
-                          {t('model.customRoleLabel')}
-                        </span>
-                      ) : null}
-                    </div>
-                    <code className="text-content-secondary min-w-0 truncate text-xs sm:text-right">
-                      {'{'}
-                      {row.reference}
-                      {'}'}
-                    </code>
-                  </div>
-                ))}
-              </div>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section className="px-6 py-20 lg:px-8 lg:py-24">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
-            <div>
-              <p className="text-action-accent text-xs font-semibold tracking-[0.18em] uppercase">
-                {t('contracts.eyebrow')}
-              </p>
-              <h2 className="font-display mt-4 text-4xl leading-tight font-semibold tracking-[-0.035em] sm:text-5xl">
-                {t('contracts.title')}
-              </h2>
-            </div>
-            <p className="text-content-secondary max-w-2xl leading-7 lg:justify-self-end">
-              {t('contracts.description')}
-            </p>
-          </div>
-
-          <div className="mt-12 grid gap-5 lg:grid-cols-2">
-            {componentKeys.map((key) => {
-              const technicalDetails = componentTechnicalDetails[key];
-
-              return (
-                <article
-                  key={key}
-                  className="border-border-subtle bg-surface-primary border p-5 sm:p-7"
-                >
-                  <div className="border-border-subtle border-b pb-6">
-                    <h3 className="text-xl font-semibold">
-                      {t(`contracts.items.${key}.title`)}
-                    </h3>
-                    <p className="text-content-secondary mt-2 text-sm leading-6">
-                      {t(`contracts.items.${key}.purpose`)}
-                    </p>
-
-                    {key === 'button' ? (
-                      <div
-                        aria-hidden="true"
-                        className="mt-6 flex flex-wrap gap-2"
-                      >
-                        <span className="bg-action-primary text-action-primary-content rounded-md px-3 py-2 text-xs font-semibold">
-                          {t('contracts.items.button.previewPrimary')}
-                        </span>
-                        <span className="border-border-default bg-surface-primary text-content-primary rounded-md border px-3 py-2 text-xs font-semibold">
-                          {t('contracts.items.button.previewSecondary')}
-                        </span>
-                      </div>
-                    ) : (
-                      <div
-                        aria-hidden="true"
-                        className="border-action-success/30 bg-action-success/10 mt-6 border p-3"
-                      >
-                        <p className="text-action-success text-xs font-semibold">
-                          {t('contracts.items.alert.previewStatus')}
-                        </p>
-                        <p className="text-content-secondary mt-1 text-xs leading-5">
-                          {t('contracts.items.alert.previewMessage')}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-
-                  <dl className="mt-6 grid gap-4 text-sm sm:grid-cols-2">
-                    <div>
-                      <dt className="text-content-tertiary text-xs font-semibold uppercase">
-                        {t('contracts.labels.variants')}
-                      </dt>
-                      <dd className="text-content-secondary mt-1.5 leading-6">
-                        {technicalDetails.variants}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt className="text-content-tertiary text-xs font-semibold uppercase">
-                        {t('contracts.labels.states')}
-                      </dt>
-                      <dd className="text-content-secondary mt-1.5 leading-6">
-                        {technicalDetails.states}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt className="text-content-tertiary text-xs font-semibold uppercase">
-                        {t('contracts.labels.bindings')}
-                      </dt>
-                      <dd className="text-content-secondary mt-1.5 font-mono text-xs leading-6 break-words">
-                        {technicalDetails.bindings}
-                      </dd>
-                    </div>
-                    <div>
-                      <dt className="text-content-tertiary text-xs font-semibold uppercase">
-                        {t('contracts.labels.accessibility')}
-                      </dt>
-                      <dd className="text-content-secondary mt-1.5 leading-6">
-                        {t(`contracts.items.${key}.accessibility`)}
-                      </dd>
-                    </div>
-                  </dl>
-                </article>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-surface-inverse text-content-on-inverse px-6 py-20 lg:px-8 lg:py-24">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
-            <div className="max-w-xl">
-              <p className="text-action-accent text-xs font-semibold tracking-[0.18em] uppercase">
-                {t('accessibility.eyebrow')}
-              </p>
-              <h2 className="font-display mt-4 text-4xl leading-tight font-semibold tracking-[-0.035em] sm:text-5xl">
-                {t('accessibility.title')}
-              </h2>
-              <p className="text-content-on-inverse/65 mt-5 leading-7">
-                {t('accessibility.description')}
-              </p>
-            </div>
-
-            <div className="border-border-on-inverse divide-border-on-inverse divide-y border-y">
-              {accessibilityCheckKeys.map((key) => (
-                <article key={key} className="flex gap-4 py-5">
-                  <CheckIcon
                     aria-hidden="true"
-                    className="text-action-accent mt-1 shrink-0"
-                    size={16}
-                    weight="bold"
-                  />
-                  <div>
-                    <h3 className="font-semibold">
-                      {t(`accessibility.checks.${key}.title`)}
-                    </h3>
-                    <p className="text-content-on-inverse/65 mt-2 text-sm leading-6">
-                      {t(`accessibility.checks.${key}.description`)}
-                    </p>
+                    className="text-border-default pointer-events-none absolute -top-8 -right-1 font-mono text-[9rem] leading-none font-semibold opacity-25 sm:text-[12rem]"
+                  >
+                    {String(index + 1).padStart(2, '0')}
                   </div>
-                </article>
-              ))}
-            </div>
-          </div>
 
-          <p className="border-border-on-inverse text-content-on-inverse/55 mt-10 max-w-3xl border-l pl-4 text-xs leading-5">
-            {t('accessibility.disclosure')}
-          </p>
-        </div>
-      </section>
+                  {key === 'token' ? (
+                    <div className="relative flex h-full min-h-[20rem] items-center justify-center">
+                      <div className="border-border-strong bg-surface-primary shadow-soft w-full max-w-xl border">
+                        <div className="border-border-subtle flex items-center justify-between gap-4 border-b px-5 py-4">
+                          <div>
+                            <p className="font-mono text-xs font-semibold">
+                              color.brand.600
+                            </p>
+                            <p className="text-content-tertiary mt-1 text-[11px]">
+                              Primitive · Color
+                            </p>
+                          </div>
+                          <span className="bg-action-accent size-8 rounded-md" />
+                        </div>
+                        <div className="grid gap-px bg-border-subtle sm:grid-cols-2">
+                          <div className="bg-surface-primary p-5">
+                            <p className="text-content-tertiary text-[10px] font-semibold uppercase">
+                              Value
+                            </p>
+                            <p className="mt-3 font-mono text-lg font-semibold">
+                              #A94E2F
+                            </p>
+                          </div>
+                          <div className="bg-surface-primary p-5">
+                            <p className="text-content-tertiary text-[10px] font-semibold uppercase">
+                              Intent
+                            </p>
+                            <p className="mt-3 text-sm font-semibold">
+                              Primary brand action
+                            </p>
+                          </div>
+                        </div>
+                        <div className="border-border-subtle border-t p-5">
+                          <p className="text-content-tertiary text-[10px] font-semibold uppercase">
+                            Description
+                          </p>
+                          <p className="text-content-secondary mt-2 text-sm leading-6">
+                            Main warm brand color used for emphasized actions and
+                            selected states.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ) : null}
 
-      <section className="px-6 py-20 lg:px-8 lg:py-24">
-        <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-            <div className="max-w-3xl">
-              <p className="text-action-accent text-xs font-semibold tracking-[0.18em] uppercase">
-                {t('delivery.eyebrow')}
-              </p>
-              <h2 className="font-display mt-4 text-4xl leading-tight font-semibold tracking-[-0.035em] sm:text-5xl">
-                {t('delivery.title')}
-              </h2>
-            </div>
-            <p className="text-content-secondary max-w-md text-sm leading-6">
-              {t('delivery.description')}
-            </p>
-          </div>
+                  {key === 'theme' ? (
+                    <div className="relative flex h-full min-h-[20rem] items-center justify-center">
+                      <div className="grid w-full max-w-2xl gap-4 sm:grid-cols-2">
+                        <div className="border-border-strong bg-surface-primary border p-5">
+                          <div className="flex items-center justify-between gap-3">
+                            <div>
+                              <p className="text-xs font-semibold">Light</p>
+                              <p className="text-content-tertiary mt-1 text-[11px]">
+                                Active theme
+                              </p>
+                            </div>
+                            <span className="bg-background-app border-border-default size-7 rounded-full border" />
+                          </div>
+                          <div className="border-border-subtle mt-6 divide-y border-y">
+                            <div className="grid grid-cols-[1fr_auto] gap-4 py-4">
+                              <code className="text-xs font-semibold">accent</code>
+                              <code className="text-content-secondary text-[11px]">
+                                {'{'}color.brand.600{'}'}
+                              </code>
+                            </div>
+                            <div className="grid grid-cols-[1fr_auto] gap-4 py-4">
+                              <code className="text-xs font-semibold">
+                                border-subtle
+                              </code>
+                              <code className="text-content-secondary text-[11px]">
+                                {'{'}color.border.line{'}'}
+                              </code>
+                            </div>
+                          </div>
+                        </div>
 
-          <div className="border-border-subtle mt-12 grid border-y sm:grid-cols-2 lg:grid-cols-3">
-            {exportFormats.map((format) => (
-              <article
-                key={format.key}
-                className="border-border-subtle border-b p-5 sm:border-r"
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h3 className="font-semibold">
-                      {t(`delivery.formatLabels.${format.key}`)}
-                    </h3>
-                    <p className="text-content-tertiary mt-2 font-mono text-xs">
-                      {format.fileName}
-                    </p>
-                  </div>
-                  <CheckIcon
-                    aria-hidden="true"
-                    className="text-action-accent shrink-0"
-                    size={16}
-                    weight="bold"
-                  />
+                        <div className="bg-surface-inverse text-content-on-inverse border-border-strong border p-5">
+                          <div className="flex items-center justify-between gap-3">
+                            <div>
+                              <p className="text-xs font-semibold">Dark</p>
+                              <p className="text-content-on-inverse/50 mt-1 text-[11px]">
+                                Independent mapping
+                              </p>
+                            </div>
+                            <span className="border-border-on-inverse bg-surface-inverse size-7 rounded-full border" />
+                          </div>
+                          <div className="border-border-on-inverse mt-6 divide-y border-y">
+                            <div className="grid grid-cols-[1fr_auto] gap-4 py-4">
+                              <code className="text-xs font-semibold">accent</code>
+                              <code className="text-content-on-inverse/65 text-[11px]">
+                                {'{'}color.brand.400{'}'}
+                              </code>
+                            </div>
+                            <div className="grid grid-cols-[1fr_auto] gap-4 py-4">
+                              <code className="text-xs font-semibold">
+                                border-subtle
+                              </code>
+                              <code className="text-content-on-inverse/65 text-[11px]">
+                                {'{'}color.border.muted{'}'}
+                              </code>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {key === 'component' ? (
+                    <div className="relative flex h-full min-h-[20rem] items-center justify-center">
+                      <div className="border-border-strong bg-surface-primary w-full max-w-2xl border">
+                        <div className="border-border-subtle flex flex-wrap items-center justify-between gap-4 border-b p-5">
+                          <div>
+                            <p className="text-lg font-semibold">Button</p>
+                            <p className="text-content-tertiary mt-1 text-xs">
+                              Interactive component contract
+                            </p>
+                          </div>
+                          <div className="flex gap-2">
+                            <span className="bg-background-subtle text-content-secondary px-2 py-1 font-mono text-[10px]">
+                              primary
+                            </span>
+                            <span className="bg-background-subtle text-content-secondary px-2 py-1 font-mono text-[10px]">
+                              md
+                            </span>
+                          </div>
+                        </div>
+                        <div className="grid gap-px bg-border-subtle sm:grid-cols-[0.8fr_1.2fr]">
+                          <div className="bg-surface-primary p-5">
+                            <p className="text-content-tertiary text-[10px] font-semibold uppercase">
+                              States
+                            </p>
+                            <div className="mt-4 flex flex-wrap gap-2">
+                              {['default', 'hover', 'focusVisible', 'disabled'].map(
+                                (state) => (
+                                  <span
+                                    key={state}
+                                    className="border-border-subtle border px-2 py-1 font-mono text-[10px]"
+                                  >
+                                    {state}
+                                  </span>
+                                ),
+                              )}
+                            </div>
+                          </div>
+                          <div className="bg-surface-primary p-5">
+                            <p className="text-content-tertiary text-[10px] font-semibold uppercase">
+                              Token bindings
+                            </p>
+                            <div className="mt-4 space-y-3 font-mono text-[11px]">
+                              <div className="flex justify-between gap-4">
+                                <span>background</span>
+                                <span className="text-action-accent">
+                                  theme.accent
+                                </span>
+                              </div>
+                              <div className="flex justify-between gap-4">
+                                <span>content</span>
+                                <span className="text-action-accent">
+                                  theme.background
+                                </span>
+                              </div>
+                              <div className="flex justify-between gap-4">
+                                <span>focusRing</span>
+                                <span className="text-action-accent">
+                                  theme.accent
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="border-border-subtle flex items-center justify-center border-t p-8">
+                          <span className="bg-action-primary text-action-primary-content rounded-md px-5 py-3 text-sm font-semibold">
+                            Primary action
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {key === 'accessibility' ? (
+                    <div className="relative flex h-full min-h-[20rem] items-center justify-center">
+                      <div className="grid w-full max-w-2xl gap-4 sm:grid-cols-[0.9fr_1.1fr]">
+                        <div className="bg-surface-inverse text-content-on-inverse border-border-strong flex min-h-64 flex-col justify-between border p-6">
+                          <div>
+                            <p className="text-content-on-inverse/50 text-[10px] font-semibold uppercase">
+                              Resolved contrast
+                            </p>
+                            <p className="font-display mt-5 text-6xl font-semibold tracking-[-0.05em]">
+                              5.50
+                            </p>
+                            <p className="text-content-on-inverse/50 mt-1 font-mono text-xs">
+                              :1
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm font-semibold">
+                            <CheckIcon
+                              aria-hidden="true"
+                              className="text-action-accent"
+                              size={16}
+                              weight="bold"
+                            />
+                            WCAG AA
+                          </div>
+                        </div>
+
+                        <div className="border-border-strong bg-surface-primary border p-6">
+                          <p className="text-content-tertiary text-[10px] font-semibold uppercase">
+                            Contract checks
+                          </p>
+                          <div className="mt-5 space-y-4">
+                            {[
+                              'focusVisible state documented',
+                              'Foreground and background resolve',
+                              'Status meaning is not color-only',
+                            ].map((item) => (
+                              <div key={item} className="flex gap-3">
+                                <span className="bg-action-success/10 text-action-success mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full">
+                                  <CheckIcon
+                                    aria-hidden="true"
+                                    size={11}
+                                    weight="bold"
+                                  />
+                                </span>
+                                <p className="text-content-secondary text-sm leading-6">
+                                  {item}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                          <p className="border-border-subtle text-content-tertiary mt-6 border-t pt-4 text-xs leading-5">
+                            Manual keyboard and screen-reader review stays explicit.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {key === 'delivery' ? (
+                    <div className="relative flex h-full min-h-[20rem] items-center justify-center">
+                      <div className="grid w-full max-w-2xl gap-4 sm:grid-cols-[1.15fr_0.85fr]">
+                        <div className="bg-surface-inverse text-content-on-inverse border-border-strong border">
+                          <div className="border-border-on-inverse flex items-center gap-2 border-b px-4 py-3">
+                            <span className="bg-action-danger size-2 rounded-full" />
+                            <span className="bg-action-warning size-2 rounded-full" />
+                            <span className="bg-action-success size-2 rounded-full" />
+                            <span className="text-content-on-inverse/40 ml-2 font-mono text-[10px]">
+                              tokens.css
+                            </span>
+                          </div>
+                          <pre className="overflow-x-auto p-5 font-mono text-[11px] leading-6">
+                            <code>{`:root {\n  --color-accent: #A94E2F;\n  --color-border-subtle: #E3DDD0;\n}\n\n.button-primary {\n  background: var(--color-accent);\n}`}</code>
+                          </pre>
+                        </div>
+
+                        <div className="border-border-strong bg-surface-primary border p-5">
+                          <p className="text-content-tertiary text-[10px] font-semibold uppercase">
+                            Generated from project
+                          </p>
+                          <div className="mt-5 space-y-2">
+                            {exportFormats.map((format) => (
+                              <div
+                                key={format.key}
+                                className="border-border-subtle flex items-center justify-between gap-3 border px-3 py-2.5"
+                              >
+                                <span className="text-xs font-semibold">
+                                  {t(`delivery.formatLabels.${format.key}`)}
+                                </span>
+                                <span className="text-content-tertiary font-mono text-[10px]">
+                                  {format.fileName}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
               </article>
             ))}
@@ -422,13 +556,186 @@ export default async function ExamplesPage() {
         </div>
       </section>
 
-      <section className="border-border-subtle px-6 pb-20 lg:px-8 lg:pb-24">
-        <div className="border-border-strong mx-auto flex max-w-7xl flex-col gap-8 border p-7 sm:p-10 lg:flex-row lg:items-center lg:justify-between">
-          <div className="max-w-2xl">
-            <h2 className="font-display text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+      <section className="border-border-subtle bg-background-sunken border-y px-6 py-24 lg:px-8 lg:py-32">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-12 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
+            <div className="lg:sticky lg:top-28 lg:self-start">
+              <p className="text-action-accent text-xs font-semibold tracking-[0.2em] uppercase">
+                {t('differentiation.eyebrow')}
+              </p>
+              <h2 className="font-display mt-5 text-4xl leading-[1.04] font-semibold tracking-[-0.04em] sm:text-5xl">
+                {t('differentiation.title')}
+              </h2>
+              <p className="text-content-secondary mt-6 leading-7">
+                {t('differentiation.description')}
+              </p>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              {differentiatorKeys.map((key, index) => (
+                <article
+                  key={key}
+                  className={`border-border-subtle bg-surface-primary border p-6 sm:p-7 ${
+                    index === 0 || index === 4 ? 'sm:col-span-2' : ''
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-6">
+                    <span className="text-action-accent font-mono text-[10px]">
+                      0{index + 1}
+                    </span>
+                    <span className="bg-background-subtle text-content-tertiary px-2 py-1 font-mono text-[10px]">
+                      {key}
+                    </span>
+                  </div>
+                  <h3 className="mt-8 text-xl font-semibold">
+                    {t(`differentiation.items.${key}.title`)}
+                  </h3>
+                  <p className="text-content-secondary mt-3 max-w-xl text-sm leading-6">
+                    {t(`differentiation.items.${key}.description`)}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="px-6 py-24 lg:px-8 lg:py-32">
+        <div className="mx-auto max-w-7xl">
+          <div className="mx-auto max-w-4xl text-center">
+            <p className="text-action-accent text-xs font-semibold tracking-[0.2em] uppercase">
+              {t('drift.eyebrow')}
+            </p>
+            <h2 className="font-display mt-5 text-4xl leading-[1.03] font-semibold tracking-[-0.04em] text-balance sm:text-5xl lg:text-6xl">
+              {t('drift.title')}
+            </h2>
+            <p className="text-content-secondary mx-auto mt-6 max-w-3xl text-lg leading-8">
+              {t('drift.description')}
+            </p>
+          </div>
+
+          <div className="mt-16 grid gap-5 lg:grid-cols-2">
+            <article className="border-border-subtle bg-background-sunken border p-6 sm:p-8">
+              <div className="flex items-center gap-3">
+                <span className="bg-action-danger size-2 rounded-full" />
+                <h3 className="text-sm font-semibold">
+                  {t('drift.scatteredTitle')}
+                </h3>
+              </div>
+              <div className="relative mt-8 space-y-3">
+                <div
+                  aria-hidden="true"
+                  className="bg-border-default absolute top-5 bottom-5 left-[0.6875rem] w-px"
+                />
+                {scatteredKeys.map((key, index) => (
+                  <div
+                    key={key}
+                    className="border-border-subtle bg-surface-primary relative flex items-start gap-4 border p-4"
+                  >
+                    <span className="bg-background-sunken border-border-default relative z-10 flex size-6 shrink-0 items-center justify-center rounded-full border font-mono text-[9px]">
+                      {index + 1}
+                    </span>
+                    <p className="text-content-secondary pt-0.5 text-sm leading-6">
+                      {t(`drift.scatteredItems.${key}`)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </article>
+
+            <article className="bg-surface-inverse text-content-on-inverse border-border-strong border p-6 sm:p-8">
+              <div className="flex items-center gap-3">
+                <span className="bg-action-success size-2 rounded-full" />
+                <h3 className="text-sm font-semibold">
+                  {t('drift.connectedTitle')}
+                </h3>
+              </div>
+              <div className="relative mt-8 space-y-3">
+                <div
+                  aria-hidden="true"
+                  className="bg-border-on-inverse absolute top-5 bottom-5 left-[0.6875rem] w-px"
+                />
+                {connectedKeys.map((key, index) => (
+                  <div
+                    key={key}
+                    className="border-border-on-inverse bg-surface-primary/5 relative flex items-start gap-4 border p-4"
+                  >
+                    <span className="border-border-on-inverse bg-surface-inverse relative z-10 flex size-6 shrink-0 items-center justify-center rounded-full border font-mono text-[9px]">
+                      {index + 1}
+                    </span>
+                    <p className="text-content-on-inverse/70 pt-0.5 text-sm leading-6">
+                      {t(`drift.connectedItems.${key}`)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              <p className="border-border-on-inverse text-action-accent mt-6 border-t pt-5 text-sm font-semibold">
+                {t('drift.note')}
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-surface-inverse text-content-on-inverse relative overflow-hidden px-6 py-24 lg:px-8 lg:py-28">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-20"
+          style={gridStyle}
+        />
+        <div className="relative mx-auto max-w-7xl">
+          <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-4xl">
+              <p className="text-action-accent text-xs font-semibold tracking-[0.2em] uppercase">
+                {t('delivery.eyebrow')}
+              </p>
+              <h2 className="font-display mt-5 text-4xl leading-[1.04] font-semibold tracking-[-0.04em] sm:text-5xl">
+                {t('delivery.title')}
+              </h2>
+            </div>
+            <p className="text-content-on-inverse/60 max-w-md text-sm leading-6">
+              {t('delivery.description')}
+            </p>
+          </div>
+
+          <div className="border-border-on-inverse mt-12 grid gap-px border bg-border-on-inverse sm:grid-cols-2 lg:grid-cols-6">
+            {exportFormats.map((format, index) => (
+              <article
+                key={format.key}
+                className="bg-surface-inverse min-w-0 p-5"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-action-accent font-mono text-[10px]">
+                    0{index + 1}
+                  </span>
+                  <CheckIcon
+                    aria-hidden="true"
+                    className="text-content-on-inverse/35"
+                    size={13}
+                  />
+                </div>
+                <h3 className="mt-6 text-sm font-semibold">
+                  {t(`delivery.formatLabels.${format.key}`)}
+                </h3>
+                <p className="text-content-on-inverse/45 mt-2 truncate font-mono text-[10px]">
+                  {format.fileName}
+                </p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="px-6 py-20 lg:px-8 lg:py-24">
+        <div className="border-border-strong bg-surface-primary mx-auto grid max-w-7xl gap-8 border p-7 sm:p-10 lg:grid-cols-[1fr_auto] lg:items-center lg:p-12">
+          <div className="max-w-3xl">
+            <p className="text-action-accent text-xs font-semibold tracking-[0.2em] uppercase">
+              {t('finalCta.eyebrow')}
+            </p>
+            <h2 className="font-display mt-5 text-3xl leading-tight font-semibold tracking-[-0.035em] sm:text-4xl lg:text-5xl">
               {t('finalCta.title')}
             </h2>
-            <p className="text-content-secondary mt-3 leading-7">
+            <p className="text-content-secondary mt-4 max-w-2xl leading-7">
               {t('finalCta.description')}
             </p>
           </div>
@@ -437,7 +744,9 @@ export default async function ExamplesPage() {
             size="lg"
             className="shrink-0 gap-2"
           >
-            {isAuthenticated ? t('finalCta.dashboardCta') : t('finalCta.cta')}
+            {isAuthenticated
+              ? t('finalCta.dashboardCta')
+              : t('finalCta.cta')}
             <ArrowRightIcon aria-hidden="true" size={16} weight="bold" />
           </PublicButtonLink>
         </div>
