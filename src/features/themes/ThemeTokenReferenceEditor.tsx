@@ -38,7 +38,6 @@ type ThemeTokenReferenceEditorProps = {
       | 'invalidRoleKey'
       | 'invalidTokenPath'
       | 'themeTokensMalformed'
-      | 'roleNotFound'
       | 'unexpected',
       string
     >;
