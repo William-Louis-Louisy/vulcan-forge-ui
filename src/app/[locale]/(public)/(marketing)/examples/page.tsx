@@ -315,7 +315,7 @@ export default async function ExamplesPage() {
                       <dt className="text-content-tertiary text-xs font-semibold uppercase">
                         {t('contracts.labels.bindings')}
                       </dt>
-                      <dd className="text-content-secondary mt-1.5 break-words font-mono text-xs leading-6">
+                      <dd className="text-content-secondary mt-1.5 font-mono text-xs leading-6 break-words">
                         {technicalDetails.bindings}
                       </dd>
                     </div>
@@ -437,9 +437,7 @@ export default async function ExamplesPage() {
             size="lg"
             className="shrink-0 gap-2"
           >
-            {isAuthenticated
-              ? t('finalCta.dashboardCta')
-              : t('finalCta.cta')}
+            {isAuthenticated ? t('finalCta.dashboardCta') : t('finalCta.cta')}
             <ArrowRightIcon aria-hidden="true" size={16} weight="bold" />
           </PublicButtonLink>
         </div>
