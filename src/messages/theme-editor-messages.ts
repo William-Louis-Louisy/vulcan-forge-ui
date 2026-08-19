@@ -179,10 +179,12 @@ export const themeEditorMessages = {
           deleting: 'Suppression…',
           errors: {
             unauthorized: 'Vous n’êtes pas autorisé à modifier ce thème.',
-            invalidPayload: 'La demande de suppression contient des données invalides.',
+            invalidPayload:
+              'La demande de suppression contient des données invalides.',
             themeNotFound: 'Ce thème est introuvable.',
             invalidRoleKey: 'La clé de ce rôle personnalisé est invalide.',
-            protectedRole: 'Les rôles intégrés du thème ne peuvent pas être supprimés.',
+            protectedRole:
+              'Les rôles intégrés du thème ne peuvent pas être supprimés.',
             themeTokensMalformed:
               'Les mappings couleur enregistrés pour ce thème sont invalides et ne peuvent pas être modifiés en toute sécurité.',
             roleNotFound: 'Ce rôle personnalisé n’existe plus.',
