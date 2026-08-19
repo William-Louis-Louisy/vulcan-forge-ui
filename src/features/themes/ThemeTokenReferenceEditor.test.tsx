@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import type { ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { ThemeTokenReferenceEditor } from './ThemeTokenReferenceEditor';
 
@@ -56,12 +57,14 @@ function renderEditor({
   resolvedValue = '#f7f3eb',
   availableOptions = options,
   showNoOptionsMessage,
+  secondaryAction,
 }: {
   roleKey?: string;
   initialReferencePath?: string | null;
   resolvedValue?: string | null;
   availableOptions?: typeof options;
   showNoOptionsMessage?: boolean;
+  secondaryAction?: ReactNode;
 } = {}) {
   const optionalProps =
     showNoOptionsMessage === undefined ? {} : { showNoOptionsMessage };
@@ -76,6 +79,7 @@ function renderEditor({
       legacyDirectValue={null}
       resolvedValue={resolvedValue}
       options={availableOptions}
+      secondaryAction={secondaryAction}
       labels={labels}
       {...optionalProps}
     />,
@@ -134,6 +138,22 @@ describe('ThemeTokenReferenceEditor', () => {
     expect(customMappingRow).toBeInTheDocument();
     expect(customThemeRole).toHaveTextContent('border-subtle');
     expect(roleKeyInput).toHaveValue('border-subtle');
+  });
+
+  it('keeps a custom destructive action outside the mapping form', () => {
+    const { container } = renderEditor({
+      roleKey: 'border-subtle',
+      secondaryAction: <button type="button">Delete role</button>,
+    });
+    const mappingRow = container.querySelector(
+      '[data-theme-mapping-row="border-subtle"]',
+    );
+    const mappingForm = mappingRow?.querySelector('form');
+    const deleteButton = screen.getByRole('button', { name: 'Delete role' });
+
+    expect(mappingForm).toBeInTheDocument();
+    expect(mappingForm).not.toContainElement(deleteButton);
+    expect(deleteButton.closest('form')).toBeNull();
   });
 
   it('updates the selected token data and save state when another token is selected', async () => {
