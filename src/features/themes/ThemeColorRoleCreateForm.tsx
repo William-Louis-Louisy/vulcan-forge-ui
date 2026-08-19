@@ -127,7 +127,7 @@ export function ThemeColorRoleCreateForm({
           id={`${themeId}-new-theme-role-form`}
           action={formAction}
           onSubmitCapture={preserveSaveContext}
-          className="border-border-subtle bg-background-subtle mt-3 grid gap-4 rounded-md border p-3 lg:grid-cols-[minmax(10rem,0.8fr)_minmax(14rem,1.4fr)_auto] lg:items-end"
+          className="border-border-subtle bg-background-subtle mt-3 grid gap-3 rounded-md border p-3 lg:grid-cols-[minmax(10rem,0.8fr)_minmax(14rem,1.4fr)_auto] lg:items-end"
         >
           <input type="hidden" name="locale" value={locale} />
           <input type="hidden" name="projectSlug" value={projectSlug} />
@@ -156,12 +156,6 @@ export function ThemeColorRoleCreateForm({
               size="sm"
               className="mt-1"
             />
-            <p
-              id={roleKeyHintId}
-              className="text-content-tertiary mt-1 text-xs leading-5"
-            >
-              {labels.roleKeyHint}
-            </p>
           </div>
 
           <div className="min-w-0">
@@ -193,6 +187,13 @@ export function ThemeColorRoleCreateForm({
           >
             {isPending ? labels.submitting : labels.submit}
           </Button>
+
+          <p
+            id={roleKeyHintId}
+            className="text-content-tertiary text-xs leading-5 lg:col-span-3"
+          >
+            {labels.roleKeyHint}
+          </p>
 
           {state.formError ? (
             <p
