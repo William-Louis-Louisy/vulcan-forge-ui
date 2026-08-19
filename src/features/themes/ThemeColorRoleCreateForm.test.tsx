@@ -8,7 +8,7 @@ vi.mock('@/features/save-context/usePreserveSaveContext', () => ({
 }));
 
 vi.mock('./create-theme-color-role.action', () => ({
-  createThemeColorRoleAction: vi.fn(async (state) => state),
+  createThemeColorRoleAction: vi.fn(),
 }));
 
 const labels = {
