@@ -202,7 +202,7 @@ export default async function ExamplesPage() {
                 ))}
               </div>
 
-              <div className="border-border-on-inverse mt-6 grid gap-px border bg-border-on-inverse sm:grid-cols-3">
+              <div className="border-border-on-inverse bg-border-on-inverse mt-6 grid gap-px border sm:grid-cols-3">
                 <div className="bg-surface-inverse p-4">
                   <p className="text-content-on-inverse/45 text-[10px] font-semibold uppercase">
                     Source
@@ -227,7 +227,10 @@ export default async function ExamplesPage() {
         </div>
       </section>
 
-      <section id="workflow" className="scroll-mt-20 px-6 py-24 lg:px-8 lg:py-32">
+      <section
+        id="workflow"
+        className="scroll-mt-20 px-6 py-24 lg:px-8 lg:py-32"
+      >
         <div className="mx-auto max-w-7xl">
           <div className="max-w-4xl">
             <p className="text-action-accent text-xs font-semibold tracking-[0.2em] uppercase">
@@ -258,7 +261,7 @@ export default async function ExamplesPage() {
                     {t(`workflow.steps.${key}.description`)}
                   </p>
                   <div className="border-border-subtle mt-7 border-l pl-4">
-                    <p className="text-content-primary text-sm font-semibold leading-6">
+                    <p className="text-content-primary text-sm leading-6 font-semibold">
                       {t(`workflow.steps.${key}.insight`)}
                     </p>
                   </div>
@@ -286,7 +289,7 @@ export default async function ExamplesPage() {
                           </div>
                           <span className="bg-action-accent size-8 rounded-md" />
                         </div>
-                        <div className="grid gap-px bg-border-subtle sm:grid-cols-2">
+                        <div className="bg-border-subtle grid gap-px sm:grid-cols-2">
                           <div className="bg-surface-primary p-5">
                             <p className="text-content-tertiary text-[10px] font-semibold uppercase">
                               Value
@@ -309,8 +312,8 @@ export default async function ExamplesPage() {
                             Description
                           </p>
                           <p className="text-content-secondary mt-2 text-sm leading-6">
-                            Main warm brand color used for emphasized actions and
-                            selected states.
+                            Main warm brand color used for emphasized actions
+                            and selected states.
                           </p>
                         </div>
                       </div>
@@ -332,7 +335,9 @@ export default async function ExamplesPage() {
                           </div>
                           <div className="border-border-subtle mt-6 divide-y border-y">
                             <div className="grid grid-cols-[1fr_auto] gap-4 py-4">
-                              <code className="text-xs font-semibold">accent</code>
+                              <code className="text-xs font-semibold">
+                                accent
+                              </code>
                               <code className="text-content-secondary text-[11px]">
                                 {'{'}color.brand.600{'}'}
                               </code>
@@ -360,7 +365,9 @@ export default async function ExamplesPage() {
                           </div>
                           <div className="border-border-on-inverse mt-6 divide-y border-y">
                             <div className="grid grid-cols-[1fr_auto] gap-4 py-4">
-                              <code className="text-xs font-semibold">accent</code>
+                              <code className="text-xs font-semibold">
+                                accent
+                              </code>
                               <code className="text-content-on-inverse/65 text-[11px]">
                                 {'{'}color.brand.400{'}'}
                               </code>
@@ -398,22 +405,25 @@ export default async function ExamplesPage() {
                             </span>
                           </div>
                         </div>
-                        <div className="grid gap-px bg-border-subtle sm:grid-cols-[0.8fr_1.2fr]">
+                        <div className="bg-border-subtle grid gap-px sm:grid-cols-[0.8fr_1.2fr]">
                           <div className="bg-surface-primary p-5">
                             <p className="text-content-tertiary text-[10px] font-semibold uppercase">
                               States
                             </p>
                             <div className="mt-4 flex flex-wrap gap-2">
-                              {['default', 'hover', 'focusVisible', 'disabled'].map(
-                                (state) => (
-                                  <span
-                                    key={state}
-                                    className="border-border-subtle border px-2 py-1 font-mono text-[10px]"
-                                  >
-                                    {state}
-                                  </span>
-                                ),
-                              )}
+                              {[
+                                'default',
+                                'hover',
+                                'focusVisible',
+                                'disabled',
+                              ].map((state) => (
+                                <span
+                                  key={state}
+                                  className="border-border-subtle border px-2 py-1 font-mono text-[10px]"
+                                >
+                                  {state}
+                                </span>
+                              ))}
                             </div>
                           </div>
                           <div className="bg-surface-primary p-5">
@@ -502,7 +512,8 @@ export default async function ExamplesPage() {
                             ))}
                           </div>
                           <p className="border-border-subtle text-content-tertiary mt-6 border-t pt-4 text-xs leading-5">
-                            Manual keyboard and screen-reader review stays explicit.
+                            Manual keyboard and screen-reader review stays
+                            explicit.
                           </p>
                         </div>
                       </div>
@@ -698,7 +709,7 @@ export default async function ExamplesPage() {
             </p>
           </div>
 
-          <div className="border-border-on-inverse mt-12 grid gap-px border bg-border-on-inverse sm:grid-cols-2 lg:grid-cols-6">
+          <div className="border-border-on-inverse bg-border-on-inverse mt-12 grid gap-px border sm:grid-cols-2 lg:grid-cols-6">
             {exportFormats.map((format, index) => (
               <article
                 key={format.key}
@@ -744,9 +755,7 @@ export default async function ExamplesPage() {
             size="lg"
             className="shrink-0 gap-2"
           >
-            {isAuthenticated
-              ? t('finalCta.dashboardCta')
-              : t('finalCta.cta')}
+            {isAuthenticated ? t('finalCta.dashboardCta') : t('finalCta.cta')}
             <ArrowRightIcon aria-hidden="true" size={16} weight="bold" />
           </PublicButtonLink>
         </div>
