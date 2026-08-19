@@ -55,7 +55,9 @@ describe('ThemeColorRoleDeleteControl', () => {
     expect(
       screen.getByRole('dialog', { name: 'Delete border-subtle?' }),
     ).toBeInTheDocument();
-    expect(screen.getByText(labels.confirmationDescription)).toBeInTheDocument();
+    expect(
+      screen.getByText(labels.confirmationDescription),
+    ).toBeInTheDocument();
     expect(container.querySelector('input[name="themeId"]')).toHaveValue(
       'light-theme',
     );
