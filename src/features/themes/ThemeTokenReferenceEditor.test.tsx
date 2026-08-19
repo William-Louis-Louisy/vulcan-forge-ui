@@ -123,16 +123,17 @@ describe('ThemeTokenReferenceEditor', () => {
       initialReferencePath: 'color.primitive.neutral.0',
       resolvedValue: '#ffffff',
     });
+    const customMappingRow = container.querySelector(
+      '[data-theme-mapping-row="border-subtle"]',
+    );
+    const customThemeRole = container.querySelector(
+      '[data-theme-role="border-subtle"]',
+    );
+    const roleKeyInput = container.querySelector('input[name="roleKey"]');
 
-    expect(
-      container.querySelector('[data-theme-mapping-row="border-subtle"]'),
-    ).toBeInTheDocument();
-    expect(
-      container.querySelector('[data-theme-role="border-subtle"]'),
-    ).toHaveTextContent('border-subtle');
-    expect(
-      container.querySelector('input[name="roleKey"]'),
-    ).toHaveValue('border-subtle');
+    expect(customMappingRow).toBeInTheDocument();
+    expect(customThemeRole).toHaveTextContent('border-subtle');
+    expect(roleKeyInput).toHaveValue('border-subtle');
   });
 
   it('updates the selected token data and save state when another token is selected', async () => {
