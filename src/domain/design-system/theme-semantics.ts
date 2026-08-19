@@ -176,9 +176,7 @@ export function isThemeColorKey(value: string): value is ThemeColorKey {
 }
 
 export function isCustomThemeColorRoleKey(value: string): boolean {
-  return (
-    themeRoleKeySchema.safeParse(value).success && !isThemeColorKey(value)
-  );
+  return themeRoleKeySchema.safeParse(value).success && !isThemeColorKey(value);
 }
 
 export function deleteThemeColorRole({
