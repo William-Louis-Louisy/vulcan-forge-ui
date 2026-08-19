@@ -19,10 +19,9 @@ describe('PublicFooter', () => {
       </NextIntlClientProvider>,
     );
 
-    expect(screen.getByRole('link', { name: 'Product example' })).toHaveAttribute(
-      'href',
-      '/examples',
-    );
+    expect(
+      screen.getByRole('link', { name: 'Product example' }),
+    ).toHaveAttribute('href', '/examples');
     expect(screen.getByRole('link', { name: 'Terms' })).toHaveAttribute(
       'href',
       '/terms',
