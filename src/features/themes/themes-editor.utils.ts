@@ -5,6 +5,7 @@ export {
   themeColorKeys,
   themeContrastPairDefinitions,
   isThemeColorKey,
+  isCustomThemeColorRoleKey,
   isThemeMode,
   sortThemesByMode,
   createThemeColorTokenOptions,
