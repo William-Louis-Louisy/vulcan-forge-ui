@@ -45,13 +45,29 @@ export function ThemeColorRoleCreateForm({
   options,
   labels,
 }: ThemeColorRoleCreateFormProps) {
-  const [state, formAction, isPending] = useActionState(
-    createThemeColorRoleAction,
-    initialCreateThemeColorRoleActionState,
-  );
   const [isOpen, setIsOpen] = useState(false);
   const [roleKey, setRoleKey] = useState('');
   const [selectedTokenPath, setSelectedTokenPath] = useState('');
+  const [state, formAction, isPending] = useActionState(
+    async (
+      previousState: CreateThemeColorRoleActionState,
+      formData: FormData,
+    ) => {
+      const nextState = await createThemeColorRoleAction(
+        previousState,
+        formData,
+      );
+
+      if (nextState.status === 'success') {
+        setRoleKey('');
+        setSelectedTokenPath('');
+        setIsOpen(false);
+      }
+
+      return nextState;
+    },
+    initialCreateThemeColorRoleActionState,
+  );
   const preserveSaveContext = usePreserveSaveContext(
     `theme-color-role-create:${projectSlug}:${themeId}`,
   );
