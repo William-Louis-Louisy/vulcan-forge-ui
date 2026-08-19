@@ -2,133 +2,142 @@ export const examplesPageMessages = {
   en: {
     ExamplesPage: {
       hero: {
-        eyebrow: 'Illustrative product example',
-        titleBefore: 'See a design system move from',
-        titleAccent: 'source decisions',
-        titleAfter: 'to implementation-ready output.',
+        eyebrow: 'Guided demo · Aurora System',
+        titleBefore: 'Change one decision.',
+        titleAccent: 'The whole system follows.',
         description:
-          'Aurora System shows how tokens, theme roles, component contracts, accessibility checks and exports stay connected inside one VulcanForge UI project.',
-        disclosure:
-          'Aurora System is a fictional product example created for this walkthrough. It is not customer data or a customer case study.',
-        primaryCta: 'Create your own system',
+          'VulcanForge UI does more than store tokens. It connects the decisions that make a design system usable: themes, component contracts, accessibility, documentation, exports and AI guidance.',
+        primaryCta: 'Build my system',
         dashboardCta: 'Open dashboard',
-        secondaryCta: 'Explore the workflow',
-      },
-      workflow: {
-        eyebrow: 'End-to-end workflow',
-        title: 'One project, five connected layers.',
-        description:
-          'The example follows the same product model from authored values to implementation assets, without turning each step into a separate source of truth.',
-        items: {
-          tokens: {
-            title: 'Tokens',
-            description:
-              'Define reusable color decisions and keep paths, values and intent together.',
+        secondaryCta: 'Follow the decision',
+        disclosure:
+          'Aurora System is a fictional project built specifically for this walkthrough.',
+        flow: {
+          token: {
+            label: 'Source decision',
+            caption: 'Named, typed and documented',
           },
-          themes: {
-            title: 'Themes',
-            description:
-              'Map semantic roles per mode, including project-specific roles such as border-subtle.',
+          theme: {
+            label: 'Meaning',
+            caption: 'Mapped to a theme role',
           },
-          components: {
-            title: 'Components',
-            description:
-              'Document anatomy, variants, states, token bindings and accessibility expectations.',
+          component: {
+            label: 'Usage',
+            caption: 'Bound to a component contract',
           },
           accessibility: {
-            title: 'Accessibility',
-            description:
-              'Evaluate resolved contrast pairs and keep automated findings separate from manual review.',
+            label: 'Check',
+            caption: 'Resolved before it ships',
           },
-          exports: {
-            title: 'Exports',
-            description:
-              'Generate implementation formats and AI guidance from the same structured project.',
+          delivery: {
+            label: 'Delivery',
+            caption: 'Generated from the same source',
           },
         },
       },
-      model: {
-        eyebrow: 'Structured source',
-        title: 'Decisions remain readable before they become code.',
+      workflow: {
+        eyebrow: 'The workflow',
+        title: 'Not five tools sitting next to each other. One chain of decisions.',
         description:
-          'Aurora keeps the authored token layer explicit, then maps those decisions into theme roles. The values below mirror the illustrative editor preview used across the public product surface.',
-        tokensTitle: 'Color tokens',
-        tokensDescription: 'A small excerpt from the example token set.',
-        tokenKinds: {
-          primitive: 'Primitive',
-          semantic: 'Semantic',
+          'Follow the same design decision as it moves through Aurora. Nothing is re-entered just to keep another document, export or prompt in sync.',
+        steps: {
+          token: {
+            kicker: '01 · Author',
+            title: 'Capture the decision, not just the value.',
+            description:
+              'A useful token carries a path, a type, a value and intent. That structure is what lets the rest of the system understand what the decision is for.',
+            insight: 'One source decision becomes reusable context.',
+          },
+          theme: {
+            kicker: '02 · Give it meaning',
+            title: 'Map the same decision to the role it plays.',
+            description:
+              'Themes reference authored tokens instead of copying raw values. Light and Dark can evolve independently, and project-specific roles stay explicit.',
+            insight: 'Roles preserve meaning while values can change.',
+          },
+          component: {
+            kicker: '03 · Connect usage',
+            title: 'Components become contracts, not screenshots.',
+            description:
+              'Variants, states, anatomy, token bindings and accessibility expectations live beside the component. A Button is no longer just how it looks today.',
+            insight: 'Implementation choices become part of the system.',
+          },
+          accessibility: {
+            kicker: '04 · Check the consequences',
+            title: 'Catch contradictions before they spread.',
+            description:
+              'Contrast checks use resolved theme values, while component contracts make requirements such as focus-visible states explicit. Automated checks stay separate from manual review.',
+            insight: 'Accessibility is connected to the decisions that affect it.',
+          },
+          delivery: {
+            kicker: '05 · Ship',
+            title: 'Export the system, not another frozen copy of it.',
+            description:
+              'CSS, Tailwind, TypeScript, React Native, Markdown and AI instructions are generated from the same structured project, so delivery starts from the same decisions.',
+            insight: 'Different outputs. One source of truth.',
+          },
         },
-        tokenPurposes: {
-          background: 'Application background',
-          surface: 'Primary surfaces',
-          content: 'Primary content',
-          accent: 'Brand accent',
-          border: 'Subtle separators',
-        },
-        rolesTitle: 'Theme role mapping',
-        rolesDescription:
-          'The Light theme references authored tokens instead of duplicating raw values.',
-        customRoleLabel: 'Custom role',
       },
-      contracts: {
-        eyebrow: 'Component contracts',
-        title: 'A component is more than a screenshot.',
+      differentiation: {
+        eyebrow: 'What changes',
+        title:
+          'The hard part is not generating more files. It is making sure they all tell the same story.',
         description:
-          'The example records the implementation decisions an engineer or AI agent needs to reuse the component without inventing a parallel system.',
-        labels: {
-          variants: 'Variants',
-          states: 'States',
-          bindings: 'Token bindings',
-          accessibility: 'Accessibility',
-        },
+          'VulcanForge UI is built around continuity. The interesting part is not any single editor; it is what becomes possible when each layer understands the others.',
         items: {
-          button: {
-            title: 'Button',
-            purpose: 'Primary interactive action with explicit visual states.',
-            accessibility: 'keyboard · visible focus · disabled state',
-            previewPrimary: 'Primary action',
-            previewSecondary: 'Secondary',
+          source: {
+            title: 'One structured source',
+            description:
+              'Documentation, exports and AI guidance read from the same project instead of being maintained as parallel artifacts.',
           },
-          alert: {
-            title: 'Alert',
-            purpose: 'Status feedback tied to semantic status colors.',
-            accessibility:
-              'semantic tone · readable content · no color-only meaning',
-            previewStatus: 'Success',
-            previewMessage: 'Export completed with the current project source.',
+          semantics: {
+            title: 'Meaning before implementation',
+            description:
+              'Theme roles keep intent visible, so a component binds to “accent” or “content” instead of scattering raw colors through the product.',
+          },
+          contracts: {
+            title: 'Component contracts',
+            description:
+              'States, variants, anatomy and bindings make the implementation rules explicit enough for humans and tools to reuse them.',
+          },
+          accessibility: {
+            title: 'Accessibility in the data model',
+            description:
+              'Resolved contrast and component requirements can be checked where the underlying design decisions already live.',
+          },
+          ai: {
+            title: 'AI guidance derived from the system',
+            description:
+              'Instead of rewriting the design system inside every prompt, generate instructions from the same source developers are already using.',
           },
         },
       },
-      accessibility: {
-        eyebrow: 'Accessibility as source data',
-        title: 'Checks stay attached to the decisions that created them.',
+      drift: {
+        eyebrow: 'Why it matters',
+        title: 'Every manual copy is another place for the system to drift.',
         description:
-          'VulcanForge UI evaluates what can be derived from the structured project while keeping manual accessibility responsibilities explicit.',
-        checks: {
-          contrast: {
-            title: 'Resolved contrast pairs',
-            description:
-              'Theme foreground and background roles are evaluated from their resolved color values.',
-          },
-          focus: {
-            title: 'Interactive state coverage',
-            description:
-              'Contracts can make focusVisible and other expected component states explicit.',
-          },
-          manual: {
-            title: 'Manual review remains visible',
-            description:
-              'Automated checks do not pretend to replace keyboard, screen-reader or contextual review.',
-          },
+          'A token file, a wiki page, a component note and an AI prompt can all be correct on day one and disagree a week later. VulcanForge UI reduces the number of places where the same decision has to be rewritten.',
+        scatteredTitle: 'When decisions are scattered',
+        connectedTitle: 'When decisions stay connected',
+        scatteredItems: {
+          token: 'Token value changes',
+          docs: 'Documentation still shows the old rule',
+          component: 'A component keeps a hard-coded exception',
+          ai: 'The next AI prompt invents a different answer',
         },
-        disclosure:
-          'This public walkthrough demonstrates the workflow; it is not presenting a persisted customer accessibility report.',
+        connectedItems: {
+          source: 'Change the source decision',
+          theme: 'Theme references resolve the new value',
+          component: 'Bindings keep usage explicit',
+          outputs: 'Docs, exports and AI guidance regenerate from the project',
+        },
+        note: 'No magic sync layer. Just fewer decisions copied by hand.',
       },
       delivery: {
-        eyebrow: 'Delivery',
-        title: 'One source, six implementation outputs.',
+        eyebrow: 'One source · multiple consumers',
+        title: 'The same system can leave the product in the format your stack needs.',
         description:
-          'Aurora can leave the product in the formats already available during the beta, with documentation and AI instructions generated beside code-oriented exports.',
+          'Code-oriented exports, documentation and AI guidance are different views of the same structured project.',
         formatLabels: {
           css: 'CSS variables',
           tailwind: 'Tailwind v4',
@@ -139,10 +148,11 @@ export const examplesPageMessages = {
         },
       },
       finalCta: {
-        title: 'Build the version that belongs to your product.',
+        eyebrow: 'Your turn',
+        title: 'Turn your design system into infrastructure, not a folder of notes.',
         description:
-          'Start from your own tokens and decisions. The beta is free and billing is not enabled.',
-        cta: 'Start a design system',
+          'Start with the decisions you already have. VulcanForge UI gives them a structure the rest of your product can actually use.',
+        cta: 'Build my design system',
         dashboardCta: 'Open dashboard',
       },
     },
@@ -150,135 +160,142 @@ export const examplesPageMessages = {
   fr: {
     ExamplesPage: {
       hero: {
-        eyebrow: 'Exemple produit illustratif',
-        titleBefore: 'Voyez un design system passer de',
-        titleAccent: 'décisions sources',
-        titleAfter: 'à des livrables prêts à implémenter.',
+        eyebrow: 'Démo guidée · Aurora System',
+        titleBefore: 'Une décision change.',
+        titleAccent: 'Tout le système suit.',
         description:
-          'Aurora System montre comment les tokens, les rôles de thème, les contrats de composants, les contrôles d’accessibilité et les exports restent reliés dans un seul projet VulcanForge UI.',
-        disclosure:
-          'Aurora System est un exemple produit fictif créé pour cette démonstration. Il ne s’agit ni de données client ni d’une étude de cas client.',
-        primaryCta: 'Créer votre propre système',
+          'VulcanForge UI ne sert pas seulement à stocker des tokens. Il relie les décisions qui font vivre un design system : thèmes, contrats de composants, accessibilité, documentation, exports et consignes pour l’IA.',
+        primaryCta: 'Créer mon système',
         dashboardCta: 'Ouvrir le tableau de bord',
-        secondaryCta: 'Explorer le workflow',
-      },
-      workflow: {
-        eyebrow: 'Workflow de bout en bout',
-        title: 'Un projet, cinq couches connectées.',
-        description:
-          'L’exemple suit le même modèle produit depuis les valeurs créées jusqu’aux ressources d’implémentation, sans transformer chaque étape en une nouvelle source de vérité.',
-        items: {
-          tokens: {
-            title: 'Tokens',
-            description:
-              'Définissez des décisions couleur réutilisables et conservez chemins, valeurs et intention ensemble.',
+        secondaryCta: 'Suivre la décision',
+        disclosure:
+          'Aurora System est un projet fictif créé spécialement pour cette démonstration.',
+        flow: {
+          token: {
+            label: 'Décision source',
+            caption: 'Nommée, typée et documentée',
           },
-          themes: {
-            title: 'Thèmes',
-            description:
-              'Mappez les rôles sémantiques par mode, y compris des rôles propres au projet comme border-subtle.',
+          theme: {
+            label: 'Sens',
+            caption: 'Associée à un rôle de thème',
           },
-          components: {
-            title: 'Composants',
-            description:
-              'Documentez anatomie, variantes, états, bindings de tokens et attentes d’accessibilité.',
+          component: {
+            label: 'Usage',
+            caption: 'Branchée sur un contrat de composant',
           },
           accessibility: {
-            title: 'Accessibilité',
-            description:
-              'Évaluez les contrastes résolus et distinguez les constats automatisés de la revue manuelle.',
+            label: 'Contrôle',
+            caption: 'Vérifiée avant la livraison',
           },
-          exports: {
-            title: 'Exports',
-            description:
-              'Générez des formats d’implémentation et des consignes IA depuis le même projet structuré.',
+          delivery: {
+            label: 'Livraison',
+            caption: 'Générée depuis la même source',
           },
         },
       },
-      model: {
-        eyebrow: 'Source structurée',
-        title: 'Les décisions restent lisibles avant de devenir du code.',
+      workflow: {
+        eyebrow: 'Le workflow',
+        title: 'Pas cinq outils posés côte à côte. Une seule chaîne de décisions.',
         description:
-          'Aurora garde la couche de tokens explicite puis mappe ces décisions vers les rôles de thème. Les valeurs ci-dessous reprennent l’aperçu illustratif de l’éditeur utilisé sur la surface publique du produit.',
-        tokensTitle: 'Tokens couleur',
-        tokensDescription: 'Un petit extrait du jeu de tokens de l’exemple.',
-        tokenKinds: {
-          primitive: 'Primitive',
-          semantic: 'Sémantique',
+          'Suivez la même décision à travers Aurora. Rien n’est ressaisi juste pour maintenir un autre document, un export ou un prompt à jour.',
+        steps: {
+          token: {
+            kicker: '01 · Créer',
+            title: 'Capturez la décision, pas seulement la valeur.',
+            description:
+              'Un token utile ne se résume pas à un hexadécimal. Il porte un chemin, un type, une valeur et une intention. C’est cette structure qui permet au reste du système de comprendre à quoi il sert.',
+            insight: 'Une décision source devient un contexte réutilisable.',
+          },
+          theme: {
+            kicker: '02 · Donner du sens',
+            title: 'Associez la décision au rôle qu’elle joue.',
+            description:
+              'Les thèmes référencent les tokens au lieu de recopier leurs valeurs. Light et Dark peuvent évoluer séparément, et les rôles propres au projet restent visibles et assumés.',
+            insight: 'Le rôle garde le sens, même quand la valeur change.',
+          },
+          component: {
+            kicker: '03 · Relier les usages',
+            title: 'Un composant devient un contrat, pas une capture d’écran.',
+            description:
+              'Variantes, états, anatomie, bindings de tokens et attentes d’accessibilité vivent avec le composant. Un Button ne se résume plus à son apparence du moment.',
+            insight: 'Les choix d’implémentation font enfin partie du système.',
+          },
+          accessibility: {
+            kicker: '04 · Mesurer les conséquences',
+            title: 'Repérez les contradictions avant qu’elles se propagent.',
+            description:
+              'Les contrastes sont calculés à partir des valeurs réellement résolues dans les thèmes. Les contrats de composants rendent aussi explicites des exigences comme le focus visible, sans confondre contrôles automatiques et revue humaine.',
+            insight: 'L’accessibilité reste liée aux décisions qui l’impactent.',
+          },
+          delivery: {
+            kicker: '05 · Livrer',
+            title: 'Exportez le système, pas une nouvelle copie figée.',
+            description:
+              'CSS, Tailwind, TypeScript, React Native, Markdown et instructions IA partent du même projet structuré. Chaque sortie raconte donc la même version du système.',
+            insight: 'Des formats différents. Une seule source de vérité.',
+          },
         },
-        tokenPurposes: {
-          background: 'Arrière-plan de l’application',
-          surface: 'Surfaces principales',
-          content: 'Contenu principal',
-          accent: 'Accent de marque',
-          border: 'Séparateurs discrets',
-        },
-        rolesTitle: 'Mapping des rôles du thème',
-        rolesDescription:
-          'Le thème Light référence les tokens créés au lieu de dupliquer leurs valeurs brutes.',
-        customRoleLabel: 'Rôle personnalisé',
       },
-      contracts: {
-        eyebrow: 'Contrats de composants',
-        title: 'Un composant est plus qu’une capture d’écran.',
+      differentiation: {
+        eyebrow: 'Ce qui change vraiment',
+        title:
+          'Le plus difficile n’est pas de générer plus de fichiers. C’est qu’ils racontent tous la même chose.',
         description:
-          'L’exemple enregistre les décisions d’implémentation dont un développeur ou un agent IA a besoin pour réutiliser le composant sans inventer un système parallèle.',
-        labels: {
-          variants: 'Variantes',
-          states: 'États',
-          bindings: 'Bindings de tokens',
-          accessibility: 'Accessibilité',
-        },
+          'VulcanForge UI est construit autour de cette continuité. L’intérêt n’est pas dans un éditeur pris isolément, mais dans ce qui devient possible quand chaque couche comprend les autres.',
         items: {
-          button: {
-            title: 'Button',
-            purpose:
-              'Action interactive principale avec des états visuels explicites.',
-            accessibility: 'clavier · focus visible · état disabled',
-            previewPrimary: 'Action principale',
-            previewSecondary: 'Secondaire',
+          source: {
+            title: 'Une source structurée',
+            description:
+              'La documentation, les exports et les consignes IA lisent le même projet au lieu d’être entretenus comme trois artefacts parallèles.',
           },
-          alert: {
-            title: 'Alert',
-            purpose:
-              'Retour de statut relié aux couleurs sémantiques de statut.',
-            accessibility:
-              'ton sémantique · contenu lisible · aucune information transmise uniquement par la couleur',
-            previewStatus: 'Succès',
-            previewMessage: 'Export terminé avec la source actuelle du projet.',
+          semantics: {
+            title: 'Le sens avant l’implémentation',
+            description:
+              'Les rôles de thème gardent l’intention visible : un composant dépend de « accent » ou « content », pas d’une couleur brute disséminée partout.',
+          },
+          contracts: {
+            title: 'Des composants décrits comme des contrats',
+            description:
+              'États, variantes, anatomie et bindings rendent les règles assez explicites pour être réutilisées aussi bien par un développeur que par un outil.',
+          },
+          accessibility: {
+            title: 'L’accessibilité dans le modèle de données',
+            description:
+              'Les contrastes résolus et les exigences des composants peuvent être contrôlés là où vivent déjà les décisions qui les influencent.',
+          },
+          ai: {
+            title: 'Des consignes IA dérivées du système',
+            description:
+              'Au lieu de réexpliquer le design system dans chaque prompt, les instructions sont générées depuis la même source que celle utilisée par les développeurs.',
           },
         },
       },
-      accessibility: {
-        eyebrow: 'L’accessibilité comme donnée source',
-        title: 'Les contrôles restent liés aux décisions qui les ont produits.',
+      drift: {
+        eyebrow: 'Pourquoi ça compte',
+        title: 'Chaque copie manuelle est un nouvel endroit où le système peut dériver.',
         description:
-          'VulcanForge UI évalue ce qui peut être déduit du projet structuré tout en laissant explicites les responsabilités d’accessibilité qui nécessitent une revue humaine.',
-        checks: {
-          contrast: {
-            title: 'Paires de contraste résolues',
-            description:
-              'Les rôles de premier plan et d’arrière-plan du thème sont évalués depuis leurs valeurs couleur résolues.',
-          },
-          focus: {
-            title: 'Couverture des états interactifs',
-            description:
-              'Les contrats peuvent rendre explicites focusVisible et les autres états attendus des composants.',
-          },
-          manual: {
-            title: 'La revue manuelle reste visible',
-            description:
-              'Les contrôles automatisés ne prétendent pas remplacer les tests clavier, lecteur d’écran ou contextuels.',
-          },
+          'Un fichier de tokens, une page de documentation, une note sur un composant et un prompt peuvent être parfaitement cohérents aujourd’hui, puis se contredire une semaine plus tard. VulcanForge UI réduit le nombre d’endroits où la même décision doit être recopiée.',
+        scatteredTitle: 'Quand les décisions sont dispersées',
+        connectedTitle: 'Quand les décisions restent reliées',
+        scatteredItems: {
+          token: 'La valeur d’un token change',
+          docs: 'La documentation affiche encore l’ancienne règle',
+          component: 'Un composant garde une exception en dur',
+          ai: 'Le prochain prompt IA invente une autre réponse',
         },
-        disclosure:
-          'Cette démonstration publique illustre le workflow ; elle ne présente pas le rapport d’accessibilité persistant d’un client.',
+        connectedItems: {
+          source: 'La décision source change',
+          theme: 'Les références de thème résolvent la nouvelle valeur',
+          component: 'Les bindings gardent l’usage explicite',
+          outputs: 'Docs, exports et consignes IA repartent du projet',
+        },
+        note: 'Pas de synchronisation magique. Juste moins de décisions recopiées à la main.',
       },
       delivery: {
-        eyebrow: 'Livraison',
-        title: 'Une source, six sorties d’implémentation.',
+        eyebrow: 'Une source · plusieurs usages',
+        title: 'Le même système peut sortir dans le format dont votre stack a besoin.',
         description:
-          'Aurora peut sortir du produit dans les formats déjà disponibles pendant la bêta, avec documentation et instructions IA aux côtés des exports orientés code.',
+          'Les exports orientés code, la documentation et les consignes IA ne sont que des vues différentes du même projet structuré.',
         formatLabels: {
           css: 'Variables CSS',
           tailwind: 'Tailwind v4',
@@ -289,10 +306,11 @@ export const examplesPageMessages = {
         },
       },
       finalCta: {
-        title: 'Construisez la version qui appartient à votre produit.',
+        eyebrow: 'À vous',
+        title: 'Faites de votre design system une infrastructure, pas un dossier de notes.',
         description:
-          'Partez de vos propres tokens et décisions. La bêta est gratuite et aucune facturation n’est activée.',
-        cta: 'Créer un design system',
+          'Partez des décisions que vous avez déjà. VulcanForge UI leur donne une structure que le reste de votre produit peut réellement exploiter.',
+        cta: 'Construire mon design system',
         dashboardCta: 'Ouvrir le tableau de bord',
       },
     },
