@@ -117,7 +117,7 @@ describe('theme role authoring', () => {
     );
   });
 
-  it('rejects updates for roles that are not authored on the selected theme', () => {
+  it('can set a valid role that is still missing from a legacy theme', () => {
     expect(
       updateThemeColorRoleReference({
         tokens: {
@@ -125,12 +125,19 @@ describe('theme role authoring', () => {
             background: '{color.semantic.background}',
           },
         },
-        roleKey: 'border-subtle',
-        tokenPath: 'color.semantic.border.subtle',
+        roleKey: 'info',
+        tokenPath: 'color.semantic.status.info.light',
       }),
-    ).toEqual({
-      status: 'error',
-      error: 'roleNotFound',
+    ).toMatchObject({
+      status: 'success',
+      roleKey: 'info',
+      tokenReference: '{color.semantic.status.info.light}',
+      tokens: {
+        color: {
+          background: '{color.semantic.background}',
+          info: '{color.semantic.status.info.light}',
+        },
+      },
     });
   });
 
