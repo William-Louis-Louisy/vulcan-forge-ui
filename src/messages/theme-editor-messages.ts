@@ -50,7 +50,8 @@ export const themeEditorMessages = {
             invalidTokenPath: 'The selected token path is invalid.',
             themeTokensMalformed:
               'The stored theme color mappings are malformed and cannot be edited safely.',
-            roleAlreadyExists: 'This role already exists in the selected theme.',
+            roleAlreadyExists:
+              'This role already exists in the selected theme.',
             unexpected: 'The role could not be added. Please try again.',
           },
         },
@@ -134,7 +135,8 @@ export const themeEditorMessages = {
           added: 'Rôle ajouté.',
           errors: {
             unauthorized: 'Vous n’êtes pas autorisé à modifier ce thème.',
-            invalidPayload: 'Le formulaire du rôle contient des données invalides.',
+            invalidPayload:
+              'Le formulaire du rôle contient des données invalides.',
             themeNotFound: 'Ce thème est introuvable.',
             invalidTokenReference:
               'Sélectionnez un token couleur résolu en valeur HEX valide.',
