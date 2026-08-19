@@ -59,7 +59,7 @@ function renderForm(availableOptions = options) {
 }
 
 describe('ThemeColorRoleCreateForm', () => {
-  it('reveals a scoped role form and enables submission after both fields are set', async () => {
+  it('reveals aligned controls and enables submission after both fields are set', async () => {
     const user = userEvent.setup();
     const { container } = renderForm();
     const toggle = screen.getByRole('button', { name: 'Add role' });
@@ -74,7 +74,15 @@ describe('ThemeColorRoleCreateForm', () => {
       'true',
     );
 
-    await user.type(screen.getByLabelText('Role key'), 'border-subtle');
+    const form = container.querySelector('#light-theme-new-theme-role-form');
+    const roleKeyInput = screen.getByLabelText('Role key');
+    const roleKeyHint = screen.getByText(labels.roleKeyHint);
+
+    expect(form).toHaveClass('lg:items-end');
+    expect(roleKeyHint).toHaveClass('lg:col-span-3');
+    expect(roleKeyInput.parentElement).not.toContainElement(roleKeyHint);
+
+    await user.type(roleKeyInput, 'border-subtle');
     const tokenSelect = screen.getByRole('combobox', { name: 'Color token' });
     await user.click(tokenSelect);
     await user.click(
