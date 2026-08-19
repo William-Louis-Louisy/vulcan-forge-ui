@@ -28,6 +28,9 @@ const labels = {
     invalidPayload: 'Invalid payload',
     themeNotFound: 'Theme not found',
     invalidTokenReference: 'Invalid token reference',
+    invalidRoleKey: 'Invalid role key',
+    invalidTokenPath: 'Invalid token path',
+    themeTokensMalformed: 'Malformed theme tokens',
     unexpected: 'Unexpected error',
   },
 };
@@ -48,11 +51,13 @@ const options = [
 ];
 
 function renderEditor({
+  roleKey = 'background',
   initialReferencePath = 'color.semantic.background.app',
   resolvedValue = '#f7f3eb',
   availableOptions = options,
   showNoOptionsMessage,
 }: {
+  roleKey?: string;
   initialReferencePath?: string | null;
   resolvedValue?: string | null;
   availableOptions?: typeof options;
@@ -66,7 +71,7 @@ function renderEditor({
       locale="en"
       projectSlug="forge"
       themeId="light-theme"
-      colorKey="background"
+      roleKey={roleKey}
       initialReferencePath={initialReferencePath}
       legacyDirectValue={null}
       resolvedValue={resolvedValue}
@@ -110,6 +115,24 @@ describe('ThemeTokenReferenceEditor', () => {
     ).not.toBeInTheDocument();
     expect(screen.getByText('Saved')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Save mapping' })).toBeDisabled();
+  });
+
+  it('renders authored custom role keys through the same mapping control', () => {
+    const { container } = renderEditor({
+      roleKey: 'border-subtle',
+      initialReferencePath: 'color.primitive.neutral.0',
+      resolvedValue: '#ffffff',
+    });
+
+    expect(
+      container.querySelector('[data-theme-mapping-row="border-subtle"]'),
+    ).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-theme-role="border-subtle"]'),
+    ).toHaveTextContent('border-subtle');
+    expect(
+      container.querySelector('input[name="roleKey"]'),
+    ).toHaveValue('border-subtle');
   });
 
   it('updates the selected token data and save state when another token is selected', async () => {
