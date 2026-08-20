@@ -48,6 +48,8 @@ const differentiatorKeys = [
   'ai',
 ] as const;
 
+const accessibilityDemoCheckKeys = ['focus', 'foreground', 'status'] as const;
+const aiRuleKeys = ['tokens', 'components', 'accessibility', 'reuse'] as const;
 const scatteredKeys = ['token', 'docs', 'component', 'ai'] as const;
 const connectedKeys = ['source', 'theme', 'component', 'outputs'] as const;
 
@@ -114,20 +116,10 @@ export default async function ExamplesPage() {
               {t('hero.description')}
             </p>
 
-            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-10">
               <PublicButtonLink href="#workflow" size="lg" className="gap-2">
                 {t('hero.secondaryCta')}
                 <ArrowRightIcon aria-hidden="true" size={16} weight="bold" />
-              </PublicButtonLink>
-              <PublicButtonLink
-                href={primaryHref}
-                variant="secondary"
-                size="lg"
-                className="border-border-on-inverse bg-surface-primary/5 text-content-on-inverse hover:bg-surface-primary/10"
-              >
-                {isAuthenticated
-                  ? t('hero.dashboardCta')
-                  : t('hero.primaryCta')}
               </PublicButtonLink>
             </div>
 
@@ -147,10 +139,10 @@ export default async function ExamplesPage() {
               <div className="border-border-on-inverse flex flex-wrap items-center justify-between gap-4 border-b pb-5">
                 <div>
                   <p className="text-content-on-inverse/45 font-mono text-[10px] tracking-[0.16em] uppercase">
-                    Aurora System
+                    {t('demo.projectLabel')}
                   </p>
                   <p className="mt-1 text-sm font-semibold">
-                    color.brand.600 → delivery
+                    color.brand.600 → {t('demo.deliveryLabel')}
                   </p>
                 </div>
                 <div className="border-border-on-inverse bg-surface-primary/5 flex items-center gap-2 border px-2.5 py-1.5 text-[11px] font-semibold">
@@ -158,7 +150,7 @@ export default async function ExamplesPage() {
                     aria-hidden="true"
                     className="bg-action-success size-1.5 rounded-full"
                   />
-                  5 connected layers
+                  {t('demo.connectedLayers')}
                 </div>
               </div>
 
@@ -205,21 +197,21 @@ export default async function ExamplesPage() {
               <div className="border-border-on-inverse bg-border-on-inverse mt-6 grid gap-px border sm:grid-cols-3">
                 <div className="bg-surface-inverse p-4">
                   <p className="text-content-on-inverse/45 text-[10px] font-semibold uppercase">
-                    Source
+                    {t('demo.source')}
                   </p>
                   <p className="mt-2 font-mono text-xs">#A94E2F</p>
                 </div>
                 <div className="bg-surface-inverse p-4">
                   <p className="text-content-on-inverse/45 text-[10px] font-semibold uppercase">
-                    Resolved contrast
+                    {t('demo.resolvedContrast')}
                   </p>
                   <p className="mt-2 font-mono text-xs">5.50:1 · AA</p>
                 </div>
                 <div className="bg-surface-inverse p-4">
                   <p className="text-content-on-inverse/45 text-[10px] font-semibold uppercase">
-                    Outputs
+                    {t('demo.outputs')}
                   </p>
-                  <p className="mt-2 font-mono text-xs">6 formats</p>
+                  <p className="mt-2 font-mono text-xs">{t('demo.formats')}</p>
                 </div>
               </div>
             </div>
@@ -284,7 +276,7 @@ export default async function ExamplesPage() {
                               color.brand.600
                             </p>
                             <p className="text-content-tertiary mt-1 text-[11px]">
-                              Primitive · Color
+                              {t('demo.primitiveColor')}
                             </p>
                           </div>
                           <span className="bg-action-accent size-8 rounded-md" />
@@ -292,7 +284,7 @@ export default async function ExamplesPage() {
                         <div className="bg-border-subtle grid gap-px sm:grid-cols-2">
                           <div className="bg-surface-primary p-5">
                             <p className="text-content-tertiary text-[10px] font-semibold uppercase">
-                              Value
+                              {t('demo.value')}
                             </p>
                             <p className="mt-3 font-mono text-lg font-semibold">
                               #A94E2F
@@ -300,20 +292,19 @@ export default async function ExamplesPage() {
                           </div>
                           <div className="bg-surface-primary p-5">
                             <p className="text-content-tertiary text-[10px] font-semibold uppercase">
-                              Intent
+                              {t('demo.intent')}
                             </p>
                             <p className="mt-3 text-sm font-semibold">
-                              Primary brand action
+                              {t('demo.primaryBrandAction')}
                             </p>
                           </div>
                         </div>
                         <div className="border-border-subtle border-t p-5">
                           <p className="text-content-tertiary text-[10px] font-semibold uppercase">
-                            Description
+                            {t('demo.description')}
                           </p>
                           <p className="text-content-secondary mt-2 text-sm leading-6">
-                            Main warm brand color used for emphasized actions
-                            and selected states.
+                            {t('demo.tokenDescription')}
                           </p>
                         </div>
                       </div>
@@ -328,7 +319,7 @@ export default async function ExamplesPage() {
                             <div>
                               <p className="text-xs font-semibold">Light</p>
                               <p className="text-content-tertiary mt-1 text-[11px]">
-                                Active theme
+                                {t('demo.activeTheme')}
                               </p>
                             </div>
                             <span className="bg-background-app border-border-default size-7 rounded-full border" />
@@ -358,7 +349,7 @@ export default async function ExamplesPage() {
                             <div>
                               <p className="text-xs font-semibold">Dark</p>
                               <p className="text-content-on-inverse/50 mt-1 text-[11px]">
-                                Independent mapping
+                                {t('demo.independentMapping')}
                               </p>
                             </div>
                             <span className="border-border-on-inverse bg-surface-inverse size-7 rounded-full border" />
@@ -393,7 +384,7 @@ export default async function ExamplesPage() {
                           <div>
                             <p className="text-lg font-semibold">Button</p>
                             <p className="text-content-tertiary mt-1 text-xs">
-                              Interactive component contract
+                              {t('demo.componentContract')}
                             </p>
                           </div>
                           <div className="flex gap-2">
@@ -408,7 +399,7 @@ export default async function ExamplesPage() {
                         <div className="bg-border-subtle grid gap-px sm:grid-cols-[0.8fr_1.2fr]">
                           <div className="bg-surface-primary p-5">
                             <p className="text-content-tertiary text-[10px] font-semibold uppercase">
-                              States
+                              {t('demo.states')}
                             </p>
                             <div className="mt-4 flex flex-wrap gap-2">
                               {[
@@ -428,7 +419,7 @@ export default async function ExamplesPage() {
                           </div>
                           <div className="bg-surface-primary p-5">
                             <p className="text-content-tertiary text-[10px] font-semibold uppercase">
-                              Token bindings
+                              {t('demo.tokenBindings')}
                             </p>
                             <div className="mt-4 space-y-3 font-mono text-[11px]">
                               <div className="flex justify-between gap-4">
@@ -454,7 +445,7 @@ export default async function ExamplesPage() {
                         </div>
                         <div className="border-border-subtle flex items-center justify-center border-t p-8">
                           <span className="bg-action-primary text-action-primary-content rounded-md px-5 py-3 text-sm font-semibold">
-                            Primary action
+                            {t('demo.primaryAction')}
                           </span>
                         </div>
                       </div>
@@ -467,7 +458,7 @@ export default async function ExamplesPage() {
                         <div className="bg-surface-inverse text-content-on-inverse border-border-strong flex min-h-64 flex-col justify-between border p-6">
                           <div>
                             <p className="text-content-on-inverse/50 text-[10px] font-semibold uppercase">
-                              Resolved contrast
+                              {t('demo.resolvedContrast')}
                             </p>
                             <p className="font-display mt-5 text-6xl font-semibold tracking-[-0.05em]">
                               5.50
@@ -489,15 +480,11 @@ export default async function ExamplesPage() {
 
                         <div className="border-border-strong bg-surface-primary border p-6">
                           <p className="text-content-tertiary text-[10px] font-semibold uppercase">
-                            Contract checks
+                            {t('demo.contractChecks')}
                           </p>
                           <div className="mt-5 space-y-4">
-                            {[
-                              'focusVisible state documented',
-                              'Foreground and background resolve',
-                              'Status meaning is not color-only',
-                            ].map((item) => (
-                              <div key={item} className="flex gap-3">
+                            {accessibilityDemoCheckKeys.map((key) => (
+                              <div key={key} className="flex gap-3">
                                 <span className="bg-action-success/10 text-action-success mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full">
                                   <CheckIcon
                                     aria-hidden="true"
@@ -506,14 +493,13 @@ export default async function ExamplesPage() {
                                   />
                                 </span>
                                 <p className="text-content-secondary text-sm leading-6">
-                                  {item}
+                                  {t(`demo.checks.${key}`)}
                                 </p>
                               </div>
                             ))}
                           </div>
                           <p className="border-border-subtle text-content-tertiary mt-6 border-t pt-4 text-xs leading-5">
-                            Manual keyboard and screen-reader review stays
-                            explicit.
+                            {t('demo.manualReview')}
                           </p>
                         </div>
                       </div>
@@ -539,7 +525,7 @@ export default async function ExamplesPage() {
 
                         <div className="border-border-strong bg-surface-primary border p-5">
                           <p className="text-content-tertiary text-[10px] font-semibold uppercase">
-                            Generated from project
+                            {t('demo.generatedFromProject')}
                           </p>
                           <div className="mt-5 space-y-2">
                             {exportFormats.map((format) => (
@@ -611,6 +597,82 @@ export default async function ExamplesPage() {
         </div>
       </section>
 
+      <section className="bg-surface-inverse text-content-on-inverse relative overflow-hidden px-6 py-24 lg:px-8 lg:py-32">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-20"
+          style={gridStyle}
+        />
+        <div className="relative mx-auto grid max-w-7xl gap-14 lg:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)] lg:items-center lg:gap-20">
+          <div className="max-w-2xl">
+            <p className="text-action-accent text-xs font-semibold tracking-[0.2em] uppercase">
+              {t('aiDevelopment.eyebrow')}
+            </p>
+            <h2 className="font-display mt-5 text-4xl leading-[1.04] font-semibold tracking-[-0.04em] text-balance sm:text-5xl lg:text-6xl">
+              {t('aiDevelopment.title')}
+            </h2>
+            <p className="text-content-on-inverse/70 mt-6 text-lg leading-8">
+              {t('aiDevelopment.description')}
+            </p>
+            <p className="border-border-on-inverse text-content-on-inverse/50 mt-8 border-l pl-4 text-xs leading-6">
+              {t('aiDevelopment.boundary')}
+            </p>
+          </div>
+
+          <div className="border-border-on-inverse bg-surface-inverse relative border">
+            <div className="border-border-on-inverse flex flex-wrap items-center justify-between gap-4 border-b px-5 py-4 sm:px-6">
+              <div>
+                <p className="text-content-on-inverse/45 text-[10px] font-semibold tracking-[0.14em] uppercase">
+                  {t('aiDevelopment.contextLabel')}
+                </p>
+                <p className="mt-1 font-mono text-sm font-semibold">
+                  {t('aiDevelopment.rulesTitle')}
+                </p>
+              </div>
+              <span className="border-border-on-inverse bg-surface-primary/5 text-content-on-inverse/60 border px-2.5 py-1.5 font-mono text-[10px]">
+                design-system context
+              </span>
+            </div>
+
+            <div className="p-5 sm:p-6">
+              <div className="space-y-3">
+                {aiRuleKeys.map((key) => (
+                  <div
+                    key={key}
+                    className="border-border-on-inverse bg-surface-inverse border"
+                  >
+                    <div className="bg-surface-primary/5 flex gap-3 p-4">
+                      <span className="bg-action-success/10 text-action-success mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full">
+                        <CheckIcon
+                          aria-hidden="true"
+                          size={11}
+                          weight="bold"
+                        />
+                      </span>
+                      <code className="text-content-on-inverse/75 text-xs leading-6">
+                        {t(`aiDevelopment.rules.${key}`)}
+                      </code>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="border-border-on-inverse mt-6 border-t pt-6">
+                <p className="text-action-accent text-[10px] font-semibold tracking-[0.14em] uppercase">
+                  {t('aiDevelopment.promptLabel')}
+                </p>
+                <p className="mt-3 text-base font-semibold">
+                  “{t('aiDevelopment.promptExample')}”
+                </p>
+                <p className="text-content-on-inverse/50 mt-2 text-xs leading-5">
+                  {t('aiDevelopment.promptNote')}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="px-6 py-24 lg:px-8 lg:py-32">
         <div className="mx-auto max-w-7xl">
           <div className="mx-auto max-w-4xl text-center">
@@ -636,14 +698,14 @@ export default async function ExamplesPage() {
               <div className="relative mt-8 space-y-3">
                 <div
                   aria-hidden="true"
-                  className="bg-border-default absolute top-5 bottom-5 left-[0.6875rem] w-px"
+                  className="bg-border-default absolute top-5 bottom-5 left-[0.6875rem] z-0 w-px"
                 />
                 {scatteredKeys.map((key, index) => (
                   <div
                     key={key}
-                    className="border-border-subtle bg-surface-primary relative flex items-start gap-4 border p-4"
+                    className="border-border-subtle bg-surface-primary relative z-10 flex items-start gap-4 border p-4"
                   >
-                    <span className="bg-background-sunken border-border-default relative z-10 flex size-6 shrink-0 items-center justify-center rounded-full border font-mono text-[9px]">
+                    <span className="bg-background-sunken border-border-default relative z-20 flex size-6 shrink-0 items-center justify-center rounded-full border font-mono text-[9px]">
                       {index + 1}
                     </span>
                     <p className="text-content-secondary pt-0.5 text-sm leading-6">
@@ -664,19 +726,21 @@ export default async function ExamplesPage() {
               <div className="relative mt-8 space-y-3">
                 <div
                   aria-hidden="true"
-                  className="bg-border-on-inverse absolute top-5 bottom-5 left-[0.6875rem] w-px"
+                  className="bg-border-on-inverse absolute top-5 bottom-5 left-[0.6875rem] z-0 w-px"
                 />
                 {connectedKeys.map((key, index) => (
                   <div
                     key={key}
-                    className="border-border-on-inverse bg-surface-primary/5 relative flex items-start gap-4 border p-4"
+                    className="border-border-on-inverse bg-surface-inverse relative z-10 border"
                   >
-                    <span className="border-border-on-inverse bg-surface-inverse relative z-10 flex size-6 shrink-0 items-center justify-center rounded-full border font-mono text-[9px]">
-                      {index + 1}
-                    </span>
-                    <p className="text-content-on-inverse/70 pt-0.5 text-sm leading-6">
-                      {t(`drift.connectedItems.${key}`)}
-                    </p>
+                    <div className="bg-surface-primary/5 flex items-start gap-4 p-4">
+                      <span className="border-border-on-inverse bg-surface-inverse relative z-20 flex size-6 shrink-0 items-center justify-center rounded-full border font-mono text-[9px]">
+                        {index + 1}
+                      </span>
+                      <p className="text-content-on-inverse/70 pt-0.5 text-sm leading-6">
+                        {t(`drift.connectedItems.${key}`)}
+                      </p>
+                    </div>
                   </div>
                 ))}
               </div>
