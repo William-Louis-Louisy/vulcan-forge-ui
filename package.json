@@ -13,7 +13,7 @@
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
     "format": "prettier . --write",
-    "format:check": "prettier \"src/components/layout/PublicMobileMenu.tsx\" \"src/components/layout/PublicMobileMenu.test.tsx\" --write && git diff --exit-code",
+    "format:check": "prettier . --check",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
