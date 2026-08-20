@@ -289,7 +289,9 @@ export default async function ExamplesPage() {
                           <span
                             aria-hidden="true"
                             className="size-8 rounded-md"
-                            style={{ backgroundColor: demoTokenColors.brand600 }}
+                            style={{
+                              backgroundColor: demoTokenColors.brand600,
+                            }}
                           />
                         </div>
                         <div className="bg-border-subtle grid gap-px sm:grid-cols-2">
