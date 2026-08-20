@@ -1,5 +1,5 @@
 import type { AnchorHTMLAttributes } from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MobileAppMenu } from './MobileAppMenu';
@@ -11,7 +11,11 @@ vi.mock('@/i18n/navigation', () => ({
 }));
 
 vi.mock('@/components/i18n/LocaleSwitcher', () => ({
-  LocaleSwitcher: () => <div>Language switcher</div>,
+  LocaleSwitcher: ({ onLocaleChange }: { onLocaleChange?: () => void }) => (
+    <button type="button" onClick={onLocaleChange}>
+      Switch language
+    </button>
+  ),
 }));
 
 vi.mock('@/features/auth/logout/LogoutButton', () => ({
@@ -19,15 +23,32 @@ vi.mock('@/features/auth/logout/LogoutButton', () => ({
 }));
 
 vi.mock('./AppShellNavigation', () => ({
-  AppShellNavigation: ({ onNavigate }: { onNavigate?: () => void }) => (
-    <button type="button" onClick={onNavigate}>
+  AppShellNavigation: ({
+    onNavigate,
+    variant,
+  }: {
+    onNavigate?: () => void;
+    variant?: string;
+  }) => (
+    <button type="button" data-variant={variant} onClick={onNavigate}>
       Dashboard navigation
     </button>
   ),
 }));
 
+beforeEach(() => {
+  document.body.style.overflow = '';
+  vi.stubGlobal(
+    'matchMedia',
+    vi.fn().mockReturnValue({
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    } as unknown as MediaQueryList),
+  );
+});
+
 describe('MobileAppMenu', () => {
-  it('renders its menu through the document body and keeps portal content interactive', async () => {
+  it('renders the same fullscreen body-level navigation pattern as the public menu', async () => {
     const user = userEvent.setup();
 
     render(
@@ -49,7 +70,17 @@ describe('MobileAppMenu', () => {
 
     expect(panel).not.toBeNull();
     expect(panel?.parentElement).toBe(document.body);
+    expect(panel).toHaveClass(
+      'bg-background-app',
+      'inset-x-0',
+      'top-12',
+      'bottom-0',
+    );
+    expect(document.body.style.overflow).toBe('hidden');
     expect(screen.getByText('user@example.com')).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Dashboard navigation' }),
+    ).toHaveAttribute('data-variant', 'fullscreen');
     expect(screen.getByRole('link', { name: 'Settings' })).toHaveAttribute(
       'href',
       '/app/settings',
@@ -64,5 +95,29 @@ describe('MobileAppMenu', () => {
     await user.click(screen.getByRole('link', { name: 'Settings' }));
 
     expect(document.getElementById('mobile-app-menu')).toBeNull();
+    expect(document.body.style.overflow).toBe('');
+  });
+
+  it('closes after switching locale', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <MobileAppMenu
+        userEmail="user@example.com"
+        ariaLabel="Application navigation"
+        accountLabel="Account"
+        settingsLabel="Settings"
+        navigationLabel="Application navigation"
+        navigationItems={{ dashboard: 'Dashboard' }}
+      />,
+    );
+
+    await user.click(
+      screen.getByRole('button', { name: 'Application navigation' }),
+    );
+    await user.click(screen.getByRole('button', { name: 'Switch language' }));
+
+    expect(document.getElementById('mobile-app-menu')).toBeNull();
+    expect(document.body.style.overflow).toBe('');
   });
 });
