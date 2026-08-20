@@ -4,11 +4,18 @@ import { getTranslations } from 'next-intl/server';
 import { auth } from '@/auth';
 import { PublicButtonLink } from '@/components/layout/PublicButtonLink';
 
+const demoTokenColors = {
+  brand600: '#A94E2F',
+  brand400: '#E29773',
+  borderLine: '#E3DDD0',
+  borderMuted: '#4A463D',
+} as const;
+
 const flowNodes = [
   {
     key: 'token',
     value: 'color.brand.600',
-    detail: '#A94E2F',
+    detail: demoTokenColors.brand600,
   },
   {
     key: 'theme',
@@ -279,7 +286,11 @@ export default async function ExamplesPage() {
                               {t('demo.primitiveColor')}
                             </p>
                           </div>
-                          <span className="bg-action-accent size-8 rounded-md" />
+                          <span
+                            aria-hidden="true"
+                            className="size-8 rounded-md"
+                            style={{ backgroundColor: demoTokenColors.brand600 }}
+                          />
                         </div>
                         <div className="bg-border-subtle grid gap-px sm:grid-cols-2">
                           <div className="bg-surface-primary p-5">
@@ -287,7 +298,7 @@ export default async function ExamplesPage() {
                               {t('demo.value')}
                             </p>
                             <p className="mt-3 font-mono text-lg font-semibold">
-                              #A94E2F
+                              {demoTokenColors.brand600}
                             </p>
                           </div>
                           <div className="bg-surface-primary p-5">
@@ -315,61 +326,91 @@ export default async function ExamplesPage() {
                     <div className="relative flex h-full min-h-[20rem] items-center justify-center">
                       <div className="grid w-full max-w-2xl gap-4 sm:grid-cols-2">
                         <div className="border-border-strong bg-surface-primary border p-5">
-                          <div className="flex items-center justify-between gap-3">
-                            <div>
-                              <p className="text-xs font-semibold">Light</p>
-                              <p className="text-content-tertiary mt-1 text-[11px]">
-                                {t('demo.activeTheme')}
-                              </p>
-                            </div>
-                            <span className="bg-background-app border-border-default size-7 rounded-full border" />
+                          <div>
+                            <p className="text-xs font-semibold">Light</p>
+                            <p className="text-content-tertiary mt-1 text-[11px]">
+                              {t('demo.activeTheme')}
+                            </p>
                           </div>
                           <div className="border-border-subtle mt-6 divide-y border-y">
-                            <div className="grid grid-cols-[1fr_auto] gap-4 py-4">
+                            <div className="grid grid-cols-[1fr_auto] items-center gap-4 py-4">
                               <code className="text-xs font-semibold">
                                 accent
                               </code>
-                              <code className="text-content-secondary text-[11px]">
-                                {'{'}color.brand.600{'}'}
-                              </code>
+                              <div className="flex items-center gap-2">
+                                <span
+                                  aria-hidden="true"
+                                  className="border-border-default size-3 shrink-0 rounded-full border"
+                                  style={{
+                                    backgroundColor: demoTokenColors.brand600,
+                                  }}
+                                />
+                                <code className="text-content-secondary text-[11px]">
+                                  {'{'}color.brand.600{'}'}
+                                </code>
+                              </div>
                             </div>
-                            <div className="grid grid-cols-[1fr_auto] gap-4 py-4">
+                            <div className="grid grid-cols-[1fr_auto] items-center gap-4 py-4">
                               <code className="text-xs font-semibold">
                                 border-subtle
                               </code>
-                              <code className="text-content-secondary text-[11px]">
-                                {'{'}color.border.line{'}'}
-                              </code>
+                              <div className="flex items-center gap-2">
+                                <span
+                                  aria-hidden="true"
+                                  className="border-border-default size-3 shrink-0 rounded-full border"
+                                  style={{
+                                    backgroundColor: demoTokenColors.borderLine,
+                                  }}
+                                />
+                                <code className="text-content-secondary text-[11px]">
+                                  {'{'}color.border.line{'}'}
+                                </code>
+                              </div>
                             </div>
                           </div>
                         </div>
 
                         <div className="bg-surface-inverse text-content-on-inverse border-border-strong border p-5">
-                          <div className="flex items-center justify-between gap-3">
-                            <div>
-                              <p className="text-xs font-semibold">Dark</p>
-                              <p className="text-content-on-inverse/50 mt-1 text-[11px]">
-                                {t('demo.independentMapping')}
-                              </p>
-                            </div>
-                            <span className="border-border-on-inverse bg-surface-inverse size-7 rounded-full border" />
+                          <div>
+                            <p className="text-xs font-semibold">Dark</p>
+                            <p className="text-content-on-inverse/50 mt-1 text-[11px]">
+                              {t('demo.independentMapping')}
+                            </p>
                           </div>
                           <div className="border-border-on-inverse mt-6 divide-y border-y">
-                            <div className="grid grid-cols-[1fr_auto] gap-4 py-4">
+                            <div className="grid grid-cols-[1fr_auto] items-center gap-4 py-4">
                               <code className="text-xs font-semibold">
                                 accent
                               </code>
-                              <code className="text-content-on-inverse/65 text-[11px]">
-                                {'{'}color.brand.400{'}'}
-                              </code>
+                              <div className="flex items-center gap-2">
+                                <span
+                                  aria-hidden="true"
+                                  className="border-border-on-inverse size-3 shrink-0 rounded-full border"
+                                  style={{
+                                    backgroundColor: demoTokenColors.brand400,
+                                  }}
+                                />
+                                <code className="text-content-on-inverse/65 text-[11px]">
+                                  {'{'}color.brand.400{'}'}
+                                </code>
+                              </div>
                             </div>
-                            <div className="grid grid-cols-[1fr_auto] gap-4 py-4">
+                            <div className="grid grid-cols-[1fr_auto] items-center gap-4 py-4">
                               <code className="text-xs font-semibold">
                                 border-subtle
                               </code>
-                              <code className="text-content-on-inverse/65 text-[11px]">
-                                {'{'}color.border.muted{'}'}
-                              </code>
+                              <div className="flex items-center gap-2">
+                                <span
+                                  aria-hidden="true"
+                                  className="border-border-on-inverse size-3 shrink-0 rounded-full border"
+                                  style={{
+                                    backgroundColor: demoTokenColors.borderMuted,
+                                  }}
+                                />
+                                <code className="text-content-on-inverse/65 text-[11px]">
+                                  {'{'}color.border.muted{'}'}
+                                </code>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -444,7 +485,13 @@ export default async function ExamplesPage() {
                           </div>
                         </div>
                         <div className="border-border-subtle flex items-center justify-center border-t p-8">
-                          <span className="bg-action-primary text-action-primary-content rounded-md px-5 py-3 text-sm font-semibold">
+                          <span
+                            className="rounded-md px-5 py-3 text-sm font-semibold"
+                            style={{
+                              backgroundColor: demoTokenColors.brand600,
+                              color: 'var(--vf-color-white)',
+                            }}
+                          >
                             {t('demo.primaryAction')}
                           </span>
                         </div>
@@ -573,7 +620,7 @@ export default async function ExamplesPage() {
                 <article
                   key={key}
                   className={`border-border-subtle bg-surface-primary border p-6 sm:p-7 ${
-                    index === 0 || index === 4 ? 'sm:col-span-2' : ''
+                    index === 0 ? 'sm:col-span-2' : ''
                   }`}
                 >
                   <div className="flex items-start justify-between gap-6">
