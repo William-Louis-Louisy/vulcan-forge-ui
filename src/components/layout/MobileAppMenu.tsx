@@ -102,11 +102,7 @@ export function MobileAppMenu({
                   </p>
                 </div>
 
-                <LocaleSwitcher
-                  fullWidth
-                  showLabel
-                  onLocaleChange={close}
-                />
+                <LocaleSwitcher fullWidth showLabel onLocaleChange={close} />
               </div>
             }
             actions={
