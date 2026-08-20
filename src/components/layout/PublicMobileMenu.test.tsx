@@ -11,11 +11,7 @@ vi.mock('@/i18n/navigation', () => ({
 }));
 
 vi.mock('@/components/i18n/LocaleSwitcher', () => ({
-  LocaleSwitcher: ({
-    onLocaleChange,
-  }: {
-    onLocaleChange?: () => void;
-  }) => (
+  LocaleSwitcher: ({ onLocaleChange }: { onLocaleChange?: () => void }) => (
     <button type="button" onClick={onLocaleChange}>
       Switch language
     </button>
@@ -58,9 +54,7 @@ describe('PublicMobileMenu', () => {
 
     render(<PublicMobileMenu isAuthenticated={false} labels={labels} />);
 
-    await user.click(
-      screen.getByRole('button', { name: labels.open }),
-    );
+    await user.click(screen.getByRole('button', { name: labels.open }));
 
     expect(
       screen.getByRole('navigation', { name: labels.navigation }),
@@ -107,10 +101,9 @@ describe('PublicMobileMenu', () => {
 
     await user.click(screen.getByRole('button', { name: labels.open }));
 
-    expect(screen.getByRole('link', { name: labels.dashboard })).toHaveAttribute(
-      'href',
-      '/app',
-    );
+    expect(
+      screen.getByRole('link', { name: labels.dashboard }),
+    ).toHaveAttribute('href', '/app');
     expect(screen.queryByRole('link', { name: labels.signIn })).toBeNull();
     expect(screen.queryByRole('link', { name: labels.getStarted })).toBeNull();
   });
