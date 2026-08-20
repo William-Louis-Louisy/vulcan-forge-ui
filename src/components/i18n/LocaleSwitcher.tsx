@@ -9,12 +9,14 @@ import { getLocalizedAuthReturnTo } from '@/features/auth/shared/return-to';
 type LocaleSwitcherProps = {
   className?: string;
   fullWidth?: boolean;
+  onLocaleChange?: () => void;
   showLabel?: boolean;
 };
 
 export function LocaleSwitcher({
   className,
   fullWidth = false,
+  onLocaleChange,
   showLabel = false,
 }: LocaleSwitcherProps = {}) {
   const currentLocale = useLocale() as Locale;
@@ -47,6 +49,7 @@ export function LocaleSwitcher({
     const destination = query ? `${pathname}?${query}` : pathname;
 
     router.replace(destination, { locale: nextLocale });
+    onLocaleChange?.();
   }
 
   return (
