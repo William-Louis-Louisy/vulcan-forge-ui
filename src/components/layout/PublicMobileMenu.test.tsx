@@ -1,6 +1,6 @@
 import type { AnchorHTMLAttributes } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { PublicMobileMenu } from './PublicMobileMenu';
 
@@ -49,13 +49,17 @@ beforeEach(() => {
 });
 
 describe('PublicMobileMenu', () => {
-  it('opens a full navigation panel and closes it after navigation', async () => {
+  it('opens a body-level navigation panel and closes it after navigation', async () => {
     const user = userEvent.setup();
 
     render(<PublicMobileMenu isAuthenticated={false} labels={labels} />);
 
     await user.click(screen.getByRole('button', { name: labels.open }));
 
+    const panel = document.getElementById('public-mobile-menu');
+
+    expect(panel).not.toBeNull();
+    expect(panel?.parentElement).toBe(document.body);
     expect(
       screen.getByRole('navigation', { name: labels.navigation }),
     ).toBeInTheDocument();
@@ -72,6 +76,14 @@ describe('PublicMobileMenu', () => {
       '/examples',
     );
     expect(document.body.style.overflow).toBe('hidden');
+
+    if (panel) {
+      fireEvent.pointerDown(panel);
+    }
+
+    expect(
+      screen.getByRole('navigation', { name: labels.navigation }),
+    ).toBeInTheDocument();
 
     await user.click(screen.getByRole('link', { name: labels.example }));
 
