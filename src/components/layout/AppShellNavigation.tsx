@@ -9,6 +9,10 @@ import {
   type PrivateNavigationItemKey,
 } from '@/features/app-navigation/private-navigation';
 import { projectEditorNavItems } from '@/features/design-systems/project-editor/project-editor-nav.config';
+import {
+  MobileNavigationDisabledRow,
+  MobileNavigationLinkRow,
+} from './MobileNavigationPanel';
 
 type AppShellNavigationLabels = Record<PrivateNavigationItemKey, string>;
 
@@ -16,6 +20,7 @@ type AppShellNavigationProps = {
   navigationLabel: string;
   labels: AppShellNavigationLabels;
   onNavigate?: () => void;
+  variant?: 'sidebar' | 'fullscreen';
 };
 
 type ProjectEditorNavItem = (typeof projectEditorNavItems)[number];
@@ -86,6 +91,7 @@ export function AppShellNavigation({
   navigationLabel,
   labels,
   onNavigate,
+  variant = 'sidebar',
 }: AppShellNavigationProps) {
   const pathname = usePathname();
   const projectSlug = getCurrentProjectSlug(pathname);
@@ -103,6 +109,91 @@ export function AppShellNavigation({
     aiInstructions: projectT('aiInstructions'),
     settings: projectT('settings'),
   };
+
+  if (variant === 'fullscreen') {
+    return (
+      <nav aria-label={navigationLabel}>
+        <div className="border-border-subtle divide-border-subtle divide-y border-y">
+          {privateNavigationItems.map((item, index) => {
+            const isActive = isActivePath(pathname, item.href);
+
+            return (
+              <MobileNavigationLinkRow
+                key={item.key}
+                href={item.href}
+                index={index + 1}
+                isActive={isActive}
+                onClick={onNavigate}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                {labels[item.key]}
+              </MobileNavigationLinkRow>
+            );
+          })}
+
+          {projectSlug
+            ? projectEditorNavItems.map((projectItem, index) => {
+                const href = createProjectEditorNavHref({
+                  projectSlug,
+                  path: projectItem.path,
+                });
+                const isProjectItemActive = isProjectEditorNavItemActive({
+                  pathname,
+                  projectSlug,
+                  path: projectItem.path,
+                });
+                const itemIndex = privateNavigationItems.length + index + 1;
+
+                if (!projectItem.isEnabled) {
+                  return (
+                    <MobileNavigationDisabledRow
+                      key={projectItem.key}
+                      index={itemIndex}
+                      trailing={
+                        <Badge size="sm" variant="default">
+                          {projectT('soon')}
+                        </Badge>
+                      }
+                    >
+                      {projectLabels[projectItem.key]}
+                    </MobileNavigationDisabledRow>
+                  );
+                }
+
+                return (
+                  <MobileNavigationLinkRow
+                    key={projectItem.key}
+                    href={href}
+                    index={itemIndex}
+                    isActive={isProjectItemActive}
+                    onClick={onNavigate}
+                    aria-current={isProjectItemActive ? 'page' : undefined}
+                  >
+                    <span className="flex items-center gap-2">
+                      {projectLabels[projectItem.key]}
+
+                      {'severity' in projectItem &&
+                      projectItem.severity === 'warning' ? (
+                        <WarningCircleIcon
+                          aria-label={projectT('warning')}
+                          size={16}
+                          weight={isProjectItemActive ? 'fill' : 'regular'}
+                          className={
+                            isProjectItemActive
+                              ? 'text-action-accent'
+                              : 'text-action-warning'
+                          }
+                        />
+                      ) : null}
+                    </span>
+                  </MobileNavigationLinkRow>
+                );
+              })
+            : null}
+        </div>
+      </nav>
+    );
+  }
 
   return (
     <nav aria-label={navigationLabel} className="space-y-1">
