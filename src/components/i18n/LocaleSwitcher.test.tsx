@@ -28,10 +28,11 @@ beforeEach(() => {
 describe('LocaleSwitcher', () => {
   it('localizes the validated return target and preserves other query values', async () => {
     const user = userEvent.setup();
+    const onLocaleChange = vi.fn();
 
     render(
       <NextIntlClientProvider locale="en" messages={enMessages}>
-        <LocaleSwitcher />
+        <LocaleSwitcher onLocaleChange={onLocaleChange} />
       </NextIntlClientProvider>,
     );
 
@@ -45,5 +46,6 @@ describe('LocaleSwitcher', () => {
       '/login?reason=authentication-required&returnTo=%2Ffr%2Fapp%2Fprojects%2Fproject-1%2Ftokens%3Fset%3Dcolor',
       { locale: 'fr' },
     );
+    expect(onLocaleChange).toHaveBeenCalledOnce();
   });
 });
