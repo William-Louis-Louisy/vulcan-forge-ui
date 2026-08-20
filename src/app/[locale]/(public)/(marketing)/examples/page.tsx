@@ -643,11 +643,7 @@ export default async function ExamplesPage() {
                   >
                     <div className="bg-surface-primary/5 flex gap-3 p-4">
                       <span className="bg-action-success/10 text-action-success mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full">
-                        <CheckIcon
-                          aria-hidden="true"
-                          size={11}
-                          weight="bold"
-                        />
+                        <CheckIcon aria-hidden="true" size={11} weight="bold" />
                       </span>
                       <code className="text-content-on-inverse/75 text-xs leading-6">
                         {t(`aiDevelopment.rules.${key}`)}
