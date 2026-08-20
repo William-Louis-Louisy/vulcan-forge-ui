@@ -406,7 +406,8 @@ export default async function ExamplesPage() {
                                   aria-hidden="true"
                                   className="border-border-on-inverse size-3 shrink-0 rounded-full border"
                                   style={{
-                                    backgroundColor: demoTokenColors.borderMuted,
+                                    backgroundColor:
+                                      demoTokenColors.borderMuted,
                                   }}
                                 />
                                 <code className="text-content-on-inverse/65 text-[11px]">
