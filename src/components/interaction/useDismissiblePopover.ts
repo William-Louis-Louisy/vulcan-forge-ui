@@ -28,7 +28,7 @@ export function useDismissiblePopover() {
 
       return Boolean(
         containerRef.current?.contains(target) ||
-          contentRef.current?.contains(target),
+        contentRef.current?.contains(target),
       );
     }
 
