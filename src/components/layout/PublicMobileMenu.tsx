@@ -105,11 +105,7 @@ export function PublicMobileMenu({
 
           <MobileNavigationFooter
             leading={
-              <LocaleSwitcher
-                fullWidth
-                showLabel
-                onLocaleChange={close}
-              />
+              <LocaleSwitcher fullWidth showLabel onLocaleChange={close} />
             }
             actions={
               <div className="grid gap-2 sm:grid-cols-2">
