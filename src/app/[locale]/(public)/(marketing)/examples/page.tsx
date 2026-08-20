@@ -105,7 +105,7 @@ export default async function ExamplesPage() {
               {t('hero.eyebrow')}
             </div>
 
-            <h1 className="font-display mt-8 text-5xl leading-[0.94] font-semibold tracking-[-0.055em] text-balance sm:text-6xl lg:text-7xl xl:text-[5.5rem]">
+            <h1 className="font-display mt-8 text-5xl leading-[0.94] font-semibold tracking-[-0.055em] text-balance sm:text-6xl lg:text-[5rem]">
               {t('hero.titleBefore')}{' '}
               <em className="text-action-accent font-medium">
                 {t('hero.titleAccent')}
