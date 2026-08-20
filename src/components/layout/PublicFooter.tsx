@@ -45,7 +45,7 @@ export function PublicFooter({
             {t('product')}
           </Link>
           <Link
-            href="/#example"
+            href="/examples"
             className="text-content-secondary hover:text-content-primary transition"
           >
             {t('example')}

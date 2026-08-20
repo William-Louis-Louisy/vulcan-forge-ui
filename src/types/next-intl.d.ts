@@ -11,6 +11,7 @@ import type { brandOverviewMessages } from '../messages/brand-overview-messages'
 import type { brandOnboardingMessages } from '../messages/brand-onboarding-messages';
 import type { projectSettingsMessages } from '../messages/project-settings-messages';
 import type { publicSurfaceMessages } from '../messages/public-surface-messages';
+import type { examplesPageMessages } from '../messages/examples-page-messages';
 import type { productEditorPreviewMessages } from '../messages/product-editor-preview-messages';
 import type { errorSurfaceMessages } from '../messages/error-surface-messages';
 import type { journeyPolishMessages } from '../messages/journey-polish-messages';
@@ -68,8 +69,11 @@ type ProductMessages = DeepMerge<
 >;
 
 type PublicMessages = DeepMerge<
-  (typeof publicSurfaceMessages)['en'],
-  (typeof productEditorPreviewMessages)['en']
+  DeepMerge<
+    (typeof publicSurfaceMessages)['en'],
+    (typeof productEditorPreviewMessages)['en']
+  >,
+  (typeof examplesPageMessages)['en']
 >;
 
 type ScopedMessages = DeepMerge<

@@ -55,7 +55,7 @@ export default async function HomePage() {
                 {primaryLabel}
                 <ArrowRightIcon aria-hidden="true" size={16} weight="bold" />
               </PublicButtonLink>
-              <PublicButtonLink href="/#example" variant="secondary" size="lg">
+              <PublicButtonLink href="/examples" variant="secondary" size="lg">
                 {t('hero.secondaryCta')}
               </PublicButtonLink>
             </div>

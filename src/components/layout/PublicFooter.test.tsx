@@ -2,7 +2,7 @@ import type { AnchorHTMLAttributes } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { NextIntlClientProvider } from 'next-intl';
 import { render, screen } from '@testing-library/react';
-import enMessages from '@/messages/en.json';
+import { publicSurfaceMessages } from '@/messages/public-surface-messages';
 import { PublicFooter } from './PublicFooter';
 
 vi.mock('@/i18n/navigation', () => ({
@@ -12,13 +12,16 @@ vi.mock('@/i18n/navigation', () => ({
 }));
 
 describe('PublicFooter', () => {
-  it('keeps Terms and Privacy reachable from public navigation', () => {
+  it('keeps core public destinations reachable from footer navigation', () => {
     render(
-      <NextIntlClientProvider locale="en" messages={enMessages}>
+      <NextIntlClientProvider locale="en" messages={publicSurfaceMessages.en}>
         <PublicFooter />
       </NextIntlClientProvider>,
     );
 
+    expect(
+      screen.getByRole('link', { name: 'Product example' }),
+    ).toHaveAttribute('href', '/examples');
     expect(screen.getByRole('link', { name: 'Terms' })).toHaveAttribute(
       'href',
       '/terms',
