@@ -49,7 +49,7 @@ beforeEach(() => {
 });
 
 describe('PublicMobileMenu', () => {
-  it('opens a body-level navigation panel and closes it after navigation', async () => {
+  it('opens the shared fullscreen body-level navigation and closes it after navigation', async () => {
     const user = userEvent.setup();
 
     render(<PublicMobileMenu isAuthenticated={false} labels={labels} />);
@@ -60,6 +60,12 @@ describe('PublicMobileMenu', () => {
 
     expect(panel).not.toBeNull();
     expect(panel?.parentElement).toBe(document.body);
+    expect(panel).toHaveClass(
+      'bg-background-app',
+      'inset-x-0',
+      'top-14',
+      'bottom-0',
+    );
     expect(
       screen.getByRole('navigation', { name: labels.navigation }),
     ).toBeInTheDocument();
