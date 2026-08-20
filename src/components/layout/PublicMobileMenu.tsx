@@ -1,11 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import {
-  ArrowRightIcon,
-  ListIcon,
-  XIcon,
-} from '@phosphor-icons/react';
+import { ArrowRightIcon, ListIcon, XIcon } from '@phosphor-icons/react';
 import { LocaleSwitcher } from '@/components/i18n/LocaleSwitcher';
 import { useDismissiblePopover } from '@/components/interaction/useDismissiblePopover';
 import { Link } from '@/i18n/navigation';
@@ -131,11 +127,7 @@ export function PublicMobileMenu({
 
             <div className="mt-auto pt-10 sm:pt-12">
               <div className="border-border-subtle grid gap-6 border-t pt-6 sm:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] sm:items-end">
-                <LocaleSwitcher
-                  fullWidth
-                  showLabel
-                  onLocaleChange={close}
-                />
+                <LocaleSwitcher fullWidth showLabel onLocaleChange={close} />
 
                 <div className="grid gap-2 sm:grid-cols-2">
                   {isAuthenticated ? (
