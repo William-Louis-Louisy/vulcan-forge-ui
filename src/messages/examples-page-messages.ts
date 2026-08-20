@@ -95,7 +95,8 @@ export const examplesPageMessages = {
             title: 'Problems are visible before export.',
             description:
               'VulcanForge UI checks contrast from the values actually resolved by the theme and keeps manual requirements visible instead of pretending everything can be automated.',
-            insight: 'You can see what is automated and what still needs review.',
+            insight:
+              'You can see what is automated and what still needs review.',
           },
           delivery: {
             kicker: '05 · Use it',
@@ -154,7 +155,8 @@ export const examplesPageMessages = {
             'Button.primary supports default, hover, focusVisible and disabled.',
           accessibility:
             'Keep documented text/background pairs at WCAG AA or higher.',
-          reuse: 'Reuse existing component contracts before creating new variants.',
+          reuse:
+            'Reuse existing component contracts before creating new variants.',
         },
         promptLabel: 'Then your prompt can stay about the feature',
         promptExample: 'Build the settings panel with the existing components.',
@@ -287,7 +289,8 @@ export const examplesPageMessages = {
             title: 'Le thème référence le token.',
             description:
               'Le rôle accent peut pointer vers une valeur en Light et une autre en Dark. Vous changez le mapping sans modifier chaque composant qui utilise ce rôle.',
-            insight: 'Les composants utilisent un rôle, pas une couleur en dur.',
+            insight:
+              'Les composants utilisent un rôle, pas une couleur en dur.',
           },
           component: {
             kicker: '03 · Décrire le composant',
@@ -350,7 +353,8 @@ export const examplesPageMessages = {
       },
       aiDevelopment: {
         eyebrow: 'Développer avec l’IA',
-        title: 'Donnez à votre assistant IA les mêmes règles qu’à votre équipe.',
+        title:
+          'Donnez à votre assistant IA les mêmes règles qu’à votre équipe.',
         description:
           'Un assistant IA ne connaît pas votre design system par défaut. Sans contexte, il peut inventer une couleur, oublier un état ou recréer un composant qui existe déjà. VulcanForge UI génère des consignes réutilisables depuis votre projet pour que vous puissiez les ajouter à son contexte.',
         boundary:
@@ -391,8 +395,7 @@ export const examplesPageMessages = {
           component: 'Les composants gardent les mêmes rôles',
           outputs: 'Vous régénérez les docs, les exports et les consignes IA',
         },
-        note:
-          'Moins de copies à maintenir, donc moins de risques qu’elles divergent.',
+        note: 'Moins de copies à maintenir, donc moins de risques qu’elles divergent.',
       },
       delivery: {
         eyebrow: 'Un projet · plusieurs sorties',
