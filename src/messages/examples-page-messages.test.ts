@@ -24,13 +24,26 @@ describe('examplesPageMessages', () => {
     ).toContain('fictional');
     expect(
       examplesPageMessages.fr.ExamplesPage.hero.disclosure.toLowerCase(),
-    ).toContain('fictif');
+    ).toContain('fictiv');
+  });
+
+  it('keeps the demo project unnamed to avoid product-name confusion', () => {
+    expect(JSON.stringify(examplesPageMessages)).not.toContain('Aurora');
   });
 
   it('keeps the walkthrough centered on five connected workflow stages', () => {
     expect(
       Object.keys(examplesPageMessages.en.ExamplesPage.workflow.steps),
     ).toEqual(['token', 'theme', 'component', 'accessibility', 'delivery']);
+  });
+
+  it('explains AI-assisted development through reusable project context', () => {
+    expect(
+      Object.keys(examplesPageMessages.en.ExamplesPage.aiDevelopment.rules),
+    ).toEqual(['tokens', 'components', 'accessibility', 'reuse']);
+    expect(
+      examplesPageMessages.fr.ExamplesPage.aiDevelopment.description.toLowerCase(),
+    ).toContain('assistant ia');
   });
 
   it('documents the six beta delivery formats', () => {
