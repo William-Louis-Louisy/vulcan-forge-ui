@@ -83,7 +83,7 @@ export default async function ExamplesPage() {
 
   return (
     <main className="bg-background-app text-content-primary overflow-hidden">
-      <section className="bg-surface-inverse text-content-on-inverse relative isolate overflow-hidden px-6 py-16 sm:py-20 lg:min-h-[calc(100vh-5rem)] lg:px-8 lg:py-24">
+      <section className="bg-surface-inverse text-content-on-inverse relative isolate overflow-hidden px-6 py-16 sm:py-20 lg:min-h-[calc(100dvh-3.5rem)] lg:px-8 lg:py-24">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 opacity-80"
