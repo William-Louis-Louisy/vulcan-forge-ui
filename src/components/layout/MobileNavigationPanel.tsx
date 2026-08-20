@@ -79,10 +79,7 @@ export function MobileNavigationLinkRow({
 }: MobileNavigationLinkRowProps) {
   return (
     <Link
-      className={[
-        'group flex items-center gap-5 py-5 sm:py-6',
-        className,
-      ]
+      className={['group flex items-center gap-5 py-5 sm:py-6', className]
         .filter(Boolean)
         .join(' ')}
       {...props}
