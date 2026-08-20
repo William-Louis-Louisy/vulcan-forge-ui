@@ -2,145 +2,190 @@ export const examplesPageMessages = {
   en: {
     ExamplesPage: {
       hero: {
-        eyebrow: 'Guided demo · Aurora System',
-        titleBefore: 'Change one decision.',
-        titleAccent: 'The whole system follows.',
+        eyebrow: 'Guided product demo',
+        titleBefore: 'Define one rule.',
+        titleAccent: 'Reuse it everywhere.',
         description:
-          'VulcanForge UI does more than store tokens. It connects the decisions that make a design system usable: themes, component contracts, accessibility, documentation, exports and AI guidance.',
-        primaryCta: 'Build my system',
-        dashboardCta: 'Open dashboard',
-        secondaryCta: 'Follow the decision',
-        disclosure:
-          'Aurora System is a fictional project built specifically for this walkthrough.',
+          'VulcanForge UI keeps the rules of your interface in one place: tokens, themes, components, accessibility, documentation, exports and guidance for your coding assistant. You stop rewriting the same decision at every step.',
+        secondaryCta: 'See the workflow',
+        disclosure: 'All data shown in this demo is fictional.',
         flow: {
           token: {
-            label: 'Source decision',
-            caption: 'Named, typed and documented',
+            label: 'Token',
+            caption: 'The value and its purpose are documented',
           },
           theme: {
-            label: 'Meaning',
-            caption: 'Mapped to a theme role',
+            label: 'Theme',
+            caption: 'The token is mapped to a role',
           },
           component: {
-            label: 'Usage',
-            caption: 'Bound to a component contract',
+            label: 'Component',
+            caption: 'The role is used by the component',
           },
           accessibility: {
-            label: 'Check',
-            caption: 'Resolved before it ships',
+            label: 'Accessibility',
+            caption: 'The resolved values are checked',
           },
           delivery: {
-            label: 'Delivery',
-            caption: 'Generated from the same source',
+            label: 'Outputs',
+            caption: 'Code, docs and AI instructions',
           },
         },
       },
+      demo: {
+        projectLabel: 'Demo project',
+        deliveryLabel: 'outputs',
+        connectedLayers: '5 connected steps',
+        source: 'Source',
+        resolvedContrast: 'Resolved contrast',
+        outputs: 'Outputs',
+        formats: '6 formats',
+        primitiveColor: 'Primitive · Color',
+        value: 'Value',
+        intent: 'Purpose',
+        primaryBrandAction: 'Primary brand action',
+        description: 'Description',
+        tokenDescription:
+          'Main brand color used for emphasized actions and selected states.',
+        activeTheme: 'Active theme',
+        independentMapping: 'Independent mapping',
+        componentContract: 'Interactive component rules',
+        states: 'States',
+        tokenBindings: 'Token bindings',
+        primaryAction: 'Primary action',
+        contractChecks: 'Checks',
+        checks: {
+          focus: 'focusVisible state is documented',
+          foreground: 'Foreground and background both resolve',
+          status: 'Status meaning does not rely on color alone',
+        },
+        manualReview:
+          'Keyboard and screen-reader testing still require manual review.',
+        generatedFromProject: 'Generated from project',
+      },
       workflow: {
-        eyebrow: 'The workflow',
-        title:
-          'Not five tools sitting next to each other. One chain of decisions.',
+        eyebrow: 'From token to code',
+        title: 'Define a rule once, then reuse it at every step.',
         description:
-          'Follow the same design decision as it moves through Aurora. Nothing is re-entered just to keep another document, export or prompt in sync.',
+          'Watch one brand color become a theme role, feed a button, pass accessibility checks and end up in code, documentation and AI instructions.',
         steps: {
           token: {
-            kicker: '01 · Author',
-            title: 'Capture the decision, not just the value.',
+            kicker: '01 · Define',
+            title: 'Give the value a name and a purpose.',
             description:
-              'A useful token carries a path, a type, a value and intent. That structure is what lets the rest of the system understand what the decision is for.',
-            insight: 'One source decision becomes reusable context.',
+              'Instead of keeping only #A94E2F, create a token such as color.brand.600 and document what it is for. The rest of the project can reference it without copying the raw value.',
+            insight: 'The value is defined in one place.',
           },
           theme: {
-            kicker: '02 · Give it meaning',
-            title: 'Map the same decision to the role it plays.',
+            kicker: '02 · Use it in a theme',
+            title: 'The theme references the token.',
             description:
-              'Themes reference authored tokens instead of copying raw values. Light and Dark can evolve independently, and project-specific roles stay explicit.',
-            insight: 'Roles preserve meaning while values can change.',
+              'The accent role can point to one token in Light and another in Dark. Change the mapping without editing every component that uses the role.',
+            insight: 'Components use a role instead of a hard-coded color.',
           },
           component: {
-            kicker: '03 · Connect usage',
-            title: 'Components become contracts, not screenshots.',
+            kicker: '03 · Describe the component',
+            title: 'The button knows which roles and states to use.',
             description:
-              'Variants, states, anatomy, token bindings and accessibility expectations live beside the component. A Button is no longer just how it looks today.',
-            insight: 'Implementation choices become part of the system.',
+              'Document its variants, states and token bindings. A developer or coding assistant can start from those rules instead of guessing how the component should behave.',
+            insight: 'The implementation rules are explicit.',
           },
           accessibility: {
-            kicker: '04 · Check the consequences',
-            title: 'Catch contradictions before they spread.',
+            kicker: '04 · Check',
+            title: 'Problems are visible before export.',
             description:
-              'Contrast checks use resolved theme values, while component contracts make requirements such as focus-visible states explicit. Automated checks stay separate from manual review.',
-            insight:
-              'Accessibility is connected to the decisions that affect it.',
+              'VulcanForge UI checks contrast from the values actually resolved by the theme and keeps manual requirements visible instead of pretending everything can be automated.',
+            insight: 'You can see what is automated and what still needs review.',
           },
           delivery: {
-            kicker: '05 · Ship',
-            title: 'Export the system, not another frozen copy of it.',
+            kicker: '05 · Use it',
+            title: 'The same project feeds your code, docs and AI context.',
             description:
-              'CSS, Tailwind, TypeScript, React Native, Markdown and AI instructions are generated from the same structured project, so delivery starts from the same decisions.',
-            insight: 'Different outputs. One source of truth.',
+              'Generate CSS, Tailwind, TypeScript, React Native, Markdown and instructions for your coding assistant. Every output starts from the same project data.',
+            insight: 'You maintain one set of rules instead of several copies.',
           },
         },
       },
       differentiation: {
-        eyebrow: 'What changes',
-        title:
-          'The hard part is not generating more files. It is making sure they all tell the same story.',
+        eyebrow: 'Why it helps',
+        title: 'One place for the rules your code, docs and AI need to share.',
         description:
-          'VulcanForge UI is built around continuity. The interesting part is not any single editor; it is what becomes possible when each layer understands the others.',
+          'Keep the tools you already use. VulcanForge UI gives them a common source instead of making you maintain the same rules in several places.',
         items: {
           source: {
-            title: 'One structured source',
+            title: 'One source to maintain',
             description:
-              'Documentation, exports and AI guidance read from the same project instead of being maintained as parallel artifacts.',
+              'Tokens, themes, components, documentation, exports and AI instructions all start from the same project data.',
           },
           semantics: {
-            title: 'Meaning before implementation',
+            title: 'Roles instead of hard-coded values',
             description:
-              'Theme roles keep intent visible, so a component binds to “accent” or “content” instead of scattering raw colors through the product.',
+              'A component can use a role such as accent or content instead of carrying a raw color that becomes difficult to replace later.',
           },
           contracts: {
-            title: 'Component contracts',
+            title: 'Components described clearly',
             description:
-              'States, variants, anatomy and bindings make the implementation rules explicit enough for humans and tools to reuse them.',
+              'Variants, states and token bindings record how a component should be used instead of leaving those rules in someone’s memory.',
           },
           accessibility: {
-            title: 'Accessibility in the data model',
+            title: 'Checks based on real values',
             description:
-              'Resolved contrast and component requirements can be checked where the underlying design decisions already live.',
+              'Contrast is calculated from the values resolved by the theme, while checks that still need a human remain clearly identified.',
           },
           ai: {
-            title: 'AI guidance derived from the system',
+            title: 'Reusable context for AI development',
             description:
-              'Instead of rewriting the design system inside every prompt, generate instructions from the same source developers are already using.',
+              'Generate instructions from the project so your coding assistant receives the same tokens, component rules and constraints as the rest of the team.',
           },
         },
       },
-      drift: {
-        eyebrow: 'Why it matters',
-        title: 'Every manual copy is another place for the system to drift.',
+      aiDevelopment: {
+        eyebrow: 'AI-assisted development',
+        title: 'Give your coding assistant the same rules your team uses.',
         description:
-          'A token file, a wiki page, a component note and an AI prompt can all be correct on day one and disagree a week later. VulcanForge UI reduces the number of places where the same decision has to be rewritten.',
-        scatteredTitle: 'When decisions are scattered',
-        connectedTitle: 'When decisions stay connected',
+          'A coding assistant does not know your design system by default. Without context it can invent a color, miss a state or rebuild a component that already exists. VulcanForge UI generates reusable instructions from your project so you can add those rules to its context.',
+        boundary:
+          'VulcanForge UI does not run your assistant. It prepares the context file you give to the tools you already use.',
+        contextLabel: 'Generated AI context',
+        rulesTitle: 'rules.md',
+        rules: {
+          tokens: 'Use theme roles before hard-coded color values.',
+          components:
+            'Button.primary supports default, hover, focusVisible and disabled.',
+          accessibility:
+            'Keep documented text/background pairs at WCAG AA or higher.',
+          reuse: 'Reuse existing component contracts before creating new variants.',
+        },
+        promptLabel: 'Then your prompt can stay about the feature',
+        promptExample: 'Build the settings panel with the existing components.',
+        promptNote: 'The UI rules are already provided in rules.md.',
+      },
+      drift: {
+        eyebrow: 'The problem this avoids',
+        title: 'Copy a rule everywhere and eventually the copies disagree.',
+        description:
+          'You update a token, but the documentation, a component or the instructions sent to AI can keep the old version. Starting from one project means fewer places to update by hand.',
+        scatteredTitle: 'When every tool has its own copy',
+        connectedTitle: 'When everything starts from the same project',
         scatteredItems: {
-          token: 'Token value changes',
-          docs: 'Documentation still shows the old rule',
-          component: 'A component keeps a hard-coded exception',
-          ai: 'The next AI prompt invents a different answer',
+          token: 'You change a token',
+          docs: 'The documentation keeps the old value',
+          component: 'A component still uses a hard-coded exception',
+          ai: 'The coding assistant receives outdated instructions',
         },
         connectedItems: {
-          source: 'Change the source decision',
-          theme: 'Theme references resolve the new value',
-          component: 'Bindings keep usage explicit',
-          outputs: 'Docs, exports and AI guidance regenerate from the project',
+          source: 'You change the rule in the project',
+          theme: 'Theme references use the new value',
+          component: 'Component bindings still point to the same roles',
+          outputs: 'You regenerate docs, exports and AI instructions',
         },
-        note: 'No magic sync layer. Just fewer decisions copied by hand.',
+        note: 'Fewer copies to maintain means fewer chances for them to drift.',
       },
       delivery: {
-        eyebrow: 'One source · multiple consumers',
-        title:
-          'The same system can leave the product in the format your stack needs.',
+        eyebrow: 'One project · several outputs',
+        title: 'Generate the format your stack or coding assistant needs.',
         description:
-          'Code-oriented exports, documentation and AI guidance are different views of the same structured project.',
+          'CSS, Tailwind, TypeScript, React Native, Markdown and AI instructions all start from the same project data.',
         formatLabels: {
           css: 'CSS variables',
           tailwind: 'Tailwind v4',
@@ -151,12 +196,11 @@ export const examplesPageMessages = {
         },
       },
       finalCta: {
-        eyebrow: 'Your turn',
-        title:
-          'Turn your design system into infrastructure, not a folder of notes.',
+        eyebrow: 'Start with what you already have',
+        title: 'Put your design-system rules in one place.',
         description:
-          'Start with the decisions you already have. VulcanForge UI gives them a structure the rest of your product can actually use.',
-        cta: 'Build my design system',
+          'Create a project, add your existing tokens and connect them to themes, components, exports and AI instructions as you go.',
+        cta: 'Create my project',
         dashboardCta: 'Open dashboard',
       },
     },
@@ -164,162 +208,213 @@ export const examplesPageMessages = {
   fr: {
     ExamplesPage: {
       hero: {
-        eyebrow: 'Démo guidée · Aurora System',
-        titleBefore: 'Une décision change.',
-        titleAccent: 'Tout le système suit.',
+        eyebrow: 'Démo guidée du produit',
+        titleBefore: 'Définissez une règle.',
+        titleAccent: 'Réutilisez-la partout.',
         description:
-          'VulcanForge UI ne sert pas seulement à stocker des tokens. Il relie les décisions qui font vivre un design system : thèmes, contrats de composants, accessibilité, documentation, exports et consignes pour l’IA.',
-        primaryCta: 'Créer mon système',
-        dashboardCta: 'Ouvrir le tableau de bord',
-        secondaryCta: 'Suivre la décision',
-        disclosure:
-          'Aurora System est un projet fictif créé spécialement pour cette démonstration.',
+          'VulcanForge UI rassemble les règles de votre interface au même endroit : tokens, thèmes, composants, accessibilité, documentation, exports et consignes pour votre assistant IA. Vous évitez de recopier la même décision à chaque étape.',
+        secondaryCta: 'Voir le workflow',
+        disclosure: 'Toutes les données de cette démo sont fictives.',
         flow: {
           token: {
-            label: 'Décision source',
-            caption: 'Nommée, typée et documentée',
+            label: 'Token',
+            caption: 'La valeur et son usage sont documentés',
           },
           theme: {
-            label: 'Sens',
-            caption: 'Associée à un rôle de thème',
+            label: 'Thème',
+            caption: 'Le token est associé à un rôle',
           },
           component: {
-            label: 'Usage',
-            caption: 'Branchée sur un contrat de composant',
+            label: 'Composant',
+            caption: 'Le rôle est utilisé par le composant',
           },
           accessibility: {
-            label: 'Contrôle',
-            caption: 'Vérifiée avant la livraison',
+            label: 'Accessibilité',
+            caption: 'Les valeurs utilisées sont vérifiées',
           },
           delivery: {
-            label: 'Livraison',
-            caption: 'Générée depuis la même source',
+            label: 'Sorties',
+            caption: 'Code, documentation et consignes IA',
           },
         },
       },
+      demo: {
+        projectLabel: 'Projet de démo',
+        deliveryLabel: 'sorties',
+        connectedLayers: '5 étapes reliées',
+        source: 'Source',
+        resolvedContrast: 'Contraste calculé',
+        outputs: 'Sorties',
+        formats: '6 formats',
+        primitiveColor: 'Primitif · Couleur',
+        value: 'Valeur',
+        intent: 'Usage',
+        primaryBrandAction: 'Action principale de la marque',
+        description: 'Description',
+        tokenDescription:
+          'Couleur principale de la marque utilisée pour les actions importantes et les états sélectionnés.',
+        activeTheme: 'Thème actif',
+        independentMapping: 'Mapping indépendant',
+        componentContract: 'Règles du composant interactif',
+        states: 'États',
+        tokenBindings: 'Tokens utilisés',
+        primaryAction: 'Action principale',
+        contractChecks: 'Contrôles',
+        checks: {
+          focus: 'L’état focusVisible est documenté',
+          foreground: 'Le texte et le fond utilisent des valeurs résolues',
+          status: 'Le statut ne repose pas uniquement sur la couleur',
+        },
+        manualReview:
+          'Les tests au clavier et au lecteur d’écran restent à faire manuellement.',
+        generatedFromProject: 'Généré depuis le projet',
+      },
       workflow: {
-        eyebrow: 'Le workflow',
-        title:
-          'Pas cinq outils posés côte à côte. Une seule chaîne de décisions.',
+        eyebrow: 'Du token au code',
+        title: 'Une règle définie une fois, puis réutilisée à chaque étape.',
         description:
-          'Suivez la même décision à travers Aurora. Rien n’est ressaisi juste pour maintenir un autre document, un export ou un prompt à jour.',
+          'Voici comment une couleur de marque devient un rôle de thème, alimente un bouton, passe les contrôles d’accessibilité puis arrive dans le code, la documentation et les consignes IA.',
         steps: {
           token: {
-            kicker: '01 · Créer',
-            title: 'Capturez la décision, pas seulement la valeur.',
+            kicker: '01 · Définir',
+            title: 'Donnez un nom et un usage à la valeur.',
             description:
-              'Un token utile ne se résume pas à un hexadécimal. Il porte un chemin, un type, une valeur et une intention. C’est cette structure qui permet au reste du système de comprendre à quoi il sert.',
-            insight: 'Une décision source devient un contexte réutilisable.',
+              'Au lieu de garder seulement #A94E2F, créez un token comme color.brand.600 et indiquez à quoi il sert. Le reste du projet peut ensuite le référencer sans recopier la valeur.',
+            insight: 'La valeur n’est définie qu’à un seul endroit.',
           },
           theme: {
-            kicker: '02 · Donner du sens',
-            title: 'Associez la décision au rôle qu’elle joue.',
+            kicker: '02 · Utiliser dans un thème',
+            title: 'Le thème référence le token.',
             description:
-              'Les thèmes référencent les tokens au lieu de recopier leurs valeurs. Light et Dark peuvent évoluer séparément, et les rôles propres au projet restent visibles et assumés.',
-            insight: 'Le rôle garde le sens, même quand la valeur change.',
+              'Le rôle accent peut pointer vers une valeur en Light et une autre en Dark. Vous changez le mapping sans modifier chaque composant qui utilise ce rôle.',
+            insight: 'Les composants utilisent un rôle, pas une couleur en dur.',
           },
           component: {
-            kicker: '03 · Relier les usages',
-            title: 'Un composant devient un contrat, pas une capture d’écran.',
+            kicker: '03 · Décrire le composant',
+            title: 'Le bouton sait quels rôles et quels états utiliser.',
             description:
-              'Variantes, états, anatomie, bindings de tokens et attentes d’accessibilité vivent avec le composant. Un Button ne se résume plus à son apparence du moment.',
-            insight: 'Les choix d’implémentation font enfin partie du système.',
+              'Vous documentez ses variantes, ses états et ses tokens. Un développeur ou un assistant IA peut partir de ces règles au lieu de deviner comment le composant doit fonctionner.',
+            insight: 'Les règles d’implémentation sont explicites.',
           },
           accessibility: {
-            kicker: '04 · Mesurer les conséquences',
-            title: 'Repérez les contradictions avant qu’elles se propagent.',
+            kicker: '04 · Vérifier',
+            title: 'Les problèmes sont visibles avant l’export.',
             description:
-              'Les contrastes sont calculés à partir des valeurs réellement résolues dans les thèmes. Les contrats de composants rendent aussi explicites des exigences comme le focus visible, sans confondre contrôles automatiques et revue humaine.',
+              'VulcanForge UI calcule les contrastes à partir des valeurs réellement utilisées par le thème et garde visibles les contrôles qui demandent encore une vérification manuelle.',
             insight:
-              'L’accessibilité reste liée aux décisions qui l’impactent.',
+              'Vous voyez ce qui est vérifié automatiquement et ce qui ne l’est pas.',
           },
           delivery: {
-            kicker: '05 · Livrer',
-            title: 'Exportez le système, pas une nouvelle copie figée.',
+            kicker: '05 · Utiliser',
+            title: 'Le même projet alimente votre code, vos docs et votre IA.',
             description:
-              'CSS, Tailwind, TypeScript, React Native, Markdown et instructions IA partent du même projet structuré. Chaque sortie raconte donc la même version du système.',
-            insight: 'Des formats différents. Une seule source de vérité.',
+              'Générez du CSS, Tailwind, TypeScript, React Native, du Markdown et un fichier de consignes pour votre assistant IA. Toutes ces sorties partent des mêmes données.',
+            insight:
+              'Vous maintenez un seul jeu de règles au lieu de plusieurs copies.',
           },
         },
       },
       differentiation: {
-        eyebrow: 'Ce qui change vraiment',
+        eyebrow: 'Pourquoi c’est utile',
         title:
-          'Le plus difficile n’est pas de générer plus de fichiers. C’est qu’ils racontent tous la même chose.',
+          'Une seule base pour les règles que votre code, votre documentation et votre IA doivent partager.',
         description:
-          'VulcanForge UI est construit autour de cette continuité. L’intérêt n’est pas dans un éditeur pris isolément, mais dans ce qui devient possible quand chaque couche comprend les autres.',
+          'Vous gardez vos outils habituels. VulcanForge UI leur fournit une source commune au lieu de vous obliger à maintenir les mêmes règles à plusieurs endroits.',
         items: {
           source: {
-            title: 'Une source structurée',
+            title: 'Une seule base à maintenir',
             description:
-              'La documentation, les exports et les consignes IA lisent le même projet au lieu d’être entretenus comme trois artefacts parallèles.',
+              'Tokens, thèmes, composants, documentation, exports et consignes IA partent des mêmes données du projet.',
           },
           semantics: {
-            title: 'Le sens avant l’implémentation',
+            title: 'Des rôles au lieu de valeurs en dur',
             description:
-              'Les rôles de thème gardent l’intention visible : un composant dépend de « accent » ou « content », pas d’une couleur brute disséminée partout.',
+              'Un composant peut utiliser un rôle comme accent ou content au lieu d’embarquer une couleur brute difficile à remplacer ensuite.',
           },
           contracts: {
-            title: 'Des composants décrits comme des contrats',
+            title: 'Des composants décrits clairement',
             description:
-              'États, variantes, anatomie et bindings rendent les règles assez explicites pour être réutilisées aussi bien par un développeur que par un outil.',
+              'Variantes, états et tokens utilisés indiquent comment un composant doit fonctionner au lieu de laisser ces règles dans la tête de quelqu’un.',
           },
           accessibility: {
-            title: 'L’accessibilité dans le modèle de données',
+            title: 'Des contrôles basés sur les vraies valeurs',
             description:
-              'Les contrastes résolus et les exigences des composants peuvent être contrôlés là où vivent déjà les décisions qui les influencent.',
+              'Les contrastes sont calculés avec les valeurs du thème. Les vérifications qui demandent encore un humain restent clairement indiquées.',
           },
           ai: {
-            title: 'Des consignes IA dérivées du système',
+            title: 'Un contexte réutilisable pour développer avec l’IA',
             description:
-              'Au lieu de réexpliquer le design system dans chaque prompt, les instructions sont générées depuis la même source que celle utilisée par les développeurs.',
+              'Générez des consignes depuis le projet pour que votre assistant IA reçoive les mêmes tokens, règles de composants et contraintes que votre équipe.',
           },
         },
       },
-      drift: {
-        eyebrow: 'Pourquoi ça compte',
-        title:
-          'Chaque copie manuelle est un nouvel endroit où le système peut dériver.',
+      aiDevelopment: {
+        eyebrow: 'Développer avec l’IA',
+        title: 'Donnez à votre assistant IA les mêmes règles qu’à votre équipe.',
         description:
-          'Un fichier de tokens, une page de documentation, une note sur un composant et un prompt peuvent être parfaitement cohérents aujourd’hui, puis se contredire une semaine plus tard. VulcanForge UI réduit le nombre d’endroits où la même décision doit être recopiée.',
-        scatteredTitle: 'Quand les décisions sont dispersées',
-        connectedTitle: 'Quand les décisions restent reliées',
+          'Un assistant IA ne connaît pas votre design system par défaut. Sans contexte, il peut inventer une couleur, oublier un état ou recréer un composant qui existe déjà. VulcanForge UI génère des consignes réutilisables depuis votre projet pour que vous puissiez les ajouter à son contexte.',
+        boundary:
+          'VulcanForge UI ne pilote pas votre assistant IA. Il prépare le fichier de contexte que vous fournissez aux outils que vous utilisez déjà.',
+        contextLabel: 'Contexte IA généré',
+        rulesTitle: 'rules.md',
+        rules: {
+          tokens: 'Utiliser les rôles de thème avant toute couleur en dur.',
+          components:
+            'Button.primary gère default, hover, focusVisible et disabled.',
+          accessibility:
+            'Conserver les paires texte/fond documentées au niveau WCAG AA ou supérieur.',
+          reuse:
+            'Réutiliser les contrats de composants existants avant de créer de nouvelles variantes.',
+        },
+        promptLabel: 'Votre prompt peut alors rester centré sur la feature',
+        promptExample:
+          'Crée le panneau des paramètres avec les composants existants.',
+        promptNote: 'Les règles d’interface sont déjà fournies dans rules.md.',
+      },
+      drift: {
+        eyebrow: 'Le problème que ça évite',
+        title:
+          'Quand une règle est copiée partout, les copies finissent par se contredire.',
+        description:
+          'Vous modifiez un token, mais la documentation, un composant ou les consignes envoyées à l’IA peuvent garder l’ancienne version. En partant d’un seul projet, vous avez moins d’endroits à mettre à jour à la main.',
+        scatteredTitle: 'Quand chaque outil garde sa propre copie',
+        connectedTitle: 'Quand tout repart du même projet',
         scatteredItems: {
-          token: 'La valeur d’un token change',
-          docs: 'La documentation affiche encore l’ancienne règle',
-          component: 'Un composant garde une exception en dur',
-          ai: 'Le prochain prompt IA invente une autre réponse',
+          token: 'Vous modifiez un token',
+          docs: 'La documentation garde l’ancienne valeur',
+          component: 'Un composant utilise encore une exception en dur',
+          ai: 'L’assistant IA reçoit des consignes dépassées',
         },
         connectedItems: {
-          source: 'La décision source change',
-          theme: 'Les références de thème résolvent la nouvelle valeur',
-          component: 'Les bindings gardent l’usage explicite',
-          outputs: 'Docs, exports et consignes IA repartent du projet',
+          source: 'Vous modifiez la règle dans le projet',
+          theme: 'Les références du thème utilisent la nouvelle valeur',
+          component: 'Les composants gardent les mêmes rôles',
+          outputs: 'Vous régénérez les docs, les exports et les consignes IA',
         },
-        note: 'Pas de synchronisation magique. Juste moins de décisions recopiées à la main.',
+        note:
+          'Moins de copies à maintenir, donc moins de risques qu’elles divergent.',
       },
       delivery: {
-        eyebrow: 'Une source · plusieurs usages',
+        eyebrow: 'Un projet · plusieurs sorties',
         title:
-          'Le même système peut sortir dans le format dont votre stack a besoin.',
+          'Générez le format dont votre stack ou votre assistant IA a besoin.',
         description:
-          'Les exports orientés code, la documentation et les consignes IA ne sont que des vues différentes du même projet structuré.',
+          'CSS, Tailwind, TypeScript, React Native, Markdown et consignes IA partent tous des mêmes données du projet.',
         formatLabels: {
           css: 'Variables CSS',
           tailwind: 'Tailwind v4',
           typescript: 'TypeScript',
           reactNative: 'React Native',
           markdown: 'Documentation Markdown',
-          aiInstructions: 'Instructions IA',
+          aiInstructions: 'Consignes IA',
         },
       },
       finalCta: {
-        eyebrow: 'À vous',
-        title:
-          'Faites de votre design system une infrastructure, pas un dossier de notes.',
+        eyebrow: 'Partez de ce que vous avez déjà',
+        title: 'Rassemblez les règles de votre design system au même endroit.',
         description:
-          'Partez des décisions que vous avez déjà. VulcanForge UI leur donne une structure que le reste de votre produit peut réellement exploiter.',
-        cta: 'Construire mon design system',
+          'Créez un projet, ajoutez vos tokens existants puis reliez-les progressivement à vos thèmes, composants, exports et consignes IA.',
+        cta: 'Créer mon projet',
         dashboardCta: 'Ouvrir le tableau de bord',
       },
     },
