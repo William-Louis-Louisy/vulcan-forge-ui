@@ -1,6 +1,6 @@
 import type { AnchorHTMLAttributes } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MobileAppMenu } from './MobileAppMenu';
 
@@ -52,7 +52,7 @@ beforeEach(() => {
 });
 
 describe('MobileAppMenu', () => {
-  it('renders the same fullscreen body-level navigation pattern as the public menu', async () => {
+  it('renders the same fullscreen body-level navigation and ignores unrelated global pointer or scroll events', async () => {
     const user = userEvent.setup();
 
     render(
@@ -90,16 +90,11 @@ describe('MobileAppMenu', () => {
       '/app/settings',
     );
 
-    await act(async () => {
-      mobileVisualViewport.dispatchEvent(new Event('scroll'));
-    });
+    mobileVisualViewport.dispatchEvent(new Event('scroll'));
+    fireEvent.pointerDown(document.body);
+    fireEvent.scroll(document);
 
     expect(document.getElementById('mobile-app-menu')).not.toBeNull();
-
-    if (panel) {
-      fireEvent.pointerDown(panel);
-    }
-
     expect(screen.getByText('user@example.com')).toBeInTheDocument();
 
     await user.click(screen.getByRole('link', { name: 'Settings' }));
