@@ -2,13 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-type UseDismissiblePopoverOptions = {
-  closeOnScroll?: boolean;
-};
-
-export function useDismissiblePopover({
-  closeOnScroll = true,
-}: UseDismissiblePopoverOptions = {}) {
+export function useDismissiblePopover() {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -63,22 +57,16 @@ export function useDismissiblePopover({
 
     document.addEventListener('pointerdown', handlePointerDown);
     document.addEventListener('keydown', handleKeyDown);
-
-    if (closeOnScroll) {
-      document.addEventListener('scroll', handleScroll, true);
-      window.visualViewport?.addEventListener('scroll', handleScroll);
-    }
+    document.addEventListener('scroll', handleScroll, true);
+    window.visualViewport?.addEventListener('scroll', handleScroll);
 
     return () => {
       document.removeEventListener('pointerdown', handlePointerDown);
       document.removeEventListener('keydown', handleKeyDown);
-
-      if (closeOnScroll) {
-        document.removeEventListener('scroll', handleScroll, true);
-        window.visualViewport?.removeEventListener('scroll', handleScroll);
-      }
+      document.removeEventListener('scroll', handleScroll, true);
+      window.visualViewport?.removeEventListener('scroll', handleScroll);
     };
-  }, [close, closeOnScroll, isOpen]);
+  }, [close, isOpen]);
 
   return {
     close,
