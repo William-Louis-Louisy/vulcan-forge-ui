@@ -1,15 +1,14 @@
 'use client';
 
-import { useEffect } from 'react';
 import { ListIcon, XIcon } from '@phosphor-icons/react';
 import { LocaleSwitcher } from '@/components/i18n/LocaleSwitcher';
-import { useDismissiblePopover } from '@/components/interaction/useDismissiblePopover';
 import {
   MobileNavigationFooter,
   MobileNavigationLinkRow,
   MobileNavigationPanel,
 } from './MobileNavigationPanel';
 import { PublicButtonLink } from './PublicButtonLink';
+import { useMobileNavigationController } from './useMobileNavigationController';
 
 type PublicMobileMenuProps = {
   isAuthenticated: boolean;
@@ -36,29 +35,13 @@ export function PublicMobileMenu({
   isAuthenticated,
   labels,
 }: PublicMobileMenuProps) {
-  const { close, containerRef, contentRef, isOpen, toggle, triggerRef } =
-    useDismissiblePopover({ closeOnScroll: false });
+  const { close, contentRef, isOpen, toggle, triggerRef } =
+    useMobileNavigationController({ desktopMediaQuery: '(min-width: 768px)' });
   const menuId = 'public-mobile-menu';
-
-  useEffect(() => {
-    const desktopMedia = window.matchMedia('(min-width: 768px)');
-
-    function handleBreakpointChange(event: MediaQueryListEvent) {
-      if (event.matches) {
-        close();
-      }
-    }
-
-    desktopMedia.addEventListener('change', handleBreakpointChange);
-
-    return () => {
-      desktopMedia.removeEventListener('change', handleBreakpointChange);
-    };
-  }, [close]);
 
   return (
     <>
-      <div ref={containerRef} className="relative md:hidden">
+      <div className="relative md:hidden">
         <button
           ref={triggerRef}
           type="button"
