@@ -1,10 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
 import { ListIcon, XIcon } from '@phosphor-icons/react';
 
 import { LocaleSwitcher } from '@/components/i18n/LocaleSwitcher';
-import { useDismissiblePopover } from '@/components/interaction/useDismissiblePopover';
 import { LogoutButton } from '@/features/auth/logout/LogoutButton';
 import type { PrivateNavigationItemKey } from '@/features/app-navigation/private-navigation';
 import { Link } from '@/i18n/navigation';
@@ -13,6 +11,7 @@ import {
   MobileNavigationFooter,
   MobileNavigationPanel,
 } from './MobileNavigationPanel';
+import { useMobileNavigationController } from './useMobileNavigationController';
 
 type MobileAppMenuProps = {
   userEmail: string;
@@ -31,29 +30,13 @@ export function MobileAppMenu({
   navigationLabel,
   navigationItems,
 }: MobileAppMenuProps) {
-  const { close, containerRef, contentRef, isOpen, toggle, triggerRef } =
-    useDismissiblePopover({ closeOnScroll: false });
+  const { close, contentRef, isOpen, toggle, triggerRef } =
+    useMobileNavigationController({ desktopMediaQuery: '(min-width: 1024px)' });
   const menuId = 'mobile-app-menu';
-
-  useEffect(() => {
-    const desktopMedia = window.matchMedia('(min-width: 1024px)');
-
-    function handleBreakpointChange(event: MediaQueryListEvent) {
-      if (event.matches) {
-        close();
-      }
-    }
-
-    desktopMedia.addEventListener('change', handleBreakpointChange);
-
-    return () => {
-      desktopMedia.removeEventListener('change', handleBreakpointChange);
-    };
-  }, [close]);
 
   return (
     <>
-      <div ref={containerRef} className="relative">
+      <div className="relative">
         <button
           ref={triggerRef}
           type="button"
