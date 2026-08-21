@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 export function useDismissiblePopover() {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   const close = useCallback(() => {
@@ -20,12 +21,19 @@ export function useDismissiblePopover() {
       return;
     }
 
-    function isInsideContainer(target: EventTarget | null) {
-      return target instanceof Node && containerRef.current?.contains(target);
+    function isInsidePopover(target: EventTarget | null) {
+      if (!(target instanceof Node)) {
+        return false;
+      }
+
+      return Boolean(
+        containerRef.current?.contains(target) ||
+        contentRef.current?.contains(target),
+      );
     }
 
     function handlePointerDown(event: PointerEvent) {
-      if (!isInsideContainer(event.target)) {
+      if (!isInsidePopover(event.target)) {
         close();
       }
     }
@@ -40,7 +48,7 @@ export function useDismissiblePopover() {
     }
 
     function handleScroll(event: Event) {
-      if (isInsideContainer(event.target)) {
+      if (isInsidePopover(event.target)) {
         return;
       }
 
@@ -63,6 +71,7 @@ export function useDismissiblePopover() {
   return {
     close,
     containerRef,
+    contentRef,
     isOpen,
     setIsOpen,
     toggle,

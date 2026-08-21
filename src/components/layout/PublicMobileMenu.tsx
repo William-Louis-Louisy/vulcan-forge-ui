@@ -2,9 +2,13 @@
 
 import { ListIcon, XIcon } from '@phosphor-icons/react';
 import { LocaleSwitcher } from '@/components/i18n/LocaleSwitcher';
-import { useDismissiblePopover } from '@/components/interaction/useDismissiblePopover';
-import { Link } from '@/i18n/navigation';
+import {
+  MobileNavigationFooter,
+  MobileNavigationLinkRow,
+  MobileNavigationPanel,
+} from './MobileNavigationPanel';
 import { PublicButtonLink } from './PublicButtonLink';
+import { useMobileNavigationController } from './useMobileNavigationController';
 
 type PublicMobileMenuProps = {
   isAuthenticated: boolean;
@@ -21,94 +25,105 @@ type PublicMobileMenuProps = {
   };
 };
 
+const navigationItems = [
+  { href: '/#product', key: 'product' },
+  { href: '/pricing', key: 'pricing' },
+  { href: '/examples', key: 'example' },
+] as const;
+
 export function PublicMobileMenu({
   isAuthenticated,
   labels,
 }: PublicMobileMenuProps) {
-  const { close, containerRef, isOpen, toggle, triggerRef } =
-    useDismissiblePopover();
+  const { close, contentRef, isOpen, toggle, triggerRef } =
+    useMobileNavigationController({ desktopMediaQuery: '(min-width: 768px)' });
   const menuId = 'public-mobile-menu';
 
   return (
-    <div ref={containerRef} className="relative md:hidden">
-      <button
-        ref={triggerRef}
-        type="button"
-        aria-label={isOpen ? labels.close : labels.open}
-        aria-expanded={isOpen}
-        aria-controls={menuId}
-        onClick={toggle}
-        className="border-border-subtle bg-surface-primary text-content-primary hover:bg-surface-secondary flex size-9 items-center justify-center rounded-md border transition"
-      >
-        {isOpen ? (
-          <XIcon aria-hidden="true" size={18} weight="bold" />
-        ) : (
-          <ListIcon aria-hidden="true" size={20} weight="bold" />
-        )}
-      </button>
+    <>
+      <div className="relative md:hidden">
+        <button
+          ref={triggerRef}
+          type="button"
+          aria-label={isOpen ? labels.close : labels.open}
+          aria-expanded={isOpen}
+          aria-controls={menuId}
+          onClick={toggle}
+          className={[
+            'flex size-10 items-center justify-center rounded-md border transition',
+            'focus-visible:outline-border-focus focus-visible:outline-2 focus-visible:outline-offset-2',
+            isOpen
+              ? 'border-surface-inverse bg-surface-inverse text-content-on-inverse'
+              : 'border-border-subtle bg-surface-primary text-content-primary hover:bg-surface-secondary',
+          ].join(' ')}
+        >
+          {isOpen ? (
+            <XIcon aria-hidden="true" size={18} weight="bold" />
+          ) : (
+            <ListIcon aria-hidden="true" size={20} weight="bold" />
+          )}
+        </button>
+      </div>
 
       {isOpen ? (
-        <div
+        <MobileNavigationPanel
+          contentRef={contentRef}
           id={menuId}
-          className="border-border-subtle bg-surface-primary shadow-elevated absolute top-full right-0 z-50 mt-2 w-[min(21rem,calc(100vw-2rem))] rounded-md border p-3"
+          topOffsetClassName="top-14"
         >
           <nav aria-label={labels.navigation}>
-            <div className="grid gap-1">
-              <Link
-                href="/#product"
-                onClick={close}
-                className="text-content-secondary hover:bg-background-subtle hover:text-content-primary rounded-md px-3 py-2.5 text-sm font-medium transition"
-              >
-                {labels.product}
-              </Link>
-              <Link
-                href="/examples"
-                onClick={close}
-                className="text-content-secondary hover:bg-background-subtle hover:text-content-primary rounded-md px-3 py-2.5 text-sm font-medium transition"
-              >
-                {labels.example}
-              </Link>
-              <Link
-                href="/pricing"
-                onClick={close}
-                className="text-content-secondary hover:bg-background-subtle hover:text-content-primary rounded-md px-3 py-2.5 text-sm font-medium transition"
-              >
-                {labels.pricing}
-              </Link>
+            <div className="border-border-subtle divide-border-subtle divide-y border-y">
+              {navigationItems.map((item, index) => (
+                <MobileNavigationLinkRow
+                  key={item.key}
+                  href={item.href}
+                  index={index + 1}
+                  onClick={close}
+                >
+                  {labels[item.key]}
+                </MobileNavigationLinkRow>
+              ))}
             </div>
           </nav>
 
-          <div className="border-border-subtle mt-3 border-t pt-3">
-            <LocaleSwitcher fullWidth showLabel />
-          </div>
-
-          <div className="border-border-subtle mt-3 grid gap-2 border-t pt-3">
-            {isAuthenticated ? (
-              <PublicButtonLink href="/app" onClick={close} className="w-full">
-                {labels.dashboard}
-              </PublicButtonLink>
-            ) : (
-              <>
-                <PublicButtonLink
-                  href="/login"
-                  variant="secondary"
-                  onClick={close}
-                  className="w-full"
-                >
-                  {labels.signIn}
-                </PublicButtonLink>
-                <PublicButtonLink
-                  href="/signup"
-                  onClick={close}
-                  className="w-full"
-                >
-                  {labels.getStarted}
-                </PublicButtonLink>
-              </>
-            )}
-          </div>
-        </div>
+          <MobileNavigationFooter
+            leading={
+              <LocaleSwitcher fullWidth showLabel onLocaleChange={close} />
+            }
+            actions={
+              <div className="grid gap-2 sm:grid-cols-2">
+                {isAuthenticated ? (
+                  <PublicButtonLink
+                    href="/app"
+                    onClick={close}
+                    className="w-full sm:col-span-2"
+                  >
+                    {labels.dashboard}
+                  </PublicButtonLink>
+                ) : (
+                  <>
+                    <PublicButtonLink
+                      href="/login"
+                      variant="secondary"
+                      onClick={close}
+                      className="w-full"
+                    >
+                      {labels.signIn}
+                    </PublicButtonLink>
+                    <PublicButtonLink
+                      href="/signup"
+                      onClick={close}
+                      className="w-full"
+                    >
+                      {labels.getStarted}
+                    </PublicButtonLink>
+                  </>
+                )}
+              </div>
+            }
+          />
+        </MobileNavigationPanel>
       ) : null}
-    </div>
+    </>
   );
 }
