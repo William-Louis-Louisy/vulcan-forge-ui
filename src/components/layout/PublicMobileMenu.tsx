@@ -37,7 +37,7 @@ export function PublicMobileMenu({
   labels,
 }: PublicMobileMenuProps) {
   const { close, containerRef, contentRef, isOpen, toggle, triggerRef } =
-    useDismissiblePopover();
+    useDismissiblePopover({ closeOnScroll: false });
   const menuId = 'public-mobile-menu';
 
   useEffect(() => {
