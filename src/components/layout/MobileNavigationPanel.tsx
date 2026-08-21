@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect } from 'react';
-import type { ComponentProps, ReactNode, RefObject } from 'react';
 import { createPortal } from 'react-dom';
 import { ArrowRightIcon } from '@phosphor-icons/react';
+import type { ComponentProps, ReactNode, RefObject } from 'react';
 
 import { Link } from '@/i18n/navigation';
 
@@ -92,7 +92,7 @@ export function MobileNavigationLinkRow({
       </span>
       <span
         className={[
-          'font-display flex-1 text-2xl leading-none font-semibold tracking-[-0.025em] sm:text-3xl',
+          'font-display flex-1 text-lg leading-none font-semibold tracking-tight sm:text-xl',
           isActive ? 'text-action-accent' : 'text-content-primary',
         ].join(' ')}
       >
@@ -128,7 +128,7 @@ export function MobileNavigationDisabledRow({
       >
         {String(index).padStart(2, '0')}
       </span>
-      <span className="font-display flex-1 text-2xl leading-none font-semibold tracking-[-0.025em] sm:text-3xl">
+      <span className="font-display flex-1 text-2xl leading-none font-semibold tracking-tight sm:text-3xl">
         {children}
       </span>
       {trailing ? <span className="shrink-0">{trailing}</span> : null}
