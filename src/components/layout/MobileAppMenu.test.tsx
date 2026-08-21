@@ -1,6 +1,6 @@
 import type { AnchorHTMLAttributes } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MobileAppMenu } from './MobileAppMenu';
 
@@ -36,8 +36,12 @@ vi.mock('./AppShellNavigation', () => ({
   ),
 }));
 
+let mobileVisualViewport: EventTarget;
+
 beforeEach(() => {
   document.body.style.overflow = '';
+  mobileVisualViewport = new EventTarget();
+  vi.stubGlobal('visualViewport', mobileVisualViewport);
   vi.stubGlobal(
     'matchMedia',
     vi.fn().mockReturnValue({
@@ -85,6 +89,12 @@ describe('MobileAppMenu', () => {
       'href',
       '/app/settings',
     );
+
+    await act(async () => {
+      mobileVisualViewport.dispatchEvent(new Event('scroll'));
+    });
+
+    expect(document.getElementById('mobile-app-menu')).not.toBeNull();
 
     if (panel) {
       fireEvent.pointerDown(panel);
