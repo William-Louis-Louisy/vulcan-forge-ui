@@ -32,7 +32,7 @@ export function MobileAppMenu({
   navigationItems,
 }: MobileAppMenuProps) {
   const { close, containerRef, contentRef, isOpen, toggle, triggerRef } =
-    useDismissiblePopover();
+    useDismissiblePopover({ closeOnScroll: false });
   const menuId = 'mobile-app-menu';
 
   useEffect(() => {
