@@ -1,6 +1,6 @@
 import type { AnchorHTMLAttributes } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { PublicMobileMenu } from './PublicMobileMenu';
 
@@ -53,7 +53,7 @@ beforeEach(() => {
 });
 
 describe('PublicMobileMenu', () => {
-  it('opens the shared fullscreen body-level navigation and closes it after navigation', async () => {
+  it('opens the shared fullscreen body-level navigation and only closes through explicit menu actions', async () => {
     const user = userEvent.setup();
 
     render(<PublicMobileMenu isAuthenticated={false} labels={labels} />);
@@ -87,17 +87,9 @@ describe('PublicMobileMenu', () => {
     );
     expect(document.body.style.overflow).toBe('hidden');
 
-    await act(async () => {
-      mobileVisualViewport.dispatchEvent(new Event('scroll'));
-    });
-
-    expect(
-      screen.getByRole('navigation', { name: labels.navigation }),
-    ).toBeInTheDocument();
-
-    if (panel) {
-      fireEvent.pointerDown(panel);
-    }
+    mobileVisualViewport.dispatchEvent(new Event('scroll'));
+    fireEvent.pointerDown(document.body);
+    fireEvent.scroll(document);
 
     expect(
       screen.getByRole('navigation', { name: labels.navigation }),
@@ -109,6 +101,28 @@ describe('PublicMobileMenu', () => {
       screen.queryByRole('navigation', { name: labels.navigation }),
     ).not.toBeInTheDocument();
     expect(document.body.style.overflow).toBe('');
+  });
+
+  it('supports legacy MediaQueryList listeners used by some mobile browsers', async () => {
+    const user = userEvent.setup();
+    const addListener = vi.fn();
+    const removeListener = vi.fn();
+
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn().mockReturnValue({
+        addListener,
+        removeListener,
+      } as unknown as MediaQueryList),
+    );
+
+    render(<PublicMobileMenu isAuthenticated={false} labels={labels} />);
+
+    expect(addListener).toHaveBeenCalledTimes(1);
+
+    await user.click(screen.getByRole('button', { name: labels.open }));
+
+    expect(document.getElementById('public-mobile-menu')).not.toBeNull();
   });
 
   it('closes after switching locale', async () => {
