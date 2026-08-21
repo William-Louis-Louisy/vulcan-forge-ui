@@ -1,6 +1,6 @@
 import type { AnchorHTMLAttributes } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { PublicMobileMenu } from './PublicMobileMenu';
 
@@ -37,8 +37,12 @@ const labels = {
   signIn: 'Sign in',
 };
 
+let mobileVisualViewport: EventTarget;
+
 beforeEach(() => {
   document.body.style.overflow = '';
+  mobileVisualViewport = new EventTarget();
+  vi.stubGlobal('visualViewport', mobileVisualViewport);
   vi.stubGlobal(
     'matchMedia',
     vi.fn().mockReturnValue({
@@ -82,6 +86,14 @@ describe('PublicMobileMenu', () => {
       '/examples',
     );
     expect(document.body.style.overflow).toBe('hidden');
+
+    await act(async () => {
+      mobileVisualViewport.dispatchEvent(new Event('scroll'));
+    });
+
+    expect(
+      screen.getByRole('navigation', { name: labels.navigation }),
+    ).toBeInTheDocument();
 
     if (panel) {
       fireEvent.pointerDown(panel);
