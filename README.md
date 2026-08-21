@@ -88,6 +88,14 @@ The product uses the validated MVP foundations globally:
 
 The visual source of truth and implementation rules are documented under `docs/product/`.
 
+## Product roadmap
+
+The post-DS-170 product-completion sequence, including Learn, Components Workspace V2, targeted Theme extensibility, SEO/social reach and eventual release qualification, is documented in:
+
+- `docs/product/ds-180-product-completion-roadmap.md`.
+
+The roadmap is the continuity source of truth for the next phases and intentionally favors small, independently qualified iterations over broad feature rewrites.
+
 ## Stack
 
 - Next.js App Router;
