@@ -16,6 +16,7 @@ import { publicSurfaceMessages } from '@/messages/public-surface-messages';
 import { examplesPageMessages } from '@/messages/examples-page-messages';
 import { learnMessages } from '@/messages/learn-messages';
 import { learnDesignSystemsMessages } from '@/messages/learn-design-systems-messages';
+import { learnDesignTokensMessages } from '@/messages/learn-design-tokens-messages';
 import { productEditorPreviewMessages } from '@/messages/product-editor-preview-messages';
 import { errorSurfaceMessages } from '@/messages/error-surface-messages';
 import { journeyPolishMessages } from '@/messages/journey-polish-messages';
@@ -52,6 +53,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
     examplesPageMessages[locale],
     learnMessages[locale],
     learnDesignSystemsMessages[locale],
+    learnDesignTokensMessages[locale],
     productEditorPreviewMessages[locale],
     errorSurfaceMessages[locale],
     journeyPolishMessages[locale],
