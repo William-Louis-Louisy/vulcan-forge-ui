@@ -120,7 +120,7 @@ export default async function LearnDesignSystemsPage() {
                     </p>
                     <div className="bg-background-sunken border-border-subtle mt-5 flex min-h-36 items-center justify-center border p-5">
                       <div
-                        className="px-4 py-3 text-sm font-semibold"
+                        className="text-sm font-semibold"
                         style={{
                           backgroundColor: color,
                           borderRadius: key === 'second' ? 12 : 14,
@@ -128,6 +128,8 @@ export default async function LearnDesignSystemsPage() {
                           boxShadow: hasFocusTreatment
                             ? '0 0 0 3px rgba(37, 99, 235, 0.38)'
                             : 'none',
+                          padding:
+                            key === 'second' ? '10px 16px' : '12px 16px',
                         }}
                       >
                         {t('openingProblem.buttonLabel')}
