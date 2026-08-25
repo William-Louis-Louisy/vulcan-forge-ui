@@ -30,6 +30,7 @@ const labels = {
   dashboard: 'Dashboard',
   example: 'Example',
   getStarted: 'Start for free',
+  learn: 'Learn',
   navigation: 'Public navigation',
   open: 'Open navigation menu',
   pricing: 'Pricing',
@@ -85,6 +86,10 @@ describe('PublicMobileMenu', () => {
       'href',
       '/examples',
     );
+    expect(screen.getByRole('link', { name: labels.learn })).toHaveAttribute(
+      'href',
+      '/learn',
+    );
     expect(document.body.style.overflow).toBe('hidden');
 
     mobileVisualViewport.dispatchEvent(new Event('scroll'));
@@ -95,7 +100,7 @@ describe('PublicMobileMenu', () => {
       screen.getByRole('navigation', { name: labels.navigation }),
     ).toBeInTheDocument();
 
-    await user.click(screen.getByRole('link', { name: labels.example }));
+    await user.click(screen.getByRole('link', { name: labels.learn }));
 
     expect(
       screen.queryByRole('navigation', { name: labels.navigation }),
