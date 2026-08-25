@@ -280,20 +280,20 @@ A chapter should not require authentication or a pre-existing VulcanForgeUI proj
 
 After completing Learn V1, a learner should be able to explain the following in their own words.
 
-| ID | Learning outcome | Evidence of understanding |
-| --- | --- | --- |
-| L01 | Explain what a Design System is and why teams create one. | Can distinguish a shared system of decisions/guidance from a pile of reusable components. |
-| L02 | Recognize design drift and repeated raw decisions. | Can identify why repeated hard-coded colors, spacing or component behavior become expensive over time. |
-| L03 | Explain primitive tokens, semantic tokens and references/aliases. | Can tell the difference between naming a raw value and naming its intended purpose. |
-| L04 | Explain the role of Themes. | Can describe how semantic roles can resolve to different token values for different appearances. |
-| L05 | Explain what a Component contract represents. | Can distinguish the contract/intent of a Button from one rendered Button instance. |
-| L06 | Distinguish anatomy, variants, sizes and states. | Can classify `icon`, `primary`, `md` and `disabled` correctly in a simple component example. |
-| L07 | Explain token bindings. | Can describe why component styling should reference system decisions instead of repeating raw values. |
-| L08 | Explain why accessibility belongs throughout a Design System. | Can describe at least contrast, focus and state semantics and knows automation is incomplete. |
-| L09 | Trace one decision through multiple consumers. | Can follow a color decision from token definition into Theme/Component usage and generated outputs. |
-| L10 | Explain canonical-source value. | Can explain why Documentation, code exports and AI Instructions should derive from the same structured project. |
-| L11 | Explain AI Instructions accurately. | Understands that generated context can guide an AI assistant but does not control or synchronize the assistant. |
-| L12 | Navigate VulcanForgeUI with intent. | Understands what Brand, Tokens, Themes, Components, Accessibility, Documentation, Exports and AI Instructions are for before editing them. |
+| ID  | Learning outcome                                                  | Evidence of understanding                                                                                                                  |
+| --- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| L01 | Explain what a Design System is and why teams create one.         | Can distinguish a shared system of decisions/guidance from a pile of reusable components.                                                  |
+| L02 | Recognize design drift and repeated raw decisions.                | Can identify why repeated hard-coded colors, spacing or component behavior become expensive over time.                                     |
+| L03 | Explain primitive tokens, semantic tokens and references/aliases. | Can tell the difference between naming a raw value and naming its intended purpose.                                                        |
+| L04 | Explain the role of Themes.                                       | Can describe how semantic roles can resolve to different token values for different appearances.                                           |
+| L05 | Explain what a Component contract represents.                     | Can distinguish the contract/intent of a Button from one rendered Button instance.                                                         |
+| L06 | Distinguish anatomy, variants, sizes and states.                  | Can classify `icon`, `primary`, `md` and `disabled` correctly in a simple component example.                                               |
+| L07 | Explain token bindings.                                           | Can describe why component styling should reference system decisions instead of repeating raw values.                                      |
+| L08 | Explain why accessibility belongs throughout a Design System.     | Can describe at least contrast, focus and state semantics and knows automation is incomplete.                                              |
+| L09 | Trace one decision through multiple consumers.                    | Can follow a color decision from token definition into Theme/Component usage and generated outputs.                                        |
+| L10 | Explain canonical-source value.                                   | Can explain why Documentation, code exports and AI Instructions should derive from the same structured project.                            |
+| L11 | Explain AI Instructions accurately.                               | Understands that generated context can guide an AI assistant but does not control or synchronize the assistant.                            |
+| L12 | Navigate VulcanForgeUI with intent.                               | Understands what Brand, Tokens, Themes, Components, Accessibility, Documentation, Exports and AI Instructions are for before editing them. |
 
 Learn should optimize for these outcomes, not for page views or vocabulary density.
 
@@ -1180,24 +1180,24 @@ Forbidden unless future product changes justify them:
 
 The following vocabulary should remain stable across Learn unless a later domain decision updates it.
 
-| Term | Curriculum meaning | Usage rule |
-| --- | --- | --- |
-| Design System | Shared system of reusable design decisions, foundations, components and guidance used to build coherent product experiences. | Capitalize when referring to the concept/product artifact consistently within Learn copy. |
-| Design token | Named design decision with a value and related semantics/metadata. | Use `token` after first clear introduction. |
-| Primitive token | Token representing a reusable base value/choice without a specific component use. | Do not describe as inferior to semantic tokens. |
-| Semantic token | Token named for intended meaning/use rather than only raw appearance. | Explain meaning-first naming. |
-| Reference / alias | A token value that points to another token. | Introduce both terms; use product wording thereafter. |
-| Theme | Contextual mapping/collection of design decisions that produces an appearance. | Distinguish general concept from current Light/Dark product limitation. |
-| Role | Semantic Theme slot such as `accent`, `content` or `background`. | Do not call every semantic token a Theme role. |
-| Component | Reusable UI building block. | Distinguish from one rendered instance. |
-| Component contract | Structured description of a component's supported semantics and expectations. | Product-specific term; explain before abbreviating. |
-| Anatomy | Named parts that compose a component conceptually. | Not the same as visual layers in every design tool. |
-| Variant | Supported intentional form of a component. | Keep separate from state. |
-| State | Condition a component can be in, such as disabled or focus-visible. | Keep separate from variant. |
-| Token binding | Link from a component visual role/property to a Design System token. | Explain as a semantic connection, not raw CSS. |
-| Accessibility report | Automated report generated from rules VulcanForgeUI can evaluate. | Never call it certification. |
-| Canonical source | Structured project data from which multiple consumers are derived. | Avoid claiming perfect external synchronization. |
-| AI Instructions | Generated context/guidance derived from the structured project for use with AI-assisted development. | Never imply enforcement/control of external assistants. |
+| Term                 | Curriculum meaning                                                                                                           | Usage rule                                                                                |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Design System        | Shared system of reusable design decisions, foundations, components and guidance used to build coherent product experiences. | Capitalize when referring to the concept/product artifact consistently within Learn copy. |
+| Design token         | Named design decision with a value and related semantics/metadata.                                                           | Use `token` after first clear introduction.                                               |
+| Primitive token      | Token representing a reusable base value/choice without a specific component use.                                            | Do not describe as inferior to semantic tokens.                                           |
+| Semantic token       | Token named for intended meaning/use rather than only raw appearance.                                                        | Explain meaning-first naming.                                                             |
+| Reference / alias    | A token value that points to another token.                                                                                  | Introduce both terms; use product wording thereafter.                                     |
+| Theme                | Contextual mapping/collection of design decisions that produces an appearance.                                               | Distinguish general concept from current Light/Dark product limitation.                   |
+| Role                 | Semantic Theme slot such as `accent`, `content` or `background`.                                                             | Do not call every semantic token a Theme role.                                            |
+| Component            | Reusable UI building block.                                                                                                  | Distinguish from one rendered instance.                                                   |
+| Component contract   | Structured description of a component's supported semantics and expectations.                                                | Product-specific term; explain before abbreviating.                                       |
+| Anatomy              | Named parts that compose a component conceptually.                                                                           | Not the same as visual layers in every design tool.                                       |
+| Variant              | Supported intentional form of a component.                                                                                   | Keep separate from state.                                                                 |
+| State                | Condition a component can be in, such as disabled or focus-visible.                                                          | Keep separate from variant.                                                               |
+| Token binding        | Link from a component visual role/property to a Design System token.                                                         | Explain as a semantic connection, not raw CSS.                                            |
+| Accessibility report | Automated report generated from rules VulcanForgeUI can evaluate.                                                            | Never call it certification.                                                              |
+| Canonical source     | Structured project data from which multiple consumers are derived.                                                           | Avoid claiming perfect external synchronization.                                          |
+| AI Instructions      | Generated context/guidance derived from the structured project for use with AI-assisted development.                         | Never imply enforcement/control of external assistants.                                   |
 
 ### Terms intentionally not central in V1
 
