@@ -7,20 +7,28 @@ function getKeys(value: object) {
 
 describe('learnDesignSystemsMessages', () => {
   it('keeps EN and FR chapter structures aligned', () => {
-    expect(getKeys(learnDesignSystemsMessages.fr.LearnDesignSystemsPage)).toEqual(
-      getKeys(learnDesignSystemsMessages.en.LearnDesignSystemsPage),
+    expect(
+      getKeys(learnDesignSystemsMessages.fr.LearnDesignSystemsPage),
+    ).toEqual(getKeys(learnDesignSystemsMessages.en.LearnDesignSystemsPage));
+
+    expect(
+      getKeys(
+        learnDesignSystemsMessages.fr.LearnDesignSystemsPage.definition.parts,
+      ),
+    ).toEqual(
+      getKeys(
+        learnDesignSystemsMessages.en.LearnDesignSystemsPage.definition.parts,
+      ),
     );
 
     expect(
-      getKeys(learnDesignSystemsMessages.fr.LearnDesignSystemsPage.definition.parts),
+      getKeys(
+        learnDesignSystemsMessages.fr.LearnDesignSystemsPage.whyMatters.items,
+      ),
     ).toEqual(
-      getKeys(learnDesignSystemsMessages.en.LearnDesignSystemsPage.definition.parts),
-    );
-
-    expect(
-      getKeys(learnDesignSystemsMessages.fr.LearnDesignSystemsPage.whyMatters.items),
-    ).toEqual(
-      getKeys(learnDesignSystemsMessages.en.LearnDesignSystemsPage.whyMatters.items),
+      getKeys(
+        learnDesignSystemsMessages.en.LearnDesignSystemsPage.whyMatters.items,
+      ),
     );
   });
 
