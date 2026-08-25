@@ -21,7 +21,12 @@ const definitionPartKeys = [
 ] as const;
 const libraryItemKeys = ['one', 'two', 'three'] as const;
 const systemItemKeys = ['one', 'two', 'three', 'four'] as const;
-const whyMatterKeys = ['continuity', 'speed', 'quality', 'collaboration'] as const;
+const whyMatterKeys = [
+  'continuity',
+  'speed',
+  'quality',
+  'collaboration',
+] as const;
 const systemMapKeys = [
   'intent',
   'foundations',
@@ -113,7 +118,7 @@ export default async function LearnDesignSystemsPage() {
                         number: String(index + 1),
                       })}
                     </p>
-                    <div className="bg-background-sunken mt-5 flex min-h-36 items-center justify-center border border-border-subtle p-5">
+                    <div className="bg-background-sunken border-border-subtle mt-5 flex min-h-36 items-center justify-center border p-5">
                       <div
                         className="px-4 py-3 text-sm font-semibold"
                         style={{
@@ -129,11 +134,13 @@ export default async function LearnDesignSystemsPage() {
                       </div>
                     </div>
                     <ul className="text-content-secondary mt-5 space-y-2 text-xs leading-5">
-                      <li className="text-content-primary font-mono">{color}</li>
+                      <li className="text-content-primary font-mono">
+                        {color}
+                      </li>
                       <li>{t(`openingProblem.cards.${key}.radius`)}</li>
                       <li>{t(`openingProblem.cards.${key}.padding`)}</li>
                     </ul>
-                    <p className="text-content-tertiary mt-4 border-t border-border-subtle pt-4 text-xs leading-5">
+                    <p className="text-content-tertiary border-border-subtle mt-4 border-t pt-4 text-xs leading-5">
                       {t(`openingProblem.cards.${key}.focus`)}
                     </p>
                   </article>
@@ -154,7 +161,7 @@ export default async function LearnDesignSystemsPage() {
               titleId="definition-title"
             />
 
-            <div className="mt-10 grid gap-px border border-border-subtle bg-border-subtle sm:grid-cols-2">
+            <div className="border-border-subtle bg-border-subtle mt-10 grid gap-px border sm:grid-cols-2">
               {definitionPartKeys.map((key, index) => (
                 <article key={key} className="bg-surface-primary p-6 sm:p-7">
                   <p className="text-action-accent font-mono text-xs font-semibold">
@@ -238,7 +245,7 @@ export default async function LearnDesignSystemsPage() {
                   {['#A94E2F', '#A34B31', '#A94E2F'].map((color, index) => (
                     <span
                       key={`${color}-${index}`}
-                      className="h-10 flex-1 border border-border-subtle"
+                      className="border-border-subtle h-10 flex-1 border"
                       style={{ backgroundColor: color }}
                     />
                   ))}
@@ -254,7 +261,7 @@ export default async function LearnDesignSystemsPage() {
                 </p>
                 <div className="mt-6 flex items-center gap-4">
                   <span
-                    className="h-12 w-12 shrink-0 border border-border-subtle"
+                    className="border-border-subtle h-12 w-12 shrink-0 border"
                     style={{ backgroundColor: t('demo.decisionValue') }}
                     aria-hidden="true"
                   />
@@ -493,7 +500,9 @@ function ComparisonCard({
           <li key={item} className="flex gap-3 text-sm leading-6">
             <CheckIcon
               aria-hidden="true"
-              className={emphasized ? 'text-action-accent' : 'text-content-tertiary'}
+              className={
+                emphasized ? 'text-action-accent' : 'text-content-tertiary'
+              }
               size={15}
               weight="bold"
             />
