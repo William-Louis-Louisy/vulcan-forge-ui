@@ -38,12 +38,12 @@ export function PublicMobileMenu({
   labels,
 }: PublicMobileMenuProps) {
   const { close, contentRef, isOpen, toggle, triggerRef } =
-    useMobileNavigationController({ desktopMediaQuery: '(min-width: 768px)' });
+    useMobileNavigationController({ desktopMediaQuery: '(min-width: 1024px)' });
   const menuId = 'public-mobile-menu';
 
   return (
     <>
-      <div className="relative md:hidden">
+      <div className="relative lg:hidden">
         <button
           ref={triggerRef}
           type="button"
