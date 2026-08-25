@@ -18,9 +18,7 @@ describe('learnThemesMessages', () => {
     expect(getKeys(fr.productBridge.items)).toEqual(
       getKeys(en.productBridge.items),
     );
-    expect(getKeys(fr.checkpoint.items)).toEqual(
-      getKeys(en.checkpoint.items),
-    );
+    expect(getKeys(fr.checkpoint.items)).toEqual(getKeys(en.checkpoint.items));
   });
 
   it('teaches stable roles with different Light and Dark mappings', () => {
@@ -30,9 +28,7 @@ describe('learnThemesMessages', () => {
     expect(page.definition.lightReference).toBe(
       '{color.primitive.neutral.950}',
     );
-    expect(page.definition.darkReference).toBe(
-      '{color.primitive.neutral.100}',
-    );
+    expect(page.definition.darkReference).toBe('{color.primitive.neutral.100}');
     expect(page.roles.items.accent.lightValue).toBe('#586644');
     expect(page.roles.items.accent.darkValue).toBe('#FF8731');
   });

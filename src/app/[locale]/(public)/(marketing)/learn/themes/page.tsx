@@ -1,8 +1,5 @@
 import type { Metadata } from 'next';
-import {
-  ArrowRightIcon,
-  CheckIcon,
-} from '@phosphor-icons/react/dist/ssr';
+import { ArrowRightIcon, CheckIcon } from '@phosphor-icons/react/dist/ssr';
 import { hasLocale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 import { LearnCurriculumNav } from '@/features/learn/LearnCurriculumNav';
@@ -161,9 +158,15 @@ export default async function LearnThemesPage() {
 
             <div className="border-border-subtle bg-border-subtle mt-10 grid gap-px border">
               <div className="bg-background-sunken hidden grid-cols-[minmax(8rem,0.55fr)_minmax(0,1fr)_minmax(0,1fr)] gap-4 px-5 py-3 text-[10px] font-semibold tracking-[0.12em] uppercase md:grid">
-                <span className="text-content-tertiary">{t('roles.roleLabel')}</span>
-                <span className="text-content-tertiary">{t('roles.lightLabel')}</span>
-                <span className="text-content-tertiary">{t('roles.darkLabel')}</span>
+                <span className="text-content-tertiary">
+                  {t('roles.roleLabel')}
+                </span>
+                <span className="text-content-tertiary">
+                  {t('roles.lightLabel')}
+                </span>
+                <span className="text-content-tertiary">
+                  {t('roles.darkLabel')}
+                </span>
               </div>
               {roleKeys.map((key) => (
                 <RoleMappingRow
@@ -224,7 +227,10 @@ export default async function LearnThemesPage() {
             </p>
           </section>
 
-          <section className="mt-20" aria-labelledby="theme-accessibility-title">
+          <section
+            className="mt-20"
+            aria-labelledby="theme-accessibility-title"
+          >
             <SectionHeading
               eyebrow={t('accessibility.eyebrow')}
               title={t('accessibility.title')}
@@ -391,10 +397,7 @@ export default async function LearnThemesPage() {
           </section>
 
           <div className="mt-16 lg:hidden">
-            <LearnCurriculumNav
-              variant="compact"
-              currentChapterKey="themes"
-            />
+            <LearnCurriculumNav variant="compact" currentChapterKey="themes" />
           </div>
         </article>
 
@@ -403,10 +406,7 @@ export default async function LearnThemesPage() {
             <p className="text-content-tertiary mb-4 text-xs font-semibold tracking-[0.14em] uppercase">
               {curriculumT('eyebrow')}
             </p>
-            <LearnCurriculumNav
-              variant="compact"
-              currentChapterKey="themes"
-            />
+            <LearnCurriculumNav variant="compact" currentChapterKey="themes" />
           </div>
         </aside>
       </div>

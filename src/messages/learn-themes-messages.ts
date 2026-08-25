@@ -16,7 +16,8 @@ export const learnThemesMessages = {
       },
       openingProblem: {
         eyebrow: 'Start with the context',
-        title: 'One correct value can become the wrong value in another appearance.',
+        title:
+          'One correct value can become the wrong value in another appearance.',
         description:
           'Chapter 02 gave shared decisions stable token identities. But a value that works on a light surface may fail completely on a dark one if every screen keeps using the same resolved color.',
         fixedLabel: 'Same fixed content value',
@@ -31,7 +32,8 @@ export const learnThemesMessages = {
       },
       definition: {
         eyebrow: 'The theme layer',
-        title: 'A theme maps stable roles to token references for a particular appearance.',
+        title:
+          'A theme maps stable roles to token references for a particular appearance.',
         description:
           'The role name stays meaningful to the interface. The theme decides which token should fulfill that role in the current appearance.',
         roleLabel: 'Stable role',
@@ -42,8 +44,7 @@ export const learnThemesMessages = {
         darkLabel: 'Dark mapping',
         darkReference: '{color.primitive.neutral.100}',
         darkValue: '#E2E7EF',
-        rule:
-          'Components can ask for “content” instead of hard-coding a light or dark color themselves.',
+        rule: 'Components can ask for “content” instead of hard-coding a light or dark color themselves.',
       },
       roles: {
         eyebrow: 'Same roles, different mappings',
@@ -95,7 +96,8 @@ export const learnThemesMessages = {
       },
       flow: {
         eyebrow: 'Dependency flow',
-        title: 'The component consumes a role; the theme supplies the appearance.',
+        title:
+          'The component consumes a role; the theme supplies the appearance.',
         description:
           'Keeping these responsibilities separate prevents presentation choices from leaking into every component contract.',
         componentLabel: 'Component intent',
@@ -110,7 +112,8 @@ export const learnThemesMessages = {
       },
       accessibility: {
         eyebrow: 'Themes are not color inversion',
-        title: 'Every appearance must still preserve usable contrast and meaning.',
+        title:
+          'Every appearance must still preserve usable contrast and meaning.',
         description:
           'Changing mappings can create new foreground/background relationships. A dark theme is not automatically accessible because it is dark, and a light theme is not automatically accessible because it is light.',
         items: {
@@ -126,7 +129,8 @@ export const learnThemesMessages = {
       },
       broaderConcept: {
         eyebrow: 'Theme ≠ dark mode',
-        title: 'Light and Dark are examples of theming, not the definition of theming.',
+        title:
+          'Light and Dark are examples of theming, not the definition of theming.',
         description:
           'A Design System can use themes for other appearance or preference contexts such as high contrast, sepia, compact density, reduced motion or custom typography. The exact model depends on the product.',
         caution:
@@ -134,15 +138,15 @@ export const learnThemesMessages = {
       },
       productBridge: {
         eyebrow: 'How VulcanForgeUI represents this today',
-        title: 'The current Theme domain is intentionally narrower than the general concept.',
+        title:
+          'The current Theme domain is intentionally narrower than the general concept.',
         description:
           'VulcanForgeUI currently persists exactly two Theme modes: Light and Dark. Each project can have at most one Theme for each mode.',
         items: {
           modes: 'Theme mode is currently limited to light or dark.',
           mapping:
             'A Theme stores color-role mappings as token references or legacy direct values.',
-          core:
-            'Built-in core roles are background, surface, content, muted and accent.',
+          core: 'Built-in core roles are background, surface, content, muted and accent.',
           statuses:
             'Built-in status roles are info, success, warning and danger.',
           custom:
@@ -159,7 +163,8 @@ export const learnThemesMessages = {
       },
       demo: {
         eyebrow: 'The Demo project',
-        title: 'The shared system now has one stable vocabulary for two appearances.',
+        title:
+          'The shared system now has one stable vocabulary for two appearances.',
         description:
           'Chapter 01 established shared decisions. Chapter 02 gave those decisions token identities. Chapter 03 adds a mapping layer so appearance can change without rewriting the vocabulary used by the interface.',
         sequence: {
@@ -183,7 +188,8 @@ export const learnThemesMessages = {
         items: {
           one: 'why the same role may need a different resolved value in another appearance;',
           two: 'the difference between a stable role and the token reference assigned by a Theme;',
-          three: 'why theming is broader than Light and Dark as a general Design System concept;',
+          three:
+            'why theming is broader than Light and Dark as a general Design System concept;',
           four: 'why VulcanForgeUI currently remains limited to exactly Light and Dark Theme modes;',
           five: 'why every supported appearance still needs its own accessibility review.',
         },
@@ -214,7 +220,8 @@ export const learnThemesMessages = {
       },
       openingProblem: {
         eyebrow: 'Commençons par le contexte',
-        title: 'Une valeur correcte peut devenir mauvaise dans une autre apparence.',
+        title:
+          'Une valeur correcte peut devenir mauvaise dans une autre apparence.',
         description:
           'Le chapitre 02 a donné une identité stable aux décisions partagées grâce aux tokens. Mais une valeur adaptée à une surface claire peut devenir inutilisable sur une surface sombre si chaque écran continue d’employer la même couleur résolue.',
         fixedLabel: 'Même valeur de contenu fixe',
@@ -229,7 +236,8 @@ export const learnThemesMessages = {
       },
       definition: {
         eyebrow: 'La couche Theme',
-        title: 'Un thème associe des rôles stables à des références de tokens pour une apparence donnée.',
+        title:
+          'Un thème associe des rôles stables à des références de tokens pour une apparence donnée.',
         description:
           'Le nom du rôle conserve son sens pour l’interface. Le thème décide quel token doit remplir ce rôle dans l’apparence active.',
         roleLabel: 'Rôle stable',
@@ -240,12 +248,12 @@ export const learnThemesMessages = {
         darkLabel: 'Mapping sombre',
         darkReference: '{color.primitive.neutral.100}',
         darkValue: '#E2E7EF',
-        rule:
-          'Les composants peuvent demander « content » au lieu de coder eux-mêmes une couleur claire ou sombre.',
+        rule: 'Les composants peuvent demander « content » au lieu de coder eux-mêmes une couleur claire ou sombre.',
       },
       roles: {
         eyebrow: 'Mêmes rôles, mappings différents',
-        title: 'Le vocabulaire reste stable pendant que les références changent.',
+        title:
+          'Le vocabulaire reste stable pendant que les références changent.',
         description:
           'Le seed VulcanForgeUI actuel emploie les mêmes clés de rôles cœur dans les deux apparences et les associe à des références différentes lorsque nécessaire.',
         roleLabel: 'Rôle',
@@ -324,7 +332,8 @@ export const learnThemesMessages = {
       },
       broaderConcept: {
         eyebrow: 'Theme ≠ mode sombre',
-        title: 'Clair et Sombre sont des exemples de theming, pas sa définition.',
+        title:
+          'Clair et Sombre sont des exemples de theming, pas sa définition.',
         description:
           'Un Design System peut utiliser des thèmes pour d’autres contextes d’apparence ou de préférence : contraste élevé, sépia, densité compacte, réduction des animations ou typographie personnalisée. Le modèle exact dépend du produit.',
         caution:
@@ -332,15 +341,15 @@ export const learnThemesMessages = {
       },
       productBridge: {
         eyebrow: 'Comment VulcanForgeUI représente cela aujourd’hui',
-        title: 'Le domaine Theme actuel est volontairement plus étroit que le concept général.',
+        title:
+          'Le domaine Theme actuel est volontairement plus étroit que le concept général.',
         description:
           'VulcanForgeUI ne persiste actuellement que deux modes de Theme : Light et Dark. Chaque projet peut posséder au maximum un Theme de chaque mode.',
         items: {
           modes: 'Le mode Theme est actuellement limité à light ou dark.',
           mapping:
             'Un Theme stocke des mappings de rôles couleur sous forme de références de tokens ou de valeurs directes héritées.',
-          core:
-            'Les rôles cœur intégrés sont background, surface, content, muted et accent.',
+          core: 'Les rôles cœur intégrés sont background, surface, content, muted et accent.',
           statuses:
             'Les rôles de statut intégrés sont info, success, warning et danger.',
           custom:
@@ -357,7 +366,8 @@ export const learnThemesMessages = {
       },
       demo: {
         eyebrow: 'Le projet Demo',
-        title: 'Le système partagé possède maintenant un vocabulaire stable pour deux apparences.',
+        title:
+          'Le système partagé possède maintenant un vocabulaire stable pour deux apparences.',
         description:
           'Le chapitre 01 a établi les décisions partagées. Le chapitre 02 leur a donné des identités de tokens. Le chapitre 03 ajoute une couche de mapping pour faire varier l’apparence sans réécrire le vocabulaire utilisé par l’interface.',
         sequence: {
@@ -369,7 +379,8 @@ export const learnThemesMessages = {
       },
       misconception: {
         eyebrow: 'Idée reçue fréquente',
-        title: 'Un Theme n’est pas une deuxième copie complète du Design System.',
+        title:
+          'Un Theme n’est pas une deuxième copie complète du Design System.',
         description:
           'Le but n’est pas de dupliquer chaque composant et chaque règle pour Light et Dark. L’intention partagée reste commune ; seules les décisions qui doivent varier se résolvent différemment à travers la couche Theme.',
       },
@@ -381,7 +392,8 @@ export const learnThemesMessages = {
         items: {
           one: 'pourquoi un même rôle peut nécessiter une valeur résolue différente dans une autre apparence ;',
           two: 'la différence entre un rôle stable et la référence de token attribuée par un Theme ;',
-          three: 'pourquoi le theming est, en général, plus large que Light et Dark ;',
+          three:
+            'pourquoi le theming est, en général, plus large que Light et Dark ;',
           four: 'pourquoi VulcanForgeUI reste actuellement limité à exactement deux modes Theme, Light et Dark ;',
           five: 'pourquoi chaque apparence prise en charge doit conserver sa propre revue d’accessibilité.',
         },

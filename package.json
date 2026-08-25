@@ -13,7 +13,7 @@
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
     "format": "prettier . --write",
-    "format:check": "prettier 'src/app/[locale]/(public)/(marketing)/learn/themes/page.tsx' src/messages/learn-themes-messages.test.ts src/messages/learn-themes-messages.ts --write && git diff --exit-code -- 'src/app/[locale]/(public)/(marketing)/learn/themes/page.tsx' src/messages/learn-themes-messages.test.ts src/messages/learn-themes-messages.ts",
+    "format:check": "prettier . --check",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
