@@ -11,7 +11,13 @@ import { LearnCurriculumNav } from '@/features/learn/LearnCurriculumNav';
 
 const rawCardKeys = ['checkout', 'settings', 'mobile'] as const;
 const anatomyKeys = ['path', 'type', 'value', 'description'] as const;
-const categoryKeys = ['color', 'spacing', 'radius', 'typography', 'motion'] as const;
+const categoryKeys = [
+  'color',
+  'spacing',
+  'radius',
+  'typography',
+  'motion',
+] as const;
 const productItemKeys = [
   'path',
   'type',
@@ -161,7 +167,7 @@ export default async function LearnDesignTokensPage() {
                       {t(`definition.anatomy.${key}.label`)}
                     </p>
                   </div>
-                  <code className="mt-5 block break-all font-mono text-sm font-semibold">
+                  <code className="mt-5 block font-mono text-sm font-semibold break-all">
                     {t(`definition.anatomy.${key}.value`)}
                   </code>
                   <p className="text-content-secondary mt-3 text-sm leading-6">
@@ -228,7 +234,7 @@ export default async function LearnDesignTokensPage() {
                 <p className="text-content-tertiary text-[10px] font-semibold tracking-[0.12em] uppercase">
                   {t('semantic.primitiveLabel')}
                 </p>
-                <code className="mt-3 block break-all font-mono text-sm font-semibold">
+                <code className="mt-3 block font-mono text-sm font-semibold break-all">
                   {t('semantic.primitivePath')}
                 </code>
               </div>
@@ -236,7 +242,7 @@ export default async function LearnDesignTokensPage() {
                 <p className="text-action-accent text-[10px] font-semibold tracking-[0.12em] uppercase">
                   {t('semantic.semanticLabel')}
                 </p>
-                <code className="mt-3 block break-all font-mono text-sm font-semibold">
+                <code className="mt-3 block font-mono text-sm font-semibold break-all">
                   {t('semantic.semanticPath')}
                 </code>
                 <p className="text-content-secondary mt-2 text-xs leading-5">
@@ -339,7 +345,7 @@ export default async function LearnDesignTokensPage() {
                   <h3 className="text-sm font-semibold">
                     {t(`categories.items.${key}.title`)}
                   </h3>
-                  <code className="text-action-accent mt-4 block break-all font-mono text-xs">
+                  <code className="text-action-accent mt-4 block font-mono text-xs break-all">
                     {t(`categories.items.${key}.example`)}
                   </code>
                   <p className="text-content-secondary mt-3 text-xs leading-5">
@@ -363,7 +369,7 @@ export default async function LearnDesignTokensPage() {
                 <p className="text-content-tertiary text-xs font-semibold tracking-[0.12em] uppercase">
                   {t('demo.conceptualLabel')}
                 </p>
-                <code className="mt-5 block break-all font-mono text-base font-semibold">
+                <code className="mt-5 block font-mono text-base font-semibold break-all">
                   {t('demo.conceptualPath')}
                 </code>
               </article>
@@ -379,7 +385,7 @@ export default async function LearnDesignTokensPage() {
                     style={{ backgroundColor: t('demo.primitiveValue') }}
                   />
                   <div className="min-w-0">
-                    <code className="block break-all font-mono text-sm font-semibold">
+                    <code className="block font-mono text-sm font-semibold break-all">
                       {t('demo.primitivePath')}
                     </code>
                     <code className="text-content-secondary mt-1 block font-mono text-xs">
@@ -388,10 +394,10 @@ export default async function LearnDesignTokensPage() {
                   </div>
                 </div>
                 <div className="border-border-subtle mt-5 border-t pt-5">
-                  <code className="block break-all font-mono text-sm font-semibold">
+                  <code className="block font-mono text-sm font-semibold break-all">
                     {t('demo.semanticPath')}
                   </code>
-                  <code className="text-content-secondary mt-2 block break-all font-mono text-xs">
+                  <code className="text-content-secondary mt-2 block font-mono text-xs break-all">
                     {String(t.raw('demo.semanticReference'))}
                   </code>
                 </div>
@@ -599,11 +605,11 @@ function TokenStageCard({
           />
         ) : null}
         <div className="min-w-0">
-          <code className="block break-all font-mono text-sm font-semibold">
+          <code className="block font-mono text-sm font-semibold break-all">
             {primary}
           </code>
           {secondary ? (
-            <code className="text-content-secondary mt-1 block break-all font-mono text-xs">
+            <code className="text-content-secondary mt-1 block font-mono text-xs break-all">
               {secondary}
             </code>
           ) : null}
@@ -679,7 +685,7 @@ function NamingCard({ label, example, emphasized = false }: NamingCardProps) {
       <p className="text-content-tertiary text-xs font-semibold tracking-[0.12em] uppercase">
         {label}
       </p>
-      <code className="mt-5 block break-all font-mono text-base font-semibold">
+      <code className="mt-5 block font-mono text-base font-semibold break-all">
         {example}
       </code>
     </article>
