@@ -26,7 +26,7 @@ export function PublicHeader({ isAuthenticated = false }: PublicHeaderProps) {
 
         <nav
           aria-label={t('navigationLabel')}
-          className="ml-8 hidden items-center gap-6 md:flex"
+          className="ml-8 hidden items-center gap-6 lg:flex"
         >
           <Link
             href="/#product"
@@ -46,9 +46,15 @@ export function PublicHeader({ isAuthenticated = false }: PublicHeaderProps) {
           >
             {t('example')}
           </Link>
+          <Link
+            href="/learn"
+            className="text-content-secondary hover:text-content-primary text-sm font-medium transition"
+          >
+            {t('learn')}
+          </Link>
         </nav>
 
-        <div className="ml-auto hidden items-center gap-3 md:flex">
+        <div className="ml-auto hidden items-center gap-3 lg:flex">
           <LocaleSwitcher />
 
           <PublicButtonLink href={accountHref} variant="ghost" size="sm">
@@ -62,7 +68,7 @@ export function PublicHeader({ isAuthenticated = false }: PublicHeaderProps) {
           ) : null}
         </div>
 
-        <div className="ml-auto md:hidden">
+        <div className="ml-auto lg:hidden">
           <PublicMobileMenu
             isAuthenticated={isAuthenticated}
             labels={{
@@ -70,6 +76,7 @@ export function PublicHeader({ isAuthenticated = false }: PublicHeaderProps) {
               dashboard: t('dashboard'),
               example: t('example'),
               getStarted: t('getStarted'),
+              learn: t('learn'),
               navigation: t('navigationLabel'),
               open: t('mobile.open'),
               pricing: t('pricing'),

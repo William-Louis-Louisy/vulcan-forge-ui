@@ -17,6 +17,7 @@ type PublicMobileMenuProps = {
     dashboard: string;
     example: string;
     getStarted: string;
+    learn: string;
     navigation: string;
     open: string;
     pricing: string;
@@ -29,6 +30,7 @@ const navigationItems = [
   { href: '/#product', key: 'product' },
   { href: '/pricing', key: 'pricing' },
   { href: '/examples', key: 'example' },
+  { href: '/learn', key: 'learn' },
 ] as const;
 
 export function PublicMobileMenu({
@@ -36,12 +38,12 @@ export function PublicMobileMenu({
   labels,
 }: PublicMobileMenuProps) {
   const { close, contentRef, isOpen, toggle, triggerRef } =
-    useMobileNavigationController({ desktopMediaQuery: '(min-width: 768px)' });
+    useMobileNavigationController({ desktopMediaQuery: '(min-width: 1024px)' });
   const menuId = 'public-mobile-menu';
 
   return (
     <>
-      <div className="relative md:hidden">
+      <div className="relative lg:hidden">
         <button
           ref={triggerRef}
           type="button"
