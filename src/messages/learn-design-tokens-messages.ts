@@ -69,7 +69,8 @@ export const learnDesignTokensMessages = {
           description: {
             label: 'Description',
             value: 'Primary brand color',
-            description: 'Human context that makes the decision easier to understand.',
+            description:
+              'Human context that makes the decision easier to understand.',
           },
         },
       },
@@ -113,7 +114,8 @@ export const learnDesignTokensMessages = {
       },
       references: {
         eyebrow: 'Connect the layers',
-        title: 'A reference keeps the relationship instead of copying the value.',
+        title:
+          'A reference keeps the relationship instead of copying the value.',
         description:
           'The DTCG uses “alias” and “reference” interchangeably for a token whose value points to another token. VulcanForgeUI uses the same curly-brace reference shape for token relationships.',
         semanticLabel: 'Semantic token',
@@ -139,8 +141,7 @@ export const learnDesignTokensMessages = {
         weakExample: 'color.orange.600',
         strongLabel: 'Purpose-shaped thinking',
         strongExample: 'color.semantic.action.primary',
-        note:
-          'Neither name is automatically right or wrong: they answer different questions. The important part is using each layer deliberately.',
+        note: 'Neither name is automatically right or wrong: they answer different questions. The important part is using each layer deliberately.',
       },
       categories: {
         eyebrow: 'Beyond color',
@@ -177,7 +178,8 @@ export const learnDesignTokensMessages = {
       },
       demo: {
         eyebrow: 'The Demo project',
-        title: 'Our shared primary action now becomes an explicit dependency chain.',
+        title:
+          'Our shared primary action now becomes an explicit dependency chain.',
         description:
           'Chapter 01 established the shared decision. Chapter 02 gives it structure using the current VulcanForgeUI color-token conventions.',
         conceptualLabel: 'Conceptual shorthand used in the public demo',
@@ -187,8 +189,7 @@ export const learnDesignTokensMessages = {
         primitiveValue: '#A94E2F',
         semanticPath: 'color.semantic.action.primary',
         semanticReference: '{color.primitive.brand.600}',
-        note:
-          'The public Examples page keeps the shorter color.brand.600 label for its high-level walkthrough. Inside the current token editor, color primitives and semantic aliases use explicit color.primitive.* and color.semantic.* paths.',
+        note: 'The public Examples page keeps the shorter color.brand.600 label for its high-level walkthrough. Inside the current token editor, color primitives and semantic aliases use explicit color.primitive.* and color.semantic.* paths.',
       },
       productBridge: {
         eyebrow: 'How VulcanForgeUI represents this',
@@ -199,8 +200,10 @@ export const learnDesignTokensMessages = {
           path: 'Path identifies the token inside the project.',
           type: 'Type is one of color, spacing, radius, typography or motion.',
           value: 'Value stores scalar data or a structured typography value.',
-          reference: 'Reference can point to another token using {token.path} syntax.',
-          description: 'Description can document the decision in English and French.',
+          reference:
+            'Reference can point to another token using {token.path} syntax.',
+          description:
+            'Description can document the decision in English and French.',
           status: 'Status records Draft, Ready or Deprecated lifecycle state.',
         },
         boundary:
@@ -220,7 +223,8 @@ export const learnDesignTokensMessages = {
         items: {
           one: 'why replacing repeated raw values with named tokens reduces disconnected copies;',
           two: 'the difference between a primitive value-oriented token and a semantic intent-oriented token;',
-          three: 'why a reference preserves a relationship instead of duplicating the resolved value;',
+          three:
+            'why a reference preserves a relationship instead of duplicating the resolved value;',
           four: 'why token architecture is broader than CSS variables or colors.',
         },
       },
@@ -250,7 +254,8 @@ export const learnDesignTokensMessages = {
       },
       openingProblem: {
         eyebrow: 'Commençons par la valeur brute',
-        title: 'Une valeur peut être correcte tout en restant difficile à maintenir.',
+        title:
+          'Une valeur peut être correcte tout en restant difficile à maintenir.',
         description:
           'La décision d’action principale du chapitre 01 est maintenant partagée. Mais si chaque écran stocke directement #A94E2F, cette décision existe toujours sous forme de copies déconnectées.',
         rawLabel: 'Valeur brute',
@@ -288,12 +293,14 @@ export const learnDesignTokensMessages = {
           path: {
             label: 'Chemin',
             value: 'color.primitive.brand.600',
-            description: 'L’adresse stable utilisée pour identifier la décision.',
+            description:
+              'L’adresse stable utilisée pour identifier la décision.',
           },
           type: {
             label: 'Type',
             value: 'color',
-            description: 'La nature de l’information de design représentée par la valeur.',
+            description:
+              'La nature de l’information de design représentée par la valeur.',
           },
           value: {
             label: 'Valeur',
@@ -303,13 +310,15 @@ export const learnDesignTokensMessages = {
           description: {
             label: 'Description',
             value: 'Couleur principale de marque',
-            description: 'Le contexte humain qui rend la décision plus facile à comprendre.',
+            description:
+              'Le contexte humain qui rend la décision plus facile à comprendre.',
           },
         },
       },
       primitive: {
         eyebrow: 'Couche 1 · Primitif',
-        title: 'Les tokens primitifs nomment des valeurs de fondation réutilisables.',
+        title:
+          'Les tokens primitifs nomment des valeurs de fondation réutilisables.',
         description:
           'Un token primitif reste proche de l’échelle ou de la palette sous-jacente. Son nom décrit généralement ce qu’est la valeur plutôt que la fonction qu’elle remplira dans l’interface.',
         rawLabel: 'Avant',
@@ -322,7 +331,8 @@ export const learnDesignTokensMessages = {
       },
       semantic: {
         eyebrow: 'Couche 2 · Sémantique',
-        title: 'Les tokens sémantiques nomment une intention plutôt qu’une apparence.',
+        title:
+          'Les tokens sémantiques nomment une intention plutôt qu’une apparence.',
         description:
           'Un token sémantique répond à une autre question : quel rôle cette décision joue-t-elle dans l’interface ? Cette couche supplémentaire permet à l’intention de rester stable même lorsque l’apparence sous-jacente change.',
         primitiveLabel: 'Ce que c’est',
@@ -347,7 +357,8 @@ export const learnDesignTokensMessages = {
       },
       references: {
         eyebrow: 'Relions les couches',
-        title: 'Une référence conserve la relation au lieu de recopier la valeur.',
+        title:
+          'Une référence conserve la relation au lieu de recopier la valeur.',
         description:
           'La DTCG utilise « alias » et « référence » comme synonymes pour un token dont la valeur pointe vers un autre token. VulcanForgeUI utilise la même forme de référence entre accolades pour relier ses tokens.',
         semanticLabel: 'Token sémantique',
@@ -373,12 +384,12 @@ export const learnDesignTokensMessages = {
         weakExample: 'color.orange.600',
         strongLabel: 'Pensée orientée intention',
         strongExample: 'color.semantic.action.primary',
-        note:
-          'Aucun des deux noms n’est automatiquement bon ou mauvais : ils répondent à des questions différentes. L’important est d’utiliser chaque couche intentionnellement.',
+        note: 'Aucun des deux noms n’est automatiquement bon ou mauvais : ils répondent à des questions différentes. L’important est d’utiliser chaque couche intentionnellement.',
       },
       categories: {
         eyebrow: 'Au-delà de la couleur',
-        title: 'Les tokens peuvent transporter de nombreux types d’informations de design récurrentes.',
+        title:
+          'Les tokens peuvent transporter de nombreux types d’informations de design récurrentes.',
         description:
           'VulcanForgeUI modélise actuellement cinq types de jeux de tokens. Leurs valeurs n’ont pas toutes la même forme et le modèle d’édition primitif/sémantique actuel des couleurs ne doit pas être généralisé à toutes les catégories.',
         items: {
@@ -411,7 +422,8 @@ export const learnDesignTokensMessages = {
       },
       demo: {
         eyebrow: 'Le projet Demo',
-        title: 'Notre action principale partagée devient maintenant une chaîne de dépendances explicite.',
+        title:
+          'Notre action principale partagée devient maintenant une chaîne de dépendances explicite.',
         description:
           'Le chapitre 01 a établi la décision partagée. Le chapitre 02 lui donne une structure avec les conventions de tokens couleur actuellement utilisées par VulcanForgeUI.',
         conceptualLabel: 'Raccourci conceptuel utilisé dans la démo publique',
@@ -421,20 +433,23 @@ export const learnDesignTokensMessages = {
         primitiveValue: '#A94E2F',
         semanticPath: 'color.semantic.action.primary',
         semanticReference: '{color.primitive.brand.600}',
-        note:
-          'La page publique Examples conserve le libellé plus court color.brand.600 pour sa démonstration générale. Dans l’éditeur de tokens actuel, les couleurs primitives et les alias sémantiques utilisent explicitement les chemins color.primitive.* et color.semantic.*.',
+        note: 'La page publique Examples conserve le libellé plus court color.brand.600 pour sa démonstration générale. Dans l’éditeur de tokens actuel, les couleurs primitives et les alias sémantiques utilisent explicitement les chemins color.primitive.* et color.semantic.*.',
       },
       productBridge: {
         eyebrow: 'Comment VulcanForgeUI représente cela',
-        title: 'L’éditeur de tokens stocke les décisions comme des données structurées du projet.',
+        title:
+          'L’éditeur de tokens stocke les décisions comme des données structurées du projet.',
         description:
           'Un Design Token dans VulcanForgeUI possède un chemin, un type, une valeur, une description localisée optionnelle, une référence optionnelle et un statut de cycle de vie. L’édition des couleurs reconnaît en plus les conventions de chemins primitifs et sémantiques.',
         items: {
           path: 'Path identifie le token dans le projet.',
           type: 'Type vaut color, spacing, radius, typography ou motion.',
-          value: 'Value stocke une donnée scalaire ou une valeur typographique structurée.',
-          reference: 'Reference peut pointer vers un autre token avec la syntaxe {token.path}.',
-          description: 'Description peut documenter la décision en anglais et en français.',
+          value:
+            'Value stocke une donnée scalaire ou une valeur typographique structurée.',
+          reference:
+            'Reference peut pointer vers un autre token avec la syntaxe {token.path}.',
+          description:
+            'Description peut documenter la décision en anglais et en français.',
           status: 'Status indique Draft, Ready ou Deprecated.',
         },
         boundary:
@@ -442,7 +457,8 @@ export const learnDesignTokensMessages = {
       },
       misconception: {
         eyebrow: 'Idée reçue fréquente',
-        title: 'Un token n’est pas seulement une variable CSS avec un nom à la mode.',
+        title:
+          'Un token n’est pas seulement une variable CSS avec un nom à la mode.',
         description:
           'Les variables CSS peuvent être une représentation générée des tokens, mais le token est la décision du Design System elle-même. Les mêmes données projet peuvent ensuite alimenter CSS, TypeScript, React Native, la documentation ou les consignes IA.',
       },
@@ -454,7 +470,8 @@ export const learnDesignTokensMessages = {
         items: {
           one: 'pourquoi remplacer des valeurs brutes répétées par des tokens nommés réduit les copies déconnectées ;',
           two: 'la différence entre un token primitif orienté valeur et un token sémantique orienté intention ;',
-          three: 'pourquoi une référence conserve une relation au lieu de dupliquer la valeur résolue ;',
+          three:
+            'pourquoi une référence conserve une relation au lieu de dupliquer la valeur résolue ;',
           four: 'pourquoi l’architecture de tokens va au-delà des variables CSS ou des couleurs.',
         },
       },
