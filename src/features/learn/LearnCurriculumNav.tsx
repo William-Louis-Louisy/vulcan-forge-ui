@@ -50,7 +50,9 @@ function ChapterCard({ chapter }: { chapter: LearnChapter }) {
     <>
       <div className="flex items-start justify-between gap-4">
         <p className="text-action-accent font-mono text-xs font-semibold tracking-[0.12em] uppercase">
-          {t('chapterLabel', { number: String(chapter.number).padStart(2, '0') })}
+          {t('chapterLabel', {
+            number: String(chapter.number).padStart(2, '0'),
+          })}
         </p>
         <ChapterStatus chapter={chapter} />
       </div>
