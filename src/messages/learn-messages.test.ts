@@ -19,26 +19,28 @@ describe('learnMessages', () => {
   });
 
   it('keeps the curriculum aligned with the accepted seven chapters', () => {
-    expect(Object.keys(learnMessages.en.LearnPage.curriculum.chapters)).toEqual([
-      'designSystems',
-      'designTokens',
-      'themes',
-      'components',
-      'accessibility',
-      'documentationDelivery',
-      'aiReady',
-    ]);
+    expect(Object.keys(learnMessages.en.LearnPage.curriculum.chapters)).toEqual(
+      [
+        'designSystems',
+        'designTokens',
+        'themes',
+        'components',
+        'accessibility',
+        'documentationDelivery',
+        'aiReady',
+      ],
+    );
   });
 
   it('keeps Learn concept-first and distinct from Examples', () => {
-    expect(learnMessages.en.LearnPage.boundary.learnDescription.toLowerCase()).toContain(
-      'concept',
-    );
-    expect(learnMessages.en.LearnPage.boundary.examplesDescription.toLowerCase()).toContain(
-      'product',
-    );
-    expect(learnMessages.fr.LearnPage.boundary.learnDescription.toLowerCase()).toContain(
-      'concept',
-    );
+    expect(
+      learnMessages.en.LearnPage.boundary.learnDescription.toLowerCase(),
+    ).toContain('concept');
+    expect(
+      learnMessages.en.LearnPage.boundary.examplesDescription.toLowerCase(),
+    ).toContain('product');
+    expect(
+      learnMessages.fr.LearnPage.boundary.learnDescription.toLowerCase(),
+    ).toContain('concept');
   });
 });
