@@ -21,13 +21,18 @@ describe('learn curriculum', () => {
     ]);
   });
 
-  it('publishes no fake chapter route before chapter content exists', () => {
-    expect(learnChapters[0]?.status).toBe('next');
-    expect(
-      learnChapters.slice(1).every((chapter) => chapter.status === 'planned'),
-    ).toBe(true);
+  it('publishes only chapter 01 while chapter 02 becomes the next lesson', () => {
+    expect(learnChapters.map((chapter) => chapter.status)).toEqual([
+      'published',
+      'next',
+      'planned',
+      'planned',
+      'planned',
+      'planned',
+      'planned',
+    ]);
     expect(learnChapters.map(getLearnChapterHref)).toEqual([
-      null,
+      '/learn/design-systems',
       null,
       null,
       null,
@@ -38,11 +43,11 @@ describe('learn curriculum', () => {
   });
 
   it('builds a chapter href only after a chapter becomes published', () => {
-    const chapter = learnChapters[0];
+    const chapter = learnChapters[1];
 
     expect(chapter).toBeDefined();
     expect(getLearnChapterHref({ ...chapter!, status: 'published' })).toBe(
-      '/learn/design-systems',
+      '/learn/design-tokens',
     );
   });
 });
