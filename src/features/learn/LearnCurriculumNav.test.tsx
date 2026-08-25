@@ -29,7 +29,11 @@ describe('LearnCurriculumNav', () => {
       'href',
       '/learn/design-tokens',
     );
-    expect(screen.queryByRole('link', { name: /Themes/ })).toBeNull();
+    expect(screen.getByRole('link', { name: /Themes/ })).toHaveAttribute(
+      'href',
+      '/learn/themes',
+    );
+    expect(screen.queryByRole('link', { name: /Components/ })).toBeNull();
     expect(screen.getByText('Up next')).toBeInTheDocument();
   });
 });

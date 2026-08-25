@@ -31,8 +31,8 @@ export const learnChapters: readonly LearnChapter[] = [
     slug: 'design-tokens',
     status: 'published',
   },
-  { key: 'themes', number: 3, slug: 'themes', status: 'next' },
-  { key: 'components', number: 4, slug: 'components', status: 'planned' },
+  { key: 'themes', number: 3, slug: 'themes', status: 'published' },
+  { key: 'components', number: 4, slug: 'components', status: 'next' },
   {
     key: 'accessibility',
     number: 5,
