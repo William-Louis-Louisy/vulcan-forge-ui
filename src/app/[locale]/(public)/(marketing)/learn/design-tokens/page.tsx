@@ -161,7 +161,7 @@ export default async function LearnDesignTokensPage() {
                       {t(`definition.anatomy.${key}.label`)}
                     </p>
                   </div>
-                  <code className="mt-5 block overflow-wrap-anywhere font-mono text-sm font-semibold">
+                  <code className="mt-5 block break-all font-mono text-sm font-semibold">
                     {t(`definition.anatomy.${key}.value`)}
                   </code>
                   <p className="text-content-secondary mt-3 text-sm leading-6">
@@ -228,7 +228,7 @@ export default async function LearnDesignTokensPage() {
                 <p className="text-content-tertiary text-[10px] font-semibold tracking-[0.12em] uppercase">
                   {t('semantic.primitiveLabel')}
                 </p>
-                <code className="mt-3 block overflow-wrap-anywhere font-mono text-sm font-semibold">
+                <code className="mt-3 block break-all font-mono text-sm font-semibold">
                   {t('semantic.primitivePath')}
                 </code>
               </div>
@@ -236,7 +236,7 @@ export default async function LearnDesignTokensPage() {
                 <p className="text-action-accent text-[10px] font-semibold tracking-[0.12em] uppercase">
                   {t('semantic.semanticLabel')}
                 </p>
-                <code className="mt-3 block overflow-wrap-anywhere font-mono text-sm font-semibold">
+                <code className="mt-3 block break-all font-mono text-sm font-semibold">
                   {t('semantic.semanticPath')}
                 </code>
                 <p className="text-content-secondary mt-2 text-xs leading-5">
@@ -266,7 +266,7 @@ export default async function LearnDesignTokensPage() {
               <FlowArrow />
               <TokenStageCard
                 label={t('references.referenceLabel')}
-                primary={formatReference(t('references.referencePath'))}
+                primary={String(t.raw('references.reference'))}
                 icon="link"
                 emphasized
               />
@@ -339,7 +339,7 @@ export default async function LearnDesignTokensPage() {
                   <h3 className="text-sm font-semibold">
                     {t(`categories.items.${key}.title`)}
                   </h3>
-                  <code className="text-action-accent mt-4 block overflow-wrap-anywhere font-mono text-xs">
+                  <code className="text-action-accent mt-4 block break-all font-mono text-xs">
                     {t(`categories.items.${key}.example`)}
                   </code>
                   <p className="text-content-secondary mt-3 text-xs leading-5">
@@ -363,7 +363,7 @@ export default async function LearnDesignTokensPage() {
                 <p className="text-content-tertiary text-xs font-semibold tracking-[0.12em] uppercase">
                   {t('demo.conceptualLabel')}
                 </p>
-                <code className="mt-5 block overflow-wrap-anywhere font-mono text-base font-semibold">
+                <code className="mt-5 block break-all font-mono text-base font-semibold">
                   {t('demo.conceptualPath')}
                 </code>
               </article>
@@ -379,7 +379,7 @@ export default async function LearnDesignTokensPage() {
                     style={{ backgroundColor: t('demo.primitiveValue') }}
                   />
                   <div className="min-w-0">
-                    <code className="block overflow-wrap-anywhere font-mono text-sm font-semibold">
+                    <code className="block break-all font-mono text-sm font-semibold">
                       {t('demo.primitivePath')}
                     </code>
                     <code className="text-content-secondary mt-1 block font-mono text-xs">
@@ -388,11 +388,11 @@ export default async function LearnDesignTokensPage() {
                   </div>
                 </div>
                 <div className="border-border-subtle mt-5 border-t pt-5">
-                  <code className="block overflow-wrap-anywhere font-mono text-sm font-semibold">
+                  <code className="block break-all font-mono text-sm font-semibold">
                     {t('demo.semanticPath')}
                   </code>
-                  <code className="text-content-secondary mt-2 block overflow-wrap-anywhere font-mono text-xs">
-                    {formatReference(t('demo.semanticReferencePath'))}
+                  <code className="text-content-secondary mt-2 block break-all font-mono text-xs">
+                    {String(t.raw('demo.semanticReference'))}
                   </code>
                 </div>
               </article>
@@ -423,7 +423,11 @@ export default async function LearnDesignTokensPage() {
                     size={15}
                     weight="bold"
                   />
-                  <span>{t(`productBridge.items.${key}`)}</span>
+                  <span>
+                    {key === 'reference'
+                      ? String(t.raw('productBridge.items.reference'))
+                      : t(`productBridge.items.${key}`)}
+                  </span>
                 </li>
               ))}
             </ul>
@@ -520,10 +524,6 @@ export default async function LearnDesignTokensPage() {
   );
 }
 
-function formatReference(path: string) {
-  return `{${path}}`;
-}
-
 type SectionHeadingProps = {
   eyebrow: string;
   title: string;
@@ -599,11 +599,11 @@ function TokenStageCard({
           />
         ) : null}
         <div className="min-w-0">
-          <code className="block overflow-wrap-anywhere font-mono text-sm font-semibold">
+          <code className="block break-all font-mono text-sm font-semibold">
             {primary}
           </code>
           {secondary ? (
-            <code className="text-content-secondary mt-1 block overflow-wrap-anywhere font-mono text-xs">
+            <code className="text-content-secondary mt-1 block break-all font-mono text-xs">
               {secondary}
             </code>
           ) : null}
@@ -679,7 +679,7 @@ function NamingCard({ label, example, emphasized = false }: NamingCardProps) {
       <p className="text-content-tertiary text-xs font-semibold tracking-[0.12em] uppercase">
         {label}
       </p>
-      <code className="mt-5 block overflow-wrap-anywhere font-mono text-base font-semibold">
+      <code className="mt-5 block break-all font-mono text-base font-semibold">
         {example}
       </code>
     </article>
