@@ -152,7 +152,12 @@ export default async function LearnPage() {
                 {t('boundary.examplesDescription')}
               </p>
               <div className="mt-7">
-                <PublicButtonLink href="/examples" variant="secondary" size="sm">
+                <PublicButtonLink
+                  href="/examples"
+                  variant="secondary"
+                  size="sm"
+                  className="gap-2"
+                >
                   {t('boundary.examplesCta')}
                   <ArrowRightIcon aria-hidden="true" size={15} weight="bold" />
                 </PublicButtonLink>
