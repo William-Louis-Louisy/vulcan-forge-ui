@@ -23,9 +23,9 @@ describe('learn curriculum', () => {
 
   it('publishes no fake chapter route before chapter content exists', () => {
     expect(learnChapters[0]?.status).toBe('next');
-    expect(learnChapters.slice(1).every((chapter) => chapter.status === 'planned')).toBe(
-      true,
-    );
+    expect(
+      learnChapters.slice(1).every((chapter) => chapter.status === 'planned'),
+    ).toBe(true);
     expect(learnChapters.map(getLearnChapterHref)).toEqual([
       null,
       null,
@@ -41,8 +41,8 @@ describe('learn curriculum', () => {
     const chapter = learnChapters[0];
 
     expect(chapter).toBeDefined();
-    expect(
-      getLearnChapterHref({ ...chapter!, status: 'published' }),
-    ).toBe('/learn/design-systems');
+    expect(getLearnChapterHref({ ...chapter!, status: 'published' })).toBe(
+      '/learn/design-systems',
+    );
   });
 });
