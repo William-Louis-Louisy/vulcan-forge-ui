@@ -17,6 +17,7 @@ type PublicMobileMenuProps = {
     dashboard: string;
     example: string;
     getStarted: string;
+    learn: string;
     navigation: string;
     open: string;
     pricing: string;
@@ -29,6 +30,7 @@ const navigationItems = [
   { href: '/#product', key: 'product' },
   { href: '/pricing', key: 'pricing' },
   { href: '/examples', key: 'example' },
+  { href: '/learn', key: 'learn' },
 ] as const;
 
 export function PublicMobileMenu({
