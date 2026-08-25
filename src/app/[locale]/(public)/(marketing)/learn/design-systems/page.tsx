@@ -123,13 +123,18 @@ export default async function LearnDesignSystemsPage() {
                         className="text-sm font-semibold"
                         style={{
                           backgroundColor: color,
-                          borderRadius: key === 'second' ? 12 : 14,
+                          borderRadius:
+                            key === 'second' ? 4 : key === 'third' ? 9999 : 14,
                           color: '#ffffff',
                           boxShadow: hasFocusTreatment
                             ? '0 0 0 3px rgba(37, 99, 235, 0.38)'
                             : 'none',
                           padding:
-                            key === 'second' ? '10px 16px' : '12px 16px',
+                            key === 'second'
+                              ? '8px 24px'
+                              : key === 'third'
+                                ? '14px 18px'
+                                : '12px 16px',
                         }}
                       >
                         {t('openingProblem.buttonLabel')}
@@ -244,7 +249,7 @@ export default async function LearnDesignSystemsPage() {
                   {t('demo.beforeLabel')}
                 </p>
                 <div className="mt-6 flex gap-2" aria-hidden="true">
-                  {['#A94E2F', '#A34B31', '#A94E2F'].map((color, index) => (
+                  {['#A94E2F', '#7D3A2A', '#C66A45'].map((color, index) => (
                     <span
                       key={`${color}-${index}`}
                       className="border-border-subtle h-10 flex-1 border"
