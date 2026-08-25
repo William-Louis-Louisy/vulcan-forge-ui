@@ -134,7 +134,7 @@ export default async function LearnPage() {
             </h2>
           </div>
 
-          <div className="mt-10 grid gap-px border border-border-subtle bg-border-subtle md:grid-cols-2">
+          <div className="border-border-subtle bg-border-subtle mt-10 grid gap-px border md:grid-cols-2">
             <article className="bg-surface-primary p-6 sm:p-8">
               <p className="text-action-accent font-mono text-xs font-semibold uppercase">
                 01 · {t('boundary.learnTitle')}
