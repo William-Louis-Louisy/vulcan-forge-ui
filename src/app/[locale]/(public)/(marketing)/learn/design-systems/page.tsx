@@ -128,20 +128,11 @@ export default async function LearnDesignSystemsPage() {
                         {t('openingProblem.buttonLabel')}
                       </div>
                     </div>
-                    <dl className="text-content-secondary mt-5 space-y-2 text-xs leading-5">
-                      <div className="flex justify-between gap-4">
-                        <dt>Color</dt>
-                        <dd className="text-content-primary font-mono">{color}</dd>
-                      </div>
-                      <div className="flex justify-between gap-4">
-                        <dt>Radius</dt>
-                        <dd>{t(`openingProblem.cards.${key}.radius`)}</dd>
-                      </div>
-                      <div className="flex justify-between gap-4">
-                        <dt>Padding</dt>
-                        <dd>{t(`openingProblem.cards.${key}.padding`)}</dd>
-                      </div>
-                    </dl>
+                    <ul className="text-content-secondary mt-5 space-y-2 text-xs leading-5">
+                      <li className="text-content-primary font-mono">{color}</li>
+                      <li>{t(`openingProblem.cards.${key}.radius`)}</li>
+                      <li>{t(`openingProblem.cards.${key}.padding`)}</li>
+                    </ul>
                     <p className="text-content-tertiary mt-4 border-t border-border-subtle pt-4 text-xs leading-5">
                       {t(`openingProblem.cards.${key}.focus`)}
                     </p>
