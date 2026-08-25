@@ -12,7 +12,7 @@ vi.mock('@/i18n/navigation', () => ({
 }));
 
 describe('LearnCurriculumNav', () => {
-  it('marks the published current chapter and keeps future chapters non-interactive', () => {
+  it('marks the current published chapter, links published chapters and keeps future chapters non-interactive', () => {
     render(
       <NextIntlClientProvider locale="en" messages={learnMessages.en}>
         <LearnCurriculumNav
@@ -25,7 +25,11 @@ describe('LearnCurriculumNav', () => {
     expect(
       screen.getByRole('link', { name: /What is a Design System\?/ }),
     ).toHaveAttribute('aria-current', 'page');
-    expect(screen.queryByRole('link', { name: /Design Tokens/ })).toBeNull();
+    expect(screen.getByRole('link', { name: /Design Tokens/ })).toHaveAttribute(
+      'href',
+      '/learn/design-tokens',
+    );
+    expect(screen.queryByRole('link', { name: /Themes/ })).toBeNull();
     expect(screen.getByText('Up next')).toBeInTheDocument();
   });
 });

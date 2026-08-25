@@ -29,9 +29,9 @@ export const learnChapters: readonly LearnChapter[] = [
     key: 'designTokens',
     number: 2,
     slug: 'design-tokens',
-    status: 'next',
+    status: 'published',
   },
-  { key: 'themes', number: 3, slug: 'themes', status: 'planned' },
+  { key: 'themes', number: 3, slug: 'themes', status: 'next' },
   { key: 'components', number: 4, slug: 'components', status: 'planned' },
   {
     key: 'accessibility',
