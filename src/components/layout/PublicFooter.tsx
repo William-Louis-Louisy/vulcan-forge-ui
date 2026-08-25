@@ -51,6 +51,12 @@ export function PublicFooter({
             {t('example')}
           </Link>
           <Link
+            href="/learn"
+            className="text-content-secondary hover:text-content-primary transition"
+          >
+            {t('learn')}
+          </Link>
+          <Link
             href="/pricing"
             className="text-content-secondary hover:text-content-primary transition"
           >
