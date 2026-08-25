@@ -46,6 +46,12 @@ export function PublicHeader({ isAuthenticated = false }: PublicHeaderProps) {
           >
             {t('example')}
           </Link>
+          <Link
+            href="/learn"
+            className="text-content-secondary hover:text-content-primary text-sm font-medium transition"
+          >
+            {t('learn')}
+          </Link>
         </nav>
 
         <div className="ml-auto hidden items-center gap-3 md:flex">
@@ -70,6 +76,7 @@ export function PublicHeader({ isAuthenticated = false }: PublicHeaderProps) {
               dashboard: t('dashboard'),
               example: t('example'),
               getStarted: t('getStarted'),
+              learn: t('learn'),
               navigation: t('navigationLabel'),
               open: t('mobile.open'),
               pricing: t('pricing'),
