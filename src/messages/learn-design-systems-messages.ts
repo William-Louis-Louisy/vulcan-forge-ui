@@ -16,7 +16,8 @@ export const learnDesignSystemsMessages = {
       },
       openingProblem: {
         eyebrow: 'Start with the problem',
-        title: 'Small differences become expensive when nobody owns the decision.',
+        title:
+          'Small differences become expensive when nobody owns the decision.',
         description:
           'Imagine three teams building the same primary action independently. Each result is reasonable on its own. Together, they create drift.',
         screenLabel: 'Screen {number}',
@@ -46,7 +47,8 @@ export const learnDesignSystemsMessages = {
       },
       definition: {
         eyebrow: 'The concept',
-        title: 'A Design System turns repeated choices into shared product knowledge.',
+        title:
+          'A Design System turns repeated choices into shared product knowledge.',
         intro:
           'Different Design Systems organize that knowledge differently, but mature systems usually combine several kinds of shared material rather than stopping at code components.',
         parts: {
@@ -74,7 +76,8 @@ export const learnDesignSystemsMessages = {
       },
       distinction: {
         eyebrow: 'A useful distinction',
-        title: 'A component library can be part of a Design System. It is not the whole system.',
+        title:
+          'A component library can be part of a Design System. It is not the whole system.',
         description:
           'A library answers “what reusable UI can I render?” A Design System also helps answer “which decision should we make, why, and how should that decision stay consistent across the product?”',
         library: {
@@ -141,7 +144,8 @@ export const learnDesignSystemsMessages = {
       },
       systemMap: {
         eyebrow: 'The wider system',
-        title: 'A Design System connects decisions to the experiences people actually use.',
+        title:
+          'A Design System connects decisions to the experiences people actually use.',
         description:
           'The exact architecture varies by organization. Keep this beginner model in mind as the rest of Learn adds detail.',
         nodes: {
@@ -162,8 +166,10 @@ export const learnDesignSystemsMessages = {
           tokens: 'Tokens make reusable design decisions explicit.',
           themes: 'Themes map semantic roles to appearance-specific decisions.',
           components: 'Components describe reusable component contracts.',
-          accessibility: 'Accessibility consolidates checks the product can evaluate.',
-          delivery: 'Documentation, Exports and AI Instructions consume structured project data.',
+          accessibility:
+            'Accessibility consolidates checks the product can evaluate.',
+          delivery:
+            'Documentation, Exports and AI Instructions consume structured project data.',
         },
         examplesCta: 'See the Demo project workflow',
       },
@@ -181,7 +187,8 @@ export const learnDesignSystemsMessages = {
         items: {
           one: 'why repeated reasonable choices can still create design drift;',
           two: 'why a component library is only one part of a broader Design System;',
-          three: 'why shared product knowledge matters to both designers and developers.',
+          three:
+            'why shared product knowledge matters to both designers and developers.',
         },
       },
       continue: {
@@ -210,7 +217,8 @@ export const learnDesignSystemsMessages = {
       },
       openingProblem: {
         eyebrow: 'Commençons par le problème',
-        title: 'De petites différences deviennent coûteuses quand personne ne porte la décision.',
+        title:
+          'De petites différences deviennent coûteuses quand personne ne porte la décision.',
         description:
           'Imaginez trois équipes qui construisent indépendamment la même action principale. Chaque résultat est raisonnable pris séparément. Ensemble, ils créent de la dérive.',
         screenLabel: 'Écran {number}',
@@ -240,7 +248,8 @@ export const learnDesignSystemsMessages = {
       },
       definition: {
         eyebrow: 'Le concept',
-        title: 'Un Design System transforme des choix répétés en connaissance produit partagée.',
+        title:
+          'Un Design System transforme des choix répétés en connaissance produit partagée.',
         intro:
           'Les Design Systems organisent cette connaissance de différentes façons, mais les systèmes matures combinent généralement plusieurs types de ressources partagées au lieu de s’arrêter aux composants de code.',
         parts: {
@@ -268,7 +277,8 @@ export const learnDesignSystemsMessages = {
       },
       distinction: {
         eyebrow: 'Une distinction utile',
-        title: 'Une bibliothèque de composants peut faire partie d’un Design System. Elle n’est pas le système entier.',
+        title:
+          'Une bibliothèque de composants peut faire partie d’un Design System. Elle n’est pas le système entier.',
         description:
           'Une bibliothèque répond à « quelle UI réutilisable puis-je afficher ? ». Un Design System aide aussi à répondre à « quelle décision devons-nous prendre, pourquoi, et comment la garder cohérente dans le produit ? ».',
         library: {
@@ -291,7 +301,8 @@ export const learnDesignSystemsMessages = {
       },
       whyMatters: {
         eyebrow: 'Pourquoi c’est important',
-        title: 'Le système réduit le raisonnement répété, pas seulement le code répété.',
+        title:
+          'Le système réduit le raisonnement répété, pas seulement le code répété.',
         description:
           'La cohérence est utile, mais le bénéfice plus profond est que la connaissance produit importante cesse de vivre uniquement dans des fichiers, des maquettes ou la mémoire de quelques personnes.',
         items: {
@@ -319,7 +330,8 @@ export const learnDesignSystemsMessages = {
       },
       demo: {
         eyebrow: 'Le projet Demo',
-        title: 'La mise en système commence avant même le token ou le composant.',
+        title:
+          'La mise en système commence avant même le token ou le composant.',
         description:
           'Notre projet Demo récurrent part d’une couleur d’action principale. Dans ce chapitre, l’étape importante n’est pas encore de savoir comment l’encoder. Il s’agit de décider que le produit doit avoir une réponse partagée pour cette action principale.',
         beforeLabel: 'Avant le système',
@@ -335,7 +347,8 @@ export const learnDesignSystemsMessages = {
       },
       systemMap: {
         eyebrow: 'Le système dans son ensemble',
-        title: 'Un Design System relie les décisions aux expériences réellement utilisées.',
+        title:
+          'Un Design System relie les décisions aux expériences réellement utilisées.',
         description:
           'L’architecture exacte varie selon les organisations. Gardez ce modèle débutant en tête pendant que les autres chapitres ajoutent progressivement du détail.',
         nodes: {
@@ -348,22 +361,29 @@ export const learnDesignSystemsMessages = {
       },
       productBridge: {
         eyebrow: 'Comment VulcanForgeUI représente cela',
-        title: 'VulcanForgeUI sépare le système en espaces de travail connectés.',
+        title:
+          'VulcanForgeUI sépare le système en espaces de travail connectés.',
         description:
           'Ces espaces ne remplacent pas la réflexion Design System. Ils donnent aux décisions un endroit structuré où vivre afin que les humains et les sorties générées puissent se référer au même projet.',
         items: {
           brand: 'Brand capture l’intention et la direction du projet.',
-          tokens: 'Tokens rend les décisions de design réutilisables explicites.',
-          themes: 'Themes associe des rôles sémantiques à des décisions propres à une apparence.',
-          components: 'Components décrit des contrats de composants réutilisables.',
-          accessibility: 'Accessibility regroupe les vérifications que le produit peut évaluer.',
-          delivery: 'Documentation, Exports et AI Instructions consomment les données structurées du projet.',
+          tokens:
+            'Tokens rend les décisions de design réutilisables explicites.',
+          themes:
+            'Themes associe des rôles sémantiques à des décisions propres à une apparence.',
+          components:
+            'Components décrit des contrats de composants réutilisables.',
+          accessibility:
+            'Accessibility regroupe les vérifications que le produit peut évaluer.',
+          delivery:
+            'Documentation, Exports et AI Instructions consomment les données structurées du projet.',
         },
         examplesCta: 'Voir le workflow du projet Demo',
       },
       misconception: {
         eyebrow: 'Idée reçue fréquente',
-        title: 'La cohérence ne signifie pas que tous les produits doivent être identiques.',
+        title:
+          'La cohérence ne signifie pas que tous les produits doivent être identiques.',
         description:
           'Un Design System utile standardise les décisions qui gagnent à être partagées tout en laissant de la place aux vrais besoins produit. L’objectif est une intention cohérente, pas l’uniformité pour elle-même.',
       },
@@ -375,7 +395,8 @@ export const learnDesignSystemsMessages = {
         items: {
           one: 'pourquoi plusieurs choix raisonnables peuvent malgré tout créer de la dérive ;',
           two: 'pourquoi une bibliothèque de composants n’est qu’une partie d’un Design System plus large ;',
-          three: 'pourquoi une connaissance produit partagée est utile aux designers comme aux développeurs.',
+          three:
+            'pourquoi une connaissance produit partagée est utile aux designers comme aux développeurs.',
         },
       },
       continue: {
