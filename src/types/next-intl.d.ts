@@ -74,10 +74,7 @@ type PublicMessages = DeepMerge<
     (typeof publicSurfaceMessages)['en'],
     (typeof productEditorPreviewMessages)['en']
   >,
-  DeepMerge<
-    (typeof examplesPageMessages)['en'],
-    (typeof learnMessages)['en']
-  >
+  DeepMerge<(typeof examplesPageMessages)['en'], (typeof learnMessages)['en']>
 >;
 
 type ScopedMessages = DeepMerge<
