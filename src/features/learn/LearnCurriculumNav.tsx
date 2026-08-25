@@ -5,14 +5,17 @@ import {
   getLearnChapterHref,
   learnChapters,
   type LearnChapter,
+  type LearnChapterKey,
 } from './learn-curriculum';
 
 type LearnCurriculumNavProps = {
   variant?: 'cards' | 'compact';
+  currentChapterKey?: LearnChapterKey;
 };
 
 export function LearnCurriculumNav({
   variant = 'cards',
+  currentChapterKey,
 }: LearnCurriculumNavProps) {
   const t = useTranslations('LearnPage.curriculum');
 
@@ -22,7 +25,10 @@ export function LearnCurriculumNav({
         <ol className="border-border-subtle divide-border-subtle divide-y border-y">
           {learnChapters.map((chapter) => (
             <li key={chapter.key}>
-              <CompactChapterRow chapter={chapter} />
+              <CompactChapterRow
+                chapter={chapter}
+                isCurrent={chapter.key === currentChapterKey}
+              />
             </li>
           ))}
         </ol>
@@ -35,7 +41,10 @@ export function LearnCurriculumNav({
       <ol className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
         {learnChapters.map((chapter) => (
           <li key={chapter.key} className="min-w-0">
-            <ChapterCard chapter={chapter} />
+            <ChapterCard
+              chapter={chapter}
+              isCurrent={chapter.key === currentChapterKey}
+            />
           </li>
         ))}
       </ol>
@@ -43,7 +52,13 @@ export function LearnCurriculumNav({
   );
 }
 
-function ChapterCard({ chapter }: { chapter: LearnChapter }) {
+function ChapterCard({
+  chapter,
+  isCurrent,
+}: {
+  chapter: LearnChapter;
+  isCurrent: boolean;
+}) {
   const t = useTranslations('LearnPage.curriculum');
   const href = getLearnChapterHref(chapter);
   const content = (
@@ -79,6 +94,7 @@ function ChapterCard({ chapter }: { chapter: LearnChapter }) {
   return href ? (
     <Link
       href={href}
+      aria-current={isCurrent ? 'page' : undefined}
       className={`${className} hover:border-border-strong hover:bg-surface-secondary focus-visible:outline-border-focus transition focus-visible:outline-2 focus-visible:outline-offset-2`}
     >
       {content}
@@ -88,7 +104,13 @@ function ChapterCard({ chapter }: { chapter: LearnChapter }) {
   );
 }
 
-function CompactChapterRow({ chapter }: { chapter: LearnChapter }) {
+function CompactChapterRow({
+  chapter,
+  isCurrent,
+}: {
+  chapter: LearnChapter;
+  isCurrent: boolean;
+}) {
   const t = useTranslations('LearnPage.curriculum');
   const href = getLearnChapterHref(chapter);
   const rowContent = (
@@ -105,11 +127,14 @@ function CompactChapterRow({ chapter }: { chapter: LearnChapter }) {
       ) : null}
     </>
   );
-  const className = 'flex min-h-12 items-center gap-3 px-3 py-2.5';
+  const className = `flex min-h-12 items-center gap-3 px-3 py-2.5 ${
+    isCurrent ? 'bg-surface-secondary' : ''
+  }`;
 
   return href ? (
     <Link
       href={href}
+      aria-current={isCurrent ? 'page' : undefined}
       className={`${className} hover:bg-surface-secondary focus-visible:outline-border-focus transition focus-visible:outline-2 focus-visible:outline-offset-[-2px]`}
     >
       {rowContent}
