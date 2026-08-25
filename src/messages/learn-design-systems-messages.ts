@@ -17,7 +17,7 @@ export const learnDesignSystemsMessages = {
       openingProblem: {
         eyebrow: 'Start with the problem',
         title:
-          'Small differences become expensive when nobody owns the decision.',
+          'Reasonable choices drift apart when nobody owns the shared decision.',
         description:
           'Imagine three teams building the same primary action independently. Each result is reasonable on its own. Together, they create drift.',
         screenLabel: 'Screen {number}',
@@ -30,15 +30,15 @@ export const learnDesignSystemsMessages = {
             focus: 'Visible focus state',
           },
           second: {
-            color: '#A34B31',
-            radius: '12 px radius',
-            padding: '10 × 16 px padding',
+            color: '#7D3A2A',
+            radius: '4 px radius',
+            padding: '8 × 24 px padding',
             focus: 'Visible focus state',
           },
           third: {
-            color: '#A94E2F',
-            radius: '14 px radius',
-            padding: '12 × 16 px padding',
+            color: '#C66A45',
+            radius: 'Pill radius',
+            padding: '14 × 18 px padding',
             focus: 'No agreed focus treatment',
           },
         },
@@ -218,7 +218,7 @@ export const learnDesignSystemsMessages = {
       openingProblem: {
         eyebrow: 'Commençons par le problème',
         title:
-          'De petites différences deviennent coûteuses quand personne ne porte la décision.',
+          'Des choix raisonnables dérivent quand personne ne porte la décision partagée.',
         description:
           'Imaginez trois équipes qui construisent indépendamment la même action principale. Chaque résultat est raisonnable pris séparément. Ensemble, ils créent de la dérive.',
         screenLabel: 'Écran {number}',
@@ -231,15 +231,15 @@ export const learnDesignSystemsMessages = {
             focus: 'État de focus visible',
           },
           second: {
-            color: '#A34B31',
-            radius: 'Rayon de 12 px',
-            padding: 'Padding 10 × 16 px',
+            color: '#7D3A2A',
+            radius: 'Rayon de 4 px',
+            padding: 'Padding 8 × 24 px',
             focus: 'État de focus visible',
           },
           third: {
-            color: '#A94E2F',
-            radius: 'Rayon de 14 px',
-            padding: 'Padding 12 × 16 px',
+            color: '#C66A45',
+            radius: 'Rayon pilule',
+            padding: 'Padding 14 × 18 px',
             focus: 'Aucun traitement de focus convenu',
           },
         },
