@@ -71,4 +71,12 @@ describe('learnAccessibilityMessages', () => {
     expect(page.productBridge.boundary).toContain('certify WCAG conformance');
     expect(page.continue.title).toBe('Documentation & Delivery');
   });
+
+  it('keeps French guillemets attached to their quoted words', () => {
+    const page = learnAccessibilityMessages.fr.LearnAccessibilityPage;
+
+    expect(page.misconception.title).toBe(
+      '« Aucun problème automatisé » ne signifie pas « accessible ».',
+    );
+  });
 });
