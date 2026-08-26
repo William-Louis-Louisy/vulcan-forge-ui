@@ -16,7 +16,8 @@ export const learnAccessibilityMessages = {
       },
       openingProblem: {
         eyebrow: 'Start with one Theme decision',
-        title: 'A single wrong mapping can weaken every screen that consumes it.',
+        title:
+          'A single wrong mapping can weaken every screen that consumes it.',
         description:
           'In the Demo project, the muted content role is reused across product surfaces. If the Light Theme accidentally points that role to the Dark Theme value, every consumer inherits the same contrast problem.',
         roleLabel: 'Semantic role',
@@ -74,8 +75,7 @@ export const learnAccessibilityMessages = {
               'Checks whether the resulting experience is understandable and operable in context.',
           },
         },
-        rule:
-          'The earlier a reusable accessibility decision is encoded, the fewer screens need to rediscover it independently.',
+        rule: 'The earlier a reusable accessibility decision is encoded, the fewer screens need to rediscover it independently.',
       },
       contrast: {
         eyebrow: 'Contrast relationships',
@@ -108,7 +108,8 @@ export const learnAccessibilityMessages = {
       },
       focus: {
         eyebrow: 'Focus and component states',
-        title: 'Keyboard focus must exist in the contract and remain visible in the real interface.',
+        title:
+          'Keyboard focus must exist in the contract and remain visible in the real interface.',
         description:
           'A sighted keyboard user needs to know which control will receive the next action. The system can require a focus-visible state, but only the rendered product can prove that the indicator is actually visible, correctly ordered and not obscured.',
         withoutLabel: 'No visible focus cue',
@@ -123,7 +124,8 @@ export const learnAccessibilityMessages = {
       },
       automation: {
         eyebrow: 'Automation vs human evaluation',
-        title: 'Automate deterministic signals; test lived behavior with people and assistive technology.',
+        title:
+          'Automate deterministic signals; test lived behavior with people and assistive technology.',
         description:
           'Automated checks are valuable because they are repeatable and can run early. Their usefulness comes from narrowing attention, not from replacing judgement.',
         automatedLabel: 'Current automated signals',
@@ -157,7 +159,8 @@ export const learnAccessibilityMessages = {
       },
       score: {
         eyebrow: 'The VulcanForgeUI score',
-        title: 'The score prioritizes detected issues; it is not a compliance percentage.',
+        title:
+          'The score prioritizes detected issues; it is not a compliance percentage.',
         description:
           'The Accessibility Center starts at 100 and applies fixed penalties to the automated issues present in the current project data.',
         formula: '100 − (critical issues × 25) − (warnings × 10)',
@@ -184,7 +187,8 @@ export const learnAccessibilityMessages = {
       },
       productBridge: {
         eyebrow: 'How VulcanForgeUI represents accessibility today',
-        title: 'The Accessibility Center reads structured project data and turns detectable risks into actionable signals.',
+        title:
+          'The Accessibility Center reads structured project data and turns detectable risks into actionable signals.',
         description:
           'The report combines Theme contrast evaluation with checks across Tokens and Component contracts. Issues keep a severity, scope and affected source so the user can return to the relevant editor.',
         items: {
@@ -204,14 +208,18 @@ export const learnAccessibilityMessages = {
       },
       demo: {
         eyebrow: 'The Demo project',
-        title: 'Accessibility connects the decisions from the first four chapters.',
+        title:
+          'Accessibility connects the decisions from the first four chapters.',
         description:
           'The Demo now shows why structured design decisions matter beyond visual consistency: they create inspectable relationships and expectations before implementation.',
         sequence: {
           token: 'Token · provide stable visual decisions and references',
-          theme: 'Theme · create color relationships that can be checked together',
-          component: 'Component · preserve states and accessibility expectations',
-          audit: 'Accessibility · detect structured risks and direct human review',
+          theme:
+            'Theme · create color relationships that can be checked together',
+          component:
+            'Component · preserve states and accessibility expectations',
+          audit:
+            'Accessibility · detect structured risks and direct human review',
         },
       },
       misconception: {
@@ -228,7 +236,8 @@ export const learnAccessibilityMessages = {
         items: {
           one: 'why accessibility is a property of repeated system decisions rather than a final checklist;',
           two: 'why contrast belongs to foreground/background relationships and can change with Theme mappings;',
-          three: 'why a documented focusVisible state is useful but cannot prove the runtime focus experience;',
+          three:
+            'why a documented focusVisible state is useful but cannot prove the runtime focus experience;',
           four: 'which categories of risk VulcanForgeUI currently detects automatically and why manual validation is still required;',
           five: 'why the Accessibility score is a prioritization signal rather than a WCAG compliance percentage.',
         },
@@ -251,7 +260,8 @@ export const learnAccessibilityMessages = {
       },
       hero: {
         chapter: 'Chapitre 05 · Accessibilité',
-        title: 'L’accessibilité appartient au système, pas à la fin du processus.',
+        title:
+          'L’accessibilité appartient au système, pas à la fin du processus.',
         description:
           'Un Design System peut prévenir des familles entières de problèmes d’accessibilité lorsque les relations de contraste, les états d’interaction et les attentes des composants sont définis avant la construction des écrans. L’automatisation aide à repérer les risques, mais elle ne remplace jamais l’évaluation humaine.',
         learnerQuestion:
@@ -259,7 +269,8 @@ export const learnAccessibilityMessages = {
       },
       openingProblem: {
         eyebrow: 'Partons d’une décision de Theme',
-        title: 'Un seul mauvais mapping peut affaiblir tous les écrans qui en dépendent.',
+        title:
+          'Un seul mauvais mapping peut affaiblir tous les écrans qui en dépendent.',
         description:
           'Dans le projet Demo, le rôle de contenu secondaire est réutilisé dans plusieurs surfaces. Si le Theme Light pointe par erreur vers la valeur prévue pour le Theme Dark, tous les consommateurs héritent du même problème de contraste.',
         roleLabel: 'Rôle sémantique',
@@ -317,12 +328,12 @@ export const learnAccessibilityMessages = {
               'Vérifie si l’expérience résultante est compréhensible et utilisable dans son contexte réel.',
           },
         },
-        rule:
-          'Plus une décision d’accessibilité réutilisable est encodée tôt, moins chaque écran doit la redécouvrir indépendamment.',
+        rule: 'Plus une décision d’accessibilité réutilisable est encodée tôt, moins chaque écran doit la redécouvrir indépendamment.',
       },
       contrast: {
         eyebrow: 'Relations de contraste',
-        title: 'Le contraste est une relation, pas une propriété d’une couleur isolée.',
+        title:
+          'Le contraste est une relation, pas une propriété d’une couleur isolée.',
         description:
           'Une même couleur de premier plan peut réussir sur un arrière-plan et échouer sur un autre. C’est pourquoi l’Accessibility Center évalue les paires premier plan/arrière-plan configurées dans les Themes après résolution des références de tokens.',
         productLabel: 'Règle actuelle des paires Theme dans VulcanForgeUI',
@@ -351,7 +362,8 @@ export const learnAccessibilityMessages = {
       },
       focus: {
         eyebrow: 'Focus et états de composant',
-        title: 'Le focus clavier doit exister dans le contrat et rester visible dans l’interface réelle.',
+        title:
+          'Le focus clavier doit exister dans le contrat et rester visible dans l’interface réelle.',
         description:
           'Une personne qui navigue au clavier tout en voyant l’écran doit savoir quel contrôle recevra la prochaine action. Le système peut exiger un état focusVisible, mais seule l’interface rendue peut démontrer que l’indicateur est réellement visible, correctement ordonné et non masqué.',
         withoutLabel: 'Aucun indice de focus visible',
@@ -366,7 +378,8 @@ export const learnAccessibilityMessages = {
       },
       automation: {
         eyebrow: 'Automatisation et évaluation humaine',
-        title: 'Automatiser les signaux déterministes ; tester le comportement vécu avec des personnes et des technologies d’assistance.',
+        title:
+          'Automatiser les signaux déterministes, tester le comportement vécu avec des personnes et des technologies d’assistance.',
         description:
           'Les contrôles automatisés sont précieux parce qu’ils sont répétables et peuvent intervenir tôt. Leur rôle est de concentrer l’attention, pas de remplacer le jugement.',
         automatedLabel: 'Signaux automatisés actuels',
@@ -400,7 +413,8 @@ export const learnAccessibilityMessages = {
       },
       score: {
         eyebrow: 'Le score VulcanForgeUI',
-        title: 'Le score aide à prioriser les problèmes détectés ; ce n’est pas un pourcentage de conformité.',
+        title:
+          'Le score aide à prioriser les problèmes détectés, ce n’est pas un pourcentage de conformité.',
         description:
           'L’Accessibility Center part de 100 et applique des pénalités fixes aux problèmes automatisés présents dans les données actuelles du projet.',
         formula: '100 − (problèmes critiques × 25) − (avertissements × 10)',
@@ -427,7 +441,8 @@ export const learnAccessibilityMessages = {
       },
       productBridge: {
         eyebrow: 'Comment VulcanForgeUI représente l’accessibilité aujourd’hui',
-        title: 'L’Accessibility Center lit les données structurées du projet et transforme les risques détectables en signaux exploitables.',
+        title:
+          'L’Accessibility Center lit les données structurées du projet et transforme les risques détectables en signaux exploitables.',
         description:
           'Le rapport combine l’évaluation des contrastes de Themes et des contrôles sur les Tokens et les contrats Components. Chaque problème conserve une sévérité, un périmètre et une source afin de revenir vers l’éditeur concerné.',
         items: {
@@ -447,14 +462,18 @@ export const learnAccessibilityMessages = {
       },
       demo: {
         eyebrow: 'Le projet Demo',
-        title: 'L’accessibilité relie les décisions des quatre premiers chapitres.',
+        title:
+          'L’accessibilité relie les décisions des quatre premiers chapitres.',
         description:
           'Le Demo montre maintenant pourquoi des décisions de design structurées servent à autre chose qu’à la cohérence visuelle : elles créent des relations et attentes inspectables avant même l’implémentation.',
         sequence: {
-          token: 'Token · fournir des décisions visuelles stables et référencées',
+          token:
+            'Token · fournir des décisions visuelles stables et référencées',
           theme: 'Theme · créer des relations de couleurs vérifiables ensemble',
-          component: 'Component · préserver les états et attentes d’accessibilité',
-          audit: 'Accessibilité · détecter les risques structurés et orienter la validation humaine',
+          component:
+            'Component · préserver les états et attentes d’accessibilité',
+          audit:
+            'Accessibilité · détecter les risques structurés et orienter la validation humaine',
         },
       },
       misconception: {
@@ -469,10 +488,11 @@ export const learnAccessibilityMessages = {
         description:
           'Si ces idées sont claires, le chapitre suivant pourra montrer comment les données structurées du Design System quittent l’éditeur pour servir plusieurs consommateurs.',
         items: {
-          one: 'pourquoi l’accessibilité est une propriété des décisions répétées du système plutôt qu’une checklist finale ;',
-          two: 'pourquoi le contraste dépend d’une relation premier plan/arrière-plan et peut changer avec les mappings de Theme ;',
-          three: 'pourquoi un état focusVisible documenté est utile sans pour autant prouver l’expérience de focus réelle ;',
-          four: 'quelles catégories de risques VulcanForgeUI détecte actuellement automatiquement et pourquoi une validation manuelle reste nécessaire ;',
+          one: 'pourquoi l’accessibilité est une propriété des décisions répétées du système plutôt qu’une checklist finale,',
+          two: 'pourquoi le contraste dépend d’une relation premier plan/arrière-plan et peut changer avec les mappings de Theme,',
+          three:
+            'pourquoi un état focusVisible documenté est utile sans pour autant prouver l’expérience de focus réelle,',
+          four: 'quelles catégories de risques VulcanForgeUI détecte actuellement automatiquement et pourquoi une validation manuelle reste nécessaire,',
           five: 'pourquoi le score Accessibility est un signal de priorisation et non un pourcentage de conformité WCAG.',
         },
       },
