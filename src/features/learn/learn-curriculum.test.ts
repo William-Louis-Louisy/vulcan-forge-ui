@@ -21,15 +21,15 @@ describe('learn curriculum', () => {
     ]);
   });
 
-  it('publishes chapters 01 through 05 while chapter 06 becomes the next lesson', () => {
+  it('publishes chapters 01 through 06 while chapter 07 becomes the next lesson', () => {
     expect(learnChapters.map((chapter) => chapter.status)).toEqual([
       'published',
       'published',
       'published',
       'published',
       'published',
+      'published',
       'next',
-      'planned',
     ]);
     expect(learnChapters.map(getLearnChapterHref)).toEqual([
       '/learn/design-systems',
@@ -37,17 +37,17 @@ describe('learn curriculum', () => {
       '/learn/themes',
       '/learn/components',
       '/learn/accessibility',
-      null,
+      '/learn/documentation-and-delivery',
       null,
     ]);
   });
 
   it('builds a chapter href only after a chapter becomes published', () => {
-    const chapter = learnChapters[5];
+    const chapter = learnChapters[6];
 
     expect(chapter).toBeDefined();
     expect(getLearnChapterHref({ ...chapter!, status: 'published' })).toBe(
-      '/learn/documentation-and-delivery',
+      '/learn/ai-ready-design-systems',
     );
   });
 });
