@@ -468,10 +468,10 @@ export const learnDesignTokensMessages = {
         description:
           'Si vous pouvez décrire ces relations sans dépendre de la valeur hexadécimale, vous êtes prêt à les utiliser dans la couche suivante.',
         items: {
-          one: 'pourquoi remplacer des valeurs brutes répétées par des tokens nommés réduit les copies déconnectées ;',
-          two: 'la différence entre un token primitif orienté valeur et un token sémantique orienté intention ;',
+          one: 'pourquoi remplacer des valeurs brutes répétées par des tokens nommés réduit les copies déconnectées,',
+          two: 'la différence entre un token primitif orienté valeur et un token sémantique orienté intention,',
           three:
-            'pourquoi une référence conserve une relation au lieu de dupliquer la valeur résolue ;',
+            'pourquoi une référence conserve une relation au lieu de dupliquer la valeur résolue,',
           four: 'pourquoi l’architecture de tokens va au-delà des variables CSS ou des couleurs.',
         },
       },

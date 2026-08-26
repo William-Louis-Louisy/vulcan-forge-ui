@@ -307,7 +307,7 @@ export const learnComponentsMessages = {
       definition: {
         eyebrow: 'Le contrat de composant',
         title:
-          'Un contrat décrit les règles stables ; une instance choisit parmi elles.',
+          'Un contrat décrit les règles stables, une instance choisit parmi elles.',
         description:
           'Le contrat donne au composant une identité partagée et un ensemble borné de choix. Un écran concret crée ensuite une instance en sélectionnant les options pertinentes et l’état courant.',
         contractLabel: 'Contrat partagé',
@@ -530,11 +530,11 @@ export const learnComponentsMessages = {
         description:
           'Si ces affirmations sont claires, le chapitre 05 pourra traiter l’accessibilité comme une propriété du système plutôt que de réintroduire la sémantique des composants depuis zéro.',
         items: {
-          one: 'pourquoi une instance de composant rendue n’est pas la même chose que son contrat réutilisable ;',
-          two: 'comment anatomie, variantes, tailles et états décrivent des dimensions différentes d’un composant ;',
+          one: 'pourquoi une instance de composant rendue n’est pas la même chose que son contrat réutilisable,',
+          two: 'comment anatomie, variantes, tailles et états décrivent des dimensions différentes d’un composant,',
           three:
-            'pourquoi purpose, contenu, accessibilité et patterns interdits doivent accompagner les règles visuelles ;',
-          four: 'comment les bindings de tokens Components actuels de VulcanForgeUI se résolvent directement depuis les Token Sets plutôt que depuis les rôles Theme ;',
+            'pourquoi purpose, contenu, accessibilité et patterns interdits doivent accompagner les règles visuelles,',
+          four: 'comment les bindings de tokens Components actuels de VulcanForgeUI se résolvent directement depuis les Token Sets plutôt que depuis les rôles Theme,',
           five: 'pourquoi des données de composant structurées peuvent améliorer les previews, la documentation, l’analyse d’accessibilité et la guidance IA.',
         },
       },

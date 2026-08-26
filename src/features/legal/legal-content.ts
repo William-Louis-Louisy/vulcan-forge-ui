@@ -71,9 +71,9 @@ function getTermsDocument(
         {
           title: '3. Utilisation acceptable',
           items: [
-            'utiliser le service conformément aux lois applicables ;',
-            'ne pas tenter de contourner les contrôles d’authentification, de limitation ou d’autorisation ;',
-            'ne pas perturber volontairement le service ni lancer de trafic automatisé abusif ;',
+            'utiliser le service conformément aux lois applicables,',
+            'ne pas tenter de contourner les contrôles d’authentification, de limitation ou d’autorisation,',
+            'ne pas perturber volontairement le service ni lancer de trafic automatisé abusif,',
             'ne pas utiliser VulcanForge UI pour stocker ou diffuser du contenu illicite ou portant atteinte aux droits de tiers.',
           ],
         },
@@ -201,18 +201,18 @@ function getPrivacyDocument(
         {
           title: '2. Données traitées',
           items: [
-            'données de compte : nom, adresse électronique, statut de vérification, langue et préférences d’interface ;',
-            'données d’authentification et de sécurité : hash du mot de passe, version d’authentification, métadonnées de session, empreintes HMAC de limitation, identifiants techniques et événements de sécurité ;',
-            'challenges de vérification et récupération : empreinte cryptographique du token, date d’expiration et métadonnées nécessaires au parcours ;',
+            'données de compte : nom, adresse électronique, statut de vérification, langue et préférences d’interface,',
+            'données d’authentification et de sécurité : hash du mot de passe, version d’authentification, métadonnées de session, empreintes HMAC de limitation, identifiants techniques et événements de sécurité,',
+            'challenges de vérification et récupération : empreinte cryptographique du token, date d’expiration et métadonnées nécessaires au parcours,',
             'données produit : espaces de travail, projets de design system, tokens, thèmes, composants, réglages, documentation et données nécessaires aux exports.',
           ],
         },
         {
           title: '3. Finalités et bases juridiques prévues',
           items: [
-            'création et gestion du compte, des espaces de travail et des projets : traitement nécessaire à la fourniture du service demandé ;',
-            'authentification, récupération, vérification d’adresse, prévention des abus et révocation de sessions : protection du service et des comptes ;',
-            'envoi des messages transactionnels nécessaires à la vérification et à la récupération du compte ;',
+            'création et gestion du compte, des espaces de travail et des projets : traitement nécessaire à la fourniture du service demandé,',
+            'authentification, récupération, vérification d’adresse, prévention des abus et révocation de sessions : protection du service et des comptes,',
+            'envoi des messages transactionnels nécessaires à la vérification et à la récupération du compte,',
             'production des fonctionnalités, contrôles d’accessibilité et exports demandés par l’utilisateur.',
           ],
           paragraphs: [
@@ -230,9 +230,9 @@ function getPrivacyDocument(
         {
           title: '5. Destinataires et prestataires techniques',
           items: [
-            'la base PostgreSQL et l’hébergement utilisés par le déploiement pour fournir l’application ;',
-            'Resend dans les environnements déployés configurés pour l’envoi des emails transactionnels de vérification et de récupération ;',
-            'Pwned Passwords pour le contrôle par k-anonymat des nouveaux mots de passe ;',
+            'la base PostgreSQL et l’hébergement utilisés par le déploiement pour fournir l’application,',
+            'Resend dans les environnements déployés configurés pour l’envoi des emails transactionnels de vérification et de récupération,',
+            'Pwned Passwords pour le contrôle par k-anonymat des nouveaux mots de passe,',
             'les services d’hébergement et de journalisation réellement configurés par l’exploitant.',
           ],
           paragraphs: [
@@ -242,9 +242,9 @@ function getPrivacyDocument(
         {
           title: '6. Durées de conservation',
           items: [
-            'les données de compte et de projet présentes dans la base principale sont conservées tant que le compte existe et sont supprimées avec le compte selon les relations de suppression du modèle actuel ;',
-            'les challenges de vérification d’adresse et de récupération expirent après 30 minutes et sont supprimés après utilisation, remplacement, expiration ou suppression du compte ;',
-            'les états de limitation sont bornés par les fenêtres de contrôle prévues par le système anti-abus ;',
+            'les données de compte et de projet présentes dans la base principale sont conservées tant que le compte existe et sont supprimées avec le compte selon les relations de suppression du modèle actuel,',
+            'les challenges de vérification d’adresse et de récupération expirent après 30 minutes et sont supprimés après utilisation, remplacement, expiration ou suppression du compte,',
+            'les états de limitation sont bornés par les fenêtres de contrôle prévues par le système anti-abus,',
             'la durée des sauvegardes, logs d’infrastructure et journaux de plateforme dépend des fournisseurs de déploiement et doit être fixée dans la configuration opérationnelle finale.',
           ],
         },
@@ -268,7 +268,7 @@ function getPrivacyDocument(
         {
           title: '9. Décisions automatisées et évolutions',
           paragraphs: [
-            'Les contrôles automatiques de sécurité, de mot de passe et de limitation servent à protéger le compte et le service ; le produit actuel ne met pas en œuvre de décision automatisée produisant des effets juridiques ou similaires sur la personne.',
+            'Les contrôles automatiques de sécurité, de mot de passe et de limitation servent à protéger le compte et le service, le produit actuel ne met pas en œuvre de décision automatisée produisant des effets juridiques ou similaires sur la personne.',
             'Toute nouvelle finalité, intégration de suivi, fonctionnalité marketing ou modification substantielle du traitement doit entraîner une réévaluation de cette politique avant son déploiement public.',
           ],
         },
