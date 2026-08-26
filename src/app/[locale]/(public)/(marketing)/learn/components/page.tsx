@@ -487,7 +487,10 @@ export default async function LearnComponentsPage() {
             </p>
           </section>
 
-          <section className="mt-20" aria-labelledby="component-checkpoint-title">
+          <section
+            className="mt-20"
+            aria-labelledby="component-checkpoint-title"
+          >
             <SectionHeading
               eyebrow={t('checkpoint.eyebrow')}
               title={t('checkpoint.title')}
