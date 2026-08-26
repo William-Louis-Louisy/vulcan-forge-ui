@@ -357,7 +357,6 @@ export default async function LearnAiReadyDesignSystemsPage({
               description={t('boundary.description')}
               titleId="ai-ready-boundary-title"
             />
-
             <div className="mt-10 grid gap-3 sm:grid-cols-2">
               {boundaryKeys.map((key) => (
                 <article
