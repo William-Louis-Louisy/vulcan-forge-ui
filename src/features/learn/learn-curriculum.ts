@@ -37,13 +37,13 @@ export const learnChapters: readonly LearnChapter[] = [
     key: 'accessibility',
     number: 5,
     slug: 'accessibility',
-    status: 'next',
+    status: 'published',
   },
   {
     key: 'documentationDelivery',
     number: 6,
     slug: 'documentation-and-delivery',
-    status: 'planned',
+    status: 'next',
   },
   {
     key: 'aiReady',
