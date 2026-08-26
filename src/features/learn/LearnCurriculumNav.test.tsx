@@ -12,13 +12,10 @@ vi.mock('@/i18n/navigation', () => ({
 }));
 
 describe('LearnCurriculumNav', () => {
-  it('marks the current published chapter, links published chapters and keeps future chapters non-interactive', () => {
+  it('links all published chapters and marks the final chapter as current', () => {
     render(
       <NextIntlClientProvider locale="en" messages={learnMessages.en}>
-        <LearnCurriculumNav
-          variant="compact"
-          currentChapterKey="documentationDelivery"
-        />
+        <LearnCurriculumNav variant="compact" currentChapterKey="aiReady" />
       </NextIntlClientProvider>,
     );
 
@@ -43,10 +40,10 @@ describe('LearnCurriculumNav', () => {
     );
     expect(
       screen.getByRole('link', { name: /Documentation & Delivery/ }),
-    ).toHaveAttribute('aria-current', 'page');
+    ).toHaveAttribute('href', '/learn/documentation-and-delivery');
     expect(
-      screen.queryByRole('link', { name: /AI-ready Design Systems/ }),
-    ).toBeNull();
-    expect(screen.getByText('Up next')).toBeInTheDocument();
+      screen.getByRole('link', { name: /AI-ready Design Systems/ }),
+    ).toHaveAttribute('aria-current', 'page');
+    expect(screen.queryByText('Up next')).toBeNull();
   });
 });
