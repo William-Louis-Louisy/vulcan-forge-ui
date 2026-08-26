@@ -34,7 +34,17 @@ export const learnQualificationFollowupMessages = {
         description:
           'Ce chapitre décrit la structure réellement présente dans le produit sans prétendre que la future version V2 de l’espace Components existe déjà.',
         boundary:
-          'Il n’existe actuellement ni création arbitraire de SearchBar ou ProductCard, ni canvas libre, ni modèle général de composition de composants. Ces questions appartiennent à la future phase d’exploration de l’espace Components V2, pas à cette itération Learn.',
+          'Il n’existe actuellement ni création arbitraire de SearchBar ou ProductCard, ni surface de composition libre, ni modèle général de composition de composants. Ces questions appartiennent à la future phase d’exploration de l’espace Components V2, pas à cette itération Learn.',
+      },
+    },
+    LearnDesignTokensPage: {
+      demo: {
+        note: 'La page publique Exemples conserve le libellé plus court color.brand.600 pour sa présentation générale. Dans l’éditeur de tokens actuel, les couleurs primitives et les références sémantiques utilisent explicitement les chemins color.primitive.* et color.semantic.*.',
+      },
+    },
+    LearnAiReadyDesignSystemsPage: {
+      complete: {
+        next: 'Utilisez Exemples pour retrouver le parcours produit condensé. Revenez dans Learn lorsque vous avez besoin de comprendre le raisonnement derrière une décision du système.',
       },
     },
   },
