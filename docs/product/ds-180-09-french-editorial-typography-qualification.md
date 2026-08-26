@@ -41,6 +41,54 @@
 - Keep numbers with short units where possible (`10 px`, `4,5:1` when localized prose uses a decimal comma; preserve code/data literals when exact product values are intentionally displayed).
 - Avoid hard-coded presentational line breaks in translation strings; use typographically meaningful non-breaking spaces instead.
 
+## Implementation
+
+The qualification is applied as a final scoped Learn-message layer instead of rewriting every historical chapter module in place.
+
+```text
+existing Learn chapter messages
+        ↓
+DS-180-09 editorial overrides
+        ↓
+French-only typography normalization
+        ↓
+final Learn messages served by next-intl
+```
+
+This keeps the chapter history readable while making the final qualified copy explicit and testable in one place.
+
+### Editorial override layer
+
+`src/messages/learn-qualification-messages.ts` contains only the wording that changes during qualification. It is merged after the hub and seven chapter modules, so unchanged source copy continues to come from the chapter that owns it.
+
+The English side is intentionally minimal and only removes stale incremental-publication states now that all seven chapters exist.
+
+### Typography normalization
+
+`src/messages/learn-french-typography.ts` recursively normalizes the final French Learn tree. It is deliberately scoped to Learn instead of modifying every application message.
+
+It currently protects:
+
+- French guillemet spacing;
+- high punctuation spacing before `:`, `;`, `?`, `!`;
+- short `px` and `ms` units when written in prose.
+
+Compact code syntax and ratios are not rewritten merely because they contain punctuation.
+
+### Regression strategy
+
+Tests reconstruct the same final Learn FR message tree used by the request configuration, then assert the qualified result rather than checking only isolated source modules.
+
+The regression suite covers:
+
+- curriculum completion language and statuses;
+- targeted recurring English calques;
+- French guillemets and high punctuation;
+- number/unit grouping;
+- checkpoint punctuation;
+- localized pedagogical contrast ratios;
+- the important AI-guidance boundary (`demandent`, not `imposent`).
+
 ## Exit criteria
 
 - Hub + seven chapters reviewed end to end in French.
