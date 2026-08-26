@@ -21,14 +21,14 @@ describe('learn curriculum', () => {
     ]);
   });
 
-  it('publishes chapters 01 through 04 while chapter 05 becomes the next lesson', () => {
+  it('publishes chapters 01 through 05 while chapter 06 becomes the next lesson', () => {
     expect(learnChapters.map((chapter) => chapter.status)).toEqual([
       'published',
       'published',
       'published',
       'published',
+      'published',
       'next',
-      'planned',
       'planned',
     ]);
     expect(learnChapters.map(getLearnChapterHref)).toEqual([
@@ -36,18 +36,18 @@ describe('learn curriculum', () => {
       '/learn/design-tokens',
       '/learn/themes',
       '/learn/components',
-      null,
+      '/learn/accessibility',
       null,
       null,
     ]);
   });
 
   it('builds a chapter href only after a chapter becomes published', () => {
-    const chapter = learnChapters[4];
+    const chapter = learnChapters[5];
 
     expect(chapter).toBeDefined();
     expect(getLearnChapterHref({ ...chapter!, status: 'published' })).toBe(
-      '/learn/accessibility',
+      '/learn/documentation-and-delivery',
     );
   });
 });

@@ -17,14 +17,14 @@ describe('LearnCurriculumNav', () => {
       <NextIntlClientProvider locale="en" messages={learnMessages.en}>
         <LearnCurriculumNav
           variant="compact"
-          currentChapterKey="designSystems"
+          currentChapterKey="accessibility"
         />
       </NextIntlClientProvider>,
     );
 
     expect(
       screen.getByRole('link', { name: /What is a Design System\?/ }),
-    ).toHaveAttribute('aria-current', 'page');
+    ).toHaveAttribute('href', '/learn/design-systems');
     expect(screen.getByRole('link', { name: /Design Tokens/ })).toHaveAttribute(
       'href',
       '/learn/design-tokens',
@@ -37,7 +37,13 @@ describe('LearnCurriculumNav', () => {
       'href',
       '/learn/components',
     );
-    expect(screen.queryByRole('link', { name: /Accessibility/ })).toBeNull();
+    expect(screen.getByRole('link', { name: /Accessibility/ })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+    expect(
+      screen.queryByRole('link', { name: /Documentation & Delivery/ }),
+    ).toBeNull();
     expect(screen.getByText('Up next')).toBeInTheDocument();
   });
 });
