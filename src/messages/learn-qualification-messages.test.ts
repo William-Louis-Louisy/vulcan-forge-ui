@@ -137,9 +137,15 @@ describe('French Learn qualification', () => {
       string,
       Record<string, string>
     >;
+    const firstCard = cards.first;
+    const secondCard = cards.second;
 
-    expect(cards.first.padding).toBe('Espacement intérieur\u202f: 12 × 16\u202fpx');
-    expect(cards.second.padding).toBe('Espacement intérieur\u202f: 8 × 24\u202fpx');
+    if (!firstCard || !secondCard) {
+      throw new Error('Missing Design Systems opening-problem cards');
+    }
+
+    expect(firstCard.padding).toBe('Espacement intérieur\u202f: 12 × 16\u202fpx');
+    expect(secondCard.padding).toBe('Espacement intérieur\u202f: 8 × 24\u202fpx');
   });
 
   it('keeps checkpoint lists as comma-led prose rather than semicolon chains', () => {
@@ -168,11 +174,18 @@ describe('French Learn qualification', () => {
     const drifted = openingProblem.drifted as Record<string, unknown>;
     const contrast = accessibility.contrast as Record<string, unknown>;
     const rows = contrast.rows as Record<string, Record<string, string>>;
+    const passRow = rows.pass;
+    const warningRow = rows.warning;
+    const failRow = rows.fail;
+
+    if (!passRow || !warningRow || !failRow) {
+      throw new Error('Missing Accessibility contrast rows');
+    }
 
     expect(correct.ratio).toBe('8,89:1');
     expect(drifted.ratio).toBe('1,97:1');
-    expect(rows.pass.range).toBe('≥ 4,5:1');
-    expect(rows.warning.range).toBe('3,0–4,49:1');
-    expect(rows.fail.range).toBe('< 3,0:1');
+    expect(passRow.range).toBe('≥ 4,5:1');
+    expect(warningRow.range).toBe('3,0–4,49:1');
+    expect(failRow.range).toBe('< 3,0:1');
   });
 });
