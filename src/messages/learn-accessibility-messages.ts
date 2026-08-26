@@ -478,7 +478,7 @@ export const learnAccessibilityMessages = {
       },
       misconception: {
         eyebrow: 'Idée reçue fréquente',
-        title: '« Aucun problème automatisé » ne signifie pas « accessible ».',
+        title: '« Aucun problème automatisé » ne signifie pas « accessible ».',
         description:
           'L’automatisation peut démontrer que certaines conditions testables par une machine sont satisfaites. Elle ne peut pas prouver que l’interface complète est compréhensible, utilisable et robuste pour des personnes réelles. Un rapport sans problème doit être le point de départ de la validation suivante, pas la fin du processus.',
       },
