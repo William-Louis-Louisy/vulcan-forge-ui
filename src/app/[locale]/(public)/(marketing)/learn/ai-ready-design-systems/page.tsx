@@ -45,22 +45,39 @@ const structuredContextByLocale = {
     'missing information: report it instead of guessing',
   ],
   fr: [
-    'token : color.semantic.action.primary',
-    'composant : Button · variante : primary',
-    'état : focusVisible',
-    'interdit : Button ≠ lien de navigation',
-    'information manquante : la signaler plutôt que deviner',
+    'token : color.semantic.action.primary',
+    'composant : Button · variante : primary',
+    'état : focusVisible',
+    'interdit : Button ≠ lien de navigation',
+    'information manquante : la signaler plutôt que deviner',
   ],
 } as const satisfies Record<Locale, readonly string[]>;
 
 const profileSummaryByLocale = {
   en: {
+    title: 'AI Instructions profile',
+    localeLabel: 'locale',
+    strictnessLabel: 'strictness',
+    sectionsLabel: 'sections',
     sections: '4 selectable',
   },
   fr: {
+    title: 'Profil AI Instructions',
+    localeLabel: 'langue',
+    strictnessLabel: 'niveau de contrainte',
+    sectionsLabel: 'sections',
     sections: '4 sélectionnables',
   },
-} as const satisfies Record<Locale, { sections: string }>;
+} as const satisfies Record<
+  Locale,
+  {
+    title: string;
+    localeLabel: string;
+    strictnessLabel: string;
+    sectionsLabel: string;
+    sections: string;
+  }
+>;
 
 type LearnAiReadyDesignSystemsPageProps = {
   params: Promise<{
@@ -313,15 +330,18 @@ export default async function LearnAiReadyDesignSystemsPage({
 
             <div className="border-border-subtle bg-background-sunken mt-6 border p-5 sm:p-6">
               <p className="text-content-tertiary text-[10px] font-semibold tracking-[0.14em] uppercase">
-                AI Instructions profile
+                {profileSummary.title}
               </p>
               <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                <ProfileMetric label="locale" value="en / fr" />
+                <ProfileMetric label={profileSummary.localeLabel} value="en / fr" />
                 <ProfileMetric
-                  label="strictness"
+                  label={profileSummary.strictnessLabel}
                   value="balanced / strict / veryStrict"
                 />
-                <ProfileMetric label="sections" value={profileSummary.sections} />
+                <ProfileMetric
+                  label={profileSummary.sectionsLabel}
+                  value={profileSummary.sections}
+                />
               </div>
             </div>
 
