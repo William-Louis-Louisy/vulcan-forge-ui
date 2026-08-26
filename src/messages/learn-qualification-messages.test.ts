@@ -8,6 +8,7 @@ import { learnAccessibilityMessages } from './learn-accessibility-messages';
 import { learnDocumentationDeliveryMessages } from './learn-documentation-delivery-messages';
 import { learnAiReadyDesignSystemsMessages } from './learn-ai-ready-design-systems-messages';
 import { learnQualificationMessages } from './learn-qualification-messages';
+import { learnQualificationFollowupMessages } from './learn-qualification-followup-messages';
 import { qualifyFrenchLearnTypography } from './learn-french-typography';
 import { mergeMessages, type MessageObject } from './merge-messages';
 
@@ -22,6 +23,7 @@ function buildQualifiedFrenchLearnMessages(): MessageObject {
     learnDocumentationDeliveryMessages.fr,
     learnAiReadyDesignSystemsMessages.fr,
     learnQualificationMessages.fr,
+    learnQualificationFollowupMessages.fr,
   ].reduce<MessageObject>(mergeMessages, {});
 
   return qualifyFrenchLearnTypography(messages);
