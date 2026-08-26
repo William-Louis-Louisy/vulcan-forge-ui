@@ -43,13 +43,13 @@ export const learnChapters: readonly LearnChapter[] = [
     key: 'documentationDelivery',
     number: 6,
     slug: 'documentation-and-delivery',
-    status: 'next',
+    status: 'published',
   },
   {
     key: 'aiReady',
     number: 7,
     slug: 'ai-ready-design-systems',
-    status: 'planned',
+    status: 'next',
   },
 ];
 
