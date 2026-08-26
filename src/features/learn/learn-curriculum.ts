@@ -49,7 +49,7 @@ export const learnChapters: readonly LearnChapter[] = [
     key: 'aiReady',
     number: 7,
     slug: 'ai-ready-design-systems',
-    status: 'next',
+    status: 'published',
   },
 ];
 
