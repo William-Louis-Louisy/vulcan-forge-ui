@@ -21,6 +21,7 @@ import { learnThemesMessages } from '@/messages/learn-themes-messages';
 import { learnComponentsMessages } from '@/messages/learn-components-messages';
 import { learnAccessibilityMessages } from '@/messages/learn-accessibility-messages';
 import { learnDocumentationDeliveryMessages } from '@/messages/learn-documentation-delivery-messages';
+import { learnAiReadyDesignSystemsMessages } from '@/messages/learn-ai-ready-design-systems-messages';
 import { productEditorPreviewMessages } from '@/messages/product-editor-preview-messages';
 import { errorSurfaceMessages } from '@/messages/error-surface-messages';
 import { journeyPolishMessages } from '@/messages/journey-polish-messages';
@@ -62,6 +63,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
     learnComponentsMessages[locale],
     learnAccessibilityMessages[locale],
     learnDocumentationDeliveryMessages[locale],
+    learnAiReadyDesignSystemsMessages[locale],
     productEditorPreviewMessages[locale],
     errorSurfaceMessages[locale],
     journeyPolishMessages[locale],
