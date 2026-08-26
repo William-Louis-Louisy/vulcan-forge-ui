@@ -31,13 +31,36 @@ const demoSequenceKeys = [
 ] as const;
 const checkpointKeys = ['one', 'two', 'three', 'four', 'five'] as const;
 
-const structuredContext = [
-  'token: color.semantic.action.primary',
-  'component: Button · variant: primary',
-  'state: focusVisible',
-  'forbidden: Button ≠ navigation link',
-  'missing information: report it instead of guessing',
-] as const;
+const requestByLocale = {
+  en: '“Make a primary button that matches the app.”',
+  fr: '« Crée un bouton principal cohérent avec l’application. »',
+} as const satisfies Record<Locale, string>;
+
+const structuredContextByLocale = {
+  en: [
+    'token: color.semantic.action.primary',
+    'component: Button · variant: primary',
+    'state: focusVisible',
+    'forbidden: Button ≠ navigation link',
+    'missing information: report it instead of guessing',
+  ],
+  fr: [
+    'token : color.semantic.action.primary',
+    'composant : Button · variante : primary',
+    'état : focusVisible',
+    'interdit : Button ≠ lien de navigation',
+    'information manquante : la signaler plutôt que deviner',
+  ],
+} as const satisfies Record<Locale, readonly string[]>;
+
+const profileSummaryByLocale = {
+  en: {
+    sections: '4 selectable',
+  },
+  fr: {
+    sections: '4 sélectionnables',
+  },
+} as const satisfies Record<Locale, { sections: string }>;
 
 type LearnAiReadyDesignSystemsPageProps = {
   params: Promise<{
@@ -45,13 +68,17 @@ type LearnAiReadyDesignSystemsPageProps = {
   }>;
 };
 
+function resolveLocale(requestedLocale: string): Locale {
+  return hasLocale(routing.locales, requestedLocale)
+    ? (requestedLocale as Locale)
+    : routing.defaultLocale;
+}
+
 export async function generateMetadata({
   params,
 }: LearnAiReadyDesignSystemsPageProps): Promise<Metadata> {
   const { locale: requestedLocale } = await params;
-  const locale = hasLocale(routing.locales, requestedLocale)
-    ? (requestedLocale as Locale)
-    : routing.defaultLocale;
+  const locale = resolveLocale(requestedLocale);
   const t = await getTranslations({
     locale,
     namespace: 'LearnAiReadyDesignSystemsPage.metadata',
@@ -63,9 +90,22 @@ export async function generateMetadata({
   };
 }
 
-export default async function LearnAiReadyDesignSystemsPage() {
-  const t = await getTranslations('LearnAiReadyDesignSystemsPage');
-  const curriculumT = await getTranslations('LearnPage.curriculum');
+export default async function LearnAiReadyDesignSystemsPage({
+  params,
+}: LearnAiReadyDesignSystemsPageProps) {
+  const { locale: requestedLocale } = await params;
+  const locale = resolveLocale(requestedLocale);
+  const t = await getTranslations({
+    locale,
+    namespace: 'LearnAiReadyDesignSystemsPage',
+  });
+  const curriculumT = await getTranslations({
+    locale,
+    namespace: 'LearnPage.curriculum',
+  });
+  const request = requestByLocale[locale];
+  const structuredContext = structuredContextByLocale[locale];
+  const profileSummary = profileSummaryByLocale[locale];
 
   return (
     <main className="bg-background-app text-content-primary">
@@ -115,8 +155,8 @@ export default async function LearnAiReadyDesignSystemsPage() {
                   <p className="text-content-tertiary text-[10px] font-semibold tracking-[0.14em] uppercase">
                     {t('openingProblem.requestLabel')}
                   </p>
-                  <p className="mt-3 text-lg leading-7 font-semibold">
-                    {t('openingProblem.description').split('.”')[0]}.”
+                  <p className="mt-3 text-lg leading-7 font-semibold text-pretty">
+                    {request}
                   </p>
                   <p className="text-content-secondary mt-6 text-sm leading-6">
                     {t('openingProblem.weakOutcome')}
@@ -138,7 +178,7 @@ export default async function LearnAiReadyDesignSystemsPage() {
                     {structuredContext.map((item) => (
                       <li
                         key={item}
-                        className="border-border-subtle bg-surface-primary break-all border px-3 py-2 font-mono text-xs leading-5"
+                        className="border-border-subtle bg-surface-primary break-words border px-3 py-2 font-mono text-xs leading-5"
                       >
                         {item}
                       </li>
@@ -281,7 +321,7 @@ export default async function LearnAiReadyDesignSystemsPage() {
                   label="strictness"
                   value="balanced / strict / veryStrict"
                 />
-                <ProfileMetric label="sections" value="4 selectable" />
+                <ProfileMetric label="sections" value={profileSummary.sections} />
               </div>
             </div>
 
