@@ -21,7 +21,7 @@ describe('learn curriculum', () => {
     ]);
   });
 
-  it('publishes chapters 01 through 06 while chapter 07 becomes the next lesson', () => {
+  it('publishes all seven accepted Learn chapters', () => {
     expect(learnChapters.map((chapter) => chapter.status)).toEqual([
       'published',
       'published',
@@ -29,7 +29,7 @@ describe('learn curriculum', () => {
       'published',
       'published',
       'published',
-      'next',
+      'published',
     ]);
     expect(learnChapters.map(getLearnChapterHref)).toEqual([
       '/learn/design-systems',
@@ -38,16 +38,13 @@ describe('learn curriculum', () => {
       '/learn/components',
       '/learn/accessibility',
       '/learn/documentation-and-delivery',
-      null,
+      '/learn/ai-ready-design-systems',
     ]);
   });
 
-  it('builds a chapter href only after a chapter becomes published', () => {
-    const chapter = learnChapters[6];
-
-    expect(chapter).toBeDefined();
-    expect(getLearnChapterHref({ ...chapter!, status: 'published' })).toBe(
-      '/learn/ai-ready-design-systems',
-    );
+  it('keeps every published chapter addressable through its accepted slug', () => {
+    for (const chapter of learnChapters) {
+      expect(getLearnChapterHref(chapter)).toBe(`/learn/${chapter.slug}`);
+    }
   });
 });
