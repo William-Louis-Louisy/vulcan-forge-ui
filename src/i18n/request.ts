@@ -19,6 +19,7 @@ import { learnDesignSystemsMessages } from '@/messages/learn-design-systems-mess
 import { learnDesignTokensMessages } from '@/messages/learn-design-tokens-messages';
 import { learnThemesMessages } from '@/messages/learn-themes-messages';
 import { learnComponentsMessages } from '@/messages/learn-components-messages';
+import { learnAccessibilityMessages } from '@/messages/learn-accessibility-messages';
 import { productEditorPreviewMessages } from '@/messages/product-editor-preview-messages';
 import { errorSurfaceMessages } from '@/messages/error-surface-messages';
 import { journeyPolishMessages } from '@/messages/journey-polish-messages';
@@ -58,6 +59,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
     learnDesignTokensMessages[locale],
     learnThemesMessages[locale],
     learnComponentsMessages[locale],
+    learnAccessibilityMessages[locale],
     productEditorPreviewMessages[locale],
     errorSurfaceMessages[locale],
     journeyPolishMessages[locale],
