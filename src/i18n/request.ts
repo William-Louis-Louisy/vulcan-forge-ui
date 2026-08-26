@@ -23,6 +23,7 @@ import { learnAccessibilityMessages } from '@/messages/learn-accessibility-messa
 import { learnDocumentationDeliveryMessages } from '@/messages/learn-documentation-delivery-messages';
 import { learnAiReadyDesignSystemsMessages } from '@/messages/learn-ai-ready-design-systems-messages';
 import { learnQualificationMessages } from '@/messages/learn-qualification-messages';
+import { learnQualificationFollowupMessages } from '@/messages/learn-qualification-followup-messages';
 import { qualifyFrenchLearnTypography } from '@/messages/learn-french-typography';
 import { productEditorPreviewMessages } from '@/messages/product-editor-preview-messages';
 import { errorSurfaceMessages } from '@/messages/error-surface-messages';
@@ -55,6 +56,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
     learnDocumentationDeliveryMessages[locale],
     learnAiReadyDesignSystemsMessages[locale],
     learnQualificationMessages[locale],
+    learnQualificationFollowupMessages[locale],
   ].reduce<MessageObject>(mergeMessages, {});
   const qualifiedLearnMessages =
     locale === 'fr'
