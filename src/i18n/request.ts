@@ -22,6 +22,8 @@ import { learnComponentsMessages } from '@/messages/learn-components-messages';
 import { learnAccessibilityMessages } from '@/messages/learn-accessibility-messages';
 import { learnDocumentationDeliveryMessages } from '@/messages/learn-documentation-delivery-messages';
 import { learnAiReadyDesignSystemsMessages } from '@/messages/learn-ai-ready-design-systems-messages';
+import { learnQualificationMessages } from '@/messages/learn-qualification-messages';
+import { qualifyFrenchLearnTypography } from '@/messages/learn-french-typography';
 import { productEditorPreviewMessages } from '@/messages/product-editor-preview-messages';
 import { errorSurfaceMessages } from '@/messages/error-surface-messages';
 import { journeyPolishMessages } from '@/messages/journey-polish-messages';
@@ -43,6 +45,21 @@ export default getRequestConfig(async ({ requestLocale }) => {
     : routing.defaultLocale;
 
   const baseMessages = await messagesByLocale[locale]();
+  const learnScopedMessages = [
+    learnMessages[locale],
+    learnDesignSystemsMessages[locale],
+    learnDesignTokensMessages[locale],
+    learnThemesMessages[locale],
+    learnComponentsMessages[locale],
+    learnAccessibilityMessages[locale],
+    learnDocumentationDeliveryMessages[locale],
+    learnAiReadyDesignSystemsMessages[locale],
+    learnQualificationMessages[locale],
+  ].reduce<MessageObject>(mergeMessages, {});
+  const qualifiedLearnMessages =
+    locale === 'fr'
+      ? qualifyFrenchLearnTypography(learnScopedMessages)
+      : learnScopedMessages;
   const scopedMessages = [
     componentGuidelineMessages[locale],
     componentPreviewMessages[locale],
@@ -56,14 +73,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
     projectSettingsMessages[locale],
     publicSurfaceMessages[locale],
     examplesPageMessages[locale],
-    learnMessages[locale],
-    learnDesignSystemsMessages[locale],
-    learnDesignTokensMessages[locale],
-    learnThemesMessages[locale],
-    learnComponentsMessages[locale],
-    learnAccessibilityMessages[locale],
-    learnDocumentationDeliveryMessages[locale],
-    learnAiReadyDesignSystemsMessages[locale],
+    qualifiedLearnMessages,
     productEditorPreviewMessages[locale],
     errorSurfaceMessages[locale],
     journeyPolishMessages[locale],
