@@ -33,7 +33,11 @@ describe('LearnCurriculumNav', () => {
       'href',
       '/learn/themes',
     );
-    expect(screen.queryByRole('link', { name: /Components/ })).toBeNull();
+    expect(screen.getByRole('link', { name: /Components/ })).toHaveAttribute(
+      'href',
+      '/learn/components',
+    );
+    expect(screen.queryByRole('link', { name: /Accessibility/ })).toBeNull();
     expect(screen.getByText('Up next')).toBeInTheDocument();
   });
 });

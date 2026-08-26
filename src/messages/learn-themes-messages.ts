@@ -301,7 +301,7 @@ export const learnThemesMessages = {
       },
       flow: {
         eyebrow: 'Flux de dépendance',
-        title: 'Le composant consomme un rôle ; le thème fournit l’apparence.',
+        title: 'Le composant consomme un rôle, le thème fournit l’apparence.',
         description:
           'Séparer ces responsabilités évite de faire remonter les choix de présentation dans chaque contrat de composant.',
         componentLabel: 'Intention du composant',
@@ -382,7 +382,7 @@ export const learnThemesMessages = {
         title:
           'Un Theme n’est pas une deuxième copie complète du Design System.',
         description:
-          'Le but n’est pas de dupliquer chaque composant et chaque règle pour Light et Dark. L’intention partagée reste commune ; seules les décisions qui doivent varier se résolvent différemment à travers la couche Theme.',
+          'Le but n’est pas de dupliquer chaque composant et chaque règle pour Light et Dark. L’intention partagée reste commune, seules les décisions qui doivent varier se résolvent différemment à travers la couche Theme.',
       },
       checkpoint: {
         eyebrow: 'Checkpoint',
@@ -390,11 +390,11 @@ export const learnThemesMessages = {
         description:
           'Si ces affirmations sont claires, le chapitre suivant peut passer de l’apparence globale du système aux contrats de composants.',
         items: {
-          one: 'pourquoi un même rôle peut nécessiter une valeur résolue différente dans une autre apparence ;',
-          two: 'la différence entre un rôle stable et la référence de token attribuée par un Theme ;',
+          one: 'pourquoi un même rôle peut nécessiter une valeur résolue différente dans une autre apparence,',
+          two: 'la différence entre un rôle stable et la référence de token attribuée par un Theme,',
           three:
-            'pourquoi le theming est, en général, plus large que Light et Dark ;',
-          four: 'pourquoi VulcanForgeUI reste actuellement limité à exactement deux modes Theme, Light et Dark ;',
+            'pourquoi le theming est, en général, plus large que Light et Dark,',
+          four: 'pourquoi VulcanForgeUI reste actuellement limité à exactement deux modes Theme, Light et Dark,',
           five: 'pourquoi chaque apparence prise en charge doit conserver sa propre revue d’accessibilité.',
         },
       },

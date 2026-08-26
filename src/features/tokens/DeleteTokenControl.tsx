@@ -46,7 +46,7 @@ const copy = {
   fr: {
     title: 'Supprimer le token',
     description:
-      'Supprime définitivement ce token. Les références des thèmes et composants sont détachées automatiquement ; les références entre tokens doivent d’abord être retirées.',
+      'Supprime définitivement ce token. Les références des thèmes et composants sont détachées automatiquement, les références entre tokens doivent d’abord être retirées.',
     request: 'Supprimer le token',
     confirmationTitle: (tokenPath: string) => `Supprimer ${tokenPath} ?`,
     confirmationDescription: 'Cette action est irréversible.',

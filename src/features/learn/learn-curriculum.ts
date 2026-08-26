@@ -32,12 +32,12 @@ export const learnChapters: readonly LearnChapter[] = [
     status: 'published',
   },
   { key: 'themes', number: 3, slug: 'themes', status: 'published' },
-  { key: 'components', number: 4, slug: 'components', status: 'next' },
+  { key: 'components', number: 4, slug: 'components', status: 'published' },
   {
     key: 'accessibility',
     number: 5,
     slug: 'accessibility',
-    status: 'planned',
+    status: 'next',
   },
   {
     key: 'documentationDelivery',

@@ -393,8 +393,8 @@ export const learnDesignSystemsMessages = {
         description:
           'Si ces idées ont du sens avec vos propres mots, vous avez la base nécessaire pour le chapitre suivant.',
         items: {
-          one: 'pourquoi plusieurs choix raisonnables peuvent malgré tout créer de la dérive ;',
-          two: 'pourquoi une bibliothèque de composants n’est qu’une partie d’un Design System plus large ;',
+          one: 'pourquoi plusieurs choix raisonnables peuvent malgré tout créer de la dérive,',
+          two: 'pourquoi une bibliothèque de composants n’est qu’une partie d’un Design System plus large,',
           three:
             'pourquoi une connaissance produit partagée est utile aux designers comme aux développeurs.',
         },
