@@ -18,6 +18,7 @@
 6. Numbers and units kept together where they appear in prose examples.
 7. Line-break safety for quoted phrases and other typographic groups that must not strand punctuation on a line.
 8. Removal of stale incremental-publication copy now that all seven chapters are published.
+9. Audit of user-visible strings defined directly in Learn page code, not only strings owned by message modules.
 
 ## Terminology contract for Learn FR
 
@@ -50,6 +51,8 @@ existing Learn chapter messages
         ↓
 DS-180-09 editorial overrides
         ↓
+final audit addenda
+        ↓
 French-only typography normalization
         ↓
 final Learn messages served by next-intl
@@ -57,11 +60,17 @@ final Learn messages served by next-intl
 
 This keeps the chapter history readable while making the final qualified copy explicit and testable in one place.
 
-### Editorial override layer
+### Editorial override layers
 
-`src/messages/learn-qualification-messages.ts` contains only the wording that changes during qualification. It is merged after the hub and seven chapter modules, so unchanged source copy continues to come from the chapter that owns it.
+`src/messages/learn-qualification-messages.ts` contains the main wording changes introduced during qualification. It is merged after the hub and seven chapter modules, so unchanged source copy continues to come from the chapter that owns it.
+
+`src/messages/learn-qualification-followup-messages.ts` contains the small set of final corrections discovered during the cross-source audit after the main pass. Keeping those corrections as a last merge layer makes the late findings explicit instead of silently rewriting the historical chapter modules.
 
 The English side is intentionally minimal and only removes stale incremental-publication states now that all seven chapters exist.
+
+### Hard-coded public copy
+
+The audit also covers user-visible text defined directly in Learn page code. Chapter 07 previously exposed profile labels such as `AI Instructions profile`, `locale` and `strictness` directly from JSX; those labels now resolve from locale-aware values so the French route no longer leaks English explanatory copy while exact enum values remain unchanged.
 
 ### Typography normalization
 
