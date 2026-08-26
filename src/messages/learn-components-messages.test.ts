@@ -59,7 +59,9 @@ describe('learnComponentsMessages', () => {
     expect(page.productBridge.boundary).toContain('SearchBar');
     expect(page.productBridge.boundary).toContain('freeform component canvas');
     expect(page.bindings.boundary).toContain('directly from Token Sets');
-    expect(page.bindings.boundary).toContain('do not currently reference Theme roles');
+    expect(page.bindings.boundary).toContain(
+      'do not currently reference Theme roles',
+    );
     expect(page.continue.title).toBe('Accessibility');
   });
 });
