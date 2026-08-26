@@ -103,12 +103,12 @@ export default async function LearnComponentsPage() {
                   {t('openingProblem.visualLabel')}
                 </p>
                 <div className="flex flex-1 items-center justify-center py-10">
-                  <button
-                    type="button"
-                    className="bg-action-accent text-on-action-accent min-h-11 rounded-md px-5 text-sm font-semibold"
+                  <div
+                    aria-hidden="true"
+                    className="bg-action-accent text-action-accent-content flex min-h-11 items-center rounded-md px-5 text-sm font-semibold"
                   >
                     {t('openingProblem.buttonLabel')}
-                  </button>
+                  </div>
                 </div>
               </div>
 
@@ -206,10 +206,10 @@ export default async function LearnComponentsPage() {
 
               <div className="mt-6 grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(14rem,0.8fr)] md:items-center">
                 <div className="border-action-accent/40 bg-action-accent/5 relative flex min-h-36 items-center justify-center border border-dashed p-6">
-                  <div className="bg-action-accent text-on-action-accent flex min-h-11 items-center gap-2 rounded-md px-5 text-sm font-semibold">
+                  <div className="bg-action-accent text-action-accent-content flex min-h-11 items-center gap-2 rounded-md px-5 text-sm font-semibold">
                     <span
                       aria-hidden="true"
-                      className="border-on-action-accent/60 size-4 rounded-sm border"
+                      className="border-action-accent-content/60 size-4 rounded-sm border"
                     />
                     <span>{t('openingProblem.buttonLabel')}</span>
                   </div>
