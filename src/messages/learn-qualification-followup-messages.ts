@@ -30,6 +30,12 @@ export const learnQualificationFollowupMessages = {
             'La configuration actuelle du Button exige une activation avec Entrée et Espace.',
         },
       },
+      productBridge: {
+        description:
+          'Ce chapitre décrit la structure réellement présente dans le produit sans prétendre que la future version V2 de l’espace Components existe déjà.',
+        boundary:
+          'Il n’existe actuellement ni création arbitraire de SearchBar ou ProductCard, ni canvas libre, ni modèle général de composition de composants. Ces questions appartiennent à la future phase d’exploration de l’espace Components V2, pas à cette itération Learn.',
+      },
     },
   },
 } as const;
