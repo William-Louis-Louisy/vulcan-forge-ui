@@ -333,7 +333,10 @@ export default async function LearnAiReadyDesignSystemsPage({
                 {profileSummary.title}
               </p>
               <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                <ProfileMetric label={profileSummary.localeLabel} value="en / fr" />
+                <ProfileMetric
+                  label={profileSummary.localeLabel}
+                  value="en / fr"
+                />
                 <ProfileMetric
                   label={profileSummary.strictnessLabel}
                   value="balanced / strict / veryStrict"
@@ -357,6 +360,7 @@ export default async function LearnAiReadyDesignSystemsPage({
               description={t('boundary.description')}
               titleId="ai-ready-boundary-title"
             />
+
             <div className="mt-10 grid gap-3 sm:grid-cols-2">
               {boundaryKeys.map((key) => (
                 <article
