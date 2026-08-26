@@ -15,6 +15,7 @@ import type { examplesPageMessages } from '../messages/examples-page-messages';
 import type { learnMessages } from '../messages/learn-messages';
 import type { learnDesignSystemsMessages } from '../messages/learn-design-systems-messages';
 import type { learnDesignTokensMessages } from '../messages/learn-design-tokens-messages';
+import type { learnThemesMessages } from '../messages/learn-themes-messages';
 import type { productEditorPreviewMessages } from '../messages/product-editor-preview-messages';
 import type { errorSurfaceMessages } from '../messages/error-surface-messages';
 import type { journeyPolishMessages } from '../messages/journey-polish-messages';
@@ -73,10 +74,13 @@ type ProductMessages = DeepMerge<
 
 type LearnMessages = DeepMerge<
   DeepMerge<
-    (typeof learnMessages)['en'],
-    (typeof learnDesignSystemsMessages)['en']
+    DeepMerge<
+      (typeof learnMessages)['en'],
+      (typeof learnDesignSystemsMessages)['en']
+    >,
+    (typeof learnDesignTokensMessages)['en']
   >,
-  (typeof learnDesignTokensMessages)['en']
+  (typeof learnThemesMessages)['en']
 >;
 
 type PublicMessages = DeepMerge<
