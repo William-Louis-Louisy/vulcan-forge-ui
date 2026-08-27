@@ -3,6 +3,8 @@ export const learnQualificationFollowupMessages = {
   fr: {
     LearnThemesPage: {
       accessibility: {
+        description:
+          'Modifier les associations crée de nouvelles relations entre premier plan et arrière-plan. Un thème sombre n’est pas automatiquement accessible parce qu’il est sombre, pas plus qu’un thème clair ne l’est parce qu’il est clair.',
         items: {
           contrast:
             'Réévaluez les contrastes du texte et de l’interface après chaque changement d’association dans un thème.',
