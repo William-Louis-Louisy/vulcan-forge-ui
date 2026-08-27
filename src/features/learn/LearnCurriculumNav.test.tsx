@@ -44,6 +44,18 @@ describe('LearnCurriculumNav', () => {
     expect(
       screen.getByRole('link', { name: /AI-ready Design Systems/ }),
     ).toHaveAttribute('aria-current', 'page');
+    expect(screen.queryByText('Available')).toBeNull();
     expect(screen.queryByText('Up next')).toBeNull();
+  });
+
+  it('does not render published-status labels on curriculum cards', () => {
+    render(
+      <NextIntlClientProvider locale="en" messages={learnMessages.en}>
+        <LearnCurriculumNav />
+      </NextIntlClientProvider>,
+    );
+
+    expect(screen.getAllByRole('link')).toHaveLength(7);
+    expect(screen.queryByText('Available')).toBeNull();
   });
 });
