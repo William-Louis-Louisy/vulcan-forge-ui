@@ -180,7 +180,10 @@ export default async function LearnAccessibilityPage() {
             </p>
           </section>
 
-          <section className="mt-20" aria-labelledby="accessibility-contrast-title">
+          <section
+            className="mt-20"
+            aria-labelledby="accessibility-contrast-title"
+          >
             <SectionHeading
               eyebrow={t('contrast.eyebrow')}
               title={t('contrast.title')}
@@ -226,7 +229,10 @@ export default async function LearnAccessibilityPage() {
             </div>
           </section>
 
-          <section className="mt-20" aria-labelledby="accessibility-focus-title">
+          <section
+            className="mt-20"
+            aria-labelledby="accessibility-focus-title"
+          >
             <SectionHeading
               eyebrow={t('focus.eyebrow')}
               title={t('focus.title')}
@@ -302,7 +308,10 @@ export default async function LearnAccessibilityPage() {
             </p>
           </section>
 
-          <section className="mt-20" aria-labelledby="accessibility-score-title">
+          <section
+            className="mt-20"
+            aria-labelledby="accessibility-score-title"
+          >
             <SectionHeading
               eyebrow={t('score.eyebrow')}
               title={t('score.title')}
@@ -315,7 +324,7 @@ export default async function LearnAccessibilityPage() {
                 {t('score.formula')}
               </p>
 
-              <dl className="mt-7 grid gap-px overflow-hidden border border-border-subtle bg-border-subtle sm:grid-cols-4">
+              <dl className="border-border-subtle bg-border-subtle mt-7 grid gap-px overflow-hidden border sm:grid-cols-4">
                 <ScoreMetric
                   label={t('score.baseLabel')}
                   value={t('score.baseValue')}
@@ -562,7 +571,7 @@ function ContrastExampleCard({
       <header className="border-border-subtle flex items-start justify-between gap-3 border-b p-4">
         <div className="min-w-0">
           <p className="text-content-primary text-sm font-semibold">{label}</p>
-          <p className="text-content-tertiary mt-1 break-all font-mono text-[11px]">
+          <p className="text-content-tertiary mt-1 font-mono text-[11px] break-all">
             {token}
           </p>
         </div>
@@ -667,9 +676,7 @@ function FocusExampleCard({
         <span
           className={[
             'bg-action-accent text-on-action-accent inline-flex min-h-11 items-center rounded-md px-5 text-sm font-semibold',
-            visible
-              ? 'outline-border-focus outline-2 outline-offset-2'
-              : '',
+            visible ? 'outline-border-focus outline-2 outline-offset-2' : '',
           ].join(' ')}
         >
           {buttonLabel}

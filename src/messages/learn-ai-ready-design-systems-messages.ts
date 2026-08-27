@@ -32,7 +32,8 @@ export const learnAiReadyDesignSystemsMessages = {
       },
       structure: {
         eyebrow: 'Structure before AI',
-        title: 'Machine-readable context is a consequence of a well-structured Design System.',
+        title:
+          'Machine-readable context is a consequence of a well-structured Design System.',
         description:
           'Nothing in the first six chapters existed only for AI. Names, references, contracts, accessibility rules and guidance first make the Design System clearer and more maintainable. Their explicit structure also makes them easier to transform into machine-readable instructions.',
         steps: {
@@ -61,7 +62,8 @@ export const learnAiReadyDesignSystemsMessages = {
       },
       context: {
         eyebrow: 'What useful context contains',
-        title: 'Values alone are not enough; constraints and semantics matter too.',
+        title:
+          'Values alone are not enough; constraints and semantics matter too.',
         description:
           'A color value can tell an assistant what pigment exists. It cannot explain which role that value serves, which Component variants are supported, which accessibility behavior matters or which usage is forbidden.',
         items: {
@@ -96,7 +98,8 @@ export const learnAiReadyDesignSystemsMessages = {
       },
       strictness: {
         eyebrow: 'Guidance strength',
-        title: 'Strictness changes the instructions, not the assistant’s permissions.',
+        title:
+          'Strictness changes the instructions, not the assistant’s permissions.',
         description:
           'VulcanForgeUI currently offers three instruction profiles. They change how the generated Markdown describes acceptable behavior when the project model is incomplete.',
         levels: {
@@ -121,7 +124,8 @@ export const learnAiReadyDesignSystemsMessages = {
       },
       productBridge: {
         eyebrow: 'How VulcanForgeUI represents this today',
-        title: 'AI Instructions turns selected project knowledge into a Markdown context file.',
+        title:
+          'AI Instructions turns selected project knowledge into a Markdown context file.',
         description:
           'The authenticated workspace generates a preview from the current project model and lets the user choose what context to include before copying or downloading the result.',
         items: {
@@ -141,7 +145,8 @@ export const learnAiReadyDesignSystemsMessages = {
       },
       boundary: {
         eyebrow: 'The boundary matters',
-        title: 'Context can guide an assistant; it cannot guarantee the result.',
+        title:
+          'Context can guide an assistant; it cannot guarantee the result.',
         description:
           'A generated instruction file improves what an assistant can know about the Design System. It does not turn VulcanForgeUI into an AI runtime or a policy enforcement layer.',
         items: {
@@ -171,15 +176,20 @@ export const learnAiReadyDesignSystemsMessages = {
       },
       demo: {
         eyebrow: 'The Demo project, end to end',
-        title: 'The same decisions taught throughout Learn can become AI context without being re-described by hand.',
+        title:
+          'The same decisions taught throughout Learn can become AI context without being re-described by hand.',
         description:
           'The Demo thread now closes the loop: a named token, a Button contract, focus expectations and a forbidden usage pattern can all be represented in one generated context artifact.',
         sequence: {
           token: 'Token · approved primary-action decision',
-          component: 'Component · supported Button structure and primary variant',
-          accessibility: 'Accessibility · focus and other documented expectations',
-          guidance: 'Guidance · forbidden patterns and missing-information rules',
-          context: 'AI Instructions · selected system knowledge formatted for another tool',
+          component:
+            'Component · supported Button structure and primary variant',
+          accessibility:
+            'Accessibility · focus and other documented expectations',
+          guidance:
+            'Guidance · forbidden patterns and missing-information rules',
+          context:
+            'AI Instructions · selected system knowledge formatted for another tool',
         },
       },
       misconception: {
@@ -190,13 +200,15 @@ export const learnAiReadyDesignSystemsMessages = {
       },
       checkpoint: {
         eyebrow: 'Final checkpoint',
-        title: 'You should now be able to explain the complete Learn mental model.',
+        title:
+          'You should now be able to explain the complete Learn mental model.',
         description:
           'The seven chapters describe one connected idea: explicit system decisions become easier to reuse, validate, document and hand to different consumers without pretending those consumers become the source of truth.',
         items: {
           one: 'why AI readiness follows from explicit Design System structure rather than replacing it',
           two: 'what Brand, Token, Component, accessibility and forbidden-pattern context can communicate to an assistant',
-          three: 'why strictness changes generated guidance but cannot enforce behavior in an external tool',
+          three:
+            'why strictness changes generated guidance but cannot enforce behavior in an external tool',
           four: 'why AI Instructions is a generated snapshot that must be refreshed when source decisions change',
           five: 'why human review remains necessary even when the generated context is complete and precise',
         },
@@ -206,8 +218,7 @@ export const learnAiReadyDesignSystemsMessages = {
         title: 'The system is the source; every output is a consumer.',
         description:
           'You can now trace a decision from raw product intent through Tokens, Themes, Components and accessibility into Documentation, code exports and AI Instructions. That relationship is the core mental model behind VulcanForgeUI.',
-        next:
-          'Use Examples when you want the compressed product workflow. Use Learn when you need to return to the reasoning behind a system decision.',
+        next: 'Use Examples when you want the compressed product workflow. Use Learn when you need to return to the reasoning behind a system decision.',
       },
     },
   },
@@ -228,7 +239,8 @@ export const learnAiReadyDesignSystemsMessages = {
       },
       openingProblem: {
         eyebrow: 'Partons de la même demande',
-        title: 'Une demande vague transforme les décisions absentes en suppositions.',
+        title:
+          'Une demande vague transforme les décisions absentes en suppositions.',
         description:
           '« Crée un bouton principal cohérent avec l’application. » semble clair pour une personne qui connaît déjà le projet. Un assistant externe ne sait pas automatiquement quel token est approuvé, quelle variante de Button existe, comment le focus doit se comporter ni quels usages l’équipe interdit.',
         weakLabel: 'Demande seule',
@@ -244,7 +256,8 @@ export const learnAiReadyDesignSystemsMessages = {
       },
       structure: {
         eyebrow: 'La structure avant l’IA',
-        title: 'Le contexte exploitable par une machine découle d’un Design System bien structuré.',
+        title:
+          'Le contexte exploitable par une machine découle d’un Design System bien structuré.',
         description:
           'Aucun concept des six premiers chapitres n’existe uniquement pour l’IA. Les noms, références, contrats, règles d’accessibilité et consignes rendent d’abord le Design System plus clair et plus maintenable. Leur structure explicite permet aussi de les transformer plus facilement en instructions exploitables par une machine.',
         steps: {
@@ -273,7 +286,8 @@ export const learnAiReadyDesignSystemsMessages = {
       },
       context: {
         eyebrow: 'Ce qu’un contexte utile contient',
-        title: 'Les valeurs seules ne suffisent pas : les contraintes et la sémantique comptent aussi.',
+        title:
+          'Les valeurs seules ne suffisent pas : les contraintes et la sémantique comptent aussi.',
         description:
           'Une couleur peut indiquer à un assistant quelle valeur existe. Elle n’explique pas le rôle de cette valeur, les variantes Component autorisées, les comportements d’accessibilité attendus ni les usages interdits.',
         items: {
@@ -308,7 +322,8 @@ export const learnAiReadyDesignSystemsMessages = {
       },
       strictness: {
         eyebrow: 'Niveau de contrainte',
-        title: 'Le niveau de strictness modifie les instructions, pas les permissions de l’assistant.',
+        title:
+          'Le niveau de strictness modifie les instructions, pas les permissions de l’assistant.',
         description:
           'VulcanForgeUI propose actuellement trois profils. Ils modifient la manière dont le Markdown généré décrit le comportement attendu lorsque le modèle du projet est incomplet.',
         levels: {
@@ -333,7 +348,8 @@ export const learnAiReadyDesignSystemsMessages = {
       },
       productBridge: {
         eyebrow: 'Comment VulcanForgeUI représente cela aujourd’hui',
-        title: 'AI Instructions transforme une sélection de connaissances du projet en fichier de contexte Markdown.',
+        title:
+          'AI Instructions transforme une sélection de connaissances du projet en fichier de contexte Markdown.',
         description:
           'L’espace authentifié génère un aperçu depuis le modèle actuel du projet et permet de choisir le contexte à inclure avant de copier ou télécharger le résultat.',
         items: {
@@ -353,7 +369,8 @@ export const learnAiReadyDesignSystemsMessages = {
       },
       boundary: {
         eyebrow: 'La frontière est essentielle',
-        title: 'Le contexte peut guider un assistant ; il ne peut pas garantir le résultat.',
+        title:
+          'Le contexte peut guider un assistant ; il ne peut pas garantir le résultat.',
         description:
           'Un fichier d’instructions généré améliore ce qu’un assistant peut connaître du Design System. Il ne transforme pas VulcanForgeUI en moteur d’IA ni en couche d’application de règles.',
         items: {
@@ -383,15 +400,19 @@ export const learnAiReadyDesignSystemsMessages = {
       },
       demo: {
         eyebrow: 'Le projet Demo, de bout en bout',
-        title: 'Les décisions enseignées dans Learn peuvent devenir du contexte IA sans être reformulées manuellement.',
+        title:
+          'Les décisions enseignées dans Learn peuvent devenir du contexte IA sans être reformulées manuellement.',
         description:
           'Le fil rouge du Demo boucle maintenant le parcours : un token nommé, un contrat Button, les attentes de focus et un usage interdit peuvent tous être représentés dans un même artefact de contexte généré.',
         sequence: {
           token: 'Token · décision approuvée pour l’action principale',
-          component: 'Component · structure du Button et variante primary prises en charge',
+          component:
+            'Component · structure du Button et variante primary prises en charge',
           accessibility: 'Accessibilité · focus et autres attentes documentées',
-          guidance: 'Consignes · usages interdits et règles sur les informations manquantes',
-          context: 'AI Instructions · connaissances sélectionnées et formatées pour un autre outil',
+          guidance:
+            'Consignes · usages interdits et règles sur les informations manquantes',
+          context:
+            'AI Instructions · connaissances sélectionnées et formatées pour un autre outil',
         },
       },
       misconception: {
@@ -402,13 +423,15 @@ export const learnAiReadyDesignSystemsMessages = {
       },
       checkpoint: {
         eyebrow: 'Checkpoint final',
-        title: 'Vous devriez maintenant pouvoir expliquer le modèle mental complet de Learn.',
+        title:
+          'Vous devriez maintenant pouvoir expliquer le modèle mental complet de Learn.',
         description:
           'Les sept chapitres décrivent une seule idée connectée : des décisions explicites sont plus faciles à réutiliser, valider, documenter et transmettre à différents consommateurs sans faire de ces consommateurs la source de vérité.',
         items: {
           one: 'pourquoi la préparation à l’IA découle d’un Design System explicite au lieu de le remplacer',
           two: 'ce que le contexte de marque, de Tokens, de Components, d’accessibilité et d’usages interdits peut communiquer à un assistant',
-          three: 'pourquoi le niveau de strictness modifie les consignes générées sans pouvoir imposer le comportement d’un outil externe',
+          three:
+            'pourquoi le niveau de strictness modifie les consignes générées sans pouvoir imposer le comportement d’un outil externe',
           four: 'pourquoi AI Instructions est un instantané généré qu’il faut actualiser lorsque les décisions sources changent',
           five: 'pourquoi une relecture humaine reste nécessaire même lorsque le contexte généré est complet et précis',
         },
@@ -418,8 +441,7 @@ export const learnAiReadyDesignSystemsMessages = {
         title: 'Le système est la source ; chaque sortie est un consommateur.',
         description:
           'Vous pouvez maintenant suivre une décision depuis l’intention produit jusqu’aux Tokens, Themes, Components et contrôles d’accessibilité, puis jusqu’à la Documentation, aux exports de code et à AI Instructions. Cette relation constitue le modèle mental central de VulcanForgeUI.',
-        next:
-          'Utilisez Examples pour retrouver le workflow produit condensé. Revenez dans Learn lorsque vous avez besoin de comprendre le raisonnement derrière une décision du système.',
+        next: 'Utilisez Examples pour retrouver le workflow produit condensé. Revenez dans Learn lorsque vous avez besoin de comprendre le raisonnement derrière une décision du système.',
       },
     },
   },

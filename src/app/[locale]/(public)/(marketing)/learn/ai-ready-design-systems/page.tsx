@@ -5,7 +5,12 @@ import { getTranslations } from 'next-intl/server';
 import { LearnCurriculumNav } from '@/features/learn/LearnCurriculumNav';
 import { routing, type Locale } from '@/i18n/routing';
 
-const structureStepKeys = ['human', 'structured', 'generated', 'assistant'] as const;
+const structureStepKeys = [
+  'human',
+  'structured',
+  'generated',
+  'assistant',
+] as const;
 const contextKeys = [
   'brand',
   'tokens',
@@ -45,22 +50,39 @@ const structuredContextByLocale = {
     'missing information: report it instead of guessing',
   ],
   fr: [
-    'token : color.semantic.action.primary',
-    'composant : Button · variante : primary',
-    'état : focusVisible',
-    'interdit : Button ≠ lien de navigation',
-    'information manquante : la signaler plutôt que deviner',
+    'token : color.semantic.action.primary',
+    'composant : Button · variante : primary',
+    'état : focusVisible',
+    'interdit : Button ≠ lien de navigation',
+    'information manquante : la signaler plutôt que deviner',
   ],
 } as const satisfies Record<Locale, readonly string[]>;
 
 const profileSummaryByLocale = {
   en: {
+    title: 'AI Instructions profile',
+    localeLabel: 'locale',
+    strictnessLabel: 'strictness',
+    sectionsLabel: 'sections',
     sections: '4 selectable',
   },
   fr: {
+    title: 'Profil AI Instructions',
+    localeLabel: 'langue',
+    strictnessLabel: 'niveau de contrainte',
+    sectionsLabel: 'sections',
     sections: '4 sélectionnables',
   },
-} as const satisfies Record<Locale, { sections: string }>;
+} as const satisfies Record<
+  Locale,
+  {
+    title: string;
+    localeLabel: string;
+    strictnessLabel: string;
+    sectionsLabel: string;
+    sections: string;
+  }
+>;
 
 type LearnAiReadyDesignSystemsPageProps = {
   params: Promise<{
@@ -178,7 +200,7 @@ export default async function LearnAiReadyDesignSystemsPage({
                     {structuredContext.map((item) => (
                       <li
                         key={item}
-                        className="border-border-subtle bg-surface-primary break-words border px-3 py-2 font-mono text-xs leading-5"
+                        className="border-border-subtle bg-surface-primary border px-3 py-2 font-mono text-xs leading-5 break-words"
                       >
                         {item}
                       </li>
@@ -257,7 +279,10 @@ export default async function LearnAiReadyDesignSystemsPage({
             </p>
           </section>
 
-          <section className="mt-20" aria-labelledby="ai-ready-strictness-title">
+          <section
+            className="mt-20"
+            aria-labelledby="ai-ready-strictness-title"
+          >
             <SectionHeading
               eyebrow={t('strictness.eyebrow')}
               title={t('strictness.title')}
@@ -313,15 +338,21 @@ export default async function LearnAiReadyDesignSystemsPage({
 
             <div className="border-border-subtle bg-background-sunken mt-6 border p-5 sm:p-6">
               <p className="text-content-tertiary text-[10px] font-semibold tracking-[0.14em] uppercase">
-                AI Instructions profile
+                {profileSummary.title}
               </p>
               <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                <ProfileMetric label="locale" value="en / fr" />
                 <ProfileMetric
-                  label="strictness"
+                  label={profileSummary.localeLabel}
+                  value="en / fr"
+                />
+                <ProfileMetric
+                  label={profileSummary.strictnessLabel}
                   value="balanced / strict / veryStrict"
                 />
-                <ProfileMetric label="sections" value={profileSummary.sections} />
+                <ProfileMetric
+                  label={profileSummary.sectionsLabel}
+                  value={profileSummary.sections}
+                />
               </div>
             </div>
 
@@ -399,7 +430,10 @@ export default async function LearnAiReadyDesignSystemsPage({
             </p>
           </section>
 
-          <section className="mt-20" aria-labelledby="ai-ready-checkpoint-title">
+          <section
+            className="mt-20"
+            aria-labelledby="ai-ready-checkpoint-title"
+          >
             <SectionHeading
               eyebrow={t('checkpoint.eyebrow')}
               title={t('checkpoint.title')}
@@ -503,7 +537,7 @@ function ProfileMetric({ label, value }: { label: string; value: string }) {
       <p className="text-content-tertiary font-mono text-[10px] font-semibold uppercase">
         {label}
       </p>
-      <p className="mt-2 break-words text-sm font-semibold">{value}</p>
+      <p className="mt-2 text-sm font-semibold break-words">{value}</p>
     </div>
   );
 }

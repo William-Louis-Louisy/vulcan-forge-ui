@@ -76,7 +76,7 @@ Chapter 06 teaches the first five. `aiInstructions` remains visible as current p
 Canonical teaching example:
 
 ```css
---color-semantic-action-primary: #FF8731;
+--color-semantic-action-primary: #ff8731;
 ```
 
 The exact project-generated file name depends on the project name.

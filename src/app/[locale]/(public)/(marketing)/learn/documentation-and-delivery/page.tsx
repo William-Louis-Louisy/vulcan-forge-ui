@@ -35,7 +35,12 @@ const productFormatKeys = [
   'markdown',
 ] as const;
 const snapshotKeys = ['source', 'regenerate', 'integrate'] as const;
-const demoSequenceKeys = ['source', 'validate', 'generate', 'integrate'] as const;
+const demoSequenceKeys = [
+  'source',
+  'validate',
+  'generate',
+  'integrate',
+] as const;
 const checkpointKeys = ['one', 'two', 'three', 'four', 'five'] as const;
 
 type LearnDocumentationDeliveryPageProps = {
@@ -109,7 +114,7 @@ export default async function LearnDocumentationDeliveryPage() {
                   {t('openingProblem.sourceLabel')}
                 </p>
                 <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-                  <code className="min-w-0 break-all text-sm font-semibold">
+                  <code className="min-w-0 text-sm font-semibold break-all">
                     {t('openingProblem.sourcePath')}
                   </code>
                   <span className="text-action-accent shrink-0 font-mono text-sm font-semibold">
@@ -207,7 +212,7 @@ export default async function LearnDocumentationDeliveryPage() {
                   {t('oneDecision.tokenLabel')}
                 </p>
                 <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-                  <code className="min-w-0 break-all text-sm font-semibold">
+                  <code className="min-w-0 text-sm font-semibold break-all">
                     {t('oneDecision.tokenPath')}
                   </code>
                   <span className="text-action-accent shrink-0 font-mono text-sm font-semibold">
@@ -243,7 +248,10 @@ export default async function LearnDocumentationDeliveryPage() {
             </p>
           </section>
 
-          <section className="mt-20" aria-labelledby="delivery-documentation-title">
+          <section
+            className="mt-20"
+            aria-labelledby="delivery-documentation-title"
+          >
             <SectionHeading
               eyebrow={t('documentation.eyebrow')}
               title={t('documentation.title')}
@@ -259,7 +267,10 @@ export default async function LearnDocumentationDeliveryPage() {
               </header>
               <ul className="divide-border-subtle divide-y">
                 {documentationSectionKeys.map((key) => (
-                  <li key={key} className="flex gap-3 px-5 py-4 text-sm leading-6">
+                  <li
+                    key={key}
+                    className="flex gap-3 px-5 py-4 text-sm leading-6"
+                  >
                     <CheckIcon
                       aria-hidden="true"
                       className="text-action-success mt-1 shrink-0"
@@ -277,7 +288,10 @@ export default async function LearnDocumentationDeliveryPage() {
             </p>
           </section>
 
-          <section className="mt-20" aria-labelledby="delivery-diagnostics-title">
+          <section
+            className="mt-20"
+            aria-labelledby="delivery-diagnostics-title"
+          >
             <SectionHeading
               eyebrow={t('diagnostics.eyebrow')}
               title={t('diagnostics.title')}
@@ -407,7 +421,10 @@ export default async function LearnDocumentationDeliveryPage() {
             </p>
           </section>
 
-          <section className="mt-20" aria-labelledby="delivery-checkpoint-title">
+          <section
+            className="mt-20"
+            aria-labelledby="delivery-checkpoint-title"
+          >
             <SectionHeading
               eyebrow={t('checkpoint.eyebrow')}
               title={t('checkpoint.title')}

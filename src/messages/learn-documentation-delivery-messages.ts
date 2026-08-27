@@ -8,7 +8,8 @@ export const learnDocumentationDeliveryMessages = {
       },
       hero: {
         chapter: 'Chapter 06 · Documentation & Delivery',
-        title: 'Structure pays off when the same decision can serve more than one consumer.',
+        title:
+          'Structure pays off when the same decision can serve more than one consumer.',
         description:
           'A token, Theme mapping or Component contract should not need to be manually reinterpreted every time another team, document or codebase needs it. Structured source data lets different outputs derive from the same project decisions.',
         learnerQuestion:
@@ -16,7 +17,8 @@ export const learnDocumentationDeliveryMessages = {
       },
       openingProblem: {
         eyebrow: 'Start with duplicated knowledge',
-        title: 'Copying one decision into several places creates several places that can drift.',
+        title:
+          'Copying one decision into several places creates several places that can drift.',
         description:
           'Imagine the primary action color is written manually in a design note, a CSS file, a TypeScript theme and a mobile theme. They agree today. A month later, one copy changes and the others do not.',
         sourceLabel: 'Original decision',
@@ -36,11 +38,13 @@ export const learnDocumentationDeliveryMessages = {
       },
       canonicalSource: {
         eyebrow: 'Canonical source',
-        title: 'Keep the decision in one structured project; let outputs become consumers.',
+        title:
+          'Keep the decision in one structured project; let outputs become consumers.',
         description:
           'A canonical source is the place where the Design System decision is authored and governed. Generated files and documentation can then represent that decision for different audiences without becoming separate masters.',
         sourceLabel: 'Structured project source',
-        sourceItems: 'Tokens · Themes · Components · Accessibility · Brand context',
+        sourceItems:
+          'Tokens · Themes · Components · Accessibility · Brand context',
         consumerLabel: 'Generated consumers',
         consumers: {
           documentation: 'Markdown documentation',
@@ -49,8 +53,7 @@ export const learnDocumentationDeliveryMessages = {
           typescript: 'TypeScript theme',
           native: 'React Native theme',
         },
-        rule:
-          'Different outputs may use different syntax, but they should derive from the same project decisions whenever the product supports that mapping.',
+        rule: 'Different outputs may use different syntax, but they should derive from the same project decisions whenever the product supports that mapping.',
       },
       oneDecision: {
         eyebrow: 'One decision, several representations',
@@ -88,7 +91,8 @@ export const learnDocumentationDeliveryMessages = {
       },
       documentation: {
         eyebrow: 'Human-readable output',
-        title: 'Generated documentation turns structured fields into a readable system reference.',
+        title:
+          'Generated documentation turns structured fields into a readable system reference.',
         description:
           'VulcanForgeUI can generate Markdown from project data rather than asking a team to recreate the same knowledge in a separate document. The current documentation profile lets the user select a locale and choose which supported sections to include.',
         sectionsLabel: 'Current Markdown sections',
@@ -96,15 +100,18 @@ export const learnDocumentationDeliveryMessages = {
           overview: 'Overview · project and Brand guidance',
           tokens: 'Tokens · paths, values and localized descriptions',
           themes: 'Themes · configured appearance mappings',
-          components: 'Components · purpose, anatomy, variants, states and rules',
-          accessibility: 'Accessibility · current structured validation summary',
+          components:
+            'Components · purpose, anatomy, variants, states and rules',
+          accessibility:
+            'Accessibility · current structured validation summary',
         },
         localization:
           'When localized content is missing, the generator can use the configured fallback locale and report which translations were missing instead of silently pretending the requested locale was complete.',
       },
       diagnostics: {
         eyebrow: 'Generation is not blind copying',
-        title: 'A useful exporter should surface what it could not represent safely.',
+        title:
+          'A useful exporter should surface what it could not represent safely.',
         description:
           'Current code exporters resolve project tokens before generating output. Deprecated tokens are excluded by default, unresolved token references can be skipped and Theme-resolution problems are reported as diagnostics.',
         items: {
@@ -117,12 +124,12 @@ export const learnDocumentationDeliveryMessages = {
           translations:
             'Documentation reports missing localized content when a fallback language is used.',
         },
-        rule:
-          'Deterministic generation reduces transcription drift, but diagnostics still require a person to decide whether the source data itself needs correction.',
+        rule: 'Deterministic generation reduces transcription drift, but diagnostics still require a person to decide whether the source data itself needs correction.',
       },
       snapshot: {
         eyebrow: 'Important delivery boundary',
-        title: 'An export is a generated snapshot, not a live synchronization channel.',
+        title:
+          'An export is a generated snapshot, not a live synchronization channel.',
         description:
           'Copying or downloading a generated file gives another system a representation of the project at that moment. If the canonical project changes later, an already copied downstream file does not update itself automatically.',
         flow: {
@@ -135,7 +142,8 @@ export const learnDocumentationDeliveryMessages = {
       },
       productBridge: {
         eyebrow: 'How VulcanForgeUI delivers the system today',
-        title: 'Documentation and Exports are separate product surfaces built from shared project data.',
+        title:
+          'Documentation and Exports are separate product surfaces built from shared project data.',
         description:
           'The Documentation profile controls the generated Markdown view, while the Export Center exposes downloadable/copyable representations and diagnostics for the current project.',
         formatsLabel: 'Formats taught in this chapter',
@@ -157,7 +165,8 @@ export const learnDocumentationDeliveryMessages = {
       },
       demo: {
         eyebrow: 'The Demo project',
-        title: 'The same project knowledge can now leave the editor without being rewritten by hand.',
+        title:
+          'The same project knowledge can now leave the editor without being rewritten by hand.',
         description:
           'The previous chapters created structured decisions. Delivery is where those decisions become useful to people and implementation environments beyond the authoring workspace.',
         sequence: {
@@ -169,7 +178,8 @@ export const learnDocumentationDeliveryMessages = {
       },
       misconception: {
         eyebrow: 'Common misconception',
-        title: '“Generated from one source” does not mean “every consumer is permanently in sync.”',
+        title:
+          '“Generated from one source” does not mean “every consumer is permanently in sync.”',
         description:
           'A canonical source reduces the number of places where a decision must be authored. It does not remove the need to regenerate, review, version and integrate outputs when downstream systems change independently.',
       },
@@ -181,7 +191,8 @@ export const learnDocumentationDeliveryMessages = {
         items: {
           one: 'why maintaining the same Design System decision manually in several formats creates drift risk;',
           two: 'why generated documentation and code exports should be consumers rather than competing canonical sources;',
-          three: 'how the same resolved token decision can be represented differently in CSS, Tailwind, TypeScript and React Native;',
+          three:
+            'how the same resolved token decision can be represented differently in CSS, Tailwind, TypeScript and React Native;',
           four: 'why export diagnostics matter when references, deprecated tokens or translations are incomplete;',
           five: 'why an exported file is a snapshot and not automatic two-way synchronization.',
         },
@@ -239,7 +250,8 @@ export const learnDocumentationDeliveryMessages = {
         description:
           'Une source canonique est l’endroit où la décision du Design System est définie et gouvernée. Les fichiers générés et la documentation peuvent ensuite représenter cette décision pour différents usages sans devenir des références concurrentes.',
         sourceLabel: 'Source structurée du projet',
-        sourceItems: 'Tokens · Themes · Components · Accessibilité · Contexte de marque',
+        sourceItems:
+          'Tokens · Themes · Components · Accessibilité · Contexte de marque',
         consumerLabel: 'Consommateurs générés',
         consumers: {
           documentation: 'Documentation Markdown',
@@ -248,8 +260,7 @@ export const learnDocumentationDeliveryMessages = {
           typescript: 'Theme TypeScript',
           native: 'Theme React Native',
         },
-        rule:
-          'Les sorties peuvent employer des syntaxes différentes tout en dérivant des mêmes décisions projet lorsque le produit prend en charge cette transformation.',
+        rule: 'Les sorties peuvent employer des syntaxes différentes tout en dérivant des mêmes décisions projet lorsque le produit prend en charge cette transformation.',
       },
       oneDecision: {
         eyebrow: 'Une décision, plusieurs représentations',
@@ -297,8 +308,7 @@ export const learnDocumentationDeliveryMessages = {
           overview: 'Vue d’ensemble · projet et guidance de marque',
           tokens: 'Tokens · chemins, valeurs et descriptions localisées',
           themes: 'Themes · mappings d’apparence configurés',
-          components:
-            'Components · rôle, anatomie, variantes, états et règles',
+          components: 'Components · rôle, anatomie, variantes, états et règles',
           accessibility:
             'Accessibilité · synthèse de la validation structurée actuelle',
         },
@@ -321,8 +331,7 @@ export const learnDocumentationDeliveryMessages = {
           translations:
             'La documentation signale les contenus localisés manquants lorsqu’une langue de repli est utilisée.',
         },
-        rule:
-          'Une génération déterministe réduit la dérive liée à la recopie, mais les diagnostics nécessitent toujours une décision humaine sur les données sources à corriger.',
+        rule: 'Une génération déterministe réduit la dérive liée à la recopie, mais les diagnostics nécessitent toujours une décision humaine sur les données sources à corriger.',
       },
       snapshot: {
         eyebrow: 'Limite importante de la livraison',
@@ -339,8 +348,7 @@ export const learnDocumentationDeliveryMessages = {
           'VulcanForgeUI ne pousse actuellement pas les mises à jour dans des dépôts arbitraires, ne fusionne pas les changements dans les applications consommatrices et ne maintient pas de synchronisation bidirectionnelle des fichiers exportés.',
       },
       productBridge: {
-        eyebrow:
-          'Comment VulcanForgeUI livre le Design System aujourd’hui',
+        eyebrow: 'Comment VulcanForgeUI livre le Design System aujourd’hui',
         title:
           'Documentation et Exports sont deux surfaces produit construites à partir de données projet partagées.',
         description:
@@ -371,7 +379,8 @@ export const learnDocumentationDeliveryMessages = {
         sequence: {
           source: '01 · Définir une fois la décision du Design System',
           validate: '02 · Valider les données structurées du projet',
-          generate: '03 · Générer la représentation dont le consommateur a besoin',
+          generate:
+            '03 · Générer la représentation dont le consommateur a besoin',
           integrate: '04 · Relire et intégrer cet instantané en aval',
         },
       },
@@ -390,7 +399,8 @@ export const learnDocumentationDeliveryMessages = {
         items: {
           one: 'pourquoi maintenir manuellement la même décision du Design System dans plusieurs formats crée un risque de dérive,',
           two: 'pourquoi la documentation générée et les exports de code doivent rester des consommateurs plutôt que des sources canoniques concurrentes,',
-          three: 'comment une même décision de token résolue peut être représentée différemment en CSS, Tailwind, TypeScript et React Native,',
+          three:
+            'comment une même décision de token résolue peut être représentée différemment en CSS, Tailwind, TypeScript et React Native,',
           four: 'pourquoi les diagnostics d’export sont importants lorsque des références, des tokens dépréciés ou des traductions sont incomplets,',
           five: 'pourquoi un fichier exporté est un instantané et non une synchronisation bidirectionnelle automatique.',
         },

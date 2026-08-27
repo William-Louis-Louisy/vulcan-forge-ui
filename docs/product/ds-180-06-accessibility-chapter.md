@@ -153,7 +153,7 @@ The current Theme contrast engine resolves token references before evaluating th
 `getThemeContrastPairs()` currently calls `evaluateContrast()` with:
 
 ```ts
-textSize: 'normal'
+textSize: 'normal';
 ```
 
 for every configured pair.
