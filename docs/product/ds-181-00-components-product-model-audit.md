@@ -277,17 +277,17 @@ DS-181-01 must therefore define selection, editing and information hierarchy bef
 
 ## 5. Current registry and identity model
 
-The registry derives presentation metadata from the persisted type:
+The registry derives category from Component type:
 
-| Type | Derived category | Platforms |
-| --- | --- | --- |
-| `button` | action | web, mobile |
-| `textField` | input | web, mobile |
-| `card` | layout | web, mobile |
-| `alert` | feedback | web, mobile |
-| `dialog` | overlay | web, mobile |
+```text
+button    → action
+textField → input
+card      → layout
+alert     → feedback
+dialog    → overlay
+```
 
-Category and platform are **not** editable ComponentContract fields today.
+All current registry types are also presented as supporting web and mobile. Category and platform are derived presentation metadata, not editable `ComponentContract` fields.
 
 The left navigation currently provides:
 
@@ -307,42 +307,71 @@ This is sufficient for the finite registry and should remain so during the first
 
 ## 6. Field-to-consumer audit
 
-The table below distinguishes what the product **stores** from what it actually **uses today**.
+The key distinction is between what the product **stores** and what each surface actually **uses today**.
 
-Legend:
+### Identity and lifecycle
 
-```text
-● direct consumer
-◐ partial / derived / heuristic consumer
-— not currently consumed in that surface
-```
+`type` is immutable in the current editor and drives the hard-coded renderer, Accessibility scope and registry category.
 
-| Contract field | Current editor | Visual preview | Component AI preview | Markdown docs | Global AI Instructions | Accessibility automation | Registry completeness |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| `type` | ◐ immutable identity | ● renderer choice | ◐ source identity | ◐ source identity | ◐ source identity | ● rule scope | ◐ derived category |
-| `name` | ● | ● visible sample text | ● heading | ● heading | ● heading | ● issue metadata | ● navigation |
-| `status` | ● | — | ◐ component wrapper data | ● | ● | — | ● navigation |
-| `purpose` | ● | — | ● | ● | ● | ● localization | ● |
-| `usageGuidelines` | ● | — | ● | — | — | — | — |
-| `contentGuidelines` | ● | — | ● | — | — | — | — |
-| `anatomy.key` | ● | — | ● | ● | ● | ◐ source identity | ● |
-| `anatomy.label` | ● | — | — | — | — | ● localization | — |
-| `anatomy.requirement` | ● | — | — | — | — | — | — |
-| `variants.key` | ● | ● heuristic visual axis | ● | ● | ● | ◐ localization container | ● |
-| `variants.label` | ● | ◐ tooltip/label resolution | — | — | — | ● localization | — |
-| `variants.description` | ● | — | — | — | — | — | — |
-| `sizes.key` | ● | ● heuristic visual axis | ● | — | — | ◐ localization container | — |
-| `sizes.label` | ● | ◐ tooltip/label resolution | — | — | — | ● localization | — |
-| `sizes.description` | ● | — | — | — | — | — | — |
-| `states.key` | ● | ● heuristic state behavior | ● | ● | ● | ● `focusVisible` semantics | ● |
-| `states.label` | ● | ● state selector label | — | — | — | ● localization | — |
-| `states.description` | ● | — | — | — | — | — | — |
-| `tokenBindings.key` | ● | ● known visual roles / Alert tones | ● | — | — | ● issue metadata | — |
-| `tokenBindings.tokenType` | ● | ● resolution guard | ◐ indirectly | — | — | ● mismatch checks | — |
-| `tokenBindings.tokenPath` | ● | ● resolved value | ● | — | — | ● missing binding checks | — |
-| `tokenBindings.description` | ● | — | — | — | — | — | — |
-| `accessibility` | ● | — | ● | ● | ● dedicated section | ● presence rule | ● |
-| `forbiddenPatterns` | ● | — | ● | ● | ● dedicated section | — | ● |
+`name` is editable and appears in navigation, visual samples, the Component AI preview, generated Markdown, global AI Instructions and Accessibility issue metadata.
+
+`status` is editable and appears in the registry, generated Markdown and AI Instructions. It does not currently gate downstream consumption: a valid deprecated Component remains part of the canonical project source.
+
+### Purpose and guidance
+
+`purpose` is editable, appears in the local Component AI preview, generated Markdown and global AI Instructions, participates in Accessibility localization checks and contributes to registry completeness.
+
+`usageGuidelines` and `contentGuidelines` are editable and appear in the local Component AI preview, but current generated Markdown and global AI component rules do not include them. Accessibility and registry completeness also ignore them today.
+
+### Anatomy
+
+`anatomy.key` is editable and appears in the local Component AI preview, generated Markdown and global AI Instructions. Anatomy presence contributes to registry completeness.
+
+`anatomy.label` is editable and localization-audited by Accessibility, but is not currently shown by generated Markdown or AI Instructions.
+
+`anatomy.requirement` is editable, but it currently has no visual preview or downstream generated representation.
+
+Most importantly, **anatomy does not currently affect the live visual preview at all**.
+
+### Variants
+
+Variant keys drive the visual matrix and type-specific preview heuristics. They also appear in the local Component AI preview, generated Markdown and global AI Instructions, and variant presence contributes to registry completeness.
+
+Variant labels can be displayed by current preview controls and are localization-audited. Variant descriptions are editable but are not currently reused by the major generated consumers.
+
+### Sizes
+
+Size keys drive the visual matrix and are included in the local Component AI preview. Size labels are localization-audited and can be used by preview controls.
+
+Current generated Markdown, global AI component rules and registry completeness do not include sizes.
+
+### States
+
+State keys drive preview behavior heuristically, appear in the local Component AI preview, generated Markdown and global AI Instructions, and contribute to registry completeness.
+
+Accessibility also gives special semantic meaning to a normalized `focusVisible` state for interactive types.
+
+State labels are used in preview controls and localization-audited. State descriptions are editable but are not currently reused by the major generated consumers.
+
+### Token bindings
+
+Binding key, expected token type and token path drive token resolution and the visual preview when a key matches a recognized preview role. Binding key/path also appear in the local Component AI preview.
+
+Accessibility checks unresolved paths and token-type mismatches.
+
+Current generated Markdown and global AI component rules do not include Component token bindings. Binding descriptions are editable but are not reused by those generated consumers.
+
+### Accessibility rules
+
+Accessibility rules are editable and appear in the local Component AI preview, generated Markdown and the dedicated global AI Instructions accessibility section. Their presence contributes to registry completeness for the current interactive types.
+
+Accessibility automation checks whether interactive Components have rules, but does not execute arbitrary authored rule descriptions as accessibility tests.
+
+### Forbidden patterns
+
+Forbidden patterns are editable and appear in the local Component AI preview, generated Markdown and the dedicated global AI Instructions forbidden-patterns section. Their presence contributes to registry completeness.
+
+They are not currently interpreted by Accessibility automation.
 
 ### Important conclusion
 
@@ -354,7 +383,7 @@ The strongest examples are:
 - localized descriptions are extensively authorable but many are not surfaced downstream;
 - usage/content guidance exists and is used by the local Component AI preview, but not by generated Markdown or the global AI component-rules section;
 - sizes materially affect the visual preview and are localization-audited, but are absent from current Markdown component output, global AI component rules and registry completeness;
-- token bindings materially affect preview and accessibility diagnostics, but are absent from current Markdown component output and global AI component rules.
+- token bindings materially affect preview and Accessibility diagnostics, but are absent from current Markdown component output and global AI component rules.
 
 DS-181 must not infer that a field is unimportant merely because today's preview does not render it.
 
@@ -572,17 +601,13 @@ sizes
 tokenBindings
 ```
 
-It also emits warnings for:
-
-- missing localized purpose;
-- missing accessible-name rule on selected interactive types;
-- missing selected “critical” states.
+It also emits warnings for missing localized purpose, missing accessible-name rules and selected “critical” states.
 
 ### Semantic drift discovered by this audit
 
-There are currently two different state heuristics:
+There are currently two different state heuristics.
 
-**Registry completeness** expects:
+Registry completeness expects:
 
 ```text
 Button    → disabled, focus, hover
@@ -590,7 +615,7 @@ TextField → focus, disabled, error
 Dialog    → open, focus, dismissed
 ```
 
-while **Accessibility automation** explicitly expects a normalized:
+Accessibility automation explicitly expects a normalized:
 
 ```text
 focusVisible
@@ -888,8 +913,6 @@ The following decisions are sufficiently supported by current product behavior t
 ---
 
 ## 17. Questions intentionally deferred to DS-181-01
-
-DS-181-01 must make explicit product/interaction decisions for:
 
 ### Selection model
 
