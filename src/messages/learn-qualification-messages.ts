@@ -24,7 +24,8 @@ export const learnQualificationMessages = {
         eyebrow: 'Apprendre · Design Systems',
         description:
           'Un parcours centré sur les concepts pour les développeurs et designers qui veulent comprendre comment des décisions partagées deviennent un système réutilisable, accessible, structuré et exploitable par une machine.',
-        reassurance: 'Aucune expertise préalable en Design System n’est requise.',
+        reassurance:
+          'Aucune expertise préalable en Design System n’est requise.',
       },
       curriculum: {
         eyebrow: 'Parcours',
@@ -93,7 +94,8 @@ export const learnQualificationMessages = {
         title: 'Qu’est-ce qu’un Design System ? · VulcanForgeUI Learn',
       },
       hero: {
-        title: 'Un Design System ne se résume pas à des composants réutilisables.',
+        title:
+          'Un Design System ne se résume pas à des composants réutilisables.',
         description:
           'C’est un ensemble partagé de décisions, de fondations, de composants et de recommandations qui aide un produit à rester cohérent à mesure que les équipes, les écrans et les technologies se multiplient.',
         learnerQuestion:
@@ -154,7 +156,8 @@ export const learnQualificationMessages = {
         },
         system: {
           items: {
-            three: 'Règles d’usage, accessibilité et connaissances d’utilisation',
+            three:
+              'Règles d’usage, accessibilité et connaissances d’utilisation',
           },
         },
       },
@@ -194,8 +197,10 @@ export const learnQualificationMessages = {
         description:
           'Ces espaces ne remplacent pas la réflexion autour du Design System. Ils donnent aux décisions une structure commune afin que les personnes comme les sorties générées puissent s’appuyer sur le même projet.',
         items: {
-          brand: 'L’espace Brand formalise l’intention et la direction du projet.',
-          tokens: 'L’espace Tokens rend explicites les décisions de design réutilisables.',
+          brand:
+            'L’espace Brand formalise l’intention et la direction du projet.',
+          tokens:
+            'L’espace Tokens rend explicites les décisions de design réutilisables.',
           themes:
             'L’espace Themes associe des rôles sémantiques à des décisions adaptées à chaque apparence.',
           components:
@@ -248,7 +253,8 @@ export const learnQualificationMessages = {
           'La DTCG emploie « alias » et « référence » comme synonymes pour un token dont la valeur pointe vers un autre token. VulcanForgeUI utilise la même notation entre accolades pour représenter ces relations.',
       },
       naming: {
-        title: 'Un chemin utile indique à quel niveau se rattache une décision.',
+        title:
+          'Un chemin utile indique à quel niveau se rattache une décision.',
         note: 'Aucun des deux noms n’est automatiquement bon ou mauvais : ils répondent à des questions différentes. L’essentiel est d’utiliser chaque couche de manière intentionnelle.',
       },
       categories: {
@@ -499,7 +505,8 @@ export const learnQualificationMessages = {
       },
       productBridge: {
         eyebrow: 'Comment VulcanForgeUI représente les composants aujourd’hui',
-        typesLabel: 'Types de composants actuellement pris en charge nativement',
+        typesLabel:
+          'Types de composants actuellement pris en charge nativement',
         items: {
           identity:
             'La persistance autorise actuellement un contrat de chaque type prédéfini par projet.',
@@ -518,7 +525,8 @@ export const learnQualificationMessages = {
       },
       demo: {
         sequence: {
-          theme: 'Thème · associer les rôles d’apparence lorsque le contexte varie',
+          theme:
+            'Thème · associer les rôles d’apparence lorsque le contexte varie',
           component:
             'Composant · définir le contrat réutilisable qui consomme les décisions du système',
         },
@@ -575,7 +583,8 @@ export const learnQualificationMessages = {
       contrast: {
         description:
           'Une même couleur de premier plan peut respecter le seuil sur un arrière-plan et échouer sur un autre. C’est pourquoi l’Accessibility Center évalue les paires premier plan/arrière-plan configurées dans les thèmes après résolution des références de tokens.',
-        productLabel: 'Règle actuelle des paires de contraste de thème dans VulcanForgeUI',
+        productLabel:
+          'Règle actuelle des paires de contraste de thème dans VulcanForgeUI',
         rows: {
           pass: { range: '≥ 4,5:1' },
           warning: { range: '3,0–4,49:1' },
@@ -668,7 +677,8 @@ export const learnQualificationMessages = {
           'Le problème n’est pas qu’un format soit mauvais. Le problème est que chaque copie peut finir par devenir une référence indépendante.',
       },
       canonicalSource: {
-        sourceItems: 'Tokens · Thèmes · Composants · Accessibilité · Contexte de marque',
+        sourceItems:
+          'Tokens · Thèmes · Composants · Accessibilité · Contexte de marque',
         consumers: {
           tailwind: 'Thème Tailwind v4',
           typescript: 'Thème TypeScript',
@@ -698,8 +708,7 @@ export const learnQualificationMessages = {
           themes:
             'Les références des thèmes sont résolues avant l’export et les associations impossibles à résoudre sont signalées.',
         },
-        rule:
-          'Une génération déterministe réduit la dérive liée à la recopie, mais les diagnostics nécessitent toujours une décision humaine sur les données source à corriger.',
+        rule: 'Une génération déterministe réduit la dérive liée à la recopie, mais les diagnostics nécessitent toujours une décision humaine sur les données source à corriger.',
       },
       productBridge: {
         title:
@@ -798,7 +807,8 @@ export const learnQualificationMessages = {
         items: {
           one: 'pourquoi la préparation à l’IA découle d’un Design System explicite au lieu de le remplacer,',
           two: 'ce que le contexte de marque, de tokens, de composants, d’accessibilité et d’usages interdits peut communiquer à un assistant,',
-          three: 'pourquoi le niveau de contrainte modifie les consignes générées sans pouvoir imposer le comportement d’un outil externe,',
+          three:
+            'pourquoi le niveau de contrainte modifie les consignes générées sans pouvoir imposer le comportement d’un outil externe,',
           four: 'pourquoi AI Instructions est un instantané généré qu’il faut actualiser lorsque les décisions source changent,',
           five: 'pourquoi une relecture humaine reste nécessaire même lorsque le contexte généré est complet et précis.',
         },
@@ -807,8 +817,7 @@ export const learnQualificationMessages = {
         title: 'Le système est la source ; chaque sortie est un consommateur.',
         description:
           'Vous pouvez maintenant suivre une décision depuis l’intention produit jusqu’aux tokens, thèmes, composants et contrôles d’accessibilité, puis jusqu’à la documentation, aux exports de code et à AI Instructions. Cette relation constitue le modèle mental central de VulcanForgeUI.',
-        next:
-          'Utilisez Examples pour retrouver le parcours produit condensé. Revenez dans Learn lorsque vous avez besoin de comprendre le raisonnement derrière une décision du système.',
+        next: 'Utilisez Examples pour retrouver le parcours produit condensé. Revenez dans Learn lorsque vous avez besoin de comprendre le raisonnement derrière une décision du système.',
       },
     },
   },

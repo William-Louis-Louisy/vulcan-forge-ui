@@ -1,10 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { learnDocumentationDeliveryMessages } from './learn-documentation-delivery-messages';
 
-function flattenKeys(
-  value: Record<string, unknown>,
-  prefix = '',
-): string[] {
+function flattenKeys(value: Record<string, unknown>, prefix = ''): string[] {
   return Object.entries(value).flatMap(([key, child]) => {
     const path = prefix ? `${prefix}.${key}` : key;
 
@@ -50,9 +47,13 @@ describe('learnDocumentationDeliveryMessages', () => {
     expect(page.documentation.sections.tokens).toContain('Tokens');
     expect(page.documentation.sections.themes).toContain('Themes');
     expect(page.documentation.sections.components).toContain('Components');
-    expect(page.documentation.sections.accessibility).toContain('Accessibility');
+    expect(page.documentation.sections.accessibility).toContain(
+      'Accessibility',
+    );
     expect(page.diagnostics.items.deprecated).toContain('excluded by default');
-    expect(page.diagnostics.items.resolution).toContain('Unresolved token references');
+    expect(page.diagnostics.items.resolution).toContain(
+      'Unresolved token references',
+    );
     expect(page.snapshot.notSync).toContain('does not currently push updates');
     expect(page.productBridge.formats).toContain('CSS Variables');
     expect(page.productBridge.formats).toContain('Tailwind v4');

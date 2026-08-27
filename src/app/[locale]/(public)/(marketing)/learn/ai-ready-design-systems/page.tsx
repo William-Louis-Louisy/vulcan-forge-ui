@@ -5,7 +5,12 @@ import { getTranslations } from 'next-intl/server';
 import { LearnCurriculumNav } from '@/features/learn/LearnCurriculumNav';
 import { routing, type Locale } from '@/i18n/routing';
 
-const structureStepKeys = ['human', 'structured', 'generated', 'assistant'] as const;
+const structureStepKeys = [
+  'human',
+  'structured',
+  'generated',
+  'assistant',
+] as const;
 const contextKeys = [
   'brand',
   'tokens',
@@ -195,7 +200,7 @@ export default async function LearnAiReadyDesignSystemsPage({
                     {structuredContext.map((item) => (
                       <li
                         key={item}
-                        className="border-border-subtle bg-surface-primary break-words border px-3 py-2 font-mono text-xs leading-5"
+                        className="border-border-subtle bg-surface-primary border px-3 py-2 font-mono text-xs leading-5 break-words"
                       >
                         {item}
                       </li>
@@ -274,7 +279,10 @@ export default async function LearnAiReadyDesignSystemsPage({
             </p>
           </section>
 
-          <section className="mt-20" aria-labelledby="ai-ready-strictness-title">
+          <section
+            className="mt-20"
+            aria-labelledby="ai-ready-strictness-title"
+          >
             <SectionHeading
               eyebrow={t('strictness.eyebrow')}
               title={t('strictness.title')}
@@ -422,7 +430,10 @@ export default async function LearnAiReadyDesignSystemsPage({
             </p>
           </section>
 
-          <section className="mt-20" aria-labelledby="ai-ready-checkpoint-title">
+          <section
+            className="mt-20"
+            aria-labelledby="ai-ready-checkpoint-title"
+          >
             <SectionHeading
               eyebrow={t('checkpoint.eyebrow')}
               title={t('checkpoint.title')}
@@ -526,7 +537,7 @@ function ProfileMetric({ label, value }: { label: string; value: string }) {
       <p className="text-content-tertiary font-mono text-[10px] font-semibold uppercase">
         {label}
       </p>
-      <p className="mt-2 break-words text-sm font-semibold">{value}</p>
+      <p className="mt-2 text-sm font-semibold break-words">{value}</p>
     </div>
   );
 }

@@ -1,10 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { learnAccessibilityMessages } from './learn-accessibility-messages';
 
-function flattenKeys(
-  value: Record<string, unknown>,
-  prefix = '',
-): string[] {
+function flattenKeys(value: Record<string, unknown>, prefix = ''): string[] {
   return Object.entries(value).flatMap(([key, child]) => {
     const path = prefix ? `${prefix}.${key}` : key;
 
@@ -65,9 +62,7 @@ describe('learnAccessibilityMessages', () => {
     expect(page.productBridge.boundary).toContain(
       'does not crawl or execute a downstream application',
     );
-    expect(page.productBridge.boundary).toContain(
-      'does not',
-    );
+    expect(page.productBridge.boundary).toContain('does not');
     expect(page.productBridge.boundary).toContain('certify WCAG conformance');
     expect(page.continue.title).toBe('Documentation & Delivery');
   });

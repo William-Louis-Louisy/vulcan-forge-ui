@@ -1,10 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { learnAiReadyDesignSystemsMessages } from './learn-ai-ready-design-systems-messages';
 
-function flattenKeys(
-  value: Record<string, unknown>,
-  prefix = '',
-): string[] {
+function flattenKeys(value: Record<string, unknown>, prefix = ''): string[] {
   return Object.entries(value).flatMap(([key, child]) => {
     const path = prefix ? `${prefix}.${key}` : key;
 

@@ -20,7 +20,7 @@ jobs:
     timeout-minutes: 12
 
     permissions:
-      contents: write
+      contents: read
 
     services:
       postgres:
@@ -43,9 +43,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-        with:
-          ref: ${{ github.head_ref }}
-          fetch-depth: 2
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -55,21 +52,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Apply DS-180 Prettier debt cleanup
-        run: |
-          npm run format
-          node -e "const fs=require('node:fs'); const p=JSON.parse(fs.readFileSync('package.json','utf8')); p.scripts['format:check']='prettier . --check'; fs.writeFileSync('package.json', JSON.stringify(p, null, 2)+'\n');"
-          git show HEAD^:.github/workflows/quality.yml > .github/workflows/quality.yml
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          if git diff --cached --quiet; then
-            exit 0
-          fi
-          git commit -m "style: apply Prettier to DS-180 Learn closeout"
-          git push origin HEAD:${{ github.head_ref }}
-          exit 1
 
       - name: Generate Prisma Client
         run: npm run db:generate

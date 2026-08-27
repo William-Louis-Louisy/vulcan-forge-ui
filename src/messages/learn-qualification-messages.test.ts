@@ -144,8 +144,12 @@ describe('French Learn qualification', () => {
       throw new Error('Missing Design Systems opening-problem cards');
     }
 
-    expect(firstCard.padding).toBe('Espacement intérieur\u202f: 12 × 16\u202fpx');
-    expect(secondCard.padding).toBe('Espacement intérieur\u202f: 8 × 24\u202fpx');
+    expect(firstCard.padding).toBe(
+      'Espacement intérieur\u202f: 12 × 16\u202fpx',
+    );
+    expect(secondCard.padding).toBe(
+      'Espacement intérieur\u202f: 8 × 24\u202fpx',
+    );
   });
 
   it('keeps checkpoint lists as comma-led prose rather than semicolon chains', () => {
