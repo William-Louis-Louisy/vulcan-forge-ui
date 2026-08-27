@@ -80,8 +80,7 @@ function ChapterCard({
       </p>
 
       {href ? (
-        <div className="text-content-primary mt-8 flex items-center gap-2 text-sm font-semibold">
-          <span>{t('statuses.published')}</span>
+        <div className="text-content-primary mt-8 flex justify-end">
           <ArrowRightIcon aria-hidden="true" size={15} weight="bold" />
         </div>
       ) : null}
@@ -146,12 +145,15 @@ function CompactChapterRow({
 
 function ChapterStatus({ chapter }: { chapter: LearnChapter }) {
   const t = useTranslations('LearnPage.curriculum');
+
+  if (chapter.status === 'published') {
+    return null;
+  }
+
   const className =
-    chapter.status === 'published'
-      ? 'border-action-success/30 bg-action-success/10 text-action-success'
-      : chapter.status === 'next'
-        ? 'border-action-accent/30 bg-action-accent/10 text-action-accent'
-        : 'border-border-subtle bg-background-sunken text-content-tertiary';
+    chapter.status === 'next'
+      ? 'border-action-accent/30 bg-action-accent/10 text-action-accent'
+      : 'border-border-subtle bg-background-sunken text-content-tertiary';
 
   return (
     <span
