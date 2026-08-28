@@ -23,6 +23,12 @@ import {
   type ComponentContractDraftValidationResult,
   type ComponentContractEditorDraft,
 } from './component-contract-editor.utils';
+import {
+  createInitialComponentWorkspacePreviewConfiguration,
+  resolveComponentWorkspacePreviewConfiguration,
+  type ComponentWorkspacePreviewConfiguration,
+  type ResolvedComponentWorkspacePreviewConfiguration,
+} from './component-preview-configuration.utils';
 import { useComponentContractPreview } from './ComponentContractPreviewContext';
 import { updateComponentContractAction } from './update-component-contract.action';
 import {
@@ -37,11 +43,14 @@ type ComponentContractWorkspaceSaveStatus =
   | 'saving'
   | 'error';
 
-export type ComponentWorkspaceCanvasView = 'preview' | 'anatomy';
+export type ComponentWorkspaceCanvasView = 'instance' | 'anatomy' | 'matrix';
 
 export type ComponentWorkspaceAuthoringSelection =
   | { kind: 'component' }
-  | { kind: 'anatomyPart'; draftId: string };
+  | { kind: 'anatomyPart'; draftId: string }
+  | { kind: 'variantDefinition'; draftId: string }
+  | { kind: 'sizeDefinition'; draftId: string }
+  | { kind: 'stateDefinition'; draftId: string };
 
 type ComponentContractWorkspaceContextValue = {
   draft: ComponentContractEditorDraft;
@@ -57,6 +66,11 @@ type ComponentContractWorkspaceContextValue = {
   setAuthoringSelection: (
     selection: ComponentWorkspaceAuthoringSelection,
   ) => void;
+  previewConfiguration: ComponentWorkspacePreviewConfiguration;
+  setPreviewConfiguration: (
+    configuration: ComponentWorkspacePreviewConfiguration,
+  ) => void;
+  resolvedPreviewConfiguration: ResolvedComponentWorkspacePreviewConfiguration;
   actionState: UpdateComponentContractActionState;
   formAction: (payload: FormData) => void;
   isPending: boolean;
@@ -92,14 +106,20 @@ export function ComponentContractWorkspaceProvider({
     () => createComponentContractDraft(contract),
     [contract],
   );
+  const initialPreviewConfiguration = useMemo(
+    () => createInitialComponentWorkspacePreviewConfiguration(initialDraft),
+    [initialDraft],
+  );
   const [draft, setDraftState] =
     useState<ComponentContractEditorDraft>(initialDraft);
   const [activeLocale, setActiveLocale] =
     useState<ComponentContractWorkspaceLocale>(locale === 'fr' ? 'fr' : 'en');
   const [canvasView, setCanvasView] =
-    useState<ComponentWorkspaceCanvasView>('preview');
+    useState<ComponentWorkspaceCanvasView>('instance');
   const [authoringSelection, setAuthoringSelection] =
     useState<ComponentWorkspaceAuthoringSelection>({ kind: 'component' });
+  const [previewConfiguration, setPreviewConfiguration] =
+    useState<ComponentWorkspacePreviewConfiguration>(initialPreviewConfiguration);
   const lastRefreshedContractRef = useRef<string | null>(null);
 
   const setDraft = useCallback(
@@ -118,6 +138,14 @@ export function ComponentContractWorkspaceProvider({
   const validation = useMemo(
     () => createComponentContractFromDraft(draft),
     [draft],
+  );
+  const resolvedPreviewConfiguration = useMemo(
+    () =>
+      resolveComponentWorkspacePreviewConfiguration(
+        draft,
+        previewConfiguration,
+      ),
+    [draft, previewConfiguration],
   );
   const contractPayload =
     validation.status === 'success' ? JSON.stringify(validation.contract) : '';
@@ -180,6 +208,9 @@ export function ComponentContractWorkspaceProvider({
       setCanvasView,
       authoringSelection,
       setAuthoringSelection,
+      previewConfiguration,
+      setPreviewConfiguration,
+      resolvedPreviewConfiguration,
       actionState,
       formAction,
       isPending,
@@ -201,7 +232,9 @@ export function ComponentContractWorkspaceProvider({
       hasCurrentActionError,
       hasUnsavedChanges,
       isPending,
+      previewConfiguration,
       previewContract,
+      resolvedPreviewConfiguration,
       saveContextId,
       saveStatus,
       setDraft,
