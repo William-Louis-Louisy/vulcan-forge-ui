@@ -8,9 +8,7 @@ import {
   type ReactNode,
 } from 'react';
 import { Button } from '@/components/ui';
-import {
-  useOptionalComponentContractWorkspace,
-} from './ComponentContractWorkspaceContext';
+import { useOptionalComponentContractWorkspace } from './ComponentContractWorkspaceContext';
 
 type ComponentWorkspaceAuxiliaryPanel = 'navigation' | 'inspector';
 
