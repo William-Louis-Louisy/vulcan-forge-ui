@@ -132,6 +132,9 @@ const labels: ComponentContractEditorLabels = {
     title: 'Visual tokens',
     description: 'Map design system tokens to preview properties.',
     add: 'Add visual token',
+    inspectBinding: 'Inspect binding',
+    scope: 'Scope',
+    componentScope: 'Component',
     role: 'Preview role',
     selectRole: 'Select a preview role',
     customRole: 'Custom role (advanced)',
@@ -153,6 +156,22 @@ const labels: ComponentContractEditorLabels = {
     tokenType: 'Token type',
     tokenPath: 'Token path',
     selectToken: 'Select a token',
+    resolvedValue: 'Resolved value',
+    tokenStatus: 'Token status',
+    previewEffect: 'Preview effect',
+    previewEffectActive: 'Applied by the current renderer.',
+    previewEffectUnavailable: 'No current renderer effect.',
+    diagnostics: {
+      title: 'Binding diagnostics',
+      unassigned: 'Choose a token.',
+      missing: 'Token path missing.',
+      typeMismatch: 'Token type mismatch.',
+      unresolved: 'Token reference unresolved.',
+      deprecated: 'Token deprecated.',
+      resolved: 'Token resolves successfully.',
+      expectedType: 'Expected type',
+      actualType: 'Token type',
+    },
     tokenTypes: {
       color: 'Color',
       spacing: 'Spacing',
@@ -240,26 +259,46 @@ const tokenOptions = [
     type: 'color' as const,
     path: 'color.background.default',
     label: 'color.background.default',
+    value: '#ffffff',
+    resolvedValue: '#ffffff',
+    status: 'ready' as const,
+    isResolved: true,
   },
   {
     type: 'spacing' as const,
     path: 'spacing.4',
     label: 'spacing.4',
+    value: '1rem',
+    resolvedValue: '1rem',
+    status: 'ready' as const,
+    isResolved: true,
   },
   {
     type: 'radius' as const,
     path: 'radius.md',
     label: 'radius.md',
+    value: '0.5rem',
+    resolvedValue: '0.5rem',
+    status: 'ready' as const,
+    isResolved: true,
   },
   {
     type: 'typography' as const,
     path: 'typography.fontWeight.semibold',
     label: 'typography.fontWeight.semibold',
+    value: { fontWeight: 600 },
+    resolvedValue: { fontWeight: 600 },
+    status: 'ready' as const,
+    isResolved: true,
   },
   {
     type: 'motion' as const,
     path: 'motion.duration.fast',
     label: 'motion.duration.fast',
+    value: '120ms',
+    resolvedValue: '120ms',
+    status: 'ready' as const,
+    isResolved: true,
   },
 ];
 
@@ -454,7 +493,7 @@ describe('ComponentContractEditor', () => {
     expect(saveButton).toBeEnabled();
   });
 
-  it('adds a guided visual token binding', async () => {
+  it('adds a guided visual token binding and opens its contextual inspector', async () => {
     const user = userEvent.setup();
 
     render(
@@ -469,6 +508,7 @@ describe('ComponentContractEditor', () => {
 
     await user.click(screen.getByRole('button', { name: /Add visual token/ }));
 
+    expect(screen.getByText('Scope: Component')).toBeInTheDocument();
     expect(
       screen.getByRole('combobox', { name: 'Preview role' }),
     ).toHaveTextContent('Background');
@@ -502,19 +542,15 @@ describe('ComponentContractEditor', () => {
     );
 
     await user.click(screen.getByRole('button', { name: /Add visual token/ }));
+    await user.click(screen.getByRole('button', { name: /Button/ }));
     await user.click(screen.getByRole('button', { name: /Add visual token/ }));
 
-    const roleSelects = screen.getAllByRole('combobox', {
+    const roleSelect = screen.getByRole('combobox', {
       name: 'Preview role',
     });
-    expect(roleSelects[0]).toHaveTextContent('Background');
-    expect(roleSelects[1]).toHaveTextContent('Foreground');
+    expect(roleSelect).toHaveTextContent('Foreground');
 
-    if (!roleSelects[1]) {
-      return;
-    }
-
-    await user.click(roleSelects[1]);
+    await user.click(roleSelect);
 
     expect(
       screen.getByRole('option', {
@@ -549,6 +585,7 @@ describe('ComponentContractEditor', () => {
 
     expect(customRoleInput).toHaveValue('fontWeight');
     expect(screen.getByLabelText('Token type')).toBeEnabled();
+    expect(screen.getByText('No current renderer effect.')).toBeInTheDocument();
 
     await user.click(screen.getByLabelText('Token type'));
     await user.click(screen.getByRole('option', { name: 'Typography' }));
