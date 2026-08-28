@@ -1,4 +1,7 @@
-import type { ComponentContractType, DesignToken } from '@/domain/design-system';
+import type {
+  ComponentContractType,
+  DesignToken,
+} from '@/domain/design-system';
 import type { ComponentTokenBindingDraft } from './component-contract-editor.utils';
 import {
   componentPreviewStatusTones,
@@ -38,7 +41,8 @@ export function getComponentTokenBindingInspectorState({
     ? getComponentPreviewTokenRoleType(previewRole)
     : null;
   const token =
-    tokenOptions.find((candidate) => candidate.path === binding.tokenPath) ?? null;
+    tokenOptions.find((candidate) => candidate.path === binding.tokenPath) ??
+    null;
 
   return {
     previewRole,
