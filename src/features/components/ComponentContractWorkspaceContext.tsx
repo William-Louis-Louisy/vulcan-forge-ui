@@ -24,8 +24,10 @@ import {
   type ComponentContractEditorDraft,
 } from './component-contract-editor.utils';
 import {
+  createComponentWorkspacePreviewAxes,
   createInitialComponentWorkspacePreviewConfiguration,
   resolveComponentWorkspacePreviewConfiguration,
+  type ComponentWorkspacePreviewAxes,
   type ComponentWorkspacePreviewConfiguration,
   type ResolvedComponentWorkspacePreviewConfiguration,
 } from './component-preview-configuration.utils';
@@ -58,6 +60,7 @@ type ComponentContractWorkspaceContextValue = {
   validation: ComponentContractDraftValidationResult;
   contractPayload: string;
   previewContract: ComponentContract;
+  previewAxes: ComponentWorkspacePreviewAxes;
   activeLocale: ComponentContractWorkspaceLocale;
   setActiveLocale: (locale: ComponentContractWorkspaceLocale) => void;
   canvasView: ComponentWorkspaceCanvasView;
@@ -112,6 +115,9 @@ export function ComponentContractWorkspaceProvider({
   );
   const [draft, setDraftState] =
     useState<ComponentContractEditorDraft>(initialDraft);
+  const [previewAxes, setPreviewAxes] = useState<ComponentWorkspacePreviewAxes>(
+    () => createComponentWorkspacePreviewAxes(initialDraft),
+  );
   const [activeLocale, setActiveLocale] =
     useState<ComponentContractWorkspaceLocale>(locale === 'fr' ? 'fr' : 'en');
   const [canvasView, setCanvasView] =
@@ -128,6 +134,7 @@ export function ComponentContractWorkspaceProvider({
 
       if (nextValidation.status === 'success') {
         previewContext?.setContract(nextValidation.contract);
+        setPreviewAxes(createComponentWorkspacePreviewAxes(nextDraft));
       }
 
       setDraftState(nextDraft);
@@ -202,6 +209,7 @@ export function ComponentContractWorkspaceProvider({
       validation,
       contractPayload,
       previewContract,
+      previewAxes,
       activeLocale,
       setActiveLocale,
       canvasView,
@@ -232,6 +240,7 @@ export function ComponentContractWorkspaceProvider({
       hasCurrentActionError,
       hasUnsavedChanges,
       isPending,
+      previewAxes,
       previewConfiguration,
       previewContract,
       resolvedPreviewConfiguration,
