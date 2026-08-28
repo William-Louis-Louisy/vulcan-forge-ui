@@ -13,7 +13,7 @@
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
     "format": "prettier . --write",
-    "format:check": "prettier src/features/components/component-token-binding-inspector.utils.ts src/features/components/ComponentContractEditorSections.tsx src/features/components/ComponentTokenBindingInspector.tsx --write && git diff -- src/features/components/component-token-binding-inspector.utils.ts src/features/components/ComponentContractEditorSections.tsx src/features/components/ComponentTokenBindingInspector.tsx && exit 1",
+    "format:check": "prettier . --check",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
