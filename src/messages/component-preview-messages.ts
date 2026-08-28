@@ -9,6 +9,7 @@ export const componentPreviewMessages = {
           'Missing semantic status colors: {paths}. The Alert matrix is using fallback colors.',
       },
       workspace: {
+        canvasTitle: 'Canvas',
         canvasModes: {
           ariaLabel: 'Canvas view',
           preview: 'Preview',
@@ -31,6 +32,7 @@ export const componentPreviewMessages = {
           'Couleurs sémantiques de statut manquantes : {paths}. La matrice des Alert utilise des couleurs de secours.',
       },
       workspace: {
+        canvasTitle: 'Canevas',
         canvasModes: {
           ariaLabel: 'Vue du canevas',
           preview: 'Aperçu',
