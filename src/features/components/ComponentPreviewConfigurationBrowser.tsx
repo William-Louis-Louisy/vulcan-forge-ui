@@ -85,6 +85,7 @@ export function ComponentInstancePreviewBrowser({
 
       <div className="grid min-w-0 gap-3 md:grid-cols-3">
         <AxisControl
+          id="component-instance-variant"
           label={labels.variant}
           items={variants}
           value={resolvedPreviewConfiguration.variantDraftId ?? ''}
@@ -106,6 +107,7 @@ export function ComponentInstancePreviewBrowser({
           }}
         />
         <AxisControl
+          id="component-instance-size"
           label={labels.size}
           items={sizes}
           value={resolvedPreviewConfiguration.sizeDraftId ?? ''}
@@ -127,6 +129,7 @@ export function ComponentInstancePreviewBrowser({
           }}
         />
         <AxisControl
+          id="component-instance-state"
           label={labels.state}
           items={states}
           value={resolvedPreviewConfiguration.stateDraftId ?? ''}
@@ -202,6 +205,7 @@ export function ComponentMatrixPreviewBrowser({
         </p>
         <div className="w-full min-w-0 lg:max-w-xs">
           <AxisControl
+            id="component-matrix-state"
             label={labels.state}
             items={states}
             value={resolvedPreviewConfiguration.stateDraftId ?? ''}
@@ -231,29 +235,30 @@ export function ComponentMatrixPreviewBrowser({
             <tr>
               <th aria-hidden="true" className="w-24 min-w-24 p-2" />
               {sizes.map((size) => {
+                const sizeDraftId = size.draftId;
                 const isEdited =
-                  size.draftId !== null &&
+                  sizeDraftId !== null &&
                   authoringSelection.kind === 'sizeDefinition' &&
-                  authoringSelection.draftId === size.draftId;
+                  authoringSelection.draftId === sizeDraftId;
 
                 return (
                   <th
-                    key={size.draftId ?? size.key}
+                    key={sizeDraftId ?? size.key}
                     scope="col"
                     className="min-w-28 px-2 pb-3 text-center"
                   >
-                    {size.draftId ? (
+                    {sizeDraftId ? (
                       <button
                         type="button"
                         aria-pressed={isEdited}
                         onClick={() => {
                           setPreviewConfiguration({
                             ...previewConfiguration,
-                            sizeDraftId: size.draftId,
+                            sizeDraftId,
                           });
                           setAuthoringSelection({
                             kind: 'sizeDefinition',
-                            draftId: size.draftId,
+                            draftId: sizeDraftId,
                           });
                         }}
                         className={[
@@ -278,26 +283,27 @@ export function ComponentMatrixPreviewBrowser({
 
           <tbody>
             {variants.map((variant) => {
+              const variantDraftId = variant.draftId;
               const isEdited =
-                variant.draftId !== null &&
+                variantDraftId !== null &&
                 authoringSelection.kind === 'variantDefinition' &&
-                authoringSelection.draftId === variant.draftId;
+                authoringSelection.draftId === variantDraftId;
 
               return (
-                <tr key={variant.draftId ?? variant.key}>
+                <tr key={variantDraftId ?? variant.key}>
                   <th scope="row" className="w-24 min-w-24 px-1 py-2 text-left">
-                    {variant.draftId ? (
+                    {variantDraftId ? (
                       <button
                         type="button"
                         aria-pressed={isEdited}
                         onClick={() => {
                           setPreviewConfiguration({
                             ...previewConfiguration,
-                            variantDraftId: variant.draftId,
+                            variantDraftId,
                           });
                           setAuthoringSelection({
                             kind: 'variantDefinition',
-                            draftId: variant.draftId,
+                            draftId: variantDraftId,
                           });
                         }}
                         className={[
@@ -379,6 +385,7 @@ export function ComponentMatrixPreviewBrowser({
 }
 
 function AxisControl({
+  id,
   label,
   items,
   value,
@@ -387,6 +394,7 @@ function AxisControl({
   onChange,
   onEdit,
 }: {
+  id: string;
   label: string;
   items: AxisItem[];
   value: string;
@@ -398,7 +406,12 @@ function AxisControl({
   return (
     <div className="grid min-w-0 gap-1.5">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-content-tertiary text-xs font-semibold">{label}</span>
+        <label
+          htmlFor={id}
+          className="text-content-tertiary text-xs font-semibold"
+        >
+          {label}
+        </label>
         <Button
           type="button"
           size="sm"
@@ -411,6 +424,7 @@ function AxisControl({
         </Button>
       </div>
       <Select
+        id={id}
         value={value}
         options={items.map((item) => ({
           value: item.draftId ?? '',
