@@ -1,6 +1,7 @@
 'use client';
 
 import { Button, Select } from '@/components/ui';
+import type { ComponentContract } from '@/domain/design-system';
 import type { Locale } from '@/i18n/routing';
 import type { ComponentContractEditorDraft } from './component-contract-editor.utils';
 import type { ComponentRegistryItem } from './components-registry.utils';
@@ -15,6 +16,7 @@ type AxisItem = {
   draftId: string | null;
   key: string;
   label: string;
+  previewKey: string;
 };
 
 export type ComponentPreviewConfigurationBrowserLabels = {
@@ -46,14 +48,34 @@ export function ComponentInstancePreviewBrowser({
 }: ComponentPreviewConfigurationBrowserProps) {
   const {
     draft,
+    previewContract,
     previewConfiguration,
     setPreviewConfiguration,
     resolvedPreviewConfiguration,
     setAuthoringSelection,
   } = useComponentContractWorkspace();
-  const variants = getVariantAxis(draft, locale);
-  const sizes = getSizeAxis(draft, locale);
-  const states = getStateAxis(draft, locale, labels.baseState, labels.state);
+  const variants = getVariantAxis(draft, previewContract, locale);
+  const sizes = getSizeAxis(draft, previewContract, locale);
+  const states = getStateAxis(
+    draft,
+    previewContract,
+    locale,
+    labels.baseState,
+    labels.state,
+  );
+  const selectedVariant =
+    variants.find(
+      (variant) =>
+        variant.draftId === resolvedPreviewConfiguration.variantDraftId,
+    ) ?? variants[0];
+  const selectedSize =
+    sizes.find(
+      (size) => size.draftId === resolvedPreviewConfiguration.sizeDraftId,
+    ) ?? sizes[0];
+  const selectedState =
+    states.find(
+      (state) => state.draftId === resolvedPreviewConfiguration.stateDraftId,
+    ) ?? states[0];
 
   return (
     <div className="grid min-w-0 gap-4">
@@ -130,10 +152,10 @@ export function ComponentInstancePreviewBrowser({
       <div className="border-border-subtle bg-background-subtle flex min-h-64 items-center justify-center rounded-xl border p-6 shadow-sm">
         <ComponentPreview
           type={component.type}
-          name={draft.name}
-          variantKey={resolvedPreviewConfiguration.variantKey}
-          sizeKey={resolvedPreviewConfiguration.sizeKey}
-          stateKey={resolvedPreviewConfiguration.stateKey}
+          name={previewContract.name}
+          variantKey={selectedVariant?.previewKey ?? 'default'}
+          sizeKey={selectedSize?.previewKey ?? 'md'}
+          stateKey={selectedState?.previewKey ?? ''}
           tokenBindingResolution={tokenBindingResolution}
           semanticPalette={semanticPalette}
         />
@@ -151,15 +173,26 @@ export function ComponentMatrixPreviewBrowser({
 }: ComponentPreviewConfigurationBrowserProps) {
   const {
     draft,
+    previewContract,
     authoringSelection,
     setAuthoringSelection,
     previewConfiguration,
     setPreviewConfiguration,
     resolvedPreviewConfiguration,
   } = useComponentContractWorkspace();
-  const variants = getVariantAxis(draft, locale);
-  const sizes = getSizeAxis(draft, locale);
-  const states = getStateAxis(draft, locale, labels.baseState, labels.state);
+  const variants = getVariantAxis(draft, previewContract, locale);
+  const sizes = getSizeAxis(draft, previewContract, locale);
+  const states = getStateAxis(
+    draft,
+    previewContract,
+    locale,
+    labels.baseState,
+    labels.state,
+  );
+  const selectedState =
+    states.find(
+      (state) => state.draftId === resolvedPreviewConfiguration.stateDraftId,
+    ) ?? states[0];
 
   return (
     <div className="grid min-w-0 gap-4">
@@ -306,10 +339,10 @@ export function ComponentMatrixPreviewBrowser({
                           <div className="pointer-events-none flex min-h-16 items-center justify-center">
                             <ComponentPreview
                               type={component.type}
-                              name={draft.name}
-                              variantKey={variant.key}
-                              sizeKey={size.key}
-                              stateKey={resolvedPreviewConfiguration.stateKey}
+                              name={previewContract.name}
+                              variantKey={variant.previewKey}
+                              sizeKey={size.previewKey}
+                              stateKey={selectedState?.previewKey ?? ''}
                               tokenBindingResolution={tokenBindingResolution}
                               semanticPalette={semanticPalette}
                             />
@@ -393,46 +426,66 @@ function AxisControl({
 
 function getVariantAxis(
   draft: ComponentContractEditorDraft,
+  previewContract: ComponentContract,
   locale: Locale,
 ): AxisItem[] {
   if (draft.variants.length === 0) {
-    return [{ draftId: null, key: 'default', label: 'default' }];
+    return [
+      {
+        draftId: null,
+        key: 'default',
+        label: 'default',
+        previewKey: previewContract.variants[0]?.key ?? 'default',
+      },
+    ];
   }
 
-  return draft.variants.map((variant) => ({
+  return draft.variants.map((variant, index) => ({
     draftId: variant.draftId,
     key: variant.key.trim() || 'default',
     label: resolveDraftLabel(variant, locale, 'default'),
+    previewKey: previewContract.variants[index]?.key ?? 'default',
   }));
 }
 
 function getSizeAxis(
   draft: ComponentContractEditorDraft,
+  previewContract: ComponentContract,
   locale: Locale,
 ): AxisItem[] {
   if (draft.sizes.length === 0) {
-    return [{ draftId: null, key: 'md', label: 'md' }];
+    return [
+      {
+        draftId: null,
+        key: 'md',
+        label: 'md',
+        previewKey: previewContract.sizes[0]?.key ?? 'md',
+      },
+    ];
   }
 
-  return draft.sizes.map((size) => ({
+  return draft.sizes.map((size, index) => ({
     draftId: size.draftId,
     key: size.key.trim() || 'md',
     label: resolveDraftLabel(size, locale, 'md'),
+    previewKey: previewContract.sizes[index]?.key ?? 'md',
   }));
 }
 
 function getStateAxis(
   draft: ComponentContractEditorDraft,
+  previewContract: ComponentContract,
   locale: Locale,
   baseStateLabel: string,
   stateFallback: string,
 ): AxisItem[] {
   return [
-    { draftId: null, key: '', label: baseStateLabel },
-    ...draft.states.map((state) => ({
+    { draftId: null, key: '', label: baseStateLabel, previewKey: '' },
+    ...draft.states.map((state, index) => ({
       draftId: state.draftId,
       key: state.key.trim(),
       label: resolveDraftLabel(state, locale, stateFallback),
+      previewKey: previewContract.states[index]?.key ?? '',
     })),
   ];
 }
