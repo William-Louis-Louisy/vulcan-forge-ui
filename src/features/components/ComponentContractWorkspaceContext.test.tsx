@@ -94,7 +94,7 @@ function PreviewProbe() {
 }
 
 describe('ComponentContractWorkspaceProvider', () => {
-  it('shares the canonical draft and keeps the last valid preview contract', async () => {
+  it('keeps the last valid preview while sharing the draft', async () => {
     const user = userEvent.setup();
 
     render(
@@ -111,7 +111,9 @@ describe('ComponentContractWorkspaceProvider', () => {
     );
 
     expect(screen.getByTestId('preview-name')).toHaveTextContent('Button');
-    expect(screen.getByTestId('validation-status')).toHaveTextContent('success');
+    expect(screen.getByTestId('validation-status')).toHaveTextContent(
+      'success',
+    );
     expect(screen.getByTestId('unsaved-status')).toHaveTextContent('false');
 
     await user.click(
@@ -121,7 +123,9 @@ describe('ComponentContractWorkspaceProvider', () => {
     expect(screen.getByTestId('preview-name')).toHaveTextContent(
       'Primary Button',
     );
-    expect(screen.getByTestId('validation-status')).toHaveTextContent('success');
+    expect(screen.getByTestId('validation-status')).toHaveTextContent(
+      'success',
+    );
     expect(screen.getByTestId('unsaved-status')).toHaveTextContent('true');
 
     await user.click(
