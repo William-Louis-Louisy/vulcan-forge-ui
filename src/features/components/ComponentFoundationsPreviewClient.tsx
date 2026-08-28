@@ -8,6 +8,7 @@ import {
   createComponentPreviewSemanticPalette,
   createComponentTokenBindingResolution,
 } from './component-token-bindings.utils';
+import { isComponentTokenBindingRendered } from './component-token-binding-inspector.utils';
 import { useComponentContractPreview } from './ComponentContractPreviewContext';
 import {
   ComponentInstancePreviewBrowser,
@@ -51,6 +52,16 @@ export function ComponentFoundationsPreviewClient({
   const missingStatusTokenPaths = semanticPalette.missingStatusTones
     .map((tone) => `color.semantic.status.${tone}`)
     .join(', ');
+  const unrenderedBindingKeys = contract.tokenBindings
+    .filter(
+      (binding) =>
+        !isComponentTokenBindingRendered({
+          key: binding.key,
+          componentType: component.type,
+        }),
+    )
+    .map((binding) => binding.key.trim())
+    .filter((key) => key.length > 0);
   const browserLabels = {
     variant: t('editor.variants.axis'),
     size: t('editor.sizes.axis'),
@@ -74,6 +85,14 @@ export function ComponentFoundationsPreviewClient({
       {contract.tokenBindings.length === 0 ? (
         <div className="border-border-subtle bg-background-subtle text-content-secondary mt-3 rounded-md border px-3 py-2 text-xs leading-5">
           {t('foundationsPreview.noTokenBindingsNotice')}
+        </div>
+      ) : null}
+
+      {unrenderedBindingKeys.length > 0 ? (
+        <div className="border-action-info/30 bg-action-info/10 text-action-info mt-3 rounded-md border px-3 py-2 text-xs leading-5 [overflow-wrap:anywhere]">
+          {t('foundationsPreview.unrenderedBindingsNotice', {
+            keys: unrenderedBindingKeys.join(', '),
+          })}
         </div>
       ) : null}
 
