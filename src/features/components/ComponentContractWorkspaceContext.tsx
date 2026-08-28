@@ -54,7 +54,9 @@ type ComponentContractWorkspaceContextValue = {
   canvasView: ComponentWorkspaceCanvasView;
   setCanvasView: (view: ComponentWorkspaceCanvasView) => void;
   authoringSelection: ComponentWorkspaceAuthoringSelection;
-  setAuthoringSelection: (selection: ComponentWorkspaceAuthoringSelection) => void;
+  setAuthoringSelection: (
+    selection: ComponentWorkspaceAuthoringSelection,
+  ) => void;
   actionState: UpdateComponentContractActionState;
   formAction: (payload: FormData) => void;
   isPending: boolean;
