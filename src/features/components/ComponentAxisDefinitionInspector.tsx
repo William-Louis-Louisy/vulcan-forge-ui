@@ -30,7 +30,11 @@ export function ComponentAxisDefinitionInspector({
     setPreviewConfiguration,
   } = useComponentContractWorkspace();
 
-  if (!isAxisSelection(authoringSelection.kind)) {
+  if (
+    authoringSelection.kind !== 'variantDefinition' &&
+    authoringSelection.kind !== 'sizeDefinition' &&
+    authoringSelection.kind !== 'stateDefinition'
+  ) {
     return null;
   }
 
@@ -193,14 +197,6 @@ export function ComponentAxisDefinitionInspector({
         </div>
       </div>
     </section>
-  );
-}
-
-function isAxisSelection(kind: string): kind is AxisSelectionKind {
-  return (
-    kind === 'variantDefinition' ||
-    kind === 'sizeDefinition' ||
-    kind === 'stateDefinition'
   );
 }
 
