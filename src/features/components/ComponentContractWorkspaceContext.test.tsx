@@ -231,7 +231,9 @@ describe('ComponentContractWorkspaceProvider', () => {
       screen.getByRole('button', { name: 'Change preview configuration' }),
     );
 
-    expect(screen.getByTestId('preview-variant')).toHaveTextContent('secondary');
+    expect(screen.getByTestId('preview-variant')).toHaveTextContent(
+      'secondary',
+    );
     expect(screen.getByTestId('preview-size')).toHaveTextContent('lg');
     expect(screen.getByTestId('preview-state')).toHaveTextContent('loading');
     expect(screen.getByTestId('selection-kind')).toHaveTextContent('component');
@@ -246,7 +248,9 @@ describe('ComponentContractWorkspaceProvider', () => {
       'anatomyPart',
     );
     expect(screen.getByTestId('canvas-view')).toHaveTextContent('matrix');
-    expect(screen.getByTestId('preview-variant')).toHaveTextContent('secondary');
+    expect(screen.getByTestId('preview-variant')).toHaveTextContent(
+      'secondary',
+    );
     expect(screen.getByTestId('preview-size')).toHaveTextContent('lg');
     expect(screen.getByTestId('preview-state')).toHaveTextContent('loading');
   });
