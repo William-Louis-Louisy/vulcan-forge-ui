@@ -113,20 +113,6 @@ export function ComponentContractWorkspaceProvider({
     [previewContext],
   );
 
-  useEffect(() => {
-    if (authoringSelection.kind !== 'anatomyPart') {
-      return;
-    }
-
-    const selectedPartStillExists = draft.anatomy.some(
-      (part) => part.draftId === authoringSelection.draftId,
-    );
-
-    if (!selectedPartStillExists) {
-      setAuthoringSelection({ kind: 'component' });
-    }
-  }, [authoringSelection, draft.anatomy]);
-
   const validation = useMemo(
     () => createComponentContractFromDraft(draft),
     [draft],
