@@ -138,8 +138,9 @@ export default async function ComponentsRegistryPage({
   const workspaceCanvasLabels = {
     modes: {
       ariaLabel: t('workspace.canvasModes.ariaLabel'),
-      preview: t('workspace.canvasModes.preview'),
+      instance: t('workspace.canvasModes.instance'),
       anatomy: t('workspace.canvasModes.anatomy'),
+      matrix: t('workspace.canvasModes.matrix'),
     },
     anatomy: {
       title: t('editor.anatomy.title'),
@@ -198,12 +199,13 @@ export default async function ComponentsRegistryPage({
               canvas={
                 <ComponentWorkspaceCanvas
                   labels={workspaceCanvasLabels}
-                  preview={
+                  instance={
                     <>
                       <ComponentFoundationsPreviewShell
                         locale={locale}
                         component={selectedComponent}
                         rawTokenSets={pageData.tokenSets}
+                        mode="instance"
                       />
                       <ComponentAiContractShell
                         t={t}
@@ -211,6 +213,14 @@ export default async function ComponentsRegistryPage({
                         component={selectedComponent}
                       />
                     </>
+                  }
+                  matrix={
+                    <ComponentFoundationsPreviewShell
+                      locale={locale}
+                      component={selectedComponent}
+                      rawTokenSets={pageData.tokenSets}
+                      mode="matrix"
+                    />
                   }
                 />
               }
