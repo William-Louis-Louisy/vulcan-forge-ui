@@ -47,7 +47,12 @@ export function ComponentAxisDefinitionInspector({
   const item = selectedItem;
   const displayLabel =
     item.label[activeLocale].trim() || item.key.trim() || axis.title;
-  const localeLabel = labels.localizedContent.locales[activeLocale];
+  const labelField =
+    activeLocale === 'en' ? labels.fields.labelEn : labels.fields.labelFr;
+  const descriptionField =
+    activeLocale === 'en'
+      ? labels.fields.descriptionEn
+      : labels.fields.descriptionFr;
 
   function updateItem(nextItem: ComponentVariantDraft) {
     const nextItems = items.map((candidate) =>
@@ -111,7 +116,7 @@ export function ComponentAxisDefinitionInspector({
         <div className="grid min-w-0 gap-2">
           <div className="flex min-w-0 items-center justify-between gap-3">
             <span className="text-content-secondary text-xs font-semibold">
-              {axis.labelField} · {localeLabel}
+              {labelField}
             </span>
             <div
               role="group"
@@ -141,7 +146,7 @@ export function ComponentAxisDefinitionInspector({
             </div>
           </div>
           <Input
-            aria-label={`${axis.labelField} · ${localeLabel}`}
+            aria-label={labelField}
             value={item.label[activeLocale]}
             onChange={(event) =>
               updateItem({
@@ -158,7 +163,7 @@ export function ComponentAxisDefinitionInspector({
 
         <label className="grid min-w-0 gap-1.5">
           <span className="text-content-secondary text-xs font-semibold">
-            {axis.descriptionField} · {localeLabel}
+            {descriptionField}
           </span>
           <Textarea
             value={item.description[activeLocale]}
@@ -207,8 +212,6 @@ function getAxisConfiguration(
     return {
       collection: 'variants' as const,
       title: labels.variants.title,
-      labelField: labels.variants.axis,
-      descriptionField: labels.fields.descriptionEn.replace(/EN$/u, '').trim(),
     };
   }
 
@@ -216,16 +219,12 @@ function getAxisConfiguration(
     return {
       collection: 'sizes' as const,
       title: labels.sizes.title,
-      labelField: labels.sizes.axis,
-      descriptionField: labels.fields.descriptionEn.replace(/EN$/u, '').trim(),
     };
   }
 
   return {
     collection: 'states' as const,
     title: labels.states.title,
-    labelField: labels.states.axis,
-    descriptionField: labels.fields.descriptionEn.replace(/EN$/u, '').trim(),
   };
 }
 
