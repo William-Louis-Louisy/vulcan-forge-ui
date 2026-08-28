@@ -17,6 +17,7 @@ import {
 import { ComponentContractPreviewProvider } from './ComponentContractPreviewContext';
 import { ComponentWorkspaceSaveAction } from './ComponentWorkspaceSaveAction';
 import { ComponentAnatomyInspector } from './ComponentAnatomyInspector';
+import { ComponentAxisDefinitionInspector } from './ComponentAxisDefinitionInspector';
 
 export type { ComponentContractEditorLabels } from './ComponentContractEditorSections';
 
@@ -162,6 +163,8 @@ function ComponentContractEditorContent({
 
       {authoringSelection.kind === 'anatomyPart' ? (
         <ComponentAnatomyInspector labels={labels} />
+      ) : isAxisDefinitionSelection(authoringSelection.kind) ? (
+        <ComponentAxisDefinitionInspector labels={labels} />
       ) : (
         <ComponentContractEditorSections
           labels={labels}
@@ -173,5 +176,13 @@ function ComponentContractEditorContent({
         />
       )}
     </section>
+  );
+}
+
+function isAxisDefinitionSelection(kind: string) {
+  return (
+    kind === 'variantDefinition' ||
+    kind === 'sizeDefinition' ||
+    kind === 'stateDefinition'
   );
 }

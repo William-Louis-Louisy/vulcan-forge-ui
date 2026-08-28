@@ -6,6 +6,7 @@ export function ComponentFoundationsPreviewShell({
   locale,
   component,
   rawTokenSets,
+  mode,
 }: {
   locale: Locale;
   component: ComponentRegistryItem;
@@ -14,12 +15,14 @@ export function ComponentFoundationsPreviewShell({
     name: string;
     tokens: unknown;
   }>;
+  mode: 'instance' | 'matrix';
 }) {
   return (
     <ComponentFoundationsPreviewClient
       locale={locale}
       component={component}
       rawTokenSets={rawTokenSets}
+      mode={mode}
     />
   );
 }

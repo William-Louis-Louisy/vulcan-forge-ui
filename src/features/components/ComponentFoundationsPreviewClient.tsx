@@ -3,13 +3,16 @@
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import type { Locale } from '@/i18n/routing';
-import { ComponentVisualMatrix } from './ComponentVisualMatrix';
 import type { ComponentRegistryItem } from './components-registry.utils';
 import {
   createComponentPreviewSemanticPalette,
   createComponentTokenBindingResolution,
 } from './component-token-bindings.utils';
 import { useComponentContractPreview } from './ComponentContractPreviewContext';
+import {
+  ComponentInstancePreviewBrowser,
+  ComponentMatrixPreviewBrowser,
+} from './ComponentPreviewConfigurationBrowser';
 
 type RawTokenSet = {
   type: string;
@@ -21,23 +24,16 @@ export function ComponentFoundationsPreviewClient({
   locale,
   component,
   rawTokenSets,
+  mode,
 }: {
   locale: Locale;
   component: ComponentRegistryItem;
   rawTokenSets: RawTokenSet[];
+  mode: 'instance' | 'matrix';
 }) {
   const t = useTranslations('ComponentsRegistryPage');
   const previewContext = useComponentContractPreview();
   const contract = previewContext?.contract ?? component.contract;
-  const previewComponent = useMemo(
-    () => ({
-      ...component,
-      name: contract.name,
-      status: contract.status,
-      contract,
-    }),
-    [component, contract],
-  );
   const tokenBindingResolution = useMemo(
     () =>
       createComponentTokenBindingResolution({
@@ -55,11 +51,24 @@ export function ComponentFoundationsPreviewClient({
   const missingStatusTokenPaths = semanticPalette.missingStatusTones
     .map((tone) => `color.semantic.status.${tone}`)
     .join(', ');
+  const browserLabels = {
+    variant: t('editor.variants.axis'),
+    size: t('editor.sizes.axis'),
+    state: t('foundationsPreview.state'),
+    baseState: t('foundationsPreview.baseState'),
+    editDefinition: t('workspace.matrix.editDefinition'),
+    instanceDescription: t('workspace.instance.description'),
+    matrixDescription: t('workspace.matrix.description'),
+    useCombination: t('workspace.matrix.useCombination'),
+    selectedCombination: t('workspace.matrix.selectedCombination'),
+  };
 
   return (
     <section className="border-border-subtle min-w-0 border-b p-3 sm:p-4">
       <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.16em] uppercase">
-        {t('foundationsPreview.title')}
+        {mode === 'matrix'
+          ? t('workspace.matrix.title')
+          : t('workspace.instance.title')}
       </p>
 
       {contract.tokenBindings.length === 0 ? (
@@ -84,16 +93,23 @@ export function ComponentFoundationsPreviewClient({
       ) : null}
 
       <div className="mt-3 max-w-full min-w-0">
-        <ComponentVisualMatrix
-          locale={locale}
-          component={previewComponent}
-          labels={{
-            baseState: t('foundationsPreview.baseState'),
-            state: t('foundationsPreview.state'),
-          }}
-          tokenBindingResolution={tokenBindingResolution}
-          semanticPalette={semanticPalette}
-        />
+        {mode === 'matrix' ? (
+          <ComponentMatrixPreviewBrowser
+            locale={locale}
+            component={component}
+            labels={browserLabels}
+            tokenBindingResolution={tokenBindingResolution}
+            semanticPalette={semanticPalette}
+          />
+        ) : (
+          <ComponentInstancePreviewBrowser
+            locale={locale}
+            component={component}
+            labels={browserLabels}
+            tokenBindingResolution={tokenBindingResolution}
+            semanticPalette={semanticPalette}
+          />
+        )}
       </div>
 
       {Object.keys(tokenBindingResolution.bindings).length > 0 ? (

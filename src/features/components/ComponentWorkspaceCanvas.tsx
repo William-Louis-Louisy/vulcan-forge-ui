@@ -12,24 +12,28 @@ import type { ComponentAnatomyCanvasLabels } from './ComponentAnatomyCanvas';
 export type ComponentWorkspaceCanvasLabels = {
   modes: {
     ariaLabel: string;
-    preview: string;
+    instance: string;
     anatomy: string;
+    matrix: string;
   };
   anatomy: ComponentAnatomyCanvasLabels;
 };
 
 export function ComponentWorkspaceCanvas({
-  preview,
+  instance,
+  matrix,
   labels,
 }: {
-  preview: ReactNode;
+  instance: ReactNode;
+  matrix: ReactNode;
   labels: ComponentWorkspaceCanvasLabels;
 }) {
   const { canvasView, setCanvasView } = useComponentContractWorkspace();
 
   const options = [
-    { value: 'preview', label: labels.modes.preview },
+    { value: 'instance', label: labels.modes.instance },
     { value: 'anatomy', label: labels.modes.anatomy },
+    { value: 'matrix', label: labels.modes.matrix },
   ] satisfies ReadonlyArray<{
     value: ComponentWorkspaceCanvasView;
     label: string;
@@ -48,8 +52,10 @@ export function ComponentWorkspaceCanvas({
 
       {canvasView === 'anatomy' ? (
         <ComponentAnatomyCanvas labels={labels.anatomy} />
+      ) : canvasView === 'matrix' ? (
+        matrix
       ) : (
-        preview
+        instance
       )}
     </div>
   );
