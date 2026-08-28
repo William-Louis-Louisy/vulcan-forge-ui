@@ -1,7 +1,11 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { ComponentResponsiveWorkspace } from './ComponentResponsiveWorkspace';
+
+vi.mock('./ComponentContractWorkspaceContext', () => ({
+  useOptionalComponentContractWorkspace: () => null,
+}));
 
 describe('ComponentResponsiveWorkspace', () => {
   it('keeps Canvas primary while Navigation and Inspector become responsive auxiliary panels', async () => {
