@@ -87,10 +87,7 @@ function WorkspaceProbe() {
       >
         Publish invalid draft
       </button>
-      <button
-        type="button"
-        onClick={() => workspace.setCanvasView('anatomy')}
-      >
+      <button type="button" onClick={() => workspace.setCanvasView('anatomy')}>
         Show anatomy
       </button>
       <button
