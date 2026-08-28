@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { ComponentContract } from '@/domain/design-system';
 import { createComponentContractDraft } from './component-contract-editor.utils';
 import {
+  createComponentWorkspacePreviewAxes,
   createInitialComponentWorkspacePreviewConfiguration,
   resolveComponentWorkspacePreviewConfiguration,
 } from './component-preview-configuration.utils';
@@ -94,5 +95,29 @@ describe('component preview configuration', () => {
     expect(resolved.variantKey).toBe('primary');
     expect(resolved.sizeKey).toBe('sm');
     expect(resolved.stateKey).toBe('');
+  });
+
+  it('snapshots only axis definitions that can enter a rendered contract', () => {
+    const draft = createComponentContractDraft(contract);
+    const firstVariant = draft.variants[0];
+
+    expect(firstVariant).toBeDefined();
+
+    if (!firstVariant) {
+      return;
+    }
+
+    firstVariant.key = '   ';
+
+    const axes = createComponentWorkspacePreviewAxes(draft);
+
+    expect(axes.variants).toEqual([
+      {
+        draftId: draft.variants[1]?.draftId,
+        key: 'secondary',
+      },
+    ]);
+    expect(axes.sizes.map((size) => size.key)).toEqual(['sm', 'lg']);
+    expect(axes.states.map((state) => state.key)).toEqual(['loading']);
   });
 });
