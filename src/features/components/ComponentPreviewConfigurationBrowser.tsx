@@ -1,6 +1,7 @@
 'use client';
 
 import { Button, Select } from '@/components/ui';
+import type { Locale } from '@/i18n/routing';
 import type { ComponentContractEditorDraft } from './component-contract-editor.utils';
 import type { ComponentRegistryItem } from './components-registry.utils';
 import type {
@@ -29,6 +30,7 @@ export type ComponentPreviewConfigurationBrowserLabels = {
 };
 
 type ComponentPreviewConfigurationBrowserProps = {
+  locale: Locale;
   component: ComponentRegistryItem;
   labels: ComponentPreviewConfigurationBrowserLabels;
   tokenBindingResolution: ComponentTokenBindingResolution;
@@ -36,6 +38,7 @@ type ComponentPreviewConfigurationBrowserProps = {
 };
 
 export function ComponentInstancePreviewBrowser({
+  locale,
   component,
   labels,
   tokenBindingResolution,
@@ -43,20 +46,14 @@ export function ComponentInstancePreviewBrowser({
 }: ComponentPreviewConfigurationBrowserProps) {
   const {
     draft,
-    activeLocale,
     previewConfiguration,
     setPreviewConfiguration,
     resolvedPreviewConfiguration,
     setAuthoringSelection,
   } = useComponentContractWorkspace();
-  const variants = getVariantAxis(draft, activeLocale);
-  const sizes = getSizeAxis(draft, activeLocale);
-  const states = getStateAxis(
-    draft,
-    activeLocale,
-    labels.baseState,
-    labels.state,
-  );
+  const variants = getVariantAxis(draft, locale);
+  const sizes = getSizeAxis(draft, locale);
+  const states = getStateAxis(draft, locale, labels.baseState, labels.state);
 
   return (
     <div className="grid min-w-0 gap-4">
@@ -146,6 +143,7 @@ export function ComponentInstancePreviewBrowser({
 }
 
 export function ComponentMatrixPreviewBrowser({
+  locale,
   component,
   labels,
   tokenBindingResolution,
@@ -153,21 +151,15 @@ export function ComponentMatrixPreviewBrowser({
 }: ComponentPreviewConfigurationBrowserProps) {
   const {
     draft,
-    activeLocale,
     authoringSelection,
     setAuthoringSelection,
     previewConfiguration,
     setPreviewConfiguration,
     resolvedPreviewConfiguration,
   } = useComponentContractWorkspace();
-  const variants = getVariantAxis(draft, activeLocale);
-  const sizes = getSizeAxis(draft, activeLocale);
-  const states = getStateAxis(
-    draft,
-    activeLocale,
-    labels.baseState,
-    labels.state,
-  );
+  const variants = getVariantAxis(draft, locale);
+  const sizes = getSizeAxis(draft, locale);
+  const states = getStateAxis(draft, locale, labels.baseState, labels.state);
 
   return (
     <div className="grid min-w-0 gap-4">
@@ -401,7 +393,7 @@ function AxisControl({
 
 function getVariantAxis(
   draft: ComponentContractEditorDraft,
-  locale: 'en' | 'fr',
+  locale: Locale,
 ): AxisItem[] {
   if (draft.variants.length === 0) {
     return [{ draftId: null, key: 'default', label: 'default' }];
@@ -416,7 +408,7 @@ function getVariantAxis(
 
 function getSizeAxis(
   draft: ComponentContractEditorDraft,
-  locale: 'en' | 'fr',
+  locale: Locale,
 ): AxisItem[] {
   if (draft.sizes.length === 0) {
     return [{ draftId: null, key: 'md', label: 'md' }];
@@ -431,7 +423,7 @@ function getSizeAxis(
 
 function getStateAxis(
   draft: ComponentContractEditorDraft,
-  locale: 'en' | 'fr',
+  locale: Locale,
   baseStateLabel: string,
   stateFallback: string,
 ): AxisItem[] {
@@ -450,7 +442,7 @@ function resolveDraftLabel(
     key: string;
     label: { en: string; fr: string };
   },
-  locale: 'en' | 'fr',
+  locale: Locale,
   fallback: string,
 ) {
   return (
