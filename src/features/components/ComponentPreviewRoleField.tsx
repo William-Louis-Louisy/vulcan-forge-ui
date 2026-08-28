@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { Input, Select, type SelectOption } from '@/components/ui';
+import { Button, Input, Select, type SelectOption } from '@/components/ui';
 import type { DesignToken } from '@/domain/design-system';
 import {
   componentPreviewTokenRoles,
@@ -16,6 +16,7 @@ import {
   getUsedComponentPreviewTokenRoles,
   type ComponentPreviewTokenRoleSelection,
 } from './component-preview-role-bindings';
+import { useOptionalComponentContractWorkspace } from './ComponentContractWorkspaceContext';
 
 export type ComponentPreviewRoleFieldLabels = {
   role: string;
@@ -25,6 +26,7 @@ export type ComponentPreviewRoleFieldLabels = {
   customRoleKey: string;
   customRolePlaceholder: string;
   roleAlreadyUsed: string;
+  inspectBinding: string;
   roles: Record<ComponentPreviewTokenRole, string>;
   tokenTypes: Record<DesignToken['type'], string>;
 };
@@ -34,6 +36,7 @@ type ComponentPreviewRoleFieldProps = {
   bindings: ComponentTokenBindingDraft[];
   labels: ComponentPreviewRoleFieldLabels;
   onChange: (binding: ComponentTokenBindingDraft) => void;
+  showInspectAction?: boolean;
 };
 
 export function ComponentPreviewRoleField({
@@ -41,7 +44,9 @@ export function ComponentPreviewRoleField({
   bindings,
   labels,
   onChange,
+  showInspectAction = true,
 }: ComponentPreviewRoleFieldProps) {
+  const workspace = useOptionalComponentContractWorkspace();
   const detectedSelection = getComponentPreviewTokenRoleSelection(binding.key);
   const [isCustomRoleSelected, setIsCustomRoleSelected] = useState(
     detectedSelection === customComponentPreviewTokenRole,
@@ -117,12 +122,30 @@ export function ComponentPreviewRoleField({
       className="component-preview-role-field grid min-w-0 gap-2"
     >
       <div className="grid min-w-0 gap-1.5">
-        <label
-          htmlFor={`token-binding-role-${binding.draftId}`}
-          className="text-content-secondary text-xs font-semibold"
-        >
-          {labels.role}
-        </label>
+        <div className="flex min-w-0 items-center justify-between gap-2">
+          <label
+            htmlFor={`token-binding-role-${binding.draftId}`}
+            className="text-content-secondary text-xs font-semibold"
+          >
+            {labels.role}
+          </label>
+          {workspace && showInspectAction ? (
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              onClick={() =>
+                workspace.setAuthoringSelection({
+                  kind: 'tokenBinding',
+                  draftId: binding.draftId,
+                })
+              }
+              className="min-h-7 px-2 py-1 text-[0.6875rem]"
+            >
+              {labels.inspectBinding}
+            </Button>
+          ) : null}
+        </div>
         <Select<ComponentPreviewTokenRoleSelection>
           id={`token-binding-role-${binding.draftId}`}
           value={selection}
