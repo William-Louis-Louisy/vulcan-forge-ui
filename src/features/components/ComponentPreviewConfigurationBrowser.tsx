@@ -1,12 +1,13 @@
 'use client';
 
 import { Button, Select } from '@/components/ui';
+import type { ComponentContractEditorDraft } from './component-contract-editor.utils';
 import type { ComponentRegistryItem } from './components-registry.utils';
-import {
-  ComponentPreview,
-  type ComponentPreviewSemanticPalette,
-  type ComponentTokenBindingResolution,
-} from './ComponentVisualMatrix';
+import type {
+  ComponentPreviewSemanticPalette,
+  ComponentTokenBindingResolution,
+} from './component-token-bindings.utils';
+import { ComponentPreview } from './ComponentVisualMatrix';
 import { useComponentContractWorkspace } from './ComponentContractWorkspaceContext';
 
 type AxisItem = {
@@ -50,7 +51,12 @@ export function ComponentInstancePreviewBrowser({
   } = useComponentContractWorkspace();
   const variants = getVariantAxis(draft, activeLocale);
   const sizes = getSizeAxis(draft, activeLocale);
-  const states = getStateAxis(draft, activeLocale);
+  const states = getStateAxis(
+    draft,
+    activeLocale,
+    labels.baseState,
+    labels.state,
+  );
 
   return (
     <div className="grid min-w-0 gap-4">
@@ -156,7 +162,12 @@ export function ComponentMatrixPreviewBrowser({
   } = useComponentContractWorkspace();
   const variants = getVariantAxis(draft, activeLocale);
   const sizes = getSizeAxis(draft, activeLocale);
-  const states = getStateAxis(draft, activeLocale);
+  const states = getStateAxis(
+    draft,
+    activeLocale,
+    labels.baseState,
+    labels.state,
+  );
 
   return (
     <div className="grid min-w-0 gap-4">
@@ -389,7 +400,7 @@ function AxisControl({
 }
 
 function getVariantAxis(
-  draft: ReturnType<typeof useComponentContractWorkspace>['draft'],
+  draft: ComponentContractEditorDraft,
   locale: 'en' | 'fr',
 ): AxisItem[] {
   if (draft.variants.length === 0) {
@@ -404,7 +415,7 @@ function getVariantAxis(
 }
 
 function getSizeAxis(
-  draft: ReturnType<typeof useComponentContractWorkspace>['draft'],
+  draft: ComponentContractEditorDraft,
   locale: 'en' | 'fr',
 ): AxisItem[] {
   if (draft.sizes.length === 0) {
@@ -419,15 +430,17 @@ function getSizeAxis(
 }
 
 function getStateAxis(
-  draft: ReturnType<typeof useComponentContractWorkspace>['draft'],
+  draft: ComponentContractEditorDraft,
   locale: 'en' | 'fr',
+  baseStateLabel: string,
+  stateFallback: string,
 ): AxisItem[] {
   return [
-    { draftId: null, key: '', label: 'Base' },
+    { draftId: null, key: '', label: baseStateLabel },
     ...draft.states.map((state) => ({
       draftId: state.draftId,
       key: state.key.trim(),
-      label: resolveDraftLabel(state, locale, state.key || 'State'),
+      label: resolveDraftLabel(state, locale, stateFallback),
     })),
   ];
 }
