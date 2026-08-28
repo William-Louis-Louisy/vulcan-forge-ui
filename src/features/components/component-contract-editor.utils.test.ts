@@ -79,6 +79,7 @@ describe('component contract editor utils', () => {
       },
       anatomy: [
         {
+          draftId: expect.any(String),
           key: 'root',
           label: {
             en: 'root',
@@ -87,6 +88,7 @@ describe('component contract editor utils', () => {
           requirement: 'required',
         },
         {
+          draftId: expect.any(String),
           key: 'label',
           label: {
             en: 'label',
@@ -113,8 +115,9 @@ describe('component contract editor utils', () => {
       ],
     });
 
-    expect(draft.anatomy).toEqual([
+    expect(draft.anatomy).toMatchObject([
       {
+        draftId: expect.any(String),
         key: 'icon-leading',
         label: {
           en: 'Leading icon',
@@ -140,6 +143,7 @@ describe('component contract editor utils', () => {
     const draft = createComponentContractDraft(buttonContract);
     draft.anatomy = [
       {
+        draftId: 'anatomy-test',
         key: 'root',
         label: {
           en: 'Root',
@@ -190,6 +194,7 @@ describe('component contract editor utils', () => {
     const draft = createComponentContractDraft(buttonContract);
     draft.anatomy = [
       {
+        draftId: 'anatomy-test',
         key: 'icon-leading',
         label: {
           en: '',
@@ -214,7 +219,8 @@ describe('component contract editor utils', () => {
   });
 
   it('creates empty nested draft items', () => {
-    expect(createEmptyAnatomyPartDraft()).toEqual({
+    expect(createEmptyAnatomyPartDraft()).toMatchObject({
+      draftId: expect.any(String),
       key: '',
       label: {
         en: '',
@@ -268,6 +274,7 @@ describe('component contract editor utils', () => {
       ],
     });
 
+    firstDraft.anatomy[0]!.draftId = 'anatomy-custom';
     firstDraft.variants[0]!.draftId = 'variant-custom';
     firstDraft.states[0]!.draftId = 'state-custom';
     firstDraft.tokenBindings[0]!.draftId = 'token-binding-custom';
