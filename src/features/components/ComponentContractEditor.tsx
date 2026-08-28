@@ -1,34 +1,21 @@
 'use client';
 
-import {
-  useActionState,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { useCallback, useLayoutEffect, useRef } from 'react';
 import { Button } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
-import { useRouter } from '@/i18n/navigation';
 import type { ComponentContract } from '@/domain/design-system';
 import type { ComponentTokenOption } from './component-token-bindings.utils';
-import {
-  createComponentContractDraft,
-  createComponentContractDraftFingerprint,
-  createComponentContractFromDraft,
-  type ComponentContractEditorDraft,
-} from './component-contract-editor.utils';
+import type { ComponentContractEditorDraft } from './component-contract-editor.utils';
 import {
   ComponentContractEditorSections,
   type ComponentContractEditorLabels,
 } from './ComponentContractEditorSections';
-import { updateComponentContractAction } from './update-component-contract.action';
-import { initialUpdateComponentContractActionState } from './update-component-contract.state';
-import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
-import { useActionBackedProjectSaveStatus } from '@/features/save-context/useActionBackedProjectSaveStatus';
-import { useComponentContractPreview } from './ComponentContractPreviewContext';
+import {
+  ComponentContractWorkspaceProvider,
+  useComponentContractWorkspace,
+  useOptionalComponentContractWorkspace,
+} from './ComponentContractWorkspaceContext';
+import { ComponentContractPreviewProvider } from './ComponentContractPreviewContext';
 
 export type { ComponentContractEditorLabels } from './ComponentContractEditorSections';
 
@@ -46,32 +33,48 @@ type PendingCollectionFocus = {
   selectionEnd: number | null;
 };
 
-export function ComponentContractEditor({
+export function ComponentContractEditor(props: ComponentContractEditorProps) {
+  const workspace = useOptionalComponentContractWorkspace();
+
+  if (workspace) {
+    return <ComponentContractEditorContent {...props} />;
+  }
+
+  return (
+    <ComponentContractPreviewProvider initialContract={props.contract}>
+      <ComponentContractWorkspaceProvider
+        locale={props.locale}
+        projectSlug={props.projectSlug}
+        contract={props.contract}
+      >
+        <ComponentContractEditorContent {...props} />
+      </ComponentContractWorkspaceProvider>
+    </ComponentContractPreviewProvider>
+  );
+}
+
+function ComponentContractEditorContent({
   locale,
   projectSlug,
-  contract,
   labels,
   tokenOptions,
 }: ComponentContractEditorProps) {
-  const [state, formAction, isPending] = useActionState(
-    updateComponentContractAction,
-    initialUpdateComponentContractActionState,
-  );
-  const router = useRouter();
-  const previewContext = useComponentContractPreview();
-  const setPreviewContract = previewContext?.setContract;
-
-  const initialDraft = useMemo(
-    () => createComponentContractDraft(contract),
-    [contract],
-  );
-  const [draft, setDraft] =
-    useState<ComponentContractEditorDraft>(initialDraft);
+  const {
+    draft,
+    setDraft,
+    validation,
+    contractPayload,
+    activeLocale,
+    setActiveLocale,
+    actionState,
+    formAction,
+    isPending,
+    hasCurrentActionError,
+    hasUnsavedChanges,
+    saveStatus,
+    handleSubmitCapture,
+  } = useComponentContractWorkspace();
   const pendingCollectionFocusRef = useRef<PendingCollectionFocus | null>(null);
-  const lastRefreshedContractRef = useRef<string | null>(null);
-  const [activeLocale, setActiveLocale] = useState<'en' | 'fr'>(
-    locale === 'fr' ? 'fr' : 'en',
-  );
 
   const getCollectionKeyInputs = useCallback(
     () =>
@@ -100,15 +103,9 @@ export function ComponentContractEditor({
         }
       }
 
-      const nextValidation = createComponentContractFromDraft(nextDraft);
-
-      if (nextValidation.status === 'success') {
-        setPreviewContract?.(nextValidation.contract);
-      }
-
       setDraft(nextDraft);
     },
-    [getCollectionKeyInputs, labels.fields.key, setPreviewContract],
+    [getCollectionKeyInputs, labels.fields.key, setDraft],
   );
 
   useLayoutEffect(() => {
@@ -137,58 +134,6 @@ export function ComponentContractEditor({
     }
   }, [draft, getCollectionKeyInputs]);
 
-  const validation = useMemo(
-    () => createComponentContractFromDraft(draft),
-    [draft],
-  );
-  const contractPayload =
-    validation.status === 'success' ? JSON.stringify(validation.contract) : '';
-  const saveContextId = `component-contract:${projectSlug}:${contract.type}`;
-  const currentFingerprint = createComponentContractDraftFingerprint(draft);
-  const initialSavedFingerprint =
-    createComponentContractDraftFingerprint(initialDraft);
-  const successfulFingerprint =
-    state.status === 'success' && state.savedContract
-      ? createComponentContractDraftFingerprint(
-          createComponentContractDraft(state.savedContract),
-        )
-      : null;
-  const {
-    hasCurrentActionError,
-    hasUnsavedChanges,
-    markCurrentDraftSubmitted,
-    status: saveStatus,
-  } = useActionBackedProjectSaveStatus({
-    sourceId: saveContextId,
-    currentFingerprint,
-    initialSavedFingerprint,
-    actionStatus: state.status,
-    successfulFingerprint,
-    isPending,
-    hasValidationError: validation.status === 'error',
-  });
-  const preserveSaveContext = usePreserveSaveContext(saveContextId);
-
-  useEffect(() => {
-    if (state.status !== 'success' || !state.savedContract) {
-      return;
-    }
-
-    const savedContractFingerprint = JSON.stringify(state.savedContract);
-
-    if (lastRefreshedContractRef.current === savedContractFingerprint) {
-      return;
-    }
-
-    lastRefreshedContractRef.current = savedContractFingerprint;
-    router.refresh();
-  }, [router, state.savedContract, state.status]);
-
-  function handleSubmitCapture() {
-    markCurrentDraftSubmitted();
-    preserveSaveContext();
-  }
-
   const saveStatusDotClassName = {
     saved: 'bg-action-success',
     unsaved: 'bg-action-warning',
@@ -201,7 +146,7 @@ export function ComponentContractEditor({
       : saveStatus === 'error'
         ? validation.status === 'error'
           ? labels.save.invalid
-          : labels.save.errors[state.formError ?? 'unexpected']
+          : labels.save.errors[actionState.formError ?? 'unexpected']
         : saveStatus === 'unsaved'
           ? labels.save.unsaved
           : labels.save.saved;
@@ -268,9 +213,9 @@ export function ComponentContractEditor({
             </p>
           ) : null}
 
-          {hasCurrentActionError && state.formError ? (
+          {hasCurrentActionError && actionState.formError ? (
             <p role="alert" className="text-action-danger mt-1 font-medium">
-              {labels.save.errors[state.formError]}
+              {labels.save.errors[actionState.formError]}
             </p>
           ) : null}
         </div>

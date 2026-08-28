@@ -24,6 +24,7 @@ import { ComponentRegistryCreateButton } from '@/features/components/ComponentRe
 import { filterComponentRegistryItems } from '@/features/components/components-registry-page.utils';
 import { ComponentFoundationsPreviewShell } from '@/features/components/ComponentFoundationsPreview';
 import { ComponentContractPreviewProvider } from '@/features/components/ComponentContractPreviewContext';
+import { ComponentContractWorkspaceProvider } from '@/features/components/ComponentContractWorkspaceContext';
 
 type ComponentsRegistryPageProps = {
   params: Promise<{
@@ -129,48 +130,54 @@ export default async function ComponentsRegistryPage({
           key={selectedComponent.id}
           initialContract={selectedComponent.contract}
         >
-          <ComponentResponsiveWorkspace
-            labels={{
-              registry: t('list.title'),
-              editor: t('editor.title'),
-              preview: t('foundationsPreview.title'),
-            }}
-            editorScrollContextId={`component-contract:${pageData.project.slug}:${selectedComponent.type}`}
-            registry={
-              <ComponentList
-                t={t}
-                locale={locale}
-                projectSlug={pageData.project.slug}
-                componentGroups={componentGroups}
-                selectedComponentType={selectedComponent.type}
-                filterQuery={componentFilterQuery}
-                availableComponentTypes={availableComponentTypes}
-              />
-            }
-            editor={
-              <ComponentDetails
-                t={t}
-                locale={locale}
-                component={selectedComponent}
-                projectSlug={pageData.project.slug}
-                tokenOptions={componentTokenOptions}
-              />
-            }
-            preview={
-              <>
-                <ComponentFoundationsPreviewShell
+          <ComponentContractWorkspaceProvider
+            locale={locale}
+            projectSlug={pageData.project.slug}
+            contract={selectedComponent.contract}
+          >
+            <ComponentResponsiveWorkspace
+              labels={{
+                registry: t('list.title'),
+                editor: t('editor.title'),
+                preview: t('foundationsPreview.title'),
+              }}
+              editorScrollContextId={`component-contract:${pageData.project.slug}:${selectedComponent.type}`}
+              registry={
+                <ComponentList
+                  t={t}
                   locale={locale}
-                  component={selectedComponent}
-                  rawTokenSets={pageData.tokenSets}
+                  projectSlug={pageData.project.slug}
+                  componentGroups={componentGroups}
+                  selectedComponentType={selectedComponent.type}
+                  filterQuery={componentFilterQuery}
+                  availableComponentTypes={availableComponentTypes}
                 />
-                <ComponentAiContractShell
+              }
+              editor={
+                <ComponentDetails
                   t={t}
                   locale={locale}
                   component={selectedComponent}
+                  projectSlug={pageData.project.slug}
+                  tokenOptions={componentTokenOptions}
                 />
-              </>
-            }
-          />
+              }
+              preview={
+                <>
+                  <ComponentFoundationsPreviewShell
+                    locale={locale}
+                    component={selectedComponent}
+                    rawTokenSets={pageData.tokenSets}
+                  />
+                  <ComponentAiContractShell
+                    t={t}
+                    locale={locale}
+                    component={selectedComponent}
+                  />
+                </>
+              }
+            />
+          </ComponentContractWorkspaceProvider>
         </ComponentContractPreviewProvider>
       ) : (
         <div className="flex min-h-80 flex-1 items-center justify-center p-4 md:p-6">
