@@ -267,7 +267,10 @@ function clearRemovedPreviewAxis(
     return { ...configuration, sizeDraftId: null };
   }
 
-  if (collection === 'states' && configuration.stateDraftId === removedDraftId) {
+  if (
+    collection === 'states' &&
+    configuration.stateDraftId === removedDraftId
+  ) {
     return { ...configuration, stateDraftId: null };
   }
 
