@@ -6,11 +6,36 @@ import {
   ComponentContractPreviewProvider,
   useComponentContractPreview,
 } from './ComponentContractPreviewContext';
+import { ComponentContractWorkspaceProvider } from './ComponentContractWorkspaceContext';
 import { ComponentFoundationsPreviewClient } from './ComponentFoundationsPreviewClient';
 import type { ComponentRegistryItem } from './components-registry.utils';
 
+const routerMocks = vi.hoisted(() => ({
+  refresh: vi.fn(),
+}));
+
 vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
+}));
+
+vi.mock('@/i18n/navigation', () => ({
+  useRouter: () => routerMocks,
+}));
+
+vi.mock('next/navigation', () => ({
+  usePathname: () => '/en/app/projects/demo/components',
+}));
+
+vi.mock('@/components/layout/ProjectTopbarBreadcrumb', () => ({
+  useProjectSaveStatus: vi.fn(),
+}));
+
+vi.mock('./update-component-contract.action', () => ({
+  updateComponentContractAction: vi.fn(async () => ({
+    status: 'idle',
+    formError: null,
+    savedContract: null,
+  })),
 }));
 
 const contract: ComponentContract = {
@@ -102,20 +127,37 @@ function ApplyVisualBindingButton() {
   );
 }
 
-describe('ComponentFoundationsPreviewClient', () => {
-  it('updates the matrix when the editor publishes a visual token binding', async () => {
-    const user = userEvent.setup();
-
-    render(
-      <ComponentContractPreviewProvider initialContract={contract}>
+function renderPreview({
+  previewContract = contract,
+  previewComponent = component,
+}: {
+  previewContract?: ComponentContract;
+  previewComponent?: ComponentRegistryItem;
+} = {}) {
+  return render(
+    <ComponentContractPreviewProvider initialContract={previewContract}>
+      <ComponentContractWorkspaceProvider
+        locale="en"
+        projectSlug="demo"
+        contract={previewContract}
+      >
         <ApplyVisualBindingButton />
         <ComponentFoundationsPreviewClient
           locale="en"
-          component={component}
+          component={previewComponent}
           rawTokenSets={rawTokenSets}
+          mode="instance"
         />
-      </ComponentContractPreviewProvider>,
-    );
+      </ComponentContractWorkspaceProvider>
+    </ComponentContractPreviewProvider>,
+  );
+}
+
+describe('ComponentFoundationsPreviewClient', () => {
+  it('updates the instance when the editor publishes a visual token binding', async () => {
+    const user = userEvent.setup();
+
+    renderPreview();
 
     const previewButton = screen.getByRole('button', { name: 'Button' });
 
@@ -152,15 +194,10 @@ describe('ComponentFoundationsPreviewClient', () => {
       contract: alertContract,
     };
 
-    render(
-      <ComponentContractPreviewProvider initialContract={alertContract}>
-        <ComponentFoundationsPreviewClient
-          locale="en"
-          component={alertComponent}
-          rawTokenSets={rawTokenSets}
-        />
-      </ComponentContractPreviewProvider>,
-    );
+    renderPreview({
+      previewContract: alertContract,
+      previewComponent: alertComponent,
+    });
 
     expect(
       screen.getByText('foundationsPreview.missingStatusColorsNotice'),
