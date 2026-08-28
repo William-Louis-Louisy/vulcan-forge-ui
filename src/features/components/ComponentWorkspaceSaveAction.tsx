@@ -3,9 +3,7 @@
 import { Button } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
 import type { ComponentContractEditorLabels } from './ComponentContractEditor';
-import {
-  useComponentContractWorkspace,
-} from './ComponentContractWorkspaceContext';
+import { useComponentContractWorkspace } from './ComponentContractWorkspaceContext';
 
 type ComponentWorkspaceSaveActionProps = {
   locale: Locale;
@@ -54,10 +52,7 @@ export function ComponentWorkspaceSaveAction({
     <form
       action={formAction}
       onSubmitCapture={handleSubmitCapture}
-      className={[
-        'flex min-w-0 items-center justify-between gap-3',
-        className,
-      ]
+      className={['flex min-w-0 items-center justify-between gap-3', className]
         .filter(Boolean)
         .join(' ')}
     >
