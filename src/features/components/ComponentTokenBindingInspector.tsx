@@ -120,7 +120,6 @@ export function ComponentTokenBindingInspector({
           binding={binding}
           bindings={draft.tokenBindings}
           onChange={updateBinding}
-          showInspectAction={false}
         />
 
         <div className="grid min-w-0 gap-3">
@@ -282,11 +281,16 @@ function BindingDiagnostics({
       <div className={`${resolutionClassName} rounded-md border px-3 py-2.5`}>
         <p className="text-xs font-semibold">{resolutionLabel}</p>
         {state.resolutionState === 'typeMismatch' && actualType ? (
-          <p className="mt-1 text-[0.6875rem] leading-5">
-            {labels.visualTokens.diagnostics.typeMismatchDetail
-              .replace('{expected}', labels.visualTokens.tokenTypes[bindingTokenType])
-              .replace('{actual}', labels.visualTokens.tokenTypes[actualType])}
-          </p>
+          <dl className="mt-2 grid gap-1 text-[0.6875rem]">
+            <div className="flex min-w-0 items-center justify-between gap-3">
+              <dt>{labels.visualTokens.diagnostics.expectedType}</dt>
+              <dd>{labels.visualTokens.tokenTypes[bindingTokenType]}</dd>
+            </div>
+            <div className="flex min-w-0 items-center justify-between gap-3">
+              <dt>{labels.visualTokens.diagnostics.actualType}</dt>
+              <dd>{labels.visualTokens.tokenTypes[actualType]}</dd>
+            </div>
+          </dl>
         ) : null}
         {state.token && state.token.type === bindingTokenType ? (
           <dl className="mt-2 grid gap-1 text-[0.6875rem]">
