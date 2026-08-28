@@ -1,97 +1,209 @@
 'use client';
 
-import { useState, type ReactNode } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
+import { Button } from '@/components/ui';
+import { useOptionalComponentContractWorkspace } from './ComponentContractWorkspaceContext';
 
-type ComponentWorkspacePanel = 'registry' | 'editor' | 'preview';
+type ComponentWorkspaceAuxiliaryPanel = 'navigation' | 'inspector';
 
 type ComponentResponsiveWorkspaceProps = {
-  labels: Record<ComponentWorkspacePanel, string>;
-  registry: ReactNode;
-  editor: ReactNode;
-  preview: ReactNode;
-  editorScrollContextId: string;
+  labels: {
+    navigation: string;
+    canvas: string;
+    inspector: string;
+  };
+  componentName: string;
+  navigation: ReactNode;
+  canvas: ReactNode;
+  inspector: ReactNode;
+  saveAction: ReactNode;
+  inspectorScrollContextId: string;
 };
-
-const panels: ComponentWorkspacePanel[] = ['registry', 'editor', 'preview'];
 
 export function ComponentResponsiveWorkspace({
   labels,
-  registry,
-  editor,
-  preview,
-  editorScrollContextId,
+  componentName,
+  navigation,
+  canvas,
+  inspector,
+  saveAction,
+  inspectorScrollContextId,
 }: ComponentResponsiveWorkspaceProps) {
-  const [activePanel, setActivePanel] =
-    useState<ComponentWorkspacePanel>('editor');
+  const workspace = useOptionalComponentContractWorkspace();
+  const [activeAuxiliaryPanel, setActiveAuxiliaryPanel] =
+    useState<ComponentWorkspaceAuxiliaryPanel | null>(null);
+  const navigationPanelRef = useRef<HTMLElement>(null);
+  const inspectorPanelRef = useRef<HTMLElement>(null);
+  const returnFocusRef = useRef<HTMLElement | null>(null);
+  const displayedComponentName = workspace?.draft.name.trim() || componentName;
+
+  const openAuxiliaryPanel = useCallback(
+    (panel: ComponentWorkspaceAuxiliaryPanel) => {
+      returnFocusRef.current =
+        document.activeElement instanceof HTMLElement
+          ? document.activeElement
+          : null;
+      setActiveAuxiliaryPanel(panel);
+    },
+    [],
+  );
+
+  const closeAuxiliaryPanel = useCallback(() => {
+    setActiveAuxiliaryPanel(null);
+    returnFocusRef.current?.focus();
+  }, []);
+
+  useEffect(() => {
+    if (!activeAuxiliaryPanel) {
+      return;
+    }
+
+    const activePanel =
+      activeAuxiliaryPanel === 'navigation'
+        ? navigationPanelRef.current
+        : inspectorPanelRef.current;
+
+    activePanel
+      ?.querySelector<HTMLElement>('[data-workspace-panel-close]')
+      ?.focus();
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        closeAuxiliaryPanel();
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [activeAuxiliaryPanel, closeAuxiliaryPanel]);
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div
-        role="tablist"
-        aria-label={labels.editor}
-        className="border-border-subtle bg-background-app/95 sticky top-0 z-20 grid grid-cols-3 gap-1 border-b p-2 backdrop-blur-sm lg:hidden"
-      >
-        {panels.map((panel) => {
-          const isActive = panel === activePanel;
+      <header className="border-border-subtle bg-background-app/95 sticky top-0 z-30 shrink-0 border-b px-3 py-3 backdrop-blur-sm sm:px-4">
+        <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <p className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.16em] uppercase">
+              {labels.canvas}
+            </p>
+            <h1 className="mt-0.5 truncate text-lg font-semibold tracking-tight">
+              {displayedComponentName}
+            </h1>
+          </div>
 
-          return (
-            <button
-              key={panel}
-              id={`components-workspace-tab-${panel}`}
-              type="button"
-              role="tab"
-              aria-selected={isActive}
-              aria-controls={`components-workspace-panel-${panel}`}
-              onClick={() => setActivePanel(panel)}
-              className={[
-                'min-h-9 min-w-0 truncate rounded-md px-2 text-xs font-semibold transition',
-                isActive
-                  ? 'bg-content-primary text-background-app'
-                  : 'text-content-secondary hover:bg-background-subtle hover:text-content-primary',
-              ].join(' ')}
-            >
-              {labels[panel]}
-            </button>
-          );
-        })}
-      </div>
+          <div className="min-w-0 sm:max-w-[24rem] sm:shrink-0">
+            {saveAction}
+          </div>
+        </div>
 
-      <div className="min-h-0 flex-1 lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] xl:h-full xl:grid-cols-[16rem_minmax(0,48rem)_minmax(24rem,1fr)] xl:overflow-hidden">
+        <div className="mt-3 grid grid-cols-2 gap-2 xl:hidden">
+          <Button
+            type="button"
+            size="sm"
+            variant="secondary"
+            aria-controls="components-workspace-navigation"
+            aria-expanded={activeAuxiliaryPanel === 'navigation'}
+            onClick={() => openAuxiliaryPanel('navigation')}
+            className="lg:hidden"
+          >
+            {labels.navigation}
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="secondary"
+            aria-controls="components-workspace-inspector"
+            aria-expanded={activeAuxiliaryPanel === 'inspector'}
+            onClick={() => openAuxiliaryPanel('inspector')}
+            className="col-start-2"
+          >
+            {labels.inspector}
+          </Button>
+        </div>
+      </header>
+
+      <div className="relative min-h-0 flex-1 lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] xl:grid-cols-[16rem_minmax(0,1fr)_22rem] xl:overflow-hidden">
         <aside
-          id="components-workspace-panel-registry"
-          role="tabpanel"
-          aria-labelledby="components-workspace-tab-registry"
+          ref={navigationPanelRef}
+          id="components-workspace-navigation"
+          aria-label={labels.navigation}
+          role={
+            activeAuxiliaryPanel === 'navigation' ? 'dialog' : undefined
+          }
+          aria-modal={
+            activeAuxiliaryPanel === 'navigation' ? true : undefined
+          }
           className={[
-            activePanel === 'registry' ? 'block' : 'hidden',
-            'border-border-subtle min-h-0 min-w-0 border-b lg:row-span-2 lg:block lg:border-r lg:border-b-0 xl:row-span-1 xl:h-full xl:overflow-y-auto',
+            activeAuxiliaryPanel === 'navigation'
+              ? 'bg-background-app fixed inset-0 z-50 block overflow-y-auto'
+              : 'hidden',
+            'border-border-subtle min-h-0 min-w-0 lg:static lg:z-auto lg:block lg:h-full lg:overflow-y-auto lg:border-r',
           ].join(' ')}
         >
-          {registry}
+          <div className="border-border-subtle bg-background-app sticky top-0 z-10 border-b p-3 lg:hidden">
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              data-workspace-panel-close
+              onClick={closeAuxiliaryPanel}
+            >
+              ← {labels.canvas}
+            </Button>
+          </div>
+          {navigation}
         </aside>
 
         <main
-          id="components-workspace-panel-editor"
-          role="tabpanel"
-          aria-labelledby="components-workspace-tab-editor"
-          data-save-context-scroll-container={editorScrollContextId}
-          className={[
-            activePanel === 'editor' ? 'block' : 'hidden',
-            'min-h-0 min-w-0 lg:col-start-2 lg:block xl:col-start-auto xl:overflow-y-auto',
-          ].join(' ')}
+          aria-label={labels.canvas}
+          className="bg-background-sunken min-h-0 min-w-0 lg:col-start-2 lg:h-full lg:overflow-y-auto xl:col-start-auto"
         >
-          {editor}
+          {canvas}
         </main>
 
+        {activeAuxiliaryPanel === 'inspector' ? (
+          <button
+            type="button"
+            aria-label={labels.canvas}
+            onClick={closeAuxiliaryPanel}
+            className="bg-overlay-scrim fixed inset-0 z-40 hidden cursor-default sm:block xl:hidden"
+          />
+        ) : null}
+
         <aside
-          id="components-workspace-panel-preview"
-          role="tabpanel"
-          aria-labelledby="components-workspace-tab-preview"
+          ref={inspectorPanelRef}
+          id="components-workspace-inspector"
+          aria-label={labels.inspector}
+          role={activeAuxiliaryPanel === 'inspector' ? 'dialog' : undefined}
+          aria-modal={activeAuxiliaryPanel === 'inspector' ? true : undefined}
+          data-save-context-scroll-container={inspectorScrollContextId}
           className={[
-            activePanel === 'preview' ? 'grid' : 'hidden',
-            'border-border-subtle bg-background-sunken min-h-0 min-w-0 content-start gap-6 border-t lg:col-start-2 lg:grid xl:col-start-auto xl:h-full xl:overflow-y-auto xl:border-t-0 xl:border-l',
+            activeAuxiliaryPanel === 'inspector'
+              ? 'bg-background-app fixed inset-0 z-50 block overflow-y-auto sm:inset-y-0 sm:right-0 sm:left-auto sm:w-[min(42rem,calc(100%-2rem))] sm:shadow-2xl'
+              : 'hidden',
+            'border-border-subtle min-h-0 min-w-0 xl:static xl:z-auto xl:block xl:h-full xl:w-auto xl:overflow-y-auto xl:border-l xl:shadow-none',
           ].join(' ')}
         >
-          {preview}
+          <div className="border-border-subtle bg-background-app sticky top-0 z-20 border-b p-3 xl:hidden">
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              data-workspace-panel-close
+              onClick={closeAuxiliaryPanel}
+            >
+              ← {labels.canvas}
+            </Button>
+          </div>
+          {inspector}
         </aside>
       </div>
     </div>

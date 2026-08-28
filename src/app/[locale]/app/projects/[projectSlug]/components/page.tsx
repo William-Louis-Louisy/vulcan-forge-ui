@@ -25,6 +25,7 @@ import { filterComponentRegistryItems } from '@/features/components/components-r
 import { ComponentFoundationsPreviewShell } from '@/features/components/ComponentFoundationsPreview';
 import { ComponentContractPreviewProvider } from '@/features/components/ComponentContractPreviewContext';
 import { ComponentContractWorkspaceProvider } from '@/features/components/ComponentContractWorkspaceContext';
+import { ComponentWorkspaceSaveAction } from '@/features/components/ComponentWorkspaceSaveAction';
 
 type ComponentsRegistryPageProps = {
   params: Promise<{
@@ -116,6 +117,23 @@ export default async function ComponentsRegistryPage({
       unexpected: t('list.create.errors.unexpected'),
     },
   };
+  const workspaceSaveLabels = {
+    action: t('editor.save.action'),
+    saving: t('editor.save.saving'),
+    saved: t('editor.save.saved'),
+    unsaved: t('editor.save.unsaved'),
+    invalid: t('editor.save.invalid'),
+    errors: {
+      unauthorized: t('editor.save.errors.unauthorized'),
+      projectNotFound: t('editor.save.errors.projectNotFound'),
+      componentContractNotFound: t(
+        'editor.save.errors.componentContractNotFound',
+      ),
+      invalidPayload: t('editor.save.errors.invalidPayload'),
+      invalidContract: t('editor.save.errors.invalidContract'),
+      unexpected: t('editor.save.errors.unexpected'),
+    },
+  };
 
   return (
     <section className="flex min-h-0 flex-col xl:absolute xl:inset-0 xl:h-auto xl:overflow-hidden">
@@ -137,12 +155,13 @@ export default async function ComponentsRegistryPage({
           >
             <ComponentResponsiveWorkspace
               labels={{
-                registry: t('list.title'),
-                editor: t('editor.title'),
-                preview: t('foundationsPreview.title'),
+                navigation: t('list.title'),
+                canvas: t('foundationsPreview.title'),
+                inspector: t('editor.title'),
               }}
-              editorScrollContextId={`component-contract:${pageData.project.slug}:${selectedComponent.type}`}
-              registry={
+              componentName={selectedComponent.name}
+              inspectorScrollContextId={`component-contract:${pageData.project.slug}:${selectedComponent.type}`}
+              navigation={
                 <ComponentList
                   t={t}
                   locale={locale}
@@ -153,16 +172,7 @@ export default async function ComponentsRegistryPage({
                   availableComponentTypes={availableComponentTypes}
                 />
               }
-              editor={
-                <ComponentDetails
-                  t={t}
-                  locale={locale}
-                  component={selectedComponent}
-                  projectSlug={pageData.project.slug}
-                  tokenOptions={componentTokenOptions}
-                />
-              }
-              preview={
+              canvas={
                 <>
                   <ComponentFoundationsPreviewShell
                     locale={locale}
@@ -175,6 +185,22 @@ export default async function ComponentsRegistryPage({
                     component={selectedComponent}
                   />
                 </>
+              }
+              inspector={
+                <ComponentDetails
+                  t={t}
+                  locale={locale}
+                  component={selectedComponent}
+                  projectSlug={pageData.project.slug}
+                  tokenOptions={componentTokenOptions}
+                />
+              }
+              saveAction={
+                <ComponentWorkspaceSaveAction
+                  locale={locale}
+                  projectSlug={pageData.project.slug}
+                  labels={workspaceSaveLabels}
+                />
               }
             />
           </ComponentContractWorkspaceProvider>
