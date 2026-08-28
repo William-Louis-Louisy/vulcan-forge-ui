@@ -44,9 +44,15 @@ const contract: ComponentContract = {
   },
   status: 'ready',
   anatomy: ['root'],
-  variants: [],
-  sizes: [],
-  states: [],
+  variants: [
+    { key: 'primary', label: { en: 'Primary' } },
+    { key: 'secondary', label: { en: 'Secondary' } },
+  ],
+  sizes: [
+    { key: 'sm', label: { en: 'Small' } },
+    { key: 'lg', label: { en: 'Large' } },
+  ],
+  states: [{ key: 'loading', label: { en: 'Loading' } }],
   tokenBindings: [],
   accessibility: [],
   forbiddenPatterns: [],
@@ -64,6 +70,15 @@ function WorkspaceProbe() {
       <span data-testid="canvas-view">{workspace.canvasView}</span>
       <span data-testid="selection-kind">
         {workspace.authoringSelection.kind}
+      </span>
+      <span data-testid="preview-variant">
+        {workspace.resolvedPreviewConfiguration.variantKey}
+      </span>
+      <span data-testid="preview-size">
+        {workspace.resolvedPreviewConfiguration.sizeKey}
+      </span>
+      <span data-testid="preview-state">
+        {workspace.resolvedPreviewConfiguration.stateKey || 'base'}
       </span>
       <button
         type="button"
@@ -90,6 +105,9 @@ function WorkspaceProbe() {
       <button type="button" onClick={() => workspace.setCanvasView('anatomy')}>
         Show anatomy
       </button>
+      <button type="button" onClick={() => workspace.setCanvasView('matrix')}>
+        Show matrix
+      </button>
       <button
         type="button"
         onClick={() => {
@@ -106,6 +124,26 @@ function WorkspaceProbe() {
         }}
       >
         Select anatomy part
+      </button>
+      <button
+        type="button"
+        onClick={() => {
+          const secondaryVariant = workspace.draft.variants[1];
+          const largeSize = workspace.draft.sizes[1];
+          const loadingState = workspace.draft.states[0];
+
+          if (!secondaryVariant || !largeSize || !loadingState) {
+            return;
+          }
+
+          workspace.setPreviewConfiguration({
+            variantDraftId: secondaryVariant.draftId,
+            sizeDraftId: largeSize.draftId,
+            stateDraftId: loadingState.draftId,
+          });
+        }}
+      >
+        Change preview configuration
       </button>
     </>
   );
@@ -166,28 +204,38 @@ describe('ComponentContractWorkspaceProvider', () => {
     );
   });
 
-  it('keeps canvas view and authoring selection as independent transient state', async () => {
+  it('keeps canvas view, authoring selection and preview configuration independent', async () => {
     const user = userEvent.setup();
 
     renderWorkspace();
 
-    expect(screen.getByTestId('canvas-view')).toHaveTextContent('preview');
+    expect(screen.getByTestId('canvas-view')).toHaveTextContent('instance');
     expect(screen.getByTestId('selection-kind')).toHaveTextContent('component');
+    expect(screen.getByTestId('preview-variant')).toHaveTextContent('primary');
+    expect(screen.getByTestId('preview-size')).toHaveTextContent('sm');
+    expect(screen.getByTestId('preview-state')).toHaveTextContent('base');
+
+    await user.click(
+      screen.getByRole('button', { name: 'Change preview configuration' }),
+    );
+
+    expect(screen.getByTestId('preview-variant')).toHaveTextContent('secondary');
+    expect(screen.getByTestId('preview-size')).toHaveTextContent('lg');
+    expect(screen.getByTestId('preview-state')).toHaveTextContent('loading');
+    expect(screen.getByTestId('selection-kind')).toHaveTextContent('component');
+    expect(screen.getByTestId('canvas-view')).toHaveTextContent('instance');
 
     await user.click(
       screen.getByRole('button', { name: 'Select anatomy part' }),
     );
+    await user.click(screen.getByRole('button', { name: 'Show matrix' }));
 
     expect(screen.getByTestId('selection-kind')).toHaveTextContent(
       'anatomyPart',
     );
-    expect(screen.getByTestId('canvas-view')).toHaveTextContent('preview');
-
-    await user.click(screen.getByRole('button', { name: 'Show anatomy' }));
-
-    expect(screen.getByTestId('canvas-view')).toHaveTextContent('anatomy');
-    expect(screen.getByTestId('selection-kind')).toHaveTextContent(
-      'anatomyPart',
-    );
+    expect(screen.getByTestId('canvas-view')).toHaveTextContent('matrix');
+    expect(screen.getByTestId('preview-variant')).toHaveTextContent('secondary');
+    expect(screen.getByTestId('preview-size')).toHaveTextContent('lg');
+    expect(screen.getByTestId('preview-state')).toHaveTextContent('loading');
   });
 });
