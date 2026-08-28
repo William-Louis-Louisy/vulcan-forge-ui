@@ -521,7 +521,7 @@ describe('ComponentContractEditor', () => {
     await user.click(tokenPathSelect);
 
     expect(
-      screen.getByRole('option', { name: 'color.background.default' }),
+      screen.getByRole('option', { name: 'color.background.default Color' }),
     ).toBeInTheDocument();
     expect(
       screen.queryByRole('option', { name: 'radius.md' }),
