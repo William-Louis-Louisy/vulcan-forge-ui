@@ -15,6 +15,17 @@ export type ResolvedComponentWorkspacePreviewConfiguration = {
   stateKey: string;
 };
 
+export type ComponentWorkspacePreviewAxisDefinition = {
+  draftId: string;
+  key: string;
+};
+
+export type ComponentWorkspacePreviewAxes = {
+  variants: ComponentWorkspacePreviewAxisDefinition[];
+  sizes: ComponentWorkspacePreviewAxisDefinition[];
+  states: ComponentWorkspacePreviewAxisDefinition[];
+};
+
 const fallbackVariantKey = 'default';
 const fallbackSizeKey = 'md';
 
@@ -25,6 +36,16 @@ export function createInitialComponentWorkspacePreviewConfiguration(
     variantDraftId: draft.variants[0]?.draftId ?? null,
     sizeDraftId: draft.sizes[0]?.draftId ?? null,
     stateDraftId: null,
+  };
+}
+
+export function createComponentWorkspacePreviewAxes(
+  draft: ComponentContractEditorDraft,
+): ComponentWorkspacePreviewAxes {
+  return {
+    variants: createPreviewAxis(draft.variants),
+    sizes: createPreviewAxis(draft.sizes),
+    states: createPreviewAxis(draft.states),
   };
 }
 
@@ -55,4 +76,18 @@ export function resolveComponentWorkspacePreviewConfiguration(
     stateDraftId: state?.draftId ?? null,
     stateKey: state?.key.trim() || '',
   };
+}
+
+function createPreviewAxis(
+  items: Array<{
+    draftId: string;
+    key: string;
+  }>,
+): ComponentWorkspacePreviewAxisDefinition[] {
+  return items
+    .filter((item) => item.key.trim().length > 0)
+    .map((item) => ({
+      draftId: item.draftId,
+      key: item.key.trim(),
+    }));
 }
