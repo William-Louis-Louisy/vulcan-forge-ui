@@ -16,6 +16,7 @@ import {
 } from './ComponentContractWorkspaceContext';
 import { ComponentContractPreviewProvider } from './ComponentContractPreviewContext';
 import { ComponentWorkspaceSaveAction } from './ComponentWorkspaceSaveAction';
+import { ComponentAnatomyInspector } from './ComponentAnatomyInspector';
 
 export type { ComponentContractEditorLabels } from './ComponentContractEditorSections';
 
@@ -72,6 +73,7 @@ function ComponentContractEditorContent({
     activeLocale,
     setActiveLocale,
     hasUnsavedChanges,
+    authoringSelection,
   } = useComponentContractWorkspace();
   const pendingCollectionFocusRef = useRef<PendingCollectionFocus | null>(null);
 
@@ -158,14 +160,18 @@ function ComponentContractEditorContent({
         </div>
       ) : null}
 
-      <ComponentContractEditorSections
-        labels={labels}
-        draft={draft}
-        setDraft={setDraftPreservingCollectionFocus}
-        activeLocale={activeLocale}
-        setActiveLocale={setActiveLocale}
-        tokenOptions={tokenOptions}
-      />
+      {authoringSelection.kind === 'anatomyPart' ? (
+        <ComponentAnatomyInspector labels={labels} />
+      ) : (
+        <ComponentContractEditorSections
+          labels={labels}
+          draft={draft}
+          setDraft={setDraftPreservingCollectionFocus}
+          activeLocale={activeLocale}
+          setActiveLocale={setActiveLocale}
+          tokenOptions={tokenOptions}
+        />
+      )}
     </section>
   );
 }
