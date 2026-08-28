@@ -37,6 +37,12 @@ type ComponentContractWorkspaceSaveStatus =
   | 'saving'
   | 'error';
 
+export type ComponentWorkspaceCanvasView = 'preview' | 'anatomy';
+
+export type ComponentWorkspaceAuthoringSelection =
+  | { kind: 'component' }
+  | { kind: 'anatomyPart'; draftId: string };
+
 type ComponentContractWorkspaceContextValue = {
   draft: ComponentContractEditorDraft;
   setDraft: (draft: ComponentContractEditorDraft) => void;
@@ -45,6 +51,10 @@ type ComponentContractWorkspaceContextValue = {
   previewContract: ComponentContract;
   activeLocale: ComponentContractWorkspaceLocale;
   setActiveLocale: (locale: ComponentContractWorkspaceLocale) => void;
+  canvasView: ComponentWorkspaceCanvasView;
+  setCanvasView: (view: ComponentWorkspaceCanvasView) => void;
+  authoringSelection: ComponentWorkspaceAuthoringSelection;
+  setAuthoringSelection: (selection: ComponentWorkspaceAuthoringSelection) => void;
   actionState: UpdateComponentContractActionState;
   formAction: (payload: FormData) => void;
   isPending: boolean;
@@ -84,6 +94,10 @@ export function ComponentContractWorkspaceProvider({
     useState<ComponentContractEditorDraft>(initialDraft);
   const [activeLocale, setActiveLocale] =
     useState<ComponentContractWorkspaceLocale>(locale === 'fr' ? 'fr' : 'en');
+  const [canvasView, setCanvasView] =
+    useState<ComponentWorkspaceCanvasView>('preview');
+  const [authoringSelection, setAuthoringSelection] =
+    useState<ComponentWorkspaceAuthoringSelection>({ kind: 'component' });
   const lastRefreshedContractRef = useRef<string | null>(null);
 
   const setDraft = useCallback(
@@ -98,6 +112,20 @@ export function ComponentContractWorkspaceProvider({
     },
     [previewContext],
   );
+
+  useEffect(() => {
+    if (authoringSelection.kind !== 'anatomyPart') {
+      return;
+    }
+
+    const selectedPartStillExists = draft.anatomy.some(
+      (part) => part.draftId === authoringSelection.draftId,
+    );
+
+    if (!selectedPartStillExists) {
+      setAuthoringSelection({ kind: 'component' });
+    }
+  }, [authoringSelection, draft.anatomy]);
 
   const validation = useMemo(
     () => createComponentContractFromDraft(draft),
@@ -160,6 +188,10 @@ export function ComponentContractWorkspaceProvider({
       previewContract,
       activeLocale,
       setActiveLocale,
+      canvasView,
+      setCanvasView,
+      authoringSelection,
+      setAuthoringSelection,
       actionState,
       formAction,
       isPending,
@@ -172,6 +204,8 @@ export function ComponentContractWorkspaceProvider({
     [
       actionState,
       activeLocale,
+      authoringSelection,
+      canvasView,
       contractPayload,
       draft,
       formAction,
