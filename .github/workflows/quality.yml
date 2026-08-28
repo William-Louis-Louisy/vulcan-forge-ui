@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - refactor/architecture
+      - refactor/components-workspace-v2
   push:
     branches:
       - main
