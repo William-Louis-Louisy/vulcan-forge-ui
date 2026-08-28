@@ -25,9 +25,9 @@ export function ComponentDetails({
       <div className="mx-auto w-full max-w-3xl min-w-0">
         <header className="border-border-subtle flex min-w-0 flex-col gap-3 border-b pb-4 sm:flex-row sm:items-start sm:justify-between sm:pb-5">
           <div className="min-w-0">
-            <h1 className="truncate text-2xl font-semibold tracking-tight sm:text-[1.625rem]">
+            <h2 className="truncate text-2xl font-semibold tracking-tight sm:text-[1.625rem]">
               {component.name}
-            </h1>
+            </h2>
             <p className="text-content-tertiary mt-1.5 truncate font-mono text-xs">
               {component.type} · {t(`categories.${component.category}`)}
             </p>

@@ -170,11 +170,9 @@ export function ComponentResponsiveWorkspace({
         </main>
 
         {activeAuxiliaryPanel === 'inspector' ? (
-          <button
-            type="button"
-            aria-label={labels.canvas}
-            onClick={closeAuxiliaryPanel}
-            className="bg-overlay-scrim fixed inset-0 z-40 hidden cursor-default sm:block xl:hidden"
+          <div
+            aria-hidden="true"
+            className="bg-overlay-scrim fixed inset-0 z-40 hidden sm:block xl:hidden"
           />
         ) : null}
 
