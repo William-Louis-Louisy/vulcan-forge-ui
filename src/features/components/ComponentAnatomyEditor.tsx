@@ -77,8 +77,8 @@ export function ComponentAnatomyEditor({
           <div className="divide-border-subtle min-w-0 divide-y">
             {draft.anatomy.map((part, index) => (
               <AnatomyPartRow
-                key={`${part.key}-${index}`}
-                rowId={`anatomy-part-${index}`}
+                key={part.draftId}
+                rowId={`anatomy-part-${part.draftId}`}
                 labels={labels}
                 activeLocale={activeLocale}
                 part={part}

@@ -43,7 +43,7 @@ const contract: ComponentContract = {
     en: 'Triggers an action.',
   },
   status: 'ready',
-  anatomy: [],
+  anatomy: ['root'],
   variants: [],
   sizes: [],
   states: [],
@@ -60,6 +60,10 @@ function WorkspaceProbe() {
       <span data-testid="validation-status">{workspace.validation.status}</span>
       <span data-testid="unsaved-status">
         {String(workspace.hasUnsavedChanges)}
+      </span>
+      <span data-testid="canvas-view">{workspace.canvasView}</span>
+      <span data-testid="selection-kind">
+        {workspace.authoringSelection.kind}
       </span>
       <button
         type="button"
@@ -83,6 +87,26 @@ function WorkspaceProbe() {
       >
         Publish invalid draft
       </button>
+      <button type="button" onClick={() => workspace.setCanvasView('anatomy')}>
+        Show anatomy
+      </button>
+      <button
+        type="button"
+        onClick={() => {
+          const firstPart = workspace.draft.anatomy[0];
+
+          if (!firstPart) {
+            return;
+          }
+
+          workspace.setAuthoringSelection({
+            kind: 'anatomyPart',
+            draftId: firstPart.draftId,
+          });
+        }}
+      >
+        Select anatomy part
+      </button>
     </>
   );
 }
@@ -93,22 +117,26 @@ function PreviewProbe() {
   return <span data-testid="preview-name">{preview?.contract.name}</span>;
 }
 
+function renderWorkspace() {
+  return render(
+    <ComponentContractPreviewProvider initialContract={contract}>
+      <ComponentContractWorkspaceProvider
+        locale="en"
+        projectSlug="demo"
+        contract={contract}
+      >
+        <WorkspaceProbe />
+        <PreviewProbe />
+      </ComponentContractWorkspaceProvider>
+    </ComponentContractPreviewProvider>,
+  );
+}
+
 describe('ComponentContractWorkspaceProvider', () => {
   it('keeps the last valid preview while sharing the draft', async () => {
     const user = userEvent.setup();
 
-    render(
-      <ComponentContractPreviewProvider initialContract={contract}>
-        <ComponentContractWorkspaceProvider
-          locale="en"
-          projectSlug="demo"
-          contract={contract}
-        >
-          <WorkspaceProbe />
-          <PreviewProbe />
-        </ComponentContractWorkspaceProvider>
-      </ComponentContractPreviewProvider>,
-    );
+    renderWorkspace();
 
     expect(screen.getByTestId('preview-name')).toHaveTextContent('Button');
     expect(screen.getByTestId('validation-status')).toHaveTextContent(
@@ -135,6 +163,31 @@ describe('ComponentContractWorkspaceProvider', () => {
     expect(screen.getByTestId('validation-status')).toHaveTextContent('error');
     expect(screen.getByTestId('preview-name')).toHaveTextContent(
       'Primary Button',
+    );
+  });
+
+  it('keeps canvas view and authoring selection as independent transient state', async () => {
+    const user = userEvent.setup();
+
+    renderWorkspace();
+
+    expect(screen.getByTestId('canvas-view')).toHaveTextContent('preview');
+    expect(screen.getByTestId('selection-kind')).toHaveTextContent('component');
+
+    await user.click(
+      screen.getByRole('button', { name: 'Select anatomy part' }),
+    );
+
+    expect(screen.getByTestId('selection-kind')).toHaveTextContent(
+      'anatomyPart',
+    );
+    expect(screen.getByTestId('canvas-view')).toHaveTextContent('preview');
+
+    await user.click(screen.getByRole('button', { name: 'Show anatomy' }));
+
+    expect(screen.getByTestId('canvas-view')).toHaveTextContent('anatomy');
+    expect(screen.getByTestId('selection-kind')).toHaveTextContent(
+      'anatomyPart',
     );
   });
 });

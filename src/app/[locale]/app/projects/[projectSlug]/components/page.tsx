@@ -26,6 +26,7 @@ import { ComponentFoundationsPreviewShell } from '@/features/components/Componen
 import { ComponentContractPreviewProvider } from '@/features/components/ComponentContractPreviewContext';
 import { ComponentContractWorkspaceProvider } from '@/features/components/ComponentContractWorkspaceContext';
 import { ComponentWorkspaceSaveAction } from '@/features/components/ComponentWorkspaceSaveAction';
+import { ComponentWorkspaceCanvas } from '@/features/components/ComponentWorkspaceCanvas';
 
 type ComponentsRegistryPageProps = {
   params: Promise<{
@@ -134,6 +135,28 @@ export default async function ComponentsRegistryPage({
       unexpected: t('editor.save.errors.unexpected'),
     },
   };
+  const workspaceCanvasLabels = {
+    modes: {
+      ariaLabel: t('workspace.canvasModes.ariaLabel'),
+      preview: t('workspace.canvasModes.preview'),
+      anatomy: t('workspace.canvasModes.anatomy'),
+    },
+    anatomy: {
+      title: t('editor.anatomy.title'),
+      description: t('editor.anatomy.description'),
+      add: t('editor.anatomy.add'),
+      component: t('workspace.anatomy.component'),
+      flatStructure: t('workspace.anatomy.flatStructure'),
+      empty: t('workspace.anatomy.empty'),
+      selectPart: t('workspace.anatomy.selectPart'),
+      untitled: t('workspace.anatomy.untitled'),
+      requirements: {
+        required: t('editor.anatomy.requirements.required'),
+        optional: t('editor.anatomy.requirements.optional'),
+        derived: t('editor.anatomy.requirements.derived'),
+      },
+    },
+  };
 
   return (
     <section className="flex min-h-0 flex-col xl:absolute xl:inset-0 xl:h-auto xl:overflow-hidden">
@@ -156,7 +179,7 @@ export default async function ComponentsRegistryPage({
             <ComponentResponsiveWorkspace
               labels={{
                 navigation: t('list.title'),
-                canvas: t('foundationsPreview.title'),
+                canvas: t('workspace.canvasTitle'),
                 inspector: t('editor.title'),
               }}
               componentName={selectedComponent.name}
@@ -173,18 +196,23 @@ export default async function ComponentsRegistryPage({
                 />
               }
               canvas={
-                <>
-                  <ComponentFoundationsPreviewShell
-                    locale={locale}
-                    component={selectedComponent}
-                    rawTokenSets={pageData.tokenSets}
-                  />
-                  <ComponentAiContractShell
-                    t={t}
-                    locale={locale}
-                    component={selectedComponent}
-                  />
-                </>
+                <ComponentWorkspaceCanvas
+                  labels={workspaceCanvasLabels}
+                  preview={
+                    <>
+                      <ComponentFoundationsPreviewShell
+                        locale={locale}
+                        component={selectedComponent}
+                        rawTokenSets={pageData.tokenSets}
+                      />
+                      <ComponentAiContractShell
+                        t={t}
+                        locale={locale}
+                        component={selectedComponent}
+                      />
+                    </>
+                  }
+                />
               }
               inspector={
                 <ComponentDetails

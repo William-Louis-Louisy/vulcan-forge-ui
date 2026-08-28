@@ -11,6 +11,7 @@ export type LocalizedTextDraft = {
 };
 
 export type ComponentAnatomyPartDraft = {
+  draftId: string;
   key: string;
   label: LocalizedTextDraft;
   requirement: ComponentAnatomyRequirement;
@@ -69,7 +70,12 @@ export type ComponentContractDraftValidationResult =
 
 let draftItemSequence = 0;
 
-type DraftItemPrefix = 'variant' | 'size' | 'state' | 'token-binding';
+type DraftItemPrefix =
+  | 'anatomy'
+  | 'variant'
+  | 'size'
+  | 'state'
+  | 'token-binding';
 
 function createDraftItemId(prefix: DraftItemPrefix) {
   draftItemSequence += 1;
@@ -93,9 +99,11 @@ function normalizeLocalizedText(value: {
 
 function normalizeAnatomyPart(
   part: ComponentContract['anatomy'][number],
+  index: number,
 ): ComponentAnatomyPartDraft {
   if (typeof part === 'string') {
     return {
+      draftId: createExistingDraftItemId('anatomy', index),
       key: part,
       label: {
         en: part,
@@ -106,6 +114,7 @@ function normalizeAnatomyPart(
   }
 
   return {
+    draftId: createExistingDraftItemId('anatomy', index),
     key: part.key,
     label: normalizeLocalizedText(part.label),
     requirement: part.requirement,
@@ -169,6 +178,11 @@ export function createComponentContractDraftFingerprint(
 ): string {
   return JSON.stringify({
     ...draft,
+    anatomy: draft.anatomy.map(({ key, label, requirement }) => ({
+      key,
+      label,
+      requirement,
+    })),
     variants: draft.variants.map(({ key, label, description }) => ({
       key,
       label,
@@ -273,6 +287,7 @@ export function createComponentContractFromDraft(
 
 export function createEmptyAnatomyPartDraft(): ComponentAnatomyPartDraft {
   return {
+    draftId: createDraftItemId('anatomy'),
     key: '',
     label: {
       en: '',
