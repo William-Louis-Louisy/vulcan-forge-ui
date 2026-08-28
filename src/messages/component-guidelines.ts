@@ -95,6 +95,7 @@ export const componentGuidelineMessages = {
           axis: 'intent',
         },
         visualTokens: {
+          componentScope: 'Component',
           customRole: 'Custom role (advanced)',
           customRoleDescription:
             'Keep an arbitrary binding key for an unsupported or external preview consumer.',
@@ -102,6 +103,27 @@ export const componentGuidelineMessages = {
           customRolePlaceholder: 'e.g. fontWeight',
           description:
             'Choose a supported preview role to enforce a compatible token type, or use an advanced custom role when the contract needs an arbitrary binding key.',
+          diagnostics: {
+            actualType: 'Token type',
+            deprecated: 'The selected token is deprecated.',
+            expectedType: 'Expected type',
+            missing:
+              'The selected token path does not exist in the current Token Sets.',
+            resolved: 'The selected token resolves successfully.',
+            title: 'Binding diagnostics',
+            typeMismatch:
+              'The selected token exists, but its type does not match this binding.',
+            unassigned: 'Choose a token to complete this binding.',
+            unresolved:
+              'The selected token contains a reference that cannot currently be resolved.',
+          },
+          inspectBinding: 'Inspect binding',
+          previewEffect: 'Preview effect',
+          previewEffectActive:
+            'This role is understood by the current component renderer.',
+          previewEffectUnavailable:
+            'This binding remains part of the contract, but the current renderer does not apply it visually.',
+          resolvedValue: 'Resolved value',
           role: 'Preview role',
           roleAlreadyUsed: 'Already used in this contract',
           roles: {
@@ -115,7 +137,9 @@ export const componentGuidelineMessages = {
             paddingY: 'Vertical padding',
             radius: 'Radius',
           },
+          scope: 'Scope',
           selectRole: 'Select a preview role',
+          tokenStatus: 'Token status',
           tokenTypes: {
             color: 'Color',
             spacing: 'Spacing',
@@ -139,6 +163,8 @@ export const componentGuidelineMessages = {
           'No visual token binding is defined for this component yet.',
         state: 'State',
         title: 'Visual matrix',
+        unrenderedBindingsNotice:
+          'Stored bindings without a current renderer effect: {keys}. They remain part of the component contract.',
       },
       list: {
         create: {
@@ -296,6 +322,7 @@ export const componentGuidelineMessages = {
           axis: 'intention',
         },
         visualTokens: {
+          componentScope: 'Composant',
           customRole: 'Rôle personnalisé (avancé)',
           customRoleDescription:
             'Conservez une clé de binding arbitraire pour un consommateur de preview non pris en charge ou externe.',
@@ -303,6 +330,27 @@ export const componentGuidelineMessages = {
           customRolePlaceholder: 'ex. fontWeight',
           description:
             'Choisissez un rôle de preview pris en charge pour imposer un type de token compatible, ou utilisez un rôle personnalisé avancé lorsque le contrat nécessite une clé de binding arbitraire.',
+          diagnostics: {
+            actualType: 'Type du token',
+            deprecated: 'Le token sélectionné est déprécié.',
+            expectedType: 'Type attendu',
+            missing:
+              'Le chemin de token sélectionné n’existe pas dans les Token Sets actuels.',
+            resolved: 'Le token sélectionné est résolu correctement.',
+            title: 'Diagnostic du binding',
+            typeMismatch:
+              'Le token sélectionné existe, mais son type ne correspond pas à ce binding.',
+            unassigned: 'Sélectionnez un token pour compléter ce binding.',
+            unresolved:
+              'Le token sélectionné contient une référence qui ne peut pas être résolue actuellement.',
+          },
+          inspectBinding: 'Inspecter le binding',
+          previewEffect: 'Effet dans la preview',
+          previewEffectActive:
+            'Ce rôle est compris par le renderer actuel du composant.',
+          previewEffectUnavailable:
+            'Ce binding reste enregistré dans le contrat, mais le renderer actuel ne l’applique pas visuellement.',
+          resolvedValue: 'Valeur résolue',
           role: 'Rôle de preview',
           roleAlreadyUsed: 'Déjà utilisé dans ce contrat',
           roles: {
@@ -316,7 +364,9 @@ export const componentGuidelineMessages = {
             paddingY: 'Espacement vertical',
             radius: 'Rayon',
           },
+          scope: 'Portée',
           selectRole: 'Sélectionner un rôle de preview',
+          tokenStatus: 'Statut du token',
           tokenTypes: {
             color: 'Couleur',
             spacing: 'Espacement',
@@ -340,6 +390,8 @@ export const componentGuidelineMessages = {
           'Aucun binding de token visuel n’est encore défini pour ce composant.',
         state: 'État',
         title: 'Matrice visuelle',
+        unrenderedBindingsNotice:
+          'Bindings enregistrés sans effet dans le renderer actuel : {keys}. Ils restent partie intégrante du contrat du composant.',
       },
       list: {
         create: {
