@@ -3,7 +3,6 @@ import type { ComponentTokenBindingDraft } from './component-contract-editor.uti
 import {
   componentPreviewStatusTones,
   normalizeComponentPreviewTokenRole,
-  type ComponentPreviewStatusTone,
   type ComponentPreviewTokenRole,
   type ComponentTokenOption,
 } from './component-token-bindings.utils';
@@ -70,9 +69,7 @@ export function isComponentTokenBindingRendered({
 
   const normalizedKey = key.trim().toLowerCase();
 
-  return componentPreviewStatusTones.includes(
-    normalizedKey as ComponentPreviewStatusTone,
-  );
+  return componentPreviewStatusTones.some((tone) => tone === normalizedKey);
 }
 
 function getResolutionState(
