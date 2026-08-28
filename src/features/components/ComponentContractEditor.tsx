@@ -18,6 +18,7 @@ import { ComponentContractPreviewProvider } from './ComponentContractPreviewCont
 import { ComponentWorkspaceSaveAction } from './ComponentWorkspaceSaveAction';
 import { ComponentAnatomyInspector } from './ComponentAnatomyInspector';
 import { ComponentAxisDefinitionInspector } from './ComponentAxisDefinitionInspector';
+import { ComponentTokenBindingInspector } from './ComponentTokenBindingInspector';
 
 export type { ComponentContractEditorLabels } from './ComponentContractEditorSections';
 
@@ -75,6 +76,7 @@ function ComponentContractEditorContent({
     setActiveLocale,
     hasUnsavedChanges,
     authoringSelection,
+    setAuthoringSelection,
   } = useComponentContractWorkspace();
   const pendingCollectionFocusRef = useRef<PendingCollectionFocus | null>(null);
 
@@ -165,6 +167,11 @@ function ComponentContractEditorContent({
         <ComponentAnatomyInspector labels={labels} />
       ) : isAxisDefinitionSelection(authoringSelection.kind) ? (
         <ComponentAxisDefinitionInspector labels={labels} />
+      ) : authoringSelection.kind === 'tokenBinding' ? (
+        <ComponentTokenBindingInspector
+          labels={labels}
+          tokenOptions={tokenOptions}
+        />
       ) : (
         <ComponentContractEditorSections
           labels={labels}
@@ -173,6 +180,9 @@ function ComponentContractEditorContent({
           activeLocale={activeLocale}
           setActiveLocale={setActiveLocale}
           tokenOptions={tokenOptions}
+          onSelectTokenBinding={(draftId) =>
+            setAuthoringSelection({ kind: 'tokenBinding', draftId })
+          }
         />
       )}
     </section>
