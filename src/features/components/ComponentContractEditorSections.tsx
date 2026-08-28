@@ -12,17 +12,13 @@ import {
   type LocalizedTextDraft,
   type ComponentStateDraft,
   type ComponentVariantDraft,
-  type ComponentTokenBindingDraft,
   type ComponentContractEditorDraft,
   type ComponentAccessibilityRuleDraft,
 } from './component-contract-editor.utils';
 import type { CSSProperties, ReactNode } from 'react';
 import { ComponentAnatomyEditor } from './ComponentAnatomyEditor';
-import {
-  normalizeComponentPreviewTokenRole,
-  type ComponentTokenOption,
-} from './component-token-bindings.utils';
-import { ComponentPreviewRoleField } from './ComponentPreviewRoleField';
+import type { ComponentTokenOption } from './component-token-bindings.utils';
+import { getComponentTokenBindingInspectorState } from './component-token-binding-inspector.utils';
 import {
   getComponentPreviewTokenRoleType,
   getFirstAvailableComponentPreviewTokenRole,
@@ -132,6 +128,9 @@ export type ComponentContractEditorLabels = {
     title: string;
     description: string;
     add: string;
+    inspectBinding: string;
+    scope: string;
+    componentScope: string;
     role: string;
     selectRole: string;
     customRole: string;
@@ -153,6 +152,22 @@ export type ComponentContractEditorLabels = {
     tokenType: string;
     tokenPath: string;
     selectToken: string;
+    resolvedValue: string;
+    tokenStatus: string;
+    previewEffect: string;
+    previewEffectActive: string;
+    previewEffectUnavailable: string;
+    diagnostics: {
+      title: string;
+      unassigned: string;
+      missing: string;
+      typeMismatch: string;
+      unresolved: string;
+      deprecated: string;
+      resolved: string;
+      expectedType: string;
+      actualType: string;
+    };
     tokenTypes: {
       color: string;
       spacing: string;
@@ -172,6 +187,10 @@ type EditorProps = {
   tokenOptions: ComponentTokenOption[];
 };
 
+type ComponentContractEditorSectionsProps = EditorProps & {
+  onSelectTokenBinding: (draftId: string) => void;
+};
+
 export function ComponentContractEditorSections({
   labels,
   draft,
@@ -179,7 +198,8 @@ export function ComponentContractEditorSections({
   activeLocale,
   setActiveLocale,
   tokenOptions,
-}: EditorProps) {
+  onSelectTokenBinding,
+}: ComponentContractEditorSectionsProps) {
   return (
     <div className="grid min-w-0 gap-6">
       <MetadataEditor labels={labels} draft={draft} setDraft={setDraft} />
@@ -226,9 +246,9 @@ export function ComponentContractEditorSections({
       <VisualTokensSection
         labels={labels}
         draft={draft}
-        activeLocale={activeLocale}
         setDraft={setDraft}
         tokenOptions={tokenOptions}
+        onSelectTokenBinding={onSelectTokenBinding}
       />
     </div>
   );
@@ -795,10 +815,12 @@ function ForbiddenPatternsSection({
 function VisualTokensSection({
   labels,
   draft,
-  activeLocale,
   setDraft,
   tokenOptions,
-}: Omit<EditorProps, 'setActiveLocale'>) {
+  onSelectTokenBinding,
+}: Pick<EditorProps, 'labels' | 'draft' | 'setDraft' | 'tokenOptions'> & {
+  onSelectTokenBinding: (draftId: string) => void;
+}) {
   function addTokenBinding() {
     const emptyBinding = createEmptyTokenBindingDraft();
     const role = getFirstAvailableComponentPreviewTokenRole(
@@ -816,6 +838,7 @@ function VisualTokensSection({
       ...draft,
       tokenBindings: [...draft.tokenBindings, nextBinding],
     });
+    onSelectTokenBinding(nextBinding.draftId);
   }
 
   return (
@@ -828,187 +851,60 @@ function VisualTokensSection({
         </Button>
       }
     >
-      <div className="border-border-subtle min-w-0 rounded-md border">
-        {draft.tokenBindings.map((binding, index) => (
-          <TokenBindingRow
-            key={binding.draftId}
-            labels={labels}
-            activeLocale={activeLocale}
-            binding={binding}
-            bindings={draft.tokenBindings}
-            tokenOptions={tokenOptions}
-            onChange={(nextBinding) => {
-              const nextBindings = [...draft.tokenBindings];
-              nextBindings[index] = nextBinding;
-              setDraft({ ...draft, tokenBindings: nextBindings });
-            }}
-            onRemove={() =>
-              setDraft({
-                ...draft,
-                tokenBindings: draft.tokenBindings.filter(
-                  (_, itemIndex) => itemIndex !== index,
-                ),
-              })
-            }
-          />
-        ))}
+      {draft.tokenBindings.length > 0 ? (
+        <div className="grid min-w-0 gap-2">
+          {draft.tokenBindings.map((binding) => {
+            const inspectorState = getComponentTokenBindingInspectorState({
+              binding,
+              tokenOptions,
+              componentType: draft.type,
+            });
+            const roleLabel = inspectorState.previewRole
+              ? labels.visualTokens.roles[inspectorState.previewRole]
+              : binding.key.trim() || labels.visualTokens.customRole;
+            const diagnosticLabel =
+              labels.visualTokens.diagnostics[inspectorState.resolutionState];
+            const diagnosticClassName =
+              inspectorState.resolutionState === 'resolved'
+                ? 'text-action-success'
+                : inspectorState.resolutionState === 'unassigned'
+                  ? 'text-content-tertiary'
+                  : 'text-action-warning';
 
-        {draft.tokenBindings.length === 0 ? (
-          <p className="text-content-tertiary px-3 py-4 text-xs">
-            {labels.visualTokens.description}
-          </p>
-        ) : null}
-      </div>
+            return (
+              <button
+                key={binding.draftId}
+                type="button"
+                onClick={() => onSelectTokenBinding(binding.draftId)}
+                aria-label={`${labels.visualTokens.inspectBinding}: ${roleLabel}`}
+                className="border-border-subtle bg-surface-primary hover:border-border-default hover:bg-background-subtle grid min-w-0 gap-2 rounded-md border px-3 py-3 text-left transition"
+              >
+                <span className="flex min-w-0 items-center justify-between gap-3">
+                  <span className="text-content-primary min-w-0 truncate text-sm font-semibold">
+                    {roleLabel}
+                  </span>
+                  <span className="text-content-tertiary shrink-0 font-mono text-[0.6875rem]">
+                    {labels.visualTokens.tokenTypes[binding.tokenType]}
+                  </span>
+                </span>
+                <span className="flex min-w-0 items-center justify-between gap-3 text-[0.6875rem]">
+                  <span className="text-content-secondary min-w-0 truncate font-mono">
+                    {binding.tokenPath || labels.visualTokens.selectToken}
+                  </span>
+                  <span className={`${diagnosticClassName} shrink-0 font-semibold`}>
+                    {diagnosticLabel}
+                  </span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      ) : (
+        <p className="border-border-subtle bg-background-subtle text-content-tertiary rounded-md border px-3 py-4 text-xs leading-5">
+          {labels.visualTokens.description}
+        </p>
+      )}
     </EditorSection>
-  );
-}
-
-function TokenBindingRow({
-  labels,
-  activeLocale,
-  binding,
-  bindings,
-  tokenOptions,
-  onChange,
-  onRemove,
-}: {
-  labels: ComponentContractEditorLabels;
-  activeLocale: 'en' | 'fr';
-  binding: ComponentTokenBindingDraft;
-  bindings: ComponentTokenBindingDraft[];
-  tokenOptions: ComponentTokenOption[];
-  onChange: (binding: ComponentTokenBindingDraft) => void;
-  onRemove: () => void;
-}) {
-  const previewRole = normalizeComponentPreviewTokenRole(binding.key);
-  const constrainedTokenType = previewRole
-    ? getComponentPreviewTokenRoleType(previewRole)
-    : null;
-  const hasCompatibleConstrainedType =
-    constrainedTokenType === null || binding.tokenType === constrainedTokenType;
-  const tokenTypeOptions = constrainedTokenType
-    ? [
-        {
-          value: constrainedTokenType,
-          label: labels.visualTokens.tokenTypes[constrainedTokenType],
-        },
-      ]
-    : [
-        {
-          value: 'color' as const,
-          label: labels.visualTokens.tokenTypes.color,
-        },
-        {
-          value: 'spacing' as const,
-          label: labels.visualTokens.tokenTypes.spacing,
-        },
-        {
-          value: 'radius' as const,
-          label: labels.visualTokens.tokenTypes.radius,
-        },
-        {
-          value: 'typography' as const,
-          label: labels.visualTokens.tokenTypes.typography,
-        },
-        {
-          value: 'motion' as const,
-          label: labels.visualTokens.tokenTypes.motion,
-        },
-      ];
-  const tokenOptionsForType = tokenOptions.filter(
-    (tokenOption) => tokenOption.type === binding.tokenType,
-  );
-  const hasCurrentTokenPath = tokenOptionsForType.some(
-    (tokenOption) => tokenOption.path === binding.tokenPath,
-  );
-  const descriptionLabel =
-    activeLocale === 'en'
-      ? labels.fields.descriptionEn
-      : labels.fields.descriptionFr;
-
-  return (
-    <div className="border-border-subtle min-w-0 border-b px-3 py-3 last:border-b-0">
-      <div className="grid min-w-0 gap-2 md:grid-cols-[minmax(9rem,1fr)_8rem_minmax(10rem,1.4fr)_2rem] md:items-end">
-        <ComponentPreviewRoleField
-          labels={labels.visualTokens}
-          binding={binding}
-          bindings={bindings}
-          onChange={onChange}
-        />
-        <div className="grid min-w-0 gap-1.5">
-          <label
-            htmlFor={`token-binding-type-${binding.draftId}`}
-            className="text-content-secondary text-xs font-semibold"
-          >
-            {labels.visualTokens.tokenType}
-          </label>
-          <Select<ComponentTokenBindingDraft['tokenType']>
-            id={`token-binding-type-${binding.draftId}`}
-            value={binding.tokenType}
-            options={tokenTypeOptions}
-            onValueChange={(tokenType) =>
-              onChange({ ...binding, tokenType, tokenPath: '' })
-            }
-            placeholder={labels.visualTokens.tokenType}
-            disabled={
-              constrainedTokenType !== null && hasCompatibleConstrainedType
-            }
-            invalid={!hasCompatibleConstrainedType}
-            size="sm"
-          />
-        </div>
-        <div className="grid min-w-0 gap-1.5">
-          <label
-            htmlFor={`token-binding-path-${binding.draftId}`}
-            className="text-content-secondary text-xs font-semibold"
-          >
-            {labels.visualTokens.tokenPath}
-          </label>
-          <Select
-            id={`token-binding-path-${binding.draftId}`}
-            value={binding.tokenPath}
-            options={[
-              ...(!hasCurrentTokenPath && binding.tokenPath
-                ? [{ value: binding.tokenPath, label: binding.tokenPath }]
-                : []),
-              ...tokenOptionsForType.map((tokenOption) => ({
-                value: tokenOption.path,
-                label: tokenOption.label,
-              })),
-            ]}
-            onValueChange={(tokenPath) => onChange({ ...binding, tokenPath })}
-            placeholder={labels.visualTokens.selectToken}
-            size="sm"
-            textMode="technical"
-          />
-        </div>
-        <RemoveIconButton label={labels.fields.remove} onClick={onRemove} />
-      </div>
-
-      <details className="mt-2">
-        <summary className="text-content-tertiary hover:text-content-secondary cursor-pointer list-none text-[0.6875rem] font-medium">
-          {descriptionLabel}
-        </summary>
-        <div className="mt-2">
-          <CompactTextarea
-            label={descriptionLabel}
-            hideLabel
-            value={binding.description[activeLocale]}
-            rows={2}
-            onChange={(value) =>
-              onChange({
-                ...binding,
-                description: updateLocalizedText(
-                  binding.description,
-                  activeLocale,
-                  value,
-                ),
-              })
-            }
-          />
-        </div>
-      </details>
-    </div>
   );
 }
 
