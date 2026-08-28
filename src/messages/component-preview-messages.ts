@@ -8,6 +8,20 @@ export const componentPreviewMessages = {
         missingStatusColorsNotice:
           'Missing semantic status colors: {paths}. The Alert matrix is using fallback colors.',
       },
+      workspace: {
+        canvasModes: {
+          ariaLabel: 'Canvas view',
+          preview: 'Preview',
+          anatomy: 'Anatomy',
+        },
+        anatomy: {
+          component: 'Component',
+          flatStructure: 'Flat contract structure',
+          empty: 'No anatomy parts yet.',
+          selectPart: 'Select a part to edit it in the Inspector.',
+          untitled: 'Untitled part',
+        },
+      },
     },
   },
   fr: {
@@ -15,6 +29,21 @@ export const componentPreviewMessages = {
       foundationsPreview: {
         missingStatusColorsNotice:
           'Couleurs sémantiques de statut manquantes : {paths}. La matrice des Alert utilise des couleurs de secours.',
+      },
+      workspace: {
+        canvasModes: {
+          ariaLabel: 'Vue du canevas',
+          preview: 'Aperçu',
+          anatomy: 'Anatomie',
+        },
+        anatomy: {
+          component: 'Composant',
+          flatStructure: 'Structure de contrat à plat',
+          empty: "Aucune partie d'anatomie pour le moment.",
+          selectPart:
+            "Sélectionnez une partie pour la modifier dans l'Inspector.",
+          untitled: 'Partie sans titre',
+        },
       },
     },
   },
