@@ -48,10 +48,7 @@ export function ComponentTokenBindingInspector({
     : null;
   const hasCompatibleConstrainedType =
     constrainedTokenType === null || binding.tokenType === constrainedTokenType;
-  const tokenTypeOptions = createTokenTypeOptions(
-    constrainedTokenType,
-    labels,
-  );
+  const tokenTypeOptions = createTokenTypeOptions(constrainedTokenType, labels);
   const tokenOptionsForType = tokenOptions.filter(
     (tokenOption) => tokenOption.type === binding.tokenType,
   );
@@ -266,8 +263,7 @@ function BindingDiagnostics({
       'border-action-success/30 bg-action-success/10 text-action-success',
     warning:
       'border-action-warning/30 bg-action-warning/10 text-action-warning',
-    neutral:
-      'border-border-subtle bg-background-subtle text-content-secondary',
+    neutral: 'border-border-subtle bg-background-subtle text-content-secondary',
   }[resolutionTone];
   const resolutionLabel =
     labels.visualTokens.diagnostics[state.resolutionState];
