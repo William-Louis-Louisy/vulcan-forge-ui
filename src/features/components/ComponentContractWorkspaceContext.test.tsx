@@ -80,6 +80,9 @@ function WorkspaceProbe() {
       <span data-testid="preview-state">
         {workspace.resolvedPreviewConfiguration.stateKey || 'base'}
       </span>
+      <span data-testid="preview-axis-variant">
+        {workspace.previewAxes.variants[0]?.key ?? 'none'}
+      </span>
       <button
         type="button"
         onClick={() =>
@@ -97,6 +100,9 @@ function WorkspaceProbe() {
           workspace.setDraft({
             ...workspace.draft,
             name: '',
+            variants: workspace.draft.variants.map((variant, index) =>
+              index === 0 ? { ...variant, key: 'renamed-primary' } : variant,
+            ),
           })
         }
       >
@@ -171,12 +177,15 @@ function renderWorkspace() {
 }
 
 describe('ComponentContractWorkspaceProvider', () => {
-  it('keeps the last valid preview while sharing the draft', async () => {
+  it('keeps the last valid preview and axis snapshot while sharing the draft', async () => {
     const user = userEvent.setup();
 
     renderWorkspace();
 
     expect(screen.getByTestId('preview-name')).toHaveTextContent('Button');
+    expect(screen.getByTestId('preview-axis-variant')).toHaveTextContent(
+      'primary',
+    );
     expect(screen.getByTestId('validation-status')).toHaveTextContent(
       'success',
     );
@@ -201,6 +210,9 @@ describe('ComponentContractWorkspaceProvider', () => {
     expect(screen.getByTestId('validation-status')).toHaveTextContent('error');
     expect(screen.getByTestId('preview-name')).toHaveTextContent(
       'Primary Button',
+    );
+    expect(screen.getByTestId('preview-axis-variant')).toHaveTextContent(
+      'primary',
     );
   });
 
