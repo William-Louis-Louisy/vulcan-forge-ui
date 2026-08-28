@@ -8,7 +8,9 @@ import {
   type ReactNode,
 } from 'react';
 import { Button } from '@/components/ui';
-import { useOptionalComponentContractWorkspace } from './ComponentContractWorkspaceContext';
+import {
+  useOptionalComponentContractWorkspace,
+} from './ComponentContractWorkspaceContext';
 
 type ComponentWorkspaceAuxiliaryPanel = 'navigation' | 'inspector';
 
@@ -135,12 +137,8 @@ export function ComponentResponsiveWorkspace({
           ref={navigationPanelRef}
           id="components-workspace-navigation"
           aria-label={labels.navigation}
-          role={
-            activeAuxiliaryPanel === 'navigation' ? 'dialog' : undefined
-          }
-          aria-modal={
-            activeAuxiliaryPanel === 'navigation' ? true : undefined
-          }
+          role={activeAuxiliaryPanel === 'navigation' ? 'dialog' : undefined}
+          aria-modal={activeAuxiliaryPanel === 'navigation' ? true : undefined}
           className={[
             activeAuxiliaryPanel === 'navigation'
               ? 'bg-background-app fixed inset-0 z-50 block overflow-y-auto'

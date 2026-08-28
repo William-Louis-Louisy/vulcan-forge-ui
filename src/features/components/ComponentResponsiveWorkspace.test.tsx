@@ -26,7 +26,9 @@ describe('ComponentResponsiveWorkspace', () => {
     const navigationPanel = screen
       .getByText('Navigation content')
       .closest('aside');
-    const inspectorPanel = screen.getByText('Inspector content').closest('aside');
+    const inspectorPanel = screen
+      .getByText('Inspector content')
+      .closest('aside');
     const canvas = screen.getByRole('main', { name: 'Canvas' });
     const navigationTrigger = screen.getByRole('button', {
       name: 'Components',

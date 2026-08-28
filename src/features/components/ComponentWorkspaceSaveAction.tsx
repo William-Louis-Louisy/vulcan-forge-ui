@@ -3,7 +3,9 @@
 import { Button } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
 import type { ComponentContractEditorLabels } from './ComponentContractEditor';
-import { useComponentContractWorkspace } from './ComponentContractWorkspaceContext';
+import {
+  useComponentContractWorkspace,
+} from './ComponentContractWorkspaceContext';
 
 type ComponentWorkspaceSaveActionProps = {
   locale: Locale;
