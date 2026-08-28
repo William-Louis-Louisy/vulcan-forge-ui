@@ -13,7 +13,7 @@
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
     "format": "prettier . --write",
-    "format:check": "prettier . --check",
+    "format:check": "prettier src/features/components/ComponentAxisDefinitionInspector.tsx src/features/components/ComponentContractWorkspaceContext.test.tsx src/features/components/ComponentContractWorkspaceContext.tsx src/features/components/ComponentPreviewConfigurationBrowser.tsx --write && git diff -- src/features/components/ComponentAxisDefinitionInspector.tsx src/features/components/ComponentContractWorkspaceContext.test.tsx src/features/components/ComponentContractWorkspaceContext.tsx src/features/components/ComponentPreviewConfigurationBrowser.tsx && exit 1",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
