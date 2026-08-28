@@ -3,9 +3,7 @@
 import { Button, Select } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
 import type { ComponentContractEditorDraft } from './component-contract-editor.utils';
-import type {
-  ComponentWorkspacePreviewAxisDefinition,
-} from './component-preview-configuration.utils';
+import type { ComponentWorkspacePreviewAxisDefinition } from './component-preview-configuration.utils';
 import type { ComponentRegistryItem } from './components-registry.utils';
 import type {
   ComponentPreviewSemanticPalette,
