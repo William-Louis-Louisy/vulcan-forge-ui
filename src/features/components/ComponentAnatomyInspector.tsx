@@ -30,16 +30,17 @@ export function ComponentAnatomyInspector({
     return null;
   }
 
+  const selectedPart = part;
   const displayLabel =
-    part.label[activeLocale].trim() || part.key.trim() || labels.anatomy.title;
+    selectedPart.label[activeLocale].trim() ||
+    selectedPart.key.trim() ||
+    labels.anatomy.title;
 
-  function updatePart(
-    nextPart: (typeof draft.anatomy)[number],
-  ) {
+  function updatePart(nextPart: (typeof draft.anatomy)[number]) {
     setDraft({
       ...draft,
       anatomy: draft.anatomy.map((candidate) =>
-        candidate.draftId === part.draftId ? nextPart : candidate,
+        candidate.draftId === selectedPart.draftId ? nextPart : candidate,
       ),
     });
   }
@@ -48,7 +49,7 @@ export function ComponentAnatomyInspector({
     setDraft({
       ...draft,
       anatomy: draft.anatomy.filter(
-        (candidate) => candidate.draftId !== part.draftId,
+        (candidate) => candidate.draftId !== selectedPart.draftId,
       ),
     });
     setAuthoringSelection({ kind: 'component' });
@@ -83,9 +84,9 @@ export function ComponentAnatomyInspector({
             {labels.anatomy.key}
           </span>
           <Input
-            value={part.key}
+            value={selectedPart.key}
             onChange={(event) =>
-              updatePart({ ...part, key: event.target.value })
+              updatePart({ ...selectedPart, key: event.target.value })
             }
             size="sm"
             textMode="technical"
@@ -127,12 +128,12 @@ export function ComponentAnatomyInspector({
           </div>
           <Input
             aria-label={labels.anatomy.label}
-            value={part.label[activeLocale]}
+            value={selectedPart.label[activeLocale]}
             onChange={(event) =>
               updatePart({
-                ...part,
+                ...selectedPart,
                 label: {
-                  ...part.label,
+                  ...selectedPart.label,
                   [activeLocale]: event.target.value,
                 },
               })
@@ -143,14 +144,14 @@ export function ComponentAnatomyInspector({
 
         <div className="grid min-w-0 gap-1.5">
           <label
-            htmlFor={`component-anatomy-requirement-${part.draftId}`}
+            htmlFor={`component-anatomy-requirement-${selectedPart.draftId}`}
             className="text-content-secondary text-xs font-semibold"
           >
             {labels.anatomy.requirement}
           </label>
-          <Select<(typeof part)['requirement']>
-            id={`component-anatomy-requirement-${part.draftId}`}
-            value={part.requirement}
+          <Select<(typeof selectedPart)['requirement']>
+            id={`component-anatomy-requirement-${selectedPart.draftId}`}
+            value={selectedPart.requirement}
             options={[
               {
                 value: 'required',
@@ -166,7 +167,7 @@ export function ComponentAnatomyInspector({
               },
             ]}
             onValueChange={(requirement) =>
-              updatePart({ ...part, requirement })
+              updatePart({ ...selectedPart, requirement })
             }
             placeholder={labels.anatomy.requirement}
             size="sm"
