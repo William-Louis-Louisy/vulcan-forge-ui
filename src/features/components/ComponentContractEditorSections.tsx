@@ -891,7 +891,9 @@ function VisualTokensSection({
                   <span className="text-content-secondary min-w-0 truncate font-mono">
                     {binding.tokenPath || labels.visualTokens.selectToken}
                   </span>
-                  <span className={`${diagnosticClassName} shrink-0 font-semibold`}>
+                  <span
+                    className={`${diagnosticClassName} shrink-0 font-semibold`}
+                  >
                     {diagnosticLabel}
                   </span>
                 </span>
