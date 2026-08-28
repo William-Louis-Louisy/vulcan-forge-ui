@@ -78,7 +78,11 @@ describe('ComponentAnatomyCanvas', () => {
     const rootPartButton = screen.getByText('Root').closest('button');
     expect(rootPartButton).not.toBeNull();
 
-    await user.click(rootPartButton!);
+    if (!rootPartButton) {
+      throw new Error('Expected the Root anatomy part to be selectable.');
+    }
+
+    await user.click(rootPartButton);
 
     expect(workspaceMocks.setAuthoringSelection).toHaveBeenLastCalledWith({
       kind: 'anatomyPart',
@@ -88,7 +92,11 @@ describe('ComponentAnatomyCanvas', () => {
     const componentButton = screen.getByText('Button').closest('button');
     expect(componentButton).not.toBeNull();
 
-    await user.click(componentButton!);
+    if (!componentButton) {
+      throw new Error('Expected the Component root to be selectable.');
+    }
+
+    await user.click(componentButton);
 
     expect(workspaceMocks.setAuthoringSelection).toHaveBeenLastCalledWith({
       kind: 'component',
