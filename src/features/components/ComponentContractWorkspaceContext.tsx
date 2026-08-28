@@ -125,7 +125,9 @@ export function ComponentContractWorkspaceProvider({
   const [authoringSelection, setAuthoringSelection] =
     useState<ComponentWorkspaceAuthoringSelection>({ kind: 'component' });
   const [previewConfiguration, setPreviewConfiguration] =
-    useState<ComponentWorkspacePreviewConfiguration>(initialPreviewConfiguration);
+    useState<ComponentWorkspacePreviewConfiguration>(
+      initialPreviewConfiguration,
+    );
   const lastRefreshedContractRef = useRef<string | null>(null);
 
   const setDraft = useCallback(
