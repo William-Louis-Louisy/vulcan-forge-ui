@@ -99,7 +99,13 @@ export function ComponentResponsiveWorkspace({
       return;
     }
 
-    openAuxiliaryPanel('inspector');
+    const frameId = window.requestAnimationFrame(() => {
+      openAuxiliaryPanel('inspector');
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+    };
   }, [
     activeAuxiliaryPanel,
     authoringSelectionKey,
@@ -122,11 +128,6 @@ export function ComponentResponsiveWorkspace({
       if (event.matches) {
         closeAuxiliaryPanel(false);
       }
-    }
-
-    if (mediaQuery.matches) {
-      closeAuxiliaryPanel(false);
-      return;
     }
 
     mediaQuery.addEventListener('change', handlePersistentLayout);
