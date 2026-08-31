@@ -1,16 +1,16 @@
-import {
-  createEmptyStateDraft,
-  createEmptyVariantDraft,
-  createComponentContractDraft,
-  createEmptyAnatomyPartDraft,
-  createComponentContractFromDraft,
-  createComponentContractDraftFingerprint,
-  createEmptyForbiddenPatternDraft,
-  createEmptyTokenBindingDraft,
-  createEmptyAccessibilityRuleDraft,
-} from './component-contract-editor.utils';
 import { describe, expect, it } from 'vitest';
 import type { ComponentContract } from '@/domain/design-system';
+import {
+  createComponentContractDraft,
+  createComponentContractDraftFingerprint,
+  createComponentContractFromDraft,
+  createEmptyAccessibilityRuleDraft,
+  createEmptyAnatomyPartDraft,
+  createEmptyForbiddenPatternDraft,
+  createEmptyStateDraft,
+  createEmptyTokenBindingDraft,
+  createEmptyVariantDraft,
+} from './component-contract-editor.utils';
 
 const buttonContract: ComponentContract = {
   type: 'button',
@@ -81,19 +81,13 @@ describe('component contract editor utils', () => {
         {
           draftId: expect.any(String),
           key: 'root',
-          label: {
-            en: 'root',
-            fr: '',
-          },
+          label: { en: 'root', fr: '' },
           requirement: 'required',
         },
         {
           draftId: expect.any(String),
           key: 'label',
-          label: {
-            en: 'label',
-            fr: '',
-          },
+          label: { en: 'label', fr: '' },
           requirement: 'required',
         },
       ],
@@ -145,10 +139,7 @@ describe('component contract editor utils', () => {
       {
         draftId: 'anatomy-test',
         key: 'root',
-        label: {
-          en: 'Root',
-          fr: 'Racine',
-        },
+        label: { en: 'Root', fr: 'Racine' },
         requirement: 'required',
       },
     ];
@@ -162,10 +153,7 @@ describe('component contract editor utils', () => {
         anatomy: [
           {
             key: 'root',
-            label: {
-              en: 'Root',
-              fr: 'Racine',
-            },
+            label: { en: 'Root', fr: 'Racine' },
             requirement: 'required',
           },
         ],
@@ -196,10 +184,7 @@ describe('component contract editor utils', () => {
       {
         draftId: 'anatomy-test',
         key: 'icon-leading',
-        label: {
-          en: '',
-          fr: '',
-        },
+        label: { en: '', fr: '' },
         requirement: 'optional',
       },
     ];
@@ -218,14 +203,11 @@ describe('component contract editor utils', () => {
     });
   });
 
-  it('creates empty nested draft items', () => {
+  it('creates empty nested draft items with transient identities', () => {
     expect(createEmptyAnatomyPartDraft()).toMatchObject({
       draftId: expect.any(String),
       key: '',
-      label: {
-        en: '',
-        fr: '',
-      },
+      label: { en: '', fr: '' },
       requirement: 'optional',
     });
     expect(createEmptyVariantDraft()).toMatchObject({
@@ -243,10 +225,12 @@ describe('component contract editor utils', () => {
       tokenPath: '',
     });
     expect(createEmptyAccessibilityRuleDraft()).toMatchObject({
+      draftId: expect.any(String),
       key: '',
       severity: 'warning',
     });
-    expect(createEmptyForbiddenPatternDraft()).toEqual({
+    expect(createEmptyForbiddenPatternDraft()).toMatchObject({
+      draftId: expect.any(String),
       en: '',
       fr: '',
     });
@@ -278,22 +262,21 @@ describe('component contract editor utils', () => {
     firstDraft.variants[0]!.draftId = 'variant-custom';
     firstDraft.states[0]!.draftId = 'state-custom';
     firstDraft.tokenBindings[0]!.draftId = 'token-binding-custom';
+    firstDraft.accessibility[0]!.draftId = 'accessibility-custom';
+    firstDraft.forbiddenPatterns[0]!.draftId = 'forbidden-pattern-custom';
 
     expect(createComponentContractDraftFingerprint(firstDraft)).toBe(
       createComponentContractDraftFingerprint(secondDraft),
     );
   });
 
-  it('creates a draft that preserves sizes and token bindings', () => {
+  it('creates a draft that preserves sizes, token bindings and guidance', () => {
     const draft = createComponentContractDraft({
       ...buttonContract,
       sizes: [
         {
           key: 'md',
-          label: {
-            en: 'Medium',
-            fr: 'Moyen',
-          },
+          label: { en: 'Medium', fr: 'Moyen' },
         },
       ],
       tokenBindings: [
@@ -309,41 +292,37 @@ describe('component contract editor utils', () => {
       {
         draftId: expect.any(String),
         key: 'md',
-        label: {
-          en: 'Medium',
-          fr: 'Moyen',
-        },
-        description: {
-          en: '',
-          fr: '',
-        },
+        label: { en: 'Medium', fr: 'Moyen' },
+        description: { en: '', fr: '' },
       },
     ]);
-
     expect(draft.tokenBindings).toMatchObject([
       {
         draftId: expect.any(String),
         key: 'radius',
         tokenType: 'radius',
         tokenPath: 'radius.md',
-        description: {
-          en: '',
-          fr: '',
-        },
+        description: { en: '', fr: '' },
       },
     ]);
+    expect(draft.accessibility[0]).toMatchObject({
+      draftId: expect.any(String),
+      key: 'accessible-name',
+      severity: 'critical',
+    });
+    expect(draft.forbiddenPatterns[0]).toMatchObject({
+      draftId: expect.any(String),
+      en: 'Do not use a button as a navigation link.',
+    });
   });
 
-  it('creates a contract from draft that preserves sizes and token bindings', () => {
+  it('creates a contract from draft that strips transient identities', () => {
     const draft = createComponentContractDraft({
       ...buttonContract,
       sizes: [
         {
           key: 'md',
-          label: {
-            en: 'Medium',
-            fr: 'Moyen',
-          },
+          label: { en: 'Medium', fr: 'Moyen' },
         },
       ],
       tokenBindings: [
@@ -366,13 +345,9 @@ describe('component contract editor utils', () => {
     expect(result.contract.sizes).toEqual([
       {
         key: 'md',
-        label: {
-          en: 'Medium',
-          fr: 'Moyen',
-        },
+        label: { en: 'Medium', fr: 'Moyen' },
       },
     ]);
-
     expect(result.contract.tokenBindings).toEqual([
       {
         key: 'paddingX',
@@ -380,5 +355,9 @@ describe('component contract editor utils', () => {
         tokenPath: 'spacing.4',
       },
     ]);
+    expect(result.contract.accessibility).toEqual(buttonContract.accessibility);
+    expect(result.contract.forbiddenPatterns).toEqual(
+      buttonContract.forbiddenPatterns,
+    );
   });
 });
