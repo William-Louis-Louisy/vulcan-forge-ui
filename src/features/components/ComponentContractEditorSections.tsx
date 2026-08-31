@@ -1,21 +1,20 @@
 'use client';
 
+import type { CSSProperties, ReactNode } from 'react';
 import { Button, Input, Select, Textarea } from '@/components/ui';
 import {
+  createEmptyAccessibilityRuleDraft,
+  createEmptyForbiddenPatternDraft,
   createEmptySizeDraft,
   createEmptyStateDraft,
-  createEmptyVariantDraft,
   createEmptyTokenBindingDraft,
-  createEmptyForbiddenPatternDraft,
-  createEmptyAccessibilityRuleDraft,
+  createEmptyVariantDraft,
+  type ComponentContractEditorDraft,
   type ComponentSizeDraft,
-  type LocalizedTextDraft,
   type ComponentStateDraft,
   type ComponentVariantDraft,
-  type ComponentContractEditorDraft,
-  type ComponentAccessibilityRuleDraft,
+  type LocalizedTextDraft,
 } from './component-contract-editor.utils';
-import type { CSSProperties, ReactNode } from 'react';
 import { ComponentAnatomyEditor } from './ComponentAnatomyEditor';
 import type { ComponentTokenOption } from './component-token-bindings.utils';
 import { getComponentTokenBindingInspectorState } from './component-token-binding-inspector.utils';
@@ -189,6 +188,8 @@ type EditorProps = {
 
 type ComponentContractEditorSectionsProps = EditorProps & {
   onSelectTokenBinding: (draftId: string) => void;
+  onSelectAccessibilityRule: (draftId: string) => void;
+  onSelectForbiddenPattern: (draftId: string) => void;
 };
 
 export function ComponentContractEditorSections({
@@ -199,6 +200,8 @@ export function ComponentContractEditorSections({
   setActiveLocale,
   tokenOptions,
   onSelectTokenBinding,
+  onSelectAccessibilityRule,
+  onSelectForbiddenPattern,
 }: ComponentContractEditorSectionsProps) {
   return (
     <div className="grid min-w-0 gap-6">
@@ -232,15 +235,17 @@ export function ComponentContractEditorSections({
       <AccessibilitySection
         labels={labels}
         draft={draft}
-        activeLocale={activeLocale}
         setDraft={setDraft}
+        activeLocale={activeLocale}
+        onSelectAccessibilityRule={onSelectAccessibilityRule}
       />
 
       <ForbiddenPatternsSection
         labels={labels}
         draft={draft}
-        activeLocale={activeLocale}
         setDraft={setDraft}
+        activeLocale={activeLocale}
+        onSelectForbiddenPattern={onSelectForbiddenPattern}
       />
 
       <VisualTokensSection
@@ -318,7 +323,7 @@ function LocalizedContentSection({
         <CompactTextarea
           label={`${labels.localizedContent.purpose} · ${localeLabel}`}
           value={draft.purpose[activeLocale]}
-          rows={2}
+          rows={3}
           onChange={(value) =>
             setDraft({
               ...draft,
@@ -327,39 +332,84 @@ function LocalizedContentSection({
           }
         />
 
-        <CompactTextarea
-          label={`${labels.localizedContent.usageGuidelines} · ${localeLabel}`}
+        <GuidanceDisclosure
+          label={labels.localizedContent.usageGuidelines}
+          localeLabel={localeLabel}
           value={draft.usageGuidelines[activeLocale]}
-          rows={2}
-          onChange={(value) =>
-            setDraft({
-              ...draft,
-              usageGuidelines: updateLocalizedText(
-                draft.usageGuidelines,
-                activeLocale,
-                value,
-              ),
-            })
-          }
-        />
+        >
+          <CompactTextarea
+            label={`${labels.localizedContent.usageGuidelines} · ${localeLabel}`}
+            value={draft.usageGuidelines[activeLocale]}
+            rows={3}
+            onChange={(value) =>
+              setDraft({
+                ...draft,
+                usageGuidelines: updateLocalizedText(
+                  draft.usageGuidelines,
+                  activeLocale,
+                  value,
+                ),
+              })
+            }
+          />
+        </GuidanceDisclosure>
 
-        <CompactTextarea
-          label={`${labels.localizedContent.contentGuidelines} · ${localeLabel}`}
+        <GuidanceDisclosure
+          label={labels.localizedContent.contentGuidelines}
+          localeLabel={localeLabel}
           value={draft.contentGuidelines[activeLocale]}
-          rows={2}
-          onChange={(value) =>
-            setDraft({
-              ...draft,
-              contentGuidelines: updateLocalizedText(
-                draft.contentGuidelines,
-                activeLocale,
-                value,
-              ),
-            })
-          }
-        />
+        >
+          <CompactTextarea
+            label={`${labels.localizedContent.contentGuidelines} · ${localeLabel}`}
+            value={draft.contentGuidelines[activeLocale]}
+            rows={3}
+            onChange={(value) =>
+              setDraft({
+                ...draft,
+                contentGuidelines: updateLocalizedText(
+                  draft.contentGuidelines,
+                  activeLocale,
+                  value,
+                ),
+              })
+            }
+          />
+        </GuidanceDisclosure>
       </div>
     </EditorSection>
+  );
+}
+
+function GuidanceDisclosure({
+  label,
+  localeLabel,
+  value,
+  children,
+}: {
+  label: string;
+  localeLabel: string;
+  value: string;
+  children: ReactNode;
+}) {
+  return (
+    <details className="border-border-subtle bg-background-subtle rounded-md border">
+      <summary className="hover:bg-surface-primary cursor-pointer list-none rounded-md px-3 py-2.5 transition">
+        <span className="flex min-w-0 items-center justify-between gap-3">
+          <span className="text-content-primary text-xs font-semibold">
+            {label} · {localeLabel}
+          </span>
+          <span className="text-content-tertiary" aria-hidden="true">
+            +
+          </span>
+        </span>
+        {value.trim() ? (
+          <span className="text-content-tertiary mt-1 block truncate text-[0.6875rem] leading-5">
+            {value.trim()}
+          </span>
+        ) : null}
+      </summary>
+      <div className="border-border-subtle border-t p-3">{children}</div>
+    </details>
   );
 }
 
@@ -503,19 +553,27 @@ function TagCollectionRow<Item extends CollectionItem>({
 
       <div className="min-w-0">
         <div className="flex min-w-0 flex-wrap gap-1.5">
-          {items.map((item, index) => (
+          {items.map((item) => (
             <EditableTag
-              key={`${item.key}-${index}`}
+              key={item.draftId}
               value={item.key}
               label={labels.fields.key}
               removeLabel={labels.fields.remove}
-              onChange={(key) => {
-                const nextItems = [...items];
-                nextItems[index] = { ...item, key } as Item;
-                onChange(nextItems);
-              }}
+              onChange={(key) =>
+                onChange(
+                  items.map((candidate) =>
+                    candidate.draftId === item.draftId
+                      ? ({ ...candidate, key } as Item)
+                      : candidate,
+                  ),
+                )
+              }
               onRemove={() =>
-                onChange(items.filter((_, itemIndex) => itemIndex !== index))
+                onChange(
+                  items.filter(
+                    (candidate) => candidate.draftId !== item.draftId,
+                  ),
+                )
               }
             />
           ))}
@@ -535,43 +593,51 @@ function TagCollectionRow<Item extends CollectionItem>({
               {editDetailsLabel}
             </summary>
             <div className="border-border-subtle bg-surface-primary mt-2 divide-y overflow-hidden rounded-md border">
-              {items.map((item, index) => (
+              {items.map((item) => (
                 <div
-                  key={`${item.key}-details-${index}`}
+                  key={`${item.draftId}-details`}
                   className="grid min-w-0 gap-2 px-3 py-3 md:grid-cols-[minmax(8rem,1fr)_minmax(12rem,1.6fr)]"
                 >
                   <CompactInput
                     label={labelField}
                     value={item.label[activeLocale]}
-                    onChange={(value) => {
-                      const nextItems = [...items];
-                      nextItems[index] = {
-                        ...item,
-                        label: updateLocalizedText(
-                          item.label,
-                          activeLocale,
-                          value,
+                    onChange={(value) =>
+                      onChange(
+                        items.map((candidate) =>
+                          candidate.draftId === item.draftId
+                            ? ({
+                                ...candidate,
+                                label: updateLocalizedText(
+                                  candidate.label,
+                                  activeLocale,
+                                  value,
+                                ),
+                              } as Item)
+                            : candidate,
                         ),
-                      } as Item;
-                      onChange(nextItems);
-                    }}
+                      )
+                    }
                   />
                   <CompactTextarea
                     label={descriptionField}
                     value={item.description[activeLocale]}
                     rows={2}
-                    onChange={(value) => {
-                      const nextItems = [...items];
-                      nextItems[index] = {
-                        ...item,
-                        description: updateLocalizedText(
-                          item.description,
-                          activeLocale,
-                          value,
+                    onChange={(value) =>
+                      onChange(
+                        items.map((candidate) =>
+                          candidate.draftId === item.draftId
+                            ? ({
+                                ...candidate,
+                                description: updateLocalizedText(
+                                  candidate.description,
+                                  activeLocale,
+                                  value,
+                                ),
+                              } as Item)
+                            : candidate,
                         ),
-                      } as Item;
-                      onChange(nextItems);
-                    }}
+                      )
+                    }
                   />
                 </div>
               ))}
@@ -622,192 +688,113 @@ function EditableTag({
 function AccessibilitySection({
   labels,
   draft,
-  activeLocale,
   setDraft,
-}: Omit<EditorProps, 'setActiveLocale' | 'tokenOptions'>) {
+  activeLocale,
+  onSelectAccessibilityRule,
+}: Pick<EditorProps, 'labels' | 'draft' | 'setDraft' | 'activeLocale'> & {
+  onSelectAccessibilityRule: (draftId: string) => void;
+}) {
+  function addRule() {
+    const rule = createEmptyAccessibilityRuleDraft();
+
+    setDraft({
+      ...draft,
+      accessibility: [...draft.accessibility, rule],
+    });
+    onSelectAccessibilityRule(rule.draftId);
+  }
+
   return (
     <EditorSection
       title={labels.accessibility.title}
       action={
-        <Button
-          variant="secondary"
-          size="sm"
-          onClick={() =>
-            setDraft({
-              ...draft,
-              accessibility: [
-                ...draft.accessibility,
-                createEmptyAccessibilityRuleDraft(),
-              ],
-            })
-          }
-        >
+        <Button variant="secondary" size="sm" onClick={addRule}>
           + {labels.accessibility.add}
         </Button>
       }
     >
-      <div className="grid min-w-0 gap-3 md:grid-cols-2">
-        {draft.accessibility.map((rule, index) => (
-          <AccessibilityRuleCard
-            key={`${rule.key}-${index}`}
-            labels={labels}
-            activeLocale={activeLocale}
-            rule={rule}
-            onChange={(nextRule) => {
-              const nextRules = [...draft.accessibility];
-              nextRules[index] = nextRule;
-              setDraft({ ...draft, accessibility: nextRules });
-            }}
-            onRemove={() =>
-              setDraft({
-                ...draft,
-                accessibility: draft.accessibility.filter(
-                  (_, itemIndex) => itemIndex !== index,
-                ),
-              })
-            }
-          />
-        ))}
-      </div>
-    </EditorSection>
-  );
-}
+      {draft.accessibility.length > 0 ? (
+        <div className="grid min-w-0 gap-2">
+          {draft.accessibility.map((rule) => {
+            const description = rule.description[activeLocale].trim();
 
-function AccessibilityRuleCard({
-  labels,
-  activeLocale,
-  rule,
-  onChange,
-  onRemove,
-}: {
-  labels: ComponentContractEditorLabels;
-  activeLocale: 'en' | 'fr';
-  rule: ComponentAccessibilityRuleDraft;
-  onChange: (rule: ComponentAccessibilityRuleDraft) => void;
-  onRemove: () => void;
-}) {
-  const descriptionLabel =
-    activeLocale === 'en'
-      ? labels.fields.descriptionEn
-      : labels.fields.descriptionFr;
-
-  return (
-    <article className="border-border-subtle bg-surface-primary min-w-0 rounded-md border p-3">
-      <div className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_7.5rem_2rem] sm:items-end">
-        <CompactInput
-          label={labels.fields.key}
-          value={rule.key}
-          mono
-          onChange={(key) => onChange({ ...rule, key })}
-        />
-        <div className="grid min-w-0 gap-1.5">
-          <label
-            htmlFor={`accessibility-severity-${rule.key}`}
-            className="text-content-secondary text-xs font-semibold"
-          >
-            {labels.accessibility.severity}
-          </label>
-          <Select<ComponentAccessibilityRuleDraft['severity']>
-            id={`accessibility-severity-${rule.key}`}
-            value={rule.severity}
-            options={[
-              { value: 'info', label: labels.severities.info },
-              { value: 'warning', label: labels.severities.warning },
-              { value: 'critical', label: labels.severities.critical },
-            ]}
-            onValueChange={(severity) => onChange({ ...rule, severity })}
-            placeholder={labels.accessibility.severity}
-            size="sm"
-          />
+            return (
+              <button
+                key={rule.draftId}
+                type="button"
+                onClick={() => onSelectAccessibilityRule(rule.draftId)}
+                className="border-border-subtle bg-surface-primary hover:border-border-default hover:bg-background-subtle grid min-w-0 gap-1 rounded-md border px-3 py-2.5 text-left transition"
+              >
+                <span className="flex min-w-0 items-center justify-between gap-3">
+                  <span className="text-content-primary min-w-0 truncate font-mono text-xs font-semibold">
+                    {rule.key || labels.accessibility.title}
+                  </span>
+                  <span className="text-content-tertiary shrink-0 text-[0.6875rem] font-semibold">
+                    {labels.severities[rule.severity]}
+                  </span>
+                </span>
+                {description ? (
+                  <span className="text-content-secondary line-clamp-2 text-[0.6875rem] leading-5">
+                    {description}
+                  </span>
+                ) : null}
+              </button>
+            );
+          })}
         </div>
-        <RemoveIconButton label={labels.fields.remove} onClick={onRemove} />
-      </div>
-
-      <div className="mt-2">
-        <CompactTextarea
-          label={descriptionLabel}
-          value={rule.description[activeLocale]}
-          rows={2}
-          onChange={(description) =>
-            onChange({
-              ...rule,
-              description: updateLocalizedText(
-                rule.description,
-                activeLocale,
-                description,
-              ),
-            })
-          }
-        />
-      </div>
-    </article>
+      ) : null}
+    </EditorSection>
   );
 }
 
 function ForbiddenPatternsSection({
   labels,
   draft,
-  activeLocale,
   setDraft,
-}: Omit<EditorProps, 'setActiveLocale' | 'tokenOptions'>) {
-  const patternLabel =
-    activeLocale === 'en' ? labels.fields.patternEn : labels.fields.patternFr;
+  activeLocale,
+  onSelectForbiddenPattern,
+}: Pick<EditorProps, 'labels' | 'draft' | 'setDraft' | 'activeLocale'> & {
+  onSelectForbiddenPattern: (draftId: string) => void;
+}) {
+  function addPattern() {
+    const pattern = createEmptyForbiddenPatternDraft();
+
+    setDraft({
+      ...draft,
+      forbiddenPatterns: [...draft.forbiddenPatterns, pattern],
+    });
+    onSelectForbiddenPattern(pattern.draftId);
+  }
 
   return (
     <EditorSection
       title={labels.forbiddenPatterns.title}
       action={
-        <Button
-          variant="secondary"
-          size="sm"
-          onClick={() =>
-            setDraft({
-              ...draft,
-              forbiddenPatterns: [
-                ...draft.forbiddenPatterns,
-                createEmptyForbiddenPatternDraft(),
-              ],
-            })
-          }
-        >
+        <Button variant="secondary" size="sm" onClick={addPattern}>
           + {labels.forbiddenPatterns.add}
         </Button>
       }
     >
-      <div className="grid min-w-0 gap-3">
-        {draft.forbiddenPatterns.map((pattern, index) => (
-          <div
-            key={index}
-            className="grid min-w-0 gap-2 md:grid-cols-[minmax(0,1fr)_2rem] md:items-end"
-          >
-            <CompactTextarea
-              label={patternLabel}
-              value={pattern[activeLocale]}
-              rows={2}
-              onChange={(value) => {
-                const nextPatterns = [...draft.forbiddenPatterns];
-                nextPatterns[index] = updateLocalizedText(
-                  pattern,
-                  activeLocale,
-                  value,
-                );
-                setDraft({ ...draft, forbiddenPatterns: nextPatterns });
-              }}
-            />
-            <RemoveIconButton
-              label={labels.fields.remove}
-              onClick={() =>
-                setDraft({
-                  ...draft,
-                  forbiddenPatterns: draft.forbiddenPatterns.filter(
-                    (_, itemIndex) => itemIndex !== index,
-                  ),
-                })
-              }
-            />
-          </div>
-        ))}
-      </div>
+      {draft.forbiddenPatterns.length > 0 ? (
+        <div className="grid min-w-0 gap-2">
+          {draft.forbiddenPatterns.map((pattern) => {
+            const value = pattern[activeLocale].trim();
+
+            return (
+              <button
+                key={pattern.draftId}
+                type="button"
+                onClick={() => onSelectForbiddenPattern(pattern.draftId)}
+                className="border-border-subtle bg-surface-primary hover:border-border-default hover:bg-background-subtle min-w-0 rounded-md border px-3 py-2.5 text-left transition"
+              >
+                <span className="text-content-secondary line-clamp-2 text-xs leading-5">
+                  {value || labels.forbiddenPatterns.title}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
     </EditorSection>
   );
 }
@@ -978,22 +965,16 @@ function CompactTextarea({
   label,
   value,
   rows,
-  hideLabel = false,
   onChange,
 }: {
   label: string;
   value: string;
   rows: number;
-  hideLabel?: boolean;
   onChange: (value: string) => void;
 }) {
   return (
     <label className="grid min-w-0 gap-1.5">
-      <span
-        className={
-          hideLabel ? 'sr-only' : 'text-content-secondary text-xs font-semibold'
-        }
-      >
+      <span className="text-content-secondary text-xs font-semibold">
         {label}
       </span>
       <Textarea
@@ -1004,25 +985,6 @@ function CompactTextarea({
         className="leading-5"
       />
     </label>
-  );
-}
-
-function RemoveIconButton({
-  label,
-  onClick,
-}: {
-  label: string;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      onClick={onClick}
-      className="text-content-tertiary hover:bg-action-danger/10 hover:text-action-danger flex size-9 items-center justify-center rounded-md text-lg transition"
-    >
-      <span aria-hidden="true">×</span>
-    </button>
   );
 }
 
