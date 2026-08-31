@@ -12,6 +12,17 @@ import { useOptionalComponentContractWorkspace } from './ComponentContractWorksp
 
 type ComponentWorkspaceAuxiliaryPanel = 'navigation' | 'inspector';
 
+const navigationPersistentQuery = '(min-width: 64rem)';
+const inspectorPersistentQuery = '(min-width: 80rem)';
+const focusableSelector = [
+  'a[href]',
+  'button:not([disabled])',
+  'input:not([disabled])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  '[tabindex]:not([tabindex="-1"])',
+].join(',');
+
 type ComponentResponsiveWorkspaceProps = {
   labels: {
     navigation: string;
@@ -42,6 +53,12 @@ export function ComponentResponsiveWorkspace({
   const inspectorPanelRef = useRef<HTMLElement>(null);
   const returnFocusRef = useRef<HTMLElement | null>(null);
   const displayedComponentName = workspace?.draft.name.trim() || componentName;
+  const authoringSelectionKey = workspace
+    ? workspace.authoringSelection.kind === 'component'
+      ? 'component'
+      : `${workspace.authoringSelection.kind}:${workspace.authoringSelection.draftId}`
+    : 'component';
+  const previousAuthoringSelectionKeyRef = useRef(authoringSelectionKey);
 
   const openAuxiliaryPanel = useCallback(
     (panel: ComponentWorkspaceAuxiliaryPanel) => {
@@ -54,10 +71,70 @@ export function ComponentResponsiveWorkspace({
     [],
   );
 
-  const closeAuxiliaryPanel = useCallback(() => {
+  const closeAuxiliaryPanel = useCallback((restoreFocus = true) => {
     setActiveAuxiliaryPanel(null);
-    returnFocusRef.current?.focus();
+
+    if (restoreFocus) {
+      returnFocusRef.current?.focus();
+    }
   }, []);
+
+  useEffect(() => {
+    const previousSelectionKey = previousAuthoringSelectionKeyRef.current;
+    previousAuthoringSelectionKeyRef.current = authoringSelectionKey;
+
+    if (
+      !workspace ||
+      previousSelectionKey === authoringSelectionKey ||
+      workspace.authoringSelection.kind === 'component' ||
+      activeAuxiliaryPanel === 'inspector'
+    ) {
+      return;
+    }
+
+    if (
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia(inspectorPersistentQuery).matches
+    ) {
+      return;
+    }
+
+    openAuxiliaryPanel('inspector');
+  }, [
+    activeAuxiliaryPanel,
+    authoringSelectionKey,
+    openAuxiliaryPanel,
+    workspace,
+  ]);
+
+  useEffect(() => {
+    if (!activeAuxiliaryPanel || typeof window.matchMedia !== 'function') {
+      return;
+    }
+
+    const mediaQuery = window.matchMedia(
+      activeAuxiliaryPanel === 'navigation'
+        ? navigationPersistentQuery
+        : inspectorPersistentQuery,
+    );
+
+    function handlePersistentLayout(event: MediaQueryListEvent) {
+      if (event.matches) {
+        closeAuxiliaryPanel(false);
+      }
+    }
+
+    if (mediaQuery.matches) {
+      closeAuxiliaryPanel(false);
+      return;
+    }
+
+    mediaQuery.addEventListener('change', handlePersistentLayout);
+
+    return () => {
+      mediaQuery.removeEventListener('change', handlePersistentLayout);
+    };
+  }, [activeAuxiliaryPanel, closeAuxiliaryPanel]);
 
   useEffect(() => {
     if (!activeAuxiliaryPanel) {
@@ -75,7 +152,48 @@ export function ComponentResponsiveWorkspace({
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
+        event.preventDefault();
         closeAuxiliaryPanel();
+        return;
+      }
+
+      if (event.key !== 'Tab' || !activePanel) {
+        return;
+      }
+
+      const focusableElements = Array.from(
+        activePanel.querySelectorAll<HTMLElement>(focusableSelector),
+      );
+
+      if (focusableElements.length === 0) {
+        return;
+      }
+
+      const firstFocusableElement = focusableElements[0];
+      const lastFocusableElement = focusableElements.at(-1);
+      const activeElement = document.activeElement;
+
+      if (!firstFocusableElement || !lastFocusableElement) {
+        return;
+      }
+
+      if (event.shiftKey) {
+        if (
+          activeElement === firstFocusableElement ||
+          !activePanel.contains(activeElement)
+        ) {
+          event.preventDefault();
+          lastFocusableElement.focus();
+        }
+        return;
+      }
+
+      if (
+        activeElement === lastFocusableElement ||
+        !activePanel.contains(activeElement)
+      ) {
+        event.preventDefault();
+        firstFocusableElement.focus();
       }
     }
 
@@ -150,7 +268,7 @@ export function ComponentResponsiveWorkspace({
               size="sm"
               variant="ghost"
               data-workspace-panel-close
-              onClick={closeAuxiliaryPanel}
+              onClick={() => closeAuxiliaryPanel()}
             >
               ← {labels.canvas}
             </Button>
@@ -192,7 +310,7 @@ export function ComponentResponsiveWorkspace({
               size="sm"
               variant="ghost"
               data-workspace-panel-close
-              onClick={closeAuxiliaryPanel}
+              onClick={() => closeAuxiliaryPanel()}
             >
               ← {labels.canvas}
             </Button>
