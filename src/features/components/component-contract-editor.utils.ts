@@ -217,12 +217,17 @@ export function createComponentContractDraftFingerprint(
         description,
       }),
     ),
-    accessibility: draft.accessibility.map(({ key, severity, description }) => ({
-      key,
-      severity,
-      description,
+    accessibility: draft.accessibility.map(
+      ({ key, severity, description }) => ({
+        key,
+        severity,
+        description,
+      }),
+    ),
+    forbiddenPatterns: draft.forbiddenPatterns.map(({ en, fr }) => ({
+      en,
+      fr,
     })),
-    forbiddenPatterns: draft.forbiddenPatterns.map(({ en, fr }) => ({ en, fr })),
   });
 }
 
