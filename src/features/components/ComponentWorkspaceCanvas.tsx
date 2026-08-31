@@ -31,12 +31,29 @@ export function ComponentWorkspaceCanvas({
   const { canvasView, setCanvasView } = useComponentContractWorkspace();
 
   const options = [
-    { value: 'instance', label: labels.modes.instance },
-    { value: 'anatomy', label: labels.modes.anatomy },
-    { value: 'matrix', label: labels.modes.matrix },
+    {
+      value: 'instance',
+      label: labels.modes.instance,
+      id: 'components-workspace-canvas-tab-instance',
+      controls: 'components-workspace-canvas-panel-instance',
+    },
+    {
+      value: 'anatomy',
+      label: labels.modes.anatomy,
+      id: 'components-workspace-canvas-tab-anatomy',
+      controls: 'components-workspace-canvas-panel-anatomy',
+    },
+    {
+      value: 'matrix',
+      label: labels.modes.matrix,
+      id: 'components-workspace-canvas-tab-matrix',
+      controls: 'components-workspace-canvas-panel-matrix',
+    },
   ] satisfies ReadonlyArray<{
     value: ComponentWorkspaceCanvasView;
     label: string;
+    id: string;
+    controls: string;
   }>;
 
   return (
@@ -47,16 +64,39 @@ export function ComponentWorkspaceCanvas({
           options={options}
           onValueChange={setCanvasView}
           ariaLabel={labels.modes.ariaLabel}
+          semantics="tabs"
         />
       </div>
 
-      {canvasView === 'anatomy' ? (
-        <ComponentAnatomyCanvas labels={labels.anatomy} />
-      ) : canvasView === 'matrix' ? (
-        matrix
-      ) : (
-        instance
-      )}
+      <div
+        id="components-workspace-canvas-panel-instance"
+        role="tabpanel"
+        aria-labelledby="components-workspace-canvas-tab-instance"
+        hidden={canvasView !== 'instance'}
+        className="min-w-0"
+      >
+        {canvasView === 'instance' ? instance : null}
+      </div>
+      <div
+        id="components-workspace-canvas-panel-anatomy"
+        role="tabpanel"
+        aria-labelledby="components-workspace-canvas-tab-anatomy"
+        hidden={canvasView !== 'anatomy'}
+        className="min-w-0"
+      >
+        {canvasView === 'anatomy' ? (
+          <ComponentAnatomyCanvas labels={labels.anatomy} />
+        ) : null}
+      </div>
+      <div
+        id="components-workspace-canvas-panel-matrix"
+        role="tabpanel"
+        aria-labelledby="components-workspace-canvas-tab-matrix"
+        hidden={canvasView !== 'matrix'}
+        className="min-w-0"
+      >
+        {canvasView === 'matrix' ? matrix : null}
+      </div>
     </div>
   );
 }

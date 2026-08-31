@@ -66,7 +66,7 @@ describe('ComponentAnatomyCanvas', () => {
     vi.clearAllMocks();
   });
 
-  it('renders the flat anatomy structure and sends part selection to the Inspector context', async () => {
+  it('renders a non-color current selection cue and sends keyboard part selection to the Inspector context', async () => {
     const user = userEvent.setup();
 
     render(<ComponentAnatomyCanvas labels={labels} />);
@@ -75,6 +75,18 @@ describe('ComponentAnatomyCanvas', () => {
     expect(screen.getByText('Root')).toBeInTheDocument();
     expect(screen.getByText('Label')).toBeInTheDocument();
 
+    const componentButton = screen.getByText('Button').closest('button');
+    expect(componentButton).not.toBeNull();
+
+    if (!componentButton) {
+      throw new Error('Expected the Component root to be selectable.');
+    }
+
+    expect(componentButton).toHaveAttribute('aria-pressed', 'true');
+    expect(
+      componentButton.querySelector('[data-workspace-selection-indicator]'),
+    ).not.toBeNull();
+
     const rootPartButton = screen.getByText('Root').closest('button');
     expect(rootPartButton).not.toBeNull();
 
@@ -82,19 +94,14 @@ describe('ComponentAnatomyCanvas', () => {
       throw new Error('Expected the Root anatomy part to be selectable.');
     }
 
-    await user.click(rootPartButton);
+    rootPartButton.focus();
+    expect(rootPartButton).toHaveFocus();
+    await user.keyboard('{Enter}');
 
     expect(workspaceMocks.setAuthoringSelection).toHaveBeenLastCalledWith({
       kind: 'anatomyPart',
       draftId: 'anatomy-0',
     });
-
-    const componentButton = screen.getByText('Button').closest('button');
-    expect(componentButton).not.toBeNull();
-
-    if (!componentButton) {
-      throw new Error('Expected the Component root to be selectable.');
-    }
 
     await user.click(componentButton);
 

@@ -7,6 +7,8 @@
     "dev": "next dev",
     "dev:up": "docker compose up -d postgres mailpit",
     "dev:down": "docker compose down",
+    "clean:next": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true})\"",
+    "dev:clean": "npm run clean:next && next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
