@@ -19,6 +19,8 @@ import { ComponentWorkspaceSaveAction } from './ComponentWorkspaceSaveAction';
 import { ComponentAnatomyInspector } from './ComponentAnatomyInspector';
 import { ComponentAxisDefinitionInspector } from './ComponentAxisDefinitionInspector';
 import { ComponentTokenBindingInspector } from './ComponentTokenBindingInspector';
+import { ComponentAccessibilityRuleInspector } from './ComponentAccessibilityRuleInspector';
+import { ComponentForbiddenPatternInspector } from './ComponentForbiddenPatternInspector';
 
 export type { ComponentContractEditorLabels } from './ComponentContractEditorSections';
 
@@ -172,6 +174,10 @@ function ComponentContractEditorContent({
           labels={labels}
           tokenOptions={tokenOptions}
         />
+      ) : authoringSelection.kind === 'accessibilityRule' ? (
+        <ComponentAccessibilityRuleInspector labels={labels} />
+      ) : authoringSelection.kind === 'forbiddenPattern' ? (
+        <ComponentForbiddenPatternInspector labels={labels} />
       ) : (
         <ComponentContractEditorSections
           labels={labels}
@@ -182,6 +188,12 @@ function ComponentContractEditorContent({
           tokenOptions={tokenOptions}
           onSelectTokenBinding={(draftId) =>
             setAuthoringSelection({ kind: 'tokenBinding', draftId })
+          }
+          onSelectAccessibilityRule={(draftId) =>
+            setAuthoringSelection({ kind: 'accessibilityRule', draftId })
+          }
+          onSelectForbiddenPattern={(draftId) =>
+            setAuthoringSelection({ kind: 'forbiddenPattern', draftId })
           }
         />
       )}
