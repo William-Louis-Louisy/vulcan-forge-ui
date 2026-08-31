@@ -53,7 +53,9 @@ export type ComponentWorkspaceAuthoringSelection =
   | { kind: 'variantDefinition'; draftId: string }
   | { kind: 'sizeDefinition'; draftId: string }
   | { kind: 'stateDefinition'; draftId: string }
-  | { kind: 'tokenBinding'; draftId: string };
+  | { kind: 'tokenBinding'; draftId: string }
+  | { kind: 'accessibilityRule'; draftId: string }
+  | { kind: 'forbiddenPattern'; draftId: string };
 
 type ComponentContractWorkspaceContextValue = {
   draft: ComponentContractEditorDraft;
