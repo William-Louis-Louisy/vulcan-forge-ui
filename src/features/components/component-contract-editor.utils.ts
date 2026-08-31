@@ -37,9 +37,14 @@ export type ComponentTokenBindingDraft = {
 };
 
 export type ComponentAccessibilityRuleDraft = {
+  draftId: string;
   key: string;
   severity: 'info' | 'warning' | 'critical';
   description: LocalizedTextDraft;
+};
+
+export type ComponentForbiddenPatternDraft = LocalizedTextDraft & {
+  draftId: string;
 };
 
 export type ComponentContractEditorDraft = {
@@ -53,7 +58,7 @@ export type ComponentContractEditorDraft = {
   variants: ComponentVariantDraft[];
   states: ComponentStateDraft[];
   accessibility: ComponentAccessibilityRuleDraft[];
-  forbiddenPatterns: LocalizedTextDraft[];
+  forbiddenPatterns: ComponentForbiddenPatternDraft[];
   sizes: ComponentSizeDraft[];
   tokenBindings: ComponentTokenBindingDraft[];
 };
@@ -75,7 +80,9 @@ type DraftItemPrefix =
   | 'variant'
   | 'size'
   | 'state'
-  | 'token-binding';
+  | 'token-binding'
+  | 'accessibility'
+  | 'forbidden-pattern';
 
 function createDraftItemId(prefix: DraftItemPrefix) {
   draftItemSequence += 1;
@@ -164,12 +171,16 @@ export function createComponentContractDraft(
       tokenPath: binding.tokenPath,
       description: normalizeLocalizedText(binding.description ?? {}),
     })),
-    accessibility: contract.accessibility.map((rule) => ({
+    accessibility: contract.accessibility.map((rule, index) => ({
+      draftId: createExistingDraftItemId('accessibility', index),
       key: rule.key,
       severity: rule.severity,
       description: normalizeLocalizedText(rule.description),
     })),
-    forbiddenPatterns: contract.forbiddenPatterns.map(normalizeLocalizedText),
+    forbiddenPatterns: contract.forbiddenPatterns.map((pattern, index) => ({
+      draftId: createExistingDraftItemId('forbidden-pattern', index),
+      ...normalizeLocalizedText(pattern),
+    })),
   };
 }
 
@@ -206,6 +217,12 @@ export function createComponentContractDraftFingerprint(
         description,
       }),
     ),
+    accessibility: draft.accessibility.map(({ key, severity, description }) => ({
+      key,
+      severity,
+      description,
+    })),
+    forbiddenPatterns: draft.forbiddenPatterns.map(({ en, fr }) => ({ en, fr })),
   });
 }
 
@@ -357,6 +374,7 @@ export function createEmptyTokenBindingDraft(): ComponentTokenBindingDraft {
 
 export function createEmptyAccessibilityRuleDraft(): ComponentAccessibilityRuleDraft {
   return {
+    draftId: createDraftItemId('accessibility'),
     key: '',
     severity: 'warning',
     description: {
@@ -366,8 +384,9 @@ export function createEmptyAccessibilityRuleDraft(): ComponentAccessibilityRuleD
   };
 }
 
-export function createEmptyForbiddenPatternDraft(): LocalizedTextDraft {
+export function createEmptyForbiddenPatternDraft(): ComponentForbiddenPatternDraft {
   return {
+    draftId: createDraftItemId('forbidden-pattern'),
     en: '',
     fr: '',
   };
