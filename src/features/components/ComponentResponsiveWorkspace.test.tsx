@@ -29,8 +29,8 @@ function createMatchMedia(matches = false) {
   }));
 }
 
-function renderWorkspace() {
-  return render(
+function createWorkspaceElement() {
+  return (
     <ComponentResponsiveWorkspace
       labels={{
         navigation: 'Components',
@@ -58,8 +58,12 @@ function renderWorkspace() {
         </div>
       }
       saveAction={<button type="button">Save</button>}
-    />,
+    />
   );
+}
+
+function renderWorkspace() {
+  return render(createWorkspaceElement());
 }
 
 describe('ComponentResponsiveWorkspace', () => {
@@ -186,21 +190,7 @@ describe('ComponentResponsiveWorkspace', () => {
       draft: { name: 'Button' },
       authoringSelection: { kind: 'anatomyPart', draftId: 'root' },
     };
-    rerender(
-      <ComponentResponsiveWorkspace
-        labels={{
-          navigation: 'Components',
-          canvas: 'Canvas',
-          inspector: 'Inspector',
-        }}
-        componentName="Button"
-        inspectorScrollContextId="component-contract:demo:button"
-        navigation={<p>Navigation content</p>}
-        canvas={<button type="button">Canvas selection</button>}
-        inspector={<p>Inspector content</p>}
-        saveAction={<button type="button">Save</button>}
-      />,
-    );
+    rerender(createWorkspaceElement());
 
     await waitFor(() => {
       expect(inspectorPanel).toHaveAttribute('role', 'dialog');
@@ -214,6 +204,6 @@ describe('ComponentResponsiveWorkspace', () => {
     await user.click(inspectorBack);
 
     expect(inspectorPanel).not.toHaveAttribute('role', 'dialog');
-    expect(screen.getByRole('button', { name: 'Canvas selection' })).toHaveFocus();
+    expect(canvasSelection).toHaveFocus();
   });
 });
