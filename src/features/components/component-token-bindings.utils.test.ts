@@ -323,21 +323,29 @@ describe('component-token-bindings utils', () => {
     expect(palette.missingStatusTones).toEqual(['info', 'warning', 'danger']);
   });
 
-  it('creates token options from raw token sets', () => {
-    expect(
-      createComponentTokenOptions([
-        {
-          type: colorTokenSet.type,
-          name: colorTokenSet.name,
-          tokens: colorTokenSet.tokens,
-        },
-      ]),
-    ).toEqual(
+  it('creates token options with resolution and lifecycle metadata', () => {
+    const options = createComponentTokenOptions([
+      {
+        type: colorTokenSet.type,
+        name: colorTokenSet.name,
+        tokens: colorTokenSet.tokens,
+      },
+    ]);
+
+    expect(options).toMatchObject(
       colorTokenSet.tokens.map((token) => ({
         type: token.type,
         path: token.path,
         label: token.path,
+        value: token.value,
+        status: token.status,
       })),
     );
+    expect(
+      options.find((option) => option.path === 'color.background.default'),
+    ).toMatchObject({
+      resolvedValue: '#2563eb',
+      isResolved: true,
+    });
   });
 });

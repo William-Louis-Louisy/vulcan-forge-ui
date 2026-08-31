@@ -23,6 +23,10 @@ export type ComponentTokenOption = {
   type: DesignToken['type'];
   path: string;
   label: string;
+  value: DesignToken['value'];
+  resolvedValue: DesignToken['value'];
+  status: DesignToken['status'];
+  isResolved: boolean;
 };
 
 export const componentPreviewTokenRoles = [
@@ -64,13 +68,24 @@ export function createComponentTokenOptions(
   }>,
 ): ComponentTokenOption[] {
   const parsedTokenSets = parseComponentTokenSets(rawTokenSets);
+  const dictionary = createPreviewTokenDictionary(parsedTokenSets.tokenSets);
 
   return parsedTokenSets.tokenSets.flatMap((tokenSet) =>
-    tokenSet.tokens.map((token) => ({
-      type: token.type,
-      path: token.path,
-      label: token.path,
-    })),
+    tokenSet.tokens.map((token) => {
+      const resolution = resolveDesignToken({ token, dictionary });
+
+      return {
+        type: token.type,
+        path: token.path,
+        label: token.path,
+        value: token.value,
+        resolvedValue: resolution.isResolved
+          ? resolution.resolvedValue
+          : token.value,
+        status: token.status,
+        isResolved: resolution.isResolved,
+      };
+    }),
   );
 }
 
