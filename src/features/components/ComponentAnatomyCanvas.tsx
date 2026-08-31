@@ -20,6 +20,9 @@ export type ComponentAnatomyCanvasLabels = {
   };
 };
 
+const selectableCanvasClassName =
+  'focus-visible:outline-border-focus focus-visible:outline-2 focus-visible:outline-offset-2';
+
 export function ComponentAnatomyCanvas({
   labels,
 }: {
@@ -32,6 +35,7 @@ export function ComponentAnatomyCanvas({
     authoringSelection,
     setAuthoringSelection,
   } = useComponentContractWorkspace();
+  const isComponentSelected = authoringSelection.kind === 'component';
 
   function addAnatomyPart() {
     const nextPart = createEmptyAnatomyPartDraft();
@@ -81,17 +85,29 @@ export function ComponentAnatomyCanvas({
 
           <button
             type="button"
-            aria-pressed={authoringSelection.kind === 'component'}
+            aria-pressed={isComponentSelected}
             onClick={() => setAuthoringSelection({ kind: 'component' })}
             className={[
               'mx-auto mt-5 block w-full max-w-md rounded-xl border px-5 py-4 text-left transition',
-              authoringSelection.kind === 'component'
+              selectableCanvasClassName,
+              isComponentSelected
                 ? 'border-border-focus bg-background-subtle'
                 : 'border-border-subtle bg-background-app hover:border-border-default',
             ].join(' ')}
           >
-            <span className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.12em] uppercase">
-              {labels.component}
+            <span className="flex min-w-0 items-center justify-between gap-3">
+              <span className="text-content-tertiary text-[0.6875rem] font-semibold tracking-[0.12em] uppercase">
+                {labels.component}
+              </span>
+              {isComponentSelected ? (
+                <span
+                  aria-hidden="true"
+                  data-workspace-selection-indicator
+                  className="text-content-primary shrink-0 text-sm font-bold"
+                >
+                  ✓
+                </span>
+              ) : null}
             </span>
             <span className="mt-1 block truncate text-base font-semibold">
               {draft.name}
@@ -144,6 +160,7 @@ export function ComponentAnatomyCanvas({
                       }
                       className={[
                         'min-w-0 rounded-lg border p-4 text-left transition',
+                        selectableCanvasClassName,
                         isSelected
                           ? 'border-border-focus bg-background-subtle'
                           : 'border-border-subtle bg-background-app hover:border-border-default hover:bg-background-subtle',
@@ -153,8 +170,19 @@ export function ComponentAnatomyCanvas({
                         <span className="text-content-tertiary font-mono text-[0.6875rem]">
                           {String(index + 1).padStart(2, '0')}
                         </span>
-                        <span className="border-border-subtle bg-surface-primary text-content-secondary rounded-full border px-2 py-0.5 text-[0.625rem] font-semibold">
-                          {labels.requirements[part.requirement]}
+                        <span className="flex shrink-0 items-center gap-2">
+                          {isSelected ? (
+                            <span
+                              aria-hidden="true"
+                              data-workspace-selection-indicator
+                              className="text-content-primary text-sm font-bold"
+                            >
+                              ✓
+                            </span>
+                          ) : null}
+                          <span className="border-border-subtle bg-surface-primary text-content-secondary rounded-full border px-2 py-0.5 text-[0.625rem] font-semibold">
+                            {labels.requirements[part.requirement]}
+                          </span>
                         </span>
                       </div>
                       <span className="mt-3 block truncate text-sm font-semibold">
