@@ -48,10 +48,14 @@ const designSystemProjectSourceSelect = {
   },
   componentContracts: {
     orderBy: {
-      type: 'asc',
+      key: 'asc',
     },
     select: {
       id: true,
+      key: true,
+      templateKey: true,
+      category: true,
+      contractVersion: true,
       type: true,
       name: true,
       contract: true,
