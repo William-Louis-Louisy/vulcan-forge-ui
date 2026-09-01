@@ -1,0 +1,38 @@
+name: DS-181R-03B Apply
+
+on:
+  push:
+    branches:
+      - agent/ds-181r-03b-border-radius-correctness
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: agent/ds-181r-03b-border-radius-correctness
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+      - run: npm ci
+      - run: python scripts/ds-181r-03b-integration-fix.py
+      - run: npx prettier --write src/features/components/component-visual-preview.utils.ts src/features/components/component-visual-preview.utils.test.ts src/features/components/ComponentContractEditorSections.tsx src/features/components/ComponentPreviewRoleField.tsx src/features/components/ComponentContractPreviewContext.tsx src/features/components/ComponentContractPreviewContext.test.tsx src/features/components/ComponentContractEditor.test.tsx
+      - run: npm run db:generate
+        env:
+          DATABASE_URL: postgresql://vulcan:vulcan@localhost:5432/vulcan?schema=public
+      - run: npx vitest run src/features/components/component-visual-preview.utils.test.ts src/features/components/ComponentContractPreviewContext.test.tsx src/features/components/ComponentContractEditor.test.tsx src/features/components/button-visual-customization.utils.test.ts src/domain/design-system/component-contract-v2.schema.test.ts
+      - name: Commit fix
+        run: |
+          git add src/features/components/component-visual-preview.utils.ts src/features/components/component-visual-preview.utils.test.ts src/features/components/ComponentContractEditorSections.tsx src/features/components/ComponentPreviewRoleField.tsx src/features/components/ComponentContractPreviewContext.tsx src/features/components/ComponentContractPreviewContext.test.tsx src/features/components/ComponentContractEditor.test.tsx
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'fix: give Button V2 radius exclusive live ownership'
+          git push origin HEAD:agent/ds-181r-03b-border-radius-correctness
