@@ -9,10 +9,10 @@ import type { UpdateComponentContractActionState } from './update-component-cont
 import {
   componentContractSchema,
   componentContractTypeSchema,
-  componentContractV2Schema,
   componentKeySchema,
   resolveStoredComponentTemplateContract,
 } from '@/domain/design-system';
+import { mergeLegacySemanticContractIntoV2 } from './component-v2-semantic-compatibility.utils';
 
 function getFormStringValue(formData: FormData, key: string): string {
   const value = formData.get(key);
@@ -159,21 +159,10 @@ export async function updateComponentContractAction(
         };
       }
 
-      const nextContractV2 = componentContractV2Schema.parse({
-        ...currentContractV2,
-        name: parsedContract.data.name,
-        purpose: parsedContract.data.purpose,
-        usageGuidelines: parsedContract.data.usageGuidelines,
-        contentGuidelines: parsedContract.data.contentGuidelines,
-        status: parsedContract.data.status,
-        anatomy: parsedContract.data.anatomy,
-        variants: parsedContract.data.variants,
-        sizes: parsedContract.data.sizes,
-        states: parsedContract.data.states,
-        tokenBindings: parsedContract.data.tokenBindings,
-        accessibility: parsedContract.data.accessibility,
-        forbiddenPatterns: parsedContract.data.forbiddenPatterns,
-      });
+      const nextContractV2 = mergeLegacySemanticContractIntoV2(
+        currentContractV2,
+        parsedContract.data,
+      );
 
       await prisma.componentContract.update({
         where: {
