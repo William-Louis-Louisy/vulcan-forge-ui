@@ -33,6 +33,7 @@ import { useComponentContractPreview } from './ComponentContractPreviewContext';
 export type { ComponentContractEditorLabels } from './ComponentContractEditorSections';
 
 type ComponentContractEditorProps = {
+  componentKey: string;
   locale: Locale;
   projectSlug: string;
   contract: ComponentContract;
@@ -47,6 +48,7 @@ type PendingCollectionFocus = {
 };
 
 export function ComponentContractEditor({
+  componentKey,
   locale,
   projectSlug,
   contract,
@@ -143,7 +145,7 @@ export function ComponentContractEditor({
   );
   const contractPayload =
     validation.status === 'success' ? JSON.stringify(validation.contract) : '';
-  const saveContextId = `component-contract:${projectSlug}:${contract.type}`;
+  const saveContextId = `component-contract:${projectSlug}:${componentKey}`;
   const currentFingerprint = createComponentContractDraftFingerprint(draft);
   const initialSavedFingerprint =
     createComponentContractDraftFingerprint(initialDraft);
@@ -247,6 +249,7 @@ export function ComponentContractEditor({
       >
         <input type="hidden" name="locale" value={locale} />
         <input type="hidden" name="projectSlug" value={projectSlug} />
+        <input type="hidden" name="componentKey" value={componentKey} />
         <input type="hidden" name="componentType" value={draft.type} />
         <input type="hidden" name="contract" value={contractPayload} />
 
