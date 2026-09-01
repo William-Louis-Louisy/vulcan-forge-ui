@@ -9,6 +9,14 @@ import { exportLogFormats } from '@/domain/exports';
 import type { ProjectOverviewPageData } from './project-overview.queries';
 import { createProjectOverviewViewModel } from './project-overview.utils';
 
+const legacyComponentCategories = {
+  button: 'action',
+  textField: 'input',
+  card: 'layout',
+  alert: 'feedback',
+  dialog: 'overlay',
+} as const;
+
 function at(value: string): Date {
   return new Date(value);
 }
@@ -47,6 +55,10 @@ function createPageData(
     })),
     componentContracts: mvpComponentContractSeeds.map((contract, index) => ({
       id: `component-${index + 1}`,
+      key: contract.type,
+      templateKey: contract.type,
+      category: legacyComponentCategories[contract.type],
+      contractVersion: 1,
       type: contract.type,
       name: contract.name,
       contract,
