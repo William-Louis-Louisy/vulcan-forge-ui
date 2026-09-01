@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import {
+  componentContractV2Schema,
   migrateLegacyComponentContract,
   type ComponentContract,
 } from '@/domain/design-system';
@@ -46,6 +47,8 @@ const contract: ComponentContract = {
   forbiddenPatterns: [],
 };
 
+const contractV2 = migrateLegacyComponentContract(contract);
+
 const component: ComponentRegistryItem = {
   id: 'button',
   key: 'button',
@@ -56,7 +59,7 @@ const component: ComponentRegistryItem = {
   category: 'action',
   platforms: ['web'],
   contract,
-  contractV2: migrateLegacyComponentContract(contract),
+  contractV2,
   isValid: true,
   completeness: {
     score: 100,
@@ -108,12 +111,51 @@ function ApplyVisualBindingButton() {
   );
 }
 
+function ApplyDirectV2VisualButton() {
+  const preview = useComponentContractPreview();
+
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        if (!preview) {
+          return;
+        }
+
+        preview.setContractV2(
+          componentContractV2Schema.parse({
+            ...preview.contractV2,
+            visual: {
+              ...preview.contractV2.visual,
+              spacing: {
+                ...preview.contractV2.visual.spacing,
+                paddingX: { source: 'value', value: '24px' },
+              },
+              radius: {
+                topLeft: { source: 'value', value: '18px' },
+                topRight: { source: 'value', value: '4px' },
+                bottomRight: { source: 'value', value: '18px' },
+                bottomLeft: { source: 'value', value: '4px' },
+              },
+            },
+          }),
+        );
+      }}
+    >
+      Apply V2 visual
+    </button>
+  );
+}
+
 describe('ComponentFoundationsPreviewClient', () => {
-  it('updates the matrix when the editor publishes a visual token binding', async () => {
+  it('updates the Button V2 matrix when the legacy editor publishes a visual token binding', async () => {
     const user = userEvent.setup();
 
     render(
-      <ComponentContractPreviewProvider initialContract={contract}>
+      <ComponentContractPreviewProvider
+        initialContract={contract}
+        initialContractV2={contractV2}
+      >
         <ApplyVisualBindingButton />
         <ComponentFoundationsPreviewClient
           locale="en"
@@ -133,6 +175,36 @@ describe('ComponentFoundationsPreviewClient', () => {
 
     expect(previewButton).toHaveStyle({ backgroundColor: '#ff0000' });
     expect(screen.getByText('#ff0000')).toBeInTheDocument();
+  });
+
+  it('applies direct V2 spacing and asymmetric radius changes immediately', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <ComponentContractPreviewProvider
+        initialContract={contract}
+        initialContractV2={contractV2}
+      >
+        <ApplyDirectV2VisualButton />
+        <ComponentFoundationsPreviewClient
+          locale="en"
+          component={component}
+          rawTokenSets={rawTokenSets}
+        />
+      </ComponentContractPreviewProvider>,
+    );
+
+    const previewButton = screen.getByRole('button', { name: 'Button' });
+
+    await user.click(screen.getByRole('button', { name: 'Apply V2 visual' }));
+
+    expect(previewButton).toHaveStyle({
+      paddingInline: '24px',
+      borderTopLeftRadius: '18px',
+      borderTopRightRadius: '4px',
+      borderBottomRightRadius: '18px',
+      borderBottomLeftRadius: '4px',
+    });
   });
 
   it('routes rendering from templateKey instead of the legacy identity type', () => {
@@ -186,6 +258,7 @@ describe('ComponentFoundationsPreviewClient', () => {
         },
       ],
     };
+    const alertContractV2 = migrateLegacyComponentContract(alertContract);
     const alertComponent: ComponentRegistryItem = {
       ...component,
       id: 'alert',
@@ -195,11 +268,14 @@ describe('ComponentFoundationsPreviewClient', () => {
       name: 'Alert',
       category: 'feedback',
       contract: alertContract,
-      contractV2: migrateLegacyComponentContract(alertContract),
+      contractV2: alertContractV2,
     };
 
     render(
-      <ComponentContractPreviewProvider initialContract={alertContract}>
+      <ComponentContractPreviewProvider
+        initialContract={alertContract}
+        initialContractV2={alertContractV2}
+      >
         <ComponentFoundationsPreviewClient
           locale="en"
           component={alertComponent}
