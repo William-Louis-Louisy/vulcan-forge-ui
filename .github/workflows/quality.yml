@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - refactor/architecture
+      - refactor/components-v2-customization
   push:
     branches:
       - main
