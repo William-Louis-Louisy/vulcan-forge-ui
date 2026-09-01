@@ -138,7 +138,7 @@ describe('components registry utils', () => {
     });
   });
 
-  it('creates registry items through the V2 normalization boundary', () => {
+  it('creates registry items through the registered V2 template boundary', () => {
     expect(
       createComponentRegistryItems([
         createStoredLegacyComponent({
@@ -168,6 +168,34 @@ describe('components registry utils', () => {
             level: 'complete',
           },
           isValid: true,
+        },
+      ],
+    });
+  });
+
+  it('derives compatibility type from templateKey instead of trusting persisted legacy type', () => {
+    const storedButton = createStoredLegacyComponent({
+      id: 'marketing-cta',
+      contract: buttonContract,
+    });
+
+    expect(
+      createComponentRegistryItems([
+        {
+          ...storedButton,
+          key: 'marketingCta',
+          name: 'Marketing CTA',
+          type: 'card',
+        },
+      ]),
+    ).toMatchObject({
+      invalidCount: 0,
+      items: [
+        {
+          key: 'marketingCta',
+          templateKey: 'button',
+          type: 'button',
+          name: 'Marketing CTA',
         },
       ],
     });

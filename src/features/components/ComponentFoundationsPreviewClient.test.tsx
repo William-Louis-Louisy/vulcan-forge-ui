@@ -135,6 +135,43 @@ describe('ComponentFoundationsPreviewClient', () => {
     expect(screen.getByText('#ff0000')).toBeInTheDocument();
   });
 
+  it('routes rendering from templateKey instead of the legacy identity type', () => {
+    const marketingContract: ComponentContract = {
+      ...contract,
+      name: 'Marketing CTA',
+    };
+    const marketingComponent: ComponentRegistryItem = {
+      ...component,
+      id: 'marketing-cta',
+      key: 'marketingCta',
+      templateKey: 'button',
+      type: 'card',
+      name: 'Marketing CTA',
+      contract: marketingContract,
+      contractV2: migrateLegacyComponentContract(marketingContract, {
+        key: 'marketingCta',
+        name: 'Marketing CTA',
+        templateKey: 'button',
+        category: 'action',
+      }),
+    };
+
+    render(
+      <ComponentFoundationsPreviewClient
+        locale="en"
+        component={marketingComponent}
+        rawTokenSets={rawTokenSets}
+      />,
+    );
+
+    expect(
+      screen.getByRole('button', { name: 'Marketing CTA' }),
+    ).toBeInTheDocument();
+    expect(
+      document.querySelector('[data-preview-component="card"]'),
+    ).not.toBeInTheDocument();
+  });
+
   it('warns when an Alert has no semantic status palette', () => {
     const alertContract: ComponentContract = {
       ...contract,

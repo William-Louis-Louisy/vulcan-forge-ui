@@ -1,5 +1,6 @@
 import {
-  parseStoredComponentContractV2,
+  getComponentTemplateDefinition,
+  resolveStoredComponentTemplateContract,
   toLegacyComponentContract,
   type ComponentContract,
   type ComponentContractType,
@@ -77,9 +78,27 @@ export const componentRegistryCategoryOrder = [
   'overlay',
 ] as const satisfies readonly ComponentRegistryItem['category'][];
 
+function isRegistryCategory(
+  category: ComponentContractV2['category'],
+): category is ComponentRegistryItem['category'] {
+  return (
+    category === 'action' ||
+    category === 'input' ||
+    category === 'layout' ||
+    category === 'feedback' ||
+    category === 'overlay'
+  );
+}
+
 export function getComponentCategory(
   type: ComponentContractType,
 ): ComponentRegistryItem['category'] {
+  const category = getComponentTemplateDefinition(type)?.category;
+
+  if (category && isRegistryCategory(category)) {
+    return category;
+  }
+
   const categories: Record<
     ComponentContractType,
     ComponentRegistryItem['category']
@@ -96,19 +115,11 @@ export function getComponentCategory(
 
 function getRegistryCategory(
   category: ComponentContractV2['category'],
-  legacyType: ComponentContractType,
+  templateType: ComponentContractType,
 ): ComponentRegistryItem['category'] {
-  if (
-    category === 'action' ||
-    category === 'input' ||
-    category === 'layout' ||
-    category === 'feedback' ||
-    category === 'overlay'
-  ) {
-    return category;
-  }
-
-  return getComponentCategory(legacyType);
+  return isRegistryCategory(category)
+    ? category
+    : getComponentCategory(templateType);
 }
 
 export function getComponentPlatforms(
@@ -184,25 +195,26 @@ export function createComponentRegistryItems(
 
   for (const componentContract of componentContracts) {
     try {
-      const contractV2 = parseStoredComponentContractV2({
-        contractVersion: componentContract.contractVersion,
-        key: componentContract.key,
-        name: componentContract.name,
-        templateKey: componentContract.templateKey,
-        category: componentContract.category,
-        contract: componentContract.contract,
-      });
+      const { template, contract: contractV2 } =
+        resolveStoredComponentTemplateContract({
+          contractVersion: componentContract.contractVersion,
+          key: componentContract.key,
+          name: componentContract.name,
+          templateKey: componentContract.templateKey,
+          category: componentContract.category,
+          contract: componentContract.contract,
+        });
       const legacyContract = toLegacyComponentContract(contractV2);
 
       items.push({
         id: componentContract.id,
         key: contractV2.key,
-        templateKey: contractV2.templateKey,
-        type: legacyContract.type,
+        templateKey: template.key,
+        type: template.legacyType,
         name: contractV2.name,
         status: legacyContract.status,
-        category: getRegistryCategory(contractV2.category, legacyContract.type),
-        platforms: getComponentPlatforms(legacyContract.type),
+        category: getRegistryCategory(contractV2.category, template.legacyType),
+        platforms: getComponentPlatforms(template.legacyType),
         contract: legacyContract,
         contractV2,
         completeness: getComponentCompleteness(legacyContract),

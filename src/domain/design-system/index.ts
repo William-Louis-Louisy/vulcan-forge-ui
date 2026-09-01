@@ -9,5 +9,6 @@ export * from './design-token.schema';
 export * from './brand-profile.schema';
 export * from './component-contract.schema';
 export * from './component-contract-v2.schema';
+export * from './component-template-registry';
 export * from './component-token-bindings';
 export * from './project-source';
