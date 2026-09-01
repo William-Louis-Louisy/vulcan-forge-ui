@@ -36,12 +36,7 @@ import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveC
 import { useActionBackedProjectSaveStatus } from '@/features/save-context/useActionBackedProjectSaveStatus';
 
 type DesignValueKind = 'dimension' | 'length' | 'radius' | 'color';
-type DesignValueGroupKey =
-  | 'dimensions'
-  | 'spacing'
-  | 'radius'
-  | 'border'
-  | 'surface';
+type DesignValueGroupKey = 'dimensions' | 'spacing' | 'radius' | 'border';
 type DesignValueLabelKey =
   | 'width'
   | 'minWidth'
@@ -56,9 +51,7 @@ type DesignValueLabelKey =
   | 'bottomRight'
   | 'bottomLeft'
   | 'borderWidth'
-  | 'borderColor'
-  | 'background'
-  | 'foreground';
+  | 'borderColor';
 
 type DesignValueDescriptor = {
   group: DesignValueGroupKey;
@@ -185,25 +178,6 @@ const propertyGroups: Array<{
         group: 'border',
         property: 'color',
         labelKey: 'borderColor',
-        kind: 'color',
-        tokenType: 'color',
-      },
-    ],
-  },
-  {
-    titleKey: 'surface',
-    properties: [
-      {
-        group: 'surface',
-        property: 'background',
-        labelKey: 'background',
-        kind: 'color',
-        tokenType: 'color',
-      },
-      {
-        group: 'surface',
-        property: 'foreground',
-        labelKey: 'foreground',
         kind: 'color',
         tokenType: 'color',
       },
@@ -509,74 +483,38 @@ export function ButtonVisualCustomizationEditor({
                 />
               );
             })}
-          </VisualGroup>
-        ))}
-
-        <VisualGroup title={t('groups.border')}>
-          <SimpleSelectProperty
-            id="button-v2-border-style"
-            label={t('properties.borderStyle')}
-            value={getButtonVisualProperty(draft, scope, 'border', 'style')}
-            options={(['none', 'solid', 'dashed', 'dotted'] as const).map(
-              (value) => ({ value, label: t(`borderStyles.${value}`) }),
-            )}
-            inheritedLabel={
-              scope.kind === 'base' ? t('templateDefault') : t('inherited')
-            }
-            resetLabel={t('reset')}
-            onChange={(value) =>
-              updateDraft(
-                setButtonVisualProperty(draft, scope, 'border', 'style', value),
-              )
-            }
-            onReset={() =>
-              updateDraft(
-                resetButtonVisualProperty(draft, scope, 'border', 'style'),
-              )
-            }
-          />
-        </VisualGroup>
-
-        <VisualGroup title={t('groups.surface')}>
-          <SimpleSelectProperty
-            id="button-v2-elevation"
-            label={t('properties.elevation')}
-            value={
-              isRecord(
-                getButtonVisualProperty(draft, scope, 'surface', 'elevation'),
-              )
-                ? (
-                    getButtonVisualProperty(
+            {group.titleKey === 'border' ? (
+              <SimpleSelectProperty
+                id="button-v2-border-style"
+                label={t('properties.borderStyle')}
+                value={getButtonVisualProperty(draft, scope, 'border', 'style')}
+                options={(['none', 'solid', 'dashed', 'dotted'] as const).map(
+                  (value) => ({ value, label: t(`borderStyles.${value}`) }),
+                )}
+                inheritedLabel={
+                  scope.kind === 'base' ? t('templateDefault') : t('inherited')
+                }
+                resetLabel={t('reset')}
+                onChange={(value) =>
+                  updateDraft(
+                    setButtonVisualProperty(
                       draft,
                       scope,
-                      'surface',
-                      'elevation',
-                    ) as Record<string, unknown>
-                  ).value
-                : undefined
-            }
-            options={(['none', 'sm', 'md', 'lg', 'xl'] as const).map(
-              (value) => ({ value, label: t(`elevations.${value}`) }),
-            )}
-            inheritedLabel={
-              scope.kind === 'base' ? t('templateDefault') : t('inherited')
-            }
-            resetLabel={t('reset')}
-            onChange={(value) =>
-              updateDraft(
-                setButtonVisualProperty(draft, scope, 'surface', 'elevation', {
-                  source: 'value',
-                  value,
-                }),
-              )
-            }
-            onReset={() =>
-              updateDraft(
-                resetButtonVisualProperty(draft, scope, 'surface', 'elevation'),
-              )
-            }
-          />
-        </VisualGroup>
+                      'border',
+                      'style',
+                      value,
+                    ),
+                  )
+                }
+                onReset={() =>
+                  updateDraft(
+                    resetButtonVisualProperty(draft, scope, 'border', 'style'),
+                  )
+                }
+              />
+            ) : null}
+          </VisualGroup>
+        ))}
 
         <TypographyEditor
           value={getButtonVisualTarget(draft, scope).typography}
