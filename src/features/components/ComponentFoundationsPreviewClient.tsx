@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
+import { getComponentTemplateDefinition } from '@/domain/design-system';
 import type { Locale } from '@/i18n/routing';
 import { ComponentVisualMatrix } from './ComponentVisualMatrix';
 import type { ComponentRegistryItem } from './components-registry.utils';
@@ -29,14 +30,18 @@ export function ComponentFoundationsPreviewClient({
   const t = useTranslations('ComponentsRegistryPage');
   const previewContext = useComponentContractPreview();
   const contract = previewContext?.contract ?? component.contract;
+  const templateDefinition = getComponentTemplateDefinition(
+    component.templateKey,
+  );
   const previewComponent = useMemo(
     () => ({
       ...component,
+      type: templateDefinition?.legacyType ?? component.type,
       name: contract.name,
       status: contract.status,
       contract,
     }),
-    [component, contract],
+    [component, contract, templateDefinition],
   );
   const tokenBindingResolution = useMemo(
     () =>
@@ -55,6 +60,7 @@ export function ComponentFoundationsPreviewClient({
   const missingStatusTokenPaths = semanticPalette.missingStatusTones
     .map((tone) => `color.semantic.status.${tone}`)
     .join(', ');
+  const isAlertTemplate = templateDefinition?.rendererKey === 'alert';
 
   return (
     <section className="border-border-subtle min-w-0 border-b p-3 sm:p-4">
@@ -74,8 +80,7 @@ export function ComponentFoundationsPreviewClient({
         </div>
       ) : null}
 
-      {component.type === 'alert' &&
-      semanticPalette.missingStatusTones.length > 0 ? (
+      {isAlertTemplate && semanticPalette.missingStatusTones.length > 0 ? (
         <div className="border-action-warning/30 bg-action-warning/10 text-action-warning mt-3 rounded-md border px-3 py-2 text-xs leading-5 [overflow-wrap:anywhere]">
           {t('foundationsPreview.missingStatusColorsNotice', {
             paths: missingStatusTokenPaths,
