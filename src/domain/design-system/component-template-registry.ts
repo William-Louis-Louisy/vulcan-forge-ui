@@ -276,10 +276,8 @@ export function resolveStoredComponentTemplateContract(
   template: ComponentTemplateDefinition;
   contract: ComponentContractV2;
 } {
+  const template = requireComponentTemplateDefinition(input.templateKey);
   const normalizedContract = parseStoredComponentContractV2(input);
-  const template = requireComponentTemplateDefinition(
-    normalizedContract.templateKey,
-  );
   const resolvedSlots = resolveComponentSlots(
     template.key,
     normalizedContract.slots,
