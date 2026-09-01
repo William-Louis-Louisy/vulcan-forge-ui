@@ -7,3 +7,5 @@ dist
 .env
 .env.*
 package-lock.json
+docs/product/ds-181r-00-components-v2-product-reset.md
+docs/product/ds-181r-01-components-v2-capability-matrix.md
