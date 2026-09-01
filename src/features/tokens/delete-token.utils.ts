@@ -24,12 +24,12 @@ export type DetachTokenReferencesResult = {
 };
 
 type ComponentTokenReferenceSource = {
-  name?: string;
+  name?: string | undefined;
   contract: unknown;
-  key?: string;
-  templateKey?: string;
-  category?: string;
-  contractVersion?: number;
+  key?: string | undefined;
+  templateKey?: string | undefined;
+  category?: string | undefined;
+  contractVersion?: number | undefined;
 };
 
 function parseTokenArray(tokens: unknown): DesignToken[] {
