@@ -1,5 +1,9 @@
 // Visual design-system tokens only: colors, spacing, radius, typography and motion.
 import { componentContractSchema } from '../component-contract.schema';
+import {
+  componentContractV2Schema,
+  parseStoredComponentContractV2,
+} from '../component-contract-v2.schema';
 import type { DesignToken } from '../design-token.schema';
 import { pathToTokenReference } from '../token-resolution';
 import { replaceDesignSystemReference } from './json-reference-migration';
@@ -28,6 +32,11 @@ export type ProjectThemeForRename = {
 export type ProjectComponentForRename = {
   id: string;
   contract: unknown;
+  key?: string;
+  name?: string;
+  templateKey?: string;
+  category?: string;
+  contractVersion?: number;
 };
 
 export type RenameTokenAcrossProjectResult =
@@ -95,6 +104,170 @@ function migrateTokenReferences({
     tokens: nextTokens,
     migratedReferencesCount,
   };
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function replaceComponentDesignValueTokenPath({
+  value,
+  currentTokenPath,
+  nextTokenPath,
+}: {
+  value: unknown;
+  currentTokenPath: string;
+  nextTokenPath: string;
+}): { value: unknown; migratedReferencesCount: number } {
+  if (Array.isArray(value)) {
+    let migratedReferencesCount = 0;
+    const nextValue = value.map((item) => {
+      const migration = replaceComponentDesignValueTokenPath({
+        value: item,
+        currentTokenPath,
+        nextTokenPath,
+      });
+
+      migratedReferencesCount += migration.migratedReferencesCount;
+      return migration.value;
+    });
+
+    return { value: nextValue, migratedReferencesCount };
+  }
+
+  if (!isRecord(value)) {
+    return { value, migratedReferencesCount: 0 };
+  }
+
+  if (
+    value.source === 'token' &&
+    typeof value.path === 'string' &&
+    value.path === currentTokenPath
+  ) {
+    return {
+      value: {
+        ...value,
+        path: nextTokenPath,
+      },
+      migratedReferencesCount: 1,
+    };
+  }
+
+  let migratedReferencesCount = 0;
+  const nextValue = Object.fromEntries(
+    Object.entries(value).map(([key, nestedValue]) => {
+      const migration = replaceComponentDesignValueTokenPath({
+        value: nestedValue,
+        currentTokenPath,
+        nextTokenPath,
+      });
+
+      migratedReferencesCount += migration.migratedReferencesCount;
+      return [key, migration.value];
+    }),
+  );
+
+  return { value: nextValue, migratedReferencesCount };
+}
+
+function migrateLegacyComponentTokenPath({
+  contract,
+  currentTokenPath,
+  nextTokenPath,
+}: {
+  contract: unknown;
+  currentTokenPath: string;
+  nextTokenPath: string;
+}): { contract: unknown; migratedReferencesCount: number } | null {
+  const parsedContract = componentContractSchema.safeParse(contract);
+
+  if (!parsedContract.success) {
+    return null;
+  }
+
+  let migratedReferencesCount = 0;
+  const tokenBindings = parsedContract.data.tokenBindings.map((binding) => {
+    if (binding.tokenPath !== currentTokenPath) {
+      return binding;
+    }
+
+    migratedReferencesCount += 1;
+    return {
+      ...binding,
+      tokenPath: nextTokenPath,
+    };
+  });
+
+  return {
+    contract: {
+      ...parsedContract.data,
+      tokenBindings,
+    },
+    migratedReferencesCount,
+  };
+}
+
+function migrateV2ComponentTokenPath({
+  component,
+  currentTokenPath,
+  nextTokenPath,
+}: {
+  component: ProjectComponentForRename;
+  currentTokenPath: string;
+  nextTokenPath: string;
+}): { contract: unknown; migratedReferencesCount: number } | null {
+  if (
+    component.contractVersion !== 2 ||
+    component.key === undefined ||
+    component.name === undefined ||
+    component.templateKey === undefined ||
+    component.category === undefined
+  ) {
+    return null;
+  }
+
+  try {
+    const contract = parseStoredComponentContractV2({
+      contractVersion: component.contractVersion,
+      key: component.key,
+      name: component.name,
+      templateKey: component.templateKey,
+      category: component.category,
+      contract: component.contract,
+    });
+    const designValueMigration = replaceComponentDesignValueTokenPath({
+      value: contract,
+      currentTokenPath,
+      nextTokenPath,
+    });
+    const reparsedContract = componentContractV2Schema.parse(
+      designValueMigration.value,
+    );
+    let tokenBindingMigrationCount = 0;
+    const tokenBindings = reparsedContract.tokenBindings.map((binding) => {
+      if (binding.tokenPath !== currentTokenPath) {
+        return binding;
+      }
+
+      tokenBindingMigrationCount += 1;
+      return {
+        ...binding,
+        tokenPath: nextTokenPath,
+      };
+    });
+
+    return {
+      contract: componentContractV2Schema.parse({
+        ...reparsedContract,
+        tokenBindings,
+      }),
+      migratedReferencesCount:
+        designValueMigration.migratedReferencesCount +
+        tokenBindingMigrationCount,
+    };
+  } catch {
+    return null;
+  }
 }
 
 export function renameTokenAndMigrateReferences({
@@ -253,37 +426,29 @@ export function renameTokenAcrossProject({
   });
 
   const componentUpdates = componentContracts.flatMap((component) => {
-    const parsedContract = componentContractSchema.safeParse(
-      component.contract,
-    );
+    const migration =
+      migrateV2ComponentTokenPath({
+        component,
+        currentTokenPath,
+        nextTokenPath: trimmedNextTokenPath,
+      }) ??
+      migrateLegacyComponentTokenPath({
+        contract: component.contract,
+        currentTokenPath,
+        nextTokenPath: trimmedNextTokenPath,
+      });
 
-    if (!parsedContract.success) {
+    if (!migration) {
       return [];
     }
 
-    let componentMigrationCount = 0;
-    const tokenBindings = parsedContract.data.tokenBindings.map((binding) => {
-      if (binding.tokenPath !== currentTokenPath) {
-        return binding;
-      }
+    migratedReferencesCount += migration.migratedReferencesCount;
 
-      componentMigrationCount += 1;
-      return {
-        ...binding,
-        tokenPath: trimmedNextTokenPath,
-      };
-    });
-
-    migratedReferencesCount += componentMigrationCount;
-
-    return componentMigrationCount > 0
+    return migration.migratedReferencesCount > 0
       ? [
           {
             id: component.id,
-            contract: {
-              ...parsedContract.data,
-              tokenBindings,
-            },
+            contract: migration.contract,
           },
         ]
       : [];

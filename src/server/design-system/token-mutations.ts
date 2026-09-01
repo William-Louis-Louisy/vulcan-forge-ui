@@ -64,6 +64,10 @@ export type EditableTokenMutationProject = {
   }>;
   componentContracts: Array<{
     id: string;
+    key: string;
+    templateKey: string;
+    category: string;
+    contractVersion: number;
     name: string;
     contract: unknown;
   }>;
@@ -276,6 +280,10 @@ export async function getEditableTokenMutationProjectForUser({
       componentContracts: {
         select: {
           id: true,
+          key: true,
+          templateKey: true,
+          category: true,
+          contractVersion: true,
           name: true,
           contract: true,
         },

@@ -149,6 +149,11 @@ export async function deleteTokenAction(
     const result = detachComponentTokenBindings({
       contract: component.contract,
       tokenPath,
+      key: component.key,
+      name: component.name,
+      templateKey: component.templateKey,
+      category: component.category,
+      contractVersion: component.contractVersion,
     });
 
     return result.removedCount > 0

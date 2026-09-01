@@ -278,18 +278,23 @@ model Theme {
 }
 
 model ComponentContract {
-  id        String                @id @default(cuid())
-  projectId String
-  type      ComponentContractType
-  name      String
-  contract  Json
-  createdAt DateTime              @default(now())
-  updatedAt DateTime              @updatedAt
+  id              String                @id @default(cuid())
+  projectId       String
+  key             String
+  templateKey     String
+  category        String
+  contractVersion Int                   @default(1)
+  type            ComponentContractType
+  name            String
+  contract        Json
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
 
   project DesignSystemProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
-  @@unique([projectId, type])
+  @@unique([projectId, key])
   @@index([projectId])
+  @@index([projectId, templateKey])
 }
 
 model DocumentationProfile {

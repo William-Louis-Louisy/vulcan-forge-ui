@@ -1,7 +1,9 @@
 import {
-  componentContractSchema,
+  parseStoredComponentContractV2,
+  toLegacyComponentContract,
   type ComponentContract,
   type ComponentContractType,
+  type ComponentContractV2,
 } from '@/domain/design-system';
 
 export type ComponentRegistryStatus = ComponentContract['status'];
@@ -23,12 +25,15 @@ export type ComponentRegistryMissingField =
 
 export type ComponentRegistryItem = {
   id: string;
+  key: string;
+  templateKey: string;
   type: ComponentContractType;
   name: string;
   status: ComponentRegistryStatus;
   category: 'action' | 'input' | 'layout' | 'feedback' | 'overlay';
   platforms: Array<'web' | 'mobile'>;
   contract: ComponentContract;
+  contractV2: ComponentContractV2;
   completeness: ComponentRegistryCompleteness;
   isValid: boolean;
 };
@@ -87,6 +92,23 @@ export function getComponentCategory(
   };
 
   return categories[type];
+}
+
+function getRegistryCategory(
+  category: ComponentContractV2['category'],
+  legacyType: ComponentContractType,
+): ComponentRegistryItem['category'] {
+  if (
+    category === 'action' ||
+    category === 'input' ||
+    category === 'layout' ||
+    category === 'feedback' ||
+    category === 'overlay'
+  ) {
+    return category;
+  }
+
+  return getComponentCategory(legacyType);
 }
 
 export function getComponentPlatforms(
@@ -148,6 +170,10 @@ export function getComponentCompleteness(
 export function createComponentRegistryItems(
   componentContracts: Array<{
     id: string;
+    key: string;
+    templateKey: string;
+    category: string;
+    contractVersion: number;
     type: ComponentContractType;
     name: string;
     contract: unknown;
@@ -157,26 +183,34 @@ export function createComponentRegistryItems(
   let invalidCount = 0;
 
   for (const componentContract of componentContracts) {
-    const parsedContract = componentContractSchema.safeParse(
-      componentContract.contract,
-    );
+    try {
+      const contractV2 = parseStoredComponentContractV2({
+        contractVersion: componentContract.contractVersion,
+        key: componentContract.key,
+        name: componentContract.name,
+        templateKey: componentContract.templateKey,
+        category: componentContract.category,
+        contract: componentContract.contract,
+      });
+      const legacyContract = toLegacyComponentContract(contractV2);
 
-    if (!parsedContract.success) {
+      items.push({
+        id: componentContract.id,
+        key: contractV2.key,
+        templateKey: contractV2.templateKey,
+        type: legacyContract.type,
+        name: contractV2.name,
+        status: legacyContract.status,
+        category: getRegistryCategory(contractV2.category, legacyContract.type),
+        platforms: getComponentPlatforms(legacyContract.type),
+        contract: legacyContract,
+        contractV2,
+        completeness: getComponentCompleteness(legacyContract),
+        isValid: true,
+      });
+    } catch {
       invalidCount += 1;
-      continue;
     }
-
-    items.push({
-      id: componentContract.id,
-      type: componentContract.type,
-      name: componentContract.name,
-      status: parsedContract.data.status,
-      category: getComponentCategory(parsedContract.data.type),
-      platforms: getComponentPlatforms(parsedContract.data.type),
-      contract: parsedContract.data,
-      completeness: getComponentCompleteness(parsedContract.data),
-      isValid: true,
-    });
   }
 
   return {
