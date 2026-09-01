@@ -9,6 +9,9 @@ import type { UpdateComponentContractActionState } from './update-component-cont
 import {
   componentContractSchema,
   componentContractTypeSchema,
+  componentContractV2Schema,
+  componentKeySchema,
+  resolveStoredComponentTemplateContract,
 } from '@/domain/design-system';
 
 function getFormStringValue(formData: FormData, key: string): string {
@@ -43,6 +46,9 @@ export async function updateComponentContractAction(
   const projectSlug = getFormStringValue(formData, 'projectSlug');
   const rawType = getFormStringValue(formData, 'componentType');
   const rawContract = getFormStringValue(formData, 'contract');
+  const parsedComponentKey = componentKeySchema.safeParse(
+    getFormStringValue(formData, 'componentKey'),
+  );
 
   const session = await auth();
 
@@ -56,7 +62,7 @@ export async function updateComponentContractAction(
 
   const parsedType = componentContractTypeSchema.safeParse(rawType);
 
-  if (!parsedType.success) {
+  if (!parsedType.success || !parsedComponentKey.success) {
     return {
       status: 'error',
       formError: 'invalidPayload',
@@ -108,33 +114,92 @@ export async function updateComponentContractAction(
     };
   }
 
+  const storedContract = await prisma.componentContract.findUnique({
+    where: {
+      projectId_key: {
+        projectId: project.id,
+        key: parsedComponentKey.data,
+      },
+    },
+    select: {
+      key: true,
+      name: true,
+      templateKey: true,
+      category: true,
+      contractVersion: true,
+      contract: true,
+    },
+  });
+
+  if (!storedContract) {
+    return {
+      status: 'error',
+      formError: 'componentContractNotFound',
+      savedContract: null,
+    };
+  }
+
   try {
-    const updatedContract = await prisma.componentContract.update({
-      where: {
-        projectId_key: {
-          projectId: project.id,
-          key: parsedType.data,
-        },
-      },
-      data: {
+    if (storedContract.contractVersion === 2) {
+      const { template, contract: currentContractV2 } =
+        resolveStoredComponentTemplateContract({
+          contractVersion: storedContract.contractVersion,
+          key: storedContract.key,
+          name: storedContract.name,
+          templateKey: storedContract.templateKey,
+          category: storedContract.category,
+          contract: storedContract.contract,
+        });
+
+      if (template.legacyType !== parsedType.data) {
+        return {
+          status: 'error',
+          formError: 'invalidContract',
+          savedContract: null,
+        };
+      }
+
+      const nextContractV2 = componentContractV2Schema.parse({
+        ...currentContractV2,
         name: parsedContract.data.name,
-        contract: toInputJsonValue(parsedContract.data),
-      },
-      select: {
-        contract: true,
-      },
-    });
+        purpose: parsedContract.data.purpose,
+        usageGuidelines: parsedContract.data.usageGuidelines,
+        contentGuidelines: parsedContract.data.contentGuidelines,
+        status: parsedContract.data.status,
+        anatomy: parsedContract.data.anatomy,
+        variants: parsedContract.data.variants,
+        sizes: parsedContract.data.sizes,
+        states: parsedContract.data.states,
+        tokenBindings: parsedContract.data.tokenBindings,
+        accessibility: parsedContract.data.accessibility,
+        forbiddenPatterns: parsedContract.data.forbiddenPatterns,
+      });
 
-    const reparsedContract = componentContractSchema.safeParse(
-      updatedContract.contract,
-    );
-
-    if (!reparsedContract.success) {
-      return {
-        status: 'error',
-        formError: 'unexpected',
-        savedContract: null,
-      };
+      await prisma.componentContract.update({
+        where: {
+          projectId_key: {
+            projectId: project.id,
+            key: storedContract.key,
+          },
+        },
+        data: {
+          name: nextContractV2.name,
+          contract: toInputJsonValue(nextContractV2),
+        },
+      });
+    } else {
+      await prisma.componentContract.update({
+        where: {
+          projectId_key: {
+            projectId: project.id,
+            key: storedContract.key,
+          },
+        },
+        data: {
+          name: parsedContract.data.name,
+          contract: toInputJsonValue(parsedContract.data),
+        },
+      });
     }
 
     revalidatePath(`/${locale}/app/projects/${projectSlug}/components`);
@@ -142,12 +207,12 @@ export async function updateComponentContractAction(
     return {
       status: 'success',
       formError: null,
-      savedContract: reparsedContract.data,
+      savedContract: parsedContract.data,
     };
   } catch {
     return {
       status: 'error',
-      formError: 'componentContractNotFound',
+      formError: 'unexpected',
       savedContract: null,
     };
   }
