@@ -34,6 +34,7 @@ type ComponentPreviewRoleFieldProps = {
   bindings: ComponentTokenBindingDraft[];
   labels: ComponentPreviewRoleFieldLabels;
   onChange: (binding: ComponentTokenBindingDraft) => void;
+  excludedRoles?: readonly ComponentPreviewTokenRole[];
 };
 
 export function ComponentPreviewRoleField({
@@ -41,6 +42,7 @@ export function ComponentPreviewRoleField({
   bindings,
   labels,
   onChange,
+  excludedRoles = [],
 }: ComponentPreviewRoleFieldProps) {
   const detectedSelection = getComponentPreviewTokenRoleSelection(binding.key);
   const [isCustomRoleSelected, setIsCustomRoleSelected] = useState(
@@ -59,21 +61,24 @@ export function ComponentPreviewRoleField({
     bindings,
     binding.draftId,
   );
+  const excludedRoleSet = new Set(excludedRoles);
   const options: SelectOption<ComponentPreviewTokenRoleSelection>[] = [
-    ...componentPreviewTokenRoles.map((role) => {
-      const tokenType = getComponentPreviewTokenRoleType(role);
-      const isUsed = usedRoles.has(role);
-      const metadata = `${role} · ${labels.tokenTypes[tokenType]}`;
+    ...componentPreviewTokenRoles
+      .filter((role) => !excludedRoleSet.has(role))
+      .map((role) => {
+        const tokenType = getComponentPreviewTokenRoleType(role);
+        const isUsed = usedRoles.has(role);
+        const metadata = `${role} · ${labels.tokenTypes[tokenType]}`;
 
-      return {
-        value: role,
-        label: labels.roles[role],
-        description: isUsed
-          ? `${metadata} · ${labels.roleAlreadyUsed}`
-          : metadata,
-        disabled: isUsed,
-      };
-    }),
+        return {
+          value: role,
+          label: labels.roles[role],
+          description: isUsed
+            ? `${metadata} · ${labels.roleAlreadyUsed}`
+            : metadata,
+          disabled: isUsed,
+        };
+      }),
     {
       value: customComponentPreviewTokenRole,
       label: labels.customRole,
@@ -96,7 +101,7 @@ export function ComponentPreviewRoleField({
       return;
     }
 
-    if (!nextSelection) {
+    if (!nextSelection || excludedRoleSet.has(nextSelection)) {
       return;
     }
 
