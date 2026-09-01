@@ -13,11 +13,13 @@ jobs:
     timeout-minutes: 5
 
     permissions:
-      contents: read
+      contents: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          ref: agent/ds-181r-01-component-domain-v2
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -36,12 +38,17 @@ jobs:
           src/features/tokens/delete-token.utils.ts
           --write
 
-      - name: Upload formatted files
-        uses: actions/upload-artifact@v4
-        with:
-          name: ds-181r-formatted-files
-          path: |
-            src/domain/design-system/component-contract-v2.schema.ts
-            src/domain/design-system/component-contract-v2.schema.test.ts
+      - name: Commit formatted files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            src/domain/design-system/component-contract-v2.schema.ts \
+            src/domain/design-system/component-contract-v2.schema.test.ts \
             src/features/tokens/delete-token.utils.ts
-          if-no-files-found: error
+          if git diff --cached --quiet; then
+            echo "No formatting changes to commit."
+            exit 0
+          fi
+          git commit -m "style: format DS-181R-01 files"
+          git push origin HEAD:agent/ds-181r-01-component-domain-v2
