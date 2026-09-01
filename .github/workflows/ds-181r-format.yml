@@ -1,0 +1,47 @@
+name: DS-181R Format
+
+on:
+  push:
+    branches:
+      - agent/ds-181r-01-component-domain-v2
+  workflow_dispatch:
+
+jobs:
+  format:
+    name: Generate formatted DS-181R files
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Format DS-181R files
+        run: >-
+          npx prettier
+          src/domain/design-system/component-contract-v2.schema.ts
+          src/domain/design-system/component-contract-v2.schema.test.ts
+          src/features/tokens/delete-token.utils.ts
+          --write
+
+      - name: Upload formatted files
+        uses: actions/upload-artifact@v4
+        with:
+          name: ds-181r-formatted-files
+          path: |
+            src/domain/design-system/component-contract-v2.schema.ts
+            src/domain/design-system/component-contract-v2.schema.test.ts
+            src/features/tokens/delete-token.utils.ts
+          if-no-files-found: error
