@@ -24,7 +24,9 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-function createTokenResolver(rawTokenSets: RawComponentTokenSet[]): TokenResolver {
+function createTokenResolver(
+  rawTokenSets: RawComponentTokenSet[],
+): TokenResolver {
   const parsedTokenSets = parseComponentTokenSets(rawTokenSets).tokenSets;
   const tokens = parsedTokenSets.flatMap((tokenSet) => tokenSet.tokens);
   const dictionary = createTokenDictionary(tokens);
@@ -145,12 +147,18 @@ export function createComponentVisualCssProperties({
     paddingInline: resolvePrimitiveDesignValue(spacing?.paddingX, resolveToken),
     paddingBlock: resolvePrimitiveDesignValue(spacing?.paddingY, resolveToken),
     paddingTop: resolvePrimitiveDesignValue(spacing?.paddingTop, resolveToken),
-    paddingRight: resolvePrimitiveDesignValue(spacing?.paddingRight, resolveToken),
+    paddingRight: resolvePrimitiveDesignValue(
+      spacing?.paddingRight,
+      resolveToken,
+    ),
     paddingBottom: resolvePrimitiveDesignValue(
       spacing?.paddingBottom,
       resolveToken,
     ),
-    paddingLeft: resolvePrimitiveDesignValue(spacing?.paddingLeft, resolveToken),
+    paddingLeft: resolvePrimitiveDesignValue(
+      spacing?.paddingLeft,
+      resolveToken,
+    ),
     gap: resolvePrimitiveDesignValue(spacing?.gap, resolveToken),
     borderWidth: resolvePrimitiveDesignValue(border?.width, resolveToken),
     borderTopWidth: resolvePrimitiveDesignValue(border?.topWidth, resolveToken),

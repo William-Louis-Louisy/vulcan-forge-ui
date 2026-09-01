@@ -25,8 +25,9 @@ export type UpdateButtonVisualCustomizationActionState =
       savedContract: null;
     };
 
-export const initialUpdateButtonVisualCustomizationActionState: UpdateButtonVisualCustomizationActionState = {
-  status: 'idle',
-  formError: null,
-  savedContract: null,
-};
+export const initialUpdateButtonVisualCustomizationActionState: UpdateButtonVisualCustomizationActionState =
+  {
+    status: 'idle',
+    formError: null,
+    savedContract: null,
+  };

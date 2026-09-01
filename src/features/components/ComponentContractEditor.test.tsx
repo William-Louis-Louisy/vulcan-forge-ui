@@ -267,6 +267,7 @@ describe('ComponentContractEditor', () => {
   it('renders localized content and compact contract sections', () => {
     render(
       <ComponentContractEditor
+        componentKey="button"
         locale="en"
         projectSlug="project"
         contract={contract}
@@ -304,6 +305,7 @@ describe('ComponentContractEditor', () => {
   it('switches localized content and anatomy labels together', async () => {
     render(
       <ComponentContractEditor
+        componentKey="button"
         locale="en"
         projectSlug="project"
         contract={contract}
@@ -329,6 +331,7 @@ describe('ComponentContractEditor', () => {
   it('adds a structured anatomy part with an optional requirement', async () => {
     render(
       <ComponentContractEditor
+        componentKey="button"
         locale="en"
         projectSlug="project"
         contract={contract}
@@ -351,6 +354,7 @@ describe('ComponentContractEditor', () => {
   it('adds an editable size tag', async () => {
     render(
       <ComponentContractEditor
+        componentKey="button"
         locale="en"
         projectSlug="project"
         contract={contract}
@@ -373,6 +377,7 @@ describe('ComponentContractEditor', () => {
 
     render(
       <ComponentContractEditor
+        componentKey="button"
         locale="en"
         projectSlug="project"
         contract={contract}
@@ -404,6 +409,7 @@ describe('ComponentContractEditor', () => {
 
     render(
       <ComponentContractEditor
+        componentKey="button"
         locale="en"
         projectSlug="project"
         contract={contract}
@@ -433,6 +439,7 @@ describe('ComponentContractEditor', () => {
   it('enables the save button after a valid local change', () => {
     render(
       <ComponentContractEditor
+        componentKey="button"
         locale="en"
         projectSlug="project"
         contract={contract}
@@ -459,6 +466,7 @@ describe('ComponentContractEditor', () => {
 
     render(
       <ComponentContractEditor
+        componentKey="button"
         locale="en"
         projectSlug="demo"
         contract={contract}
@@ -493,6 +501,7 @@ describe('ComponentContractEditor', () => {
 
     render(
       <ComponentContractEditor
+        componentKey="button"
         locale="en"
         projectSlug="demo"
         contract={contract}
@@ -528,6 +537,7 @@ describe('ComponentContractEditor', () => {
 
     render(
       <ComponentContractEditor
+        componentKey="button"
         locale="en"
         projectSlug="demo"
         contract={contract}

@@ -7,7 +7,9 @@ import {
 import { mergeLegacySemanticContractIntoV2 } from './component-v2-semantic-compatibility.utils';
 
 function getButtonSeed(): ComponentContract {
-  const seed = mvpComponentContractSeeds.find((candidate) => candidate.type === 'button');
+  const seed = mvpComponentContractSeeds.find(
+    (candidate) => candidate.type === 'button',
+  );
 
   if (!seed) {
     throw new Error('Button seed is required for this test');

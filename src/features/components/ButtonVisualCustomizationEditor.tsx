@@ -212,7 +212,9 @@ function getSource(value: unknown): string {
 }
 
 function getTokenPath(value: unknown): string {
-  return isRecord(value) && value.source === 'token' && typeof value.path === 'string'
+  return isRecord(value) &&
+    value.source === 'token' &&
+    typeof value.path === 'string'
     ? value.path
     : '';
 }
@@ -227,7 +229,10 @@ function getExplicitValue(value: unknown): string {
     : '';
 }
 
-function getScopeKeys(contract: ComponentContract, kind: ButtonVisualScope['kind']) {
+function getScopeKeys(
+  contract: ComponentContract,
+  kind: ButtonVisualScope['kind'],
+) {
   if (kind === 'variant') {
     return contract.variants.map((item) => item.key);
   }
@@ -379,7 +384,10 @@ export function ButtonVisualCustomizationEditor({
           <LabeledControl label={t('target')}>
             <Select
               value={scope.key}
-              options={scopeTargetKeys.map((key) => ({ value: key, label: key }))}
+              options={scopeTargetKeys.map((key) => ({
+                value: key,
+                label: key,
+              }))}
               onValueChange={(key) => {
                 setExplicitDrafts({});
                 setScope({ kind: scope.kind, key });
@@ -397,7 +405,10 @@ export function ButtonVisualCustomizationEditor({
 
       <div className="mt-5 grid gap-5">
         {propertyGroups.map((group) => (
-          <VisualGroup key={group.titleKey} title={t(`groups.${group.titleKey}`)}>
+          <VisualGroup
+            key={group.titleKey}
+            title={t(`groups.${group.titleKey}`)}
+          >
             {group.properties.map((descriptor) => {
               const fieldId = `${scope.kind}:${scope.kind === 'base' ? 'base' : scope.key}:${descriptor.group}:${descriptor.property}`;
 
@@ -604,7 +615,13 @@ export function ButtonVisualCustomizationEditor({
   );
 }
 
-function VisualGroup({ title, children }: { title: string; children: ReactNode }) {
+function VisualGroup({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) {
   return (
     <fieldset className="border-border-subtle bg-surface-primary grid gap-3 rounded-lg border p-3">
       <legend className="text-content-primary px-1 text-xs font-semibold">
@@ -615,10 +632,18 @@ function VisualGroup({ title, children }: { title: string; children: ReactNode }
   );
 }
 
-function LabeledControl({ label, children }: { label: string; children: ReactNode }) {
+function LabeledControl({
+  label,
+  children,
+}: {
+  label: string;
+  children: ReactNode;
+}) {
   return (
     <div className="grid min-w-0 gap-1.5">
-      <span className="text-content-secondary text-xs font-semibold">{label}</span>
+      <span className="text-content-secondary text-xs font-semibold">
+        {label}
+      </span>
       {children}
     </div>
   );
@@ -853,7 +878,9 @@ function TypographyEditor({
     valuePlaceholder: string;
     textAlignments: Record<'left' | 'center' | 'right' | 'justify', string>;
   };
-  onChange: (value: ComponentVisualProperties['typography'] | undefined) => void;
+  onChange: (
+    value: ComponentVisualProperties['typography'] | undefined,
+  ) => void;
 }) {
   const source = value?.source ?? 'unset';
   const typographyTokens = tokenOptions.filter(
@@ -870,7 +897,9 @@ function TypographyEditor({
       [field]: nextValue || undefined,
     };
     const cleaned = Object.fromEntries(
-      Object.entries(nextExplicit).filter(([, fieldValue]) => fieldValue !== undefined),
+      Object.entries(nextExplicit).filter(
+        ([, fieldValue]) => fieldValue !== undefined,
+      ),
     );
 
     if (Object.keys(cleaned).length > 0) {
@@ -880,7 +909,7 @@ function TypographyEditor({
 
   return (
     <VisualGroup title={labels.title}>
-      <div className="sm:col-span-2 grid gap-3">
+      <div className="grid gap-3 sm:col-span-2">
         <div className="flex items-center justify-between gap-2">
           {value ? (
             <button
@@ -949,12 +978,20 @@ function TypographyEditor({
           <div className="grid gap-2 sm:grid-cols-2">
             <TypographyInput
               label={labels.fontFamily}
-              value={typeof explicit.fontFamily === 'string' ? explicit.fontFamily : ''}
-              onChange={(nextValue) => setExplicitField('fontFamily', nextValue)}
+              value={
+                typeof explicit.fontFamily === 'string'
+                  ? explicit.fontFamily
+                  : ''
+              }
+              onChange={(nextValue) =>
+                setExplicitField('fontFamily', nextValue)
+              }
             />
             <TypographyInput
               label={labels.fontSize}
-              value={typeof explicit.fontSize === 'string' ? explicit.fontSize : ''}
+              value={
+                typeof explicit.fontSize === 'string' ? explicit.fontSize : ''
+              }
               placeholder={labels.valuePlaceholder}
               onChange={(nextValue) => {
                 if (explicitLengthValueSchema.safeParse(nextValue).success) {

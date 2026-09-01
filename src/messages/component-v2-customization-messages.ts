@@ -93,7 +93,8 @@ export const componentV2CustomizationMessages = {
             projectNotFound: 'The design system could not be found.',
             componentContractNotFound: 'This component no longer exists.',
             invalidPayload: 'The visual customization payload is invalid.',
-            invalidContract: 'This visual editor only supports Button templates.',
+            invalidContract:
+              'This visual editor only supports Button templates.',
             unexpected: 'Unable to save the visual customization. Try again.',
           },
         },
@@ -187,12 +188,15 @@ export const componentV2CustomizationMessages = {
           unsaved: 'Modifications visuelles non enregistrées',
           invalid: 'La personnalisation visuelle est invalide',
           errors: {
-            unauthorized: 'Vous devez être connecté pour modifier ce composant.',
+            unauthorized:
+              'Vous devez être connecté pour modifier ce composant.',
             projectNotFound: 'Le design system est introuvable.',
             componentContractNotFound: 'Ce composant n’existe plus.',
             invalidPayload: 'La personnalisation visuelle est invalide.',
-            invalidContract: 'Cet éditeur visuel prend uniquement en charge les templates Button.',
-            unexpected: 'Impossible d’enregistrer la personnalisation visuelle. Veuillez réessayer.',
+            invalidContract:
+              'Cet éditeur visuel prend uniquement en charge les templates Button.',
+            unexpected:
+              'Impossible d’enregistrer la personnalisation visuelle. Veuillez réessayer.',
           },
         },
       },

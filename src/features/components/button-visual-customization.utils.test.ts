@@ -12,7 +12,9 @@ import {
 } from './button-visual-customization.utils';
 
 function createButtonContract() {
-  const seed = mvpComponentContractSeeds.find((candidate) => candidate.type === 'button');
+  const seed = mvpComponentContractSeeds.find(
+    (candidate) => candidate.type === 'button',
+  );
 
   if (!seed) {
     throw new Error('Button seed is required for this test');
