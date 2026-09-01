@@ -1,0 +1,82 @@
+name: DS-181R-03 Prepare
+
+on:
+  push:
+    branches:
+      - agent/ds-181r-03-button-customization
+
+permissions:
+  contents: write
+
+jobs:
+  prepare:
+    name: Prepare DS-181R-03 files
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          ref: agent/ds-181r-03-button-customization
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Update semantic editor test fixtures
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('src/features/components/ComponentContractEditor.test.tsx')
+          text = path.read_text()
+          text = text.replace(
+              '<ComponentContractEditor\n        locale=',
+              '<ComponentContractEditor\n        componentKey="button"\n        locale=',
+          )
+          path.write_text(text)
+          PY
+
+      - name: Format DS-181R-03 files
+        run: |
+          npx prettier --write \
+            docs/product/ds-181r-03-button-customization-vertical-slice.md \
+            src/app/[locale]/app/projects/[projectSlug]/components/page.tsx \
+            src/features/components/ButtonVisualCustomizationEditor.tsx \
+            src/features/components/ButtonVisualPreviewMatrix.tsx \
+            src/features/components/ComponentContractEditor.tsx \
+            src/features/components/ComponentContractEditor.test.tsx \
+            src/features/components/ComponentContractEditorBoundary.tsx \
+            src/features/components/ComponentContractPreviewContext.tsx \
+            src/features/components/ComponentDetailsPanel.tsx \
+            src/features/components/ComponentFoundationsPreviewClient.tsx \
+            src/features/components/ComponentFoundationsPreviewClient.test.tsx \
+            src/features/components/button-visual-customization.utils.ts \
+            src/features/components/button-visual-customization.utils.test.ts \
+            src/features/components/component-v2-semantic-compatibility.utils.ts \
+            src/features/components/component-v2-semantic-compatibility.utils.test.ts \
+            src/features/components/component-visual-preview.utils.ts \
+            src/features/components/component-visual-preview.utils.test.ts \
+            src/features/components/update-button-visual-customization.action.ts \
+            src/features/components/update-button-visual-customization.state.ts \
+            src/features/components/update-component-contract.action.ts \
+            src/i18n/request.ts \
+            src/messages/component-v2-customization-messages.ts \
+            src/messages/messages.test.ts
+
+      - name: Commit prepared files
+        run: |
+          git add docs/product/ds-181r-03-button-customization-vertical-slice.md src/app src/features/components src/i18n/request.ts src/messages/component-v2-customization-messages.ts src/messages/messages.test.ts
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'chore: prepare DS-181R-03 files'
+          git push origin HEAD:agent/ds-181r-03-button-customization
