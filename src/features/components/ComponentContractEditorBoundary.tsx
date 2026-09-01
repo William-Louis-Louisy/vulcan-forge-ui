@@ -9,6 +9,7 @@ import type { ComponentTokenOption } from './component-token-bindings.utils';
 
 type ComponentContractEditorBoundaryProps = {
   componentId: string;
+  componentKey: string;
   locale: Locale;
   projectSlug: string;
   contract: ComponentContract;
@@ -18,6 +19,7 @@ type ComponentContractEditorBoundaryProps = {
 
 export function ComponentContractEditorBoundary({
   componentId,
+  componentKey,
   locale,
   projectSlug,
   contract,
@@ -27,6 +29,7 @@ export function ComponentContractEditorBoundary({
   return (
     <ComponentContractEditor
       key={`${projectSlug}:${componentId}`}
+      componentKey={componentKey}
       locale={locale}
       projectSlug={projectSlug}
       contract={contract}
