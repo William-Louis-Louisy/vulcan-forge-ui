@@ -36,17 +36,40 @@ import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveC
 import { useActionBackedProjectSaveStatus } from '@/features/save-context/useActionBackedProjectSaveStatus';
 
 type DesignValueKind = 'dimension' | 'length' | 'radius' | 'color';
+type DesignValueGroupKey =
+  | 'dimensions'
+  | 'spacing'
+  | 'radius'
+  | 'border'
+  | 'surface';
+type DesignValueLabelKey =
+  | 'width'
+  | 'minWidth'
+  | 'height'
+  | 'minHeight'
+  | 'paddingX'
+  | 'paddingY'
+  | 'gap'
+  | 'radius'
+  | 'topLeft'
+  | 'topRight'
+  | 'bottomRight'
+  | 'bottomLeft'
+  | 'borderWidth'
+  | 'borderColor'
+  | 'background'
+  | 'foreground';
 
 type DesignValueDescriptor = {
-  group: 'dimensions' | 'spacing' | 'radius' | 'border' | 'surface';
+  group: DesignValueGroupKey;
   property: string;
-  labelKey: string;
+  labelKey: DesignValueLabelKey;
   kind: DesignValueKind;
   tokenType: ComponentTokenOption['type'];
 };
 
 const propertyGroups: Array<{
-  titleKey: string;
+  titleKey: DesignValueGroupKey;
   properties: DesignValueDescriptor[];
 }> = [
   {
@@ -377,6 +400,7 @@ export function ButtonVisualCustomizationEditor({
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         <LabeledControl label={t('scope')}>
           <Select<ButtonVisualScope['kind']>
+            id="button-v2-customization-scope"
             value={scope.kind}
             options={[
               { value: 'base', label: t('scopes.base') },
@@ -393,6 +417,7 @@ export function ButtonVisualCustomizationEditor({
         {scope.kind !== 'base' ? (
           <LabeledControl label={t('target')}>
             <Select
+              id="button-v2-customization-target"
               value={scope.key}
               options={scopeTargetKeys.map((key) => ({
                 value: key,
@@ -425,6 +450,7 @@ export function ButtonVisualCustomizationEditor({
               return (
                 <DesignValueField
                   key={`${descriptor.group}:${descriptor.property}`}
+                  id={fieldId}
                   label={t(`properties.${descriptor.labelKey}`)}
                   value={getButtonVisualProperty(
                     draft,
@@ -488,6 +514,7 @@ export function ButtonVisualCustomizationEditor({
 
         <VisualGroup title={t('groups.border')}>
           <SimpleSelectProperty
+            id="button-v2-border-style"
             label={t('properties.borderStyle')}
             value={getButtonVisualProperty(draft, scope, 'border', 'style')}
             options={(['none', 'solid', 'dashed', 'dotted'] as const).map(
@@ -512,6 +539,7 @@ export function ButtonVisualCustomizationEditor({
 
         <VisualGroup title={t('groups.surface')}>
           <SimpleSelectProperty
+            id="button-v2-elevation"
             label={t('properties.elevation')}
             value={
               isRecord(
@@ -660,6 +688,7 @@ function LabeledControl({
 }
 
 function DesignValueField({
+  id,
   label,
   value,
   descriptor,
@@ -670,6 +699,7 @@ function DesignValueField({
   onReset,
   labels,
 }: {
+  id: string;
   label: string;
   value: unknown;
   descriptor: DesignValueDescriptor;
@@ -760,6 +790,7 @@ function DesignValueField({
       </div>
 
       <Select
+        id={`${id}-source`}
         value={source}
         options={[
           { value: 'unset', label: labels.unset },
@@ -779,6 +810,7 @@ function DesignValueField({
 
       {source === 'token' ? (
         <Select
+          id={`${id}-token`}
           value={getTokenPath(value)}
           options={availableTokens.map((token) => ({
             value: token.path,
@@ -798,11 +830,12 @@ function DesignValueField({
 
       {source === 'explicit' ? (
         <Input
+          id={`${id}-explicit`}
           value={explicitValue}
           onChange={(event) => handleExplicitChange(event.target.value)}
           placeholder={labels.valuePlaceholder}
           size="sm"
-          textMode="code"
+          textMode="technical"
         />
       ) : null}
     </div>
@@ -810,6 +843,7 @@ function DesignValueField({
 }
 
 function SimpleSelectProperty({
+  id,
   label,
   value,
   options,
@@ -818,6 +852,7 @@ function SimpleSelectProperty({
   onChange,
   onReset,
 }: {
+  id: string;
   label: string;
   value: unknown;
   options: Array<{ value: string; label: string }>;
@@ -849,6 +884,7 @@ function SimpleSelectProperty({
         )}
       </div>
       <Select
+        id={id}
         value={resolvedValue}
         options={[{ value: '', label: inheritedLabel }, ...options]}
         onValueChange={(nextValue) =>
@@ -936,6 +972,7 @@ function TypographyEditor({
           )}
         </div>
         <Select
+          id="button-v2-typography-source"
           value={source}
           options={[
             { value: 'unset', label: labels.unset },
@@ -971,6 +1008,7 @@ function TypographyEditor({
 
         {value?.source === 'token' ? (
           <Select
+            id="button-v2-typography-token"
             value={value.path}
             options={typographyTokens.map((token) => ({
               value: token.path,
@@ -1025,6 +1063,7 @@ function TypographyEditor({
             />
             <LabeledControl label={labels.fontWeight}>
               <Select
+                id="button-v2-typography-font-weight"
                 value={String(explicit.fontWeight ?? 600)}
                 options={['400', '500', '600', '700', 'bold'].map((weight) => ({
                   value: weight,
@@ -1042,6 +1081,7 @@ function TypographyEditor({
             </LabeledControl>
             <LabeledControl label={labels.lineHeight}>
               <Select
+                id="button-v2-typography-line-height"
                 value={String(explicit.lineHeight ?? 1.2)}
                 options={['1', '1.2', '1.5', '1.75', '2'].map((lineHeight) => ({
                   value: lineHeight,
@@ -1056,6 +1096,7 @@ function TypographyEditor({
             </LabeledControl>
             <LabeledControl label={labels.textAlign}>
               <Select
+                id="button-v2-typography-text-align"
                 value={explicit.textAlign ?? 'center'}
                 options={(['left', 'center', 'right', 'justify'] as const).map(
                   (alignment) => ({

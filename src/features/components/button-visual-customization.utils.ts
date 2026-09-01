@@ -41,7 +41,9 @@ export function getButtonVisualProperty(
   const target = getButtonVisualTarget(contract, scope);
   const groupValue = target[group];
 
-  return isRecord(groupValue) ? groupValue[property] : undefined;
+  return isRecord(groupValue)
+    ? (groupValue as Record<string, unknown>)[property]
+    : undefined;
 }
 
 function setTarget(

@@ -2,6 +2,7 @@ import type { routing } from '../i18n/routing';
 import type baseMessages from '../messages/en.json';
 import type { componentGuidelineMessages } from '../messages/component-guidelines';
 import type { componentPreviewMessages } from '../messages/component-preview-messages';
+import type { componentV2CustomizationMessages } from '../messages/component-v2-customization-messages';
 import type { themePreviewMessages } from '../messages/theme-preview-messages';
 import type { themeEditorMessages } from '../messages/theme-editor-messages';
 import type { accessibilityCenterMessages } from '../messages/accessibility-center-messages';
@@ -52,8 +53,11 @@ type WidenMessageValues<Value> = Value extends string
           : Value;
 
 type ComponentMessages = DeepMerge<
-  (typeof componentGuidelineMessages)['en'],
-  (typeof componentPreviewMessages)['en']
+  DeepMerge<
+    (typeof componentGuidelineMessages)['en'],
+    (typeof componentPreviewMessages)['en']
+  >,
+  (typeof componentV2CustomizationMessages)['en']
 >;
 
 type ThemeMessages = DeepMerge<

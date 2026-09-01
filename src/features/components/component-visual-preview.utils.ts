@@ -85,6 +85,14 @@ function resolvePrimitiveDesignValue(
   return undefined;
 }
 
+function resolveStringDesignValue(
+  value: unknown,
+  resolveToken: TokenResolver,
+): string | undefined {
+  const resolved = resolvePrimitiveDesignValue(value, resolveToken);
+  return typeof resolved === 'string' ? resolved : undefined;
+}
+
 function resolveTypographyDesignValue(
   value: ComponentVisualProperties['typography'],
   resolveToken: TokenResolver,
@@ -175,7 +183,7 @@ export function createComponentVisualCssProperties({
       resolveToken,
     ),
     borderStyle: border?.style,
-    borderColor: resolvePrimitiveDesignValue(border?.color, resolveToken),
+    borderColor: resolveStringDesignValue(border?.color, resolveToken),
     borderRadius: resolvePrimitiveDesignValue(radius?.radius, resolveToken),
     borderTopLeftRadius: resolvePrimitiveDesignValue(
       radius?.topLeft,
@@ -193,11 +201,11 @@ export function createComponentVisualCssProperties({
       radius?.bottomLeft,
       resolveToken,
     ),
-    backgroundColor: resolvePrimitiveDesignValue(
+    backgroundColor: resolveStringDesignValue(
       surface?.background,
       resolveToken,
     ),
-    color: resolvePrimitiveDesignValue(surface?.foreground, resolveToken),
+    color: resolveStringDesignValue(surface?.foreground, resolveToken),
     boxShadow: elevationToBoxShadow(
       resolvePrimitiveDesignValue(surface?.elevation, resolveToken),
     ),
