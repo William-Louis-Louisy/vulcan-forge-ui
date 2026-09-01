@@ -200,10 +200,7 @@ describe('ComponentFoundationsPreviewClient', () => {
 
     expect(previewButton).toHaveStyle({
       paddingInline: '24px',
-      borderTopLeftRadius: '18px',
-      borderTopRightRadius: '4px',
-      borderBottomRightRadius: '18px',
-      borderBottomLeftRadius: '4px',
+      borderRadius: '18px 4px 18px 4px',
     });
   });
 
