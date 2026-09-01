@@ -1,0 +1,62 @@
+name: DS-181R-02 Format
+
+on:
+  push:
+    branches:
+      - agent/ds-181r-02-template-registry
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    name: Format DS-181R-02 files
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          ref: agent/ds-181r-02-template-registry
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Format DS-181R-02 files
+        run: >-
+          npx prettier
+          src/domain/design-system/component-template-registry.test.ts
+          src/domain/design-system/component-template-registry.ts
+          src/domain/design-system/index.ts
+          src/features/components/component-contract-crud.actions.ts
+          src/features/components/ComponentFoundationsPreviewClient.test.tsx
+          src/features/components/ComponentFoundationsPreviewClient.tsx
+          src/features/components/components-registry.utils.test.ts
+          src/features/components/components-registry.utils.ts
+          --write
+
+      - name: Commit formatted files
+        run: |
+          git add \
+            src/domain/design-system/component-template-registry.test.ts \
+            src/domain/design-system/component-template-registry.ts \
+            src/domain/design-system/index.ts \
+            src/features/components/component-contract-crud.actions.ts \
+            src/features/components/ComponentFoundationsPreviewClient.test.tsx \
+            src/features/components/ComponentFoundationsPreviewClient.tsx \
+            src/features/components/components-registry.utils.test.ts \
+            src/features/components/components-registry.utils.ts
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'style: format DS-181R-02 files'
+          git push origin HEAD:agent/ds-181r-02-template-registry
