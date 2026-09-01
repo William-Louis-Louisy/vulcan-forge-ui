@@ -117,13 +117,7 @@ function createRadiusCssProperties(
     return { borderRadius: uniform };
   }
 
-  const resolveCorner = (
-    value: ComponentVisualProperties['radius'] extends infer Radius
-      ? Radius extends { topLeft?: infer Corner }
-        ? Corner
-        : never
-      : never,
-  ) =>
+  const resolveCorner = (value: unknown) =>
     value === undefined
       ? uniform
       : resolvePrimitiveDesignValue(value, resolveToken);
