@@ -5,10 +5,15 @@ import {
   type BrandProfile,
 } from './brand-profile.schema';
 import {
-  componentContractSchema,
   type ComponentContract,
   type ComponentContractType,
 } from './component-contract.schema';
+import {
+  parseStoredComponentContractV2,
+  toLegacyComponentContract,
+  type ComponentCategory,
+  type ComponentContractV2,
+} from './component-contract-v2.schema';
 import { designTokenSchema, type DesignToken } from './design-token.schema';
 import {
   jsonValueSchema,
@@ -46,9 +51,14 @@ export type DesignSystemProjectSourceTheme = {
 
 export type DesignSystemProjectSourceComponent = {
   id: string;
+  key: string;
+  templateKey: string;
+  category: ComponentCategory;
+  contractVersion: number;
   type: ComponentContractType;
   name: string;
   contract: ComponentContract;
+  contractV2: ComponentContractV2;
   updatedAt: Date;
 };
 
@@ -84,6 +94,10 @@ export type DesignSystemProjectSourceInput = {
   }>;
   componentContracts: Array<{
     id: string;
+    key: string;
+    templateKey: string;
+    category: string;
+    contractVersion: number;
     type: ComponentContractType;
     name: string;
     contract: unknown;
@@ -140,23 +154,34 @@ export function createDesignSystemProjectSource({
   }));
 
   const components = componentContracts.flatMap((componentContract) => {
-    const parsedContract = componentContractSchema.safeParse(
-      componentContract.contract,
-    );
+    try {
+      const contractV2 = parseStoredComponentContractV2({
+        contractVersion: componentContract.contractVersion,
+        key: componentContract.key,
+        name: componentContract.name,
+        templateKey: componentContract.templateKey,
+        category: componentContract.category,
+        contract: componentContract.contract,
+      });
+      const legacyContract = toLegacyComponentContract(contractV2);
 
-    if (!parsedContract.success) {
+      return [
+        {
+          id: componentContract.id,
+          key: contractV2.key,
+          templateKey: contractV2.templateKey,
+          category: contractV2.category,
+          contractVersion: componentContract.contractVersion,
+          type: legacyContract.type,
+          name: contractV2.name,
+          contract: legacyContract,
+          contractV2,
+          updatedAt: componentContract.updatedAt,
+        },
+      ];
+    } catch {
       return [];
     }
-
-    return [
-      {
-        id: componentContract.id,
-        type: componentContract.type,
-        name: componentContract.name,
-        contract: parsedContract.data,
-        updatedAt: componentContract.updatedAt,
-      },
-    ];
   });
 
   return {
