@@ -93,6 +93,49 @@ function resolveStringDesignValue(
   return typeof resolved === 'string' ? resolved : undefined;
 }
 
+function createRadiusCssProperties(
+  radius: ComponentVisualProperties['radius'],
+  resolveToken: TokenResolver,
+): Pick<
+  CSSProperties,
+  | 'borderRadius'
+  | 'borderTopLeftRadius'
+  | 'borderTopRightRadius'
+  | 'borderBottomRightRadius'
+  | 'borderBottomLeftRadius'
+> {
+  const uniform = resolvePrimitiveDesignValue(radius?.radius, resolveToken);
+  const hasCornerValue = Boolean(
+    radius &&
+    (radius.topLeft !== undefined ||
+      radius.topRight !== undefined ||
+      radius.bottomRight !== undefined ||
+      radius.bottomLeft !== undefined),
+  );
+
+  if (!hasCornerValue) {
+    return { borderRadius: uniform };
+  }
+
+  const resolveCorner = (
+    value: ComponentVisualProperties['radius'] extends infer Radius
+      ? Radius extends { topLeft?: infer Corner }
+        ? Corner
+        : never
+      : never,
+  ) =>
+    value === undefined
+      ? uniform
+      : resolvePrimitiveDesignValue(value, resolveToken);
+
+  return {
+    borderTopLeftRadius: resolveCorner(radius?.topLeft),
+    borderTopRightRadius: resolveCorner(radius?.topRight),
+    borderBottomRightRadius: resolveCorner(radius?.bottomRight),
+    borderBottomLeftRadius: resolveCorner(radius?.bottomLeft),
+  };
+}
+
 function resolveTypographyDesignValue(
   value: ComponentVisualProperties['typography'],
   resolveToken: TokenResolver,
@@ -137,6 +180,7 @@ export function createComponentVisualCssProperties({
   const spacing = visual.spacing;
   const border = visual.border;
   const radius = visual.radius;
+  const radiusStyles = createRadiusCssProperties(radius, resolveToken);
   const surface = visual.surface;
   const typography = resolveTypographyDesignValue(
     visual.typography,
@@ -184,23 +228,7 @@ export function createComponentVisualCssProperties({
     ),
     borderStyle: border?.style,
     borderColor: resolveStringDesignValue(border?.color, resolveToken),
-    borderRadius: resolvePrimitiveDesignValue(radius?.radius, resolveToken),
-    borderTopLeftRadius: resolvePrimitiveDesignValue(
-      radius?.topLeft,
-      resolveToken,
-    ),
-    borderTopRightRadius: resolvePrimitiveDesignValue(
-      radius?.topRight,
-      resolveToken,
-    ),
-    borderBottomRightRadius: resolvePrimitiveDesignValue(
-      radius?.bottomRight,
-      resolveToken,
-    ),
-    borderBottomLeftRadius: resolvePrimitiveDesignValue(
-      radius?.bottomLeft,
-      resolveToken,
-    ),
+    ...radiusStyles,
     backgroundColor: resolveStringDesignValue(
       surface?.background,
       resolveToken,

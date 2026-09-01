@@ -264,6 +264,62 @@ describe('ComponentContract V2 domain', () => {
     });
   });
 
+  it('treats a higher-layer uniform radius as shorthand that replaces inherited corners', () => {
+    const resolved = resolveComponentVisualProperties({
+      templateDefaults: {
+        radius: {
+          radius: { source: 'value', value: '8px' },
+          topLeft: { source: 'value', value: '16px' },
+        },
+      },
+      overrides: {
+        variants: {
+          primary: {
+            radius: {
+              radius: { source: 'value', value: '4px' },
+              bottomRight: { source: 'value', value: '12px' },
+            },
+          },
+        },
+        sizes: {},
+        states: {},
+      },
+      variantKey: 'primary',
+    });
+
+    expect(resolved.radius).toEqual({
+      radius: { source: 'value', value: '4px' },
+      bottomRight: { source: 'value', value: '12px' },
+    });
+  });
+
+  it('preserves inherited radius corners when a higher layer changes only another corner', () => {
+    const resolved = resolveComponentVisualProperties({
+      templateDefaults: {
+        radius: { radius: { source: 'value', value: '8px' } },
+      },
+      base: {
+        radius: { topLeft: { source: 'value', value: '16px' } },
+      },
+      overrides: {
+        variants: {
+          primary: {
+            radius: { topRight: { source: 'value', value: '4px' } },
+          },
+        },
+        sizes: {},
+        states: {},
+      },
+      variantKey: 'primary',
+    });
+
+    expect(resolved.radius).toEqual({
+      radius: { source: 'value', value: '8px' },
+      topLeft: { source: 'value', value: '16px' },
+      topRight: { source: 'value', value: '4px' },
+    });
+  });
+
   it('resets one override property back to inherited behavior', () => {
     const override = {
       surface: {

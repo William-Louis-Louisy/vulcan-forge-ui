@@ -139,4 +139,40 @@ describe('createComponentVisualCssProperties', () => {
       boxShadow: '0 4px 10px rgb(0 0 0 / 0.12)',
     });
   });
+
+  it('projects mixed uniform and per-corner radius through corner longhands only', () => {
+    const styles = createComponentVisualCssProperties({
+      visual: {
+        radius: {
+          radius: { source: 'value', value: '8px' },
+          topLeft: { source: 'value', value: '18px' },
+          bottomRight: { source: 'value', value: '32px' },
+        },
+      },
+      rawTokenSets: [],
+    });
+
+    expect(styles.borderRadius).toBeUndefined();
+    expect(styles).toMatchObject({
+      borderTopLeftRadius: '18px',
+      borderTopRightRadius: '8px',
+      borderBottomRightRadius: '32px',
+      borderBottomLeftRadius: '8px',
+    });
+  });
+
+  it('keeps the CSS radius shorthand when no corner override exists', () => {
+    const styles = createComponentVisualCssProperties({
+      visual: {
+        radius: { radius: { source: 'value', value: '10px' } },
+      },
+      rawTokenSets: [],
+    });
+
+    expect(styles.borderRadius).toBe('10px');
+    expect(styles.borderTopLeftRadius).toBeUndefined();
+    expect(styles.borderTopRightRadius).toBeUndefined();
+    expect(styles.borderBottomRightRadius).toBeUndefined();
+    expect(styles.borderBottomLeftRadius).toBeUndefined();
+  });
 });

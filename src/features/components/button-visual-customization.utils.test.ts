@@ -145,4 +145,35 @@ describe('Button visual customization utilities', () => {
       createButtonVisualCustomizationFingerprint(contract),
     );
   });
+
+  it('resetting a corner keeps the authored uniform radius intact', () => {
+    let contract = createButtonContract();
+    contract = setButtonVisualProperty(
+      contract,
+      { kind: 'base' },
+      'radius',
+      'radius',
+      { source: 'value', value: '8px' },
+    );
+    contract = setButtonVisualProperty(
+      contract,
+      { kind: 'base' },
+      'radius',
+      'topLeft',
+      { source: 'value', value: '18px' },
+    );
+    contract = resetButtonVisualProperty(
+      contract,
+      { kind: 'base' },
+      'radius',
+      'topLeft',
+    );
+
+    expect(
+      getButtonVisualProperty(contract, { kind: 'base' }, 'radius', 'topLeft'),
+    ).toBeUndefined();
+    expect(
+      getButtonVisualProperty(contract, { kind: 'base' }, 'radius', 'radius'),
+    ).toEqual({ source: 'value', value: '8px' });
+  });
 });
