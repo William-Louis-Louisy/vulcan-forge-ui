@@ -1,0 +1,44 @@
+name: DS-181R-02 Format
+
+on:
+  push:
+    branches:
+      - agent/ds-181r-02-template-registry
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    name: Format DS-181R-02 registry fix
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          ref: agent/ds-181r-02-template-registry
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Format registry file
+        run: npx prettier src/domain/design-system/component-template-registry.ts --write
+
+      - name: Commit formatted registry file
+        run: |
+          git add src/domain/design-system/component-template-registry.ts
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'style: format Component template registry fix'
+          git push origin HEAD:agent/ds-181r-02-template-registry
