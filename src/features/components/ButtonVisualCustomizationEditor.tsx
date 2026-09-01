@@ -4,6 +4,7 @@ import {
   useActionState,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
@@ -266,6 +267,7 @@ export function ButtonVisualCustomizationEditor({
   const t = useTranslations('ComponentsRegistryPage.buttonCustomization');
   const router = useRouter();
   const previewContext = useComponentContractPreview();
+  const lastRefreshedSavedContractRef = useRef<string | null>(null);
   const [state, formAction, isPending] = useActionState(
     updateButtonVisualCustomizationAction,
     initialUpdateButtonVisualCustomizationActionState,
@@ -303,14 +305,22 @@ export function ButtonVisualCustomizationEditor({
       return;
     }
 
-    setDraft(state.savedContract);
-    previewContext?.setContractV2(state.savedContract);
-    router.refresh();
-  }, [previewContext, router, state]);
+    const savedFingerprint = createButtonVisualCustomizationFingerprint(
+      state.savedContract,
+    );
 
+    if (lastRefreshedSavedContractRef.current === savedFingerprint) {
+      return;
+    }
+
+    lastRefreshedSavedContractRef.current = savedFingerprint;
+    router.refresh();
+  }, [router, state.savedContract, state.status]);
+
+  const liveSemanticContract = previewContext?.contract ?? semanticContract;
   const scopeTargetKeys = useMemo(
-    () => getScopeKeys(semanticContract, scope.kind),
-    [scope.kind, semanticContract],
+    () => getScopeKeys(liveSemanticContract, scope.kind),
+    [liveSemanticContract, scope.kind],
   );
 
   function updateDraft(nextDraft: ComponentContractV2) {
@@ -326,7 +336,7 @@ export function ButtonVisualCustomizationEditor({
       return;
     }
 
-    const firstKey = getScopeKeys(semanticContract, kind)[0];
+    const firstKey = getScopeKeys(liveSemanticContract, kind)[0];
 
     if (firstKey) {
       setScope({ kind, key: firstKey });
