@@ -1,0 +1,67 @@
+name: DS-181R-03 Type Fix V2
+
+on:
+  push:
+    branches:
+      - agent/ds-181r-03-button-customization
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: agent/ds-181r-03-button-customization
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+      - run: npm ci
+      - name: Apply previously qualified strict fixes
+        run: |
+          awk '/^          python - <<'\''PY'\''$/{flag=1; next} /^          PY$/{flag=0} flag{sub(/^          /,""); print}' .github/workflows/ds-181r-03-typefix.yml > /tmp/ds181r03-typefix.py
+          python /tmp/ds181r03-typefix.py
+      - name: Bound dynamic translation keys
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('src/features/components/ButtonVisualCustomizationEditor.tsx')
+          text = path.read_text()
+          text = text.replace(
+              "type DesignValueKind = 'dimension' | 'length' | 'radius' | 'color';\n\ntype DesignValueDescriptor = {\n  group: 'dimensions' | 'spacing' | 'radius' | 'border' | 'surface';\n  property: string;\n  labelKey: string;",
+              "type DesignValueKind = 'dimension' | 'length' | 'radius' | 'color';\ntype DesignValueGroupKey =\n  | 'dimensions'\n  | 'spacing'\n  | 'radius'\n  | 'border'\n  | 'surface';\ntype DesignValueLabelKey =\n  | 'width'\n  | 'minWidth'\n  | 'height'\n  | 'minHeight'\n  | 'paddingX'\n  | 'paddingY'\n  | 'gap'\n  | 'radius'\n  | 'topLeft'\n  | 'topRight'\n  | 'bottomRight'\n  | 'bottomLeft'\n  | 'borderWidth'\n  | 'borderColor'\n  | 'background'\n  | 'foreground';\n\ntype DesignValueDescriptor = {\n  group: DesignValueGroupKey;\n  property: string;\n  labelKey: DesignValueLabelKey;",
+              1,
+          )
+          text = text.replace(
+              "const propertyGroups: Array<{\n  titleKey: string;",
+              "const propertyGroups: Array<{\n  titleKey: DesignValueGroupKey;",
+              1,
+          )
+          path.write_text(text)
+          PY
+      - name: Format fixes
+        run: |
+          npx prettier --write \
+            src/features/components/ButtonVisualCustomizationEditor.tsx \
+            src/features/components/ButtonVisualPreviewMatrix.tsx \
+            src/features/components/ComponentContractEditorBoundary.test.tsx \
+            src/features/components/button-visual-customization.utils.ts \
+            src/features/components/component-visual-preview.utils.ts \
+            src/types/next-intl.d.ts
+      - name: Generate Prisma Client
+        run: npm run db:generate
+      - name: Verify typecheck
+        run: npm run typecheck
+      - name: Commit fixes
+        run: |
+          git add src/features/components src/types/next-intl.d.ts
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'fix: satisfy strict Button customization contracts'
+          git push origin HEAD:agent/ds-181r-03-button-customization
