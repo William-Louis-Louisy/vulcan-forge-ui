@@ -1,4 +1,8 @@
 import { describe, expect, it } from 'vitest';
+import {
+  migrateLegacyComponentContract,
+  type ComponentContract,
+} from '@/domain/design-system';
 import type { ComponentRegistryItem } from './components-registry.utils';
 import {
   createComponentAiContractPreview,
@@ -25,8 +29,88 @@ const copy: ComponentAiContractRuleCopy = {
   },
 };
 
+const contract: ComponentContract = {
+  type: 'button',
+  name: 'Button',
+  status: 'ready',
+  purpose: {
+    en: 'Trigger a contextual action.',
+    fr: 'Déclencher une action contextuelle.',
+  },
+  usageGuidelines: {
+    en: 'Use one primary action per context.',
+    fr: 'Utiliser une action principale par contexte.',
+  },
+  contentGuidelines: {
+    en: 'Start labels with a verb.',
+    fr: 'Commencer les labels par un verbe.',
+  },
+  anatomy: [
+    {
+      key: 'label',
+      label: {
+        en: 'Label',
+        fr: 'Libellé',
+      },
+      requirement: 'required',
+    },
+  ],
+  variants: [
+    {
+      key: 'primary',
+      label: {
+        en: 'Primary',
+        fr: 'Primaire',
+      },
+    },
+  ],
+  sizes: [
+    {
+      key: 'md',
+      label: {
+        en: 'Medium',
+        fr: 'Moyen',
+      },
+    },
+  ],
+  states: [
+    {
+      key: 'loading',
+      label: {
+        en: 'Loading',
+        fr: 'Chargement',
+      },
+    },
+  ],
+  tokenBindings: [
+    {
+      key: 'background',
+      tokenType: 'color',
+      tokenPath: 'color.action.primary',
+    },
+  ],
+  accessibility: [
+    {
+      key: 'loading-state',
+      severity: 'critical',
+      description: {
+        en: 'Expose aria-busy while loading.',
+        fr: 'Exposer aria-busy pendant le chargement.',
+      },
+    },
+  ],
+  forbiddenPatterns: [
+    {
+      en: 'Wrap a button in a link.',
+      fr: 'Imbriquer un bouton dans un lien.',
+    },
+  ],
+};
+
 const component: ComponentRegistryItem = {
   id: 'button',
+  key: 'button',
+  templateKey: 'button',
   type: 'button',
   name: 'Button',
   status: 'ready',
@@ -39,83 +123,8 @@ const component: ComponentRegistryItem = {
     missingFields: [],
     warnings: [],
   },
-  contract: {
-    type: 'button',
-    name: 'Button',
-    status: 'ready',
-    purpose: {
-      en: 'Trigger a contextual action.',
-      fr: 'Déclencher une action contextuelle.',
-    },
-    usageGuidelines: {
-      en: 'Use one primary action per context.',
-      fr: 'Utiliser une action principale par contexte.',
-    },
-    contentGuidelines: {
-      en: 'Start labels with a verb.',
-      fr: 'Commencer les labels par un verbe.',
-    },
-    anatomy: [
-      {
-        key: 'label',
-        label: {
-          en: 'Label',
-          fr: 'Libellé',
-        },
-        requirement: 'required',
-      },
-    ],
-    variants: [
-      {
-        key: 'primary',
-        label: {
-          en: 'Primary',
-          fr: 'Primaire',
-        },
-      },
-    ],
-    sizes: [
-      {
-        key: 'md',
-        label: {
-          en: 'Medium',
-          fr: 'Moyen',
-        },
-      },
-    ],
-    states: [
-      {
-        key: 'loading',
-        label: {
-          en: 'Loading',
-          fr: 'Chargement',
-        },
-      },
-    ],
-    tokenBindings: [
-      {
-        key: 'background',
-        tokenType: 'color',
-        tokenPath: 'color.action.primary',
-      },
-    ],
-    accessibility: [
-      {
-        key: 'loading-state',
-        severity: 'critical',
-        description: {
-          en: 'Expose aria-busy while loading.',
-          fr: 'Exposer aria-busy pendant le chargement.',
-        },
-      },
-    ],
-    forbiddenPatterns: [
-      {
-        en: 'Wrap a button in a link.',
-        fr: 'Imbriquer un bouton dans un lien.',
-      },
-    ],
-  },
+  contract,
+  contractV2: migrateLegacyComponentContract(contract),
 };
 
 describe('createComponentAiContractPreview', () => {
