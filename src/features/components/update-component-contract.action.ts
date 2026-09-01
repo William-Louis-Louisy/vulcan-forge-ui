@@ -111,9 +111,9 @@ export async function updateComponentContractAction(
   try {
     const updatedContract = await prisma.componentContract.update({
       where: {
-        projectId_type: {
+        projectId_key: {
           projectId: project.id,
-          type: parsedType.data,
+          key: parsedType.data,
         },
       },
       data: {
