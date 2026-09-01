@@ -1,7 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import type { ComponentContract } from '@/domain/design-system';
+import {
+  migrateLegacyComponentContract,
+  type ComponentContract,
+} from '@/domain/design-system';
 import {
   ComponentContractPreviewProvider,
   useComponentContractPreview,
@@ -45,12 +48,15 @@ const contract: ComponentContract = {
 
 const component: ComponentRegistryItem = {
   id: 'button',
+  key: 'button',
+  templateKey: 'button',
   type: 'button',
   name: 'Button',
   status: 'ready',
   category: 'action',
   platforms: ['web'],
   contract,
+  contractV2: migrateLegacyComponentContract(contract),
   isValid: true,
   completeness: {
     score: 100,
@@ -146,10 +152,13 @@ describe('ComponentFoundationsPreviewClient', () => {
     const alertComponent: ComponentRegistryItem = {
       ...component,
       id: 'alert',
+      key: 'alert',
+      templateKey: 'alert',
       type: 'alert',
       name: 'Alert',
       category: 'feedback',
       contract: alertContract,
+      contractV2: migrateLegacyComponentContract(alertContract),
     };
 
     render(
