@@ -235,7 +235,9 @@ export function createComponentContractFromTemplate({
   status?: ComponentContractV2['status'];
 }): ComponentContractV2 {
   const template = requireComponentTemplateDefinition(templateKey);
-  const defaultContract = componentContractV2Schema.parse(template.defaultContract);
+  const defaultContract = componentContractV2Schema.parse(
+    template.defaultContract,
+  );
 
   return componentContractV2Schema.parse({
     ...defaultContract,

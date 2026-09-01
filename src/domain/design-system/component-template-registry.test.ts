@@ -12,13 +12,9 @@ import { mvpComponentContractSeeds } from './mvp-seed-templates';
 
 describe('componentTemplateDefinitions', () => {
   it('registers the five Wave A templates with typed defaults', () => {
-    expect(componentTemplateDefinitions.map((template) => template.key)).toEqual([
-      'button',
-      'textField',
-      'card',
-      'alert',
-      'dialog',
-    ]);
+    expect(
+      componentTemplateDefinitions.map((template) => template.key),
+    ).toEqual(['button', 'textField', 'card', 'alert', 'dialog']);
 
     for (const template of componentTemplateDefinitions) {
       expect(
@@ -31,7 +27,9 @@ describe('componentTemplateDefinitions', () => {
   });
 
   it('captures constrained vs full capability profiles instead of exposing every group uniformly', () => {
-    expect(getComponentTemplateDefinition('button')?.capabilities).toMatchObject({
+    expect(
+      getComponentTemplateDefinition('button')?.capabilities,
+    ).toMatchObject({
       dimensions: 'constrained',
       spacing: 'full',
       layout: 'constrained',
@@ -40,9 +38,9 @@ describe('componentTemplateDefinitions', () => {
     expect(getComponentTemplateDefinition('card')?.capabilities.overflow).toBe(
       'full',
     );
-    expect(getComponentTemplateDefinition('dialog')?.capabilities.overflow).toBe(
-      'full',
-    );
+    expect(
+      getComponentTemplateDefinition('dialog')?.capabilities.overflow,
+    ).toBe('full');
   });
 
   it('keeps renderer selection attached to the template rather than Component identity', () => {
@@ -54,7 +52,9 @@ describe('componentTemplateDefinitions', () => {
 
     expect(component.key).toBe('marketingCta');
     expect(component.templateKey).toBe('button');
-    expect(getComponentTemplateRendererKey(component.templateKey)).toBe('button');
+    expect(getComponentTemplateRendererKey(component.templateKey)).toBe(
+      'button',
+    );
   });
 });
 
@@ -110,7 +110,9 @@ describe('template migration adapters', () => {
       expect(result.contract.templateKey).toBe(legacyContract.type);
       expect(result.contract.name).toBe(legacyContract.name);
       expect(result.contract.purpose).toEqual(legacyContract.purpose);
-      expect(result.contract.accessibility).toEqual(legacyContract.accessibility);
+      expect(result.contract.accessibility).toEqual(
+        legacyContract.accessibility,
+      );
       expect(result.contract.forbiddenPatterns).toEqual(
         legacyContract.forbiddenPatterns,
       );
