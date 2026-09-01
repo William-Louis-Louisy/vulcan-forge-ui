@@ -1,0 +1,67 @@
+name: DS-181R-03B Quality
+
+on:
+  push:
+    branches:
+      - agent/ds-181r-03b-border-radius-correctness
+
+concurrency:
+  group: ds-181r-03b-quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Quality checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: vulcan
+          POSTGRES_PASSWORD: vulcan_dev_password
+          POSTGRES_DB: vulcan_forge_ui
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U vulcan -d vulcan_forge_ui"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://vulcan:vulcan_dev_password@localhost:5432/vulcan_forge_ui?schema=public
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Generate Prisma Client
+        run: npm run db:generate
+      - name: Apply database migrations
+        run: npm run db:migrate:deploy
+      - name: Run authentication database integration tests
+        run: npm run test:auth-integration
+        env:
+          RUN_AUTH_DATABASE_TESTS: 'true'
+          AUTH_RATE_LIMIT_SECRET: integration-rate-limit-secret
+          AUTH_TRUST_PROXY_HEADERS: 'false'
+          AUTH_RATE_LIMIT_FAIL_OPEN: 'false'
+      - name: Run lint
+        run: npm run lint
+      - name: Run typecheck
+        run: npm run typecheck
+      - name: Check formatting
+        run: npm run format:check
+      - name: Run UI audit
+        run: npm run audit:ui
+      - name: Run tests
+        run: npm run test
+      - name: Build application
+        run: npm run build
