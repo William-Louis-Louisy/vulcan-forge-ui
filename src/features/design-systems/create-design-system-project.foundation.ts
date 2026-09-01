@@ -6,6 +6,7 @@ import type {
 import type { Prisma } from '@/generated/prisma/client';
 import {
   getMvpSeedTemplates,
+  migrateLegacyComponentContract,
   type BrandVisualStyle,
 } from '@/domain/design-system';
 
@@ -58,11 +59,20 @@ export function buildDesignSystemProjectFoundation(
       })),
     },
     componentContracts: {
-      create: seedTemplates.componentContracts.map((componentContract) => ({
-        type: componentContract.type,
-        name: componentContract.name,
-        contract: toInputJsonValue(componentContract),
-      })),
+      create: seedTemplates.componentContracts.map((componentContract) => {
+        const normalizedContract =
+          migrateLegacyComponentContract(componentContract);
+
+        return {
+          key: normalizedContract.key,
+          templateKey: normalizedContract.templateKey,
+          category: normalizedContract.category,
+          contractVersion: 1,
+          type: componentContract.type,
+          name: componentContract.name,
+          contract: toInputJsonValue(componentContract),
+        };
+      }),
     },
     documentationProfile: {
       create: {
