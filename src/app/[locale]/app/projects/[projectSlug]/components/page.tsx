@@ -128,6 +128,7 @@ export default async function ComponentsRegistryPage({
         <ComponentContractPreviewProvider
           key={selectedComponent.id}
           initialContract={selectedComponent.contract}
+          initialContractV2={selectedComponent.contractV2}
         >
           <ComponentResponsiveWorkspace
             labels={{
