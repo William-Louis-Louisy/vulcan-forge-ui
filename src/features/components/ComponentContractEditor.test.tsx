@@ -565,4 +565,46 @@ describe('ComponentContractEditor', () => {
 
     expect(screen.getByLabelText('Token type')).toHaveTextContent('Typography');
   });
+
+  it('keeps the Button V2 radius role out of the legacy Visual Tokens editor', async () => {
+    const user = userEvent.setup();
+    const contractWithLegacyRadius: ComponentContract = {
+      ...contract,
+      tokenBindings: [
+        {
+          key: 'radius',
+          tokenType: 'radius',
+          tokenPath: 'radius.md',
+        },
+      ],
+    };
+
+    render(
+      <ComponentContractEditor
+        componentKey="button"
+        locale="en"
+        projectSlug="demo"
+        contract={contractWithLegacyRadius}
+        labels={labels}
+        tokenOptions={tokenOptions}
+      />,
+    );
+
+    expect(
+      screen.queryByRole('combobox', { name: 'Preview role' }),
+    ).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /Add visual token/ }));
+
+    const roleSelect = screen.getByRole('combobox', {
+      name: 'Preview role',
+    });
+    expect(roleSelect).toHaveTextContent('Background');
+
+    await user.click(roleSelect);
+
+    expect(
+      screen.queryByRole('option', { name: /Radius radius · Radius/ }),
+    ).not.toBeInTheDocument();
+  });
 });

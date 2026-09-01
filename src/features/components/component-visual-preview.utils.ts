@@ -96,14 +96,7 @@ function resolveStringDesignValue(
 function createRadiusCssProperties(
   radius: ComponentVisualProperties['radius'],
   resolveToken: TokenResolver,
-): Pick<
-  CSSProperties,
-  | 'borderRadius'
-  | 'borderTopLeftRadius'
-  | 'borderTopRightRadius'
-  | 'borderBottomRightRadius'
-  | 'borderBottomLeftRadius'
-> {
+): Pick<CSSProperties, 'borderRadius'> {
   const uniform = resolvePrimitiveDesignValue(radius?.radius, resolveToken);
   const hasCornerValue = Boolean(
     radius &&
@@ -118,16 +111,15 @@ function createRadiusCssProperties(
   }
 
   const resolveCorner = (value: unknown) =>
-    value === undefined
-      ? uniform
-      : resolvePrimitiveDesignValue(value, resolveToken);
+    resolvePrimitiveDesignValue(value, resolveToken) ?? uniform ?? 0;
+  const corners = [
+    resolveCorner(radius?.topLeft),
+    resolveCorner(radius?.topRight),
+    resolveCorner(radius?.bottomRight),
+    resolveCorner(radius?.bottomLeft),
+  ];
 
-  return {
-    borderTopLeftRadius: resolveCorner(radius?.topLeft),
-    borderTopRightRadius: resolveCorner(radius?.topRight),
-    borderBottomRightRadius: resolveCorner(radius?.bottomRight),
-    borderBottomLeftRadius: resolveCorner(radius?.bottomLeft),
-  };
+  return { borderRadius: corners.map(String).join(' ') };
 }
 
 function resolveTypographyDesignValue(

@@ -19,14 +19,13 @@ import {
 import type { CSSProperties, ReactNode } from 'react';
 import { ComponentAnatomyEditor } from './ComponentAnatomyEditor';
 import {
+  componentPreviewTokenRoles,
   normalizeComponentPreviewTokenRole,
+  type ComponentPreviewTokenRole,
   type ComponentTokenOption,
 } from './component-token-bindings.utils';
 import { ComponentPreviewRoleField } from './ComponentPreviewRoleField';
-import {
-  getComponentPreviewTokenRoleType,
-  getFirstAvailableComponentPreviewTokenRole,
-} from './component-preview-role-bindings';
+import { getComponentPreviewTokenRoleType } from './component-preview-role-bindings';
 
 export type ComponentContractEditorLabels = {
   title: string;
@@ -171,6 +170,21 @@ type EditorProps = {
   setActiveLocale: (locale: 'en' | 'fr') => void;
   tokenOptions: ComponentTokenOption[];
 };
+
+const v2OwnedLegacyPreviewRolesByComponentType: Partial<
+  Record<
+    ComponentContractEditorDraft['type'],
+    readonly ComponentPreviewTokenRole[]
+  >
+> = {
+  button: ['radius'],
+};
+
+function getV2OwnedLegacyPreviewRoles(
+  componentType: ComponentContractEditorDraft['type'],
+): readonly ComponentPreviewTokenRole[] {
+  return v2OwnedLegacyPreviewRolesByComponentType[componentType] ?? [];
+}
 
 export function ComponentContractEditorSections({
   labels,
@@ -799,11 +813,26 @@ function VisualTokensSection({
   setDraft,
   tokenOptions,
 }: Omit<EditorProps, 'setActiveLocale'>) {
+  const excludedRoles = getV2OwnedLegacyPreviewRoles(draft.type);
+  const excludedRoleSet = new Set(excludedRoles);
+  const visibleBindings = draft.tokenBindings
+    .map((binding, index) => ({ binding, index }))
+    .filter(({ binding }) => {
+      const role = normalizeComponentPreviewTokenRole(binding.key);
+      return role === null || !excludedRoleSet.has(role);
+    });
+
   function addTokenBinding() {
     const emptyBinding = createEmptyTokenBindingDraft();
-    const role = getFirstAvailableComponentPreviewTokenRole(
-      draft.tokenBindings,
-    );
+    const role =
+      componentPreviewTokenRoles.find(
+        (candidate) =>
+          !excludedRoleSet.has(candidate) &&
+          !draft.tokenBindings.some(
+            (binding) =>
+              normalizeComponentPreviewTokenRole(binding.key) === candidate,
+          ),
+      ) ?? null;
     const nextBinding = role
       ? {
           ...emptyBinding,
@@ -829,7 +858,7 @@ function VisualTokensSection({
       }
     >
       <div className="border-border-subtle min-w-0 rounded-md border">
-        {draft.tokenBindings.map((binding, index) => (
+        {visibleBindings.map(({ binding, index }) => (
           <TokenBindingRow
             key={binding.draftId}
             labels={labels}
@@ -837,7 +866,16 @@ function VisualTokensSection({
             binding={binding}
             bindings={draft.tokenBindings}
             tokenOptions={tokenOptions}
+            excludedRoles={excludedRoles}
             onChange={(nextBinding) => {
+              const nextRole = normalizeComponentPreviewTokenRole(
+                nextBinding.key,
+              );
+
+              if (nextRole && excludedRoleSet.has(nextRole)) {
+                return;
+              }
+
               const nextBindings = [...draft.tokenBindings];
               nextBindings[index] = nextBinding;
               setDraft({ ...draft, tokenBindings: nextBindings });
@@ -853,7 +891,7 @@ function VisualTokensSection({
           />
         ))}
 
-        {draft.tokenBindings.length === 0 ? (
+        {visibleBindings.length === 0 ? (
           <p className="text-content-tertiary px-3 py-4 text-xs">
             {labels.visualTokens.description}
           </p>
@@ -869,6 +907,7 @@ function TokenBindingRow({
   binding,
   bindings,
   tokenOptions,
+  excludedRoles,
   onChange,
   onRemove,
 }: {
@@ -877,6 +916,7 @@ function TokenBindingRow({
   binding: ComponentTokenBindingDraft;
   bindings: ComponentTokenBindingDraft[];
   tokenOptions: ComponentTokenOption[];
+  excludedRoles: readonly ComponentPreviewTokenRole[];
   onChange: (binding: ComponentTokenBindingDraft) => void;
   onRemove: () => void;
 }) {
@@ -933,6 +973,7 @@ function TokenBindingRow({
           labels={labels.visualTokens}
           binding={binding}
           bindings={bindings}
+          excludedRoles={excludedRoles}
           onChange={onChange}
         />
         <div className="grid min-w-0 gap-1.5">

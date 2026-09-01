@@ -131,8 +131,7 @@ describe('createComponentVisualCssProperties', () => {
       width: '100%',
       height: 'auto',
       minHeight: '40px',
-      borderTopLeftRadius: '18px',
-      borderTopRightRadius: '4px',
+      borderRadius: '18px 4px 0 0',
       borderWidth: '2px',
       borderStyle: 'dashed',
       borderColor: '#abcdef',
@@ -140,7 +139,7 @@ describe('createComponentVisualCssProperties', () => {
     });
   });
 
-  it('projects mixed uniform and per-corner radius through corner longhands only', () => {
+  it('projects mixed uniform and per-corner radius through one four-value shorthand', () => {
     const styles = createComponentVisualCssProperties({
       visual: {
         radius: {
@@ -152,13 +151,11 @@ describe('createComponentVisualCssProperties', () => {
       rawTokenSets: [],
     });
 
-    expect(styles.borderRadius).toBeUndefined();
-    expect(styles).toMatchObject({
-      borderTopLeftRadius: '18px',
-      borderTopRightRadius: '8px',
-      borderBottomRightRadius: '32px',
-      borderBottomLeftRadius: '8px',
-    });
+    expect(styles.borderRadius).toBe('18px 8px 32px 8px');
+    expect(styles.borderTopLeftRadius).toBeUndefined();
+    expect(styles.borderTopRightRadius).toBeUndefined();
+    expect(styles.borderBottomRightRadius).toBeUndefined();
+    expect(styles.borderBottomLeftRadius).toBeUndefined();
   });
 
   it('keeps the CSS radius shorthand when no corner override exists', () => {
