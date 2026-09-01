@@ -1,0 +1,199 @@
+name: DS-181R-03B Editor Repro
+
+on:
+  push:
+    branches:
+      - agent/ds-181r-03b-border-radius-correctness
+
+jobs:
+  repro-editor:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+      - run: npm ci
+      - name: Create actual Button editor reproduction
+        run: |
+          cat > src/features/components/ds-181r-03b-editor-repro.test.tsx <<'EOF'
+          import { render, screen } from '@testing-library/react';
+          import userEvent from '@testing-library/user-event';
+          import { describe, expect, it, vi } from 'vitest';
+          import {
+            migrateLegacyComponentContract,
+            type ComponentContract,
+          } from '@/domain/design-system';
+          import { ButtonVisualCustomizationEditor } from './ButtonVisualCustomizationEditor';
+          import { ComponentContractPreviewProvider } from './ComponentContractPreviewContext';
+          import { ComponentFoundationsPreviewClient } from './ComponentFoundationsPreviewClient';
+          import type { ComponentRegistryItem } from './components-registry.utils';
+
+          vi.mock('next-intl', () => ({
+            useTranslations: () => (key: string) => key,
+          }));
+          vi.mock('@/i18n/navigation', () => ({
+            useRouter: () => ({ refresh: vi.fn() }),
+          }));
+          vi.mock('@/features/save-context/usePreserveSaveContext', () => ({
+            usePreserveSaveContext: () => vi.fn(),
+          }));
+          vi.mock('@/features/save-context/useActionBackedProjectSaveStatus', () => ({
+            useActionBackedProjectSaveStatus: () => ({
+              hasUnsavedChanges: true,
+              markCurrentDraftSubmitted: vi.fn(),
+              status: 'unsaved',
+            }),
+          }));
+          vi.mock('./update-button-visual-customization.action', () => ({
+            updateButtonVisualCustomizationAction: vi.fn(async () => ({
+              status: 'idle',
+              formError: null,
+              savedContract: null,
+            })),
+          }));
+
+          const contract: ComponentContract = {
+            type: 'button',
+            name: 'Button',
+            purpose: { en: 'Triggers an action.' },
+            status: 'ready',
+            anatomy: ['root', 'label'],
+            variants: [{ key: 'primary', label: { en: 'Primary' } }],
+            sizes: [{ key: 'md', label: { en: 'Medium' } }],
+            states: [],
+            tokenBindings: [
+              { key: 'radius', tokenType: 'radius', tokenPath: 'radius.md' },
+            ],
+            accessibility: [],
+            forbiddenPatterns: [],
+          };
+          const contractV2 = migrateLegacyComponentContract(contract);
+          const component: ComponentRegistryItem = {
+            id: 'button',
+            key: 'button',
+            templateKey: 'button',
+            type: 'button',
+            name: 'Button',
+            status: 'ready',
+            category: 'action',
+            platforms: ['web'],
+            contract,
+            contractV2,
+            isValid: true,
+            completeness: {
+              score: 100,
+              level: 'complete',
+              missingFields: [],
+              warnings: [],
+            },
+          };
+          const rawTokenSets = [
+            {
+              type: 'radius',
+              name: 'Radius',
+              tokens: [
+                {
+                  path: 'radius.md',
+                  type: 'radius',
+                  value: '0.5rem',
+                  description: { en: 'Medium radius.' },
+                  status: 'ready',
+                },
+              ],
+            },
+          ];
+          const tokenOptions = [
+            { type: 'radius' as const, path: 'radius.md', label: 'radius.md' },
+          ];
+
+          async function setExplicit(
+            user: ReturnType<typeof userEvent.setup>,
+            property: string,
+            value: string,
+          ) {
+            const source = document.getElementById(
+              `base:base:radius:${property}-source`,
+            );
+            if (!(source instanceof HTMLButtonElement)) {
+              throw new Error(`Missing source control for ${property}`);
+            }
+            await user.click(source);
+            await user.click(screen.getByRole('option', { name: 'explicit' }));
+            const input = document.getElementById(
+              `base:base:radius:${property}-explicit`,
+            );
+            if (!(input instanceof HTMLInputElement)) {
+              throw new Error(`Missing explicit input for ${property}`);
+            }
+            await user.clear(input);
+            await user.type(input, value);
+          }
+
+          function renderEditor() {
+            return render(
+              <ComponentContractPreviewProvider
+                initialContract={contract}
+                initialContractV2={contractV2}
+              >
+                <ButtonVisualCustomizationEditor
+                  locale="en"
+                  projectSlug="demo"
+                  componentKey="button"
+                  semanticContract={contract}
+                  contractV2={contractV2}
+                  tokenOptions={tokenOptions}
+                />
+                <ComponentFoundationsPreviewClient
+                  locale="en"
+                  component={component}
+                  rawTokenSets={rawTokenSets}
+                />
+              </ComponentContractPreviewProvider>,
+            );
+          }
+
+          describe('DS-181R-03B actual editor reproduction', () => {
+            it('applies uniform plus asymmetric corners from the real editor controls', async () => {
+              const user = userEvent.setup();
+              renderEditor();
+              await setExplicit(user, 'radius', '8px');
+              await setExplicit(user, 'topLeft', '18px');
+              await setExplicit(user, 'bottomRight', '32px');
+
+              const previewButton = screen.getByRole('button', { name: 'Button' });
+              expect(previewButton.style.borderRadius).toBe('');
+              expect(previewButton.style.borderTopLeftRadius).toBe('18px');
+              expect(previewButton.style.borderTopRightRadius).toBe('8px');
+              expect(previewButton.style.borderBottomRightRadius).toBe('32px');
+              expect(previewButton.style.borderBottomLeftRadius).toBe('8px');
+            });
+
+            it('applies four independent corners from the real editor controls', async () => {
+              const user = userEvent.setup();
+              renderEditor();
+              await setExplicit(user, 'topLeft', '4px');
+              await setExplicit(user, 'topRight', '8px');
+              await setExplicit(user, 'bottomRight', '16px');
+              await setExplicit(user, 'bottomLeft', '32px');
+
+              const previewButton = screen.getByRole('button', { name: 'Button' });
+              expect(previewButton.style.borderRadius).toBe('');
+              expect(previewButton.style.borderTopLeftRadius).toBe('4px');
+              expect(previewButton.style.borderTopRightRadius).toBe('8px');
+              expect(previewButton.style.borderBottomRightRadius).toBe('16px');
+              expect(previewButton.style.borderBottomLeftRadius).toBe('32px');
+            });
+          });
+          EOF
+      - name: Generate Prisma Client
+        run: npm run db:generate
+        env:
+          DATABASE_URL: postgresql://vulcan:vulcan@localhost:5432/vulcan?schema=public
+      - name: Reproduce mixed radius through actual editor
+        run: npx vitest run src/features/components/ds-181r-03b-editor-repro.test.tsx -t "uniform plus asymmetric"
+      - name: Reproduce four corners through actual editor
+        run: npx vitest run src/features/components/ds-181r-03b-editor-repro.test.tsx -t "four independent corners"
