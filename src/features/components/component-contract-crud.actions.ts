@@ -7,6 +7,7 @@ import type { Prisma } from '@/generated/prisma/client';
 import {
   componentContractSchema,
   componentContractTypeSchema,
+  getLegacyComponentCategory,
   mvpComponentContractSeeds,
 } from '@/domain/design-system';
 import { defaultAppLocale, isAppLocale } from '@/domain/i18n';
@@ -112,9 +113,9 @@ export async function createComponentContractAction(
 
   const existingComponent = await prisma.componentContract.findUnique({
     where: {
-      projectId_type: {
+      projectId_key: {
         projectId,
-        type: parsedType.data,
+        key: parsedType.data,
       },
     },
     select: {
@@ -134,6 +135,10 @@ export async function createComponentContractAction(
     await prisma.componentContract.create({
       data: {
         projectId,
+        key: parsedContract.data.type,
+        templateKey: parsedContract.data.type,
+        category: getLegacyComponentCategory(parsedContract.data.type),
+        contractVersion: 1,
         type: parsedContract.data.type,
         name: parsedContract.data.name,
         contract: toInputJsonValue(parsedContract.data),
@@ -197,7 +202,7 @@ export async function deleteComponentContractAction(
     const deleted = await prisma.componentContract.deleteMany({
       where: {
         projectId,
-        type: parsedType.data,
+        key: parsedType.data,
       },
     });
 
