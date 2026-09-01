@@ -5,10 +5,9 @@ import { revalidatePath } from 'next/cache';
 import { prisma } from '@/server/db/prisma';
 import type { Prisma } from '@/generated/prisma/client';
 import {
-  componentContractSchema,
   componentContractTypeSchema,
-  getLegacyComponentCategory,
-  mvpComponentContractSeeds,
+  getComponentTemplateDefinition,
+  toLegacyComponentContract,
 } from '@/domain/design-system';
 import { defaultAppLocale, isAppLocale } from '@/domain/i18n';
 import type {
@@ -98,12 +97,9 @@ export async function createComponentContractAction(
     };
   }
 
-  const seed = mvpComponentContractSeeds.find(
-    (candidate) => candidate.type === parsedType.data,
-  );
-  const parsedContract = componentContractSchema.safeParse(seed);
+  const template = getComponentTemplateDefinition(parsedType.data);
 
-  if (!parsedContract.success) {
+  if (!template) {
     return {
       status: 'error',
       error: 'unexpected',
@@ -111,11 +107,12 @@ export async function createComponentContractAction(
     };
   }
 
+  const legacyContract = toLegacyComponentContract(template.defaultContract);
   const existingComponent = await prisma.componentContract.findUnique({
     where: {
       projectId_key: {
         projectId,
-        key: parsedType.data,
+        key: template.key,
       },
     },
     select: {
@@ -135,13 +132,13 @@ export async function createComponentContractAction(
     await prisma.componentContract.create({
       data: {
         projectId,
-        key: parsedContract.data.type,
-        templateKey: parsedContract.data.type,
-        category: getLegacyComponentCategory(parsedContract.data.type),
+        key: template.key,
+        templateKey: template.key,
+        category: template.category,
         contractVersion: 1,
-        type: parsedContract.data.type,
-        name: parsedContract.data.name,
-        contract: toInputJsonValue(parsedContract.data),
+        type: template.legacyType,
+        name: legacyContract.name,
+        contract: toInputJsonValue(legacyContract),
       },
     });
 
@@ -150,7 +147,7 @@ export async function createComponentContractAction(
     return {
       status: 'success',
       error: null,
-      componentType: parsedContract.data.type,
+      componentType: template.legacyType,
     };
   } catch {
     return {
