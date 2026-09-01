@@ -21,9 +21,9 @@ describe('componentTemplateDefinitions', () => {
     ]);
 
     for (const template of componentTemplateDefinitions) {
-      expect(componentContractV2Schema.safeParse(template.defaultContract).success).toBe(
-        true,
-      );
+      expect(
+        componentContractV2Schema.safeParse(template.defaultContract).success,
+      ).toBe(true);
       expect(template.defaultContract.templateKey).toBe(template.key);
       expect(template.defaultContract.category).toBe(template.category);
       expect(template.rendererKey).toBe(template.key);
@@ -122,12 +122,14 @@ describe('template migration adapters', () => {
       (contract) => contract.type === 'button',
     );
 
-    expect(legacyButton).toBeDefined();
+    if (!legacyButton) {
+      throw new Error('Missing Button seed');
+    }
 
     const result = migrateLegacyComponentToRegisteredTemplate({
       ...legacyButton,
       tokenBindings: [
-        ...(legacyButton?.tokenBindings ?? []),
+        ...legacyButton.tokenBindings,
         {
           key: 'customBrandRole',
           tokenType: 'color',
@@ -148,7 +150,9 @@ describe('template migration adapters', () => {
       (contract) => contract.type === 'card',
     );
 
-    expect(legacyCard).toBeDefined();
+    if (!legacyCard) {
+      throw new Error('Missing Card seed');
+    }
 
     const result = resolveStoredComponentTemplateContract({
       contractVersion: 1,
