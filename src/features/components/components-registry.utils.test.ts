@@ -6,7 +6,11 @@ import {
   groupComponentRegistryItemsByCategory,
 } from './components-registry.utils';
 import { describe, expect, it } from 'vitest';
-import type { ComponentContract } from '@/domain/design-system';
+import type {
+  ComponentCategory,
+  ComponentContract,
+  ComponentContractType,
+} from '@/domain/design-system';
 
 const buttonContract: ComponentContract = {
   type: 'button',
@@ -69,6 +73,33 @@ const buttonContract: ComponentContract = {
   tokenBindings: [],
 };
 
+const categoryByType: Record<ComponentContractType, ComponentCategory> = {
+  button: 'action',
+  textField: 'input',
+  card: 'layout',
+  alert: 'feedback',
+  dialog: 'overlay',
+};
+
+function createStoredLegacyComponent({
+  id,
+  contract,
+}: {
+  id: string;
+  contract: ComponentContract;
+}) {
+  return {
+    id,
+    key: contract.type,
+    templateKey: contract.type,
+    category: categoryByType[contract.type],
+    contractVersion: 1,
+    type: contract.type,
+    name: contract.name,
+    contract,
+  };
+}
+
 describe('components registry utils', () => {
   it('maps component types to categories', () => {
     expect(getComponentCategory('button')).toBe('action');
@@ -107,26 +138,31 @@ describe('components registry utils', () => {
     });
   });
 
-  it('creates registry items from valid component contracts', () => {
+  it('creates registry items through the V2 normalization boundary', () => {
     expect(
       createComponentRegistryItems([
-        {
+        createStoredLegacyComponent({
           id: 'button-contract',
-          type: 'button',
-          name: 'Button',
           contract: buttonContract,
-        },
+        }),
       ]),
     ).toMatchObject({
       invalidCount: 0,
       items: [
         {
           id: 'button-contract',
+          key: 'button',
+          templateKey: 'button',
           type: 'button',
           name: 'Button',
           status: 'ready',
           category: 'action',
           platforms: ['web', 'mobile'],
+          contractV2: {
+            version: 2,
+            key: 'button',
+            templateKey: 'button',
+          },
           completeness: {
             score: 100,
             level: 'complete',
@@ -142,6 +178,10 @@ describe('components registry utils', () => {
       createComponentRegistryItems([
         {
           id: 'invalid-contract',
+          key: 'button',
+          templateKey: 'button',
+          category: 'action',
+          contractVersion: 1,
           type: 'button',
           name: 'Button',
           contract: {
@@ -223,39 +263,36 @@ describe('components registry utils', () => {
     });
   });
 
-  it('groups registry items by category', () => {
+  it('groups registry items by persisted category', () => {
+    const alertContract: ComponentContract = {
+      ...buttonContract,
+      type: 'alert',
+      name: 'Alert',
+      status: 'draft',
+      variants: [],
+      states: [],
+      accessibility: [],
+      forbiddenPatterns: [],
+    };
     const registry = createComponentRegistryItems([
-      {
+      createStoredLegacyComponent({
         id: 'button-contract',
-        type: 'button',
-        name: 'Button',
         contract: buttonContract,
-      },
-      {
+      }),
+      createStoredLegacyComponent({
         id: 'alert-contract',
-        type: 'alert',
-        name: 'Alert',
-        contract: {
-          ...buttonContract,
-          type: 'alert',
-          name: 'Alert',
-          status: 'draft',
-          variants: [],
-          states: [],
-          accessibility: [],
-          forbiddenPatterns: [],
-        },
-      },
+        contract: alertContract,
+      }),
     ]);
 
     expect(groupComponentRegistryItemsByCategory(registry.items)).toEqual([
       {
         category: 'action',
-        items: [expect.objectContaining({ type: 'button' })],
+        items: [expect.objectContaining({ type: 'button', key: 'button' })],
       },
       {
         category: 'feedback',
-        items: [expect.objectContaining({ type: 'alert' })],
+        items: [expect.objectContaining({ type: 'alert', key: 'alert' })],
       },
     ]);
   });
