@@ -156,14 +156,21 @@ const typographyExplicitValueSchema = z
   .object({
     fontFamily: explicitFontFamilySchema.optional(),
     fontSize: explicitLengthValueSchema.optional(),
-    fontWeight: z.union([z.number().int().min(100).max(900), z.literal('normal'), z.literal('bold')]).optional(),
+    fontWeight: z
+      .union([
+        z.number().int().min(100).max(900),
+        z.literal('normal'),
+        z.literal('bold'),
+      ])
+      .optional(),
     lineHeight: explicitLineHeightSchema.optional(),
     letterSpacing: explicitLengthValueSchema.optional(),
     textAlign: z.enum(['left', 'center', 'right', 'justify']).optional(),
   })
   .strict()
   .refine(
-    (value) => Object.values(value).some((fieldValue) => fieldValue !== undefined),
+    (value) =>
+      Object.values(value).some((fieldValue) => fieldValue !== undefined),
     { message: 'designValueTypographyEmpty' },
   );
 
@@ -407,7 +414,8 @@ export const componentTemplateSlotProfiles = {
   },
 } as const satisfies Readonly<Record<string, TemplateSlotProfile>>;
 
-export type WaveAComponentTemplateKey = keyof typeof componentTemplateSlotProfiles;
+export type WaveAComponentTemplateKey =
+  keyof typeof componentTemplateSlotProfiles;
 
 const legacyCategoryByType: Record<ComponentContractType, ComponentCategory> = {
   button: 'action',
@@ -647,7 +655,8 @@ export function migrateLegacyComponentContract(
     name: identityOverride?.name ?? legacyContract.name,
     templateKey: identityOverride?.templateKey ?? legacyContract.type,
     category:
-      identityOverride?.category ?? getLegacyComponentCategory(legacyContract.type),
+      identityOverride?.category ??
+      getLegacyComponentCategory(legacyContract.type),
   });
 
   return componentContractV2Schema.parse({
@@ -692,10 +701,16 @@ export function parseStoredComponentContractV2({
   }
 
   if (contractVersion !== componentContractVersion) {
-    throw new Error(`Unsupported ComponentContract version: ${contractVersion}`);
+    throw new Error(
+      `Unsupported ComponentContract version: ${contractVersion}`,
+    );
   }
 
-  if (typeof contract !== 'object' || contract === null || Array.isArray(contract)) {
+  if (
+    typeof contract !== 'object' ||
+    contract === null ||
+    Array.isArray(contract)
+  ) {
     return componentContractV2Schema.parse(contract);
   }
 
@@ -712,7 +727,9 @@ export function parseStoredComponentContractV2({
 export function toLegacyComponentContract(
   contract: ComponentContractV2,
 ): ComponentContract {
-  const parsedType = componentContractTypeSchema.safeParse(contract.templateKey);
+  const parsedType = componentContractTypeSchema.safeParse(
+    contract.templateKey,
+  );
 
   if (!parsedType.success) {
     throw new Error(

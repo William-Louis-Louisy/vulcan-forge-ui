@@ -260,9 +260,7 @@ function removeComponentDesignValueTokenPath({
   };
 }
 
-function parseStoredV2Component(
-  source: ComponentTokenReferenceSource,
-) {
+function parseStoredV2Component(source: ComponentTokenReferenceSource) {
   if (
     source.contractVersion !== 2 ||
     source.key === undefined ||
@@ -353,8 +351,7 @@ export function detachComponentTokenBindings({
     );
     const removedBindingsCount =
       reparsedV2Contract.data.tokenBindings.length - nextTokenBindings.length;
-    const removedCount =
-      designValueResult.removedCount + removedBindingsCount;
+    const removedCount = designValueResult.removedCount + removedBindingsCount;
 
     if (removedCount === 0) {
       return {
@@ -473,7 +470,9 @@ export function findTokenDependencies({
       continue;
     }
 
-    const parsedContract = componentContractSchema.safeParse(component.contract);
+    const parsedContract = componentContractSchema.safeParse(
+      component.contract,
+    );
 
     if (!parsedContract.success) {
       continue;

@@ -146,7 +146,9 @@ describe('ComponentContract V2 domain', () => {
     expect(marketingCta.key).not.toBe(checkoutCta.key);
     expect(marketingCta.templateKey).toBe('button');
     expect(checkoutCta.templateKey).toBe('button');
-    expect(componentContractV2Schema.safeParse(marketingCta).success).toBe(true);
+    expect(componentContractV2Schema.safeParse(marketingCta).success).toBe(
+      true,
+    );
     expect(componentContractV2Schema.safeParse(checkoutCta).success).toBe(true);
   });
 
