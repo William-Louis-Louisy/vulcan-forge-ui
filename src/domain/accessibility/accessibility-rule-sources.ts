@@ -1,6 +1,8 @@
 import {
   componentContractSchema,
   designTokenSetSchema,
+  parseStoredComponentContractV2,
+  toLegacyComponentContract,
   type ComponentContract,
   type ComponentContractType,
   type DesignToken,
@@ -20,6 +22,10 @@ export type AccessibilityRuleComponentContractSource = {
   type: ComponentContractType;
   name: string;
   contract: unknown;
+  key?: string;
+  templateKey?: string;
+  category?: string;
+  contractVersion?: number;
 };
 
 export type ParsedAccessibilityRuleTokenSet = {
@@ -51,6 +57,36 @@ function normalizeProjectLocales({
   supportedLocales: AppLocale[];
 }): AppLocale[] {
   return Array.from(new Set([defaultLocale, ...supportedLocales]));
+}
+
+function parseComponentContractSource(
+  source: AccessibilityRuleComponentContractSource,
+): ComponentContract | null {
+  if (
+    source.key !== undefined &&
+    source.templateKey !== undefined &&
+    source.category !== undefined &&
+    source.contractVersion !== undefined
+  ) {
+    try {
+      return toLegacyComponentContract(
+        parseStoredComponentContractV2({
+          contractVersion: source.contractVersion,
+          key: source.key,
+          name: source.name,
+          templateKey: source.templateKey,
+          category: source.category,
+          contract: source.contract,
+        }),
+      );
+    } catch {
+      return null;
+    }
+  }
+
+  const legacyResult = componentContractSchema.safeParse(source.contract);
+
+  return legacyResult.success ? legacyResult.data : null;
 }
 
 export function createAccessibilityRuleSources({
@@ -91,9 +127,9 @@ export function createAccessibilityRuleSources({
     [];
 
   for (const source of componentContracts) {
-    const result = componentContractSchema.safeParse(source.contract);
+    const contract = parseComponentContractSource(source);
 
-    if (!result.success) {
+    if (!contract) {
       invalidComponentContracts.push(source);
       continue;
     }
@@ -102,7 +138,7 @@ export function createAccessibilityRuleSources({
       id: source.id,
       storedType: source.type,
       storedName: source.name,
-      contract: result.data,
+      contract,
     });
   }
 
