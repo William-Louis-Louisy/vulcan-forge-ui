@@ -75,10 +75,14 @@ export async function saveAccessibilityReportAction(
       },
       componentContracts: {
         orderBy: {
-          type: 'asc',
+          key: 'asc',
         },
         select: {
           id: true,
+          key: true,
+          templateKey: true,
+          category: true,
+          contractVersion: true,
           type: true,
           name: true,
           contract: true,
@@ -126,6 +130,10 @@ export async function saveAccessibilityReportAction(
     })),
     componentContracts: project.componentContracts.map((componentContract) => ({
       id: componentContract.id,
+      key: componentContract.key,
+      templateKey: componentContract.templateKey,
+      category: componentContract.category,
+      contractVersion: componentContract.contractVersion,
       type: componentContract.type as ComponentContractType,
       name: componentContract.name,
       contract: componentContract.contract,
