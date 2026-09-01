@@ -59,6 +59,10 @@ function createSourceInput(): DesignSystemProjectSourceInput {
     componentContracts: [
       {
         id: 'component-button',
+        key: 'button',
+        templateKey: 'button',
+        category: 'action',
+        contractVersion: 1,
         type: 'button',
         name: 'Button',
         contract: {
@@ -92,10 +96,24 @@ describe('canonical design system project source', () => {
       mode: 'light',
       name: 'Light',
     });
-    expect(source.components[0]?.contract).toMatchObject({
+    expect(source.components[0]).toMatchObject({
+      key: 'button',
+      templateKey: 'button',
+      category: 'action',
+      contractVersion: 1,
       type: 'button',
       name: 'Button',
-      status: 'ready',
+      contract: {
+        type: 'button',
+        name: 'Button',
+        status: 'ready',
+      },
+      contractV2: {
+        version: 2,
+        key: 'button',
+        templateKey: 'button',
+        category: 'action',
+      },
     });
   });
 
