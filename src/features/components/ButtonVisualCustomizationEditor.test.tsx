@@ -169,12 +169,8 @@ describe('ButtonVisualCustomizationEditor', () => {
     });
 
     expect(independentCorners).not.toBeChecked();
-    expect(
-      screen.queryByText('Top-left radius'),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByText('Bottom-right radius'),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText('Top-left radius')).not.toBeInTheDocument();
+    expect(screen.queryByText('Bottom-right radius')).not.toBeInTheDocument();
 
     await user.click(independentCorners);
 

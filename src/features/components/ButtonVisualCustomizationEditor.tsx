@@ -635,7 +635,9 @@ export function ButtonVisualCustomizationEditor({
                 value: key,
                 label: key,
               }))}
-              onValueChange={(key) => setEditingScope({ kind: scope.kind, key })}
+              onValueChange={(key) =>
+                setEditingScope({ kind: scope.kind, key })
+              }
               placeholder={t('target')}
               size="sm"
             />

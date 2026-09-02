@@ -162,11 +162,7 @@ describe('Button visual customization utilities', () => {
       { source: 'value', value: '#112233' },
     );
 
-    const reset = resetButtonVisualGroup(
-      contract,
-      { kind: 'base' },
-      'border',
-    );
+    const reset = resetButtonVisualGroup(contract, { kind: 'base' }, 'border');
 
     expect(reset.visual.border).toBeUndefined();
     expect(reset.visual.spacing?.paddingX).toEqual({

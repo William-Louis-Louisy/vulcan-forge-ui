@@ -115,7 +115,8 @@ export const componentV2CustomizationMessages = {
         target: 'Cible',
         addProperty: 'Ajouter une propriété visuelle',
         removeProperty: 'Retirer la propriété visuelle',
-        noPropertiesToAdd: 'Toutes les propriétés optionnelles sont déjà affichées.',
+        noPropertiesToAdd:
+          'Toutes les propriétés optionnelles sont déjà affichées.',
         independentCorners: 'Independent corners',
         scopes: {
           base: 'Base',
