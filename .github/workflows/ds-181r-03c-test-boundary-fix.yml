@@ -1,0 +1,41 @@
+name: DS-181R-03C test boundary fix
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.event.pull_request.head.ref == 'agent/ds-181r-03c-button-property-inspector'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Isolate semantic editor test from Button visual server dependencies
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path('src/features/components/ComponentContractEditor.test.tsx')
+          source = path.read_text()
+          anchor = """vi.mock('./update-component-contract.action', () => ({\n  updateComponentContractAction: vi.fn(async () => ({\n    status: 'idle',\n    formError: null,\n    savedContract: null,\n  })),\n}));\n"""
+          addition = anchor + """\nvi.mock('./ButtonVisualCustomizationEditor', () => ({\n  ButtonVisualCustomizationEditor: () => (\n    <section data-testid=\"button-visual-customization-editor\" />\n  ),\n}));\n"""
+          if anchor not in source:
+              raise SystemExit('Expected mock anchor was not found')
+          path.write_text(source.replace(anchor, addition, 1))
+      - name: Format focused test
+        run: npx prettier src/features/components/ComponentContractEditor.test.tsx --write
+      - name: Remove temporary workflow
+        run: git rm .github/workflows/ds-181r-03c-test-boundary-fix.yml
+      - name: Commit focused test isolation
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/features/components/ComponentContractEditor.test.tsx
+          git commit -m "test: isolate semantic editor from Button visual action"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
