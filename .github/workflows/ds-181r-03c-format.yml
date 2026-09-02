@@ -1,0 +1,42 @@
+name: DS-181R-03C format
+
+on:
+  push:
+    branches:
+      - agent/ds-181r-03c-button-property-inspector
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: agent/ds-181r-03c-button-property-inspector
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Format DS-181R-03C files
+        run: |
+          npx prettier --write \
+            src/features/components/button-visual-customization.utils.test.ts \
+            src/features/components/ButtonVisualCustomizationEditor.test.tsx \
+            src/features/components/ButtonVisualCustomizationEditor.tsx \
+            src/messages/component-v2-customization-messages.ts
+      - name: Commit formatting and remove workflow
+        run: |
+          git rm .github/workflows/ds-181r-03c-format.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/features/components/button-visual-customization.utils.test.ts \
+                  src/features/components/ButtonVisualCustomizationEditor.test.tsx \
+                  src/features/components/ButtonVisualCustomizationEditor.tsx \
+                  src/messages/component-v2-customization-messages.ts
+          git commit -m "style: format Button property inspector"
+          git push origin HEAD:agent/ds-181r-03c-button-property-inspector
