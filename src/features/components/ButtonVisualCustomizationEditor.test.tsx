@@ -181,12 +181,17 @@ describe('ButtonVisualCustomizationEditor', () => {
     expect(screen.getByText('Bottom-left radius')).toBeInTheDocument();
   });
 
-  it('adds and removes optional visual groups progressively', async () => {
+  it('keeps Fill first and adds only secondary visual groups progressively', async () => {
     const user = userEvent.setup();
 
     render(<ButtonVisualCustomizationEditor {...createEditorProps()} />);
 
-    expect(screen.getByText('Fill')).toBeInTheDocument();
+    const fillHeading = screen.getByRole('heading', { name: 'Fill' });
+    const dimensionsHeading = screen.getByRole('heading', { name: 'Dimensions' });
+    expect(
+      fillHeading.compareDocumentPosition(dimensionsHeading) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
     expect(screen.getByText('Background')).toBeInTheDocument();
     expect(screen.getByText('Foreground')).toBeInTheDocument();
     expect(screen.queryByText('Stroke / Border')).not.toBeInTheDocument();
