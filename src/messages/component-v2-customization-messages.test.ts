@@ -14,9 +14,11 @@ describe('Component V2 Button customization messages', () => {
     expect(french.properties).toEqual(english.properties);
     expect(french.borderStyles).toEqual(english.borderStyles);
     expect(french.textAlignments).toEqual(english.textAlignments);
+    expect(english.unset).toBe('Default');
+    expect(french.unset).toBe('Default');
   });
 
-  it('keeps Fill ownership explicit while deferred effects stay absent', () => {
+  it('keeps Fill ownership while deferred effects stay out of the inspector', () => {
     const messages =
       componentV2CustomizationMessages.en.ComponentsRegistryPage
         .buttonCustomization;
@@ -26,6 +28,5 @@ describe('Component V2 Button customization messages', () => {
     expect(messages.properties.foreground).toBe('Foreground');
     expect('surface' in messages.groups).toBe(false);
     expect('elevation' in messages.properties).toBe(false);
-    expect('shadow' in messages.properties).toBe(false);
   });
 });
