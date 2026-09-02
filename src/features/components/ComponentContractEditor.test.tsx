@@ -23,6 +23,12 @@ vi.mock('./update-component-contract.action', () => ({
   })),
 }));
 
+vi.mock('./ButtonVisualCustomizationEditor', () => ({
+  ButtonVisualCustomizationEditor: () => (
+    <section data-testid="button-visual-customization-editor" />
+  ),
+}));
+
 import {
   ComponentContractEditor,
   type ComponentContractEditorLabels,
