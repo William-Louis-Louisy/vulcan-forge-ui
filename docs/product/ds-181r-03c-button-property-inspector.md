@@ -38,10 +38,22 @@ The inspector exposes the V2 authoring layers as a compact segmented control:
 
 Unavailable axes are disabled when the semantic contract has no entries for that axis. Variant, Size and State expose a target selector only when active.
 
+### Page hierarchy
+
+For Button, the authoring order is intentionally dependency-first:
+
+1. Naming / status;
+2. Variants & states;
+3. Visual tokens;
+4. secondary semantic sections.
+
+Secondary sections (localized guidance, anatomy, accessibility, forbidden patterns) are collapsed by default for Button and remain available on demand.
+
 ### Core groups
 
-The following groups remain visible because they are fundamental to Button geometry:
+The following groups remain visible in the inspector, in this order:
 
+- Fill;
 - Dimensions;
 - Spacing;
 - Radius.
@@ -52,7 +64,6 @@ They retain Token / explicit / inherited behavior and continue writing sparse ca
 
 The inspector header exposes one `+` action. Optional groups can be added progressively:
 
-- Fill;
 - Stroke / Border;
 - Typography.
 
@@ -60,7 +71,7 @@ Adding a group only reveals its controls; it does not invent an override value. 
 
 Removing an optional group resets the values owned by that group in the current editing layer and therefore restores inheritance. Other groups and other V2 layers remain untouched.
 
-`Fill` owns the V2 `surface.background` and `surface.foreground` values. `Stroke / Border` owns the V2 border group. Typography keeps its canonical V2 typography value.
+`Fill` is always visible and owns the V2 `surface.background` and `surface.foreground` values. `Stroke / Border` owns the V2 border group. Typography keeps its canonical V2 typography value.
 
 ## Radius interaction
 
@@ -82,7 +93,7 @@ DS-181R-03B correctness rules remain authoritative:
 
 The former card-per-property layout is replaced by compact property rows. Each row keeps the canonical controlled source model:
 
-- Inherit / default;
+- Default (the UI label for the sparse, inherited/unset state);
 - Token, when compatible tokens exist;
 - Explicit value;
 - Auto / Fill only for supported dimension properties.
@@ -127,3 +138,17 @@ Before this pattern is generalized, manual QA must establish that the Button edi
 If this interaction model is not materially better, the project should refine Button again rather than scale it to Wave A templates.
 
 The product gate applies to the interaction model itself: effects, shadows and elevation must not be used to compensate for an inspector structure that is still unclear.
+
+## DS-181R-03C refinement after first UX review
+
+The first real-page UX review tightened the inspector without changing V2 semantics:
+
+- Naming stays first because component identity should be established before customization.
+- Variants & states now precede Visual tokens because those axes define the targets used by visual overrides.
+- Secondary semantic blocks are collapsible for Button to reduce vertical noise.
+- Fill is the first visual group and is always present; it is no longer treated as optional.
+- Stroke / Border and Typography remain progressively addable.
+- The optional-property `+` uses a centered icon rather than a baseline-sensitive text glyph.
+- DesignValue source selection uses a Button-specific compact native select; rich Token selectors remain unchanged.
+- `Default` replaces `Inherit / default` in that compact selector while retaining the exact same sparse inheritance behavior.
+- Independent-corner cells and their value controls use the full grid width available to them.

@@ -31,7 +31,7 @@ vi.mock('next-intl', () => ({
       explicit: 'Explicit value',
       modeAuto: 'Auto',
       modeFill: 'Fill',
-      unset: 'Inherit / default',
+      unset: 'Default',
       selectToken: 'Select token',
       valuePlaceholder: 'e.g. 12px',
       colorPlaceholder: 'e.g. #111827',
@@ -186,11 +186,17 @@ describe('ButtonVisualCustomizationEditor', () => {
 
     render(<ButtonVisualCustomizationEditor {...createEditorProps()} />);
 
+    expect(screen.getByText('Fill')).toBeInTheDocument();
+    expect(screen.getByText('Background')).toBeInTheDocument();
+    expect(screen.getByText('Foreground')).toBeInTheDocument();
     expect(screen.queryByText('Stroke / Border')).not.toBeInTheDocument();
 
     await user.click(
       screen.getByRole('button', { name: 'Add visual property' }),
     );
+    expect(
+      screen.queryByRole('button', { name: 'Fill' }),
+    ).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Stroke / Border' }));
 
     expect(screen.getByText('Stroke / Border')).toBeInTheDocument();

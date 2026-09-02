@@ -169,6 +169,7 @@ type EditorProps = {
   activeLocale: 'en' | 'fr';
   setActiveLocale: (locale: 'en' | 'fr') => void;
   tokenOptions: ComponentTokenOption[];
+  visualEditor?: ReactNode;
 };
 
 const v2OwnedLegacyPreviewRolesByComponentType: Partial<
@@ -193,10 +194,20 @@ export function ComponentContractEditorSections({
   activeLocale,
   setActiveLocale,
   tokenOptions,
+  visualEditor,
 }: EditorProps) {
   return (
     <div className="grid min-w-0 gap-6">
       <MetadataEditor labels={labels} draft={draft} setDraft={setDraft} />
+
+      <VariantsSizesStatesSection
+        labels={labels}
+        draft={draft}
+        activeLocale={activeLocale}
+        setDraft={setDraft}
+      />
+
+      {visualEditor}
 
       <LocalizedContentSection
         labels={labels}
@@ -214,13 +225,7 @@ export function ComponentContractEditorSections({
         activeLocale={activeLocale}
         draft={draft}
         setDraft={setDraft}
-      />
-
-      <VariantsSizesStatesSection
-        labels={labels}
-        draft={draft}
-        activeLocale={activeLocale}
-        setDraft={setDraft}
+        collapsible={draft.type === 'button'}
       />
 
       <AccessibilitySection
@@ -302,6 +307,7 @@ function LocalizedContentSection({
   return (
     <EditorSection
       title={labels.localizedContent.title}
+      collapsible={draft.type === 'button'}
       action={
         <LocaleControl
           labels={labels}
@@ -624,6 +630,7 @@ function AccessibilitySection({
   return (
     <EditorSection
       title={labels.accessibility.title}
+      collapsible={draft.type === 'button'}
       action={
         <Button
           variant="secondary"
@@ -752,6 +759,7 @@ function ForbiddenPatternsSection({
   return (
     <EditorSection
       title={labels.forbiddenPatterns.title}
+      collapsible={draft.type === 'button'}
       action={
         <Button
           variant="secondary"
@@ -1060,26 +1068,55 @@ function EditorSection({
   description,
   action,
   tone = 'default',
+  collapsible = false,
   children,
 }: {
   title: string;
   description?: string;
   action?: ReactNode;
   tone?: 'default' | 'danger';
+  collapsible?: boolean;
   children: ReactNode;
 }) {
+  const titleClassName = [
+    'text-base font-semibold tracking-tight',
+    tone === 'danger' ? 'text-action-danger' : '',
+  ].join(' ');
+
+  if (collapsible) {
+    return (
+      <details className="border-border-subtle group min-w-0 border-t pt-4">
+        <summary className="focus-visible:outline-border-focus flex cursor-pointer list-none items-start justify-between gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2">
+          <div className="min-w-0">
+            <h3 className={titleClassName}>{title}</h3>
+            {description ? (
+              <p className="text-content-secondary mt-1 max-w-2xl text-xs leading-5">
+                {description}
+              </p>
+            ) : null}
+          </div>
+          <span
+            aria-hidden="true"
+            className="text-content-tertiary mt-0.5 flex size-6 shrink-0 items-center justify-center text-base transition-transform group-open:rotate-90"
+          >
+            ›
+          </span>
+        </summary>
+        <div className="mt-3 min-w-0">
+          {action ? (
+            <div className="mb-3 flex justify-end">{action}</div>
+          ) : null}
+          {children}
+        </div>
+      </details>
+    );
+  }
+
   return (
     <section className="min-w-0 pt-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <h3
-            className={[
-              'text-base font-semibold tracking-tight',
-              tone === 'danger' ? 'text-action-danger' : '',
-            ].join(' ')}
-          >
-            {title}
-          </h3>
+          <h3 className={titleClassName}>{title}</h3>
           {description ? (
             <p className="text-content-secondary mt-1 max-w-2xl text-xs leading-5">
               {description}

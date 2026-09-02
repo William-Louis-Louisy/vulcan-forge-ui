@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from 'react';
 import { useTranslations } from 'next-intl';
+import { CaretDownIcon, PlusIcon } from '@phosphor-icons/react';
 import { Button, Input, SegmentedControl, Select } from '@/components/ui';
 import {
   explicitColorValueSchema,
@@ -60,7 +61,7 @@ type DesignValueLabelKey =
   | 'foreground'
   | 'borderWidth'
   | 'borderColor';
-type InspectorOptionalGroupKey = 'fill' | 'border' | 'typography';
+type InspectorOptionalGroupKey = 'border' | 'typography';
 
 type DesignValueDescriptor = {
   group: DesignValueGroupKey;
@@ -198,7 +199,7 @@ const borderProperties = [
   },
 ] satisfies readonly DesignValueDescriptor[];
 
-const optionalGroups = ['fill', 'border', 'typography'] as const;
+const optionalGroups = ['border', 'typography'] as const;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -282,13 +283,6 @@ function getVisibleOptionalGroups(
 ): InspectorOptionalGroupKey[] {
   const target = getButtonVisualTarget(contract, scope);
   const groups: InspectorOptionalGroupKey[] = [];
-
-  if (
-    target.surface?.background !== undefined ||
-    target.surface?.foreground !== undefined
-  ) {
-    groups.push('fill');
-  }
 
   if (target.border !== undefined) {
     groups.push('border');
@@ -424,20 +418,7 @@ export function ButtonVisualCustomizationEditor({
   function removeOptionalGroup(group: InspectorOptionalGroupKey) {
     let nextDraft = draft;
 
-    if (group === 'fill') {
-      nextDraft = resetButtonVisualProperty(
-        nextDraft,
-        scope,
-        'surface',
-        'background',
-      );
-      nextDraft = resetButtonVisualProperty(
-        nextDraft,
-        scope,
-        'surface',
-        'foreground',
-      );
-    } else if (group === 'border') {
+    if (group === 'border') {
       nextDraft = resetButtonVisualGroup(nextDraft, scope, 'border');
     } else {
       nextDraft = setButtonTypographyValue(nextDraft, scope, undefined);
@@ -572,9 +553,9 @@ export function ButtonVisualCustomizationEditor({
             aria-label={t('addProperty')}
             aria-expanded={isAddMenuOpen}
             onClick={() => setIsAddMenuOpen((open) => !open)}
-            className="border-border-subtle bg-surface-primary text-content-secondary hover:border-border-default hover:text-content-primary focus-visible:outline-border-focus flex size-8 items-center justify-center rounded-md border text-lg leading-none transition focus-visible:outline-2 focus-visible:outline-offset-2"
+            className="border-border-subtle bg-surface-primary text-content-secondary hover:border-border-default hover:text-content-primary focus-visible:outline-border-focus flex size-8 items-center justify-center rounded-md border transition focus-visible:outline-2 focus-visible:outline-offset-2"
           >
-            <span aria-hidden="true">+</span>
+            <PlusIcon aria-hidden="true" size={14} weight="bold" />
           </button>
 
           {isAddMenuOpen ? (
@@ -650,6 +631,12 @@ export function ButtonVisualCustomizationEditor({
       </div>
 
       <div className="border-border-subtle divide-border-subtle divide-y border-t">
+        <InspectorGroup title={t('groups.fill')}>
+          {fillProperties.map((descriptor) =>
+            renderDesignValueField(descriptor),
+          )}
+        </InspectorGroup>
+
         <InspectorGroup title={t('groups.dimensions')}>
           {dimensionProperties.map((descriptor) =>
             renderDesignValueField(descriptor),
@@ -677,7 +664,7 @@ export function ButtonVisualCustomizationEditor({
           </label>
 
           {independentCorners ? (
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid w-full min-w-0 gap-3 sm:grid-cols-2">
               {cornerProperties.map((descriptor) =>
                 renderDesignValueField(descriptor, 'stacked'),
               )}
@@ -686,18 +673,6 @@ export function ButtonVisualCustomizationEditor({
             renderDesignValueField(radiusProperty)
           )}
         </InspectorGroup>
-
-        {visibleOptionalGroups.includes('fill') ? (
-          <InspectorGroup
-            title={t('groups.fill')}
-            onRemove={() => removeOptionalGroup('fill')}
-            removeLabel={t('removeProperty')}
-          >
-            {fillProperties.map((descriptor) =>
-              renderDesignValueField(descriptor),
-            )}
-          </InspectorGroup>
-        ) : null}
 
         {visibleOptionalGroups.includes('border') ? (
           <InspectorGroup
@@ -962,14 +937,13 @@ function DesignValueField({
         {label}
       </label>
 
-      <div className="grid min-w-0 grid-cols-[minmax(7rem,0.8fr)_minmax(0,1.2fr)_2rem] items-center gap-2">
-        <Select
+      <div className="grid w-full min-w-0 grid-cols-[auto_minmax(0,1fr)_2rem] items-center gap-2">
+        <PropertySourceSelect
           id={`${id}-source`}
           value={source}
           options={sourceOptions}
           onValueChange={handleSourceChange}
-          placeholder={labels.source}
-          size="sm"
+          ariaLabel={labels.source}
         />
 
         {source === 'token' ? (
@@ -1022,6 +996,43 @@ function DesignValueField({
           <span aria-hidden="true" />
         )}
       </div>
+    </div>
+  );
+}
+
+function PropertySourceSelect({
+  id,
+  value,
+  options,
+  onValueChange,
+  ariaLabel,
+}: {
+  id: string;
+  value: string;
+  options: Array<{ value: string; label: string }>;
+  onValueChange: (value: string) => void;
+  ariaLabel: string;
+}) {
+  return (
+    <div className="relative max-w-32 min-w-[6.75rem]">
+      <select
+        id={id}
+        aria-label={ariaLabel}
+        value={value}
+        onChange={(event) => onValueChange(event.target.value)}
+        className="border-border-default bg-surface-primary text-content-secondary focus-visible:outline-border-focus h-7 w-full cursor-pointer appearance-none rounded-md border py-0 pr-6 pl-2 text-[0.6875rem] font-semibold focus-visible:outline-2 focus-visible:outline-offset-2"
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+      <CaretDownIcon
+        aria-hidden="true"
+        size={11}
+        className="text-content-tertiary pointer-events-none absolute top-1/2 right-2 -translate-y-1/2"
+      />
     </div>
   );
 }
@@ -1146,8 +1157,8 @@ function TypographyControls({
         >
           {labels.source}
         </label>
-        <div className="grid min-w-0 gap-2 sm:grid-cols-2">
-          <Select
+        <div className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-2">
+          <PropertySourceSelect
             id="button-v2-typography-source"
             value={source}
             options={[
@@ -1180,8 +1191,7 @@ function TypographyControls({
                 value: { fontSize: '14px', fontWeight: 600, lineHeight: 1.2 },
               });
             }}
-            placeholder={labels.source}
-            size="sm"
+            ariaLabel={labels.source}
           />
 
           {value?.source === 'token' ? (
