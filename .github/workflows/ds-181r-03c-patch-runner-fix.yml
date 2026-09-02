@@ -1,0 +1,73 @@
+name: DS-181R-03C patch runner fix
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+
+jobs:
+  harden:
+    if: github.event.pull_request.head.ref == 'agent/ds-181r-03c-button-property-inspector'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Harden correction workflow
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path('.github/workflows/ds-181r-03c-density-template-fix.yml')
+          source = path.read_text()
+
+          npm_anchor = "      - run: npm ci\n"
+          npm_replacement = npm_anchor + "\n      - run: npm run db:generate\n"
+          if 'npm run db:generate' not in source:
+              if npm_anchor not in source:
+                  raise SystemExit('npm ci anchor not found')
+              source = source.replace(npm_anchor, npm_replacement, 1)
+
+          input_anchor = """          replace_once(\n              'src/components/ui/Input.tsx',\n              \"const sizeClassNames: Record<InputSize, string> = {\\n  sm: 'min-h-9 px-3 py-1.5 text-xs',\",\n              \"const sizeClassNames: Record<InputSize, string> = {\\n  xs: 'min-h-7 px-2 py-1 text-xs',\\n  sm: 'min-h-9 px-3 py-1.5 text-xs',\",\n          )\n"""
+          textarea_patch = input_anchor + """\n          # Textarea owns its own density contract; Input xs must not widen it implicitly.\n          replace_once(\n              'src/components/ui/Textarea.tsx',\n              \"import type { InputSize, InputTextMode } from './Input';\",\n              \"import type { InputTextMode } from './Input';\\n\\nexport type TextareaSize = 'sm' | 'md';\",\n          )\n          replace_once(\n              'src/components/ui/Textarea.tsx',\n              \"  size?: InputSize;\",\n              \"  size?: TextareaSize;\",\n          )\n          replace_once(\n              'src/components/ui/Textarea.tsx',\n              \"const sizeClassNames: Record<InputSize, string> = {\",\n              \"const sizeClassNames: Record<TextareaSize, string> = {\",\n          )\n"""
+          if 'export type TextareaSize' not in source:
+              if input_anchor not in source:
+                  raise SystemExit('Input patch anchor not found')
+              source = source.replace(input_anchor, textarea_patch, 1)
+
+          prettier_anchor = "          src/components/ui/Input.tsx\n          src/components/ui/Select.tsx"
+          if '          src/components/ui/Textarea.tsx\n' not in source:
+              if prettier_anchor not in source:
+                  raise SystemExit('Prettier file anchor not found')
+              source = source.replace(
+                  prettier_anchor,
+                  "          src/components/ui/Input.tsx\n          src/components/ui/Textarea.tsx\n          src/components/ui/Select.tsx",
+                  1,
+              )
+
+          git_add_anchor = "            src/components/ui/Input.tsx \\\n            src/components/ui/Select.tsx"
+          if '            src/components/ui/Textarea.tsx \\\n' not in source:
+              if git_add_anchor not in source:
+                  raise SystemExit('git add file anchor not found')
+              source = source.replace(
+                  git_add_anchor,
+                  "            src/components/ui/Input.tsx \\\n            src/components/ui/Textarea.tsx \\\n            src/components/ui/Select.tsx",
+                  1,
+              )
+
+          path.write_text(source)
+
+      - name: Remove runner helper
+        run: git rm .github/workflows/ds-181r-03c-patch-runner-fix.yml
+
+      - name: Commit runner correction
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/workflows/ds-181r-03c-density-template-fix.yml
+          git commit -m "chore: harden DS-181R-03C correction workflow"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
