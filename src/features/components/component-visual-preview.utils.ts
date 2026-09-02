@@ -93,6 +93,16 @@ function resolveStringDesignValue(
   return typeof resolved === 'string' ? resolved : undefined;
 }
 
+function normalizeComposedRadiusValue(
+  value: string | number | undefined,
+): string | number | undefined {
+  if (typeof value !== 'string') {
+    return value;
+  }
+
+  return value.trim().toLowerCase() === '9999px' ? '50%' : value;
+}
+
 function createRadiusCssProperties(
   radius: ComponentVisualProperties['radius'],
   resolveToken: TokenResolver,
@@ -100,10 +110,10 @@ function createRadiusCssProperties(
   const uniform = resolvePrimitiveDesignValue(radius?.radius, resolveToken);
   const hasCornerValue = Boolean(
     radius &&
-    (radius.topLeft !== undefined ||
-      radius.topRight !== undefined ||
-      radius.bottomRight !== undefined ||
-      radius.bottomLeft !== undefined),
+      (radius.topLeft !== undefined ||
+        radius.topRight !== undefined ||
+        radius.bottomRight !== undefined ||
+        radius.bottomLeft !== undefined),
   );
 
   if (!hasCornerValue) {
@@ -111,7 +121,9 @@ function createRadiusCssProperties(
   }
 
   const resolveCorner = (value: unknown) =>
-    resolvePrimitiveDesignValue(value, resolveToken) ?? uniform ?? 0;
+    normalizeComposedRadiusValue(
+      resolvePrimitiveDesignValue(value, resolveToken) ?? uniform ?? 0,
+    );
   const corners = [
     resolveCorner(radius?.topLeft),
     resolveCorner(radius?.topRight),
