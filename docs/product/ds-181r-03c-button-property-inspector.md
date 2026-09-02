@@ -100,6 +100,8 @@ The former card-per-property layout is replaced by compact property rows. Each r
 
 The source selector, resolved Token/value editor and reset affordance are grouped on the same row where space permits.
 
+`Default` is deliberately a presentation label only. It does not introduce a stored default value: selecting it keeps the current scope sparse so the property resolves through normal V2 inheritance.
+
 ## Sparse persistence contract
 
 The UX redesign does not change persistence semantics:
@@ -152,3 +154,17 @@ The first real-page UX review tightened the inspector without changing V2 semant
 - DesignValue source selection uses a Button-specific compact native select; rich Token selectors remain unchanged.
 - `Default` replaces `Inherit / default` in that compact selector while retaining the exact same sparse inheritance behavior.
 - Independent-corner cells and their value controls use the full grid width available to them.
+
+### Refined real-page QA gate
+
+The next manual QA must evaluate these refinements directly, rather than repeating the already accepted 03B correctness suite:
+
+1. the visible authoring hierarchy is Naming → Variants & states → Visual tokens;
+2. localized guidance, anatomy, accessibility and forbidden patterns start collapsed and remain easy to reopen;
+3. Fill is the first visual group and cannot be redundantly added from the `+` menu;
+4. the `+` affordance is visually centered and exposes only Stroke / Border and Typography;
+5. source selectors are compact and say `Default`, while selecting Default still restores inherited behavior;
+6. independent-corner rows use the width of their grid cells instead of compressing the value selector unnecessarily;
+7. the accepted radius, override, immediate-preview and persistence behavior remains intact.
+
+The pattern still must not be generalized until this refined real-page gate is explicitly accepted.
