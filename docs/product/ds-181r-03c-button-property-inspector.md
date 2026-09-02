@@ -151,7 +151,7 @@ The first real-page UX review tightened the inspector without changing V2 semant
 - Fill is the first visual group and is always present; it is no longer treated as optional.
 - Stroke / Border and Typography remain progressively addable.
 - The optional-property `+` uses a centered icon rather than a baseline-sensitive text glyph.
-- DesignValue source selection uses a Button-specific compact native select; rich Token selectors remain unchanged.
+- DesignValue source selection uses the shared Select primitive through a Button-specific compact wrapper and the dedicated `xs` density; rich Token selectors remain unchanged.
 - `Default` replaces `Inherit / default` in that compact selector while retaining the exact same sparse inheritance behavior.
 - Independent-corner cells and their value controls use the full grid width available to them.
 
