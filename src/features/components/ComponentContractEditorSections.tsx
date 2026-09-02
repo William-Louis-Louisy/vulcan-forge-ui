@@ -237,13 +237,15 @@ export function ComponentContractEditorSections({
         setDraft={setDraft}
       />
 
-      <VisualTokensSection
-        labels={labels}
-        draft={draft}
-        activeLocale={activeLocale}
-        setDraft={setDraft}
-        tokenOptions={tokenOptions}
-      />
+      {draft.type === 'button' ? null : (
+        <VisualTokensSection
+          labels={labels}
+          draft={draft}
+          activeLocale={activeLocale}
+          setDraft={setDraft}
+          tokenOptions={tokenOptions}
+        />
+      )}
     </div>
   );
 }
