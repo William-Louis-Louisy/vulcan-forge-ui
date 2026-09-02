@@ -112,6 +112,10 @@ The UX redesign does not change persistence semantics:
 - optional group removal is scope-local;
 - semantic saves continue preserving V2-only visual data.
 
+## Test boundary
+
+The semantic component-editor tests mock the dedicated Button V2 visual editor. They verify semantic authoring and legacy-Visual-Tokens visibility rules without importing the visual editor's server-action dependencies. Button visual behavior remains covered by its dedicated editor, preview and visual-customization suites. This keeps the unit boundary explicit while preserving end-to-end qualification through the canonical build and full test suite.
+
 ## Out of scope
 
 This slice deliberately does not add:
