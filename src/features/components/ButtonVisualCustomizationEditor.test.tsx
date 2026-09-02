@@ -187,7 +187,9 @@ describe('ButtonVisualCustomizationEditor', () => {
     render(<ButtonVisualCustomizationEditor {...createEditorProps()} />);
 
     const fillHeading = screen.getByRole('heading', { name: 'Fill' });
-    const dimensionsHeading = screen.getByRole('heading', { name: 'Dimensions' });
+    const dimensionsHeading = screen.getByRole('heading', {
+      name: 'Dimensions',
+    });
     expect(
       fillHeading.compareDocumentPosition(dimensionsHeading) &
         Node.DOCUMENT_POSITION_FOLLOWING,
