@@ -1,0 +1,102 @@
+name: DS-181R-03C compact Select fix
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.event.pull_request.head.ref == 'agent/ds-181r-03c-button-property-inspector'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Apply focused Button editor replacement
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path('src/features/components/ButtonVisualCustomizationEditor.tsx')
+          source = path.read_text()
+          source = source.replace(
+              "import { CaretDownIcon, PlusIcon } from '@phosphor-icons/react';",
+              "import { PlusIcon } from '@phosphor-icons/react';",
+          )
+          old = '''function PropertySourceSelect({
+            id,
+            value,
+            options,
+            onValueChange,
+            ariaLabel,
+          }: {
+            id: string;
+            value: string;
+            options: Array<{ value: string; label: string }>;
+            onValueChange: (value: string) => void;
+            ariaLabel: string;
+          }) {
+            return (
+              <div className="relative max-w-32 min-w-[6.75rem]">
+                <select
+                  id={id}
+                  aria-label={ariaLabel}
+                  value={value}
+                  onChange={(event) => onValueChange(event.target.value)}
+                  className="border-border-default bg-surface-primary text-content-secondary focus-visible:outline-border-focus h-7 w-full cursor-pointer appearance-none rounded-md border py-0 pr-6 pl-2 text-[0.6875rem] font-semibold focus-visible:outline-2 focus-visible:outline-offset-2"
+                >
+                  {options.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <CaretDownIcon
+                  aria-hidden="true"
+                  size={11}
+                  className="text-content-tertiary pointer-events-none absolute top-1/2 right-2 -translate-y-1/2"
+                />
+              </div>
+            );
+          }'''
+          new = '''function PropertySourceSelect({
+            id,
+            value,
+            options,
+            onValueChange,
+            ariaLabel,
+          }: {
+            id: string;
+            value: string;
+            options: Array<{ value: string; label: string }>;
+            onValueChange: (value: string) => void;
+            ariaLabel: string;
+          }) {
+            return (
+              <Select
+                id={id}
+                value={value}
+                options={options}
+                onValueChange={onValueChange}
+                placeholder={ariaLabel}
+                size="xs"
+                className="max-w-32 min-w-[6.75rem]"
+              />
+            );
+          }'''
+          if old not in source:
+              raise SystemExit('Expected PropertySourceSelect block was not found')
+          path.write_text(source.replace(old, new))
+      - name: Remove temporary workflow
+        run: git rm .github/workflows/ds-181r-03c-compact-select-fix.yml
+      - name: Commit focused fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/features/components/ButtonVisualCustomizationEditor.tsx
+          git commit -m "fix: use shared compact Select in Button inspector"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
