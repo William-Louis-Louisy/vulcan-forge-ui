@@ -102,6 +102,34 @@ The source selector, resolved Token/value editor and reset affordance are groupe
 
 `Default` is deliberately a presentation label only. It does not introduce a stored default value: selecting it keeps the current scope sparse so the property resolves through normal V2 inheritance.
 
+### Coherent `xs` property density
+
+The property inspector treats density as a row-level contract, not as a source-selector special case:
+
+- the source selector (`Default / Token / Explicit value / controlled modes`) uses `xs`;
+- the Token-value selector uses the same `xs` height;
+- the explicit-value `Input` uses the same `xs` height;
+- Border style and Typography property controls use the same `xs` density;
+- inherited/read-only placeholders occupy the same compact row height;
+- the shared `Select` propagates `xs` to both its trigger and its opened listbox/options, including tighter listbox padding.
+
+`Input` now exposes an explicit `xs` density alongside `sm` and `md`. `Textarea` keeps its own `sm | md` density contract instead of inheriting Input-specific sizes it does not use.
+
+Context-level controls such as the Variant/Size/State target selector remain `sm`; the compact `xs` density is reserved for property-level authoring controls.
+
+## Button template defaults
+
+The Button template carries visual defaults independently from user-authored Component values.
+
+For the canonical Button template:
+
+- the `primary` variant explicitly defaults to `border.style = none`;
+- `secondary` is not forced to be borderless;
+- template variant defaults resolve before user-authored Base / Variant / Size / State data;
+- a user-authored Border override can therefore still replace the Primary template default, and resetting that override restores the borderless template behavior.
+
+This keeps the rule in template data rather than hiding a Primary-specific border exception inside the renderer.
+
 ## Sparse persistence contract
 
 The UX redesign does not change persistence semantics:
@@ -112,9 +140,9 @@ The UX redesign does not change persistence semantics:
 - optional group removal is scope-local;
 - semantic saves continue preserving V2-only visual data.
 
-## Test boundary
+## Test boundaries
 
-The semantic component-editor tests mock the dedicated Button V2 visual editor. They verify semantic authoring and legacy-Visual-Tokens visibility rules without importing the visual editor's server-action dependencies. Button visual behavior remains covered by its dedicated editor, preview and visual-customization suites. This keeps the unit boundary explicit while preserving end-to-end qualification through the canonical build and full test suite.
+The semantic `ComponentContractEditor` suite validates semantic authoring and the presence/absence boundary of the dedicated Button V2 visual editor. It mocks that visual editor instead of importing its server-action dependency graph. Dedicated Button V2 suites own visual-inspector behavior, preview resolution and persistence regressions.
 
 ## Out of scope
 
@@ -139,36 +167,39 @@ Before this pattern is generalized, manual QA must establish that the Button edi
 - there is only one Button visual-authoring surface;
 - Base / Variant / Size / State context remains understandable;
 - Token / explicit / inherited behavior remains predictable;
+- property-level controls share one coherent density;
 - persistence and immediate preview still work.
 
 If this interaction model is not materially better, the project should refine Button again rather than scale it to Wave A templates.
 
 The product gate applies to the interaction model itself: effects, shadows and elevation must not be used to compensate for an inspector structure that is still unclear.
 
-## DS-181R-03C refinement after first UX review
+## DS-181R-03C refinement after UX reviews
 
-The first real-page UX review tightened the inspector without changing V2 semantics:
+Real-page UX reviews tightened the inspector without changing V2 persistence semantics:
 
 - Naming stays first because component identity should be established before customization.
-- Variants & states now precede Visual tokens because those axes define the targets used by visual overrides.
+- Variants & states precede Visual tokens because those axes define the targets used by visual overrides.
 - Secondary semantic blocks are collapsible for Button to reduce vertical noise.
 - Fill is the first visual group and is always present; it is no longer treated as optional.
 - Stroke / Border and Typography remain progressively addable.
 - The optional-property `+` uses a centered icon rather than a baseline-sensitive text glyph.
-- DesignValue source selection uses the shared Select primitive through a Button-specific compact wrapper and the dedicated `xs` density; rich Token selectors remain unchanged.
-- `Default` replaces `Inherit / default` in that compact selector while retaining the exact same sparse inheritance behavior.
+- `Default` replaces `Inherit / default` while retaining the exact same sparse inheritance behavior.
 - Independent-corner cells and their value controls use the full grid width available to them.
+- The complete property row now uses the shared `xs` density: source, Token value, explicit value, Border and Typography controls.
+- `Select xs` densifies the opened dropdown as well as its trigger.
+- the Primary Button template is explicitly borderless by default while Secondary keeps its own behavior.
 
 ### Refined real-page QA gate
 
-The next manual QA must evaluate these refinements directly, rather than repeating the already accepted 03B correctness suite:
+The next manual QA focuses on the remaining product-facing refinements rather than repeating the already accepted 03B correctness suite:
 
-1. the visible authoring hierarchy is Naming → Variants & states → Visual tokens;
-2. localized guidance, anatomy, accessibility and forbidden patterns start collapsed and remain easy to reopen;
-3. Fill is the first visual group and cannot be redundantly added from the `+` menu;
-4. the `+` affordance is visually centered and exposes only Stroke / Border and Typography;
-5. source selectors are compact and say `Default`, while selecting Default still restores inherited behavior;
-6. independent-corner rows use the width of their grid cells instead of compressing the value selector unnecessarily;
+1. property source, Token-value selector and explicit-value input have the same compact height;
+2. Typography property controls follow the same compact density;
+3. an opened `xs` Select has visibly compact options and tighter listbox spacing;
+4. Primary base renders without a border by template default;
+5. Secondary is not implicitly made borderless;
+6. an authored Border override can replace the Primary template default and reset restores it;
 7. the accepted radius, override, immediate-preview and persistence behavior remains intact.
 
 The pattern still must not be generalized until this refined real-page gate is explicitly accepted.
