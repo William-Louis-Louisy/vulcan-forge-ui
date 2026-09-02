@@ -9,6 +9,13 @@ export type ButtonVisualScope =
   | { kind: 'base' }
   | { kind: 'variant' | 'size' | 'state'; key: string };
 
+const radiusCornerProperties = [
+  'topLeft',
+  'topRight',
+  'bottomRight',
+  'bottomLeft',
+] as const;
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
@@ -92,6 +99,12 @@ export function setButtonVisualProperty(
   const nextTarget = isRecord(target) ? target : {};
   const groupValue = nextTarget[group];
   const nextGroup = isRecord(groupValue) ? groupValue : {};
+
+  if (group === 'radius' && property === 'radius') {
+    for (const cornerProperty of radiusCornerProperties) {
+      delete nextGroup[cornerProperty];
+    }
+  }
 
   nextGroup[property] = value;
   nextTarget[group] = nextGroup;
