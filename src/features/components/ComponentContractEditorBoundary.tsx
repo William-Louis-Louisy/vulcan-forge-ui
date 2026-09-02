@@ -38,7 +38,7 @@ export function ComponentContractEditorBoundary({
       locale={locale}
       projectSlug={projectSlug}
       contract={contract}
-      contractV2={contractV2}
+      {...(contractV2 ? { contractV2 } : {})}
       labels={labels}
       tokenOptions={tokenOptions}
     />
