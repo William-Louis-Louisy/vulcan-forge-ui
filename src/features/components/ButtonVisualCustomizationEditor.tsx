@@ -9,7 +9,7 @@ import {
   type ReactNode,
 } from 'react';
 import { useTranslations } from 'next-intl';
-import { CaretDownIcon, PlusIcon } from '@phosphor-icons/react';
+import { PlusIcon } from '@phosphor-icons/react';
 import { Button, Input, SegmentedControl, Select } from '@/components/ui';
 import {
   explicitColorValueSchema,
@@ -1014,26 +1014,15 @@ function PropertySourceSelect({
   ariaLabel: string;
 }) {
   return (
-    <div className="relative max-w-32 min-w-[6.75rem]">
-      <select
-        id={id}
-        aria-label={ariaLabel}
-        value={value}
-        onChange={(event) => onValueChange(event.target.value)}
-        className="border-border-default bg-surface-primary text-content-secondary focus-visible:outline-border-focus h-7 w-full cursor-pointer appearance-none rounded-md border py-0 pr-6 pl-2 text-[0.6875rem] font-semibold focus-visible:outline-2 focus-visible:outline-offset-2"
-      >
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-      <CaretDownIcon
-        aria-hidden="true"
-        size={11}
-        className="text-content-tertiary pointer-events-none absolute top-1/2 right-2 -translate-y-1/2"
-      />
-    </div>
+    <Select
+      id={id}
+      value={value}
+      options={options}
+      onValueChange={onValueChange}
+      placeholder={ariaLabel}
+      size="xs"
+      className="max-w-32 min-w-[6.75rem]"
+    />
   );
 }
 
