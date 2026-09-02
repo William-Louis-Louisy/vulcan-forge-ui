@@ -1,0 +1,199 @@
+name: DS-181R-03C apply integration edits
+
+on:
+  push:
+    branches:
+      - agent/ds-181r-03c-button-property-inspector
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: agent/ds-181r-03c-button-property-inspector
+          fetch-depth: 0
+
+      - name: Apply focused source edits
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          sections_path = Path('src/features/components/ComponentContractEditorSections.tsx')
+          sections = sections_path.read_text()
+          old = """      <VisualTokensSection
+                labels={labels}
+                draft={draft}
+                activeLocale={activeLocale}
+                setDraft={setDraft}
+                tokenOptions={tokenOptions}
+              />"""
+          if old not in sections:
+              old = """      <VisualTokensSection
+                labels={labels}
+                draft={draft}
+                activeLocale={activeLocale}
+                setDraft={setDraft}
+                tokenOptions={tokenOptions}
+              />"""
+          # The source uses six-space indentation in this call. Build the exact text independently.
+          exact = """      <VisualTokensSection
+                labels={labels}
+                draft={draft}
+                activeLocale={activeLocale}
+                setDraft={setDraft}
+                tokenOptions={tokenOptions}
+              />"""
+          if exact not in sections:
+              exact = """      <VisualTokensSection
+        labels={labels}
+        draft={draft}
+        activeLocale={activeLocale}
+        setDraft={setDraft}
+        tokenOptions={tokenOptions}
+      />"""
+          if exact not in sections:
+              raise SystemExit('VisualTokensSection call block not found')
+          replacement = """      {draft.type === 'button' ? null : (
+        <VisualTokensSection
+          labels={labels}
+          draft={draft}
+          activeLocale={activeLocale}
+          setDraft={setDraft}
+          tokenOptions={tokenOptions}
+        />
+      )}"""
+          sections_path.write_text(sections.replace(exact, replacement, 1))
+
+          test_path = Path('src/features/components/ComponentContractEditor.test.tsx')
+          tests = test_path.read_text()
+          contract_marker = "const contract: ComponentContract = {\n  type: 'button',"
+          if contract_marker not in tests:
+              raise SystemExit('ComponentContractEditor base contract marker not found')
+          tests = tests.replace(
+              contract_marker,
+              "const contract: ComponentContract = {\n  type: 'card',",
+              1,
+          )
+
+          final_test_pattern = re.compile(
+              r"\n  it\('keeps the Button V2 radius role out of the legacy Visual Tokens editor'.*?\n  \}\);\n\}\);\s*$",
+              re.S,
+          )
+          replacement_test = r"""
+  it('hides the legacy Visual Tokens editor entirely for Button', () => {
+    const buttonContract: ComponentContract = {
+      ...contract,
+      type: 'button',
+      tokenBindings: [
+        {
+          key: 'radius',
+          tokenType: 'radius',
+          tokenPath: 'radius.md',
+        },
+      ],
+    };
+
+    render(
+      <ComponentContractEditor
+        componentKey="button"
+        locale="en"
+        projectSlug="demo"
+        contract={buttonContract}
+        labels={labels}
+        tokenOptions={tokenOptions}
+      />,
+    );
+
+    expect(
+      screen.queryByRole('button', { name: /Add visual token/ }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('combobox', { name: 'Preview role' }),
+    ).not.toBeInTheDocument();
+  });
+});
+"""
+          tests, count = final_test_pattern.subn(replacement_test, tests)
+          if count != 1:
+              raise SystemExit(f'Expected to replace final Button visual-token test once, got {count}')
+          test_path.write_text(tests)
+
+          utils_test_path = Path('src/features/components/button-visual-customization.utils.test.ts')
+          utils_tests = utils_test_path.read_text()
+          import_marker = "  resetButtonVisualProperty,\n"
+          if import_marker not in utils_tests:
+              raise SystemExit('resetButtonVisualProperty import marker not found')
+          utils_tests = utils_tests.replace(
+              import_marker,
+              "  resetButtonVisualGroup,\n  resetButtonVisualProperty,\n",
+              1,
+          )
+          insertion_marker = "  it('fingerprints only visual customization state', () => {"
+          if insertion_marker not in utils_tests:
+              raise SystemExit('fingerprint test marker not found')
+          group_test = r"""  it('resets an entire visual group only in the selected scope', () => {
+    let contract = createButtonContract();
+    contract = setButtonVisualProperty(
+      contract,
+      { kind: 'base' },
+      'spacing',
+      'paddingX',
+      { source: 'value', value: '12px' },
+    );
+    contract = setButtonVisualProperty(
+      contract,
+      { kind: 'base' },
+      'border',
+      'width',
+      { source: 'value', value: '2px' },
+    );
+    contract = setButtonVisualProperty(
+      contract,
+      { kind: 'variant', key: 'primary' },
+      'border',
+      'color',
+      { source: 'value', value: '#112233' },
+    );
+
+    const reset = resetButtonVisualGroup(
+      contract,
+      { kind: 'base' },
+      'border',
+    );
+
+    expect(reset.visual.border).toBeUndefined();
+    expect(reset.visual.spacing?.paddingX).toEqual({
+      source: 'value',
+      value: '12px',
+    });
+    expect(reset.overrides.variants.primary?.border?.color).toEqual({
+      source: 'value',
+      value: '#112233',
+    });
+  });
+
+"""
+          utils_test_path.write_text(
+              utils_tests.replace(insertion_marker, group_test + insertion_marker, 1)
+          )
+          PY
+
+      - name: Remove temporary workflow
+        run: git rm .github/workflows/ds-181r-03c-apply.yml
+
+      - name: Commit edits
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/features/components/ComponentContractEditorSections.tsx \
+                  src/features/components/ComponentContractEditor.test.tsx \
+                  src/features/components/button-visual-customization.utils.test.ts
+          git commit -m "refactor: consolidate Button visual authoring surface"
+          git push origin HEAD:agent/ds-181r-03c-button-property-inspector
