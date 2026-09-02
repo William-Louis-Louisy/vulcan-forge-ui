@@ -11,6 +11,8 @@ jobs:
   apply:
     if: github.event.pull_request.head.ref == 'agent/ds-181r-03c-button-property-inspector'
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://vulcan:vulcan_dev_password@localhost:5432/vulcan_forge_ui?schema=public
     steps:
       - uses: actions/checkout@v6
         with:
