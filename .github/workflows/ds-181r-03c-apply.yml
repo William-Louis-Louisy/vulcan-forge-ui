@@ -1,4 +1,4 @@
-name: DS-181R-03C apply integration edits
+name: DS-181R-03C apply
 
 on:
   push:
@@ -10,10 +10,9 @@ permissions:
 
 jobs:
   apply:
-    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
         with:
           ref: agent/ds-181r-03c-button-property-inspector
           fetch-depth: 0
@@ -27,39 +26,13 @@ jobs:
 
           sections_path = Path('src/features/components/ComponentContractEditorSections.tsx')
           sections = sections_path.read_text()
-          old = """      <VisualTokensSection
-                labels={labels}
-                draft={draft}
-                activeLocale={activeLocale}
-                setDraft={setDraft}
-                tokenOptions={tokenOptions}
-              />"""
-          if old not in sections:
-              old = """      <VisualTokensSection
-                labels={labels}
-                draft={draft}
-                activeLocale={activeLocale}
-                setDraft={setDraft}
-                tokenOptions={tokenOptions}
-              />"""
-          # The source uses six-space indentation in this call. Build the exact text independently.
-          exact = """      <VisualTokensSection
-                labels={labels}
-                draft={draft}
-                activeLocale={activeLocale}
-                setDraft={setDraft}
-                tokenOptions={tokenOptions}
-              />"""
-          if exact not in sections:
-              exact = """      <VisualTokensSection
+          current = """      <VisualTokensSection
         labels={labels}
         draft={draft}
         activeLocale={activeLocale}
         setDraft={setDraft}
         tokenOptions={tokenOptions}
       />"""
-          if exact not in sections:
-              raise SystemExit('VisualTokensSection call block not found')
           replacement = """      {draft.type === 'button' ? null : (
         <VisualTokensSection
           labels={labels}
@@ -69,7 +42,9 @@ jobs:
           tokenOptions={tokenOptions}
         />
       )}"""
-          sections_path.write_text(sections.replace(exact, replacement, 1))
+          if current not in sections:
+              raise SystemExit('VisualTokensSection call block not found')
+          sections_path.write_text(sections.replace(current, replacement, 1))
 
           test_path = Path('src/features/components/ComponentContractEditor.test.tsx')
           tests = test_path.read_text()
@@ -122,7 +97,7 @@ jobs:
 """
           tests, count = final_test_pattern.subn(replacement_test, tests)
           if count != 1:
-              raise SystemExit(f'Expected to replace final Button visual-token test once, got {count}')
+              raise SystemExit(f'Expected one Button visual-token test replacement, got {count}')
           test_path.write_text(tests)
 
           utils_test_path = Path('src/features/components/button-visual-customization.utils.test.ts')
@@ -188,12 +163,13 @@ jobs:
       - name: Remove temporary workflow
         run: git rm .github/workflows/ds-181r-03c-apply.yml
 
-      - name: Commit edits
+      - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add src/features/components/ComponentContractEditorSections.tsx \
                   src/features/components/ComponentContractEditor.test.tsx \
-                  src/features/components/button-visual-customization.utils.test.ts
+                  src/features/components/button-visual-customization.utils.test.ts \
+                  .github/workflows/ds-181r-03c-apply.yml
           git commit -m "refactor: consolidate Button visual authoring surface"
           git push origin HEAD:agent/ds-181r-03c-button-property-inspector
