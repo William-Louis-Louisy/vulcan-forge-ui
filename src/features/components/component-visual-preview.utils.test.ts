@@ -36,6 +36,12 @@ const rawTokenSets = [
         value: '8px',
         status: 'ready',
       },
+      {
+        path: 'radius.full',
+        type: 'radius',
+        value: '9999px',
+        status: 'ready',
+      },
     ],
   },
   {
@@ -171,5 +177,41 @@ describe('createComponentVisualCssProperties', () => {
     expect(styles.borderTopRightRadius).toBeUndefined();
     expect(styles.borderBottomRightRadius).toBeUndefined();
     expect(styles.borderBottomLeftRadius).toBeUndefined();
+  });
+
+  it('keeps radius.full unchanged when it is the only radius value', () => {
+    const styles = createComponentVisualCssProperties({
+      visual: {
+        radius: {
+          radius: {
+            source: 'token',
+            tokenType: 'radius',
+            path: 'radius.full',
+          },
+        },
+      },
+      rawTokenSets,
+    });
+
+    expect(styles.borderRadius).toBe('9999px');
+  });
+
+  it('normalizes radius.full only while composing asymmetric corners', () => {
+    const styles = createComponentVisualCssProperties({
+      visual: {
+        radius: {
+          radius: {
+            source: 'token',
+            tokenType: 'radius',
+            path: 'radius.full',
+          },
+          topLeft: { source: 'value', value: '18px' },
+          bottomRight: { source: 'value', value: '32px' },
+        },
+      },
+      rawTokenSets,
+    });
+
+    expect(styles.borderRadius).toBe('18px 50% 32px 50%');
   });
 });
