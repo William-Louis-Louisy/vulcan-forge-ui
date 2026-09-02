@@ -176,4 +176,73 @@ describe('Button visual customization utilities', () => {
       getButtonVisualProperty(contract, { kind: 'base' }, 'radius', 'radius'),
     ).toEqual({ source: 'value', value: '8px' });
   });
+
+  it('setting a uniform base radius clears same-layer corner overrides', () => {
+    let contract = createButtonContract();
+    contract = setButtonVisualProperty(
+      contract,
+      { kind: 'base' },
+      'radius',
+      'topLeft',
+      { source: 'value', value: '18px' },
+    );
+    contract = setButtonVisualProperty(
+      contract,
+      { kind: 'base' },
+      'radius',
+      'bottomRight',
+      { source: 'value', value: '32px' },
+    );
+    contract = setButtonVisualProperty(
+      contract,
+      { kind: 'base' },
+      'radius',
+      'radius',
+      { source: 'value', value: '8px' },
+    );
+
+    expect(contract.visual.radius).toEqual({
+      radius: { source: 'value', value: '8px' },
+    });
+  });
+
+  it('setting a uniform override radius clears corners only in that override layer', () => {
+    let contract = createButtonContract();
+    contract = setButtonVisualProperty(
+      contract,
+      { kind: 'base' },
+      'radius',
+      'topLeft',
+      { source: 'value', value: '24px' },
+    );
+    contract = setButtonVisualProperty(
+      contract,
+      { kind: 'variant', key: 'primary' },
+      'radius',
+      'topRight',
+      { source: 'value', value: '18px' },
+    );
+    contract = setButtonVisualProperty(
+      contract,
+      { kind: 'variant', key: 'primary' },
+      'radius',
+      'bottomLeft',
+      { source: 'value', value: '32px' },
+    );
+    contract = setButtonVisualProperty(
+      contract,
+      { kind: 'variant', key: 'primary' },
+      'radius',
+      'radius',
+      { source: 'value', value: '6px' },
+    );
+
+    expect(contract.visual.radius?.topLeft).toEqual({
+      source: 'value',
+      value: '24px',
+    });
+    expect(contract.overrides.variants.primary?.radius).toEqual({
+      radius: { source: 'value', value: '6px' },
+    });
+  });
 });
