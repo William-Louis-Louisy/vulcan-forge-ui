@@ -1,0 +1,105 @@
+name: DS-181R-03C apply final correction
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.event.pull_request.head.ref == 'agent/ds-181r-03c-button-property-inspector'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Apply previously qualified cohesive patch
+        shell: python
+        run: |
+          from pathlib import Path
+          import textwrap
+
+          workflow_path = Path('.github/workflows/ds-181r-03c-density-template-fix.yml')
+          workflow_source = workflow_path.read_text()
+          start_marker = "      - name: Apply cohesive xs density and Button template defaults\n        shell: python\n        run: |\n"
+          end_marker = "\n      - name: Format touched files"
+
+          if start_marker not in workflow_source or end_marker not in workflow_source:
+              raise SystemExit('Unable to locate the qualified patch block')
+
+          patch_block = workflow_source.split(start_marker, 1)[1].split(end_marker, 1)[0]
+          namespace = {}
+          exec(compile(textwrap.dedent(patch_block), str(workflow_path), 'exec'), namespace)
+
+          textarea_path = Path('src/components/ui/Textarea.tsx')
+          textarea_source = textarea_path.read_text()
+          replacements = [
+              (
+                  "import type { InputSize, InputTextMode } from './Input';",
+                  "import type { InputTextMode } from './Input';\n\nexport type TextareaSize = 'sm' | 'md';",
+              ),
+              ('  size?: InputSize;', '  size?: TextareaSize;'),
+              (
+                  'const sizeClassNames: Record<InputSize, string> = {',
+                  'const sizeClassNames: Record<TextareaSize, string> = {',
+              ),
+          ]
+          for old, new in replacements:
+              if old not in textarea_source:
+                  raise SystemExit(f'Textarea anchor not found: {old}')
+              textarea_source = textarea_source.replace(old, new, 1)
+          textarea_path.write_text(textarea_source)
+
+      - name: Format touched files
+        run: >-
+          npx prettier
+          src/components/ui/Input.tsx
+          src/components/ui/Textarea.tsx
+          src/components/ui/Select.tsx
+          src/components/ui/ControlDensity.test.tsx
+          src/components/ui/Select.test.tsx
+          src/features/components/ButtonVisualCustomizationEditor.tsx
+          src/features/components/ButtonVisualCustomizationEditor.test.tsx
+          src/features/components/ButtonVisualPreviewMatrix.tsx
+          src/features/components/ComponentFoundationsPreviewClient.test.tsx
+          src/domain/design-system/component-template-registry.ts
+          src/domain/design-system/component-template-registry.test.ts
+          --write
+
+      - name: Run focused regression tests
+        run: >-
+          npx vitest run
+          src/components/ui/ControlDensity.test.tsx
+          src/components/ui/Select.test.tsx
+          src/features/components/ButtonVisualCustomizationEditor.test.tsx
+          src/features/components/ComponentFoundationsPreviewClient.test.tsx
+          src/domain/design-system/component-template-registry.test.ts
+
+      - run: npm run db:generate
+
+      - name: Run strict typecheck
+        run: npm run typecheck
+
+      - name: Remove temporary correction workflows
+        run: |
+          git rm .github/workflows/ds-181r-03c-density-template-fix.yml
+          git rm .github/workflows/ds-181r-03c-apply-final.yml
+
+      - name: Commit cohesive correction
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "fix: align Button inspector density and primary template"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
