@@ -125,3 +125,5 @@ Before this pattern is generalized, manual QA must establish that the Button edi
 - persistence and immediate preview still work.
 
 If this interaction model is not materially better, the project should refine Button again rather than scale it to Wave A templates.
+
+The product gate applies to the interaction model itself: effects, shadows and elevation must not be used to compensate for an inspector structure that is still unclear.
