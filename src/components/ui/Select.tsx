@@ -47,9 +47,15 @@ const triggerSizeClassNames: Record<SelectSize, string> = {
 };
 
 const optionSizeClassNames: Record<SelectSize, string> = {
-  xs: 'min-h-8 px-2 py-1.5',
+  xs: 'min-h-7 px-2 py-1',
   sm: 'min-h-9 px-2.5 py-1.5',
   md: 'min-h-11 px-2.5 py-2',
+};
+
+const listboxSizeClassNames: Record<SelectSize, string> = {
+  xs: 'p-0.5',
+  sm: 'p-1',
+  md: 'p-1',
 };
 
 const labelTextClassNames: Record<SelectTextMode, string> = {
@@ -374,7 +380,10 @@ export function Select<Value extends string>({
           popover="manual"
           data-placement={placement}
           style={popoverStyle}
-          className="border-border-subtle bg-surface-primary shadow-elevated z-50 max-h-72 overflow-y-auto rounded-md border p-1"
+          className={[
+            'border-border-subtle bg-surface-primary shadow-elevated z-50 max-h-72 overflow-y-auto rounded-md border',
+            listboxSizeClassNames[size],
+          ].join(' ')}
         >
           {options.map((option, index) => {
             const isSelected = option.value === value;

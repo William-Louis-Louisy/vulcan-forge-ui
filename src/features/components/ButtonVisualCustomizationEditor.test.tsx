@@ -159,6 +159,26 @@ function createEditorProps() {
 }
 
 describe('ButtonVisualCustomizationEditor', () => {
+  it('keeps property source, token value and explicit value controls on the same xs density', async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <ButtonVisualCustomizationEditor {...createEditorProps()} />,
+    );
+
+    const radiusSource = screen.getByRole('combobox', { name: 'Radius' });
+    expect(radiusSource).toHaveClass('min-h-7');
+    expect(container.querySelector('input[id$="-explicit"]')).toHaveClass(
+      'min-h-7',
+    );
+
+    await user.click(radiusSource);
+    await user.click(screen.getByRole('option', { name: 'Token' }));
+
+    expect(container.querySelector('button[id$="-token"]')).toHaveClass(
+      'min-h-7',
+    );
+  });
+
   it('uses one uniform radius control until independent corners are enabled', async () => {
     const user = userEvent.setup();
 

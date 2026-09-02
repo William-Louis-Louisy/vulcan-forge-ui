@@ -962,7 +962,7 @@ function DesignValueField({
               })
             }
             placeholder={labels.selectToken}
-            size="sm"
+            size="xs"
           />
         ) : source === 'explicit' ? (
           <Input
@@ -970,11 +970,11 @@ function DesignValueField({
             value={explicitValue}
             onChange={(event) => handleExplicitChange(event.target.value)}
             placeholder={labels.valuePlaceholder}
-            size="sm"
+            size="xs"
             textMode="technical"
           />
         ) : (
-          <span className="text-content-tertiary truncate text-xs">
+          <span className="text-content-tertiary flex min-h-7 items-center truncate text-xs">
             {source === 'auto'
               ? labels.auto
               : source === 'fill'
@@ -1064,7 +1064,7 @@ function SimpleSelectProperty({
             nextValue ? onChange(nextValue) : onReset()
           }
           placeholder={inheritedLabel}
-          size="sm"
+          size="xs"
         />
         {resolvedValue ? (
           <button
@@ -1195,10 +1195,10 @@ function TypographyControls({
                 onChange({ source: 'token', tokenType: 'typography', path })
               }
               placeholder={labels.selectToken}
-              size="sm"
+              size="xs"
             />
           ) : (
-            <span className="text-content-tertiary flex min-h-9 items-center text-xs">
+            <span className="text-content-tertiary flex min-h-7 items-center text-xs">
               {inheritedLabel}
             </span>
           )}
@@ -1255,7 +1255,7 @@ function TypographyControls({
                 )
               }
               placeholder={labels.fontWeight}
-              size="sm"
+              size="xs"
             />
           </LabeledControl>
           <LabeledControl label={labels.lineHeight}>
@@ -1270,7 +1270,7 @@ function TypographyControls({
                 setExplicitField('lineHeight', Number(lineHeight))
               }
               placeholder={labels.lineHeight}
-              size="sm"
+              size="xs"
             />
           </LabeledControl>
           <LabeledControl label={labels.textAlign}>
@@ -1290,7 +1290,7 @@ function TypographyControls({
                 )
               }
               placeholder={labels.textAlign}
-              size="sm"
+              size="xs"
             />
           </LabeledControl>
         </div>
@@ -1333,7 +1333,7 @@ function TypographyInput({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
-        size="sm"
+        size="xs"
       />
     </LabeledControl>
   );
