@@ -21,7 +21,7 @@ export type SelectOption<Value extends string = string> = {
   disabled?: boolean;
 };
 
-export type SelectSize = 'sm' | 'md';
+export type SelectSize = 'xs' | 'sm' | 'md';
 export type SelectTextMode = 'default' | 'technical';
 
 export type SelectProps<Value extends string = string> = {
@@ -41,11 +41,13 @@ export type SelectProps<Value extends string = string> = {
 };
 
 const triggerSizeClassNames: Record<SelectSize, string> = {
+  xs: 'min-h-7 px-2 py-1',
   sm: 'min-h-9 px-3 py-1.5',
   md: 'min-h-10 px-3 py-2',
 };
 
 const optionSizeClassNames: Record<SelectSize, string> = {
+  xs: 'min-h-8 px-2 py-1.5',
   sm: 'min-h-9 px-2.5 py-1.5',
   md: 'min-h-11 px-2.5 py-2',
 };
