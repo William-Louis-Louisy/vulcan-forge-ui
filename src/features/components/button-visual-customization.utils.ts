@@ -149,6 +149,24 @@ export function resetButtonVisualProperty(
   );
 }
 
+export function resetButtonVisualGroup(
+  contract: ComponentContractV2,
+  scope: ButtonVisualScope,
+  group: keyof ComponentVisualProperties,
+): ComponentContractV2 {
+  const target = structuredClone(
+    getButtonVisualTarget(contract, scope),
+  ) as ComponentVisualProperties;
+
+  delete target[group];
+
+  return setTarget(
+    contract,
+    scope,
+    componentVisualPropertiesSchema.parse(target),
+  );
+}
+
 export function setButtonTypographyValue(
   contract: ComponentContractV2,
   scope: ButtonVisualScope,
