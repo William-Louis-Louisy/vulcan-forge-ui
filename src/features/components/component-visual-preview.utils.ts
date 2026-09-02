@@ -110,10 +110,10 @@ function createRadiusCssProperties(
   const uniform = resolvePrimitiveDesignValue(radius?.radius, resolveToken);
   const hasCornerValue = Boolean(
     radius &&
-      (radius.topLeft !== undefined ||
-        radius.topRight !== undefined ||
-        radius.bottomRight !== undefined ||
-        radius.bottomLeft !== undefined),
+    (radius.topLeft !== undefined ||
+      radius.topRight !== undefined ||
+      radius.bottomRight !== undefined ||
+      radius.bottomLeft !== undefined),
   );
 
   if (!hasCornerValue) {
