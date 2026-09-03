@@ -556,15 +556,13 @@ export function ButtonVisualCustomizationEditor({
             onClick={(event) => event.stopPropagation()}
             onKeyDown={(event) => event.stopPropagation()}
           >
-            <button
-              type="button"
-              aria-label={t('addProperty')}
-              aria-expanded={isAddMenuOpen}
+            <Button
+              variant="secondary"
+              size="sm"
               onClick={() => setIsAddMenuOpen((open) => !open)}
-              className="border-border-subtle bg-surface-primary text-content-secondary hover:border-border-default hover:text-content-primary focus-visible:outline-border-focus flex size-8 items-center justify-center rounded-md border transition focus-visible:outline-2 focus-visible:outline-offset-2"
             >
-              <PlusIcon aria-hidden="true" size={14} weight="bold" />
-            </button>
+              <span>+ {t('addProperty')}</span>
+            </Button>
 
             {isAddMenuOpen ? (
               <div className="border-border-subtle bg-surface-primary shadow-soft absolute top-full right-0 z-30 mt-1 w-48 rounded-md border p-1">
@@ -587,12 +585,14 @@ export function ButtonVisualCustomizationEditor({
               </div>
             ) : null}
           </div>
-          <CaretRightIcon
-            aria-hidden="true"
-            size={14}
-            weight="bold"
-            className="text-content-tertiary mt-0.5 shrink-0 transition-transform group-open:rotate-90"
-          />
+          <div className="flex aspect-square items-center justify-center p-1">
+            <CaretRightIcon
+              aria-hidden="true"
+              size={14}
+              weight="bold"
+              className="text-content-tertiary mt-0.5 shrink-0 transition-transform group-open:rotate-90"
+            />
+          </div>
         </div>
       </summary>
 
@@ -674,7 +674,7 @@ export function ButtonVisualCustomizationEditor({
                 onChange={(event) =>
                   handleIndependentCornersChange(event.target.checked)
                 }
-                className="size-4 accent-[var(--vf-action-accent)]"
+                className="accent-action-accent size-4"
               />
               <span>{t('independentCorners')}</span>
             </label>

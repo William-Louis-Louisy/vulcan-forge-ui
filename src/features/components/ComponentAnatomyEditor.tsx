@@ -69,12 +69,14 @@ export function ComponentAnatomyEditor({
                 + {labels.add}
               </Button>
             </span>
-            <CaretRightIcon
-              aria-hidden="true"
-              size={14}
-              weight="bold"
-              className="text-content-tertiary mt-0.5 shrink-0 transition-transform group-open:rotate-90"
-            />
+            <div className="flex aspect-square items-center justify-center p-1">
+              <CaretRightIcon
+                aria-hidden="true"
+                size={14}
+                weight="bold"
+                className="text-content-tertiary mt-0.5 shrink-0 transition-transform group-open:rotate-90"
+              />
+            </div>
           </div>
         </summary>
 
