@@ -39,9 +39,9 @@ export function ComponentAnatomyEditor({
 }: ComponentAnatomyEditorProps) {
   if (collapsible) {
     return (
-      <details className="border-border-subtle group min-w-0 border-t pt-4">
-        <summary className="focus-visible:outline-border-focus flex cursor-pointer list-none items-start justify-between gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2">
-          <div className="min-w-0">
+      <details className="border-border-subtle group min-w-0 border-t py-4">
+        <summary className="focus-visible:outline-border-focus flex cursor-pointer list-none flex-col gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0 flex-1">
             <h3 className="text-base font-semibold tracking-tight">
               {labels.title}
             </h3>
@@ -49,28 +49,33 @@ export function ComponentAnatomyEditor({
               {labels.description}
             </p>
           </div>
-          <span
-            aria-hidden="true"
-            className="text-content-tertiary mt-0.5 flex size-6 shrink-0 items-center justify-center text-base transition-transform group-open:rotate-90"
-          >
-            ›
-          </span>
+          <div className="flex shrink-0 items-start justify-between gap-2 sm:justify-end">
+            <span
+              onClick={(event) => event.stopPropagation()}
+              onKeyDown={(event) => event.stopPropagation()}
+            >
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() =>
+                  setDraft({
+                    ...draft,
+                    anatomy: [...draft.anatomy, createEmptyAnatomyPartDraft()],
+                  })
+                }
+              >
+                + {labels.add}
+              </Button>
+            </span>
+            <span
+              aria-hidden="true"
+              className="text-content-tertiary mt-0.5 flex size-6 shrink-0 items-center justify-center text-base transition-transform group-open:rotate-90"
+            >
+              ›
+            </span>
+          </div>
         </summary>
 
-        <div className="mt-3 flex justify-end">
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() =>
-              setDraft({
-                ...draft,
-                anatomy: [...draft.anatomy, createEmptyAnatomyPartDraft()],
-              })
-            }
-          >
-            + {labels.add}
-          </Button>
-        </div>
         <AnatomyTable
           labels={labels}
           activeLocale={activeLocale}

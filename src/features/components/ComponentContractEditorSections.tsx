@@ -21,6 +21,7 @@ import { ComponentAnatomyEditor } from './ComponentAnatomyEditor';
 import {
   componentPreviewTokenRoles,
   normalizeComponentPreviewTokenRole,
+  sortComponentTokenOptions,
   type ComponentPreviewTokenRole,
   type ComponentTokenOption,
 } from './component-token-bindings.utils';
@@ -197,7 +198,11 @@ export function ComponentContractEditorSections({
   visualEditor,
 }: EditorProps) {
   return (
-    <div className="grid min-w-0 gap-6">
+    <div
+      className={
+        draft.type === 'button' ? 'grid min-w-0 gap-0' : 'grid min-w-0 gap-6'
+      }
+    >
       <MetadataEditor labels={labels} draft={draft} setDraft={setDraft} />
 
       <VariantsSizesStatesSection
@@ -263,7 +268,10 @@ function MetadataEditor({
   return (
     <section
       aria-label={labels.metadata.title}
-      className="border-border-subtle grid min-w-0 gap-3 border-b pb-5 sm:grid-cols-[minmax(0,1fr)_11rem]"
+      className={[
+        'grid min-w-0 gap-3 pb-5 sm:grid-cols-[minmax(0,1fr)_11rem]',
+        draft.type === 'button' ? '' : 'border-border-subtle border-b',
+      ].join(' ')}
     >
       <CompactInput
         label={labels.basics.name}
@@ -412,7 +420,10 @@ function VariantsSizesStatesSection({
   setDraft,
 }: Omit<EditorProps, 'setActiveLocale' | 'tokenOptions'>) {
   return (
-    <EditorSection title={labels.collections.title}>
+    <EditorSection
+      title={labels.collections.title}
+      collapsible={draft.type === 'button'}
+    >
       <div className="grid gap-4">
         <TagCollectionRow
           axisLabel={labels.variants.axis}
@@ -965,8 +976,10 @@ function TokenBindingRow({
           label: labels.visualTokens.tokenTypes.motion,
         },
       ];
-  const tokenOptionsForType = tokenOptions.filter(
-    (tokenOption) => tokenOption.type === binding.tokenType,
+  const tokenOptionsForType = sortComponentTokenOptions(
+    tokenOptions.filter(
+      (tokenOption) => tokenOption.type === binding.tokenType,
+    ),
   );
   const hasCurrentTokenPath = tokenOptionsForType.some(
     (tokenOption) => tokenOption.path === binding.tokenPath,
@@ -1085,9 +1098,9 @@ function EditorSection({
 
   if (collapsible) {
     return (
-      <details className="border-border-subtle group min-w-0 border-t pt-4">
-        <summary className="focus-visible:outline-border-focus flex cursor-pointer list-none items-start justify-between gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2">
-          <div className="min-w-0">
+      <details className="border-border-subtle group min-w-0 border-t py-4">
+        <summary className="focus-visible:outline-border-focus flex cursor-pointer list-none flex-col gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0 flex-1">
             <h3 className={titleClassName}>{title}</h3>
             {description ? (
               <p className="text-content-secondary mt-1 max-w-2xl text-xs leading-5">
@@ -1095,19 +1108,24 @@ function EditorSection({
               </p>
             ) : null}
           </div>
-          <span
-            aria-hidden="true"
-            className="text-content-tertiary mt-0.5 flex size-6 shrink-0 items-center justify-center text-base transition-transform group-open:rotate-90"
-          >
-            ›
-          </span>
+          <div className="flex shrink-0 items-start justify-between gap-2 sm:justify-end">
+            {action ? (
+              <span
+                onClick={(event) => event.stopPropagation()}
+                onKeyDown={(event) => event.stopPropagation()}
+              >
+                {action}
+              </span>
+            ) : null}
+            <span
+              aria-hidden="true"
+              className="text-content-tertiary mt-0.5 flex size-6 shrink-0 items-center justify-center text-base transition-transform group-open:rotate-90"
+            >
+              ›
+            </span>
+          </div>
         </summary>
-        <div className="mt-3 min-w-0">
-          {action ? (
-            <div className="mb-3 flex justify-end">{action}</div>
-          ) : null}
-          {children}
-        </div>
+        <div className="mt-3 min-w-0">{children}</div>
       </details>
     );
   }

@@ -16,6 +16,8 @@ describe('Component V2 Button customization messages', () => {
     expect(french.textAlignments).toEqual(english.textAlignments);
     expect(english.unset).toBe('Default');
     expect(french.unset).toBe('Default');
+    expect(english.title).toBe('Visual tokens');
+    expect(french.title).toBe('Tokens visuels');
   });
 
   it('keeps Fill ownership while deferred effects stay out of the inspector', () => {

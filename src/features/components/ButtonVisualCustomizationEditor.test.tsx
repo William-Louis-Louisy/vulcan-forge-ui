@@ -189,6 +189,10 @@ describe('ButtonVisualCustomizationEditor', () => {
     });
 
     expect(independentCorners).not.toBeChecked();
+    expect(independentCorners).toHaveClass('accent-[var(--vf-action-accent)]');
+    expect(
+      screen.getByRole('heading', { name: 'Visual tokens' }).closest('details'),
+    ).not.toBeNull();
     expect(screen.queryByText('Top-left radius')).not.toBeInTheDocument();
     expect(screen.queryByText('Bottom-right radius')).not.toBeInTheDocument();
 

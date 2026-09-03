@@ -108,7 +108,7 @@ export const componentV2CustomizationMessages = {
   fr: {
     ComponentsRegistryPage: {
       buttonCustomization: {
-        title: 'Visual tokens',
+        title: 'Tokens visuels',
         description:
           'Modifiez l’apparence du Button depuis un seul inspecteur compact. Ajoutez les groupes de propriétés optionnels uniquement lorsque vous en avez besoin.',
         scope: 'Couche éditée',
@@ -141,11 +141,11 @@ export const componentV2CustomizationMessages = {
         borderStyles: technicalBorderStyles,
         textAlignments: technicalTextAlignments,
         save: {
-          action: 'Enregistrer les Visual tokens',
+          action: 'Enregistrer les tokens visuels',
           saving: 'Enregistrement…',
-          saved: 'Visual tokens enregistrés',
+          saved: 'Tokens visuels enregistrés',
           unsaved: 'Modifications visuelles non enregistrées',
-          invalid: 'Les Visual tokens sont invalides',
+          invalid: 'Les tokens visuels sont invalides',
           errors: {
             unauthorized:
               'Vous devez être connecté pour modifier ce composant.',
@@ -155,7 +155,7 @@ export const componentV2CustomizationMessages = {
             invalidContract:
               'Cet éditeur visuel prend uniquement en charge les templates Button.',
             unexpected:
-              'Impossible d’enregistrer les Visual tokens. Veuillez réessayer.',
+              'Impossible d’enregistrer les tokens visuels. Veuillez réessayer.',
           },
         },
       },

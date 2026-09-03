@@ -20,7 +20,10 @@ import {
 } from '@/domain/design-system';
 import type { Locale } from '@/i18n/routing';
 import { useRouter } from '@/i18n/navigation';
-import type { ComponentTokenOption } from './component-token-bindings.utils';
+import {
+  sortComponentTokenOptions,
+  type ComponentTokenOption,
+} from './component-token-bindings.utils';
 import {
   createButtonVisualCustomizationFingerprint,
   getButtonVisualProperty,
@@ -536,262 +539,276 @@ export function ButtonVisualCustomizationEditor({
           : t('save.saved');
 
   return (
-    <section className="border-border-subtle bg-surface-primary relative mb-6 rounded-lg border">
-      <header className="flex items-start justify-between gap-3 px-3 py-3 sm:px-4">
-        <div className="min-w-0">
-          <h2 className="text-content-primary text-sm font-semibold">
+    <details className="border-border-subtle group min-w-0 border-t py-4">
+      <summary className="focus-visible:outline-border-focus flex cursor-pointer list-none flex-col gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0 flex-1">
+          <h2 className="text-content-primary text-base font-semibold tracking-tight">
             {t('title')}
           </h2>
-          <p className="text-content-tertiary mt-1 max-w-2xl text-xs leading-5">
+          <p className="text-content-secondary mt-1 max-w-2xl text-xs leading-5">
             {t('description')}
           </p>
         </div>
 
-        <div className="relative shrink-0">
-          <button
-            type="button"
-            aria-label={t('addProperty')}
-            aria-expanded={isAddMenuOpen}
-            onClick={() => setIsAddMenuOpen((open) => !open)}
-            className="border-border-subtle bg-surface-primary text-content-secondary hover:border-border-default hover:text-content-primary focus-visible:outline-border-focus flex size-8 items-center justify-center rounded-md border transition focus-visible:outline-2 focus-visible:outline-offset-2"
+        <div className="flex shrink-0 items-start justify-between gap-2 sm:justify-end">
+          <div
+            className="relative"
+            onClick={(event) => event.stopPropagation()}
+            onKeyDown={(event) => event.stopPropagation()}
           >
-            <PlusIcon aria-hidden="true" size={14} weight="bold" />
-          </button>
+            <button
+              type="button"
+              aria-label={t('addProperty')}
+              aria-expanded={isAddMenuOpen}
+              onClick={() => setIsAddMenuOpen((open) => !open)}
+              className="border-border-subtle bg-surface-primary text-content-secondary hover:border-border-default hover:text-content-primary focus-visible:outline-border-focus flex size-8 items-center justify-center rounded-md border transition focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
+              <PlusIcon aria-hidden="true" size={14} weight="bold" />
+            </button>
 
-          {isAddMenuOpen ? (
-            <div className="border-border-subtle bg-surface-primary shadow-soft absolute top-full right-0 z-30 mt-1 w-48 rounded-md border p-1">
-              {availableOptionalGroups.length > 0 ? (
-                availableOptionalGroups.map((group) => (
-                  <button
-                    key={group}
-                    type="button"
-                    onClick={() => addOptionalGroup(group)}
-                    className="text-content-secondary hover:bg-background-subtle hover:text-content-primary flex w-full items-center rounded-sm px-2.5 py-2 text-left text-xs font-semibold transition"
-                  >
-                    {t(`groups.${group}`)}
-                  </button>
-                ))
-              ) : (
-                <p className="text-content-tertiary px-2.5 py-2 text-xs">
-                  {t('noPropertiesToAdd')}
-                </p>
-              )}
-            </div>
-          ) : null}
-        </div>
-      </header>
-
-      <div className="border-border-subtle bg-background-subtle flex flex-col gap-2 border-t px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4">
-        <SegmentedControl<ButtonVisualScope['kind']>
-          value={scope.kind}
-          options={[
-            { value: 'base', label: t('scopes.base') },
-            {
-              value: 'variant',
-              label: t('scopes.variant'),
-              disabled: liveSemanticContract.variants.length === 0,
-            },
-            {
-              value: 'size',
-              label: t('scopes.size'),
-              disabled: liveSemanticContract.sizes.length === 0,
-            },
-            {
-              value: 'state',
-              label: t('scopes.state'),
-              disabled: liveSemanticContract.states.length === 0,
-            },
-          ]}
-          onValueChange={handleScopeKindChange}
-          ariaLabel={t('scope')}
-          className="w-full sm:w-fit"
-        />
-
-        {scope.kind !== 'base' ? (
-          <div className="min-w-0 sm:w-48">
-            <Select
-              id="button-v2-customization-target"
-              value={scope.key}
-              options={scopeTargetKeys.map((key) => ({
-                value: key,
-                label: key,
-              }))}
-              onValueChange={(key) =>
-                setEditingScope({ kind: scope.kind, key })
-              }
-              placeholder={t('target')}
-              size="sm"
-            />
+            {isAddMenuOpen ? (
+              <div className="border-border-subtle bg-surface-primary shadow-soft absolute top-full right-0 z-30 mt-1 w-48 rounded-md border p-1">
+                {availableOptionalGroups.length > 0 ? (
+                  availableOptionalGroups.map((group) => (
+                    <button
+                      key={group}
+                      type="button"
+                      onClick={() => addOptionalGroup(group)}
+                      className="text-content-secondary hover:bg-background-subtle hover:text-content-primary flex w-full items-center rounded-sm px-2.5 py-2 text-left text-xs font-semibold transition"
+                    >
+                      {t(`groups.${group}`)}
+                    </button>
+                  ))
+                ) : (
+                  <p className="text-content-tertiary px-2.5 py-2 text-xs">
+                    {t('noPropertiesToAdd')}
+                  </p>
+                )}
+              </div>
+            ) : null}
           </div>
-        ) : (
-          <span className="text-content-tertiary text-xs">
-            {t('templateDefault')}
+          <span
+            aria-hidden="true"
+            className="text-content-tertiary mt-0.5 flex size-6 shrink-0 items-center justify-center text-base transition-transform group-open:rotate-90"
+          >
+            ›
           </span>
-        )}
-      </div>
+        </div>
+      </summary>
 
-      <div className="border-border-subtle divide-border-subtle divide-y border-t">
-        <InspectorGroup title={t('groups.fill')}>
-          {fillProperties.map((descriptor) =>
-            renderDesignValueField(descriptor),
-          )}
-        </InspectorGroup>
+      <div className="border-border-subtle bg-surface-primary mt-3 rounded-lg border">
+        <div className="bg-background-subtle flex flex-col gap-2 px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4">
+          <SegmentedControl<ButtonVisualScope['kind']>
+            value={scope.kind}
+            options={[
+              { value: 'base', label: t('scopes.base') },
+              {
+                value: 'variant',
+                label: t('scopes.variant'),
+                disabled: liveSemanticContract.variants.length === 0,
+              },
+              {
+                value: 'size',
+                label: t('scopes.size'),
+                disabled: liveSemanticContract.sizes.length === 0,
+              },
+              {
+                value: 'state',
+                label: t('scopes.state'),
+                disabled: liveSemanticContract.states.length === 0,
+              },
+            ]}
+            onValueChange={handleScopeKindChange}
+            ariaLabel={t('scope')}
+            className="w-full sm:w-fit"
+          />
 
-        <InspectorGroup title={t('groups.dimensions')}>
-          {dimensionProperties.map((descriptor) =>
-            renderDesignValueField(descriptor),
-          )}
-        </InspectorGroup>
-
-        <InspectorGroup title={t('groups.spacing')}>
-          {spacingProperties.map((descriptor) =>
-            renderDesignValueField(descriptor),
-          )}
-        </InspectorGroup>
-
-        <InspectorGroup title={t('groups.radius')}>
-          <label className="text-content-secondary flex w-fit items-center gap-2 text-xs font-semibold">
-            <input
-              id="button-v2-independent-corners"
-              type="checkbox"
-              checked={independentCorners}
-              onChange={(event) =>
-                handleIndependentCornersChange(event.target.checked)
-              }
-              className="size-4"
-            />
-            <span>{t('independentCorners')}</span>
-          </label>
-
-          {independentCorners ? (
-            <div className="grid w-full min-w-0 gap-3 sm:grid-cols-2">
-              {cornerProperties.map((descriptor) =>
-                renderDesignValueField(descriptor, 'stacked'),
-              )}
+          {scope.kind !== 'base' ? (
+            <div className="min-w-0 sm:w-48">
+              <Select
+                id="button-v2-customization-target"
+                value={scope.key}
+                options={scopeTargetKeys.map((key) => ({
+                  value: key,
+                  label: key,
+                }))}
+                onValueChange={(key) =>
+                  setEditingScope({ kind: scope.kind, key })
+                }
+                placeholder={t('target')}
+                size="sm"
+              />
             </div>
           ) : (
-            renderDesignValueField(radiusProperty)
+            <span className="text-content-tertiary text-xs">
+              {t('templateDefault')}
+            </span>
           )}
-        </InspectorGroup>
+        </div>
 
-        {visibleOptionalGroups.includes('border') ? (
-          <InspectorGroup
-            title={t('groups.border')}
-            onRemove={() => removeOptionalGroup('border')}
-            removeLabel={t('removeProperty')}
-          >
-            {borderProperties.map((descriptor) =>
+        <div className="border-border-subtle divide-border-subtle divide-y border-t">
+          <InspectorGroup title={t('groups.fill')}>
+            {fillProperties.map((descriptor) =>
               renderDesignValueField(descriptor),
             )}
-            <SimpleSelectProperty
-              id="button-v2-border-style"
-              label={t('properties.borderStyle')}
-              value={getButtonVisualProperty(draft, scope, 'border', 'style')}
-              options={(['none', 'solid', 'dashed', 'dotted'] as const).map(
-                (value) => ({ value, label: t(`borderStyles.${value}`) }),
+          </InspectorGroup>
+
+          <InspectorGroup title={t('groups.dimensions')}>
+            {dimensionProperties.map((descriptor) =>
+              renderDesignValueField(descriptor),
+            )}
+          </InspectorGroup>
+
+          <InspectorGroup title={t('groups.spacing')}>
+            {spacingProperties.map((descriptor) =>
+              renderDesignValueField(descriptor),
+            )}
+          </InspectorGroup>
+
+          <InspectorGroup title={t('groups.radius')}>
+            <label className="text-content-secondary flex w-fit items-center gap-2 text-xs font-semibold">
+              <input
+                id="button-v2-independent-corners"
+                type="checkbox"
+                checked={independentCorners}
+                onChange={(event) =>
+                  handleIndependentCornersChange(event.target.checked)
+                }
+                className="size-4 accent-[var(--vf-action-accent)]"
+              />
+              <span>{t('independentCorners')}</span>
+            </label>
+
+            {independentCorners ? (
+              <div className="grid w-full min-w-0 gap-3 sm:grid-cols-2">
+                {cornerProperties.map((descriptor) =>
+                  renderDesignValueField(descriptor, 'stacked'),
+                )}
+              </div>
+            ) : (
+              renderDesignValueField(radiusProperty)
+            )}
+          </InspectorGroup>
+
+          {visibleOptionalGroups.includes('border') ? (
+            <InspectorGroup
+              title={t('groups.border')}
+              onRemove={() => removeOptionalGroup('border')}
+              removeLabel={t('removeProperty')}
+            >
+              {borderProperties.map((descriptor) =>
+                renderDesignValueField(descriptor),
               )}
-              inheritedLabel={
-                scope.kind === 'base' ? t('templateDefault') : t('inherited')
-              }
-              resetLabel={t('reset')}
-              onChange={(value) =>
-                updateDraft(
-                  setButtonVisualProperty(
-                    draft,
-                    scope,
-                    'border',
-                    'style',
-                    value,
-                  ),
-                )
-              }
-              onReset={() =>
-                updateDraft(
-                  resetButtonVisualProperty(draft, scope, 'border', 'style'),
-                )
-              }
-            />
-          </InspectorGroup>
-        ) : null}
+              <SimpleSelectProperty
+                id="button-v2-border-style"
+                label={t('properties.borderStyle')}
+                value={getButtonVisualProperty(draft, scope, 'border', 'style')}
+                options={(['none', 'solid', 'dashed', 'dotted'] as const).map(
+                  (value) => ({ value, label: t(`borderStyles.${value}`) }),
+                )}
+                inheritedLabel={
+                  scope.kind === 'base' ? t('templateDefault') : t('inherited')
+                }
+                resetLabel={t('reset')}
+                onChange={(value) =>
+                  updateDraft(
+                    setButtonVisualProperty(
+                      draft,
+                      scope,
+                      'border',
+                      'style',
+                      value,
+                    ),
+                  )
+                }
+                onReset={() =>
+                  updateDraft(
+                    resetButtonVisualProperty(draft, scope, 'border', 'style'),
+                  )
+                }
+              />
+            </InspectorGroup>
+          ) : null}
 
-        {visibleOptionalGroups.includes('typography') ? (
-          <InspectorGroup
-            title={t('groups.typography')}
-            onRemove={() => removeOptionalGroup('typography')}
-            removeLabel={t('removeProperty')}
+          {visibleOptionalGroups.includes('typography') ? (
+            <InspectorGroup
+              title={t('groups.typography')}
+              onRemove={() => removeOptionalGroup('typography')}
+              removeLabel={t('removeProperty')}
+            >
+              <TypographyControls
+                value={getButtonVisualTarget(draft, scope).typography}
+                tokenOptions={tokenOptions}
+                inheritedLabel={
+                  scope.kind === 'base' ? t('templateDefault') : t('inherited')
+                }
+                labels={{
+                  source: t('source'),
+                  unset: t('unset'),
+                  token: t('token'),
+                  explicit: t('explicit'),
+                  selectToken: t('selectToken'),
+                  fontFamily: t('properties.fontFamily'),
+                  fontSize: t('properties.fontSize'),
+                  fontWeight: t('properties.fontWeight'),
+                  lineHeight: t('properties.lineHeight'),
+                  letterSpacing: t('properties.letterSpacing'),
+                  textAlign: t('properties.textAlign'),
+                  valuePlaceholder: t('valuePlaceholder'),
+                  textAlignments: {
+                    left: t('textAlignments.left'),
+                    center: t('textAlignments.center'),
+                    right: t('textAlignments.right'),
+                    justify: t('textAlignments.justify'),
+                  },
+                }}
+                onChange={(value) =>
+                  updateDraft(setButtonTypographyValue(draft, scope, value))
+                }
+              />
+            </InspectorGroup>
+          ) : null}
+        </div>
+
+        <form
+          action={formAction}
+          onSubmitCapture={() => {
+            markCurrentDraftSubmitted();
+            preserveSaveContext();
+          }}
+          className="border-border-subtle bg-background-subtle flex flex-col gap-3 border-t px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4"
+        >
+          <input type="hidden" name="locale" value={locale} />
+          <input type="hidden" name="projectSlug" value={projectSlug} />
+          <input type="hidden" name="componentKey" value={componentKey} />
+          <input
+            type="hidden"
+            name="visualCustomization"
+            value={visualCustomizationPayload}
+          />
+          <p
+            aria-live="polite"
+            className={[
+              'text-xs font-semibold',
+              saveStatus === 'error'
+                ? 'text-action-danger'
+                : saveStatus === 'unsaved'
+                  ? 'text-action-warning'
+                  : 'text-content-secondary',
+            ].join(' ')}
           >
-            <TypographyControls
-              value={getButtonVisualTarget(draft, scope).typography}
-              tokenOptions={tokenOptions}
-              inheritedLabel={
-                scope.kind === 'base' ? t('templateDefault') : t('inherited')
-              }
-              labels={{
-                source: t('source'),
-                unset: t('unset'),
-                token: t('token'),
-                explicit: t('explicit'),
-                selectToken: t('selectToken'),
-                fontFamily: t('properties.fontFamily'),
-                fontSize: t('properties.fontSize'),
-                fontWeight: t('properties.fontWeight'),
-                lineHeight: t('properties.lineHeight'),
-                letterSpacing: t('properties.letterSpacing'),
-                textAlign: t('properties.textAlign'),
-                valuePlaceholder: t('valuePlaceholder'),
-                textAlignments: {
-                  left: t('textAlignments.left'),
-                  center: t('textAlignments.center'),
-                  right: t('textAlignments.right'),
-                  justify: t('textAlignments.justify'),
-                },
-              }}
-              onChange={(value) =>
-                updateDraft(setButtonTypographyValue(draft, scope, value))
-              }
-            />
-          </InspectorGroup>
-        ) : null}
+            {statusLabel}
+          </p>
+          <Button
+            type="submit"
+            size="sm"
+            disabled={isPending || !hasUnsavedChanges}
+          >
+            {isPending ? t('save.saving') : t('save.action')}
+          </Button>
+        </form>
       </div>
-
-      <form
-        action={formAction}
-        onSubmitCapture={() => {
-          markCurrentDraftSubmitted();
-          preserveSaveContext();
-        }}
-        className="border-border-subtle bg-background-subtle flex flex-col gap-3 border-t px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4"
-      >
-        <input type="hidden" name="locale" value={locale} />
-        <input type="hidden" name="projectSlug" value={projectSlug} />
-        <input type="hidden" name="componentKey" value={componentKey} />
-        <input
-          type="hidden"
-          name="visualCustomization"
-          value={visualCustomizationPayload}
-        />
-        <p
-          aria-live="polite"
-          className={[
-            'text-xs font-semibold',
-            saveStatus === 'error'
-              ? 'text-action-danger'
-              : saveStatus === 'unsaved'
-                ? 'text-action-warning'
-                : 'text-content-secondary',
-          ].join(' ')}
-        >
-          {statusLabel}
-        </p>
-        <Button
-          type="submit"
-          size="sm"
-          disabled={isPending || !hasUnsavedChanges}
-        >
-          {isPending ? t('save.saving') : t('save.action')}
-        </Button>
-      </form>
-    </section>
+    </details>
   );
 }
 
@@ -863,8 +880,8 @@ function DesignValueField({
   };
 }) {
   const source = getSource(value);
-  const availableTokens = tokenOptions.filter(
-    (token) => token.type === descriptor.tokenType,
+  const availableTokens = sortComponentTokenOptions(
+    tokenOptions.filter((token) => token.type === descriptor.tokenType),
   );
   const explicitValue = explicitDraft ?? getExplicitValue(value);
   const sourceOptions = [

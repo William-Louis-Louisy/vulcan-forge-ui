@@ -572,6 +572,54 @@ describe('ComponentContractEditor', () => {
     expect(screen.getByLabelText('Token type')).toHaveTextContent('Typography');
   });
 
+  it('keeps every Button section except naming collapsible and aligns section actions in their headers', () => {
+    const buttonContract: ComponentContract = {
+      ...contract,
+      type: 'button',
+    };
+
+    render(
+      <ComponentContractEditor
+        componentKey="button"
+        locale="en"
+        projectSlug="demo"
+        contract={buttonContract}
+        labels={labels}
+        tokenOptions={tokenOptions}
+      />,
+    );
+
+    expect(screen.getByLabelText('Name').closest('details')).toBeNull();
+    expect(
+      screen.getByText('Variants & states').closest('details'),
+    ).not.toBeNull();
+
+    for (const title of [
+      'Localized content',
+      'Anatomy',
+      'Accessibility contract',
+      'Forbidden patterns',
+    ]) {
+      expect(screen.getByText(title).closest('details')).not.toBeNull();
+    }
+
+    const anatomySummary = screen.getByText('Anatomy').closest('summary');
+    expect(
+      screen
+        .getByRole('button', { name: /Add anatomy item/ })
+        .closest('summary'),
+    ).toBe(anatomySummary);
+
+    const accessibilitySummary = screen
+      .getByText('Accessibility contract')
+      .closest('summary');
+    expect(
+      screen
+        .getByRole('button', { name: /Add accessibility rule/ })
+        .closest('summary'),
+    ).toBe(accessibilitySummary);
+  });
+
   it('hides the legacy Visual Tokens editor entirely for Button', () => {
     const buttonContract: ComponentContract = {
       ...contract,
