@@ -1,0 +1,57 @@
+name: DS-181R-03C final test sync
+
+on:
+  push:
+    branches:
+      - agent/ds-181r-03c-button-property-inspector
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: agent/ds-181r-03c-button-property-inspector
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Apply final sync
+        run: python scripts/ds-181r-03c-final-test-sync.py
+
+      - name: Format touched files
+        run: >-
+          npx prettier
+          src/features/components/ButtonVisualCustomizationEditor.tsx
+          src/features/components/ButtonVisualCustomizationEditor.test.tsx
+          --write
+
+      - name: Run focused tests
+        run: >-
+          npx vitest run
+          src/features/components/ButtonVisualCustomizationEditor.test.tsx
+
+      - name: Run lint on touched editor
+        run: npx eslint src/features/components/ButtonVisualCustomizationEditor.tsx src/features/components/ButtonVisualCustomizationEditor.test.tsx
+
+      - name: Remove temporary assets
+        run: |
+          git rm scripts/ds-181r-03c-final-test-sync.py
+          git rm .github/workflows/ds-181r-03c-final-test-sync.yml
+
+      - name: Commit final sync
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "test: sync Button inspector assertions"
+          git push origin HEAD:agent/ds-181r-03c-button-property-inspector
