@@ -1,0 +1,85 @@
+name: DS-181R-03C section coherence runner
+
+on:
+  push:
+    branches:
+      - agent/ds-181r-03c-button-property-inspector
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://vulcan:vulcan_dev_password@localhost:5432/vulcan_forge_ui?schema=public
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: agent/ds-181r-03c-button-property-inspector
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Apply prepared coherence patch
+        shell: python
+        run: |
+          from pathlib import Path
+          import textwrap
+
+          workflow_path = Path('.github/workflows/ds-181r-03c-section-coherence.yml')
+          source = workflow_path.read_text()
+          start = "      - name: Apply section coherence pass\n        shell: python\n        run: |\n"
+          end = "\n      - name: Format touched files"
+
+          if start not in source or end not in source:
+              raise SystemExit('Prepared coherence patch block not found')
+
+          patch = source.split(start, 1)[1].split(end, 1)[0]
+          exec(compile(textwrap.dedent(patch), str(workflow_path), 'exec'), {})
+
+      - name: Format touched files
+        run: >-
+          npx prettier
+          src/features/components/ComponentContractEditorSections.tsx
+          src/features/components/ComponentAnatomyEditor.tsx
+          src/features/components/ButtonVisualCustomizationEditor.tsx
+          src/features/components/ButtonVisualCustomizationEditor.test.tsx
+          src/features/components/ComponentContractEditor.test.tsx
+          src/features/components/component-token-bindings.utils.ts
+          src/features/components/component-token-bindings.utils.test.ts
+          src/messages/component-v2-customization-messages.ts
+          src/messages/component-v2-customization-messages.test.ts
+          --write
+
+      - name: Run focused tests
+        run: >-
+          npx vitest run
+          src/features/components/ButtonVisualCustomizationEditor.test.tsx
+          src/features/components/ComponentContractEditor.test.tsx
+          src/features/components/component-token-bindings.utils.test.ts
+          src/messages/component-v2-customization-messages.test.ts
+
+      - run: npm run db:generate
+
+      - name: Run strict typecheck
+        run: npm run typecheck
+
+      - name: Remove temporary workflows
+        run: |
+          git rm .github/workflows/ds-181r-03c-section-coherence.yml
+          git rm .github/workflows/ds-181r-03c-section-coherence-runner.yml
+
+      - name: Commit section coherence pass
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "fix: harmonize Button editor section UX"
+          git push origin HEAD:agent/ds-181r-03c-button-property-inspector
