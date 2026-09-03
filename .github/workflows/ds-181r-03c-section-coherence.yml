@@ -1,0 +1,582 @@
+name: DS-181R-03C section coherence
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.event.pull_request.head.ref == 'agent/ds-181r-03c-button-property-inspector'
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://vulcan:vulcan_dev_password@localhost:5432/vulcan_forge_ui?schema=public
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Apply section coherence pass
+        shell: python
+        run: |
+          from pathlib import Path
+
+          def replace_once(path_str: str, old: str, new: str) -> None:
+              path = Path(path_str)
+              source = path.read_text()
+              if old not in source:
+                  raise SystemExit(f'Expected anchor not found in {path_str}: {old[:100]!r}')
+              path.write_text(source.replace(old, new, 1))
+
+          sections = 'src/features/components/ComponentContractEditorSections.tsx'
+
+          replace_once(
+              sections,
+              '<div className="grid min-w-0 gap-6">',
+              "<div\n      className={\n        draft.type === 'button'\n          ? 'grid min-w-0 gap-0'\n          : 'grid min-w-0 gap-6'\n      }\n    >",
+          )
+
+          replace_once(
+              sections,
+              '      className="border-border-subtle grid min-w-0 gap-3 border-b pb-5 sm:grid-cols-[minmax(0,1fr)_11rem]"',
+              "      className={[\n        'grid min-w-0 gap-3 pb-5 sm:grid-cols-[minmax(0,1fr)_11rem]',\n        draft.type === 'button' ? '' : 'border-border-subtle border-b',\n      ].join(' ')}",
+          )
+
+          replace_once(
+              sections,
+              '    <EditorSection title={labels.collections.title}>',
+              "    <EditorSection\n      title={labels.collections.title}\n      collapsible={draft.type === 'button'}\n      defaultOpen={draft.type === 'button'}\n    >",
+          )
+
+          replace_once(
+              sections,
+              "  collapsible = false,\n  children,",
+              "  collapsible = false,\n  defaultOpen = false,\n  children,",
+          )
+          replace_once(
+              sections,
+              "  collapsible?: boolean;\n  children: ReactNode;",
+              "  collapsible?: boolean;\n  defaultOpen?: boolean;\n  children: ReactNode;",
+          )
+
+          old_collapsible = '''  if (collapsible) {
+    return (
+      <details className="border-border-subtle group min-w-0 border-t pt-4">
+        <summary className="focus-visible:outline-border-focus flex cursor-pointer list-none items-start justify-between gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2">
+          <div className="min-w-0">
+            <h3 className={titleClassName}>{title}</h3>
+            {description ? (
+              <p className="text-content-secondary mt-1 max-w-2xl text-xs leading-5">
+                {description}
+              </p>
+            ) : null}
+          </div>
+          <span
+            aria-hidden="true"
+            className="text-content-tertiary mt-0.5 flex size-6 shrink-0 items-center justify-center text-base transition-transform group-open:rotate-90"
+          >
+            ›
+          </span>
+        </summary>
+        <div className="mt-3 min-w-0">
+          {action ? (
+            <div className="mb-3 flex justify-end">{action}</div>
+          ) : null}
+          {children}
+        </div>
+      </details>
+    );
+  }
+'''
+          new_collapsible = '''  if (collapsible) {
+    return (
+      <details
+        open={defaultOpen}
+        className="border-border-subtle group min-w-0 border-t py-4"
+      >
+        <summary className="focus-visible:outline-border-focus flex cursor-pointer list-none flex-col gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0 flex-1">
+            <h3 className={titleClassName}>{title}</h3>
+            {description ? (
+              <p className="text-content-secondary mt-1 max-w-2xl text-xs leading-5">
+                {description}
+              </p>
+            ) : null}
+          </div>
+          <div className="flex shrink-0 items-start justify-between gap-2 sm:justify-end">
+            {action ? (
+              <span onClick={(event) => event.stopPropagation()}>{action}</span>
+            ) : null}
+            <span
+              aria-hidden="true"
+              className="text-content-tertiary mt-0.5 flex size-6 shrink-0 items-center justify-center text-base transition-transform group-open:rotate-90"
+            >
+              ›
+            </span>
+          </div>
+        </summary>
+        <div className="mt-3 min-w-0">{children}</div>
+      </details>
+    );
+  }
+'''
+          replace_once(sections, old_collapsible, new_collapsible)
+
+          anatomy = 'src/features/components/ComponentAnatomyEditor.tsx'
+          old_anatomy = '''  if (collapsible) {
+    return (
+      <details className="border-border-subtle group min-w-0 border-t pt-4">
+        <summary className="focus-visible:outline-border-focus flex cursor-pointer list-none items-start justify-between gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2">
+          <div className="min-w-0">
+            <h3 className="text-base font-semibold tracking-tight">
+              {labels.title}
+            </h3>
+            <p className="text-content-secondary mt-1 text-xs leading-5">
+              {labels.description}
+            </p>
+          </div>
+          <span
+            aria-hidden="true"
+            className="text-content-tertiary mt-0.5 flex size-6 shrink-0 items-center justify-center text-base transition-transform group-open:rotate-90"
+          >
+            ›
+          </span>
+        </summary>
+
+        <div className="mt-3 flex justify-end">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() =>
+              setDraft({
+                ...draft,
+                anatomy: [...draft.anatomy, createEmptyAnatomyPartDraft()],
+              })
+            }
+          >
+            + {labels.add}
+          </Button>
+        </div>
+        <AnatomyTable
+          labels={labels}
+          activeLocale={activeLocale}
+          draft={draft}
+          setDraft={setDraft}
+        />
+      </details>
+    );
+  }
+'''
+          new_anatomy = '''  if (collapsible) {
+    return (
+      <details className="border-border-subtle group min-w-0 border-t py-4">
+        <summary className="focus-visible:outline-border-focus flex cursor-pointer list-none flex-col gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0 flex-1">
+            <h3 className="text-base font-semibold tracking-tight">
+              {labels.title}
+            </h3>
+            <p className="text-content-secondary mt-1 text-xs leading-5">
+              {labels.description}
+            </p>
+          </div>
+          <div className="flex shrink-0 items-start justify-between gap-2 sm:justify-end">
+            <span onClick={(event) => event.stopPropagation()}>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() =>
+                  setDraft({
+                    ...draft,
+                    anatomy: [...draft.anatomy, createEmptyAnatomyPartDraft()],
+                  })
+                }
+              >
+                + {labels.add}
+              </Button>
+            </span>
+            <span
+              aria-hidden="true"
+              className="text-content-tertiary mt-0.5 flex size-6 shrink-0 items-center justify-center text-base transition-transform group-open:rotate-90"
+            >
+              ›
+            </span>
+          </div>
+        </summary>
+
+        <AnatomyTable
+          labels={labels}
+          activeLocale={activeLocale}
+          draft={draft}
+          setDraft={setDraft}
+        />
+      </details>
+    );
+  }
+'''
+          replace_once(anatomy, old_anatomy, new_anatomy)
+
+          editor = 'src/features/components/ButtonVisualCustomizationEditor.tsx'
+          editor_source = Path(editor).read_text()
+          old_header = '''  return (
+    <section className="border-border-subtle bg-surface-primary relative mb-6 rounded-lg border">
+      <header className="flex items-start justify-between gap-3 px-3 py-3 sm:px-4">
+        <div className="min-w-0">
+          <h2 className="text-content-primary text-sm font-semibold">
+            {t('title')}
+          </h2>
+          <p className="text-content-tertiary mt-1 max-w-2xl text-xs leading-5">
+            {t('description')}
+          </p>
+        </div>
+
+        <div className="relative shrink-0">
+          <button
+            type="button"
+            aria-label={t('addProperty')}
+            aria-expanded={isAddMenuOpen}
+            onClick={() => setIsAddMenuOpen((open) => !open)}
+            className="border-border-subtle bg-surface-primary text-content-secondary hover:border-border-default hover:text-content-primary focus-visible:outline-border-focus flex size-8 items-center justify-center rounded-md border transition focus-visible:outline-2 focus-visible:outline-offset-2"
+          >
+            <PlusIcon aria-hidden="true" size={14} weight="bold" />
+          </button>
+
+          {isAddMenuOpen ? (
+            <div className="border-border-subtle bg-surface-primary shadow-soft absolute top-full right-0 z-30 mt-1 w-48 rounded-md border p-1">
+              {availableOptionalGroups.length > 0 ? (
+                availableOptionalGroups.map((group) => (
+                  <button
+                    key={group}
+                    type="button"
+                    onClick={() => addOptionalGroup(group)}
+                    className="text-content-secondary hover:bg-background-subtle hover:text-content-primary flex w-full items-center rounded-sm px-2.5 py-2 text-left text-xs font-semibold transition"
+                  >
+                    {t(`groups.${group}`)}
+                  </button>
+                ))
+              ) : (
+                <p className="text-content-tertiary px-2.5 py-2 text-xs">
+                  {t('noPropertiesToAdd')}
+                </p>
+              )}
+            </div>
+          ) : null}
+        </div>
+      </header>
+
+      <div className="border-border-subtle bg-background-subtle flex flex-col gap-2 border-t px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4">
+'''
+          new_header = '''  return (
+    <details
+      open
+      className="border-border-subtle group min-w-0 border-t py-4"
+    >
+      <summary className="focus-visible:outline-border-focus flex cursor-pointer list-none flex-col gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0 flex-1">
+          <h2 className="text-content-primary text-base font-semibold tracking-tight">
+            {t('title')}
+          </h2>
+          <p className="text-content-secondary mt-1 max-w-2xl text-xs leading-5">
+            {t('description')}
+          </p>
+        </div>
+
+        <div className="flex shrink-0 items-start justify-between gap-2 sm:justify-end">
+          <div
+            className="relative"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              aria-label={t('addProperty')}
+              aria-expanded={isAddMenuOpen}
+              onClick={() => setIsAddMenuOpen((open) => !open)}
+              className="border-border-subtle bg-surface-primary text-content-secondary hover:border-border-default hover:text-content-primary focus-visible:outline-border-focus flex size-8 items-center justify-center rounded-md border transition focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
+              <PlusIcon aria-hidden="true" size={14} weight="bold" />
+            </button>
+
+            {isAddMenuOpen ? (
+              <div className="border-border-subtle bg-surface-primary shadow-soft absolute top-full right-0 z-30 mt-1 w-48 rounded-md border p-1">
+                {availableOptionalGroups.length > 0 ? (
+                  availableOptionalGroups.map((group) => (
+                    <button
+                      key={group}
+                      type="button"
+                      onClick={() => addOptionalGroup(group)}
+                      className="text-content-secondary hover:bg-background-subtle hover:text-content-primary flex w-full items-center rounded-sm px-2.5 py-2 text-left text-xs font-semibold transition"
+                    >
+                      {t(`groups.${group}`)}
+                    </button>
+                  ))
+                ) : (
+                  <p className="text-content-tertiary px-2.5 py-2 text-xs">
+                    {t('noPropertiesToAdd')}
+                  </p>
+                )}
+              </div>
+            ) : null}
+          </div>
+          <span
+            aria-hidden="true"
+            className="text-content-tertiary mt-0.5 flex size-6 shrink-0 items-center justify-center text-base transition-transform group-open:rotate-90"
+          >
+            ›
+          </span>
+        </div>
+      </summary>
+
+      <div className="border-border-subtle bg-surface-primary mt-3 rounded-lg border">
+        <div className="bg-background-subtle flex flex-col gap-2 px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4">
+'''
+          if old_header not in editor_source:
+              raise SystemExit('Button visual editor header anchor not found')
+          editor_source = editor_source.replace(old_header, new_header, 1)
+          old_tail = '''      </form>
+    </section>
+  );
+}
+'''
+          new_tail = '''      </form>
+      </div>
+    </details>
+  );
+}
+'''
+          if old_tail not in editor_source:
+              raise SystemExit('Button visual editor tail anchor not found')
+          editor_source = editor_source.replace(old_tail, new_tail, 1)
+          editor_source = editor_source.replace(
+              '              className="size-4"',
+              '              className="size-4 accent-[var(--vf-action-accent)]"',
+              1,
+          )
+          Path(editor).write_text(editor_source)
+
+          messages = 'src/messages/component-v2-customization-messages.ts'
+          msg = Path(messages).read_text()
+          replacements = [
+              ("        title: 'Visual tokens',\n        description:\n          'Modifiez", "        title: 'Tokens visuels',\n        description:\n          'Modifiez"),
+              ("          action: 'Enregistrer les Visual tokens',", "          action: 'Enregistrer les tokens visuels',"),
+              ("          saved: 'Visual tokens enregistrés',", "          saved: 'Tokens visuels enregistrés',"),
+              ("          invalid: 'Les Visual tokens sont invalides',", "          invalid: 'Les tokens visuels sont invalides',"),
+              ("              'Impossible d’enregistrer les Visual tokens. Veuillez réessayer.',", "              'Impossible d’enregistrer les tokens visuels. Veuillez réessayer.',"),
+          ]
+          for old, new in replacements:
+              if old not in msg:
+                  raise SystemExit(f'Message anchor not found: {old}')
+              msg = msg.replace(old, new, 1)
+          Path(messages).write_text(msg)
+
+          token_utils = 'src/features/components/component-token-bindings.utils.ts'
+          replace_once(
+              token_utils,
+              '''export function createComponentTokenOptions(
+  rawTokenSets: Array<{
+    type: string;
+    name: string;
+    tokens: unknown;
+  }>,
+): ComponentTokenOption[] {
+  const parsedTokenSets = parseComponentTokenSets(rawTokenSets);
+
+  return parsedTokenSets.tokenSets.flatMap((tokenSet) =>
+    tokenSet.tokens.map((token) => ({
+      type: token.type,
+      path: token.path,
+      label: token.path,
+    })),
+  );
+}
+''',
+              '''function getComponentTokenLayerRank(path: string): number {
+  if (path.includes('.semantic.')) {
+    return 0;
+  }
+
+  if (path.includes('.primitive.')) {
+    return 1;
+  }
+
+  return 2;
+}
+
+export function sortComponentTokenOptions(
+  tokenOptions: readonly ComponentTokenOption[],
+): ComponentTokenOption[] {
+  return [...tokenOptions].sort((left, right) => {
+    const layerDifference =
+      getComponentTokenLayerRank(left.path) -
+      getComponentTokenLayerRank(right.path);
+
+    return layerDifference || left.path.localeCompare(right.path);
+  });
+}
+
+export function createComponentTokenOptions(
+  rawTokenSets: Array<{
+    type: string;
+    name: string;
+    tokens: unknown;
+  }>,
+): ComponentTokenOption[] {
+  const parsedTokenSets = parseComponentTokenSets(rawTokenSets);
+  const tokenOptions = parsedTokenSets.tokenSets.flatMap((tokenSet) =>
+    tokenSet.tokens.map((token) => ({
+      type: token.type,
+      path: token.path,
+      label: token.path,
+    })),
+  );
+
+  return sortComponentTokenOptions(tokenOptions);
+}
+''',
+          )
+
+          token_test = 'src/features/components/component-token-bindings.utils.test.ts'
+          replace_once(
+              token_test,
+              '''    ).toEqual(
+      colorTokenSet.tokens.map((token) => ({
+        type: token.type,
+        path: token.path,
+        label: token.path,
+      })),
+    );
+''',
+              '''    ).toEqual(
+      [
+        'color.semantic.action.primary',
+        'color.semantic.status.success',
+        'color.primitive.blue.500',
+        'color.primitive.green.500',
+        'color.background.default',
+      ].map((path) => {
+        const token = colorTokenSet.tokens.find(
+          (candidate) => candidate.path === path,
+        );
+
+        expect(token).toBeDefined();
+
+        return {
+          type: token?.type,
+          path,
+          label: path,
+        };
+      }),
+    );
+''',
+          )
+
+          message_test = 'src/messages/component-v2-customization-messages.test.ts'
+          replace_once(
+              message_test,
+              "    expect(french.unset).toBe('Default');\n  });",
+              "    expect(french.unset).toBe('Default');\n    expect(english.title).toBe('Visual tokens');\n    expect(french.title).toBe('Tokens visuels');\n  });",
+          )
+
+          button_test = 'src/features/components/ButtonVisualCustomizationEditor.test.tsx'
+          replace_once(
+              button_test,
+              "    expect(independentCorners).not.toBeChecked();",
+              "    expect(independentCorners).not.toBeChecked();\n    expect(independentCorners).toHaveClass(\n      'accent-[var(--vf-action-accent)]',\n    );\n    expect(screen.getByRole('heading', { name: 'Visual tokens' }).closest('details')).toHaveAttribute('open');",
+          )
+
+          contract_test = 'src/features/components/ComponentContractEditor.test.tsx'
+          marker = "  it('hides the legacy Visual Tokens editor entirely for Button', () => {"
+          addition = '''  it('keeps every Button section except naming collapsible and aligns section actions in their headers', () => {
+    const buttonContract: ComponentContract = {
+      ...contract,
+      type: 'button',
+    };
+
+    render(
+      <ComponentContractEditor
+        componentKey="button"
+        locale="en"
+        projectSlug="demo"
+        contract={buttonContract}
+        labels={labels}
+        tokenOptions={tokenOptions}
+      />,
+    );
+
+    expect(screen.getByLabelText('Name').closest('details')).toBeNull();
+
+    const variantsHeading = screen.getByText('Variants & states');
+    expect(variantsHeading.closest('details')).toHaveAttribute('open');
+
+    for (const title of [
+      'Localized content',
+      'Anatomy',
+      'Accessibility contract',
+      'Forbidden patterns',
+    ]) {
+      expect(screen.getByText(title).closest('details')).not.toBeNull();
+    }
+
+    const anatomyAction = screen.getByRole('button', {
+      name: /Add anatomy item/,
+    });
+    expect(anatomyAction.closest('summary')).toBe(
+      screen.getByText('Anatomy').closest('summary'),
+    );
+
+    const accessibilityAction = screen.getByRole('button', {
+      name: /Add accessibility rule/,
+    });
+    expect(accessibilityAction.closest('summary')).toBe(
+      screen.getByText('Accessibility contract').closest('summary'),
+    );
+  });
+
+'''
+          replace_once(contract_test, marker, addition + marker)
+
+      - name: Format touched files
+        run: >-
+          npx prettier
+          src/features/components/ComponentContractEditorSections.tsx
+          src/features/components/ComponentAnatomyEditor.tsx
+          src/features/components/ButtonVisualCustomizationEditor.tsx
+          src/features/components/ButtonVisualCustomizationEditor.test.tsx
+          src/features/components/ComponentContractEditor.test.tsx
+          src/features/components/component-token-bindings.utils.ts
+          src/features/components/component-token-bindings.utils.test.ts
+          src/messages/component-v2-customization-messages.ts
+          src/messages/component-v2-customization-messages.test.ts
+          --write
+
+      - name: Run focused tests
+        run: >-
+          npx vitest run
+          src/features/components/ButtonVisualCustomizationEditor.test.tsx
+          src/features/components/ComponentContractEditor.test.tsx
+          src/features/components/component-token-bindings.utils.test.ts
+          src/messages/component-v2-customization-messages.test.ts
+
+      - run: npm run db:generate
+
+      - name: Run strict typecheck
+        run: npm run typecheck
+
+      - name: Remove temporary workflow
+        run: git rm .github/workflows/ds-181r-03c-section-coherence.yml
+
+      - name: Commit section coherence pass
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "fix: harmonize Button editor section UX"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
