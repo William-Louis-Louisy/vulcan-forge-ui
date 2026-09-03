@@ -189,7 +189,7 @@ describe('ButtonVisualCustomizationEditor', () => {
     });
 
     expect(independentCorners).not.toBeChecked();
-    expect(independentCorners).toHaveClass('accent-[var(--vf-action-accent)]');
+    expect(independentCorners).toHaveClass('accent-action-accent');
     const visualHeading = screen.getByRole('heading', {
       name: 'Visual tokens',
     });

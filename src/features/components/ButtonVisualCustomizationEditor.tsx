@@ -9,7 +9,7 @@ import {
   type ReactNode,
 } from 'react';
 import { useTranslations } from 'next-intl';
-import { CaretRightIcon, PlusIcon } from '@phosphor-icons/react';
+import { CaretRightIcon } from '@phosphor-icons/react';
 import { Button, Input, SegmentedControl, Select } from '@/components/ui';
 import {
   explicitColorValueSchema,
@@ -559,6 +559,8 @@ export function ButtonVisualCustomizationEditor({
             <Button
               variant="secondary"
               size="sm"
+              aria-label={t('addProperty')}
+              aria-expanded={isAddMenuOpen}
               onClick={() => setIsAddMenuOpen((open) => !open)}
             >
               <span>+ {t('addProperty')}</span>
