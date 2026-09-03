@@ -9,7 +9,7 @@ import {
   type ReactNode,
 } from 'react';
 import { useTranslations } from 'next-intl';
-import { PlusIcon } from '@phosphor-icons/react';
+import { CaretRightIcon, PlusIcon } from '@phosphor-icons/react';
 import { Button, Input, SegmentedControl, Select } from '@/components/ui';
 import {
   explicitColorValueSchema,
@@ -552,7 +552,7 @@ export function ButtonVisualCustomizationEditor({
 
         <div className="flex shrink-0 items-start justify-between gap-2 sm:justify-end">
           <div
-            className="relative"
+            className="relative hidden group-open:block"
             onClick={(event) => event.stopPropagation()}
             onKeyDown={(event) => event.stopPropagation()}
           >
@@ -587,12 +587,12 @@ export function ButtonVisualCustomizationEditor({
               </div>
             ) : null}
           </div>
-          <span
+          <CaretRightIcon
             aria-hidden="true"
-            className="text-content-tertiary mt-0.5 flex size-6 shrink-0 items-center justify-center text-base transition-transform group-open:rotate-90"
-          >
-            ›
-          </span>
+            size={14}
+            weight="bold"
+            className="text-content-tertiary mt-0.5 shrink-0 transition-transform group-open:rotate-90"
+          />
         </div>
       </summary>
 

@@ -604,20 +604,28 @@ describe('ComponentContractEditor', () => {
     }
 
     const anatomySummary = screen.getByText('Anatomy').closest('summary');
-    expect(
-      screen
-        .getByRole('button', { name: /Add anatomy item/ })
-        .closest('summary'),
-    ).toBe(anatomySummary);
+    const anatomyAction = screen.getByRole('button', {
+      name: /Add anatomy item/,
+    });
+    expect(anatomyAction.closest('summary')).toBe(anatomySummary);
+    expect(anatomyAction.parentElement).toHaveClass(
+      'hidden',
+      'group-open:block',
+    );
+    expect(anatomySummary?.querySelector('svg')).not.toBeNull();
 
     const accessibilitySummary = screen
       .getByText('Accessibility contract')
       .closest('summary');
-    expect(
-      screen
-        .getByRole('button', { name: /Add accessibility rule/ })
-        .closest('summary'),
-    ).toBe(accessibilitySummary);
+    const accessibilityAction = screen.getByRole('button', {
+      name: /Add accessibility rule/,
+    });
+    expect(accessibilityAction.closest('summary')).toBe(accessibilitySummary);
+    expect(accessibilityAction.parentElement).toHaveClass(
+      'hidden',
+      'group-open:block',
+    );
+    expect(accessibilitySummary?.querySelector('svg')).not.toBeNull();
   });
 
   it('hides the legacy Visual Tokens editor entirely for Button', () => {

@@ -1,6 +1,7 @@
 'use client';
 
 import { Button, Input, Select, Textarea } from '@/components/ui';
+import { CaretRightIcon } from '@phosphor-icons/react';
 import {
   createEmptySizeDraft,
   createEmptyStateDraft,
@@ -1111,18 +1112,19 @@ function EditorSection({
           <div className="flex shrink-0 items-start justify-between gap-2 sm:justify-end">
             {action ? (
               <span
+                className="hidden group-open:block"
                 onClick={(event) => event.stopPropagation()}
                 onKeyDown={(event) => event.stopPropagation()}
               >
                 {action}
               </span>
             ) : null}
-            <span
+            <CaretRightIcon
               aria-hidden="true"
-              className="text-content-tertiary mt-0.5 flex size-6 shrink-0 items-center justify-center text-base transition-transform group-open:rotate-90"
-            >
-              ›
-            </span>
+              size={14}
+              weight="bold"
+              className="text-content-tertiary mt-0.5 shrink-0 transition-transform group-open:rotate-90"
+            />
           </div>
         </summary>
         <div className="mt-3 min-w-0">{children}</div>

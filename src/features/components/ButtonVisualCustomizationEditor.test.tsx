@@ -190,9 +190,21 @@ describe('ButtonVisualCustomizationEditor', () => {
 
     expect(independentCorners).not.toBeChecked();
     expect(independentCorners).toHaveClass('accent-[var(--vf-action-accent)]');
-    expect(
-      screen.getByRole('heading', { name: 'Visual tokens' }).closest('details'),
-    ).not.toBeNull();
+    const visualHeading = screen.getByRole('heading', {
+      name: 'Visual tokens',
+    });
+    const visualDetails = visualHeading.closest('details');
+    const visualSummary = visualHeading.closest('summary');
+    const addPropertyAction = screen.getByRole('button', {
+      name: 'Add visual property',
+    });
+
+    expect(visualDetails).not.toBeNull();
+    expect(addPropertyAction.parentElement).toHaveClass(
+      'hidden',
+      'group-open:block',
+    );
+    expect(visualSummary?.querySelector('svg')).not.toBeNull();
     expect(screen.queryByText('Top-left radius')).not.toBeInTheDocument();
     expect(screen.queryByText('Bottom-right radius')).not.toBeInTheDocument();
 

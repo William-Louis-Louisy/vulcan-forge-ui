@@ -1,6 +1,7 @@
 'use client';
 
 import { Button, Input, Select } from '@/components/ui';
+import { CaretRightIcon } from '@phosphor-icons/react';
 import type {
   ComponentAnatomyPartDraft,
   ComponentContractEditorDraft,
@@ -51,6 +52,7 @@ export function ComponentAnatomyEditor({
           </div>
           <div className="flex shrink-0 items-start justify-between gap-2 sm:justify-end">
             <span
+              className="hidden group-open:block"
               onClick={(event) => event.stopPropagation()}
               onKeyDown={(event) => event.stopPropagation()}
             >
@@ -67,12 +69,12 @@ export function ComponentAnatomyEditor({
                 + {labels.add}
               </Button>
             </span>
-            <span
+            <CaretRightIcon
               aria-hidden="true"
-              className="text-content-tertiary mt-0.5 flex size-6 shrink-0 items-center justify-center text-base transition-transform group-open:rotate-90"
-            >
-              ›
-            </span>
+              size={14}
+              weight="bold"
+              className="text-content-tertiary mt-0.5 shrink-0 transition-transform group-open:rotate-90"
+            />
           </div>
         </summary>
 
