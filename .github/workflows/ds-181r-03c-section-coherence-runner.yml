@@ -31,7 +31,6 @@ jobs:
         shell: python
         run: |
           from pathlib import Path
-          import textwrap
 
           workflow_path = Path('.github/workflows/ds-181r-03c-section-coherence.yml')
           source = workflow_path.read_text()
@@ -41,8 +40,15 @@ jobs:
           if start not in source or end not in source:
               raise SystemExit('Prepared coherence patch block not found')
 
-          patch = source.split(start, 1)[1].split(end, 1)[0]
-          exec(compile(textwrap.dedent(patch), str(workflow_path), 'exec'), {})
+          yaml_block = source.split(start, 1)[1].split(end, 1)[0]
+          patch_lines = []
+          for line in yaml_block.splitlines():
+              if line.startswith('          '):
+                  patch_lines.append(line[10:])
+              else:
+                  patch_lines.append(line)
+          patch = '\n'.join(patch_lines)
+          exec(compile(patch, '<section-coherence-patch>', 'exec'), {})
 
       - name: Format touched files
         run: >-
