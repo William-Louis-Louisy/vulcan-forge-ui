@@ -418,5 +418,4 @@ describe('ComponentFoundationsPreviewClient', () => {
     await user.click(screen.getByRole('option', { name: 'Disabled' }));
     expect(input).toBeDisabled();
   });
-
 });

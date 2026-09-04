@@ -65,8 +65,7 @@ export function ComponentFoundationsPreviewClient({
     .join(', ');
   const isAlertTemplate = templateDefinition?.rendererKey === 'alert';
   const isButtonTemplate = templateDefinition?.rendererKey === 'button';
-  const isTextFieldTemplate =
-    templateDefinition?.rendererKey === 'textField';
+  const isTextFieldTemplate = templateDefinition?.rendererKey === 'textField';
   const usesV2VisualPreview = isButtonTemplate || isTextFieldTemplate;
   const previewLabels = {
     baseState: t('foundationsPreview.baseState'),

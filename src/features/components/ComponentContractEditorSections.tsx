@@ -207,7 +207,9 @@ export function ComponentContractEditorSections({
   return (
     <div
       className={
-        usesV2VisualInspector(draft.type) ? 'grid min-w-0 gap-0' : 'grid min-w-0 gap-6'
+        usesV2VisualInspector(draft.type)
+          ? 'grid min-w-0 gap-0'
+          : 'grid min-w-0 gap-6'
       }
     >
       <MetadataEditor labels={labels} draft={draft} setDraft={setDraft} />
@@ -277,7 +279,9 @@ function MetadataEditor({
       aria-label={labels.metadata.title}
       className={[
         'grid min-w-0 gap-3 pb-5 sm:grid-cols-[minmax(0,1fr)_11rem]',
-        usesV2VisualInspector(draft.type) ? '' : 'border-border-subtle border-b',
+        usesV2VisualInspector(draft.type)
+          ? ''
+          : 'border-border-subtle border-b',
       ].join(' ')}
     >
       <CompactInput

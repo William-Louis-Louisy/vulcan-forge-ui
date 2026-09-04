@@ -716,8 +716,11 @@ describe('ComponentContractEditor', () => {
     expect(
       screen.queryByRole('button', { name: /Add visual token/ }),
     ).not.toBeInTheDocument();
-    expect(screen.getByText('Variants & states').closest('details')).not.toBeNull();
-    expect(screen.getByText('Localized content').closest('details')).not.toBeNull();
+    expect(
+      screen.getByText('Variants & states').closest('details'),
+    ).not.toBeNull();
+    expect(
+      screen.getByText('Localized content').closest('details'),
+    ).not.toBeNull();
   });
-
 });
