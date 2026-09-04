@@ -1,5 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { ComponentContract } from '@/domain/design-system';
+import {
+  migrateLegacyComponentContract,
+  type ComponentContract,
+} from '@/domain/design-system';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -659,4 +662,62 @@ describe('ComponentContractEditor', () => {
       screen.queryByRole('combobox', { name: 'Preview role' }),
     ).not.toBeInTheDocument();
   });
+
+  it('uses the V2 visual inspector as the sole TextField visual authoring surface', () => {
+    const textFieldContract: ComponentContract = {
+      ...contract,
+      type: 'textField',
+      name: 'TextField',
+      variants: [
+        {
+          key: 'default',
+          label: { en: 'Default', fr: 'Défaut' },
+        },
+      ],
+      sizes: [
+        {
+          key: 'md',
+          label: { en: 'Medium', fr: 'Moyen' },
+        },
+      ],
+      states: [
+        {
+          key: 'invalid',
+          label: { en: 'Invalid', fr: 'Invalide' },
+        },
+      ],
+      tokenBindings: [],
+    };
+    const textFieldContractV2 = migrateLegacyComponentContract(
+      textFieldContract,
+      {
+        key: 'textField',
+        name: 'TextField',
+        templateKey: 'textField',
+        category: 'input',
+      },
+    );
+
+    render(
+      <ComponentContractEditor
+        componentKey="textField"
+        locale="en"
+        projectSlug="demo"
+        contract={textFieldContract}
+        contractV2={textFieldContractV2}
+        labels={labels}
+        tokenOptions={tokenOptions}
+      />,
+    );
+
+    expect(
+      screen.getByTestId('button-visual-customization-editor'),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /Add visual token/ }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByText('Variants & states').closest('details')).not.toBeNull();
+    expect(screen.getByText('Localized content').closest('details')).not.toBeNull();
+  });
+
 });
