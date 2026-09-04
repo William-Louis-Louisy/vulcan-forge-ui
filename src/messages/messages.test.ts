@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { mergeMessages, type MessageObject } from './merge-messages';
 import { componentGuidelineMessages } from './component-guidelines';
 import { componentPreviewMessages } from './component-preview-messages';
+import { componentV2CustomizationMessages } from './component-v2-customization-messages';
 import { themePreviewMessages } from './theme-preview-messages';
 import { themeEditorMessages } from './theme-editor-messages';
 import { accessibilityCenterMessages } from './accessibility-center-messages';
@@ -54,19 +55,14 @@ function createLocalizedMessages(
   baseMessages: MessageObject,
   locale: 'en' | 'fr',
 ): JsonObject {
-  const scopedMessages = mergeMessages(
-    mergeMessages(
-      mergeMessages(
-        mergeMessages(
-          componentGuidelineMessages[locale],
-          componentPreviewMessages[locale],
-        ),
-        themePreviewMessages[locale],
-      ),
-      themeEditorMessages[locale],
-    ),
+  const scopedMessages = [
+    componentGuidelineMessages[locale],
+    componentPreviewMessages[locale],
+    componentV2CustomizationMessages[locale],
+    themePreviewMessages[locale],
+    themeEditorMessages[locale],
     accessibilityCenterMessages[locale],
-  );
+  ].reduce<MessageObject>(mergeMessages, {});
 
   return mergeMessages(baseMessages, scopedMessages) as unknown as JsonObject;
 }

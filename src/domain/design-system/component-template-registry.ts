@@ -155,11 +155,42 @@ function getLegacySeed(
   return componentContractSchema.parse(seed);
 }
 
+function applyTemplateSpecificDefaults(
+  templateKey: WaveAComponentTemplateKey,
+  contract: ComponentContractV2,
+): ComponentContractV2 {
+  if (templateKey !== 'button') {
+    return contract;
+  }
+
+  const primaryDefaults = contract.overrides.variants.primary ?? {};
+
+  return componentContractV2Schema.parse({
+    ...contract,
+    overrides: {
+      ...contract.overrides,
+      variants: {
+        ...contract.overrides.variants,
+        primary: {
+          ...primaryDefaults,
+          border: {
+            ...primaryDefaults.border,
+            style: 'none',
+          },
+        },
+      },
+    },
+  });
+}
+
 function createTemplateDefinition(
   templateKey: WaveAComponentTemplateKey,
 ): ComponentTemplateDefinition {
   const legacySeed = getLegacySeed(templateKey);
-  const defaultContract = migrateLegacyComponentContract(legacySeed);
+  const defaultContract = applyTemplateSpecificDefaults(
+    templateKey,
+    migrateLegacyComponentContract(legacySeed),
+  );
 
   return {
     key: templateKey,

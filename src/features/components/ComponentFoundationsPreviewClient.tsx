@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { getComponentTemplateDefinition } from '@/domain/design-system';
 import type { Locale } from '@/i18n/routing';
 import { ComponentVisualMatrix } from './ComponentVisualMatrix';
+import { ButtonVisualPreviewMatrix } from './ButtonVisualPreviewMatrix';
 import type { ComponentRegistryItem } from './components-registry.utils';
 import {
   createComponentPreviewSemanticPalette,
@@ -30,6 +31,7 @@ export function ComponentFoundationsPreviewClient({
   const t = useTranslations('ComponentsRegistryPage');
   const previewContext = useComponentContractPreview();
   const contract = previewContext?.contract ?? component.contract;
+  const contractV2 = previewContext?.contractV2 ?? component.contractV2;
   const templateDefinition = getComponentTemplateDefinition(
     component.templateKey,
   );
@@ -40,8 +42,9 @@ export function ComponentFoundationsPreviewClient({
       name: contract.name,
       status: contract.status,
       contract,
+      contractV2,
     }),
-    [component, contract, templateDefinition],
+    [component, contract, contractV2, templateDefinition],
   );
   const tokenBindingResolution = useMemo(
     () =>
@@ -61,6 +64,11 @@ export function ComponentFoundationsPreviewClient({
     .map((tone) => `color.semantic.status.${tone}`)
     .join(', ');
   const isAlertTemplate = templateDefinition?.rendererKey === 'alert';
+  const isButtonTemplate = templateDefinition?.rendererKey === 'button';
+  const previewLabels = {
+    baseState: t('foundationsPreview.baseState'),
+    state: t('foundationsPreview.state'),
+  };
 
   return (
     <section className="border-border-subtle min-w-0 border-b p-3 sm:p-4">
@@ -89,16 +97,24 @@ export function ComponentFoundationsPreviewClient({
       ) : null}
 
       <div className="mt-3 max-w-full min-w-0">
-        <ComponentVisualMatrix
-          locale={locale}
-          component={previewComponent}
-          labels={{
-            baseState: t('foundationsPreview.baseState'),
-            state: t('foundationsPreview.state'),
-          }}
-          tokenBindingResolution={tokenBindingResolution}
-          semanticPalette={semanticPalette}
-        />
+        {isButtonTemplate ? (
+          <ButtonVisualPreviewMatrix
+            locale={locale}
+            component={previewComponent}
+            contractV2={contractV2}
+            labels={previewLabels}
+            rawTokenSets={rawTokenSets}
+            semanticPalette={semanticPalette}
+          />
+        ) : (
+          <ComponentVisualMatrix
+            locale={locale}
+            component={previewComponent}
+            labels={previewLabels}
+            tokenBindingResolution={tokenBindingResolution}
+            semanticPalette={semanticPalette}
+          />
+        )}
       </div>
 
       {Object.keys(tokenBindingResolution.bindings).length > 0 ? (

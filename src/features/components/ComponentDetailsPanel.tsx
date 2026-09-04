@@ -29,7 +29,8 @@ export function ComponentDetails({
               {component.name}
             </h1>
             <p className="text-content-tertiary mt-1.5 truncate font-mono text-xs">
-              {component.type} · {t(`categories.${component.category}`)}
+              {component.key} · {component.templateKey} ·{' '}
+              {t(`categories.${component.category}`)}
             </p>
           </div>
 
@@ -70,9 +71,11 @@ export function ComponentDetails({
         <div className="mt-4 min-w-0 sm:mt-5">
           <ComponentContractEditorBoundary
             componentId={component.id}
+            componentKey={component.key}
             locale={locale}
             projectSlug={projectSlug}
             contract={component.contract}
+            contractV2={component.contractV2}
             labels={createComponentContractEditorLabels(t)}
             tokenOptions={tokenOptions}
           />

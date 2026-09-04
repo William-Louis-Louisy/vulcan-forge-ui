@@ -12,7 +12,10 @@ import {
 import { Button } from '@/components/ui';
 import type { Locale } from '@/i18n/routing';
 import { useRouter } from '@/i18n/navigation';
-import type { ComponentContract } from '@/domain/design-system';
+import type {
+  ComponentContract,
+  ComponentContractV2,
+} from '@/domain/design-system';
 import type { ComponentTokenOption } from './component-token-bindings.utils';
 import {
   createComponentContractDraft,
@@ -29,13 +32,16 @@ import { initialUpdateComponentContractActionState } from './update-component-co
 import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveContext';
 import { useActionBackedProjectSaveStatus } from '@/features/save-context/useActionBackedProjectSaveStatus';
 import { useComponentContractPreview } from './ComponentContractPreviewContext';
+import { ButtonVisualCustomizationEditor } from './ButtonVisualCustomizationEditor';
 
 export type { ComponentContractEditorLabels } from './ComponentContractEditorSections';
 
 type ComponentContractEditorProps = {
+  componentKey: string;
   locale: Locale;
   projectSlug: string;
   contract: ComponentContract;
+  contractV2?: ComponentContractV2;
   labels: ComponentContractEditorLabels;
   tokenOptions: ComponentTokenOption[];
 };
@@ -47,9 +53,11 @@ type PendingCollectionFocus = {
 };
 
 export function ComponentContractEditor({
+  componentKey,
   locale,
   projectSlug,
   contract,
+  contractV2,
   labels,
   tokenOptions,
 }: ComponentContractEditorProps) {
@@ -143,7 +151,7 @@ export function ComponentContractEditor({
   );
   const contractPayload =
     validation.status === 'success' ? JSON.stringify(validation.contract) : '';
-  const saveContextId = `component-contract:${projectSlug}:${contract.type}`;
+  const saveContextId = `component-contract:${projectSlug}:${componentKey}`;
   const currentFingerprint = createComponentContractDraftFingerprint(draft);
   const initialSavedFingerprint =
     createComponentContractDraftFingerprint(initialDraft);
@@ -238,6 +246,18 @@ export function ComponentContractEditor({
         activeLocale={activeLocale}
         setActiveLocale={setActiveLocale}
         tokenOptions={tokenOptions}
+        visualEditor={
+          contractV2?.templateKey === 'button' ? (
+            <ButtonVisualCustomizationEditor
+              locale={locale}
+              projectSlug={projectSlug}
+              componentKey={componentKey}
+              semanticContract={contract}
+              contractV2={contractV2}
+              tokenOptions={tokenOptions}
+            />
+          ) : null
+        }
       />
 
       <form
@@ -247,6 +267,7 @@ export function ComponentContractEditor({
       >
         <input type="hidden" name="locale" value={locale} />
         <input type="hidden" name="projectSlug" value={projectSlug} />
+        <input type="hidden" name="componentKey" value={componentKey} />
         <input type="hidden" name="componentType" value={draft.type} />
         <input type="hidden" name="contract" value={contractPayload} />
 

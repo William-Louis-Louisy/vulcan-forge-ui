@@ -54,6 +54,7 @@ describe('ComponentContractEditorBoundary', () => {
     const { rerender } = render(
       <ComponentContractEditorBoundary
         componentId="button-id"
+        componentKey="button"
         locale="en"
         projectSlug="project"
         contract={buttonContract}
@@ -71,6 +72,7 @@ describe('ComponentContractEditorBoundary', () => {
     rerender(
       <ComponentContractEditorBoundary
         componentId="text-field-id"
+        componentKey="textField"
         locale="en"
         projectSlug="project"
         contract={textFieldContract}

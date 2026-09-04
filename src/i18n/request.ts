@@ -4,6 +4,7 @@ import { getRequestConfig } from 'next-intl/server';
 import { mergeMessages, type MessageObject } from '@/messages/merge-messages';
 import { componentGuidelineMessages } from '@/messages/component-guidelines';
 import { componentPreviewMessages } from '@/messages/component-preview-messages';
+import { componentV2CustomizationMessages } from '@/messages/component-v2-customization-messages';
 import { themePreviewMessages } from '@/messages/theme-preview-messages';
 import { themeEditorMessages } from '@/messages/theme-editor-messages';
 import { accessibilityCenterMessages } from '@/messages/accessibility-center-messages';
@@ -65,6 +66,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
   const scopedMessages = [
     componentGuidelineMessages[locale],
     componentPreviewMessages[locale],
+    componentV2CustomizationMessages[locale],
     themePreviewMessages[locale],
     themeEditorMessages[locale],
     accessibilityCenterMessages[locale],
