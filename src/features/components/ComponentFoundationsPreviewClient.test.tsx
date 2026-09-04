@@ -305,4 +305,117 @@ describe('ComponentFoundationsPreviewClient', () => {
       screen.getByText('foundationsPreview.missingStatusColorsNotice'),
     ).toBeInTheDocument();
   });
+
+  it('renders TextField through the V2 resolver without a legacy binding notice', async () => {
+    const user = userEvent.setup();
+    const textFieldContract: ComponentContract = {
+      ...contract,
+      type: 'textField',
+      name: 'TextField',
+      variants: [
+        {
+          key: 'default',
+          label: { en: 'Default' },
+        },
+      ],
+      sizes: [
+        {
+          key: 'md',
+          label: { en: 'Medium' },
+        },
+      ],
+      states: [
+        {
+          key: 'focus',
+          label: { en: 'Focus' },
+        },
+        {
+          key: 'invalid',
+          label: { en: 'Invalid' },
+        },
+        {
+          key: 'disabled',
+          label: { en: 'Disabled' },
+        },
+      ],
+      tokenBindings: [],
+    };
+    const migratedTextFieldContract = migrateLegacyComponentContract(
+      textFieldContract,
+      {
+        key: 'textField',
+        name: 'TextField',
+        templateKey: 'textField',
+        category: 'input',
+      },
+    );
+    const textFieldContractV2 = componentContractV2Schema.parse({
+      ...migratedTextFieldContract,
+      visual: {
+        ...migratedTextFieldContract.visual,
+        surface: {
+          background: { source: 'value', value: '#fefefe' },
+        },
+      },
+      overrides: {
+        ...migratedTextFieldContract.overrides,
+        states: {
+          ...migratedTextFieldContract.overrides.states,
+          invalid: {
+            border: {
+              color: { source: 'value', value: '#cc0000' },
+            },
+          },
+        },
+      },
+    });
+    const textFieldComponent: ComponentRegistryItem = {
+      ...component,
+      id: 'text-field',
+      key: 'textField',
+      templateKey: 'textField',
+      type: 'textField',
+      name: 'TextField',
+      category: 'input',
+      contract: textFieldContract,
+      contractV2: textFieldContractV2,
+    };
+
+    render(
+      <ComponentContractPreviewProvider
+        initialContract={textFieldContract}
+        initialContractV2={textFieldContractV2}
+      >
+        <ComponentFoundationsPreviewClient
+          locale="en"
+          component={textFieldComponent}
+          rawTokenSets={rawTokenSets}
+        />
+      </ComponentContractPreviewProvider>,
+    );
+
+    expect(
+      screen.queryByText('foundationsPreview.noTokenBindingsNotice'),
+    ).not.toBeInTheDocument();
+    expect(
+      document.querySelector('[data-component-v2-preview="textField"]'),
+    ).not.toBeNull();
+
+    const input = screen.getByRole('textbox', { name: 'TextField' });
+    expect(input).toHaveAttribute('data-preview-v2', 'true');
+    expect(input).toHaveStyle({ backgroundColor: '#fefefe' });
+
+    const stateSelect = screen.getByRole('combobox', {
+      name: 'foundationsPreview.state',
+    });
+    await user.click(stateSelect);
+    await user.click(screen.getByRole('option', { name: 'Invalid' }));
+
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(input).toHaveStyle({ borderColor: '#cc0000' });
+
+    await user.click(stateSelect);
+    await user.click(screen.getByRole('option', { name: 'Disabled' }));
+    expect(input).toBeDisabled();
+  });
 });

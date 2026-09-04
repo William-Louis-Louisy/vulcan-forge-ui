@@ -247,7 +247,8 @@ export function ComponentContractEditor({
         setActiveLocale={setActiveLocale}
         tokenOptions={tokenOptions}
         visualEditor={
-          contractV2?.templateKey === 'button' ? (
+          contractV2?.templateKey === 'button' ||
+          contractV2?.templateKey === 'textField' ? (
             <ButtonVisualCustomizationEditor
               locale={locale}
               projectSlug={projectSlug}
