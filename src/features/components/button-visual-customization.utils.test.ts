@@ -7,6 +7,7 @@ import {
 import {
   createButtonVisualCustomizationFingerprint,
   getButtonVisualProperty,
+  resetButtonVisualGroup,
   resetButtonVisualProperty,
   setButtonVisualProperty,
 } from './button-visual-customization.utils';
@@ -134,6 +135,43 @@ describe('Button visual customization utilities', () => {
     expect(resolved.spacing?.paddingX).toEqual({
       source: 'value',
       value: '24px',
+    });
+  });
+
+  it('resets an entire visual group only in the selected scope', () => {
+    let contract = createButtonContract();
+    contract = setButtonVisualProperty(
+      contract,
+      { kind: 'base' },
+      'spacing',
+      'paddingX',
+      { source: 'value', value: '12px' },
+    );
+    contract = setButtonVisualProperty(
+      contract,
+      { kind: 'base' },
+      'border',
+      'width',
+      { source: 'value', value: '2px' },
+    );
+    contract = setButtonVisualProperty(
+      contract,
+      { kind: 'variant', key: 'primary' },
+      'border',
+      'color',
+      { source: 'value', value: '#112233' },
+    );
+
+    const reset = resetButtonVisualGroup(contract, { kind: 'base' }, 'border');
+
+    expect(reset.visual.border).toBeUndefined();
+    expect(reset.visual.spacing?.paddingX).toEqual({
+      source: 'value',
+      value: '12px',
+    });
+    expect(reset.overrides.variants.primary?.border?.color).toEqual({
+      source: 'value',
+      value: '#112233',
     });
   });
 

@@ -332,12 +332,32 @@ describe('component-token-bindings utils', () => {
           tokens: colorTokenSet.tokens,
         },
       ]),
-    ).toEqual(
-      colorTokenSet.tokens.map((token) => ({
-        type: token.type,
-        path: token.path,
-        label: token.path,
-      })),
-    );
+    ).toEqual([
+      {
+        type: 'color',
+        path: 'color.semantic.action.primary',
+        label: 'color.semantic.action.primary',
+      },
+      {
+        type: 'color',
+        path: 'color.semantic.status.success',
+        label: 'color.semantic.status.success',
+      },
+      {
+        type: 'color',
+        path: 'color.primitive.blue.500',
+        label: 'color.primitive.blue.500',
+      },
+      {
+        type: 'color',
+        path: 'color.primitive.green.500',
+        label: 'color.primitive.green.500',
+      },
+      {
+        type: 'color',
+        path: 'color.background.default',
+        label: 'color.background.default',
+      },
+    ]);
   });
 });

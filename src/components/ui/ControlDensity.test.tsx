@@ -8,6 +8,31 @@ import { Select } from './Select';
 const options = [{ value: 'ready', label: 'Ready' }] as const;
 
 describe('shared control density', () => {
+  it('aligns extra-compact inputs and selects to the property-inspector density', () => {
+    render(
+      <>
+        <label htmlFor="extra-compact-input">Extra compact input</label>
+        <Input id="extra-compact-input" size="xs" />
+        <label htmlFor="extra-compact-select">Extra compact select</label>
+        <Select
+          id="extra-compact-select"
+          value="ready"
+          options={options}
+          onValueChange={() => undefined}
+          placeholder="Choose"
+          size="xs"
+        />
+      </>,
+    );
+
+    expect(
+      screen.getByRole('textbox', { name: 'Extra compact input' }),
+    ).toHaveClass('min-h-7');
+    expect(
+      screen.getByRole('combobox', { name: 'Extra compact select' }),
+    ).toHaveClass('min-h-7');
+  });
+
   it('aligns small inputs, selects and buttons to the compact editor density', () => {
     render(
       <>

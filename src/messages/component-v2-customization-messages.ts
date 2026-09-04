@@ -5,7 +5,8 @@ const technicalGroups = {
   dimensions: 'Dimensions',
   spacing: 'Spacing',
   radius: 'Radius',
-  border: 'Border',
+  fill: 'Fill',
+  border: 'Stroke / Border',
   typography: 'Typography',
 } as const;
 
@@ -22,6 +23,8 @@ const technicalProperties = {
   topRight: 'Top-right radius',
   bottomRight: 'Bottom-right radius',
   bottomLeft: 'Bottom-left radius',
+  background: 'Background',
+  foreground: 'Foreground',
   borderWidth: 'Border width',
   borderStyle: 'Border style',
   borderColor: 'Border color',
@@ -52,11 +55,15 @@ export const componentV2CustomizationMessages = {
   en: {
     ComponentsRegistryPage: {
       buttonCustomization: {
-        title: 'Button visual customization',
+        title: 'Visual tokens',
         description:
-          'Author the Button appearance directly. Values can reference design tokens or use controlled explicit values.',
+          'Edit the Button appearance from one compact property inspector. Add optional property groups only when you need them.',
         scope: 'Editing layer',
         target: 'Target',
+        addProperty: 'Add visual property',
+        removeProperty: 'Remove visual property',
+        noPropertiesToAdd: 'All optional properties are already visible.',
+        independentCorners: 'Independent corners',
         scopes: {
           base: 'Base',
           variant: 'Variant',
@@ -71,7 +78,7 @@ export const componentV2CustomizationMessages = {
         explicit: 'Explicit value',
         modeAuto: 'Auto',
         modeFill: 'Fill',
-        unset: 'Inherit / default',
+        unset: 'Default',
         selectToken: 'Select token',
         valuePlaceholder: 'e.g. 12px',
         colorPlaceholder: 'e.g. #111827',
@@ -80,11 +87,11 @@ export const componentV2CustomizationMessages = {
         borderStyles: technicalBorderStyles,
         textAlignments: technicalTextAlignments,
         save: {
-          action: 'Save visual customization',
+          action: 'Save visual tokens',
           saving: 'Saving…',
-          saved: 'Visual customization saved',
+          saved: 'Visual tokens saved',
           unsaved: 'Unsaved visual changes',
-          invalid: 'Visual customization is invalid',
+          invalid: 'Visual tokens are invalid',
           errors: {
             unauthorized: 'You must be signed in to update this component.',
             projectNotFound: 'The design system could not be found.',
@@ -92,7 +99,7 @@ export const componentV2CustomizationMessages = {
             invalidPayload: 'The visual customization payload is invalid.',
             invalidContract:
               'This visual editor only supports Button templates.',
-            unexpected: 'Unable to save the visual customization. Try again.',
+            unexpected: 'Unable to save the visual tokens. Try again.',
           },
         },
       },
@@ -101,11 +108,16 @@ export const componentV2CustomizationMessages = {
   fr: {
     ComponentsRegistryPage: {
       buttonCustomization: {
-        title: 'Personnalisation visuelle du Button',
+        title: 'Tokens visuels',
         description:
-          'Définissez directement l’apparence du Button. Les valeurs peuvent référencer des design tokens ou utiliser des valeurs explicites contrôlées.',
+          'Modifiez l’apparence du Button depuis un seul inspecteur compact. Ajoutez les groupes de propriétés optionnels uniquement lorsque vous en avez besoin.',
         scope: 'Couche éditée',
         target: 'Cible',
+        addProperty: 'Ajouter une propriété visuelle',
+        removeProperty: 'Retirer la propriété visuelle',
+        noPropertiesToAdd:
+          'Toutes les propriétés optionnelles sont déjà affichées.',
+        independentCorners: 'Independent corners',
         scopes: {
           base: 'Base',
           variant: 'Variant',
@@ -120,7 +132,7 @@ export const componentV2CustomizationMessages = {
         explicit: 'Explicit value',
         modeAuto: 'Auto',
         modeFill: 'Fill',
-        unset: 'Inherit / default',
+        unset: 'Default',
         selectToken: 'Sélectionner un token',
         valuePlaceholder: 'ex. 12px',
         colorPlaceholder: 'ex. #111827',
@@ -129,11 +141,11 @@ export const componentV2CustomizationMessages = {
         borderStyles: technicalBorderStyles,
         textAlignments: technicalTextAlignments,
         save: {
-          action: 'Enregistrer la personnalisation',
+          action: 'Enregistrer les tokens visuels',
           saving: 'Enregistrement…',
-          saved: 'Personnalisation visuelle enregistrée',
+          saved: 'Tokens visuels enregistrés',
           unsaved: 'Modifications visuelles non enregistrées',
-          invalid: 'La personnalisation visuelle est invalide',
+          invalid: 'Les tokens visuels sont invalides',
           errors: {
             unauthorized:
               'Vous devez être connecté pour modifier ce composant.',
@@ -143,7 +155,7 @@ export const componentV2CustomizationMessages = {
             invalidContract:
               'Cet éditeur visuel prend uniquement en charge les templates Button.',
             unexpected:
-              'Impossible d’enregistrer la personnalisation visuelle. Veuillez réessayer.',
+              'Impossible d’enregistrer les tokens visuels. Veuillez réessayer.',
           },
         },
       },

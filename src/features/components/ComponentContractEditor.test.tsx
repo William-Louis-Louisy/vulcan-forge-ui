@@ -23,6 +23,12 @@ vi.mock('./update-component-contract.action', () => ({
   })),
 }));
 
+vi.mock('./ButtonVisualCustomizationEditor', () => ({
+  ButtonVisualCustomizationEditor: () => (
+    <section data-testid="button-visual-customization-editor" />
+  ),
+}));
+
 import {
   ComponentContractEditor,
   type ComponentContractEditorLabels,
@@ -164,7 +170,7 @@ const labels: ComponentContractEditorLabels = {
 };
 
 const contract: ComponentContract = {
-  type: 'button',
+  type: 'card',
   name: 'Button',
   purpose: {
     en: 'Triggers an action.',
@@ -566,10 +572,66 @@ describe('ComponentContractEditor', () => {
     expect(screen.getByLabelText('Token type')).toHaveTextContent('Typography');
   });
 
-  it('keeps the Button V2 radius role out of the legacy Visual Tokens editor', async () => {
-    const user = userEvent.setup();
-    const contractWithLegacyRadius: ComponentContract = {
+  it('keeps every Button section except naming collapsible and aligns section actions in their headers', () => {
+    const buttonContract: ComponentContract = {
       ...contract,
+      type: 'button',
+    };
+
+    render(
+      <ComponentContractEditor
+        componentKey="button"
+        locale="en"
+        projectSlug="demo"
+        contract={buttonContract}
+        labels={labels}
+        tokenOptions={tokenOptions}
+      />,
+    );
+
+    expect(screen.getByLabelText('Name').closest('details')).toBeNull();
+    expect(
+      screen.getByText('Variants & states').closest('details'),
+    ).not.toBeNull();
+
+    for (const title of [
+      'Localized content',
+      'Anatomy',
+      'Accessibility contract',
+      'Forbidden patterns',
+    ]) {
+      expect(screen.getByText(title).closest('details')).not.toBeNull();
+    }
+
+    const anatomySummary = screen.getByText('Anatomy').closest('summary');
+    const anatomyAction = screen.getByRole('button', {
+      name: /Add anatomy item/,
+    });
+    expect(anatomyAction.closest('summary')).toBe(anatomySummary);
+    expect(anatomyAction.parentElement).toHaveClass(
+      'hidden',
+      'group-open:block',
+    );
+    expect(anatomySummary?.querySelector('svg')).not.toBeNull();
+
+    const accessibilitySummary = screen
+      .getByText('Accessibility contract')
+      .closest('summary');
+    const accessibilityAction = screen.getByRole('button', {
+      name: /Add accessibility rule/,
+    });
+    expect(accessibilityAction.closest('summary')).toBe(accessibilitySummary);
+    expect(accessibilityAction.parentElement).toHaveClass(
+      'hidden',
+      'group-open:block',
+    );
+    expect(accessibilitySummary?.querySelector('svg')).not.toBeNull();
+  });
+
+  it('hides the legacy Visual Tokens editor entirely for Button', () => {
+    const buttonContract: ComponentContract = {
+      ...contract,
+      type: 'button',
       tokenBindings: [
         {
           key: 'radius',
@@ -584,27 +646,17 @@ describe('ComponentContractEditor', () => {
         componentKey="button"
         locale="en"
         projectSlug="demo"
-        contract={contractWithLegacyRadius}
+        contract={buttonContract}
         labels={labels}
         tokenOptions={tokenOptions}
       />,
     );
 
     expect(
-      screen.queryByRole('combobox', { name: 'Preview role' }),
+      screen.queryByRole('button', { name: /Add visual token/ }),
     ).not.toBeInTheDocument();
-
-    await user.click(screen.getByRole('button', { name: /Add visual token/ }));
-
-    const roleSelect = screen.getByRole('combobox', {
-      name: 'Preview role',
-    });
-    expect(roleSelect).toHaveTextContent('Background');
-
-    await user.click(roleSelect);
-
     expect(
-      screen.queryByRole('option', { name: /Radius radius · Radius/ }),
+      screen.queryByRole('combobox', { name: 'Preview role' }),
     ).not.toBeInTheDocument();
   });
 });

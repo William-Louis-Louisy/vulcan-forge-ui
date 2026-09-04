@@ -107,6 +107,36 @@ describe('Select', () => {
     expect(combobox).toHaveFocus();
   });
 
+  it('densifies both the xs trigger and its dropdown options', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <>
+        <label htmlFor="compact-token">Compact token</label>
+        <Select
+          id="compact-token"
+          value="color.semantic.background.app"
+          options={options}
+          placeholder="Select a token"
+          size="xs"
+          onValueChange={() => undefined}
+        />
+      </>,
+    );
+
+    const combobox = screen.getByRole('combobox', { name: 'Compact token' });
+    expect(combobox).toHaveClass('min-h-7', 'px-2', 'py-1');
+
+    await user.click(combobox);
+
+    expect(screen.getByRole('listbox')).toHaveClass('p-0.5');
+    expect(
+      screen.getByRole('option', {
+        name: 'color.primitive.neutral.0 #ffffff',
+      }),
+    ).toHaveClass('min-h-7', 'px-2', 'py-1');
+  });
+
   it('supports a disabled state', () => {
     render(<SelectFixture disabled />);
 
