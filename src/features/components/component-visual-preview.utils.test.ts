@@ -36,6 +36,12 @@ const rawTokenSets = [
         value: '8px',
         status: 'ready',
       },
+      {
+        path: 'radius.full',
+        type: 'radius',
+        value: '9999px',
+        status: 'ready',
+      },
     ],
   },
   {
@@ -131,12 +137,81 @@ describe('createComponentVisualCssProperties', () => {
       width: '100%',
       height: 'auto',
       minHeight: '40px',
-      borderTopLeftRadius: '18px',
-      borderTopRightRadius: '4px',
+      borderRadius: '18px 4px 0 0',
       borderWidth: '2px',
       borderStyle: 'dashed',
       borderColor: '#abcdef',
       boxShadow: '0 4px 10px rgb(0 0 0 / 0.12)',
     });
+  });
+
+  it('projects mixed uniform and per-corner radius through one four-value shorthand', () => {
+    const styles = createComponentVisualCssProperties({
+      visual: {
+        radius: {
+          radius: { source: 'value', value: '8px' },
+          topLeft: { source: 'value', value: '18px' },
+          bottomRight: { source: 'value', value: '32px' },
+        },
+      },
+      rawTokenSets: [],
+    });
+
+    expect(styles.borderRadius).toBe('18px 8px 32px 8px');
+    expect(styles.borderTopLeftRadius).toBeUndefined();
+    expect(styles.borderTopRightRadius).toBeUndefined();
+    expect(styles.borderBottomRightRadius).toBeUndefined();
+    expect(styles.borderBottomLeftRadius).toBeUndefined();
+  });
+
+  it('keeps the CSS radius shorthand when no corner override exists', () => {
+    const styles = createComponentVisualCssProperties({
+      visual: {
+        radius: { radius: { source: 'value', value: '10px' } },
+      },
+      rawTokenSets: [],
+    });
+
+    expect(styles.borderRadius).toBe('10px');
+    expect(styles.borderTopLeftRadius).toBeUndefined();
+    expect(styles.borderTopRightRadius).toBeUndefined();
+    expect(styles.borderBottomRightRadius).toBeUndefined();
+    expect(styles.borderBottomLeftRadius).toBeUndefined();
+  });
+
+  it('keeps radius.full unchanged when it is the only radius value', () => {
+    const styles = createComponentVisualCssProperties({
+      visual: {
+        radius: {
+          radius: {
+            source: 'token',
+            tokenType: 'radius',
+            path: 'radius.full',
+          },
+        },
+      },
+      rawTokenSets,
+    });
+
+    expect(styles.borderRadius).toBe('9999px');
+  });
+
+  it('normalizes radius.full only while composing asymmetric corners', () => {
+    const styles = createComponentVisualCssProperties({
+      visual: {
+        radius: {
+          radius: {
+            source: 'token',
+            tokenType: 'radius',
+            path: 'radius.full',
+          },
+          topLeft: { source: 'value', value: '18px' },
+          bottomRight: { source: 'value', value: '32px' },
+        },
+      },
+      rawTokenSets,
+    });
+
+    expect(styles.borderRadius).toBe('18px 50% 32px 50%');
   });
 });

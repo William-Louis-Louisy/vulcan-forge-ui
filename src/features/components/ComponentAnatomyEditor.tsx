@@ -1,6 +1,7 @@
 'use client';
 
 import { Button, Input, Select } from '@/components/ui';
+import { CaretRightIcon } from '@phosphor-icons/react';
 import type {
   ComponentAnatomyPartDraft,
   ComponentContractEditorDraft,
@@ -27,6 +28,7 @@ type ComponentAnatomyEditorProps = {
   activeLocale: 'en' | 'fr';
   draft: ComponentContractEditorDraft;
   setDraft: (draft: ComponentContractEditorDraft) => void;
+  collapsible?: boolean;
 };
 
 export function ComponentAnatomyEditor({
@@ -34,7 +36,60 @@ export function ComponentAnatomyEditor({
   activeLocale,
   draft,
   setDraft,
+  collapsible = false,
 }: ComponentAnatomyEditorProps) {
+  if (collapsible) {
+    return (
+      <details className="border-border-subtle group min-w-0 border-t py-4">
+        <summary className="focus-visible:outline-border-focus flex cursor-pointer list-none flex-col gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0 flex-1">
+            <h3 className="text-base font-semibold tracking-tight">
+              {labels.title}
+            </h3>
+            <p className="text-content-secondary mt-1 text-xs leading-5">
+              {labels.description}
+            </p>
+          </div>
+          <div className="flex shrink-0 items-start justify-between gap-2 sm:justify-end">
+            <span
+              className="hidden group-open:block"
+              onClick={(event) => event.stopPropagation()}
+              onKeyDown={(event) => event.stopPropagation()}
+            >
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() =>
+                  setDraft({
+                    ...draft,
+                    anatomy: [...draft.anatomy, createEmptyAnatomyPartDraft()],
+                  })
+                }
+              >
+                + {labels.add}
+              </Button>
+            </span>
+            <div className="flex aspect-square items-center justify-center p-1">
+              <CaretRightIcon
+                aria-hidden="true"
+                size={14}
+                weight="bold"
+                className="text-content-tertiary mt-0.5 shrink-0 transition-transform group-open:rotate-90"
+              />
+            </div>
+          </div>
+        </summary>
+
+        <AnatomyTable
+          labels={labels}
+          activeLocale={activeLocale}
+          draft={draft}
+          setDraft={setDraft}
+        />
+      </details>
+    );
+  }
+
   return (
     <section className="border-border-subtle min-w-0 border-t pt-4 sm:pt-5">
       <div className="flex min-w-0 flex-col items-start gap-3 sm:flex-row sm:justify-between">
@@ -61,46 +116,62 @@ export function ComponentAnatomyEditor({
         </Button>
       </div>
 
-      <div className="border-border-subtle mt-3 min-w-0 overflow-hidden rounded-md border">
-        <div className="bg-background-subtle text-content-tertiary hidden min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_8rem_2rem] gap-2 border-b px-3 py-2 text-[0.6875rem] font-medium md:grid">
-          <span>{labels.key}</span>
-          <span>{labels.label}</span>
-          <span>{labels.requirement}</span>
-          <span aria-hidden="true" />
-        </div>
-
-        {draft.anatomy.length === 0 ? (
-          <p className="text-content-tertiary px-3 py-4 text-xs">
-            {labels.description}
-          </p>
-        ) : (
-          <div className="divide-border-subtle min-w-0 divide-y">
-            {draft.anatomy.map((part, index) => (
-              <AnatomyPartRow
-                key={`${part.key}-${index}`}
-                rowId={`anatomy-part-${index}`}
-                labels={labels}
-                activeLocale={activeLocale}
-                part={part}
-                onChange={(nextPart) => {
-                  const nextAnatomy = [...draft.anatomy];
-                  nextAnatomy[index] = nextPart;
-                  setDraft({ ...draft, anatomy: nextAnatomy });
-                }}
-                onRemove={() =>
-                  setDraft({
-                    ...draft,
-                    anatomy: draft.anatomy.filter(
-                      (_, itemIndex) => itemIndex !== index,
-                    ),
-                  })
-                }
-              />
-            ))}
-          </div>
-        )}
-      </div>
+      <AnatomyTable
+        labels={labels}
+        activeLocale={activeLocale}
+        draft={draft}
+        setDraft={setDraft}
+      />
     </section>
+  );
+}
+
+function AnatomyTable({
+  labels,
+  activeLocale,
+  draft,
+  setDraft,
+}: ComponentAnatomyEditorProps) {
+  return (
+    <div className="border-border-subtle mt-3 min-w-0 overflow-hidden rounded-md border">
+      <div className="bg-background-subtle text-content-tertiary hidden min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_8rem_2rem] gap-2 border-b px-3 py-2 text-[0.6875rem] font-medium md:grid">
+        <span>{labels.key}</span>
+        <span>{labels.label}</span>
+        <span>{labels.requirement}</span>
+        <span aria-hidden="true" />
+      </div>
+
+      {draft.anatomy.length === 0 ? (
+        <p className="text-content-tertiary px-3 py-4 text-xs">
+          {labels.description}
+        </p>
+      ) : (
+        <div className="divide-border-subtle min-w-0 divide-y">
+          {draft.anatomy.map((part, index) => (
+            <AnatomyPartRow
+              key={`${part.key}-${index}`}
+              rowId={`anatomy-part-${index}`}
+              labels={labels}
+              activeLocale={activeLocale}
+              part={part}
+              onChange={(nextPart) => {
+                const nextAnatomy = [...draft.anatomy];
+                nextAnatomy[index] = nextPart;
+                setDraft({ ...draft, anatomy: nextAnatomy });
+              }}
+              onRemove={() =>
+                setDraft({
+                  ...draft,
+                  anatomy: draft.anatomy.filter(
+                    (_, itemIndex) => itemIndex !== index,
+                  ),
+                })
+              }
+            />
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 

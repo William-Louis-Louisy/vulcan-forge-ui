@@ -1,13 +1,15 @@
 import type { TextareaHTMLAttributes } from 'react';
-import type { InputSize, InputTextMode } from './Input';
+import type { InputTextMode } from './Input';
+
+export type TextareaSize = 'sm' | 'md';
 
 export type TextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
   invalid?: boolean;
-  size?: InputSize;
+  size?: TextareaSize;
   textMode?: InputTextMode;
 };
 
-const sizeClassNames: Record<InputSize, string> = {
+const sizeClassNames: Record<TextareaSize, string> = {
   sm: 'px-3 py-2 text-xs',
   md: 'px-3 py-2.5 text-sm',
 };

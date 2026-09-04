@@ -6,7 +6,6 @@ import type { ComponentContractEditorLabels } from './ComponentContractEditor';
 import { DeleteComponentContractButton } from './DeleteComponentContractButton';
 import { StatusBadge } from '@/app/[locale]/app/projects/[projectSlug]/components/page';
 import type { ComponentsRegistryTranslator } from '@/app/[locale]/app/projects/[projectSlug]/components/page';
-import { ButtonVisualCustomizationEditor } from './ButtonVisualCustomizationEditor';
 
 export function ComponentDetails({
   t,
@@ -70,23 +69,13 @@ export function ComponentDetails({
         </header>
 
         <div className="mt-4 min-w-0 sm:mt-5">
-          {component.templateKey === 'button' ? (
-            <ButtonVisualCustomizationEditor
-              locale={locale}
-              projectSlug={projectSlug}
-              componentKey={component.key}
-              semanticContract={component.contract}
-              contractV2={component.contractV2}
-              tokenOptions={tokenOptions}
-            />
-          ) : null}
-
           <ComponentContractEditorBoundary
             componentId={component.id}
             componentKey={component.key}
             locale={locale}
             projectSlug={projectSlug}
             contract={component.contract}
+            contractV2={component.contractV2}
             labels={createComponentContractEditorLabels(t)}
             tokenOptions={tokenOptions}
           />

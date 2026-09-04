@@ -9,6 +9,13 @@ export type ButtonVisualScope =
   | { kind: 'base' }
   | { kind: 'variant' | 'size' | 'state'; key: string };
 
+const radiusCornerProperties = [
+  'topLeft',
+  'topRight',
+  'bottomRight',
+  'bottomLeft',
+] as const;
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
@@ -93,6 +100,12 @@ export function setButtonVisualProperty(
   const groupValue = nextTarget[group];
   const nextGroup = isRecord(groupValue) ? groupValue : {};
 
+  if (group === 'radius' && property === 'radius') {
+    for (const cornerProperty of radiusCornerProperties) {
+      delete nextGroup[cornerProperty];
+    }
+  }
+
   nextGroup[property] = value;
   nextTarget[group] = nextGroup;
 
@@ -128,6 +141,24 @@ export function resetButtonVisualProperty(
   if (Object.keys(groupValue).length === 0) {
     delete target[group];
   }
+
+  return setTarget(
+    contract,
+    scope,
+    componentVisualPropertiesSchema.parse(target),
+  );
+}
+
+export function resetButtonVisualGroup(
+  contract: ComponentContractV2,
+  scope: ButtonVisualScope,
+  group: keyof ComponentVisualProperties,
+): ComponentContractV2 {
+  const target = structuredClone(
+    getButtonVisualTarget(contract, scope),
+  ) as ComponentVisualProperties;
+
+  delete target[group];
 
   return setTarget(
     contract,

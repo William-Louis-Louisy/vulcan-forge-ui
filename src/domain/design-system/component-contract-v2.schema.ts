@@ -754,6 +754,31 @@ export function toLegacyComponentContract(
   });
 }
 
+function mergeRadiusProperties(
+  base: ComponentVisualProperties['radius'],
+  override: ComponentVisualProperties['radius'],
+): ComponentVisualProperties['radius'] {
+  if (!override) {
+    return base;
+  }
+
+  if (!base) {
+    return override;
+  }
+
+  if (!override.radius) {
+    return componentRadiusSchema.parse({ ...base, ...override });
+  }
+
+  return componentRadiusSchema.parse({
+    radius: override.radius,
+    ...(override.topLeft ? { topLeft: override.topLeft } : {}),
+    ...(override.topRight ? { topRight: override.topRight } : {}),
+    ...(override.bottomRight ? { bottomRight: override.bottomRight } : {}),
+    ...(override.bottomLeft ? { bottomLeft: override.bottomLeft } : {}),
+  });
+}
+
 function mergeVisualProperties(
   base: ComponentVisualProperties,
   override: ComponentVisualProperties | undefined,
@@ -775,10 +800,7 @@ function mergeVisualProperties(
       base.border || override.border
         ? { ...base.border, ...override.border }
         : undefined,
-    radius:
-      base.radius || override.radius
-        ? { ...base.radius, ...override.radius }
-        : undefined,
+    radius: mergeRadiusProperties(base.radius, override.radius),
     surface:
       base.surface || override.surface
         ? { ...base.surface, ...override.surface }

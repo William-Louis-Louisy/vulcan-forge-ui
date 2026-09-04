@@ -1,6 +1,7 @@
 'use client';
 
 import { Button, Input, Select, Textarea } from '@/components/ui';
+import { CaretRightIcon } from '@phosphor-icons/react';
 import {
   createEmptySizeDraft,
   createEmptyStateDraft,
@@ -19,14 +20,14 @@ import {
 import type { CSSProperties, ReactNode } from 'react';
 import { ComponentAnatomyEditor } from './ComponentAnatomyEditor';
 import {
+  componentPreviewTokenRoles,
   normalizeComponentPreviewTokenRole,
+  sortComponentTokenOptions,
+  type ComponentPreviewTokenRole,
   type ComponentTokenOption,
 } from './component-token-bindings.utils';
 import { ComponentPreviewRoleField } from './ComponentPreviewRoleField';
-import {
-  getComponentPreviewTokenRoleType,
-  getFirstAvailableComponentPreviewTokenRole,
-} from './component-preview-role-bindings';
+import { getComponentPreviewTokenRoleType } from './component-preview-role-bindings';
 
 export type ComponentContractEditorLabels = {
   title: string;
@@ -170,7 +171,23 @@ type EditorProps = {
   activeLocale: 'en' | 'fr';
   setActiveLocale: (locale: 'en' | 'fr') => void;
   tokenOptions: ComponentTokenOption[];
+  visualEditor?: ReactNode;
 };
+
+const v2OwnedLegacyPreviewRolesByComponentType: Partial<
+  Record<
+    ComponentContractEditorDraft['type'],
+    readonly ComponentPreviewTokenRole[]
+  >
+> = {
+  button: ['radius'],
+};
+
+function getV2OwnedLegacyPreviewRoles(
+  componentType: ComponentContractEditorDraft['type'],
+): readonly ComponentPreviewTokenRole[] {
+  return v2OwnedLegacyPreviewRolesByComponentType[componentType] ?? [];
+}
 
 export function ComponentContractEditorSections({
   labels,
@@ -179,10 +196,24 @@ export function ComponentContractEditorSections({
   activeLocale,
   setActiveLocale,
   tokenOptions,
+  visualEditor,
 }: EditorProps) {
   return (
-    <div className="grid min-w-0 gap-6">
+    <div
+      className={
+        draft.type === 'button' ? 'grid min-w-0 gap-0' : 'grid min-w-0 gap-6'
+      }
+    >
       <MetadataEditor labels={labels} draft={draft} setDraft={setDraft} />
+
+      <VariantsSizesStatesSection
+        labels={labels}
+        draft={draft}
+        activeLocale={activeLocale}
+        setDraft={setDraft}
+      />
+
+      {visualEditor}
 
       <LocalizedContentSection
         labels={labels}
@@ -200,13 +231,7 @@ export function ComponentContractEditorSections({
         activeLocale={activeLocale}
         draft={draft}
         setDraft={setDraft}
-      />
-
-      <VariantsSizesStatesSection
-        labels={labels}
-        draft={draft}
-        activeLocale={activeLocale}
-        setDraft={setDraft}
+        collapsible={draft.type === 'button'}
       />
 
       <AccessibilitySection
@@ -223,13 +248,15 @@ export function ComponentContractEditorSections({
         setDraft={setDraft}
       />
 
-      <VisualTokensSection
-        labels={labels}
-        draft={draft}
-        activeLocale={activeLocale}
-        setDraft={setDraft}
-        tokenOptions={tokenOptions}
-      />
+      {draft.type === 'button' ? null : (
+        <VisualTokensSection
+          labels={labels}
+          draft={draft}
+          activeLocale={activeLocale}
+          setDraft={setDraft}
+          tokenOptions={tokenOptions}
+        />
+      )}
     </div>
   );
 }
@@ -242,7 +269,10 @@ function MetadataEditor({
   return (
     <section
       aria-label={labels.metadata.title}
-      className="border-border-subtle grid min-w-0 gap-3 border-b pb-5 sm:grid-cols-[minmax(0,1fr)_11rem]"
+      className={[
+        'grid min-w-0 gap-3 pb-5 sm:grid-cols-[minmax(0,1fr)_11rem]',
+        draft.type === 'button' ? '' : 'border-border-subtle border-b',
+      ].join(' ')}
     >
       <CompactInput
         label={labels.basics.name}
@@ -286,6 +316,7 @@ function LocalizedContentSection({
   return (
     <EditorSection
       title={labels.localizedContent.title}
+      collapsible={draft.type === 'button'}
       action={
         <LocaleControl
           labels={labels}
@@ -390,7 +421,10 @@ function VariantsSizesStatesSection({
   setDraft,
 }: Omit<EditorProps, 'setActiveLocale' | 'tokenOptions'>) {
   return (
-    <EditorSection title={labels.collections.title}>
+    <EditorSection
+      title={labels.collections.title}
+      collapsible={draft.type === 'button'}
+    >
       <div className="grid gap-4">
         <TagCollectionRow
           axisLabel={labels.variants.axis}
@@ -608,6 +642,7 @@ function AccessibilitySection({
   return (
     <EditorSection
       title={labels.accessibility.title}
+      collapsible={draft.type === 'button'}
       action={
         <Button
           variant="secondary"
@@ -736,6 +771,7 @@ function ForbiddenPatternsSection({
   return (
     <EditorSection
       title={labels.forbiddenPatterns.title}
+      collapsible={draft.type === 'button'}
       action={
         <Button
           variant="secondary"
@@ -799,11 +835,26 @@ function VisualTokensSection({
   setDraft,
   tokenOptions,
 }: Omit<EditorProps, 'setActiveLocale'>) {
+  const excludedRoles = getV2OwnedLegacyPreviewRoles(draft.type);
+  const excludedRoleSet = new Set(excludedRoles);
+  const visibleBindings = draft.tokenBindings
+    .map((binding, index) => ({ binding, index }))
+    .filter(({ binding }) => {
+      const role = normalizeComponentPreviewTokenRole(binding.key);
+      return role === null || !excludedRoleSet.has(role);
+    });
+
   function addTokenBinding() {
     const emptyBinding = createEmptyTokenBindingDraft();
-    const role = getFirstAvailableComponentPreviewTokenRole(
-      draft.tokenBindings,
-    );
+    const role =
+      componentPreviewTokenRoles.find(
+        (candidate) =>
+          !excludedRoleSet.has(candidate) &&
+          !draft.tokenBindings.some(
+            (binding) =>
+              normalizeComponentPreviewTokenRole(binding.key) === candidate,
+          ),
+      ) ?? null;
     const nextBinding = role
       ? {
           ...emptyBinding,
@@ -829,7 +880,7 @@ function VisualTokensSection({
       }
     >
       <div className="border-border-subtle min-w-0 rounded-md border">
-        {draft.tokenBindings.map((binding, index) => (
+        {visibleBindings.map(({ binding, index }) => (
           <TokenBindingRow
             key={binding.draftId}
             labels={labels}
@@ -837,7 +888,16 @@ function VisualTokensSection({
             binding={binding}
             bindings={draft.tokenBindings}
             tokenOptions={tokenOptions}
+            excludedRoles={excludedRoles}
             onChange={(nextBinding) => {
+              const nextRole = normalizeComponentPreviewTokenRole(
+                nextBinding.key,
+              );
+
+              if (nextRole && excludedRoleSet.has(nextRole)) {
+                return;
+              }
+
               const nextBindings = [...draft.tokenBindings];
               nextBindings[index] = nextBinding;
               setDraft({ ...draft, tokenBindings: nextBindings });
@@ -853,7 +913,7 @@ function VisualTokensSection({
           />
         ))}
 
-        {draft.tokenBindings.length === 0 ? (
+        {visibleBindings.length === 0 ? (
           <p className="text-content-tertiary px-3 py-4 text-xs">
             {labels.visualTokens.description}
           </p>
@@ -869,6 +929,7 @@ function TokenBindingRow({
   binding,
   bindings,
   tokenOptions,
+  excludedRoles,
   onChange,
   onRemove,
 }: {
@@ -877,6 +938,7 @@ function TokenBindingRow({
   binding: ComponentTokenBindingDraft;
   bindings: ComponentTokenBindingDraft[];
   tokenOptions: ComponentTokenOption[];
+  excludedRoles: readonly ComponentPreviewTokenRole[];
   onChange: (binding: ComponentTokenBindingDraft) => void;
   onRemove: () => void;
 }) {
@@ -915,8 +977,10 @@ function TokenBindingRow({
           label: labels.visualTokens.tokenTypes.motion,
         },
       ];
-  const tokenOptionsForType = tokenOptions.filter(
-    (tokenOption) => tokenOption.type === binding.tokenType,
+  const tokenOptionsForType = sortComponentTokenOptions(
+    tokenOptions.filter(
+      (tokenOption) => tokenOption.type === binding.tokenType,
+    ),
   );
   const hasCurrentTokenPath = tokenOptionsForType.some(
     (tokenOption) => tokenOption.path === binding.tokenPath,
@@ -933,6 +997,7 @@ function TokenBindingRow({
           labels={labels.visualTokens}
           binding={binding}
           bindings={bindings}
+          excludedRoles={excludedRoles}
           onChange={onChange}
         />
         <div className="grid min-w-0 gap-1.5">
@@ -1017,26 +1082,63 @@ function EditorSection({
   description,
   action,
   tone = 'default',
+  collapsible = false,
   children,
 }: {
   title: string;
   description?: string;
   action?: ReactNode;
   tone?: 'default' | 'danger';
+  collapsible?: boolean;
   children: ReactNode;
 }) {
+  const titleClassName = [
+    'text-base font-semibold tracking-tight',
+    tone === 'danger' ? 'text-action-danger' : '',
+  ].join(' ');
+
+  if (collapsible) {
+    return (
+      <details className="border-border-subtle group min-w-0 border-t py-4">
+        <summary className="focus-visible:outline-border-focus flex cursor-pointer list-none flex-col gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0 flex-1">
+            <h3 className={titleClassName}>{title}</h3>
+            {description ? (
+              <p className="text-content-secondary mt-1 max-w-2xl text-xs leading-5">
+                {description}
+              </p>
+            ) : null}
+          </div>
+          <div className="flex shrink-0 items-start justify-between gap-2 sm:justify-end">
+            {action ? (
+              <span
+                className="hidden group-open:block"
+                onClick={(event) => event.stopPropagation()}
+                onKeyDown={(event) => event.stopPropagation()}
+              >
+                {action}
+              </span>
+            ) : null}
+            <div className="flex aspect-square items-center justify-center p-1">
+              <CaretRightIcon
+                aria-hidden="true"
+                size={14}
+                weight="bold"
+                className="text-content-tertiary mt-0.5 shrink-0 transition-transform group-open:rotate-90"
+              />
+            </div>
+          </div>
+        </summary>
+        <div className="mt-3 min-w-0">{children}</div>
+      </details>
+    );
+  }
+
   return (
     <section className="min-w-0 pt-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <h3
-            className={[
-              'text-base font-semibold tracking-tight',
-              tone === 'danger' ? 'text-action-danger' : '',
-            ].join(' ')}
-          >
-            {title}
-          </h3>
+          <h3 className={titleClassName}>{title}</h3>
           {description ? (
             <p className="text-content-secondary mt-1 max-w-2xl text-xs leading-5">
               {description}

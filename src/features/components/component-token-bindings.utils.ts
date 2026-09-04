@@ -56,6 +56,30 @@ export type ComponentPreviewSemanticPalette = {
   missingStatusTones: ComponentPreviewStatusTone[];
 };
 
+function getComponentTokenLayerRank(path: string): number {
+  if (path.includes('.semantic.')) {
+    return 0;
+  }
+
+  if (path.includes('.primitive.')) {
+    return 1;
+  }
+
+  return 2;
+}
+
+export function sortComponentTokenOptions(
+  tokenOptions: readonly ComponentTokenOption[],
+): ComponentTokenOption[] {
+  return [...tokenOptions].sort((left, right) => {
+    const layerDifference =
+      getComponentTokenLayerRank(left.path) -
+      getComponentTokenLayerRank(right.path);
+
+    return layerDifference || left.path.localeCompare(right.path);
+  });
+}
+
 export function createComponentTokenOptions(
   rawTokenSets: Array<{
     type: string;
@@ -64,14 +88,15 @@ export function createComponentTokenOptions(
   }>,
 ): ComponentTokenOption[] {
   const parsedTokenSets = parseComponentTokenSets(rawTokenSets);
-
-  return parsedTokenSets.tokenSets.flatMap((tokenSet) =>
+  const tokenOptions = parsedTokenSets.tokenSets.flatMap((tokenSet) =>
     tokenSet.tokens.map((token) => ({
       type: token.type,
       path: token.path,
       label: token.path,
     })),
   );
+
+  return sortComponentTokenOptions(tokenOptions);
 }
 
 function createPreviewTokenDictionary(
