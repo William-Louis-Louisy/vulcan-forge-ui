@@ -1,0 +1,34 @@
+name: DS-181R-04 format
+
+on:
+  push:
+    branches:
+      - agent/ds-181r-04-textfield-customization
+    paths:
+      - .github/workflows/ds-181r-04-format.yml
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: agent/ds-181r-04-textfield-customization
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Format R04 files
+        run: npx --yes --package prettier@3.8.3 --package prettier-plugin-tailwindcss@0.8.0 prettier --plugin=prettier-plugin-tailwindcss src/features/components/update-button-visual-customization.action.ts src/features/components/ComponentContractEditor.tsx src/features/components/ComponentContractEditorSections.tsx src/features/components/ComponentContractEditor.test.tsx src/features/components/ComponentFoundationsPreviewClient.tsx src/features/components/ComponentFoundationsPreviewClient.test.tsx src/features/components/ButtonVisualPreviewMatrix.tsx src/messages/component-v2-customization-messages.ts docs/product/ds-181r-04-textfield-customization.md --write
+      - name: Remove temporary workflow
+        run: git rm .github/workflows/ds-181r-04-format.yml
+      - name: Commit formatting
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src docs
+          git commit -m "style: format DS-181R-04 files"
+          git push origin HEAD:agent/ds-181r-04-textfield-customization
