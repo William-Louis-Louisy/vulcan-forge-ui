@@ -189,6 +189,12 @@ function getV2OwnedLegacyPreviewRoles(
   return v2OwnedLegacyPreviewRolesByComponentType[componentType] ?? [];
 }
 
+function usesV2VisualInspector(
+  componentType: ComponentContractEditorDraft['type'],
+): boolean {
+  return componentType === 'button' || componentType === 'textField';
+}
+
 export function ComponentContractEditorSections({
   labels,
   draft,
@@ -201,7 +207,7 @@ export function ComponentContractEditorSections({
   return (
     <div
       className={
-        draft.type === 'button' ? 'grid min-w-0 gap-0' : 'grid min-w-0 gap-6'
+        usesV2VisualInspector(draft.type) ? 'grid min-w-0 gap-0' : 'grid min-w-0 gap-6'
       }
     >
       <MetadataEditor labels={labels} draft={draft} setDraft={setDraft} />
@@ -231,7 +237,7 @@ export function ComponentContractEditorSections({
         activeLocale={activeLocale}
         draft={draft}
         setDraft={setDraft}
-        collapsible={draft.type === 'button'}
+        collapsible={usesV2VisualInspector(draft.type)}
       />
 
       <AccessibilitySection
@@ -248,7 +254,7 @@ export function ComponentContractEditorSections({
         setDraft={setDraft}
       />
 
-      {draft.type === 'button' ? null : (
+      {usesV2VisualInspector(draft.type) ? null : (
         <VisualTokensSection
           labels={labels}
           draft={draft}
@@ -271,7 +277,7 @@ function MetadataEditor({
       aria-label={labels.metadata.title}
       className={[
         'grid min-w-0 gap-3 pb-5 sm:grid-cols-[minmax(0,1fr)_11rem]',
-        draft.type === 'button' ? '' : 'border-border-subtle border-b',
+        usesV2VisualInspector(draft.type) ? '' : 'border-border-subtle border-b',
       ].join(' ')}
     >
       <CompactInput
@@ -316,7 +322,7 @@ function LocalizedContentSection({
   return (
     <EditorSection
       title={labels.localizedContent.title}
-      collapsible={draft.type === 'button'}
+      collapsible={usesV2VisualInspector(draft.type)}
       action={
         <LocaleControl
           labels={labels}
@@ -423,7 +429,7 @@ function VariantsSizesStatesSection({
   return (
     <EditorSection
       title={labels.collections.title}
-      collapsible={draft.type === 'button'}
+      collapsible={usesV2VisualInspector(draft.type)}
     >
       <div className="grid gap-4">
         <TagCollectionRow
@@ -642,7 +648,7 @@ function AccessibilitySection({
   return (
     <EditorSection
       title={labels.accessibility.title}
-      collapsible={draft.type === 'button'}
+      collapsible={usesV2VisualInspector(draft.type)}
       action={
         <Button
           variant="secondary"
@@ -771,7 +777,7 @@ function ForbiddenPatternsSection({
   return (
     <EditorSection
       title={labels.forbiddenPatterns.title}
-      collapsible={draft.type === 'button'}
+      collapsible={usesV2VisualInspector(draft.type)}
       action={
         <Button
           variant="secondary"

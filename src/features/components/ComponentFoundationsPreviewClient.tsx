@@ -65,6 +65,8 @@ export function ComponentFoundationsPreviewClient({
     .join(', ');
   const isAlertTemplate = templateDefinition?.rendererKey === 'alert';
   const isButtonTemplate = templateDefinition?.rendererKey === 'button';
+  const isTextFieldTemplate =
+    templateDefinition?.rendererKey === 'textField';
   const previewLabels = {
     baseState: t('foundationsPreview.baseState'),
     state: t('foundationsPreview.state'),
@@ -97,7 +99,7 @@ export function ComponentFoundationsPreviewClient({
       ) : null}
 
       <div className="mt-3 max-w-full min-w-0">
-        {isButtonTemplate ? (
+        {isButtonTemplate || isTextFieldTemplate ? (
           <ButtonVisualPreviewMatrix
             locale={locale}
             component={previewComponent}

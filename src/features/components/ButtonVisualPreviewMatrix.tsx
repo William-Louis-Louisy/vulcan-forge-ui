@@ -121,7 +121,11 @@ export function ButtonVisualPreviewMatrix({
   );
 
   return (
-    <div className="min-w-0" data-button-v2-preview="true">
+    <div
+      className="min-w-0"
+      data-button-v2-preview={component.type === 'button' ? 'true' : undefined}
+      data-component-v2-preview={component.type}
+    >
       {states.length > 0 ? (
         <div className="mb-3 ml-auto grid max-w-xs gap-1.5">
           <label
@@ -200,6 +204,7 @@ export function ButtonVisualPreviewMatrix({
                     <td key={`${variant.key}-${size.key}`} className="p-1.5">
                       <div className="flex min-h-20 min-w-24 items-center justify-center">
                         <ButtonVisualPreview
+                          type={component.type}
                           name={component.name}
                           variantKey={variant.key}
                           sizeKey={size.key}
@@ -221,6 +226,7 @@ export function ButtonVisualPreviewMatrix({
 }
 
 function ButtonVisualPreview({
+  type,
   name,
   variantKey,
   sizeKey,
@@ -228,6 +234,7 @@ function ButtonVisualPreview({
   styles,
   semanticPalette,
 }: {
+  type: ComponentRegistryItem['type'];
   name: string;
   variantKey: string;
   sizeKey: string;
@@ -238,10 +245,71 @@ function ButtonVisualPreview({
   const normalizedStateKey = stateKey.toLowerCase();
   const isDisabled = normalizedStateKey.includes('disabled');
   const isFocus = normalizedStateKey.includes('focus');
+  const isError =
+    normalizedStateKey.includes('invalid') ||
+    normalizedStateKey.includes('error');
   const isLoading = normalizedStateKey.includes('loading');
   const isHover = normalizedStateKey.includes('hover');
   const isActive = normalizedStateKey.includes('active');
   const size = getPreviewSizeCategory(sizeKey);
+
+  if (type === 'textField') {
+    return (
+      <input
+        aria-label={name}
+        aria-invalid={isError || undefined}
+        disabled={isDisabled}
+        readOnly
+        tabIndex={-1}
+        value={variantKey}
+        data-preview-component="textField"
+        data-preview-v2="true"
+        style={styles}
+        className={[
+          'w-full transition',
+          styles.borderStyle === 'none' ? '' : 'border',
+          hasRadius(styles) ? '' : 'rounded-md',
+          hasHorizontalPadding(styles) ? '' : 'px-2',
+          hasExplicitHeight(styles)
+            ? ''
+            : size === 'small'
+              ? 'min-h-8'
+              : size === 'large'
+                ? 'min-h-11'
+                : 'min-h-9',
+          hasDefinedStyle(styles.fontSize)
+            ? ''
+            : size === 'small'
+              ? 'text-[0.6875rem]'
+              : size === 'large'
+                ? 'text-sm'
+                : 'text-xs',
+          hasDefinedStyle(styles.backgroundColor)
+            ? ''
+            : isDisabled
+              ? 'bg-background-subtle'
+              : 'bg-surface-primary',
+          hasDefinedStyle(styles.color)
+            ? ''
+            : isError
+              ? 'text-action-danger'
+              : isDisabled
+                ? 'text-content-tertiary'
+                : 'text-content-primary',
+          hasDefinedStyle(styles.borderColor)
+            ? ''
+            : isError
+              ? 'border-action-danger'
+              : isFocus
+                ? 'border-action-primary'
+                : 'border-border-subtle',
+          isFocus ? 'ring-action-primary/25 ring-2' : '',
+          isDisabled ? 'cursor-not-allowed opacity-60' : '',
+        ].join(' ')}
+      />
+    );
+  }
+
   const variantTone = getButtonVariantTone(variantKey);
   const semanticColor =
     variantTone === 'danger'
