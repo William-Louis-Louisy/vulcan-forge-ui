@@ -173,13 +173,18 @@ export function ButtonVisualPreviewMatrix({
                   {variant.key}
                 </th>
                 {sizes.map((size) => {
+                  const templateResolvedVisual = templateDefinition
+                    ? resolveComponentVisualProperties({
+                        templateDefaults:
+                          templateDefinition.defaultContract.visual,
+                        overrides: templateDefinition.defaultContract.overrides,
+                        variantKey: variant.key,
+                        sizeKey: size.key,
+                        ...(stateKey ? { stateKey } : {}),
+                      })
+                    : {};
                   const resolvedVisual = resolveComponentVisualProperties({
-                    ...(templateDefinition?.defaultContract.visual
-                      ? {
-                          templateDefaults:
-                            templateDefinition.defaultContract.visual,
-                        }
-                      : {}),
+                    templateDefaults: templateResolvedVisual,
                     base: contractV2.visual,
                     overrides: contractV2.overrides,
                     variantKey: variant.key,

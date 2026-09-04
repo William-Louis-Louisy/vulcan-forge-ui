@@ -148,6 +148,26 @@ function ApplyDirectV2VisualButton() {
 }
 
 describe('ComponentFoundationsPreviewClient', () => {
+  it('renders the Primary base Button template without a border', () => {
+    render(
+      <ComponentContractPreviewProvider
+        initialContract={contract}
+        initialContractV2={contractV2}
+      >
+        <ComponentFoundationsPreviewClient
+          locale="en"
+          component={component}
+          rawTokenSets={rawTokenSets}
+        />
+      </ComponentContractPreviewProvider>,
+    );
+
+    const previewButton = screen.getByRole('button', { name: 'Button' });
+
+    expect(previewButton).toHaveStyle({ borderStyle: 'none' });
+    expect(previewButton).not.toHaveClass('border');
+  });
+
   it('updates the Button V2 matrix when the legacy editor publishes a visual token binding', async () => {
     const user = userEvent.setup();
 
@@ -200,10 +220,7 @@ describe('ComponentFoundationsPreviewClient', () => {
 
     expect(previewButton).toHaveStyle({
       paddingInline: '24px',
-      borderTopLeftRadius: '18px',
-      borderTopRightRadius: '4px',
-      borderBottomRightRadius: '18px',
-      borderBottomLeftRadius: '4px',
+      borderRadius: '18px 4px 18px 4px',
     });
   });
 

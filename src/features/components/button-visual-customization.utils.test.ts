@@ -7,6 +7,7 @@ import {
 import {
   createButtonVisualCustomizationFingerprint,
   getButtonVisualProperty,
+  resetButtonVisualGroup,
   resetButtonVisualProperty,
   setButtonVisualProperty,
 } from './button-visual-customization.utils';
@@ -137,6 +138,43 @@ describe('Button visual customization utilities', () => {
     });
   });
 
+  it('resets an entire visual group only in the selected scope', () => {
+    let contract = createButtonContract();
+    contract = setButtonVisualProperty(
+      contract,
+      { kind: 'base' },
+      'spacing',
+      'paddingX',
+      { source: 'value', value: '12px' },
+    );
+    contract = setButtonVisualProperty(
+      contract,
+      { kind: 'base' },
+      'border',
+      'width',
+      { source: 'value', value: '2px' },
+    );
+    contract = setButtonVisualProperty(
+      contract,
+      { kind: 'variant', key: 'primary' },
+      'border',
+      'color',
+      { source: 'value', value: '#112233' },
+    );
+
+    const reset = resetButtonVisualGroup(contract, { kind: 'base' }, 'border');
+
+    expect(reset.visual.border).toBeUndefined();
+    expect(reset.visual.spacing?.paddingX).toEqual({
+      source: 'value',
+      value: '12px',
+    });
+    expect(reset.overrides.variants.primary?.border?.color).toEqual({
+      source: 'value',
+      value: '#112233',
+    });
+  });
+
   it('fingerprints only visual customization state', () => {
     const contract = createButtonContract();
     const renamed = { ...contract, name: 'Renamed Button' };
@@ -144,5 +182,105 @@ describe('Button visual customization utilities', () => {
     expect(createButtonVisualCustomizationFingerprint(renamed)).toBe(
       createButtonVisualCustomizationFingerprint(contract),
     );
+  });
+
+  it('resetting a corner keeps the authored uniform radius intact', () => {
+    let contract = createButtonContract();
+    contract = setButtonVisualProperty(
+      contract,
+      { kind: 'base' },
+      'radius',
+      'radius',
+      { source: 'value', value: '8px' },
+    );
+    contract = setButtonVisualProperty(
+      contract,
+      { kind: 'base' },
+      'radius',
+      'topLeft',
+      { source: 'value', value: '18px' },
+    );
+    contract = resetButtonVisualProperty(
+      contract,
+      { kind: 'base' },
+      'radius',
+      'topLeft',
+    );
+
+    expect(
+      getButtonVisualProperty(contract, { kind: 'base' }, 'radius', 'topLeft'),
+    ).toBeUndefined();
+    expect(
+      getButtonVisualProperty(contract, { kind: 'base' }, 'radius', 'radius'),
+    ).toEqual({ source: 'value', value: '8px' });
+  });
+
+  it('setting a uniform base radius clears same-layer corner overrides', () => {
+    let contract = createButtonContract();
+    contract = setButtonVisualProperty(
+      contract,
+      { kind: 'base' },
+      'radius',
+      'topLeft',
+      { source: 'value', value: '18px' },
+    );
+    contract = setButtonVisualProperty(
+      contract,
+      { kind: 'base' },
+      'radius',
+      'bottomRight',
+      { source: 'value', value: '32px' },
+    );
+    contract = setButtonVisualProperty(
+      contract,
+      { kind: 'base' },
+      'radius',
+      'radius',
+      { source: 'value', value: '8px' },
+    );
+
+    expect(contract.visual.radius).toEqual({
+      radius: { source: 'value', value: '8px' },
+    });
+  });
+
+  it('setting a uniform override radius clears corners only in that override layer', () => {
+    let contract = createButtonContract();
+    contract = setButtonVisualProperty(
+      contract,
+      { kind: 'base' },
+      'radius',
+      'topLeft',
+      { source: 'value', value: '24px' },
+    );
+    contract = setButtonVisualProperty(
+      contract,
+      { kind: 'variant', key: 'primary' },
+      'radius',
+      'topRight',
+      { source: 'value', value: '18px' },
+    );
+    contract = setButtonVisualProperty(
+      contract,
+      { kind: 'variant', key: 'primary' },
+      'radius',
+      'bottomLeft',
+      { source: 'value', value: '32px' },
+    );
+    contract = setButtonVisualProperty(
+      contract,
+      { kind: 'variant', key: 'primary' },
+      'radius',
+      'radius',
+      { source: 'value', value: '6px' },
+    );
+
+    expect(contract.visual.radius?.topLeft).toEqual({
+      source: 'value',
+      value: '24px',
+    });
+    expect(contract.overrides.variants.primary?.radius).toEqual({
+      radius: { source: 'value', value: '6px' },
+    });
   });
 });

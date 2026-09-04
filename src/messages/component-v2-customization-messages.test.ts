@@ -14,16 +14,21 @@ describe('Component V2 Button customization messages', () => {
     expect(french.properties).toEqual(english.properties);
     expect(french.borderStyles).toEqual(english.borderStyles);
     expect(french.textAlignments).toEqual(english.textAlignments);
+    expect(english.unset).toBe('Default');
+    expect(french.unset).toBe('Default');
+    expect(english.title).toBe('Visual tokens');
+    expect(french.title).toBe('Tokens visuels');
   });
 
-  it('does not duplicate Visual Tokens or deferred effects ownership', () => {
+  it('keeps Fill ownership while deferred effects stay out of the inspector', () => {
     const messages =
       componentV2CustomizationMessages.en.ComponentsRegistryPage
         .buttonCustomization;
 
+    expect(messages.groups.fill).toBe('Fill');
+    expect(messages.properties.background).toBe('Background');
+    expect(messages.properties.foreground).toBe('Foreground');
     expect('surface' in messages.groups).toBe(false);
-    expect('background' in messages.properties).toBe(false);
-    expect('foreground' in messages.properties).toBe(false);
     expect('elevation' in messages.properties).toBe(false);
   });
 });

@@ -29,13 +29,14 @@ const ComponentContractPreviewContext =
 function mergeMigratedLegacyVisualProperties(
   current: ComponentVisualProperties,
   migrated: ComponentVisualProperties,
+  { includeRadius }: { includeRadius: boolean },
 ): ComponentVisualProperties {
   return {
     ...current,
     ...(migrated.spacing
       ? { spacing: { ...current.spacing, ...migrated.spacing } }
       : {}),
-    ...(migrated.radius
+    ...(includeRadius && migrated.radius
       ? { radius: { ...current.radius, ...migrated.radius } }
       : {}),
     ...(migrated.surface
@@ -75,6 +76,12 @@ export function ComponentContractPreviewProvider({
             visual: mergeMigratedLegacyVisualProperties(
               currentContractV2.visual,
               migrated.visual,
+              {
+                // Initial V1 → V2 migration still seeds Button radius from the
+                // legacy binding. Once V2 is live, its dedicated editor owns
+                // radius and legacy Visual Tokens must not rewrite it.
+                includeRadius: currentContractV2.templateKey !== 'button',
+              },
             ),
           });
         });

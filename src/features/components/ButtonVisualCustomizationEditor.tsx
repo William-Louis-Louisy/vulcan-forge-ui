@@ -9,7 +9,8 @@ import {
   type ReactNode,
 } from 'react';
 import { useTranslations } from 'next-intl';
-import { Button, Input, Select } from '@/components/ui';
+import { CaretRightIcon } from '@phosphor-icons/react';
+import { Button, Input, SegmentedControl, Select } from '@/components/ui';
 import {
   explicitColorValueSchema,
   explicitLengthValueSchema,
@@ -19,11 +20,15 @@ import {
 } from '@/domain/design-system';
 import type { Locale } from '@/i18n/routing';
 import { useRouter } from '@/i18n/navigation';
-import type { ComponentTokenOption } from './component-token-bindings.utils';
+import {
+  sortComponentTokenOptions,
+  type ComponentTokenOption,
+} from './component-token-bindings.utils';
 import {
   createButtonVisualCustomizationFingerprint,
   getButtonVisualProperty,
   getButtonVisualTarget,
+  resetButtonVisualGroup,
   resetButtonVisualProperty,
   setButtonTypographyValue,
   setButtonVisualProperty,
@@ -36,7 +41,12 @@ import { usePreserveSaveContext } from '@/features/save-context/usePreserveSaveC
 import { useActionBackedProjectSaveStatus } from '@/features/save-context/useActionBackedProjectSaveStatus';
 
 type DesignValueKind = 'dimension' | 'length' | 'radius' | 'color';
-type DesignValueGroupKey = 'dimensions' | 'spacing' | 'radius' | 'border';
+type DesignValueGroupKey =
+  | 'dimensions'
+  | 'spacing'
+  | 'radius'
+  | 'border'
+  | 'surface';
 type DesignValueLabelKey =
   | 'width'
   | 'minWidth'
@@ -50,8 +60,11 @@ type DesignValueLabelKey =
   | 'topRight'
   | 'bottomRight'
   | 'bottomLeft'
+  | 'background'
+  | 'foreground'
   | 'borderWidth'
   | 'borderColor';
+type InspectorOptionalGroupKey = 'border' | 'typography';
 
 type DesignValueDescriptor = {
   group: DesignValueGroupKey;
@@ -61,129 +74,135 @@ type DesignValueDescriptor = {
   tokenType: ComponentTokenOption['type'];
 };
 
-const propertyGroups: Array<{
-  titleKey: DesignValueGroupKey;
-  properties: DesignValueDescriptor[];
-}> = [
+const dimensionProperties = [
   {
-    titleKey: 'dimensions',
-    properties: [
-      {
-        group: 'dimensions',
-        property: 'width',
-        labelKey: 'width',
-        kind: 'dimension',
-        tokenType: 'spacing',
-      },
-      {
-        group: 'dimensions',
-        property: 'minWidth',
-        labelKey: 'minWidth',
-        kind: 'length',
-        tokenType: 'spacing',
-      },
-      {
-        group: 'dimensions',
-        property: 'height',
-        labelKey: 'height',
-        kind: 'dimension',
-        tokenType: 'spacing',
-      },
-      {
-        group: 'dimensions',
-        property: 'minHeight',
-        labelKey: 'minHeight',
-        kind: 'length',
-        tokenType: 'spacing',
-      },
-    ],
+    group: 'dimensions',
+    property: 'width',
+    labelKey: 'width',
+    kind: 'dimension',
+    tokenType: 'spacing',
   },
   {
-    titleKey: 'spacing',
-    properties: [
-      {
-        group: 'spacing',
-        property: 'paddingX',
-        labelKey: 'paddingX',
-        kind: 'length',
-        tokenType: 'spacing',
-      },
-      {
-        group: 'spacing',
-        property: 'paddingY',
-        labelKey: 'paddingY',
-        kind: 'length',
-        tokenType: 'spacing',
-      },
-      {
-        group: 'spacing',
-        property: 'gap',
-        labelKey: 'gap',
-        kind: 'length',
-        tokenType: 'spacing',
-      },
-    ],
+    group: 'dimensions',
+    property: 'minWidth',
+    labelKey: 'minWidth',
+    kind: 'length',
+    tokenType: 'spacing',
   },
   {
-    titleKey: 'radius',
-    properties: [
-      {
-        group: 'radius',
-        property: 'radius',
-        labelKey: 'radius',
-        kind: 'radius',
-        tokenType: 'radius',
-      },
-      {
-        group: 'radius',
-        property: 'topLeft',
-        labelKey: 'topLeft',
-        kind: 'radius',
-        tokenType: 'radius',
-      },
-      {
-        group: 'radius',
-        property: 'topRight',
-        labelKey: 'topRight',
-        kind: 'radius',
-        tokenType: 'radius',
-      },
-      {
-        group: 'radius',
-        property: 'bottomRight',
-        labelKey: 'bottomRight',
-        kind: 'radius',
-        tokenType: 'radius',
-      },
-      {
-        group: 'radius',
-        property: 'bottomLeft',
-        labelKey: 'bottomLeft',
-        kind: 'radius',
-        tokenType: 'radius',
-      },
-    ],
+    group: 'dimensions',
+    property: 'height',
+    labelKey: 'height',
+    kind: 'dimension',
+    tokenType: 'spacing',
   },
   {
-    titleKey: 'border',
-    properties: [
-      {
-        group: 'border',
-        property: 'width',
-        labelKey: 'borderWidth',
-        kind: 'length',
-        tokenType: 'spacing',
-      },
-      {
-        group: 'border',
-        property: 'color',
-        labelKey: 'borderColor',
-        kind: 'color',
-        tokenType: 'color',
-      },
-    ],
+    group: 'dimensions',
+    property: 'minHeight',
+    labelKey: 'minHeight',
+    kind: 'length',
+    tokenType: 'spacing',
   },
-];
+] satisfies readonly DesignValueDescriptor[];
+
+const spacingProperties = [
+  {
+    group: 'spacing',
+    property: 'paddingX',
+    labelKey: 'paddingX',
+    kind: 'length',
+    tokenType: 'spacing',
+  },
+  {
+    group: 'spacing',
+    property: 'paddingY',
+    labelKey: 'paddingY',
+    kind: 'length',
+    tokenType: 'spacing',
+  },
+  {
+    group: 'spacing',
+    property: 'gap',
+    labelKey: 'gap',
+    kind: 'length',
+    tokenType: 'spacing',
+  },
+] satisfies readonly DesignValueDescriptor[];
+
+const radiusProperty = {
+  group: 'radius',
+  property: 'radius',
+  labelKey: 'radius',
+  kind: 'radius',
+  tokenType: 'radius',
+} satisfies DesignValueDescriptor;
+
+const cornerProperties = [
+  {
+    group: 'radius',
+    property: 'topLeft',
+    labelKey: 'topLeft',
+    kind: 'radius',
+    tokenType: 'radius',
+  },
+  {
+    group: 'radius',
+    property: 'topRight',
+    labelKey: 'topRight',
+    kind: 'radius',
+    tokenType: 'radius',
+  },
+  {
+    group: 'radius',
+    property: 'bottomRight',
+    labelKey: 'bottomRight',
+    kind: 'radius',
+    tokenType: 'radius',
+  },
+  {
+    group: 'radius',
+    property: 'bottomLeft',
+    labelKey: 'bottomLeft',
+    kind: 'radius',
+    tokenType: 'radius',
+  },
+] satisfies readonly DesignValueDescriptor[];
+
+const fillProperties = [
+  {
+    group: 'surface',
+    property: 'background',
+    labelKey: 'background',
+    kind: 'color',
+    tokenType: 'color',
+  },
+  {
+    group: 'surface',
+    property: 'foreground',
+    labelKey: 'foreground',
+    kind: 'color',
+    tokenType: 'color',
+  },
+] satisfies readonly DesignValueDescriptor[];
+
+const borderProperties = [
+  {
+    group: 'border',
+    property: 'width',
+    labelKey: 'borderWidth',
+    kind: 'length',
+    tokenType: 'spacing',
+  },
+  {
+    group: 'border',
+    property: 'color',
+    labelKey: 'borderColor',
+    kind: 'color',
+    tokenType: 'color',
+  },
+] satisfies readonly DesignValueDescriptor[];
+
+const optionalGroups = ['border', 'typography'] as const;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -246,6 +265,39 @@ function getScopeKeys(
   return [];
 }
 
+function hasCornerOverrides(
+  contract: ComponentContractV2,
+  scope: ButtonVisualScope,
+) {
+  return cornerProperties.some(
+    (descriptor) =>
+      getButtonVisualProperty(
+        contract,
+        scope,
+        descriptor.group,
+        descriptor.property,
+      ) !== undefined,
+  );
+}
+
+function getVisibleOptionalGroups(
+  contract: ComponentContractV2,
+  scope: ButtonVisualScope,
+): InspectorOptionalGroupKey[] {
+  const target = getButtonVisualTarget(contract, scope);
+  const groups: InspectorOptionalGroupKey[] = [];
+
+  if (target.border !== undefined) {
+    groups.push('border');
+  }
+
+  if (target.typography !== undefined) {
+    groups.push('typography');
+  }
+
+  return groups;
+}
+
 export function ButtonVisualCustomizationEditor({
   locale,
   projectSlug,
@@ -269,11 +321,19 @@ export function ButtonVisualCustomizationEditor({
     updateButtonVisualCustomizationAction,
     initialUpdateButtonVisualCustomizationActionState,
   );
+  const baseScope = { kind: 'base' } as const;
   const [draft, setDraft] = useState(contractV2);
-  const [scope, setScope] = useState<ButtonVisualScope>({ kind: 'base' });
+  const [scope, setScope] = useState<ButtonVisualScope>(baseScope);
   const [explicitDrafts, setExplicitDrafts] = useState<Record<string, string>>(
     {},
   );
+  const [visibleOptionalGroups, setVisibleOptionalGroups] = useState<
+    InspectorOptionalGroupKey[]
+  >(() => getVisibleOptionalGroups(contractV2, baseScope));
+  const [independentCorners, setIndependentCorners] = useState(() =>
+    hasCornerOverrides(contractV2, baseScope),
+  );
+  const [isAddMenuOpen, setIsAddMenuOpen] = useState(false);
   const saveContextId = `component-visual:${projectSlug}:${componentKey}`;
   const currentFingerprint = createButtonVisualCustomizationFingerprint(draft);
   const initialSavedFingerprint =
@@ -319,25 +379,148 @@ export function ButtonVisualCustomizationEditor({
     () => getScopeKeys(liveSemanticContract, scope.kind),
     [liveSemanticContract, scope.kind],
   );
+  const availableOptionalGroups = optionalGroups.filter(
+    (group) => !visibleOptionalGroups.includes(group),
+  );
 
   function updateDraft(nextDraft: ComponentContractV2) {
     setDraft(nextDraft);
     previewContext?.setContractV2(nextDraft);
   }
 
-  function handleScopeKindChange(kind: ButtonVisualScope['kind']) {
+  function setEditingScope(nextScope: ButtonVisualScope) {
+    setScope(nextScope);
     setExplicitDrafts({});
+    setVisibleOptionalGroups(getVisibleOptionalGroups(draft, nextScope));
+    setIndependentCorners(hasCornerOverrides(draft, nextScope));
+    setIsAddMenuOpen(false);
+  }
 
+  function handleScopeKindChange(kind: ButtonVisualScope['kind']) {
     if (kind === 'base') {
-      setScope({ kind: 'base' });
+      setEditingScope(baseScope);
       return;
     }
 
     const firstKey = getScopeKeys(liveSemanticContract, kind)[0];
 
     if (firstKey) {
-      setScope({ kind, key: firstKey });
+      setEditingScope({ kind, key: firstKey });
     }
+  }
+
+  function addOptionalGroup(group: InspectorOptionalGroupKey) {
+    setVisibleOptionalGroups((current) =>
+      optionalGroups.filter(
+        (candidate) => current.includes(candidate) || candidate === group,
+      ),
+    );
+    setIsAddMenuOpen(false);
+  }
+
+  function removeOptionalGroup(group: InspectorOptionalGroupKey) {
+    let nextDraft = draft;
+
+    if (group === 'border') {
+      nextDraft = resetButtonVisualGroup(nextDraft, scope, 'border');
+    } else {
+      nextDraft = setButtonTypographyValue(nextDraft, scope, undefined);
+    }
+
+    updateDraft(nextDraft);
+    setVisibleOptionalGroups((current) =>
+      current.filter((candidate) => candidate !== group),
+    );
+  }
+
+  function handleIndependentCornersChange(checked: boolean) {
+    setIndependentCorners(checked);
+
+    if (checked) {
+      return;
+    }
+
+    let nextDraft = draft;
+
+    for (const descriptor of cornerProperties) {
+      nextDraft = resetButtonVisualProperty(
+        nextDraft,
+        scope,
+        descriptor.group,
+        descriptor.property,
+      );
+    }
+
+    updateDraft(nextDraft);
+  }
+
+  function renderDesignValueField(
+    descriptor: DesignValueDescriptor,
+    layout: 'row' | 'stacked' = 'row',
+  ) {
+    const scopeKey = scope.kind === 'base' ? 'base' : scope.key;
+    const fieldId = `${scope.kind}:${scopeKey}:${descriptor.group}:${descriptor.property}`;
+
+    return (
+      <DesignValueField
+        key={`${descriptor.group}:${descriptor.property}`}
+        id={fieldId}
+        label={t(`properties.${descriptor.labelKey}`)}
+        value={getButtonVisualProperty(
+          draft,
+          scope,
+          descriptor.group,
+          descriptor.property,
+        )}
+        descriptor={descriptor}
+        tokenOptions={tokenOptions}
+        explicitDraft={explicitDrafts[fieldId]}
+        onExplicitDraftChange={(value) =>
+          setExplicitDrafts((current) => ({
+            ...current,
+            [fieldId]: value,
+          }))
+        }
+        onChange={(value) =>
+          updateDraft(
+            setButtonVisualProperty(
+              draft,
+              scope,
+              descriptor.group,
+              descriptor.property,
+              value,
+            ),
+          )
+        }
+        onReset={() =>
+          updateDraft(
+            resetButtonVisualProperty(
+              draft,
+              scope,
+              descriptor.group,
+              descriptor.property,
+            ),
+          )
+        }
+        layout={layout}
+        labels={{
+          source: t('source'),
+          unset: t('unset'),
+          token: t('token'),
+          explicit: t('explicit'),
+          auto: t('modeAuto'),
+          fill: t('modeFill'),
+          selectToken: t('selectToken'),
+          reset: t('reset'),
+          inherited:
+            scope.kind === 'base' ? t('templateDefault') : t('inherited'),
+          valuePlaceholder:
+            descriptor.kind === 'color'
+              ? t('colorPlaceholder')
+              : t('valuePlaceholder'),
+        }}
+      />
+    );
   }
 
   const visualCustomizationPayload = JSON.stringify({
@@ -356,134 +539,168 @@ export function ButtonVisualCustomizationEditor({
           : t('save.saved');
 
   return (
-    <section className="border-border-subtle bg-background-subtle mb-6 rounded-xl border p-4 sm:p-5">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <h2 className="text-content-primary text-base font-semibold">
+    <details className="border-border-subtle group min-w-0 border-t py-4">
+      <summary className="focus-visible:outline-border-focus flex cursor-pointer list-none flex-col gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0 flex-1">
+          <h2 className="text-content-primary text-base font-semibold tracking-tight">
             {t('title')}
           </h2>
           <p className="text-content-secondary mt-1 max-w-2xl text-xs leading-5">
             {t('description')}
           </p>
         </div>
-        <span className="border-border-subtle bg-surface-primary text-content-tertiary w-fit rounded-full border px-2.5 py-1 font-mono text-[0.6875rem]">
-          V2 · button
-        </span>
-      </div>
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-2">
-        <LabeledControl label={t('scope')}>
-          <Select<ButtonVisualScope['kind']>
-            id="button-v2-customization-scope"
+        <div className="flex shrink-0 items-start justify-between gap-2 sm:justify-end">
+          <div
+            className="relative hidden group-open:block"
+            onClick={(event) => event.stopPropagation()}
+            onKeyDown={(event) => event.stopPropagation()}
+          >
+            <Button
+              variant="secondary"
+              size="sm"
+              aria-label={t('addProperty')}
+              aria-expanded={isAddMenuOpen}
+              onClick={() => setIsAddMenuOpen((open) => !open)}
+            >
+              <span>+ {t('addProperty')}</span>
+            </Button>
+
+            {isAddMenuOpen ? (
+              <div className="border-border-subtle bg-surface-primary shadow-soft absolute top-full right-0 z-30 mt-1 w-48 rounded-md border p-1">
+                {availableOptionalGroups.length > 0 ? (
+                  availableOptionalGroups.map((group) => (
+                    <button
+                      key={group}
+                      type="button"
+                      onClick={() => addOptionalGroup(group)}
+                      className="text-content-secondary hover:bg-background-subtle hover:text-content-primary flex w-full items-center rounded-sm px-2.5 py-2 text-left text-xs font-semibold transition"
+                    >
+                      {t(`groups.${group}`)}
+                    </button>
+                  ))
+                ) : (
+                  <p className="text-content-tertiary px-2.5 py-2 text-xs">
+                    {t('noPropertiesToAdd')}
+                  </p>
+                )}
+              </div>
+            ) : null}
+          </div>
+          <div className="flex aspect-square items-center justify-center p-1">
+            <CaretRightIcon
+              aria-hidden="true"
+              size={14}
+              weight="bold"
+              className="text-content-tertiary mt-0.5 shrink-0 transition-transform group-open:rotate-90"
+            />
+          </div>
+        </div>
+      </summary>
+
+      <div className="border-border-subtle bg-surface-primary mt-3 rounded-lg border">
+        <div className="bg-background-subtle flex flex-col gap-2 px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4">
+          <SegmentedControl<ButtonVisualScope['kind']>
             value={scope.kind}
             options={[
               { value: 'base', label: t('scopes.base') },
-              { value: 'variant', label: t('scopes.variant') },
-              { value: 'size', label: t('scopes.size') },
-              { value: 'state', label: t('scopes.state') },
+              {
+                value: 'variant',
+                label: t('scopes.variant'),
+                disabled: liveSemanticContract.variants.length === 0,
+              },
+              {
+                value: 'size',
+                label: t('scopes.size'),
+                disabled: liveSemanticContract.sizes.length === 0,
+              },
+              {
+                value: 'state',
+                label: t('scopes.state'),
+                disabled: liveSemanticContract.states.length === 0,
+              },
             ]}
             onValueChange={handleScopeKindChange}
-            placeholder={t('scope')}
-            size="sm"
+            ariaLabel={t('scope')}
+            className="w-full sm:w-fit"
           />
-        </LabeledControl>
 
-        {scope.kind !== 'base' ? (
-          <LabeledControl label={t('target')}>
-            <Select
-              id="button-v2-customization-target"
-              value={scope.key}
-              options={scopeTargetKeys.map((key) => ({
-                value: key,
-                label: key,
-              }))}
-              onValueChange={(key) => {
-                setExplicitDrafts({});
-                setScope({ kind: scope.kind, key });
-              }}
-              placeholder={t('target')}
-              size="sm"
-            />
-          </LabeledControl>
-        ) : (
-          <div className="border-border-subtle bg-surface-primary text-content-secondary flex min-h-9 items-center rounded-md border px-3 text-xs">
-            {t('templateDefault')}
-          </div>
-        )}
-      </div>
+          {scope.kind !== 'base' ? (
+            <div className="min-w-0 sm:w-48">
+              <Select
+                id="button-v2-customization-target"
+                value={scope.key}
+                options={scopeTargetKeys.map((key) => ({
+                  value: key,
+                  label: key,
+                }))}
+                onValueChange={(key) =>
+                  setEditingScope({ kind: scope.kind, key })
+                }
+                placeholder={t('target')}
+                size="sm"
+              />
+            </div>
+          ) : (
+            <span className="text-content-tertiary text-xs">
+              {t('templateDefault')}
+            </span>
+          )}
+        </div>
 
-      <div className="mt-5 grid gap-5">
-        {propertyGroups.map((group) => (
-          <VisualGroup
-            key={group.titleKey}
-            title={t(`groups.${group.titleKey}`)}
-          >
-            {group.properties.map((descriptor) => {
-              const fieldId = `${scope.kind}:${scope.kind === 'base' ? 'base' : scope.key}:${descriptor.group}:${descriptor.property}`;
+        <div className="border-border-subtle divide-border-subtle divide-y border-t">
+          <InspectorGroup title={t('groups.fill')}>
+            {fillProperties.map((descriptor) =>
+              renderDesignValueField(descriptor),
+            )}
+          </InspectorGroup>
 
-              return (
-                <DesignValueField
-                  key={`${descriptor.group}:${descriptor.property}`}
-                  id={fieldId}
-                  label={t(`properties.${descriptor.labelKey}`)}
-                  value={getButtonVisualProperty(
-                    draft,
-                    scope,
-                    descriptor.group,
-                    descriptor.property,
-                  )}
-                  descriptor={descriptor}
-                  tokenOptions={tokenOptions}
-                  explicitDraft={explicitDrafts[fieldId]}
-                  onExplicitDraftChange={(value) =>
-                    setExplicitDrafts((current) => ({
-                      ...current,
-                      [fieldId]: value,
-                    }))
-                  }
-                  onChange={(value) =>
-                    updateDraft(
-                      setButtonVisualProperty(
-                        draft,
-                        scope,
-                        descriptor.group,
-                        descriptor.property,
-                        value,
-                      ),
-                    )
-                  }
-                  onReset={() =>
-                    updateDraft(
-                      resetButtonVisualProperty(
-                        draft,
-                        scope,
-                        descriptor.group,
-                        descriptor.property,
-                      ),
-                    )
-                  }
-                  labels={{
-                    source: t('source'),
-                    unset: t('unset'),
-                    token: t('token'),
-                    explicit: t('explicit'),
-                    auto: t('modeAuto'),
-                    fill: t('modeFill'),
-                    selectToken: t('selectToken'),
-                    reset: t('reset'),
-                    inherited:
-                      scope.kind === 'base'
-                        ? t('templateDefault')
-                        : t('inherited'),
-                    valuePlaceholder:
-                      descriptor.kind === 'color'
-                        ? t('colorPlaceholder')
-                        : t('valuePlaceholder'),
-                  }}
-                />
-              );
-            })}
-            {group.titleKey === 'border' ? (
+          <InspectorGroup title={t('groups.dimensions')}>
+            {dimensionProperties.map((descriptor) =>
+              renderDesignValueField(descriptor),
+            )}
+          </InspectorGroup>
+
+          <InspectorGroup title={t('groups.spacing')}>
+            {spacingProperties.map((descriptor) =>
+              renderDesignValueField(descriptor),
+            )}
+          </InspectorGroup>
+
+          <InspectorGroup title={t('groups.radius')}>
+            <label className="text-content-secondary flex w-fit items-center gap-2 text-xs font-semibold">
+              <input
+                id="button-v2-independent-corners"
+                type="checkbox"
+                checked={independentCorners}
+                onChange={(event) =>
+                  handleIndependentCornersChange(event.target.checked)
+                }
+                className="accent-action-accent size-4"
+              />
+              <span>{t('independentCorners')}</span>
+            </label>
+
+            {independentCorners ? (
+              <div className="grid w-full min-w-0 gap-3 sm:grid-cols-2">
+                {cornerProperties.map((descriptor) =>
+                  renderDesignValueField(descriptor, 'stacked'),
+                )}
+              </div>
+            ) : (
+              renderDesignValueField(radiusProperty)
+            )}
+          </InspectorGroup>
+
+          {visibleOptionalGroups.includes('border') ? (
+            <InspectorGroup
+              title={t('groups.border')}
+              onRemove={() => removeOptionalGroup('border')}
+              removeLabel={t('removeProperty')}
+            >
+              {borderProperties.map((descriptor) =>
+                renderDesignValueField(descriptor),
+              )}
               <SimpleSelectProperty
                 id="button-v2-border-style"
                 label={t('properties.borderStyle')}
@@ -512,116 +729,119 @@ export function ButtonVisualCustomizationEditor({
                   )
                 }
               />
-            ) : null}
-          </VisualGroup>
-        ))}
+            </InspectorGroup>
+          ) : null}
 
-        <TypographyEditor
-          value={getButtonVisualTarget(draft, scope).typography}
-          tokenOptions={tokenOptions}
-          inheritedLabel={
-            scope.kind === 'base' ? t('templateDefault') : t('inherited')
-          }
-          labels={{
-            title: t('groups.typography'),
-            source: t('source'),
-            unset: t('unset'),
-            token: t('token'),
-            explicit: t('explicit'),
-            selectToken: t('selectToken'),
-            reset: t('reset'),
-            fontFamily: t('properties.fontFamily'),
-            fontSize: t('properties.fontSize'),
-            fontWeight: t('properties.fontWeight'),
-            lineHeight: t('properties.lineHeight'),
-            letterSpacing: t('properties.letterSpacing'),
-            textAlign: t('properties.textAlign'),
-            valuePlaceholder: t('valuePlaceholder'),
-            textAlignments: {
-              left: t('textAlignments.left'),
-              center: t('textAlignments.center'),
-              right: t('textAlignments.right'),
-              justify: t('textAlignments.justify'),
-            },
+          {visibleOptionalGroups.includes('typography') ? (
+            <InspectorGroup
+              title={t('groups.typography')}
+              onRemove={() => removeOptionalGroup('typography')}
+              removeLabel={t('removeProperty')}
+            >
+              <TypographyControls
+                value={getButtonVisualTarget(draft, scope).typography}
+                tokenOptions={tokenOptions}
+                inheritedLabel={
+                  scope.kind === 'base' ? t('templateDefault') : t('inherited')
+                }
+                labels={{
+                  source: t('source'),
+                  unset: t('unset'),
+                  token: t('token'),
+                  explicit: t('explicit'),
+                  selectToken: t('selectToken'),
+                  fontFamily: t('properties.fontFamily'),
+                  fontSize: t('properties.fontSize'),
+                  fontWeight: t('properties.fontWeight'),
+                  lineHeight: t('properties.lineHeight'),
+                  letterSpacing: t('properties.letterSpacing'),
+                  textAlign: t('properties.textAlign'),
+                  valuePlaceholder: t('valuePlaceholder'),
+                  textAlignments: {
+                    left: t('textAlignments.left'),
+                    center: t('textAlignments.center'),
+                    right: t('textAlignments.right'),
+                    justify: t('textAlignments.justify'),
+                  },
+                }}
+                onChange={(value) =>
+                  updateDraft(setButtonTypographyValue(draft, scope, value))
+                }
+              />
+            </InspectorGroup>
+          ) : null}
+        </div>
+
+        <form
+          action={formAction}
+          onSubmitCapture={() => {
+            markCurrentDraftSubmitted();
+            preserveSaveContext();
           }}
-          onChange={(value) =>
-            updateDraft(setButtonTypographyValue(draft, scope, value))
-          }
-        />
+          className="border-border-subtle bg-background-subtle flex flex-col gap-3 border-t px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4"
+        >
+          <input type="hidden" name="locale" value={locale} />
+          <input type="hidden" name="projectSlug" value={projectSlug} />
+          <input type="hidden" name="componentKey" value={componentKey} />
+          <input
+            type="hidden"
+            name="visualCustomization"
+            value={visualCustomizationPayload}
+          />
+          <p
+            aria-live="polite"
+            className={[
+              'text-xs font-semibold',
+              saveStatus === 'error'
+                ? 'text-action-danger'
+                : saveStatus === 'unsaved'
+                  ? 'text-action-warning'
+                  : 'text-content-secondary',
+            ].join(' ')}
+          >
+            {statusLabel}
+          </p>
+          <Button
+            type="submit"
+            size="sm"
+            disabled={isPending || !hasUnsavedChanges}
+          >
+            {isPending ? t('save.saving') : t('save.action')}
+          </Button>
+        </form>
       </div>
-
-      <form
-        action={formAction}
-        onSubmitCapture={() => {
-          markCurrentDraftSubmitted();
-          preserveSaveContext();
-        }}
-        className="border-border-subtle mt-5 flex flex-col gap-3 border-t pt-4 sm:flex-row sm:items-center sm:justify-between"
-      >
-        <input type="hidden" name="locale" value={locale} />
-        <input type="hidden" name="projectSlug" value={projectSlug} />
-        <input type="hidden" name="componentKey" value={componentKey} />
-        <input
-          type="hidden"
-          name="visualCustomization"
-          value={visualCustomizationPayload}
-        />
-        <p
-          aria-live="polite"
-          className={[
-            'text-xs font-semibold',
-            saveStatus === 'error'
-              ? 'text-action-danger'
-              : saveStatus === 'unsaved'
-                ? 'text-action-warning'
-                : 'text-content-secondary',
-          ].join(' ')}
-        >
-          {statusLabel}
-        </p>
-        <Button
-          type="submit"
-          size="sm"
-          disabled={isPending || !hasUnsavedChanges}
-        >
-          {isPending ? t('save.saving') : t('save.action')}
-        </Button>
-      </form>
-    </section>
+    </details>
   );
 }
 
-function VisualGroup({
+function InspectorGroup({
   title,
   children,
+  onRemove,
+  removeLabel,
 }: {
   title: string;
   children: ReactNode;
+  onRemove?: () => void;
+  removeLabel?: string;
 }) {
   return (
-    <fieldset className="border-border-subtle bg-surface-primary grid gap-3 rounded-lg border p-3">
-      <legend className="text-content-primary px-1 text-xs font-semibold">
-        {title}
-      </legend>
-      <div className="grid gap-3 sm:grid-cols-2">{children}</div>
-    </fieldset>
-  );
-}
-
-function LabeledControl({
-  label,
-  children,
-}: {
-  label: string;
-  children: ReactNode;
-}) {
-  return (
-    <div className="grid min-w-0 gap-1.5">
-      <span className="text-content-secondary text-xs font-semibold">
-        {label}
-      </span>
-      {children}
-    </div>
+    <section data-inspector-group={title} className="min-w-0">
+      <div className="flex min-h-10 items-center justify-between gap-3 px-3 py-2 sm:px-4">
+        <h3 className="text-content-primary text-xs font-semibold">{title}</h3>
+        {onRemove ? (
+          <button
+            type="button"
+            aria-label={`${removeLabel ?? 'Remove'} ${title}`}
+            onClick={onRemove}
+            className="text-content-tertiary hover:bg-background-subtle hover:text-content-primary focus-visible:outline-border-focus flex size-7 items-center justify-center rounded-sm text-base transition focus-visible:outline-2 focus-visible:outline-offset-2"
+          >
+            <span aria-hidden="true">−</span>
+          </button>
+        ) : null}
+      </div>
+      <div className="grid gap-3 px-3 pb-3 sm:px-4">{children}</div>
+    </section>
   );
 }
 
@@ -635,6 +855,7 @@ function DesignValueField({
   onExplicitDraftChange,
   onChange,
   onReset,
+  layout,
   labels,
 }: {
   id: string;
@@ -646,6 +867,7 @@ function DesignValueField({
   onExplicitDraftChange: (value: string) => void;
   onChange: (value: unknown) => void;
   onReset: () => void;
+  layout: 'row' | 'stacked';
   labels: {
     source: string;
     unset: string;
@@ -660,10 +882,23 @@ function DesignValueField({
   };
 }) {
   const source = getSource(value);
-  const availableTokens = tokenOptions.filter(
-    (token) => token.type === descriptor.tokenType,
+  const availableTokens = sortComponentTokenOptions(
+    tokenOptions.filter((token) => token.type === descriptor.tokenType),
   );
   const explicitValue = explicitDraft ?? getExplicitValue(value);
+  const sourceOptions = [
+    { value: 'unset', label: labels.unset },
+    ...(availableTokens.length > 0
+      ? [{ value: 'token', label: labels.token }]
+      : []),
+    { value: 'explicit', label: labels.explicit },
+    ...(descriptor.kind === 'dimension'
+      ? [
+          { value: 'auto', label: labels.auto },
+          { value: 'fill', label: labels.fill },
+        ]
+      : []),
+  ];
 
   function handleSourceChange(nextSource: string) {
     if (nextSource === 'unset') {
@@ -707,76 +942,106 @@ function DesignValueField({
   }
 
   return (
-    <div className="border-border-subtle grid min-w-0 gap-2 rounded-md border p-2.5">
-      <div className="flex items-center justify-between gap-2">
-        <span className="text-content-secondary text-xs font-semibold">
-          {label}
-        </span>
-        {value === undefined ? (
-          <span className="text-content-tertiary text-[0.6875rem]">
-            {labels.inherited}
-          </span>
+    <div
+      className={
+        layout === 'stacked'
+          ? 'grid min-w-0 gap-1.5'
+          : 'grid min-w-0 gap-2 sm:grid-cols-[8.5rem_minmax(0,1fr)] sm:items-center'
+      }
+    >
+      <label
+        htmlFor={`${id}-source`}
+        className="text-content-secondary text-xs font-semibold"
+      >
+        {label}
+      </label>
+
+      <div className="grid w-full min-w-0 grid-cols-[auto_minmax(0,1fr)_2rem] items-center gap-2">
+        <PropertySourceSelect
+          id={`${id}-source`}
+          value={source}
+          options={sourceOptions}
+          onValueChange={handleSourceChange}
+          ariaLabel={labels.source}
+        />
+
+        {source === 'token' ? (
+          <Select
+            id={`${id}-token`}
+            value={getTokenPath(value)}
+            options={availableTokens.map((token) => ({
+              value: token.path,
+              label: token.label,
+            }))}
+            onValueChange={(path) =>
+              onChange({
+                source: 'token',
+                tokenType: descriptor.tokenType,
+                path,
+              })
+            }
+            placeholder={labels.selectToken}
+            size="xs"
+          />
+        ) : source === 'explicit' ? (
+          <Input
+            id={`${id}-explicit`}
+            value={explicitValue}
+            onChange={(event) => handleExplicitChange(event.target.value)}
+            placeholder={labels.valuePlaceholder}
+            size="xs"
+            textMode="technical"
+          />
         ) : (
+          <span className="text-content-tertiary flex min-h-7 items-center truncate text-xs">
+            {source === 'auto'
+              ? labels.auto
+              : source === 'fill'
+                ? labels.fill
+                : labels.inherited}
+          </span>
+        )}
+
+        {value !== undefined ? (
           <button
             type="button"
+            aria-label={`${labels.reset} ${label}`}
             onClick={onReset}
-            className="text-content-tertiary hover:text-content-primary text-[0.6875rem] font-semibold"
+            className="text-content-tertiary hover:bg-background-subtle hover:text-content-primary focus-visible:outline-border-focus flex size-7 items-center justify-center rounded-sm text-base transition focus-visible:outline-2 focus-visible:outline-offset-2"
           >
-            {labels.reset}
+            <span aria-hidden="true">×</span>
           </button>
+        ) : (
+          <span aria-hidden="true" />
         )}
       </div>
-
-      <Select
-        id={`${id}-source`}
-        value={source}
-        options={[
-          { value: 'unset', label: labels.unset },
-          { value: 'token', label: labels.token },
-          { value: 'explicit', label: labels.explicit },
-          ...(descriptor.kind === 'dimension'
-            ? [
-                { value: 'auto', label: labels.auto },
-                { value: 'fill', label: labels.fill },
-              ]
-            : []),
-        ]}
-        onValueChange={handleSourceChange}
-        placeholder={labels.source}
-        size="sm"
-      />
-
-      {source === 'token' ? (
-        <Select
-          id={`${id}-token`}
-          value={getTokenPath(value)}
-          options={availableTokens.map((token) => ({
-            value: token.path,
-            label: token.label,
-          }))}
-          onValueChange={(path) =>
-            onChange({
-              source: 'token',
-              tokenType: descriptor.tokenType,
-              path,
-            })
-          }
-          placeholder={labels.selectToken}
-          size="sm"
-        />
-      ) : null}
-
-      {source === 'explicit' ? (
-        <Input
-          id={`${id}-explicit`}
-          value={explicitValue}
-          onChange={(event) => handleExplicitChange(event.target.value)}
-          placeholder={labels.valuePlaceholder}
-          size="sm"
-          textMode="technical"
-        />
-      ) : null}
     </div>
+  );
+}
+
+function PropertySourceSelect({
+  id,
+  value,
+  options,
+  onValueChange,
+  ariaLabel,
+}: {
+  id: string;
+  value: string;
+  options: Array<{ value: string; label: string }>;
+  onValueChange: (value: string) => void;
+  ariaLabel: string;
+}) {
+  return (
+    <Select
+      id={id}
+      value={value}
+      options={options}
+      onValueChange={onValueChange}
+      placeholder={ariaLabel}
+      size="xs"
+      className="max-w-32 min-w-[6.75rem]"
+    />
   );
 }
 
@@ -802,40 +1067,42 @@ function SimpleSelectProperty({
   const resolvedValue = typeof value === 'string' ? value : '';
 
   return (
-    <div className="border-border-subtle grid min-w-0 gap-2 rounded-md border p-2.5">
-      <div className="flex items-center justify-between gap-2">
-        <span className="text-content-secondary text-xs font-semibold">
-          {label}
-        </span>
+    <div className="grid min-w-0 gap-2 sm:grid-cols-[8.5rem_minmax(0,1fr)] sm:items-center">
+      <label
+        htmlFor={id}
+        className="text-content-secondary text-xs font-semibold"
+      >
+        {label}
+      </label>
+      <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_2rem] items-center gap-2">
+        <Select
+          id={id}
+          value={resolvedValue}
+          options={[{ value: '', label: inheritedLabel }, ...options]}
+          onValueChange={(nextValue) =>
+            nextValue ? onChange(nextValue) : onReset()
+          }
+          placeholder={inheritedLabel}
+          size="xs"
+        />
         {resolvedValue ? (
           <button
             type="button"
+            aria-label={`${resetLabel} ${label}`}
             onClick={onReset}
-            className="text-content-tertiary hover:text-content-primary text-[0.6875rem] font-semibold"
+            className="text-content-tertiary hover:bg-background-subtle hover:text-content-primary focus-visible:outline-border-focus flex size-7 items-center justify-center rounded-sm text-base transition focus-visible:outline-2 focus-visible:outline-offset-2"
           >
-            {resetLabel}
+            <span aria-hidden="true">×</span>
           </button>
         ) : (
-          <span className="text-content-tertiary text-[0.6875rem]">
-            {inheritedLabel}
-          </span>
+          <span aria-hidden="true" />
         )}
       </div>
-      <Select
-        id={id}
-        value={resolvedValue}
-        options={[{ value: '', label: inheritedLabel }, ...options]}
-        onValueChange={(nextValue) =>
-          nextValue ? onChange(nextValue) : onReset()
-        }
-        placeholder={inheritedLabel}
-        size="sm"
-      />
     </div>
   );
 }
 
-function TypographyEditor({
+function TypographyControls({
   value,
   tokenOptions,
   inheritedLabel,
@@ -846,13 +1113,11 @@ function TypographyEditor({
   tokenOptions: ComponentTokenOption[];
   inheritedLabel: string;
   labels: {
-    title: string;
     source: string;
     unset: string;
     token: string;
     explicit: string;
     selectToken: string;
-    reset: string;
     fontFamily: string;
     fontSize: string;
     fontWeight: string;
@@ -892,170 +1157,181 @@ function TypographyEditor({
   }
 
   return (
-    <VisualGroup title={labels.title}>
-      <div className="grid gap-3 sm:col-span-2">
-        <div className="flex items-center justify-between gap-2">
-          {value ? (
-            <button
-              type="button"
-              onClick={() => onChange(undefined)}
-              className="text-content-tertiary hover:text-content-primary ml-auto text-[0.6875rem] font-semibold"
-            >
-              {labels.reset}
-            </button>
+    <div className="grid gap-3">
+      <div className="grid min-w-0 gap-2 sm:grid-cols-[8.5rem_minmax(0,1fr)] sm:items-center">
+        <label
+          htmlFor="button-v2-typography-source"
+          className="text-content-secondary text-xs font-semibold"
+        >
+          {labels.source}
+        </label>
+        <div className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-2">
+          <PropertySourceSelect
+            id="button-v2-typography-source"
+            value={source}
+            options={[
+              { value: 'unset', label: labels.unset },
+              ...(typographyTokens.length > 0
+                ? [{ value: 'token', label: labels.token }]
+                : []),
+              { value: 'value', label: labels.explicit },
+            ]}
+            onValueChange={(nextSource) => {
+              if (nextSource === 'unset') {
+                onChange(undefined);
+                return;
+              }
+
+              if (nextSource === 'token') {
+                const token = typographyTokens[0];
+                if (token) {
+                  onChange({
+                    source: 'token',
+                    tokenType: 'typography',
+                    path: token.path,
+                  });
+                }
+                return;
+              }
+
+              onChange({
+                source: 'value',
+                value: { fontSize: '14px', fontWeight: 600, lineHeight: 1.2 },
+              });
+            }}
+            ariaLabel={labels.source}
+          />
+
+          {value?.source === 'token' ? (
+            <Select
+              id="button-v2-typography-token"
+              value={value.path}
+              options={typographyTokens.map((token) => ({
+                value: token.path,
+                label: token.label,
+              }))}
+              onValueChange={(path) =>
+                onChange({ source: 'token', tokenType: 'typography', path })
+              }
+              placeholder={labels.selectToken}
+              size="xs"
+            />
           ) : (
-            <span className="text-content-tertiary ml-auto text-[0.6875rem]">
+            <span className="text-content-tertiary flex min-h-7 items-center text-xs">
               {inheritedLabel}
             </span>
           )}
         </div>
-        <Select
-          id="button-v2-typography-source"
-          value={source}
-          options={[
-            { value: 'unset', label: labels.unset },
-            { value: 'token', label: labels.token },
-            { value: 'value', label: labels.explicit },
-          ]}
-          onValueChange={(nextSource) => {
-            if (nextSource === 'unset') {
-              onChange(undefined);
-              return;
-            }
-
-            if (nextSource === 'token') {
-              const token = typographyTokens[0];
-              if (token) {
-                onChange({
-                  source: 'token',
-                  tokenType: 'typography',
-                  path: token.path,
-                });
-              }
-              return;
-            }
-
-            onChange({
-              source: 'value',
-              value: { fontSize: '14px', fontWeight: 600, lineHeight: 1.2 },
-            });
-          }}
-          placeholder={labels.source}
-          size="sm"
-        />
-
-        {value?.source === 'token' ? (
-          <Select
-            id="button-v2-typography-token"
-            value={value.path}
-            options={typographyTokens.map((token) => ({
-              value: token.path,
-              label: token.label,
-            }))}
-            onValueChange={(path) =>
-              onChange({ source: 'token', tokenType: 'typography', path })
-            }
-            placeholder={labels.selectToken}
-            size="sm"
-          />
-        ) : null}
-
-        {value?.source === 'value' ? (
-          <div className="grid gap-2 sm:grid-cols-2">
-            <TypographyInput
-              label={labels.fontFamily}
-              value={
-                typeof explicit.fontFamily === 'string'
-                  ? explicit.fontFamily
-                  : ''
-              }
-              onChange={(nextValue) =>
-                setExplicitField('fontFamily', nextValue)
-              }
-            />
-            <TypographyInput
-              label={labels.fontSize}
-              value={
-                typeof explicit.fontSize === 'string' ? explicit.fontSize : ''
-              }
-              placeholder={labels.valuePlaceholder}
-              onChange={(nextValue) => {
-                if (explicitLengthValueSchema.safeParse(nextValue).success) {
-                  setExplicitField('fontSize', nextValue);
-                }
-              }}
-            />
-            <TypographyInput
-              label={labels.letterSpacing}
-              value={
-                typeof explicit.letterSpacing === 'string'
-                  ? explicit.letterSpacing
-                  : ''
-              }
-              placeholder={labels.valuePlaceholder}
-              onChange={(nextValue) => {
-                if (explicitLengthValueSchema.safeParse(nextValue).success) {
-                  setExplicitField('letterSpacing', nextValue);
-                }
-              }}
-            />
-            <LabeledControl label={labels.fontWeight}>
-              <Select
-                id="button-v2-typography-font-weight"
-                value={String(explicit.fontWeight ?? 600)}
-                options={['400', '500', '600', '700', 'bold'].map((weight) => ({
-                  value: weight,
-                  label: weight,
-                }))}
-                onValueChange={(weight) =>
-                  setExplicitField(
-                    'fontWeight',
-                    weight === 'bold' ? 'bold' : Number(weight),
-                  )
-                }
-                placeholder={labels.fontWeight}
-                size="sm"
-              />
-            </LabeledControl>
-            <LabeledControl label={labels.lineHeight}>
-              <Select
-                id="button-v2-typography-line-height"
-                value={String(explicit.lineHeight ?? 1.2)}
-                options={['1', '1.2', '1.5', '1.75', '2'].map((lineHeight) => ({
-                  value: lineHeight,
-                  label: lineHeight,
-                }))}
-                onValueChange={(lineHeight) =>
-                  setExplicitField('lineHeight', Number(lineHeight))
-                }
-                placeholder={labels.lineHeight}
-                size="sm"
-              />
-            </LabeledControl>
-            <LabeledControl label={labels.textAlign}>
-              <Select
-                id="button-v2-typography-text-align"
-                value={explicit.textAlign ?? 'center'}
-                options={(['left', 'center', 'right', 'justify'] as const).map(
-                  (alignment) => ({
-                    value: alignment,
-                    label: labels.textAlignments[alignment],
-                  }),
-                )}
-                onValueChange={(alignment) =>
-                  setExplicitField(
-                    'textAlign',
-                    alignment as 'left' | 'center' | 'right' | 'justify',
-                  )
-                }
-                placeholder={labels.textAlign}
-                size="sm"
-              />
-            </LabeledControl>
-          </div>
-        ) : null}
       </div>
-    </VisualGroup>
+
+      {value?.source === 'value' ? (
+        <div className="grid gap-3 sm:grid-cols-2">
+          <TypographyInput
+            label={labels.fontFamily}
+            value={
+              typeof explicit.fontFamily === 'string' ? explicit.fontFamily : ''
+            }
+            onChange={(nextValue) => setExplicitField('fontFamily', nextValue)}
+          />
+          <TypographyInput
+            label={labels.fontSize}
+            value={
+              typeof explicit.fontSize === 'string' ? explicit.fontSize : ''
+            }
+            placeholder={labels.valuePlaceholder}
+            onChange={(nextValue) => {
+              if (explicitLengthValueSchema.safeParse(nextValue).success) {
+                setExplicitField('fontSize', nextValue);
+              }
+            }}
+          />
+          <TypographyInput
+            label={labels.letterSpacing}
+            value={
+              typeof explicit.letterSpacing === 'string'
+                ? explicit.letterSpacing
+                : ''
+            }
+            placeholder={labels.valuePlaceholder}
+            onChange={(nextValue) => {
+              if (explicitLengthValueSchema.safeParse(nextValue).success) {
+                setExplicitField('letterSpacing', nextValue);
+              }
+            }}
+          />
+          <LabeledControl label={labels.fontWeight}>
+            <Select
+              id="button-v2-typography-font-weight"
+              value={String(explicit.fontWeight ?? 600)}
+              options={['400', '500', '600', '700', 'bold'].map((weight) => ({
+                value: weight,
+                label: weight,
+              }))}
+              onValueChange={(weight) =>
+                setExplicitField(
+                  'fontWeight',
+                  weight === 'bold' ? 'bold' : Number(weight),
+                )
+              }
+              placeholder={labels.fontWeight}
+              size="xs"
+            />
+          </LabeledControl>
+          <LabeledControl label={labels.lineHeight}>
+            <Select
+              id="button-v2-typography-line-height"
+              value={String(explicit.lineHeight ?? 1.2)}
+              options={['1', '1.2', '1.5', '1.75', '2'].map((lineHeight) => ({
+                value: lineHeight,
+                label: lineHeight,
+              }))}
+              onValueChange={(lineHeight) =>
+                setExplicitField('lineHeight', Number(lineHeight))
+              }
+              placeholder={labels.lineHeight}
+              size="xs"
+            />
+          </LabeledControl>
+          <LabeledControl label={labels.textAlign}>
+            <Select
+              id="button-v2-typography-text-align"
+              value={explicit.textAlign ?? 'center'}
+              options={(['left', 'center', 'right', 'justify'] as const).map(
+                (alignment) => ({
+                  value: alignment,
+                  label: labels.textAlignments[alignment],
+                }),
+              )}
+              onValueChange={(alignment) =>
+                setExplicitField(
+                  'textAlign',
+                  alignment as 'left' | 'center' | 'right' | 'justify',
+                )
+              }
+              placeholder={labels.textAlign}
+              size="xs"
+            />
+          </LabeledControl>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function LabeledControl({
+  label,
+  children,
+}: {
+  label: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="grid min-w-0 gap-1.5">
+      <span className="text-content-secondary text-xs font-semibold">
+        {label}
+      </span>
+      {children}
+    </div>
   );
 }
 
@@ -1076,7 +1352,7 @@ function TypographyInput({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
-        size="sm"
+        size="xs"
       />
     </LabeledControl>
   );

@@ -43,6 +43,17 @@ describe('componentTemplateDefinitions', () => {
     ).toBe('full');
   });
 
+  it('keeps the Primary Button template borderless without imposing that default on Secondary', () => {
+    const buttonTemplate = getComponentTemplateDefinition('button');
+
+    expect(
+      buttonTemplate?.defaultContract.overrides.variants.primary?.border?.style,
+    ).toBe('none');
+    expect(
+      buttonTemplate?.defaultContract.overrides.variants.secondary?.border,
+    ).toBeUndefined();
+  });
+
   it('keeps renderer selection attached to the template rather than Component identity', () => {
     const component = createComponentContractFromTemplate({
       templateKey: 'button',
