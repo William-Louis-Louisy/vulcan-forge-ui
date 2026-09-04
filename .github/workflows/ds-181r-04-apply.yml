@@ -20,7 +20,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: .nvmrc
           cache: npm
       - run: npm ci
       - name: Apply R04 implementation
@@ -31,7 +31,7 @@ jobs:
         run: npx vitest run src/features/components/ButtonVisualCustomizationEditor.test.tsx src/features/components/ComponentContractEditor.test.tsx src/features/components/ComponentFoundationsPreviewClient.test.tsx src/messages/component-v2-customization-messages.test.ts
       - name: Typecheck
         run: |
-          npx prisma generate
+          npm run db:generate
           npm run typecheck
       - name: Remove temporary assets
         run: git rm .github/workflows/ds-181r-04-apply.yml scripts/ds-181r-04-apply.py
