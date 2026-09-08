@@ -99,7 +99,8 @@ describe('createComponentVisualCssProperties', () => {
     });
 
     expect(styles).toMatchObject({
-      paddingInline: '16px',
+      paddingLeft: '16px',
+      paddingRight: '16px',
       borderRadius: '8px',
       backgroundColor: '#123456',
       fontFamily: 'Inter, sans-serif',
@@ -107,9 +108,12 @@ describe('createComponentVisualCssProperties', () => {
       fontWeight: 600,
       lineHeight: 1.2,
     });
+    expect(styles.padding).toBeUndefined();
+    expect(styles.paddingInline).toBeUndefined();
+    expect(styles.paddingBlock).toBeUndefined();
   });
 
-  it('maps controlled explicit values and dimension modes', () => {
+  it('maps controlled explicit values, focus ring and dimension modes without CSS shorthand conflicts', () => {
     const styles = createComponentVisualCssProperties({
       visual: {
         dimensions: {
@@ -126,6 +130,12 @@ describe('createComponentVisualCssProperties', () => {
           style: 'dashed',
           color: { source: 'value', value: '#abcdef' },
         },
+        focusRing: {
+          width: { source: 'value', value: '2px' },
+          offset: { source: 'value', value: '2px' },
+          style: 'solid',
+          color: { source: 'value', value: '#123456' },
+        },
         surface: {
           elevation: { source: 'value', value: 'md' },
         },
@@ -133,14 +143,22 @@ describe('createComponentVisualCssProperties', () => {
       rawTokenSets: [],
     });
 
+    expect(styles.borderWidth).toBeUndefined();
     expect(styles).toMatchObject({
       width: '100%',
       height: 'auto',
       minHeight: '40px',
       borderRadius: '18px 4px 0 0',
-      borderWidth: '2px',
+      borderTopWidth: '2px',
+      borderRightWidth: '2px',
+      borderBottomWidth: '2px',
+      borderLeftWidth: '2px',
       borderStyle: 'dashed',
       borderColor: '#abcdef',
+      outlineWidth: '2px',
+      outlineOffset: '2px',
+      outlineStyle: 'solid',
+      outlineColor: '#123456',
       boxShadow: '0 4px 10px rgb(0 0 0 / 0.12)',
     });
   });
