@@ -171,15 +171,16 @@ function applyTemplateSpecificDefaults(
             ...contract.overrides.states,
             focusVisible: {
               ...focusVisibleDefaults,
-              border: {
+              focusRing: {
                 width: { source: 'value', value: '2px' },
+                offset: { source: 'value', value: '2px' },
                 style: 'solid',
                 color: {
                   source: 'token',
                   tokenType: 'color',
                   path: 'color.semantic.action.primary',
                 },
-                ...focusVisibleDefaults.border,
+                ...focusVisibleDefaults.focusRing,
               },
             },
           },
