@@ -248,7 +248,8 @@ export function ComponentContractEditor({
         tokenOptions={tokenOptions}
         visualEditor={
           contractV2?.templateKey === 'button' ||
-          contractV2?.templateKey === 'textField' ? (
+          contractV2?.templateKey === 'textField' ||
+          contractV2?.templateKey === 'card' ? (
             <ButtonVisualCustomizationEditor
               locale={locale}
               projectSlug={projectSlug}
