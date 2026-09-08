@@ -54,14 +54,15 @@ describe('componentTemplateDefinitions', () => {
     ).toBeUndefined();
   });
 
-  it('defines an authorable focusVisible border treatment for interactive V2 templates', () => {
+  it('defines an authorable focusVisible ring for interactive V2 templates', () => {
     for (const templateKey of ['button', 'textField'] as const) {
       const focusVisible =
         getComponentTemplateDefinition(templateKey)?.defaultContract.overrides
           .states.focusVisible;
 
-      expect(focusVisible?.border).toMatchObject({
+      expect(focusVisible?.focusRing).toMatchObject({
         width: { source: 'value', value: '2px' },
+        offset: { source: 'value', value: '2px' },
         style: 'solid',
         color: {
           source: 'token',
@@ -69,6 +70,7 @@ describe('componentTemplateDefinitions', () => {
           path: 'color.semantic.action.primary',
         },
       });
+      expect(focusVisible?.border).toBeUndefined();
     }
   });
 
