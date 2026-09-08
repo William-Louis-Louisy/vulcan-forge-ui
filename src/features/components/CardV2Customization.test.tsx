@@ -8,6 +8,7 @@ import {
 } from '@/domain/design-system';
 import { ButtonVisualPreviewMatrix } from './ButtonVisualPreviewMatrix';
 import type { ComponentRegistryItem } from './components-registry.utils';
+import type { ComponentPreviewSemanticPalette } from './component-token-bindings.utils';
 
 function createCardFixture() {
   const semanticContract = mvpComponentContractSeeds.find(
@@ -74,9 +75,14 @@ const labels = {
   state: 'State',
 };
 
-const semanticPalette = {
+const semanticPalette: ComponentPreviewSemanticPalette = {
   action: {},
-  status: {},
+  status: {
+    info: '',
+    success: '',
+    warning: '',
+    danger: '',
+  },
   missingStatusTones: [],
 };
 
