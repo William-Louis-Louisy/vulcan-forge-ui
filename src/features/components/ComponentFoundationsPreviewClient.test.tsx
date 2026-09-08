@@ -409,6 +409,12 @@ describe('ComponentFoundationsPreviewClient', () => {
       name: 'foundationsPreview.state',
     });
     await user.click(stateSelect);
+    await user.click(screen.getByRole('option', { name: 'Focus' }));
+
+    expect(input).toHaveClass('ring-2');
+    expect(input).toHaveClass('focus-visible:outline-none');
+
+    await user.click(stateSelect);
     await user.click(screen.getByRole('option', { name: 'Invalid' }));
 
     expect(input).toHaveAttribute('aria-invalid', 'true');
