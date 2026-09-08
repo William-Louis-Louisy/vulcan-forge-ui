@@ -1,0 +1,184 @@
+name: DS-181R-04 QA fixes
+
+on:
+  push:
+    branches:
+      - agent/ds-181r-04-textfield-customization
+    paths:
+      - .github/workflows/ds-181r-04-qa-fixes.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: agent/ds-181r-04-textfield-customization
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Apply QA fixes
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          def replace_once(path: str, old: str, new: str):
+              file = Path(path)
+              text = file.read_text()
+              if old not in text:
+                  raise SystemExit(f"Missing expected snippet in {path}: {old[:80]!r}")
+              file.write_text(text.replace(old, new, 1))
+
+          # 1. Canonical TextField seed: focusVisible is the single focus state.
+          replace_once(
+              'src/domain/design-system/mvp-seed-templates.ts',
+              """      {\n        key: 'focus',\n        label: { en: 'Focus', fr: 'Focus' },\n      },\n      {\n        key: 'focusVisible',\n        label: { en: 'Focus visible', fr: 'Focus visible' },\n      },""",
+              """      {\n        key: 'focusVisible',\n        label: { en: 'Focus visible', fr: 'Focus visible' },\n      },""",
+          )
+
+          # 2. Registry: normalize legacy TextField focus duplicate and expose display-order fallback.
+          replace_once(
+              'src/features/components/components-registry.utils.ts',
+              """import {\n  getComponentTemplateDefinition,\n  resolveStoredComponentTemplateContract,\n  toLegacyComponentContract,""",
+              """import {\n  componentContractV2Schema,\n  getComponentTemplateDefinition,\n  resolveStoredComponentTemplateContract,\n  toLegacyComponentContract,""",
+          )
+
+          replace_once(
+              'src/features/components/components-registry.utils.ts',
+              """export const componentRegistryCategoryOrder = [\n  'action',\n  'input',\n  'layout',\n  'feedback',\n  'overlay',\n] as const satisfies readonly ComponentRegistryItem['category'][];\n""",
+              """export const componentRegistryCategoryOrder = [\n  'action',\n  'input',\n  'layout',\n  'feedback',\n  'overlay',\n] as const satisfies readonly ComponentRegistryItem['category'][];\n\nexport function getFirstComponentRegistryItemByDisplayOrder(\n  items: readonly ComponentRegistryItem[],\n): ComponentRegistryItem | null {\n  return groupComponentRegistryItemsByCategory(items)[0]?.items[0] ?? null;\n}\n""",
+          )
+
+          replace_once(
+              'src/features/components/components-registry.utils.ts',
+              """function getRegistryCategory(\n  category: ComponentContractV2['category'],\n  templateType: ComponentContractType,\n): ComponentRegistryItem['category'] {\n  return isRegistryCategory(category)\n    ? category\n    : getComponentCategory(templateType);\n}\n""",
+              """function getRegistryCategory(\n  category: ComponentContractV2['category'],\n  templateType: ComponentContractType,\n): ComponentRegistryItem['category'] {\n  return isRegistryCategory(category)\n    ? category\n    : getComponentCategory(templateType);\n}\n\nfunction normalizeTextFieldFocusState(\n  contract: ComponentContractV2,\n): ComponentContractV2 {\n  const hasFocus = contract.states.some((state) => state.key === 'focus');\n  const hasFocusVisible = contract.states.some(\n    (state) => state.key === 'focusVisible',\n  );\n\n  if (!hasFocus || !hasFocusVisible) {\n    return contract;\n  }\n\n  const stateOverrides = { ...contract.overrides.states };\n\n  if (stateOverrides.focus && stateOverrides.focusVisible === undefined) {\n    stateOverrides.focusVisible = stateOverrides.focus;\n  }\n\n  delete stateOverrides.focus;\n\n  return componentContractV2Schema.parse({\n    ...contract,\n    states: contract.states.filter((state) => state.key !== 'focus'),\n    overrides: {\n      ...contract.overrides,\n      states: stateOverrides,\n    },\n  });\n}\n""",
+          )
+
+          replace_once(
+              'src/features/components/components-registry.utils.ts',
+              """      const legacyContract = toLegacyComponentContract(contractV2);\n\n      items.push({""",
+              """      const normalizedContractV2 =\n        template.legacyType === 'textField'\n          ? normalizeTextFieldFocusState(contractV2)\n          : contractV2;\n      const legacyContract = toLegacyComponentContract(normalizedContractV2);\n\n      items.push({""",
+          )
+          replace_once(
+              'src/features/components/components-registry.utils.ts',
+              """        contract: legacyContract,\n        contractV2,""",
+              """        contract: legacyContract,\n        contractV2: normalizedContractV2,""",
+          )
+
+          # 3. Components page: fallback selection follows the visible navigation order.
+          replace_once(
+              'src/app/[locale]/app/projects/[projectSlug]/components/page.tsx',
+              """  createComponentRegistryItems,\n  groupComponentRegistryItemsByCategory,\n  type ComponentRegistryItem,""",
+              """  createComponentRegistryItems,\n  getFirstComponentRegistryItemByDisplayOrder,\n  groupComponentRegistryItemsByCategory,\n  type ComponentRegistryItem,""",
+          )
+          replace_once(
+              'src/app/[locale]/app/projects/[projectSlug]/components/page.tsx',
+              """  const selectedComponent =\n    filteredRegistryItems.find((item) => item.type === selectedComponentType) ??\n    filteredRegistryItems[0] ??\n    registry.items[0] ??\n    null;""",
+              """  const selectedComponent =\n    filteredRegistryItems.find((item) => item.type === selectedComponentType) ??\n    getFirstComponentRegistryItemByDisplayOrder(filteredRegistryItems) ??\n    getFirstComponentRegistryItemByDisplayOrder(registry.items);""",
+          )
+
+          # 4. Button/TextField templates define an authorable focusVisible border treatment.
+          replace_once(
+              'src/domain/design-system/component-template-registry.ts',
+              """function applyTemplateSpecificDefaults(\n  templateKey: WaveAComponentTemplateKey,\n  contract: ComponentContractV2,\n): ComponentContractV2 {\n  if (templateKey !== 'button') {\n    return contract;\n  }\n\n  const primaryDefaults = contract.overrides.variants.primary ?? {};\n\n  return componentContractV2Schema.parse({\n    ...contract,\n    overrides: {\n      ...contract.overrides,\n      variants: {\n        ...contract.overrides.variants,\n        primary: {\n          ...primaryDefaults,\n          border: {\n            ...primaryDefaults.border,\n            style: 'none',\n          },\n        },\n      },\n    },\n  });\n}""",
+              """function applyTemplateSpecificDefaults(\n  templateKey: WaveAComponentTemplateKey,\n  contract: ComponentContractV2,\n): ComponentContractV2 {\n  const supportsFocusVisible =\n    templateKey === 'button' || templateKey === 'textField';\n  const focusVisibleDefaults = contract.overrides.states.focusVisible ?? {};\n  const contractWithFocusVisibleDefaults = supportsFocusVisible\n    ? componentContractV2Schema.parse({\n        ...contract,\n        overrides: {\n          ...contract.overrides,\n          states: {\n            ...contract.overrides.states,\n            focusVisible: {\n              ...focusVisibleDefaults,\n              border: {\n                width: { source: 'value', value: '2px' },\n                style: 'solid',\n                color: {\n                  source: 'token',\n                  tokenType: 'color',\n                  path: 'color.semantic.action.primary',\n                },\n                ...focusVisibleDefaults.border,\n              },\n            },\n          },\n        },\n      })\n    : contract;\n\n  if (templateKey !== 'button') {\n    return contractWithFocusVisibleDefaults;\n  }\n\n  const primaryDefaults =\n    contractWithFocusVisibleDefaults.overrides.variants.primary ?? {};\n\n  return componentContractV2Schema.parse({\n    ...contractWithFocusVisibleDefaults,\n    overrides: {\n      ...contractWithFocusVisibleDefaults.overrides,\n      variants: {\n        ...contractWithFocusVisibleDefaults.overrides.variants,\n        primary: {\n          ...primaryDefaults,\n          border: {\n            ...primaryDefaults.border,\n            style: 'none',\n          },\n        },\n      },\n    },\n  });\n}""",
+          )
+
+          # 5. Visual inspector: focus states always expose Stroke / Border and cannot hide it.
+          replace_once(
+              'src/features/components/ButtonVisualCustomizationEditor.tsx',
+              """function getVisibleOptionalGroups(\n  contract: ComponentContractV2,\n  scope: ButtonVisualScope,\n): InspectorOptionalGroupKey[] {\n  const target = getButtonVisualTarget(contract, scope);\n  const groups: InspectorOptionalGroupKey[] = [];\n\n  if (target.border !== undefined) {""",
+              """function isFocusStateScope(scope: ButtonVisualScope): boolean {\n  return scope.kind === 'state' && scope.key.toLowerCase().includes('focus');\n}\n\nfunction getVisibleOptionalGroups(\n  contract: ComponentContractV2,\n  scope: ButtonVisualScope,\n): InspectorOptionalGroupKey[] {\n  const target = getButtonVisualTarget(contract, scope);\n  const groups: InspectorOptionalGroupKey[] = [];\n\n  if (target.border !== undefined || isFocusStateScope(scope)) {""",
+          )
+          replace_once(
+              'src/features/components/ButtonVisualCustomizationEditor.tsx',
+              """              onRemove={() => removeOptionalGroup('border')}\n              removeLabel={t('removeProperty')}""",
+              """              onRemove={\n                isFocusStateScope(scope)\n                  ? undefined\n                  : () => removeOptionalGroup('border')\n              }\n              removeLabel={t('removeProperty')}""",
+          )
+
+          # 6. Preview: focus appearance comes from resolved V2 border, not a hardcoded ring.
+          replace_once(
+              'src/features/components/ButtonVisualPreviewMatrix.tsx',
+              """          isFocus ? 'ring-action-primary/25 ring-2' : '',\n          isDisabled ? 'cursor-not-allowed opacity-60' : '',""",
+              """          isDisabled ? 'cursor-not-allowed opacity-60' : '',""",
+          )
+          replace_once(
+              'src/features/components/ButtonVisualPreviewMatrix.tsx',
+              """        isFocus ? 'ring-action-primary/30 ring-2' : '',\n        isHover ? 'brightness-95' : '',""",
+              """        isHover ? 'brightness-95' : '',""",
+          )
+
+          # 7. Regression tests.
+          replace_once(
+              'src/features/components/ButtonVisualCustomizationEditor.test.tsx',
+              """  it('starts in independent-corner mode when the current scope already owns corners', () => {""",
+              """  it('keeps Stroke / Border visible for focus-state authoring', async () => {\n    const user = userEvent.setup();\n\n    render(<ButtonVisualCustomizationEditor {...createEditorProps()} />);\n\n    await user.click(screen.getByRole('button', { name: 'State' }));\n\n    expect(screen.getByText('Stroke / Border')).toBeInTheDocument();\n    expect(screen.getByText('Border width')).toBeInTheDocument();\n    expect(screen.getByText('Border style')).toBeInTheDocument();\n    expect(screen.getByText('Border color')).toBeInTheDocument();\n    expect(\n      screen.queryByRole('button', {\n        name: 'Remove visual property Stroke / Border',\n      }),\n    ).not.toBeInTheDocument();\n  });\n\n  it('starts in independent-corner mode when the current scope already owns corners', () => {""",
+          )
+
+          replace_once(
+              'src/features/components/ComponentFoundationsPreviewClient.test.tsx',
+              """        {\n          key: 'focus',\n          label: { en: 'Focus' },\n        },""",
+              """        {\n          key: 'focusVisible',\n          label: { en: 'Focus visible' },\n        },""",
+          )
+          replace_once(
+              'src/features/components/ComponentFoundationsPreviewClient.test.tsx',
+              """    await user.click(screen.getByRole('option', { name: 'Focus' }));\n\n    expect(input).toHaveClass('ring-2');\n    expect(input).toHaveClass('focus-visible:outline-none');""",
+              """    await user.click(\n      screen.getByRole('option', { name: 'Focus visible' }),\n    );\n\n    expect(input).not.toHaveClass('ring-2');\n    expect(input).toHaveClass('focus-visible:outline-none');\n    expect(input).toHaveStyle({ borderWidth: '2px', borderStyle: 'solid' });""",
+          )
+
+          replace_once(
+              'src/domain/design-system/component-template-registry.test.ts',
+              """  it('keeps renderer selection attached to the template rather than Component identity', () => {""",
+              """  it('defines an authorable focusVisible border treatment for interactive V2 templates', () => {\n    for (const templateKey of ['button', 'textField'] as const) {\n      const focusVisible =\n        getComponentTemplateDefinition(templateKey)?.defaultContract.overrides\n          .states.focusVisible;\n\n      expect(focusVisible?.border).toMatchObject({\n        width: { source: 'value', value: '2px' },\n        style: 'solid',\n        color: {\n          source: 'token',\n          tokenType: 'color',\n          path: 'color.semantic.action.primary',\n        },\n      });\n    }\n  });\n\n  it('keeps renderer selection attached to the template rather than Component identity', () => {""",
+          )
+
+          replace_once(
+              'src/features/components/components-registry.utils.test.ts',
+              """  getComponentCategory,\n  getComponentCompleteness,\n  createComponentRegistryItems,""",
+              """  getComponentCategory,\n  getComponentCompleteness,\n  createComponentRegistryItems,\n  getFirstComponentRegistryItemByDisplayOrder,""",
+          )
+          replace_once(
+              'src/features/components/components-registry.utils.test.ts',
+              """  it('groups registry items by persisted category', () => {""",
+              """  it('normalizes legacy TextField focus + focusVisible duplicates to focusVisible', () => {\n    const textFieldContract: ComponentContract = {\n      ...buttonContract,\n      type: 'textField',\n      name: 'TextField',\n      states: [\n        { key: 'focus', label: { en: 'Focus' } },\n        { key: 'focusVisible', label: { en: 'Focus visible' } },\n        { key: 'invalid', label: { en: 'Invalid' } },\n        { key: 'disabled', label: { en: 'Disabled' } },\n      ],\n    };\n    const registry = createComponentRegistryItems([\n      createStoredLegacyComponent({\n        id: 'text-field-contract',\n        contract: textFieldContract,\n      }),\n    ]);\n\n    expect(registry.items[0]?.contract.states.map((state) => state.key)).toEqual([\n      'focusVisible',\n      'invalid',\n      'disabled',\n    ]);\n    expect(\n      registry.items[0]?.contractV2.states.map((state) => state.key),\n    ).toEqual(['focusVisible', 'invalid', 'disabled']);\n  });\n\n  it('selects the first component using the same category order as the visible registry', () => {\n    const alertContract: ComponentContract = {\n      ...buttonContract,\n      type: 'alert',\n      name: 'Alert',\n      states: [],\n    };\n    const registry = createComponentRegistryItems([\n      createStoredLegacyComponent({\n        id: 'alert-contract',\n        contract: alertContract,\n      }),\n      createStoredLegacyComponent({\n        id: 'button-contract',\n        contract: buttonContract,\n      }),\n    ]);\n\n    expect(getFirstComponentRegistryItemByDisplayOrder(registry.items)?.type).toBe(\n      'button',\n    );\n  });\n\n  it('groups registry items by persisted category', () => {""",
+          )
+          PY
+      - name: Format changed files
+        run: >-
+          npx prettier
+          src/domain/design-system/mvp-seed-templates.ts
+          src/domain/design-system/component-template-registry.ts
+          src/domain/design-system/component-template-registry.test.ts
+          src/features/components/components-registry.utils.ts
+          src/features/components/components-registry.utils.test.ts
+          src/features/components/ButtonVisualCustomizationEditor.tsx
+          src/features/components/ButtonVisualCustomizationEditor.test.tsx
+          src/features/components/ButtonVisualPreviewMatrix.tsx
+          src/features/components/ComponentFoundationsPreviewClient.test.tsx
+          'src/app/[locale]/app/projects/[projectSlug]/components/page.tsx'
+          --write
+      - name: Run focused regression tests
+        run: >-
+          npx vitest run
+          src/domain/design-system/component-template-registry.test.ts
+          src/features/components/components-registry.utils.test.ts
+          src/features/components/ButtonVisualCustomizationEditor.test.tsx
+          src/features/components/ComponentFoundationsPreviewClient.test.tsx
+      - name: Run typecheck
+        run: npm run typecheck
+      - name: Remove temporary workflow and commit
+        run: |
+          git rm .github/workflows/ds-181r-04-qa-fixes.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "fix: qualify focus states and initial component selection"
+          git push origin HEAD:agent/ds-181r-04-textfield-customization
