@@ -216,7 +216,8 @@ export function createComponentVisualCssProperties({
       padding,
     gap: resolvePrimitiveDesignValue(spacing?.gap, resolveToken),
     borderTopWidth:
-      resolvePrimitiveDesignValue(border?.topWidth, resolveToken) ?? borderWidth,
+      resolvePrimitiveDesignValue(border?.topWidth, resolveToken) ??
+      borderWidth,
     borderRightWidth:
       resolvePrimitiveDesignValue(border?.rightWidth, resolveToken) ??
       borderWidth,
@@ -224,7 +225,8 @@ export function createComponentVisualCssProperties({
       resolvePrimitiveDesignValue(border?.bottomWidth, resolveToken) ??
       borderWidth,
     borderLeftWidth:
-      resolvePrimitiveDesignValue(border?.leftWidth, resolveToken) ?? borderWidth,
+      resolvePrimitiveDesignValue(border?.leftWidth, resolveToken) ??
+      borderWidth,
     borderStyle: border?.style,
     borderColor: resolveStringDesignValue(border?.color, resolveToken),
     outlineWidth: resolvePrimitiveDesignValue(focusRing?.width, resolveToken),
