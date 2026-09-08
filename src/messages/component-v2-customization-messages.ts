@@ -7,6 +7,7 @@ const technicalGroups = {
   radius: 'Radius',
   fill: 'Fill',
   border: 'Stroke / Border',
+  focusRing: 'Focus ring',
   typography: 'Typography',
 } as const;
 
@@ -28,6 +29,10 @@ const technicalProperties = {
   borderWidth: 'Border width',
   borderStyle: 'Border style',
   borderColor: 'Border color',
+  focusRingWidth: 'Focus ring width',
+  focusRingOffset: 'Focus ring offset',
+  focusRingColor: 'Focus ring color',
+  focusRingStyle: 'Focus ring style',
   typography: 'Typography',
   fontFamily: 'Font family',
   fontSize: 'Font size',
