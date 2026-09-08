@@ -192,7 +192,11 @@ function getV2OwnedLegacyPreviewRoles(
 function usesV2VisualInspector(
   componentType: ComponentContractEditorDraft['type'],
 ): boolean {
-  return componentType === 'button' || componentType === 'textField';
+  return (
+    componentType === 'button' ||
+    componentType === 'textField' ||
+    componentType === 'card'
+  );
 }
 
 export function ComponentContractEditorSections({
