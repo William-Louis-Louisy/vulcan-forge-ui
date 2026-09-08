@@ -41,7 +41,7 @@ The preview does not add a hardcoded Tailwind focus ring. Its visual focus treat
 
 TextField is promoted from the legacy token-binding preview to the normalized V2 resolver. Template defaults are resolved first, then Base → Variant → Size → State. The TextField renderer preserves familiar fallback visuals only when the resolved V2 contract does not author that property. `invalid` and `disabled` remain visible as fallback state affordances, while `focusVisible` is resolved from the dedicated V2 Focus ring.
 
-The CSS projection intentionally avoids mixing shorthand and longhand properties during live rerenders. Border widths are emitted only as `borderTopWidth` / `borderRightWidth` / `borderBottomWidth` / `borderLeftWidth`, and padding is emitted only as the four physical side properties after resolving uniform, axis and side-specific authoring precedence. This prevents React's shorthand/longhand style-update conflicts while preserving the V2 inheritance semantics.
+The CSS projection intentionally avoids mixing shorthand and longhand properties during live rerenders. Border widths are emitted only as `borderTopWidth` / `borderRightWidth` / `borderBottomWidth` / `borderLeftWidth`, and padding is emitted only as the four physical side properties after resolving uniform, axis and side-specific authoring precedence. This prevents React's shorthand/longhand style-update conflicts while preserving the V2 inheritance semantics. Regression tests cover both uniform-to-side transitions and side-specific precedence.
 
 ## Initial component selection
 
