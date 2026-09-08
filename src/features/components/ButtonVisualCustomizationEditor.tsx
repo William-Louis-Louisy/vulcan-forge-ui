@@ -46,6 +46,7 @@ type DesignValueGroupKey =
   | 'spacing'
   | 'radius'
   | 'border'
+  | 'focusRing'
   | 'surface';
 type DesignValueLabelKey =
   | 'width'
@@ -63,7 +64,10 @@ type DesignValueLabelKey =
   | 'background'
   | 'foreground'
   | 'borderWidth'
-  | 'borderColor';
+  | 'borderColor'
+  | 'focusRingWidth'
+  | 'focusRingOffset'
+  | 'focusRingColor';
 type InspectorOptionalGroupKey = 'border' | 'typography';
 
 type DesignValueDescriptor = {
@@ -202,6 +206,30 @@ const borderProperties = [
   },
 ] satisfies readonly DesignValueDescriptor[];
 
+const focusRingProperties = [
+  {
+    group: 'focusRing',
+    property: 'width',
+    labelKey: 'focusRingWidth',
+    kind: 'length',
+    tokenType: 'spacing',
+  },
+  {
+    group: 'focusRing',
+    property: 'offset',
+    labelKey: 'focusRingOffset',
+    kind: 'length',
+    tokenType: 'spacing',
+  },
+  {
+    group: 'focusRing',
+    property: 'color',
+    labelKey: 'focusRingColor',
+    kind: 'color',
+    tokenType: 'color',
+  },
+] satisfies readonly DesignValueDescriptor[];
+
 const optionalGroups = ['border', 'typography'] as const;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -291,7 +319,7 @@ function getVisibleOptionalGroups(
   const target = getButtonVisualTarget(contract, scope);
   const groups: InspectorOptionalGroupKey[] = [];
 
-  if (target.border !== undefined || isFocusStateScope(scope)) {
+  if (target.border !== undefined) {
     groups.push('border');
   }
 
@@ -696,12 +724,56 @@ export function ButtonVisualCustomizationEditor({
             )}
           </InspectorGroup>
 
+          {isFocusStateScope(scope) ? (
+            <InspectorGroup title={t('groups.focusRing')}>
+              {focusRingProperties.map((descriptor) =>
+                renderDesignValueField(descriptor),
+              )}
+              <SimpleSelectProperty
+                id="button-v2-focus-ring-style"
+                label={t('properties.focusRingStyle')}
+                value={getButtonVisualProperty(
+                  draft,
+                  scope,
+                  'focusRing',
+                  'style',
+                )}
+                options={(['solid', 'dashed', 'dotted'] as const).map(
+                  (value) => ({ value, label: t(`borderStyles.${value}`) }),
+                )}
+                inheritedLabel={
+                  scope.kind === 'base' ? t('templateDefault') : t('inherited')
+                }
+                resetLabel={t('reset')}
+                onChange={(value) =>
+                  updateDraft(
+                    setButtonVisualProperty(
+                      draft,
+                      scope,
+                      'focusRing',
+                      'style',
+                      value,
+                    ),
+                  )
+                }
+                onReset={() =>
+                  updateDraft(
+                    resetButtonVisualProperty(
+                      draft,
+                      scope,
+                      'focusRing',
+                      'style',
+                    ),
+                  )
+                }
+              />
+            </InspectorGroup>
+          ) : null}
+
           {visibleOptionalGroups.includes('border') ? (
             <InspectorGroup
               title={t('groups.border')}
-              {...(isFocusStateScope(scope)
-                ? {}
-                : { onRemove: () => removeOptionalGroup('border') })}
+              onRemove={() => removeOptionalGroup('border')}
               removeLabel={t('removeProperty')}
             >
               {borderProperties.map((descriptor) =>
