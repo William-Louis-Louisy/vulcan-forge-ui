@@ -266,7 +266,7 @@ function ButtonVisualPreview({
         data-preview-v2="true"
         style={styles}
         className={[
-          'w-full transition',
+          'w-full transition focus-visible:outline-none',
           styles.borderStyle === 'none' ? '' : 'border',
           hasRadius(styles) ? '' : 'rounded-md',
           hasHorizontalPadding(styles) ? '' : 'px-2',
