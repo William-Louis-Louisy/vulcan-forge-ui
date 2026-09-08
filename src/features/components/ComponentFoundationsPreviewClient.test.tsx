@@ -219,7 +219,8 @@ describe('ComponentFoundationsPreviewClient', () => {
     await user.click(screen.getByRole('button', { name: 'Apply V2 visual' }));
 
     expect(previewButton).toHaveStyle({
-      paddingInline: '24px',
+      paddingLeft: '24px',
+      paddingRight: '24px',
       borderRadius: '18px 4px 18px 4px',
     });
   });
@@ -413,7 +414,11 @@ describe('ComponentFoundationsPreviewClient', () => {
 
     expect(input).not.toHaveClass('ring-2');
     expect(input).toHaveClass('focus-visible:outline-none');
-    expect(input).toHaveStyle({ borderWidth: '2px', borderStyle: 'solid' });
+    expect(input).toHaveStyle({
+      outlineWidth: '2px',
+      outlineOffset: '2px',
+      outlineStyle: 'solid',
+    });
 
     await user.click(stateSelect);
     await user.click(screen.getByRole('option', { name: 'Invalid' }));
