@@ -320,6 +320,98 @@ describe('ComponentContract V2 domain', () => {
     });
   });
 
+  it('lets a higher-layer uniform border width replace inherited side widths', () => {
+    const resolved = resolveComponentVisualProperties({
+      templateDefaults: {
+        border: {
+          width: { source: 'value', value: '1px' },
+          topWidth: { source: 'value', value: '3px' },
+          color: { source: 'value', value: '#111111' },
+          style: 'solid',
+        },
+      },
+      overrides: {
+        variants: {},
+        sizes: {},
+        states: {
+          focusVisible: {
+            border: { width: { source: 'value', value: '2px' } },
+          },
+        },
+      },
+      stateKey: 'focusVisible',
+    });
+
+    expect(resolved.border).toEqual({
+      width: { source: 'value', value: '2px' },
+      color: { source: 'value', value: '#111111' },
+      style: 'solid',
+    });
+  });
+
+  it('lets higher-layer padding shorthands replace inherited side-specific padding', () => {
+    const resolved = resolveComponentVisualProperties({
+      templateDefaults: {
+        spacing: {
+          padding: { source: 'value', value: '8px' },
+          paddingLeft: { source: 'value', value: '24px' },
+        },
+      },
+      overrides: {
+        variants: {
+          primary: {
+            spacing: { paddingX: { source: 'value', value: '16px' } },
+          },
+        },
+        sizes: {},
+        states: {},
+      },
+      variantKey: 'primary',
+    });
+
+    expect(resolved.spacing).toEqual({
+      padding: { source: 'value', value: '8px' },
+      paddingX: { source: 'value', value: '16px' },
+    });
+  });
+
+  it('resolves focus ring properties independently from the component border', () => {
+    const resolved = resolveComponentVisualProperties({
+      templateDefaults: {
+        border: {
+          width: { source: 'value', value: '1px' },
+          style: 'solid',
+        },
+      },
+      overrides: {
+        variants: {},
+        sizes: {},
+        states: {
+          focusVisible: {
+            focusRing: {
+              width: { source: 'value', value: '2px' },
+              offset: { source: 'value', value: '2px' },
+              style: 'solid',
+              color: { source: 'value', value: '#ff8731' },
+            },
+          },
+        },
+      },
+      stateKey: 'focusVisible',
+    });
+
+    expect(resolved.border?.width).toEqual({
+      source: 'value',
+      value: '1px',
+    });
+    expect(resolved.focusRing).toEqual({
+      width: { source: 'value', value: '2px' },
+      offset: { source: 'value', value: '2px' },
+      style: 'solid',
+      color: { source: 'value', value: '#ff8731' },
+    });
+  });
+
   it('resets one override property back to inherited behavior', () => {
     const override = {
       surface: {
