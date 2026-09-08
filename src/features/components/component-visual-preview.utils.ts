@@ -177,6 +177,7 @@ export function createComponentVisualCssProperties({
   const dimensions = visual.dimensions;
   const spacing = visual.spacing;
   const border = visual.border;
+  const focusRing = visual.focusRing;
   const radius = visual.radius;
   const radiusStyles = createRadiusCssProperties(radius, resolveToken);
   const surface = visual.surface;
@@ -185,6 +186,10 @@ export function createComponentVisualCssProperties({
     resolveToken,
   );
   const layout = visual.layout;
+  const padding = resolvePrimitiveDesignValue(spacing?.padding, resolveToken);
+  const paddingX = resolvePrimitiveDesignValue(spacing?.paddingX, resolveToken);
+  const paddingY = resolvePrimitiveDesignValue(spacing?.paddingY, resolveToken);
+  const borderWidth = resolvePrimitiveDesignValue(border?.width, resolveToken);
 
   return {
     width: resolvePrimitiveDesignValue(dimensions?.width, resolveToken),
@@ -193,39 +198,41 @@ export function createComponentVisualCssProperties({
     height: resolvePrimitiveDesignValue(dimensions?.height, resolveToken),
     minHeight: resolvePrimitiveDesignValue(dimensions?.minHeight, resolveToken),
     maxHeight: resolvePrimitiveDesignValue(dimensions?.maxHeight, resolveToken),
-    padding: resolvePrimitiveDesignValue(spacing?.padding, resolveToken),
-    paddingInline: resolvePrimitiveDesignValue(spacing?.paddingX, resolveToken),
-    paddingBlock: resolvePrimitiveDesignValue(spacing?.paddingY, resolveToken),
-    paddingTop: resolvePrimitiveDesignValue(spacing?.paddingTop, resolveToken),
-    paddingRight: resolvePrimitiveDesignValue(
-      spacing?.paddingRight,
-      resolveToken,
-    ),
-    paddingBottom: resolvePrimitiveDesignValue(
-      spacing?.paddingBottom,
-      resolveToken,
-    ),
-    paddingLeft: resolvePrimitiveDesignValue(
-      spacing?.paddingLeft,
-      resolveToken,
-    ),
+    paddingTop:
+      resolvePrimitiveDesignValue(spacing?.paddingTop, resolveToken) ??
+      paddingY ??
+      padding,
+    paddingRight:
+      resolvePrimitiveDesignValue(spacing?.paddingRight, resolveToken) ??
+      paddingX ??
+      padding,
+    paddingBottom:
+      resolvePrimitiveDesignValue(spacing?.paddingBottom, resolveToken) ??
+      paddingY ??
+      padding,
+    paddingLeft:
+      resolvePrimitiveDesignValue(spacing?.paddingLeft, resolveToken) ??
+      paddingX ??
+      padding,
     gap: resolvePrimitiveDesignValue(spacing?.gap, resolveToken),
-    borderWidth: resolvePrimitiveDesignValue(border?.width, resolveToken),
-    borderTopWidth: resolvePrimitiveDesignValue(border?.topWidth, resolveToken),
-    borderRightWidth: resolvePrimitiveDesignValue(
-      border?.rightWidth,
-      resolveToken,
-    ),
-    borderBottomWidth: resolvePrimitiveDesignValue(
-      border?.bottomWidth,
-      resolveToken,
-    ),
-    borderLeftWidth: resolvePrimitiveDesignValue(
-      border?.leftWidth,
-      resolveToken,
-    ),
+    borderTopWidth:
+      resolvePrimitiveDesignValue(border?.topWidth, resolveToken) ??
+      borderWidth,
+    borderRightWidth:
+      resolvePrimitiveDesignValue(border?.rightWidth, resolveToken) ??
+      borderWidth,
+    borderBottomWidth:
+      resolvePrimitiveDesignValue(border?.bottomWidth, resolveToken) ??
+      borderWidth,
+    borderLeftWidth:
+      resolvePrimitiveDesignValue(border?.leftWidth, resolveToken) ??
+      borderWidth,
     borderStyle: border?.style,
     borderColor: resolveStringDesignValue(border?.color, resolveToken),
+    outlineWidth: resolvePrimitiveDesignValue(focusRing?.width, resolveToken),
+    outlineOffset: resolvePrimitiveDesignValue(focusRing?.offset, resolveToken),
+    outlineStyle: focusRing?.style,
+    outlineColor: resolveStringDesignValue(focusRing?.color, resolveToken),
     ...radiusStyles,
     backgroundColor: resolveStringDesignValue(
       surface?.background,

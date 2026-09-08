@@ -227,6 +227,15 @@ export const componentBorderSchema = z
   })
   .strict();
 
+export const componentFocusRingSchema = z
+  .object({
+    width: lengthDesignValueSchema.optional(),
+    offset: lengthDesignValueSchema.optional(),
+    style: z.enum(['solid', 'dashed', 'dotted']).optional(),
+    color: colorDesignValueSchema.optional(),
+  })
+  .strict();
+
 export const componentRadiusSchema = z
   .object({
     radius: radiusDesignValueSchema.optional(),
@@ -269,6 +278,7 @@ export const componentVisualPropertiesSchema = z
     dimensions: componentDimensionsSchema.optional(),
     spacing: componentSpacingSchema.optional(),
     border: componentBorderSchema.optional(),
+    focusRing: componentFocusRingSchema.optional(),
     radius: componentRadiusSchema.optional(),
     surface: componentSurfaceSchema.optional(),
     typography: typographyDesignValueSchema.optional(),
@@ -754,6 +764,66 @@ export function toLegacyComponentContract(
   });
 }
 
+function mergeSpacingProperties(
+  base: ComponentVisualProperties['spacing'],
+  override: ComponentVisualProperties['spacing'],
+): ComponentVisualProperties['spacing'] {
+  if (!override) {
+    return base;
+  }
+
+  if (!base) {
+    return override;
+  }
+
+  const next = { ...base };
+
+  if (override.padding) {
+    delete next.paddingX;
+    delete next.paddingY;
+    delete next.paddingTop;
+    delete next.paddingRight;
+    delete next.paddingBottom;
+    delete next.paddingLeft;
+  }
+
+  if (override.paddingX) {
+    delete next.paddingLeft;
+    delete next.paddingRight;
+  }
+
+  if (override.paddingY) {
+    delete next.paddingTop;
+    delete next.paddingBottom;
+  }
+
+  return componentSpacingSchema.parse({ ...next, ...override });
+}
+
+function mergeBorderProperties(
+  base: ComponentVisualProperties['border'],
+  override: ComponentVisualProperties['border'],
+): ComponentVisualProperties['border'] {
+  if (!override) {
+    return base;
+  }
+
+  if (!base) {
+    return override;
+  }
+
+  const next = { ...base };
+
+  if (override.width) {
+    delete next.topWidth;
+    delete next.rightWidth;
+    delete next.bottomWidth;
+    delete next.leftWidth;
+  }
+
+  return componentBorderSchema.parse({ ...next, ...override });
+}
+
 function mergeRadiusProperties(
   base: ComponentVisualProperties['radius'],
   override: ComponentVisualProperties['radius'],
@@ -792,13 +862,11 @@ function mergeVisualProperties(
       base.dimensions || override.dimensions
         ? { ...base.dimensions, ...override.dimensions }
         : undefined,
-    spacing:
-      base.spacing || override.spacing
-        ? { ...base.spacing, ...override.spacing }
-        : undefined,
-    border:
-      base.border || override.border
-        ? { ...base.border, ...override.border }
+    spacing: mergeSpacingProperties(base.spacing, override.spacing),
+    border: mergeBorderProperties(base.border, override.border),
+    focusRing:
+      base.focusRing || override.focusRing
+        ? { ...base.focusRing, ...override.focusRing }
         : undefined,
     radius: mergeRadiusProperties(base.radius, override.radius),
     surface:

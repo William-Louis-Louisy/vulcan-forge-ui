@@ -7,6 +7,7 @@ const technicalGroups = {
   radius: 'Radius',
   fill: 'Fill',
   border: 'Stroke / Border',
+  focusRing: 'Focus ring',
   typography: 'Typography',
 } as const;
 
@@ -28,6 +29,10 @@ const technicalProperties = {
   borderWidth: 'Border width',
   borderStyle: 'Border style',
   borderColor: 'Border color',
+  focusRingWidth: 'Focus ring width',
+  focusRingOffset: 'Focus ring offset',
+  focusRingColor: 'Focus ring color',
+  focusRingStyle: 'Focus ring style',
   typography: 'Typography',
   fontFamily: 'Font family',
   fontSize: 'Font size',
@@ -57,7 +62,7 @@ export const componentV2CustomizationMessages = {
       buttonCustomization: {
         title: 'Visual tokens',
         description:
-          'Edit the Button appearance from one compact property inspector. Add optional property groups only when you need them.',
+          'Edit the component appearance from one compact property inspector. Add optional property groups only when you need them.',
         scope: 'Editing layer',
         target: 'Target',
         addProperty: 'Add visual property',
@@ -98,7 +103,7 @@ export const componentV2CustomizationMessages = {
             componentContractNotFound: 'This component no longer exists.',
             invalidPayload: 'The visual customization payload is invalid.',
             invalidContract:
-              'This visual editor only supports Button templates.',
+              'This visual editor only supports Button and TextField templates.',
             unexpected: 'Unable to save the visual tokens. Try again.',
           },
         },
@@ -110,7 +115,7 @@ export const componentV2CustomizationMessages = {
       buttonCustomization: {
         title: 'Tokens visuels',
         description:
-          'Modifiez l’apparence du Button depuis un seul inspecteur compact. Ajoutez les groupes de propriétés optionnels uniquement lorsque vous en avez besoin.',
+          'Modifiez l’apparence du composant depuis un seul inspecteur compact. Ajoutez les groupes de propriétés optionnels uniquement lorsque vous en avez besoin.',
         scope: 'Couche éditée',
         target: 'Cible',
         addProperty: 'Ajouter une propriété visuelle',
@@ -153,7 +158,7 @@ export const componentV2CustomizationMessages = {
             componentContractNotFound: 'Ce composant n’existe plus.',
             invalidPayload: 'La personnalisation visuelle est invalide.',
             invalidContract:
-              'Cet éditeur visuel prend uniquement en charge les templates Button.',
+              'Cet éditeur visuel prend uniquement en charge les templates Button et TextField.',
             unexpected:
               'Impossible d’enregistrer les tokens visuels. Veuillez réessayer.',
           },

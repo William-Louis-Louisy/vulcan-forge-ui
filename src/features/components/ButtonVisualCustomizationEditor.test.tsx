@@ -40,6 +40,7 @@ vi.mock('next-intl', () => ({
       'groups.radius': 'Radius',
       'groups.fill': 'Fill',
       'groups.border': 'Stroke / Border',
+      'groups.focusRing': 'Focus ring',
       'groups.typography': 'Typography',
       'properties.width': 'Width',
       'properties.minWidth': 'Min width',
@@ -58,6 +59,10 @@ vi.mock('next-intl', () => ({
       'properties.borderWidth': 'Border width',
       'properties.borderColor': 'Border color',
       'properties.borderStyle': 'Border style',
+      'properties.focusRingWidth': 'Focus ring width',
+      'properties.focusRingOffset': 'Focus ring offset',
+      'properties.focusRingColor': 'Focus ring color',
+      'properties.focusRingStyle': 'Focus ring style',
       'properties.fontFamily': 'Font family',
       'properties.fontSize': 'Font size',
       'properties.fontWeight': 'Font weight',
@@ -253,6 +258,21 @@ describe('ButtonVisualCustomizationEditor', () => {
       }),
     );
 
+    expect(screen.queryByText('Stroke / Border')).not.toBeInTheDocument();
+  });
+
+  it('exposes a dedicated Focus ring for focus-state authoring without forcing Border', async () => {
+    const user = userEvent.setup();
+
+    render(<ButtonVisualCustomizationEditor {...createEditorProps()} />);
+
+    await user.click(screen.getByRole('button', { name: 'State' }));
+
+    expect(screen.getByText('Focus ring')).toBeInTheDocument();
+    expect(screen.getByText('Focus ring width')).toBeInTheDocument();
+    expect(screen.getByText('Focus ring offset')).toBeInTheDocument();
+    expect(screen.getByText('Focus ring color')).toBeInTheDocument();
+    expect(screen.getByText('Focus ring style')).toBeInTheDocument();
     expect(screen.queryByText('Stroke / Border')).not.toBeInTheDocument();
   });
 

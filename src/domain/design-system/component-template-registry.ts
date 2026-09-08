@@ -32,6 +32,7 @@ export const componentTemplateCapabilityGroups = [
   'dimensions',
   'spacing',
   'border',
+  'focusRing',
   'radius',
   'surface',
   'typography',
@@ -70,6 +71,7 @@ const buttonCapabilities: ComponentTemplateCapabilityProfile = {
   dimensions: 'constrained',
   spacing: 'full',
   border: 'full',
+  focusRing: 'full',
   radius: 'full',
   surface: 'full',
   typography: 'full',
@@ -81,6 +83,7 @@ const textFieldCapabilities: ComponentTemplateCapabilityProfile = {
   dimensions: 'full',
   spacing: 'full',
   border: 'full',
+  focusRing: 'full',
   radius: 'full',
   surface: 'full',
   typography: 'full',
@@ -92,6 +95,7 @@ const cardCapabilities: ComponentTemplateCapabilityProfile = {
   dimensions: 'full',
   spacing: 'full',
   border: 'full',
+  focusRing: 'none',
   radius: 'full',
   surface: 'full',
   typography: 'full',
@@ -103,6 +107,7 @@ const alertCapabilities: ComponentTemplateCapabilityProfile = {
   dimensions: 'full',
   spacing: 'full',
   border: 'full',
+  focusRing: 'none',
   radius: 'full',
   surface: 'full',
   typography: 'full',
@@ -114,6 +119,7 @@ const dialogCapabilities: ComponentTemplateCapabilityProfile = {
   dimensions: 'full',
   spacing: 'full',
   border: 'full',
+  focusRing: 'none',
   radius: 'full',
   surface: 'full',
   typography: 'full',
@@ -159,18 +165,48 @@ function applyTemplateSpecificDefaults(
   templateKey: WaveAComponentTemplateKey,
   contract: ComponentContractV2,
 ): ComponentContractV2 {
+  const supportsFocusVisible =
+    templateKey === 'button' || templateKey === 'textField';
+  const focusVisibleDefaults = contract.overrides.states.focusVisible ?? {};
+  const contractWithFocusVisibleDefaults = supportsFocusVisible
+    ? componentContractV2Schema.parse({
+        ...contract,
+        overrides: {
+          ...contract.overrides,
+          states: {
+            ...contract.overrides.states,
+            focusVisible: {
+              ...focusVisibleDefaults,
+              focusRing: {
+                width: { source: 'value', value: '2px' },
+                offset: { source: 'value', value: '2px' },
+                style: 'solid',
+                color: {
+                  source: 'token',
+                  tokenType: 'color',
+                  path: 'color.semantic.action.primary',
+                },
+                ...focusVisibleDefaults.focusRing,
+              },
+            },
+          },
+        },
+      })
+    : contract;
+
   if (templateKey !== 'button') {
-    return contract;
+    return contractWithFocusVisibleDefaults;
   }
 
-  const primaryDefaults = contract.overrides.variants.primary ?? {};
+  const primaryDefaults =
+    contractWithFocusVisibleDefaults.overrides.variants.primary ?? {};
 
   return componentContractV2Schema.parse({
-    ...contract,
+    ...contractWithFocusVisibleDefaults,
     overrides: {
-      ...contract.overrides,
+      ...contractWithFocusVisibleDefaults.overrides,
       variants: {
-        ...contract.overrides.variants,
+        ...contractWithFocusVisibleDefaults.overrides.variants,
         primary: {
           ...primaryDefaults,
           border: {

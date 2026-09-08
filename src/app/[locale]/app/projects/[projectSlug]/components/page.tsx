@@ -10,6 +10,7 @@ import { notFound, redirect } from 'next/navigation';
 import { routing, type Locale } from '@/i18n/routing';
 import {
   createComponentRegistryItems,
+  getFirstComponentRegistryItemByDisplayOrder,
   groupComponentRegistryItemsByCategory,
   type ComponentRegistryItem,
 } from '@/features/components/components-registry.utils';
@@ -93,9 +94,8 @@ export default async function ComponentsRegistryPage({
 
   const selectedComponent =
     filteredRegistryItems.find((item) => item.type === selectedComponentType) ??
-    filteredRegistryItems[0] ??
-    registry.items[0] ??
-    null;
+    getFirstComponentRegistryItemByDisplayOrder(filteredRegistryItems) ??
+    getFirstComponentRegistryItemByDisplayOrder(registry.items);
 
   const createComponentLabels = {
     ariaLabel: t('list.create.ariaLabel'),

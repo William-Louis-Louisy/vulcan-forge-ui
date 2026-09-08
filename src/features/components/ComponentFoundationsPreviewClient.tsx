@@ -65,6 +65,8 @@ export function ComponentFoundationsPreviewClient({
     .join(', ');
   const isAlertTemplate = templateDefinition?.rendererKey === 'alert';
   const isButtonTemplate = templateDefinition?.rendererKey === 'button';
+  const isTextFieldTemplate = templateDefinition?.rendererKey === 'textField';
+  const usesV2VisualPreview = isButtonTemplate || isTextFieldTemplate;
   const previewLabels = {
     baseState: t('foundationsPreview.baseState'),
     state: t('foundationsPreview.state'),
@@ -76,7 +78,7 @@ export function ComponentFoundationsPreviewClient({
         {t('foundationsPreview.title')}
       </p>
 
-      {contract.tokenBindings.length === 0 ? (
+      {contract.tokenBindings.length === 0 && !usesV2VisualPreview ? (
         <div className="border-border-subtle bg-background-subtle text-content-secondary mt-3 rounded-md border px-3 py-2 text-xs leading-5">
           {t('foundationsPreview.noTokenBindingsNotice')}
         </div>
@@ -97,7 +99,7 @@ export function ComponentFoundationsPreviewClient({
       ) : null}
 
       <div className="mt-3 max-w-full min-w-0">
-        {isButtonTemplate ? (
+        {usesV2VisualPreview ? (
           <ButtonVisualPreviewMatrix
             locale={locale}
             component={previewComponent}
