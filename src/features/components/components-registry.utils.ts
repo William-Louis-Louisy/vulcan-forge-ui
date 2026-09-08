@@ -1,4 +1,5 @@
 import {
+  componentContractV2Schema,
   getComponentTemplateDefinition,
   resolveStoredComponentTemplateContract,
   toLegacyComponentContract,
@@ -78,6 +79,12 @@ export const componentRegistryCategoryOrder = [
   'overlay',
 ] as const satisfies readonly ComponentRegistryItem['category'][];
 
+export function getFirstComponentRegistryItemByDisplayOrder(
+  items: readonly ComponentRegistryItem[],
+): ComponentRegistryItem | null {
+  return groupComponentRegistryItemsByCategory(items)[0]?.items[0] ?? null;
+}
+
 function isRegistryCategory(
   category: ComponentContractV2['category'],
 ): category is ComponentRegistryItem['category'] {
@@ -120,6 +127,36 @@ function getRegistryCategory(
   return isRegistryCategory(category)
     ? category
     : getComponentCategory(templateType);
+}
+
+function normalizeTextFieldFocusState(
+  contract: ComponentContractV2,
+): ComponentContractV2 {
+  const hasFocus = contract.states.some((state) => state.key === 'focus');
+  const hasFocusVisible = contract.states.some(
+    (state) => state.key === 'focusVisible',
+  );
+
+  if (!hasFocus || !hasFocusVisible) {
+    return contract;
+  }
+
+  const stateOverrides = { ...contract.overrides.states };
+
+  if (stateOverrides.focus && stateOverrides.focusVisible === undefined) {
+    stateOverrides.focusVisible = stateOverrides.focus;
+  }
+
+  delete stateOverrides.focus;
+
+  return componentContractV2Schema.parse({
+    ...contract,
+    states: contract.states.filter((state) => state.key !== 'focus'),
+    overrides: {
+      ...contract.overrides,
+      states: stateOverrides,
+    },
+  });
 }
 
 export function getComponentPlatforms(
@@ -204,7 +241,11 @@ export function createComponentRegistryItems(
           category: componentContract.category,
           contract: componentContract.contract,
         });
-      const legacyContract = toLegacyComponentContract(contractV2);
+      const normalizedContractV2 =
+        template.legacyType === 'textField'
+          ? normalizeTextFieldFocusState(contractV2)
+          : contractV2;
+      const legacyContract = toLegacyComponentContract(normalizedContractV2);
 
       items.push({
         id: componentContract.id,
@@ -216,7 +257,7 @@ export function createComponentRegistryItems(
         category: getRegistryCategory(contractV2.category, template.legacyType),
         platforms: getComponentPlatforms(template.legacyType),
         contract: legacyContract,
-        contractV2,
+        contractV2: normalizedContractV2,
         completeness: getComponentCompleteness(legacyContract),
         isValid: true,
       });

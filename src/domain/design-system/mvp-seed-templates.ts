@@ -679,10 +679,6 @@ export const mvpComponentContractSeeds = [
     ],
     states: [
       {
-        key: 'focus',
-        label: { en: 'Focus', fr: 'Focus' },
-      },
-      {
         key: 'focusVisible',
         label: { en: 'Focus visible', fr: 'Focus visible' },
       },

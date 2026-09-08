@@ -326,8 +326,8 @@ describe('ComponentFoundationsPreviewClient', () => {
       ],
       states: [
         {
-          key: 'focus',
-          label: { en: 'Focus' },
+          key: 'focusVisible',
+          label: { en: 'Focus visible' },
         },
         {
           key: 'invalid',
@@ -409,10 +409,11 @@ describe('ComponentFoundationsPreviewClient', () => {
       name: 'foundationsPreview.state',
     });
     await user.click(stateSelect);
-    await user.click(screen.getByRole('option', { name: 'Focus' }));
+    await user.click(screen.getByRole('option', { name: 'Focus visible' }));
 
-    expect(input).toHaveClass('ring-2');
+    expect(input).not.toHaveClass('ring-2');
     expect(input).toHaveClass('focus-visible:outline-none');
+    expect(input).toHaveStyle({ borderWidth: '2px', borderStyle: 'solid' });
 
     await user.click(stateSelect);
     await user.click(screen.getByRole('option', { name: 'Invalid' }));

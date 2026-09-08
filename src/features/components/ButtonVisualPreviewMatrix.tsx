@@ -303,7 +303,6 @@ function ButtonVisualPreview({
               : isFocus
                 ? 'border-action-primary'
                 : 'border-border-subtle',
-          isFocus ? 'ring-action-primary/25 ring-2' : '',
           isDisabled ? 'cursor-not-allowed opacity-60' : '',
         ].join(' ')}
       />
@@ -390,7 +389,6 @@ function ButtonVisualPreview({
               : variantTone === 'ghost'
                 ? 'border-transparent'
                 : 'border-border-subtle',
-        isFocus ? 'ring-action-primary/30 ring-2' : '',
         isHover ? 'brightness-95' : '',
         isActive ? 'translate-y-px' : '',
         isDisabled ? 'cursor-not-allowed opacity-45' : '',

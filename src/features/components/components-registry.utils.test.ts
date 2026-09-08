@@ -2,6 +2,7 @@ import {
   getComponentCategory,
   getComponentCompleteness,
   createComponentRegistryItems,
+  getFirstComponentRegistryItemByDisplayOrder,
   getComponentCompletenessWarnings,
   groupComponentRegistryItemsByCategory,
 } from './components-registry.utils';
@@ -289,6 +290,56 @@ describe('components registry utils', () => {
       code: 'missingAccessibleNameRule',
       severity: 'warning',
     });
+  });
+
+  it('normalizes legacy TextField focus + focusVisible duplicates to focusVisible', () => {
+    const textFieldContract: ComponentContract = {
+      ...buttonContract,
+      type: 'textField',
+      name: 'TextField',
+      states: [
+        { key: 'focus', label: { en: 'Focus' } },
+        { key: 'focusVisible', label: { en: 'Focus visible' } },
+        { key: 'invalid', label: { en: 'Invalid' } },
+        { key: 'disabled', label: { en: 'Disabled' } },
+      ],
+    };
+    const registry = createComponentRegistryItems([
+      createStoredLegacyComponent({
+        id: 'text-field-contract',
+        contract: textFieldContract,
+      }),
+    ]);
+
+    expect(
+      registry.items[0]?.contract.states.map((state) => state.key),
+    ).toEqual(['focusVisible', 'invalid', 'disabled']);
+    expect(
+      registry.items[0]?.contractV2.states.map((state) => state.key),
+    ).toEqual(['focusVisible', 'invalid', 'disabled']);
+  });
+
+  it('selects the first component using the same category order as the visible registry', () => {
+    const alertContract: ComponentContract = {
+      ...buttonContract,
+      type: 'alert',
+      name: 'Alert',
+      states: [],
+    };
+    const registry = createComponentRegistryItems([
+      createStoredLegacyComponent({
+        id: 'alert-contract',
+        contract: alertContract,
+      }),
+      createStoredLegacyComponent({
+        id: 'button-contract',
+        contract: buttonContract,
+      }),
+    ]);
+
+    expect(
+      getFirstComponentRegistryItemByDisplayOrder(registry.items)?.type,
+    ).toBe('button');
   });
 
   it('groups registry items by persisted category', () => {

@@ -159,18 +159,47 @@ function applyTemplateSpecificDefaults(
   templateKey: WaveAComponentTemplateKey,
   contract: ComponentContractV2,
 ): ComponentContractV2 {
+  const supportsFocusVisible =
+    templateKey === 'button' || templateKey === 'textField';
+  const focusVisibleDefaults = contract.overrides.states.focusVisible ?? {};
+  const contractWithFocusVisibleDefaults = supportsFocusVisible
+    ? componentContractV2Schema.parse({
+        ...contract,
+        overrides: {
+          ...contract.overrides,
+          states: {
+            ...contract.overrides.states,
+            focusVisible: {
+              ...focusVisibleDefaults,
+              border: {
+                width: { source: 'value', value: '2px' },
+                style: 'solid',
+                color: {
+                  source: 'token',
+                  tokenType: 'color',
+                  path: 'color.semantic.action.primary',
+                },
+                ...focusVisibleDefaults.border,
+              },
+            },
+          },
+        },
+      })
+    : contract;
+
   if (templateKey !== 'button') {
-    return contract;
+    return contractWithFocusVisibleDefaults;
   }
 
-  const primaryDefaults = contract.overrides.variants.primary ?? {};
+  const primaryDefaults =
+    contractWithFocusVisibleDefaults.overrides.variants.primary ?? {};
 
   return componentContractV2Schema.parse({
-    ...contract,
+    ...contractWithFocusVisibleDefaults,
     overrides: {
-      ...contract.overrides,
+      ...contractWithFocusVisibleDefaults.overrides,
       variants: {
-        ...contract.overrides.variants,
+        ...contractWithFocusVisibleDefaults.overrides.variants,
         primary: {
           ...primaryDefaults,
           border: {

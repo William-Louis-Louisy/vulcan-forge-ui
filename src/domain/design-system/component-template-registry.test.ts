@@ -54,6 +54,24 @@ describe('componentTemplateDefinitions', () => {
     ).toBeUndefined();
   });
 
+  it('defines an authorable focusVisible border treatment for interactive V2 templates', () => {
+    for (const templateKey of ['button', 'textField'] as const) {
+      const focusVisible =
+        getComponentTemplateDefinition(templateKey)?.defaultContract.overrides
+          .states.focusVisible;
+
+      expect(focusVisible?.border).toMatchObject({
+        width: { source: 'value', value: '2px' },
+        style: 'solid',
+        color: {
+          source: 'token',
+          tokenType: 'color',
+          path: 'color.semantic.action.primary',
+        },
+      });
+    }
+  });
+
   it('keeps renderer selection attached to the template rather than Component identity', () => {
     const component = createComponentContractFromTemplate({
       templateKey: 'button',

@@ -256,6 +256,24 @@ describe('ButtonVisualCustomizationEditor', () => {
     expect(screen.queryByText('Stroke / Border')).not.toBeInTheDocument();
   });
 
+  it('keeps Stroke / Border visible for focus-state authoring', async () => {
+    const user = userEvent.setup();
+
+    render(<ButtonVisualCustomizationEditor {...createEditorProps()} />);
+
+    await user.click(screen.getByRole('button', { name: 'State' }));
+
+    expect(screen.getByText('Stroke / Border')).toBeInTheDocument();
+    expect(screen.getByText('Border width')).toBeInTheDocument();
+    expect(screen.getByText('Border style')).toBeInTheDocument();
+    expect(screen.getByText('Border color')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', {
+        name: 'Remove visual property Stroke / Border',
+      }),
+    ).not.toBeInTheDocument();
+  });
+
   it('starts in independent-corner mode when the current scope already owns corners', () => {
     const props = createEditorProps();
     const contractV2: ComponentContractV2 = {

@@ -280,6 +280,10 @@ function hasCornerOverrides(
   );
 }
 
+function isFocusStateScope(scope: ButtonVisualScope): boolean {
+  return scope.kind === 'state' && scope.key.toLowerCase().includes('focus');
+}
+
 function getVisibleOptionalGroups(
   contract: ComponentContractV2,
   scope: ButtonVisualScope,
@@ -287,7 +291,7 @@ function getVisibleOptionalGroups(
   const target = getButtonVisualTarget(contract, scope);
   const groups: InspectorOptionalGroupKey[] = [];
 
-  if (target.border !== undefined) {
+  if (target.border !== undefined || isFocusStateScope(scope)) {
     groups.push('border');
   }
 
@@ -695,7 +699,9 @@ export function ButtonVisualCustomizationEditor({
           {visibleOptionalGroups.includes('border') ? (
             <InspectorGroup
               title={t('groups.border')}
-              onRemove={() => removeOptionalGroup('border')}
+              {...(isFocusStateScope(scope)
+                ? {}
+                : { onRemove: () => removeOptionalGroup('border') })}
               removeLabel={t('removeProperty')}
             >
               {borderProperties.map((descriptor) =>
