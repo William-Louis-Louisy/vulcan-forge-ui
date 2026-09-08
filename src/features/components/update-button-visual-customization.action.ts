@@ -134,7 +134,11 @@ export async function updateButtonVisualCustomizationAction(
       contract: storedContract.contract,
     });
 
-    if (template.key !== 'button' && template.key !== 'textField') {
+    if (
+      template.key !== 'button' &&
+      template.key !== 'textField' &&
+      template.key !== 'card'
+    ) {
       return {
         status: 'error',
         formError: 'invalidContract',
