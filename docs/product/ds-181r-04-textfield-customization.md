@@ -6,7 +6,9 @@ Use TextField as the first generalization check for the Button V2 property-inspe
 
 ## TextField contract already present
 
-The registered TextField seed exposes one `default` variant, `sm` / `md` / `lg` sizes and the states `focus`, `focusVisible`, `invalid` and `disabled`. Its template capabilities allow dimensions, spacing, border, radius, surface and typography; layout remains constrained and overflow unsupported.
+The registered TextField seed exposes one `default` variant, `sm` / `md` / `lg` sizes and the canonical states `focusVisible`, `invalid` and `disabled`. Earlier stored TextField contracts that contain both `focus` and `focusVisible` are normalized when read: the duplicate `focus` state is removed and its state override is migrated to `focusVisible` when no `focusVisible` override already exists.
+
+Its template capabilities allow dimensions, spacing, border, radius, surface and typography; layout remains constrained and overflow unsupported.
 
 ## Reused inspector contract
 
@@ -18,6 +20,8 @@ TextField uses the same live V2 inspector as Button:
 - Base / Variant / Size / State use sparse overrides;
 - Fill, Dimensions, Spacing and Radius are core groups;
 - Stroke / Border and Typography stay progressive optional groups;
+- when a focus state is authored, Stroke / Border is exposed automatically so the focus treatment is editable rather than hardcoded;
+- the focus-state Border group cannot be removed because it represents the template's focus affordance;
 - uniform radius and independent corners share the accepted R03 semantics;
 - token options keep semantic → primitive → remaining deterministic ordering;
 - compact `xs` source, token and explicit-value controls stay aligned;
@@ -25,9 +29,19 @@ TextField uses the same live V2 inspector as Button:
 
 The existing Button-named implementation file remains temporarily as the compatibility boundary for this slice; R04 proves reuse with a second template before any file/API rename that would create broad mechanical churn.
 
+## Focus treatment
+
+`focusVisible` is the single canonical focus state for TextField. Button and TextField templates provide an authorable default focus treatment through the V2 border contract: `2px solid` using `color.semantic.action.primary`.
+
+The preview no longer adds a hardcoded Tailwind focus ring. Its visual focus treatment is resolved through Template defaults → Base → Variant → Size → State like every other V2 visual property. The TextField preview still locally neutralizes VulcanForgeUI's application-level `:focus-visible` outline so the specimen does not display a second, unrelated focus treatment; shared application input styling and global accessibility focus behavior remain unchanged.
+
 ## Preview
 
-TextField is promoted from the legacy token-binding preview to the normalized V2 resolver. Template defaults are resolved first, then Base → Variant → Size → State. The TextField renderer preserves familiar fallback visuals only when the resolved V2 contract does not author that property. `invalid`, focus and disabled remain visible as fallback state affordances, while authored V2 values win for background, foreground and border color.
+TextField is promoted from the legacy token-binding preview to the normalized V2 resolver. Template defaults are resolved first, then Base → Variant → Size → State. The TextField renderer preserves familiar fallback visuals only when the resolved V2 contract does not author that property. `invalid` and `disabled` remain visible as fallback state affordances, while `focusVisible` is resolved from the authorable V2 border treatment.
+
+## Initial component selection
+
+When the Components page is opened without an explicit `?component=...` selection, the initial component now follows the same category/display ordering as the visible registry navigation (`action` → `input` → `layout` → `feedback` → `overlay`). This keeps Button selected by default when it is the first visible registry entry instead of depending on raw persistence order.
 
 ## Persistence
 
@@ -47,4 +61,4 @@ For TextField, the generic legacy Visual Tokens editor is hidden once the V2 ins
 
 ## Acceptance gate
 
-R04 is accepted only if the real Components page confirms that TextField feels like the same authoring system as Button, while its `default` variant, three sizes and focus / focusVisible / invalid / disabled states preview and persist correctly. Button behavior must remain unchanged.
+R04 is accepted only if the real Components page confirms that TextField feels like the same authoring system as Button, while its `default` variant, three sizes and `focusVisible` / `invalid` / `disabled` states preview and persist correctly. Button behavior must remain unchanged. Opening the Components page without an explicit component selection must select Button, matching the first visible registry entry.
