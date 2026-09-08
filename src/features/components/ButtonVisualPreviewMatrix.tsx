@@ -244,7 +244,6 @@ function ButtonVisualPreview({
 }) {
   const normalizedStateKey = stateKey.toLowerCase();
   const isDisabled = normalizedStateKey.includes('disabled');
-  const isFocus = normalizedStateKey.includes('focus');
   const isError =
     normalizedStateKey.includes('invalid') ||
     normalizedStateKey.includes('error');
@@ -300,9 +299,7 @@ function ButtonVisualPreview({
             ? ''
             : isError
               ? 'border-action-danger'
-              : isFocus
-                ? 'border-action-primary'
-                : 'border-border-subtle',
+              : 'border-border-subtle',
           isDisabled ? 'cursor-not-allowed opacity-60' : '',
         ].join(' ')}
       />
