@@ -244,6 +244,12 @@ const contract: ComponentContract = {
   tokenBindings: [],
 };
 
+const legacyVisualTokensContract: ComponentContract = {
+  ...contract,
+  type: 'alert',
+  name: 'Alert',
+};
+
 const tokenOptions = [
   {
     type: 'color' as const,
@@ -475,10 +481,10 @@ describe('ComponentContractEditor', () => {
 
     render(
       <ComponentContractEditor
-        componentKey="button"
+        componentKey="alert"
         locale="en"
         projectSlug="demo"
-        contract={contract}
+        contract={legacyVisualTokensContract}
         labels={labels}
         tokenOptions={tokenOptions}
       />,
@@ -510,10 +516,10 @@ describe('ComponentContractEditor', () => {
 
     render(
       <ComponentContractEditor
-        componentKey="button"
+        componentKey="alert"
         locale="en"
         projectSlug="demo"
-        contract={contract}
+        contract={legacyVisualTokensContract}
         labels={labels}
         tokenOptions={tokenOptions}
       />,
@@ -546,10 +552,10 @@ describe('ComponentContractEditor', () => {
 
     render(
       <ComponentContractEditor
-        componentKey="button"
+        componentKey="alert"
         locale="en"
         projectSlug="demo"
-        contract={contract}
+        contract={legacyVisualTokensContract}
         labels={labels}
         tokenOptions={tokenOptions}
       />,
@@ -661,6 +667,46 @@ describe('ComponentContractEditor', () => {
     expect(
       screen.queryByRole('combobox', { name: 'Preview role' }),
     ).not.toBeInTheDocument();
+  });
+
+  it('uses the V2 visual inspector as the sole Card visual authoring surface', () => {
+    const cardContract: ComponentContract = {
+      ...contract,
+      type: 'card',
+      name: 'Card',
+      tokenBindings: [],
+    };
+    const cardContractV2 = migrateLegacyComponentContract(cardContract, {
+      key: 'card',
+      name: 'Card',
+      templateKey: 'card',
+      category: 'layout',
+    });
+
+    render(
+      <ComponentContractEditor
+        componentKey="card"
+        locale="en"
+        projectSlug="demo"
+        contract={cardContract}
+        contractV2={cardContractV2}
+        labels={labels}
+        tokenOptions={tokenOptions}
+      />,
+    );
+
+    expect(
+      screen.getByTestId('button-visual-customization-editor'),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /Add visual token/ }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByText('Variants & states').closest('details'),
+    ).not.toBeNull();
+    expect(
+      screen.getByText('Localized content').closest('details'),
+    ).not.toBeNull();
   });
 
   it('uses the V2 visual inspector as the sole TextField visual authoring surface', () => {
