@@ -8,9 +8,7 @@ import {
 } from '@/domain/design-system';
 import { ButtonVisualPreviewMatrix } from './ButtonVisualPreviewMatrix';
 import type { ComponentRegistryItem } from './components-registry.utils';
-import {
-  createComponentPreviewSemanticPalette,
-} from './component-token-bindings.utils';
+import { createComponentPreviewSemanticPalette } from './component-token-bindings.utils';
 
 const cardSelector = '[data-preview-component="card"]';
 const v2CardSelector = '[data-component-v2-preview="card"]';
