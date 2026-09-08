@@ -13,6 +13,8 @@ permissions:
 jobs:
   apply:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://localhost:5432/vulcan_forge_ui?schema=public
     steps:
       - uses: actions/checkout@v6
         with:
