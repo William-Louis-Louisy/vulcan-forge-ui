@@ -20,8 +20,8 @@ TextField uses the same live V2 inspector as Button:
 - Base / Variant / Size / State use sparse overrides;
 - Fill, Dimensions, Spacing and Radius are core groups;
 - Stroke / Border and Typography stay progressive optional groups;
-- when a focus state is authored, Stroke / Border is exposed automatically so the focus treatment is editable rather than hardcoded;
-- the focus-state Border group cannot be removed because it represents the template's focus affordance;
+- `focusVisible` exposes a dedicated Focus ring group rather than reusing Stroke / Border;
+- Focus ring width, offset, style and color are authorable independently from the component border;
 - uniform radius and independent corners share the accepted R03 semantics;
 - token options keep semantic → primitive → remaining deterministic ordering;
 - compact `xs` source, token and explicit-value controls stay aligned;
@@ -31,13 +31,17 @@ The existing Button-named implementation file remains temporarily as the compati
 
 ## Focus treatment
 
-`focusVisible` is the single canonical focus state for TextField. Button and TextField templates provide an authorable default focus treatment through the V2 border contract: `2px solid` using `color.semantic.action.primary`.
+`focusVisible` is the single canonical focus state for TextField. Button and TextField templates provide a dedicated authorable Focus ring with a `2px` width, `2px` offset, `solid` style and `color.semantic.action.primary` color.
 
-The preview no longer adds a hardcoded Tailwind focus ring. Its visual focus treatment is resolved through Template defaults → Base → Variant → Size → State like every other V2 visual property. The TextField preview still locally neutralizes VulcanForgeUI's application-level `:focus-visible` outline so the specimen does not display a second, unrelated focus treatment; shared application input styling and global accessibility focus behavior remain unchanged.
+The Focus ring is projected as CSS `outline` properties. This keeps the accessibility affordance independent from the component's ordinary border and avoids changing the component box model when focus becomes visible. Stroke / Border can still be authored independently on a focus state when the design explicitly calls for it.
+
+The preview does not add a hardcoded Tailwind focus ring. Its visual focus treatment is resolved through Template defaults → Base → Variant → Size → State like every other V2 visual property. The TextField preview still locally neutralizes VulcanForgeUI's application-level `:focus-visible` outline so the specimen does not display a second, unrelated focus treatment; shared application input styling and global accessibility focus behavior remain unchanged.
 
 ## Preview
 
-TextField is promoted from the legacy token-binding preview to the normalized V2 resolver. Template defaults are resolved first, then Base → Variant → Size → State. The TextField renderer preserves familiar fallback visuals only when the resolved V2 contract does not author that property. `invalid` and `disabled` remain visible as fallback state affordances, while `focusVisible` is resolved from the authorable V2 border treatment.
+TextField is promoted from the legacy token-binding preview to the normalized V2 resolver. Template defaults are resolved first, then Base → Variant → Size → State. The TextField renderer preserves familiar fallback visuals only when the resolved V2 contract does not author that property. `invalid` and `disabled` remain visible as fallback state affordances, while `focusVisible` is resolved from the dedicated V2 Focus ring.
+
+The CSS projection intentionally avoids mixing shorthand and longhand properties during live rerenders. Border widths are emitted only as `borderTopWidth` / `borderRightWidth` / `borderBottomWidth` / `borderLeftWidth`, and padding is emitted only as the four physical side properties after resolving uniform, axis and side-specific authoring precedence. This prevents React's shorthand/longhand style-update conflicts while preserving the V2 inheritance semantics.
 
 ## Initial component selection
 
