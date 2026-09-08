@@ -1,0 +1,78 @@
+name: DS-181R-04 format
+
+on:
+  pull_request:
+    types: [synchronize]
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.head.ref == 'agent/ds-181r-04-textfield-customization'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout R04 branch
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Format R04 focus-ring fixes
+        run: >-
+          npx prettier
+          docs/product/ds-181r-04-textfield-customization.md
+          src/domain/design-system/component-contract-v2.schema.test.ts
+          src/domain/design-system/component-contract-v2.schema.ts
+          src/domain/design-system/component-template-registry.test.ts
+          src/domain/design-system/component-template-registry.ts
+          src/features/components/ButtonVisualCustomizationEditor.test.tsx
+          src/features/components/ButtonVisualCustomizationEditor.tsx
+          src/features/components/ButtonVisualPreviewMatrix.tsx
+          src/features/components/component-visual-preview.utils.test.ts
+          src/features/components/component-visual-preview.utils.ts
+          src/features/components/ComponentFoundationsPreviewClient.test.tsx
+          src/messages/component-v2-customization-messages.ts
+          --write
+
+      - name: Verify formatting
+        run: >-
+          npx prettier
+          docs/product/ds-181r-04-textfield-customization.md
+          src/domain/design-system/component-contract-v2.schema.test.ts
+          src/domain/design-system/component-contract-v2.schema.ts
+          src/domain/design-system/component-template-registry.test.ts
+          src/domain/design-system/component-template-registry.ts
+          src/features/components/ButtonVisualCustomizationEditor.test.tsx
+          src/features/components/ButtonVisualCustomizationEditor.tsx
+          src/features/components/ButtonVisualPreviewMatrix.tsx
+          src/features/components/component-visual-preview.utils.test.ts
+          src/features/components/component-visual-preview.utils.ts
+          src/features/components/ComponentFoundationsPreviewClient.test.tsx
+          src/messages/component-v2-customization-messages.ts
+          --check
+
+      - name: Commit formatting and remove helper
+        shell: bash
+        run: |
+          git rm .github/workflows/ds-181r-04-format.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "style: format R04 focus ring fixes"
+          git push origin "HEAD:${{ github.event.pull_request.head.ref }}"
