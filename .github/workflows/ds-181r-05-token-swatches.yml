@@ -1,0 +1,107 @@
+name: DS-181R-05 token swatches
+
+on:
+  push:
+    branches:
+      - agent/ds-181r-05-card-customization
+    paths:
+      - .github/workflows/ds-181r-05-token-swatches.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: agent/ds-181r-05-card-customization
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Apply token swatch polish
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+
+          function replaceExact(path, before, after) {
+            const source = fs.readFileSync(path, 'utf8');
+            if (!source.includes(before)) {
+              throw new Error(`Expected snippet not found in ${path}`);
+            }
+            fs.writeFileSync(path, source.replace(before, after));
+          }
+
+          replaceExact(
+            'src/features/components/ButtonVisualCustomizationEditor.tsx',
+            `options={availableTokens.map((token) => ({\n              value: token.path,\n              label: token.label,\n            }))}`,
+            `options={availableTokens.map((token) => ({\n              value: token.path,\n              label: token.label,\n              swatch: token.swatch,\n            }))}`,
+          );
+
+          replaceExact(
+            'src/features/components/ButtonVisualCustomizationEditor.tsx',
+            `options={typographyTokens.map((token) => ({\n                value: token.path,\n                label: token.label,\n              }))}`,
+            `options={typographyTokens.map((token) => ({\n                value: token.path,\n                label: token.label,\n                swatch: token.swatch,\n              }))}`,
+          );
+
+          replaceExact(
+            'src/features/components/ComponentContractEditorSections.tsx',
+            `...tokenOptionsForType.map((tokenOption) => ({\n                value: tokenOption.path,\n                label: tokenOption.label,\n              })),`,
+            `...tokenOptionsForType.map((tokenOption) => ({\n                value: tokenOption.path,\n                label: tokenOption.label,\n                swatch: tokenOption.swatch,\n              })),`,
+          );
+
+          replaceExact(
+            'src/features/components/ButtonVisualCustomizationEditor.test.tsx',
+            `      {\n        type: 'color' as const,\n        path: 'color.brand.primary',\n        label: 'color.brand.primary',\n      },`,
+            `      {\n        type: 'color' as const,\n        path: 'color.brand.primary',\n        label: 'color.brand.primary',\n        swatch: '#2563eb',\n      },`,
+          );
+
+          replaceExact(
+            'src/features/components/ButtonVisualCustomizationEditor.test.tsx',
+            `  it('uses one uniform radius control until independent corners are enabled', async () => {`,
+            `  it('shows resolved color swatches in V2 color token selects', async () => {\n    const user = userEvent.setup();\n    const { container } = render(\n      <ButtonVisualCustomizationEditor {...createEditorProps()} />,\n    );\n\n    await user.click(screen.getByRole('combobox', { name: 'Background' }));\n    await user.click(screen.getByRole('option', { name: 'Token' }));\n\n    const colorTokenSelect = container.querySelector<HTMLButtonElement>(\n      'button[id$="surface:background-token"]',\n    );\n\n    expect(colorTokenSelect).not.toBeNull();\n    expect(colorTokenSelect?.querySelector('span[style]')).toHaveStyle({\n      backgroundColor: '#2563eb',\n    });\n  });\n\n  it('uses one uniform radius control until independent corners are enabled', async () => {`,
+          );
+
+          replaceExact(
+            'src/features/components/ComponentContractEditor.test.tsx',
+            `  {\n    type: 'color' as const,\n    path: 'color.background.default',\n    label: 'color.background.default',\n  },`,
+            `  {\n    type: 'color' as const,\n    path: 'color.background.default',\n    label: 'color.background.default',\n    swatch: '#2563eb',\n  },`,
+          );
+
+          replaceExact(
+            'src/features/components/ComponentContractEditor.test.tsx',
+            `    expect(\n      screen.getByRole('option', { name: 'color.background.default' }),\n    ).toBeInTheDocument();`,
+            `    const colorTokenOption = screen.getByRole('option', {\n      name: 'color.background.default',\n    });\n\n    expect(colorTokenOption).toBeInTheDocument();\n    expect(colorTokenOption.querySelector('span[style]')).toHaveStyle({\n      backgroundColor: '#2563eb',\n    });`,
+          );
+
+          replaceExact(
+            'src/features/components/component-token-bindings.utils.test.ts',
+            `      {\n        type: 'color',\n        path: 'color.semantic.action.primary',\n        label: 'color.semantic.action.primary',\n      },\n      {\n        type: 'color',\n        path: 'color.semantic.status.success',\n        label: 'color.semantic.status.success',\n      },\n      {\n        type: 'color',\n        path: 'color.primitive.blue.500',\n        label: 'color.primitive.blue.500',\n      },\n      {\n        type: 'color',\n        path: 'color.primitive.green.500',\n        label: 'color.primitive.green.500',\n      },\n      {\n        type: 'color',\n        path: 'color.background.default',\n        label: 'color.background.default',\n      },`,
+            `      {\n        type: 'color',\n        path: 'color.semantic.action.primary',\n        label: 'color.semantic.action.primary',\n        swatch: '#2563eb',\n      },\n      {\n        type: 'color',\n        path: 'color.semantic.status.success',\n        label: 'color.semantic.status.success',\n        swatch: '#16a34a',\n      },\n      {\n        type: 'color',\n        path: 'color.primitive.blue.500',\n        label: 'color.primitive.blue.500',\n        swatch: '#2563eb',\n      },\n      {\n        type: 'color',\n        path: 'color.primitive.green.500',\n        label: 'color.primitive.green.500',\n        swatch: '#16a34a',\n      },\n      {\n        type: 'color',\n        path: 'color.background.default',\n        label: 'color.background.default',\n        swatch: '#2563eb',\n      },`,
+          );
+          NODE
+
+      - name: Format changed files
+        run: npx prettier --write src/features/components/ButtonVisualCustomizationEditor.tsx src/features/components/ComponentContractEditorSections.tsx src/features/components/ButtonVisualCustomizationEditor.test.tsx src/features/components/ComponentContractEditor.test.tsx src/features/components/component-token-bindings.utils.ts src/features/components/component-token-bindings.utils.test.ts
+
+      - name: Run focused tests
+        run: npm test -- src/features/components/component-token-bindings.utils.test.ts src/features/components/ButtonVisualCustomizationEditor.test.tsx src/features/components/ComponentContractEditor.test.tsx
+
+      - name: Remove helper and commit
+        run: |
+          git rm .github/workflows/ds-181r-05-token-swatches.yml
+          git add src/features/components/ButtonVisualCustomizationEditor.tsx src/features/components/ComponentContractEditorSections.tsx src/features/components/ButtonVisualCustomizationEditor.test.tsx src/features/components/ComponentContractEditor.test.tsx src/features/components/component-token-bindings.utils.ts src/features/components/component-token-bindings.utils.test.ts
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "feat: show color token swatches in component selectors"
+          git push origin HEAD:agent/ds-181r-05-card-customization
