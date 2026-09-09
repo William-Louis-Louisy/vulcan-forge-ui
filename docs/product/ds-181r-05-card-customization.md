@@ -39,6 +39,8 @@ Color token options now carry their resolved color value as an optional swatch. 
 
 The shared `Select` component already supports swatches in the selected value and in dropdown options. The Components surfaces now pass that metadata through in both the legacy Visual Tokens block and the V2 visual inspector. Non-color token types keep the existing text-only presentation.
 
+Swatch metadata is omitted entirely when no resolved color exists, rather than being projected as `undefined`; this preserves the repository's `exactOptionalPropertyTypes` contract while keeping non-color options unchanged.
+
 Regression coverage verifies resolved primitive and semantic swatch values, the legacy Visual Tokens selector, and the V2 color-token selector. This keeps the visual hint additive: token paths remain the authored value and swatches never replace token identity.
 
 ## Preview ownership
