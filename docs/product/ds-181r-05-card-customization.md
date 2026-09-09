@@ -39,6 +39,8 @@ Color token options now carry their resolved color value as an optional swatch. 
 
 The shared `Select` component already supports swatches in the selected value and in dropdown options. The Components surfaces now pass that metadata through in both the legacy Visual Tokens block and the V2 visual inspector. Non-color token types keep the existing text-only presentation.
 
+Regression coverage verifies resolved primitive and semantic swatch values, the legacy Visual Tokens selector, and the V2 color-token selector. This keeps the visual hint additive: token paths remain the authored value and swatches never replace token identity.
+
 ## Preview ownership
 
 Card now follows the normalized V2 preview path used by Button and TextField. The legacy no-token-bindings notice is suppressed for Card because empty legacy bindings no longer mean that its visual preview is unconfigured.
