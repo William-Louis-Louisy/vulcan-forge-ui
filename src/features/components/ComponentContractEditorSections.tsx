@@ -192,7 +192,11 @@ function getV2OwnedLegacyPreviewRoles(
 function usesV2VisualInspector(
   componentType: ComponentContractEditorDraft['type'],
 ): boolean {
-  return componentType === 'button' || componentType === 'textField';
+  return (
+    componentType === 'button' ||
+    componentType === 'textField' ||
+    componentType === 'card'
+  );
 }
 
 export function ComponentContractEditorSections({
@@ -1049,6 +1053,7 @@ function TokenBindingRow({
               ...tokenOptionsForType.map((tokenOption) => ({
                 value: tokenOption.path,
                 label: tokenOption.label,
+                ...(tokenOption.swatch ? { swatch: tokenOption.swatch } : {}),
               })),
             ]}
             onValueChange={(tokenPath) => onChange({ ...binding, tokenPath })}

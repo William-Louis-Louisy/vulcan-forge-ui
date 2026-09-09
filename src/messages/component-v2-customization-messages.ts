@@ -103,7 +103,7 @@ export const componentV2CustomizationMessages = {
             componentContractNotFound: 'This component no longer exists.',
             invalidPayload: 'The visual customization payload is invalid.',
             invalidContract:
-              'This visual editor only supports Button and TextField templates.',
+              'This visual editor only supports Button, TextField and Card templates.',
             unexpected: 'Unable to save the visual tokens. Try again.',
           },
         },
@@ -158,7 +158,7 @@ export const componentV2CustomizationMessages = {
             componentContractNotFound: 'Ce composant n’existe plus.',
             invalidPayload: 'La personnalisation visuelle est invalide.',
             invalidContract:
-              'Cet éditeur visuel prend uniquement en charge les templates Button et TextField.',
+              'Cet éditeur visuel prend uniquement en charge les templates Button, TextField et Card.',
             unexpected:
               'Impossible d’enregistrer les tokens visuels. Veuillez réessayer.',
           },

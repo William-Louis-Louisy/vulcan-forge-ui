@@ -6,6 +6,7 @@ import {
   getComponentTemplateDefinition,
   resolveComponentVisualProperties,
   type ComponentContractV2,
+  type ComponentSlotConfiguration,
 } from '@/domain/design-system';
 import type { Locale } from '@/i18n/routing';
 import type { ComponentRegistryItem } from './components-registry.utils';
@@ -211,6 +212,7 @@ export function ButtonVisualPreviewMatrix({
                           stateKey={stateKey}
                           styles={visualStyles}
                           semanticPalette={semanticPalette}
+                          slots={contractV2.slots}
                         />
                       </div>
                     </td>
@@ -233,6 +235,7 @@ function ButtonVisualPreview({
   stateKey,
   styles,
   semanticPalette,
+  slots,
 }: {
   type: ComponentRegistryItem['type'];
   name: string;
@@ -241,6 +244,7 @@ function ButtonVisualPreview({
   stateKey: string;
   styles: CSSProperties;
   semanticPalette: ComponentPreviewSemanticPalette;
+  slots: ComponentSlotConfiguration;
 }) {
   const normalizedStateKey = stateKey.toLowerCase();
   const isDisabled = normalizedStateKey.includes('disabled');
@@ -303,6 +307,93 @@ function ButtonVisualPreview({
           isDisabled ? 'cursor-not-allowed opacity-60' : '',
         ].join(' ')}
       />
+    );
+  }
+
+  if (type === 'card') {
+    const isInteractive = variantKey.toLowerCase().includes('interactive');
+    const headerEnabled = slots.header?.enabled ?? false;
+    const contentEnabled = slots.content?.enabled ?? true;
+    const footerEnabled = slots.footer?.enabled ?? false;
+
+    return (
+      <article
+        aria-label={name}
+        data-preview-component="card"
+        data-preview-v2="true"
+        style={styles}
+        className={[
+          'flex flex-col overflow-hidden transition',
+          styles.borderStyle === 'none' ? '' : 'border',
+          hasRadius(styles) ? '' : 'rounded-md',
+          hasHorizontalPadding(styles)
+            ? ''
+            : size === 'small'
+              ? 'px-2'
+              : size === 'large'
+                ? 'px-3.5'
+                : 'px-3',
+          hasVerticalPadding(styles)
+            ? ''
+            : size === 'small'
+              ? 'py-2'
+              : size === 'large'
+                ? 'py-3.5'
+                : 'py-3',
+          hasDefinedStyle(styles.gap) ? '' : 'gap-2',
+          hasDefinedStyle(styles.width) ? '' : 'w-40',
+          hasDefinedStyle(styles.backgroundColor) ? '' : 'bg-surface-primary',
+          hasDefinedStyle(styles.color) ? '' : 'text-content-primary',
+          hasDefinedStyle(styles.borderColor) ? '' : 'border-border-subtle',
+          isInteractive ? 'cursor-pointer' : '',
+        ].join(' ')}
+      >
+        {headerEnabled ? (
+          <header
+            data-card-slot="header"
+            className="flex min-w-0 items-center gap-2"
+          >
+            <span
+              aria-hidden="true"
+              className={[
+                'bg-action-primary/15 shrink-0 rounded-sm',
+                size === 'small'
+                  ? 'size-5'
+                  : size === 'large'
+                    ? 'size-8'
+                    : 'size-6',
+              ].join(' ')}
+            />
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-[0.6875rem] font-semibold">{name}</p>
+              <p className="text-content-tertiary truncate font-mono text-[0.5625rem]">
+                {variantKey}
+              </p>
+            </div>
+          </header>
+        ) : null}
+
+        {contentEnabled ? (
+          <div data-card-slot="content" className="space-y-1">
+            <span className="bg-background-sunken block h-1.5 w-full rounded-full" />
+            <span className="bg-background-sunken block h-1.5 w-3/4 rounded-full" />
+          </div>
+        ) : null}
+
+        {footerEnabled ? (
+          <footer
+            data-card-slot="footer"
+            className="border-border-subtle flex items-center justify-between border-t pt-2"
+          >
+            <span className="bg-background-sunken block h-1.5 w-8 rounded-full" />
+            {isInteractive ? (
+              <span className="bg-action-primary/15 text-action-primary rounded px-1.5 py-0.5 text-[0.5rem] font-semibold">
+                →
+              </span>
+            ) : null}
+          </footer>
+        ) : null}
+      </article>
     );
   }
 

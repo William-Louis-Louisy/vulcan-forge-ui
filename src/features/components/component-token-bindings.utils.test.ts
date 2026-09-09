@@ -337,26 +337,31 @@ describe('component-token-bindings utils', () => {
         type: 'color',
         path: 'color.semantic.action.primary',
         label: 'color.semantic.action.primary',
+        swatch: '#2563eb',
       },
       {
         type: 'color',
         path: 'color.semantic.status.success',
         label: 'color.semantic.status.success',
+        swatch: '#16a34a',
       },
       {
         type: 'color',
         path: 'color.primitive.blue.500',
         label: 'color.primitive.blue.500',
+        swatch: '#2563eb',
       },
       {
         type: 'color',
         path: 'color.primitive.green.500',
         label: 'color.primitive.green.500',
+        swatch: '#16a34a',
       },
       {
         type: 'color',
         path: 'color.background.default',
         label: 'color.background.default',
+        swatch: '#2563eb',
       },
     ]);
   });

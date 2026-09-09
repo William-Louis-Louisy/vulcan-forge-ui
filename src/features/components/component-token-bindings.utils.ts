@@ -23,6 +23,7 @@ export type ComponentTokenOption = {
   type: DesignToken['type'];
   path: string;
   label: string;
+  swatch?: string;
 };
 
 export const componentPreviewTokenRoles = [
@@ -88,12 +89,18 @@ export function createComponentTokenOptions(
   }>,
 ): ComponentTokenOption[] {
   const parsedTokenSets = parseComponentTokenSets(rawTokenSets);
+  const dictionary = createPreviewTokenDictionary(parsedTokenSets.tokenSets);
   const tokenOptions = parsedTokenSets.tokenSets.flatMap((tokenSet) =>
-    tokenSet.tokens.map((token) => ({
-      type: token.type,
-      path: token.path,
-      label: token.path,
-    })),
+    tokenSet.tokens.map((token) => {
+      const swatch = getComponentTokenSwatch({ dictionary, token });
+
+      return {
+        type: token.type,
+        path: token.path,
+        label: token.path,
+        ...(swatch ? { swatch } : {}),
+      };
+    }),
   );
 
   return sortComponentTokenOptions(tokenOptions);
@@ -120,6 +127,30 @@ function resolvePreviewTokenValue({
   });
 
   return resolvedToken.isResolved ? resolvedToken.resolvedValue : token.value;
+}
+
+function getComponentTokenSwatch({
+  dictionary,
+  token,
+}: {
+  dictionary: TokenDictionary;
+  token: DesignToken;
+}): string | undefined {
+  if (token.type !== 'color') {
+    return undefined;
+  }
+
+  const resolvedValue = resolvePreviewTokenValue({ dictionary, token });
+
+  if (typeof resolvedValue !== 'string') {
+    return undefined;
+  }
+
+  const normalizedValue = resolvedValue.trim();
+
+  return normalizedValue.length > 0 && !normalizedValue.startsWith('{')
+    ? normalizedValue
+    : undefined;
 }
 
 export function normalizeComponentPreviewTokenRole(
