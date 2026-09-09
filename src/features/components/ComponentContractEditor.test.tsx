@@ -255,6 +255,7 @@ const tokenOptions = [
     type: 'color' as const,
     path: 'color.background.default',
     label: 'color.background.default',
+    swatch: '#2563eb',
   },
   {
     type: 'spacing' as const,
@@ -503,9 +504,14 @@ describe('ComponentContractEditor', () => {
     });
     await user.click(tokenPathSelect);
 
-    expect(
-      screen.getByRole('option', { name: 'color.background.default' }),
-    ).toBeInTheDocument();
+    const colorTokenOption = screen.getByRole('option', {
+      name: 'color.background.default',
+    });
+
+    expect(colorTokenOption).toBeInTheDocument();
+    expect(colorTokenOption.querySelector('span[style]')).toHaveStyle({
+      backgroundColor: '#2563eb',
+    });
     expect(
       screen.queryByRole('option', { name: 'radius.md' }),
     ).not.toBeInTheDocument();

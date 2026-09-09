@@ -153,6 +153,7 @@ function createEditorProps() {
         type: 'color' as const,
         path: 'color.brand.primary',
         label: 'color.brand.primary',
+        swatch: '#2563eb',
       },
       {
         type: 'typography' as const,
@@ -182,6 +183,25 @@ describe('ButtonVisualCustomizationEditor', () => {
     expect(container.querySelector('button[id$="-token"]')).toHaveClass(
       'min-h-7',
     );
+  });
+
+  it('shows resolved color swatches in V2 color token selects', async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <ButtonVisualCustomizationEditor {...createEditorProps()} />,
+    );
+
+    await user.click(screen.getByRole('combobox', { name: 'Background' }));
+    await user.click(screen.getByRole('option', { name: 'Token' }));
+
+    const colorTokenSelect = container.querySelector<HTMLButtonElement>(
+      'button[id$="surface:background-token"]',
+    );
+
+    expect(colorTokenSelect).not.toBeNull();
+    expect(colorTokenSelect?.querySelector('span[style]')).toHaveStyle({
+      backgroundColor: '#2563eb',
+    });
   });
 
   it('uses one uniform radius control until independent corners are enabled', async () => {
