@@ -73,5 +73,5 @@ R05 is accepted only if the real Components page confirms that:
 2. the legacy Visual Tokens editor no longer competes with Card V2 authoring;
 3. Base, Variant and Size visual changes resolve live and persist correctly;
 4. the Card preview is rendered from the V2 resolver and respects the stored Header / Content / Footer slot configuration;
-5. color token selectors show resolved swatches in both legacy and V2 Components authoring surfaces;
+5. color token selectors show resolved swatches in both legacy and V2 Components authoring surfaces, while non-color token selectors remain text-only;
 6. Button and TextField remain regression-free.
