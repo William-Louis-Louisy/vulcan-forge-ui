@@ -33,6 +33,12 @@ The V2 foundations preview now consumes `contractV2.slots` instead of rendering 
 
 The slot configuration is therefore part of the preview contract, but this slice does not introduce a second independent slot-editing save surface. Slot enable/disable authoring and slot-specific visual styling remain a focused follow-up so structural editing can share one coherent V2 draft/save boundary rather than duplicate persistence logic.
 
+## Token selector polish
+
+Color token options now carry their resolved color value as an optional swatch. Semantic aliases are resolved through the design-token dictionary before the selector is built, so both primitive and semantic color tokens can show the actual resulting color.
+
+The shared `Select` component already supports swatches in the selected value and in dropdown options. The Components surfaces now pass that metadata through in both the legacy Visual Tokens block and the V2 visual inspector. Non-color token types keep the existing text-only presentation.
+
 ## Preview ownership
 
 Card now follows the normalized V2 preview path used by Button and TextField. The legacy no-token-bindings notice is suppressed for Card because empty legacy bindings no longer mean that its visual preview is unconfigured.
@@ -63,4 +69,5 @@ R05 is accepted only if the real Components page confirms that:
 2. the legacy Visual Tokens editor no longer competes with Card V2 authoring;
 3. Base, Variant and Size visual changes resolve live and persist correctly;
 4. the Card preview is rendered from the V2 resolver and respects the stored Header / Content / Footer slot configuration;
-5. Button and TextField remain regression-free.
+5. color token selectors show resolved swatches in both legacy and V2 Components authoring surfaces;
+6. Button and TextField remain regression-free.
