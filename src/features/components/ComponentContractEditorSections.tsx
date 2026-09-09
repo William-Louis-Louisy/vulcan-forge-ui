@@ -1053,7 +1053,9 @@ function TokenBindingRow({
               ...tokenOptionsForType.map((tokenOption) => ({
                 value: tokenOption.path,
                 label: tokenOption.label,
-                swatch: tokenOption.swatch,
+                ...(tokenOption.swatch
+                  ? { swatch: tokenOption.swatch }
+                  : {}),
               })),
             ]}
             onValueChange={(tokenPath) => onChange({ ...binding, tokenPath })}

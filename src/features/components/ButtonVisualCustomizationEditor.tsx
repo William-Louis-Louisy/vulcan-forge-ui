@@ -1050,7 +1050,7 @@ function DesignValueField({
             options={availableTokens.map((token) => ({
               value: token.path,
               label: token.label,
-              swatch: token.swatch,
+              ...(token.swatch ? { swatch: token.swatch } : {}),
             }))}
             onValueChange={(path) =>
               onChange({
@@ -1288,7 +1288,7 @@ function TypographyControls({
               options={typographyTokens.map((token) => ({
                 value: token.path,
                 label: token.label,
-                swatch: token.swatch,
+                ...(token.swatch ? { swatch: token.swatch } : {}),
               }))}
               onValueChange={(path) =>
                 onChange({ source: 'token', tokenType: 'typography', path })
